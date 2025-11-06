@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifications | Silent Depth</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; margin: 0; padding: 20px; background: #fafafa; }
+    h1 { font-family: 'Playfair Display', serif; margin-bottom: 20px; }
+    .notification-card { background: #fff; padding: 16px; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; }
+    .notification-card.unread { border-left: 4px solid #ff6347; }
+    .notification-card p { margin: 0 0 8px 0; }
+    .poem-title { font-weight: 700; }
+    .from-user { font-style: italic; color: #555; }
+    .timestamp { font-size: 12px; color: #999; }
+  </style>
+</head>
+<body>
+
+  <h1>Notifications</h1>
+  <div id="notifications"></div>
+
+  <script type="module">
+    import { 
+      initializeApp 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+    import { 
+      getFirestore, collection, query, orderBy, getDocs, doc, getDoc, updateDoc 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+      authDomain: "silent-depth.firebaseapp.com",
+      projectId: "silent-depth",
+      storageBucket: "silent-depth.appspot.com",
+      messagingSenderId: "78008755450",
+      appId: "1:78008755450:web:3fd0f0f298a08820935543"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+
+    const notificationsDiv = document.getElementById("notifications");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        notificationsDiv.innerHTML = "<p>Please sign in to see your notifications.</p>";
+        return;
+      }
+
+      // Fetch notifications for the signed-in user
+      const q = query(
+        collection(db, "notifications"),
+        orderBy("timestamp", "desc")
+      );
+
+      const snapshot = await getDocs(q);
+
+      const userNotifications = snapshot.docs
+        .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
+        .filter(notif => notif.forUser === user.uid);
+
+      if (userNotifications.length === 0) {
+        notificationsDiv.innerHTML = "<p>No notifications yet.</p>";
+        return;
+      }
+
+      userNotifications.forEach(async (notif) => {
+        // Fetch commenter username
+        let fromUsername = "Someone";
+        if (notif.fromUser) {
+          const userDoc = await getDoc(doc(db, "users", notif.fromUser));
+          if (userDoc.exists()) fromUsername = userDoc.data().username || "Someone";
+        }
+
+        // Fetch poem title
+        let poemTitle = "a poem";
+        if (notif.poemId) {
+          const poemDoc = await getDoc(doc(db, "recentPoems", notif.poemId));
+          if (poemDoc.exists()) poemTitle = poemDoc.data().title || "a poem";
+        }
+
+        // Format timestamp
+        const time = notif.timestamp?.toDate?.();
+        const timeStr = time ? time.toLocaleString() : "";
+
+        // Render notification
+        const div = document.createElement("div");
+        div.className = "notification-card" + (notif.read ? "" : " unread");
+        div.innerHTML = `
+          <p><span class="from-user">${fromUsername}</span> commented on your poem <span class="poem-title">"${poemTitle}"</span>:</p>
+          <p>"${notif.text}"</p>
+          <p class="timestamp">${timeStr}</p>
+        `;
+
+        // Mark notification as read on click
+        div.addEventListener("click", async () => {
+          if (!notif.read) {
+            await updateDoc(doc(db, "notifications", notif.id), { read: true });
+            div.classList.remove("unread");
+          }
+          // Optional: redirect to the poem page
+          // window.location.href = `poem.html?id=${notif.poemId}`;
+        });
+
+        notificationsDiv.appendChild(div);
+      });
+    });
+  </script>
+
+</body>
+</html>

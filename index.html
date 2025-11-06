@@ -4,7 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Volant Poetry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles & Icons -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="images/logo.png" />
+  <link rel="apple-touch-icon" href="images/logo.png" />
 
+  
   <!-- Styles & Icons -->
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="images/logo.png" />
@@ -80,157 +88,805 @@
   ]
 }
 </script>
+  <style>/* Recent Poems Container */
+
+/* Individual Poem Card */
+.recent-poem-card {
+  background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
+  color: #4b3f2f;
+}
+
+/* Read More / Show Less */
+.read-more-btn {
+  background: none;
+  border: none;
+  color: #960606;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.92rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.read-more-btn:hover { color: #ff0000; }
+
+/* Poem Categories */
+.poem-category-line em,
+.poem-category {
+  font-size: 0.7rem;    /* bigger category text */
+  font-style: italic;
+  color:  #B8860B;}
+
+#links-container ul {
+  list-style: none;        
+  padding: 0;
+  max-width: 750px;        
+  margin-left: 80px;       /* shifts the list to the right */
+}
+
+
+#links-container li {
+  margin-bottom: 12px;
+  padding: 10px 15px;
+  background: #f7f5ff;    
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#links-container li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+#links-container a {
+  color: #4b2aad;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+#links-container a:hover {
+  text-decoration: underline;
+}
+
+#links-container div {
+  font-size: 0.85rem;
+  color: #555;
+  margin-left: 10px;
+  font-style: italic;
+}
+/* LINKS TAB PARAGRAPH */
+#links p {
+  font-size: 1rem;
+  color: #333;              /* dark text for readability */
+  margin-bottom: 12px;      /* space between paragraph and links */
+  text-align: left;         /* align text to the left */
+  font-weight: 500;
+  line-height: 1.5;
+  font-family: 'Inter', sans-serif;
+   margin-left: 85px;        /* moves it slightly to the right */
+}
+
+/* SMALL SCREEN STYLING FOR LINKS TAB */
+@media (max-width: 768px) {
+  #links-container ul {
+    max-width: 95%;      /* allow full width on small screens */
+    margin-left: 10px;    /* smaller shift to the right */
+    padding: 0;
+  }
+
+  #links-container li {
+    padding: 8px 12px;    /* slightly smaller padding */
+    flex-direction: column; /* stack title and author vertically */
+    align-items: flex-start; 
+  }
+
+  #links-container a {
+    font-size: 0.95rem;   /* slightly smaller text */
+  }
+
+  #links-container div {
+    font-size: 0.8rem;
+    margin-left: 0;       /* remove extra left margin on small screens */
+    margin-top: 4px;      /* small spacing above author */
+  }
+
+  /* Paragraph above the list */
+  #links p {
+    margin-left: 25px;    /* smaller left shift */
+    font-size: 0.95rem;
+  }
+}
+
+/* Featured Poems Styling */
+.featured-poem-card {
+  background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
+  color: #4b3f2f;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 15px;
+  white-space: pre-wrap;
+    padding: 15px 20px 15px 50px; /* top, right, bottom, left padding to move content right */
+}
+
+.featured-poem-card .title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #4b2aad; /* Title color */
+  margin-bottom: 6px;
+}
+
+.featured-poem-card .author {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #B8860B; /* Author color */
+  margin-bottom: 10px;
+}
+
+.featured-poem-card .content {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #4b3f2f; /* Poem text color */
+  line-height: 1.6;
+}
+
+/* Featured Poems Container */
+#featured-poems-container {
+  max-width: 85%;      /* reduce width from the right */
+  margin-left: 0;      /* keep aligned to the left */
+  
+  margin-right: auto;  /* optional: pushes it away from the right edge */
+}
+
+/* --- Small Screen Adjustments --- */
+@media (max-width: 768px) {
+  #featured-poems-container {
+    max-width: 100% !important;   /* force full width */
+    width: 100% !important;
+    padding: 0 5px;               /* minimal horizontal padding */
+    margin: 0 !important;         /* remove any margin constraints */
+  }
+
+  .featured-poem-card {
+    width: 100% !important;       /* make each card fill the container */
+    padding: 15px 10px 15px 15px; /* reduce left/right padding for more space */
+    box-sizing: border-box;       /* ensure padding is included in width */
+  }
+
+  .featured-poem-card .title {
+    font-size: 1.5rem;            /* slightly larger title for readability */
+  }
+
+  .featured-poem-card .author {
+    font-size: 0.95rem;
+  }
+
+  .featured-poem-card .content {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+
+/* Username styles */
+.username-display, .username-sm {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  background: linear-gradient(90deg, #5a3cb3, #a67c52); /* soft purple → muted gold */
+  background-clip: text;              /* ✅ Standard */
+  -webkit-background-clip: text;      /* ✅ For Safari/Chrome */
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.3px;
+  font-style: normal;
+  transition: all 0.3s ease;
+}
+
+.username-display:hover, .username-sm:hover {
+  background: linear-gradient(90deg, #6a45d1, #c49b63); /* slightly brighter on hover */
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* Hide logout by default */
+.logout-btn {
+  display: none;           /* hidden initially */
+  margin-top: 5px;         /* spacing below username */
+  padding: 6px 12px;
+  background: #ff4b4b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Desktop vs Mobile visibility */
+.username-display { display: inline-block; } /* desktop */
+.username-sm { display: none; } /* hidden initially */
+
+#logoutBtn { display: none; } /* hide logout initially */
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .username-display { display: none; } /* hide desktop username */
+  .username-sm { display: inline-block; margin-right: 8px; } /* show mobile username */
+}
+
+
+/* --- Mobile Username & Logout Inline --- */
+@media (max-width: 768px) {
+  .nav-right {
+    display: flex;
+    align-items: center; /* vertical center */
+    gap: 8px;            /* spacing between username & logout */
+  }
+
+  #username-display-sm {
+    display: inline-block;
+    font-size: 1.2rem;   /* slightly bigger font */
+    font-weight: 600;
+    color: #4b2aad;
+    cursor: pointer;
+    margin-right: 0;      /* spacing handled by gap */
+  }
+
+  #logout-btn {
+    display: none;       /* hide initially */
+    font-size: 0.5rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    background: #ff4b4b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    width: 6px;            /* force smaller width */
+    
+  }
+
+  #logout-btn:hover {
+    background: #e03b3b;
+      width: 40px;           /* smaller hover width */
+  padding: 6px 8px;      /* adjust padding to match smaller width */
+  }
+}
+
+/* --- MOBILE SEARCH ICON --- */
+.search-toggle {
+  display: none;
+  cursor: pointer;
+  color: #3a2d60;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem;
+  border-radius: 50%;
+  transition: background 0.25s ease;
+}
+
+.search-toggle:hover {
+  background: rgba(123, 76, 194, 0.08);
+}
+
+/* --- MOBILE SEARCH DROPDOWN (smaller version) --- */
+.mobile-search-dropdown {
+  position: absolute;
+  top: 100%; /* appear just below navbar */
+  left: 50%;
+  transform: translate(-50%, -10px);
+  width: 90%; /* reduced width */
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  padding: 0.5rem 0.8rem; /* reduced padding */
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+/* When toggled ON */
+.mobile-search-dropdown.show {
+  opacity: 1;
+  transform: translate(-50%, 5px);
+  pointer-events: auto;
+}
+
+#mobile-search-input {
+  width: 90%;
+  padding: 0.2rem 0.7rem; /* smaller height */
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem; /* slightly smaller text */
+  transition: all 0.25s ease;
+}
+
+
+#mobile-search-input:focus {
+  outline: none;
+  border-color: #7b4cc2;
+  box-shadow: 0 0 6px rgba(123, 76, 194, 0.3);
+}
+
+/* --- RESPONSIVE BEHAVIOR --- */
+@media (max-width: 768px) {
+  .desktop-search {
+    display: none;
+  }
+  .search-toggle {
+    display: flex;
+  }
+}
+
+/* --- MOBILE ICONS WRAPPER --- */
+.mobile-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Hide last poetry gallery item on small screens */
+@media (max-width: 768px) {
+  #poetry-gallery .gallery-item:last-child {
+    display: none;
+  }
+}
+
+  /* --- Community Section --- */
+    .community-section { display: flex; align-items: center; justify-content: space-between; padding: 3rem 5%; background: #fdf6f0; flex-wrap: wrap; gap: 2rem; }
+    .community-content { max-width: 500px; }
+    .community-content h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: #4b2aad; }
+    .community-content p { font-size: 1rem; line-height: 1.5; margin: 1rem 0; }
+    .community-image img { max-width: 400px; height: auto; border-radius: 12px; }
+
+.author {
+  display: block;
+
+ color: #B8860B; /* Author color */;            /* soft gray tone for readability */
+  font-style: italic;     /* elegant literary feel */
+  font-size: 54rem;     /* slightly smaller than poem text */
+  margin-top: -6px;       /* moves it up closer to title */
+  margin-bottom: 1rem;    /* adds subtle space before poem starts */
+}
+
+</style>
 
 </head>
-
 <body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="logo">Volant Poetry</div>
-    <div class="menu-toggle" id="menu-toggle">☰</div>
+
+<header>
+  <nav>
+    <div class="logo">
+      <img src="images/logo.png" alt="Volant Poetry Logo" class="nav-logo-img">
+      <span class="logo-text">
+        <span class="logo-highlight">Volant</span> Poetry
+      </span>
+    </div>
+
+
+ <div class="search-container">
+  <input id="global-search-input" type="text" placeholder="Search poems, authors..." />
+</div>
+
     <div class="nav-links" id="nav-links">
-      <a href="index.html" class="active">Home</a>
+      <span class="close-btn" id="close-btn">✕</span>
+      <a href="index.html">Home</a>
       <a href="poems.html">Poems</a>
-      <a href="poemslink.html">Links</a>
       <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-      <a href="users-login.html" id="profile-link">Login</a>
-
-      <!-- Logged-in dropdown -->
-      <div id="user-dropdown" class="user-dropdown" style="display:none;">
-        <span id="username-display"></span> ▼
-        <div id="dropdown-content" class="dropdown-content">
-          <a href="#" id="logoutBtn">Logout</a>
-        </div>
-      </div>
+       <a href="contact.html">Contact Us</a> <!-- ✅ New link -->
+        <a href="user-profile.html">My Profile</a>
+          <a href="all-categories.html" class="mobile-only">Categories</a> <!-- Mobile only -->
     </div>
+<div class="nav-right">
+  <!-- Desktop username display -->
+<!-- Desktop & Mobile username -->
+<span id="username-display" class="username-display"></span>
+<span id="username-display-sm" class="username-sm"></span>
+
+<!-- Logout button (desktop + mobile) -->
+<button id="logout-btn" class="logout-btn">Logout</button>
+
+
+  <!-- Mobile username display (before search toggle) -->
+  <span id="username-display-sm" class="username-sm"></span>
+
+  <!-- Login / Logout -->
+  <a href="users-login.html" id="login-link">Login</a>
+  <button id="logoutBtn">Logout</button>
+
+  <!-- Search toggle -->
+<!-- Mobile Icons -->
+    <div class="mobile-icons">
+      <div class="search-toggle" id="search-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="20" fill="none"
+          stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+          stroke-linejoin="round" viewBox="0 0 24 24">
+          <path
+            d="M10.5 3a7.5 7.5 0 015.9 12.09l3.7 3.7a1 1 0 01-1.42 1.42l-3.7-3.7A7.5 7.5 0 1110.5 3z" />
+        </svg>
+      </div>
+      <div class="menu-toggle" id="menu-toggle">☰</div>
+    </div>
+  </div>
+</nav>
+
+<!-- 🌸 MOBILE SEARCH DROPDOWN -->
+<div class="mobile-search-dropdown" id="search-dropdown">
+  <input
+    type="text"
+    id="mobile-search-input"
+    placeholder="Search poems, authors, or categories..."
+    autocomplete="off"
+  />
+</div>
+
   </nav>
+</header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <p>
-      Welcome to my silent depth— words are weaved to share emotions,
-      inspiring creativity, and conveying messages through their beauty.
-      You can read, like, comment, and share the raw verses poured on this site.
-    </p>
-  </section>
-
-  <!-- Weekly Highlights -->
-  <section class="weekly-container">
-    <!-- Left column -->
-    <div class="weekly-left">
-      <div class="weekly-card quote-card">
-        <h2 class="weekly-title">Quote of the Week</h2>
-        <p id="weekly-quote"><em>Loading quote...</em></p>
-        <span id="quote-author" class="author"></span>
-      </div>
-
-      <div id="poem-categories-container">
-        <h4 class="categories-title">Categories</h4>
-        <div id="poem-categories"></div>
-      </div>
-    </div>
-
-    <!-- Right column -->
-    <div class="weekly-card poem-card">
-      <h2 class="weekly-title">Poem of the Week</h2>
-      <div id="poem-title"></div>
-      <p id="weekly-poem"><em>Loading poem...</em></p>
-      <span id="poem-author" class="author"></span>
-    </div>
-  </section>
-
-  <!-- Recent Poems -->
-  <section class="recent-poems-section" style="position: relative;">
-  <h2 class="recent-poems-heading" id="recent-poems-title">Recent Poems</h2>
-
-    <input type="text" id="recent-poems-search" placeholder="Search..." />
-    <div id="recent-poems-container" class="recent-poems-container">
-      <p>Loading recent poems...</p>
-    </div>
-    <div style="text-align: center; margin-top: 15px;">
-      <button id="load-more-poems" style="padding: 8px 16px; border: none; background: #333; color: #fff; border-radius: 5px; cursor: pointer;">
-        Load More
-      </button>
-    </div>
-  </section>
-
-<!-- Bottom Categories -->
-<section id="bottom-categories-section" class="bottom-categories">
-  <h4 class="categories-title">Categories</h4>
-  <div id="bottom-poem-categories"></div>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <img src="images/logo.png" alt="Volant Poetry Logo" class="hero-logo">
+  </div>
+  <div class="hero-right">
+    <h1>Volant<br><span>Poetry</span></h1>
+  </div>
+  <div class="hero-line-content">
+    <p>Discover poetry that breathes life, emotion, and meaning.<br>Volant Poetry is where words take flight.</p>
+    <a href="poems.html" class="cta-btn">Explore Poems</a>
+  </div>
 </section>
- 
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-container">
-      <p>&copy; 2025 Volant Poetry. All rights reserved.</p>
+<!-- TABS SECTION -->
+<!-- TABS SECTION -->
+<section class="tabs-section">
+  <div class="tabs-nav">
+    <button class="tab-btn" data-tab="recent">Recent Poems</button>
+    <button class="tab-btn" data-tab="links">Links</button>
+    <button class="tab-btn" data-tab="featured">Featured Poems</button>
+    <button class="tab-btn" data-tab="weekly">Weekly Highlights</button>
+    <button class="tab-btn" data-tab="rank-poems">Ranking Poems</button>
+    <button class="tab-btn" data-tab="rank-poets">Ranking Poets</button>
+    <button class="tab-btn" data-tab="submit">Submit</button>
+  </div>
+
+  <div class="tab-content-container">
+    <!-- RECENT POEMS -->
+    <div class="tab-content active" id="recent">
+      <div id="recent-poems-container" class="recent-poems-container"></div>
+      <div style="text-align: center; margin-top: 15px;">
+        <button id="load-more-poems" style="padding: 8px 16px; border: none; background: #333; color: #fff; border-radius: 5px; cursor: pointer; display: none;">
+          Load More
+        </button>
+      </div>
     </div>
-  </footer>
+
+    <!-- LINKS TAB -->
+    <div class="tab-content" id="links">
+      <p>Click on a poem title to read it:</p>
+      <div id="links-container"></div>
+    </div>
+
+    <!-- FEATURED POEMS -->
+    <div class="tab-content" id="featured">
+      <div id="featured-poems-container" class="recent-poems-container"></div>
+      <div style="text-align: center; margin-top: 15px;">
+        <button id="load-more-featured" style="padding: 8px 16px; border: none; background: #4b2aad; color: #fff; border-radius: 5px; cursor: pointer; display: none;">
+          Load More
+        </button>
+      </div>
+    </div>
+
+    <!-- WEEKLY HIGHLIGHTS -->
+    <div class="tab-content" id="weekly">
+      <h3>Poem of the Week</h3>
+      <a href="poem-of-the-week.html" class="weekly-link">Read Poem of the Week</a>
+
+      <h3 style="margin-top: 2rem;">Quote of the Week</h3>
+      <a href="quote-of-the-week.html" class="weekly-link">View Quote of the Week</a>
+    </div>
+
+    <!-- RANKING POEMS -->
+   <!-- RANKING POEMS -->
+<div class="tab-content" id="rank-poems">
+  <h3>Ranking Poems</h3>
+  <p>These poems are ranked based on popularity: views, likes, and comments combined.</p>
+
+  <!-- Container for ranked poems -->
+  <ul id="ranking-poems-list" style="list-style: none; padding: 0; margin-top: 15px;">
+    <!-- JS will dynamically append <li> items here -->
+  </ul>
+</div>
+
+<!-- RANKING POETS -->
+<div class="tab-content" id="rank-poets">
+  <h3>Ranking Poets</h3>
+  <p>Discover poets rising in popularity within our vibrant community.</p>
+  <div id="ranking-poets-container"></div> <!-- IMPORTANT -->
+</div>
+
+
+    <!-- SUBMIT -->
+    <div class="tab-content" id="submit">
+      <h3>Submit Your Work</h3>
+      <p>Share your poetry with the world. Join Volant Poetry today.</p>
+      <a href="submitpoems.html" class="cta-btn">Submit a Poem</a>
+    </div>
+  </div>
+</section>
+
+
+    <div id="poem-categories-container" style="display: none;">
+  <h4 class="categories-title">Categories</h4>
+  <div id="poem-categories"></div>
+</div>
+
+<!-- 🌿 JOIN COMMUNITY SECTION -->
+<section class="community-section">
+  <div class="community-content">
+    <h2>Join the Volant Poetry Community</h2>
+    <p>Be part of a world where words take flight.  
+    Share your poems, connect with fellow poets, and celebrate creativity every day.</p>
+    <a href="users-signup.html" class="join-btn">Join the Community</a>
+  </div>
+  <div class="community-image">
+    <img src="images/community-art.png" alt="Poetry Community">
+  </div>
+
+</section>
+
+<!-- 🖼️ POETRY IN MOTION GALLERY -->
+<!-- 🖼️ DYNAMIC POETRY GALLERY -->
+<section class="gallery-section">
+  <h2>Poetry in Motion</h2>
+  <div class="poetry-gallery" id="poetry-gallery">
+    <!-- Poems will load dynamically from Firestore -->
+  </div>
+</section>
+
+
+<footer>
+  &copy; 2025 Volant Poetry. All Rights Reserved.
+</footer>
 
   <!-- Scripts -->
   <script type="module" src="script.js"></script>
-  <script type="module">
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
-      authDomain: "silent-depth.firebaseapp.com",
-      projectId: "silent-depth",
-      storageBucket: "silent-depth.appspot.com",
-      messagingSenderId: "78008755450",
-      appId: "1:78008755450:web:3fd0f0f298a08820935543"
-    };
+<!-- SCRIPT TO POPULATE LINKS TAB AND FEATURED POEMS -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+const firebaseConfig = {
+  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+  authDomain: "silent-depth.firebaseapp.com",
+  projectId: "silent-depth",
+  storageBucket: "silent-depth.appspot.com",
+  messagingSenderId: "78008755450",
+  appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    (async function fetchBottomCategories() {
-      try {
-        const snapshot = await getDocs(collection(db, "recentPoems"));
-        const categorySet = new Set();
+// --- Load Recent Poems Links ---
+async function loadRecentPoemsLinks() {
+  try {
+    const colRef = collection(db, "recentPoems");
+    const snapshot = await getDocs(colRef);
+    if (snapshot.empty) return;
 
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          if (data.categories && Array.isArray(data.categories)) {
-            data.categories.forEach(cat => categorySet.add(cat.trim()));
-          }
-        });
+    const container = document.getElementById("links-container");
+    const loadMoreBtn = document.getElementById("load-more-poems");
 
-        const sortedCategories = Array.from(categorySet).sort((a, b) => a.localeCompare(b));
-        const container = document.getElementById("bottom-poem-categories");
-        if (!container) return;
-        container.innerHTML = "";
+    // Map docs to structured poems
+    const poems = await Promise.all(snapshot.docs.map(async docSnap => {
+      const data = docSnap.data();
+      let username = "Anonymous";
 
-        const limit = 20;
-        sortedCategories.slice(0, limit).forEach(cat => {
-          const span = document.createElement("span");
-          span.textContent = cat;
-          span.className = "poem-category";
-          span.addEventListener("click", () => {
-            window.location.href = `category.html?name=${encodeURIComponent(cat)}`;
-          });
-          container.appendChild(span);
-        });
-
-        if (sortedCategories.length > limit) {
-          const allSpan = document.createElement("span");
-          allSpan.textContent = "All »";
-          allSpan.className = "all-categories";
-          allSpan.addEventListener("click", () => {
-            window.location.href = "all-categories.html";
-          });
-          container.appendChild(allSpan);
+      if (data.userId) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", data.userId));
+          if (userDoc.exists()) username = userDoc.data().username || "Anonymous";
+        } catch (err) {
+          console.warn("Failed to fetch username:", err);
         }
-
-      } catch (err) {
-        console.error("❌ Error fetching bottom categories:", err);
       }
-    })();
-  </script>
-  
-  
+
+      return {
+        title: data.title || "Untitled",
+        slug: data.slug || (data.title ? data.title.toLowerCase().replace(/\s+/g, "-") : docSnap.id),
+        username
+      };
+    }));
+
+    // Shuffle poems
+    for (let i = poems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [poems[i], poems[j]] = [poems[j], poems[i]];
+    }
+
+    const INITIAL_COUNT = 15;
+    let displayedCount = 0;
+
+    function renderPoems(count) {
+      const slice = poems.slice(displayedCount, displayedCount + count);
+
+      // Create or append to <ul>
+      let ul = container.querySelector("ul");
+      if (!ul) {
+        ul = document.createElement("ul");
+        ul.style.listStyle = "disc inside";
+        ul.style.padding = "0";
+        ul.style.marginTop = "10px";
+        container.appendChild(ul);
+      }
+
+      slice.forEach(poem => {
+        const li = document.createElement("li");
+        li.style.marginBottom = "12px";
+        li.style.padding = "10px 15px";
+        li.style.background = "#f7f5ff";
+        li.style.borderRadius = "10px";
+        li.style.boxShadow = "0 2px 6px rgba(0,0,0,0.05)";
+        li.style.display = "flex";
+        li.style.justifyContent = "space-between";
+        li.style.alignItems = "center";
+
+        const a = document.createElement("a");
+        a.href = `poem.html?slug=${poem.slug}`;
+        a.textContent = poem.title;
+        a.style.color = "#4b2aad";
+        a.style.textDecoration = "none";
+        a.onmouseover = () => a.style.textDecoration = "underline";
+        a.onmouseout = () => a.style.textDecoration = "none";
+
+        const byLine = document.createElement("div");
+        byLine.textContent = `by ${poem.username}`;
+        byLine.className = "author";
+
+        li.appendChild(a);
+        li.appendChild(byLine);
+        ul.appendChild(li);
+      });
+
+      displayedCount += slice.length;
+
+      // Show button only if there are more poems
+      if (displayedCount < poems.length) {
+        loadMoreBtn.style.display = "inline-block";
+      } else {
+        loadMoreBtn.style.display = "none";
+      }
+    }
+
+    // Initially render first 15 poems
+    renderPoems(INITIAL_COUNT);
+
+    // Load more on button click (5 at a time)
+    loadMoreBtn.addEventListener("click", () => renderPoems(5));
+
+  } catch (err) {
+    console.error("Error loading recent poem links:", err);
+  }
+}
+
+// --- Load Featured Poems ---
+async function loadFeaturedPoems() {
+  try {
+    const snapshot = await getDocs(collection(db, "classicPoems"));
+    if (snapshot.empty) return;
+
+    const featuredContainer = document.getElementById("featured-poems-container");
+    const loadMoreBtn = document.getElementById("load-more-featured");
+
+    const poems = snapshot.docs.map(docSnap => {
+      const data = docSnap.data();
+      return {
+        title: data.title || "Untitled",
+        author: data.authorName || "Anonymous",
+        content: data.content || ""
+      };
+    });
+
+    const INITIAL_COUNT = 15;
+    let displayedCount = 0;
+
+    function renderPoems(count) {
+      const slice = poems.slice(displayedCount, displayedCount + count);
+      slice.forEach(poem => {
+        const poemCard = document.createElement("div");
+        poemCard.className = "featured-poem-card";
+
+        const title = document.createElement("h4");
+        title.textContent = poem.title;
+        title.className = "title";
+
+        const author = document.createElement("p");
+        author.textContent = `by ${poem.author}`;
+        author.className = "author";
+
+        const content = document.createElement("p");
+        content.textContent = poem.content;
+        content.className = "content";
+
+        poemCard.appendChild(title);
+        poemCard.appendChild(author);
+        poemCard.appendChild(content);
+
+        featuredContainer.appendChild(poemCard);
+      });
+
+      displayedCount += slice.length;
+
+      // Show "Load More" only if there are more poems
+      if (displayedCount < poems.length) {
+        loadMoreBtn.style.display = "inline-block";
+      } else {
+        loadMoreBtn.style.display = "none";
+      }
+    }
+
+    // Initially render first 15 poems
+    renderPoems(INITIAL_COUNT);
+
+    // Load more on button click
+    loadMoreBtn.addEventListener("click", () => renderPoems(5)); // Load 5 more at a time
+  } catch (err) {
+    console.error("Error loading featured poems:", err);
+  }
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadRecentPoemsLinks();
+  loadFeaturedPoems();
+});
+</script>
+
+
+<script>
+  const menuToggle = document.getElementById("menu-toggle");
+  const navLinks = document.getElementById("nav-links");
+  const closeBtn = document.getElementById("close-btn");
+  const searchToggle = document.getElementById("search-toggle");
+  const searchDropdown = document.getElementById("search-dropdown");
+
+  menuToggle.addEventListener("click", () => navLinks.classList.add("show"));
+  closeBtn.addEventListener("click", () => navLinks.classList.remove("show"));
+  searchToggle.addEventListener("click", () => searchDropdown.classList.toggle("show"));
+
+  document.addEventListener("click", (e) => {
+    if (!searchDropdown.contains(e.target) && !searchToggle.contains(e.target)) {
+      searchDropdown.classList.remove("show");
+    }
+  });
+
+  // Tab switching
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach(b => b.classList.remove("active"));
+      tabContents.forEach(c => c.classList.remove("active"));
+
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
+  });
+</script>
+
 </body>
 </html>
+

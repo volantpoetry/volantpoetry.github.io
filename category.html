@@ -9,23 +9,37 @@
 </head>
 <body>
 
-<nav class="navbar">
-  <div class="logo">Volant Poetry</div>
-  <div class="menu-toggle" id="menu-toggle">☰</div>
-  <div class="nav-links" id="nav-links">
-    <a href="index.html">Home</a>
-    <a href="category.html"  class="active">Poems</a>
-        <a href="poemslink.html">Links</a>
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
+<header>
+  <nav>
+    <div class="logo">
+      <img src="images/logo.png" alt="Volant Poetry Logo" class="nav-logo-img">
+      <span class="logo-text">
+        <span class="logo-highlight">Volant</span> Poetry
+      </span>
+    </div>
+
+    <div class="nav-links" id="nav-links">
+      <span class="close-btn" id="close-btn">✕</span>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+       <a href="contact.html">Contact Us</a> <!-- ✅ New link -->
+    </div>
+<div class="nav-right">
+
+<!-- Mobile Icons -->
+    <div class="mobile-icons">
+
+      <div class="menu-toggle" id="menu-toggle">☰</div>
+    </div>
   </div>
 </nav>
+</header>
 
 
 <section class="recent-poems-section">
-  <h2 class="category-header" id="category-title">Loading...</h2>
+  <h2 class="category-header" id="category-title"></h2>
   <div id="recent-poems-container" class="recent-poems-container">
-    <p>Loading poems...</p>
+    <p></p>
   </div>
 </section>
 
@@ -231,6 +245,26 @@ sidebarToggle.addEventListener("click", () => {
 overlay.addEventListener("click", () => {
   sidebar.classList.remove("show");
   overlay.classList.remove("show");
+});
+</script>
+<script>// Navbar toggle (mobile)
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("menu-toggle");
+  const navLinks = document.getElementById("nav-links");
+  const closeBtn = document.getElementById("close-btn");
+
+  if (toggle && navLinks) {
+    toggle.addEventListener("click", () => navLinks.classList.add("show"));
+  }
+
+  if (closeBtn && navLinks) {
+    closeBtn.addEventListener("click", () => navLinks.classList.remove("show"));
+  }
+
+  // Close menu when clicking a link
+  navLinks.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => navLinks.classList.remove("show"));
+  });
 });
 </script>
 </body>

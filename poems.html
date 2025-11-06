@@ -5,11 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Poems | Volant Poetry</title>
   <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="png" href="images/logo.png" />
-<meta name="description" content="Discover a growing collection of verses — arranged alphabetically so you can wander through words with ease.">
- <link rel="author" href="https://volantpoetry.github.io/about.html">
+  <link rel="icon" type="png" href="images/logo.png" />
+  <meta name="description" content="Discover a growing collection of verses — arranged alphabetically so you can wander through words with ease.">
+  <link rel="author" href="https://volantpoetry.github.io/about.html">
 
- <style>
+  <style>
+/* Entire page background */
+body {
+  background-color: #ffffff; /* page is white */
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Recent poems section */
+.recent-poems-section {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background-color: #ffffff; /* ensures section is white */
+}
+
     .load-more-btn {
       display: block;
       margin: 20px auto;
@@ -28,52 +43,268 @@
       text-align: center;
       font-size: 0.9em;
     }
-  </style>
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Volant Poetry",
-  "url": "https://volantpoetry.github.io/index.html",
-  "author": {
-    "@type": "Person",
-    "name": "Rence Blunt",
-    "url": "https://volantpoetry.github.io/about.html",
-    "image": "https://volantpoetry.github.io/images/renceblunt.jpg"
+
+    /* Navbar search visible on desktop */
+    .search-container {
+      display: flex;
+      align-items: center;
+      margin-left: 20px;
+    }
+    .search-container input {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      outline: none;
+      width: 200px;
+    }
+    @media (max-width: 768px) {
+      .search-container { display: none; }
+      #search-dropdown { display: block; position: absolute; top: 60px; right: 20px; background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 5px 10px; z-index: 100; }
+    }
+
+    .recent-poems-section {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.recent-poems-container {
+  width: 70%;
+  max-width: 100%;
+  margin: 0 0 0 20%;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px; /* space between cards */
+  box-sizing: border-box;
+  background-color: #ffffff; /* makes the gaps white */
+  padding: 10px; /* optional, gives a small padding around cards */
+}
+
+
+/* Small screens: slightly shifted right and smaller gaps */
+@media (max-width: 768px) {
+  .recent-poems-container {
+    width: 100%;
+    margin: 0 0 0 5%; /* small shift to the right */
+    gap: 5px; /* reduced gap between cards */
   }
 }
-</script>
 
+
+
+/* Card hover effect */
+.recent-poem-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 24px rgba(0,0,0,0.12);
+ 
+}
+
+/* Poem Title */
+.recent-poem-card .poem-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: var(--primary);
+}
+
+/* Poem Content */
+.recent-poem-card .poem-content {
+  white-space: pre-line;
+  margin-bottom: 10px;
+}
+
+/* Read More / Show Less */
+.read-more-btn {
+  background: none;
+  border: none;
+  color: #960606;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.92rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.read-more-btn:hover { color: #ff0000; }
+
+/* Poem Content */
+.poem-content {
+  font-size: 1rem;    /* larger readable content */
+  line-height: 1.5;     /* better spacing */
+  margin-bottom: 10px;
+}
+
+/* Individual Poem Card */
+.recent-poem-card {
+  background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
+  color: #4b3f2f;
+}
+
+.recent-poem-title {
+  color: var(--primary); /* or replace with any color you want, e.g., #4b2aad */
+}
+
+/* Show logo on large screens */
+.nav-logo-img {
+  display: inline-block;
+  width: 40px; /* adjust size */
+  height: auto;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+/* Ensure logo and text stay inline */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Logo text styling */
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.3rem;
+  white-space: nowrap;
+}
+
+/* Logo container */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 4px; /* smaller gap brings image closer to text */
+}
+
+/* Logo image */
+.nav-logo-img {
+  width: 40px;       /* adjust as needed */
+  height: auto;
+  margin: 0;         /* remove any extra margin */
+  vertical-align: middle;
+}
+
+/* Logo text */
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+
+@media (max-width: 768px) {
+  /* Logo image on small screens */
+  .nav-logo-img {
+    width: 30px;       /* smaller size for mobile */
+    height: auto;
+    margin: 0;
+    vertical-align: middle;
+  }
+
+  /* Logo text on small screens */
+  .logo-text {
+    font-size: 1.9rem;  /* reduce text size for mobile */
+    line-height: 1.1;   /* slightly looser spacing for readability */
+  }
+
+  /* Optional: adjust highlighted part */
+  .logo-highlight {
+    font-size: 1.7rem;  /* slightly bigger than surrounding text */
+    font-weight: 800;
+  }
+
+    /* "Poetry" part (normal text inside .logo-text) */
+  .logo-text:not(.logo-highlight) {
+    font-size: 1.7rem;  /* slightly smaller than "Volant" */
+       line-height: 1.1;   /* slightly looser spacing for readability */
+  }
+}
+
+/* SEARCH CONTAINER */
+    .search-container {
+      flex-grow: 1;
+      max-width: 200px;
+    }
+
+    .search-container input {
+      width: 100%;
+      padding: 0.45rem 0.2rem;
+      border: 1px solid #ddd;
+      border-radius: 40px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .search-container input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(75,42,173,0.1);
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Volant Poetry",
+    "url": "https://volantpoetry.github.io/index.html",
+    "author": {
+      "@type": "Person",
+      "name": "Rence Blunt",
+      "url": "https://volantpoetry.github.io/about.html",
+      "image": "https://volantpoetry.github.io/images/renceblunt.jpg"
+    }
+  }
+  </script>
 </head>
 <body>
 
 <!-- Navbar -->
-<nav class="navbar">
-  <div class="logo">Volant Poetry</div>
-  <div class="menu-toggle" id="menu-toggle">☰</div>
-  <div class="nav-links" id="nav-links">
-    <a href="index.html">Home</a>
-    <a href="poems.html" class="active">Poems</a>
-    <a href="poemslink.html">Links</a>
-    <a href="about.html">About</a>
-    <a href="contact.html">Contact</a>
-  </div>
-</nav>
+<header>
+  <nav>
+    <div class="logo">
+      <img src="images/logo.png" alt="Volant Poetry Small Logo" class="nav-logo-img">
+      <span class="logo-text">
+        <span class="logo-highlight">Volant</span> Poetry
+      </span>
+    </div>
+
+    <!-- Desktop search -->
+    <div class="search-container">
+      <input type="text" placeholder="Search poems, authors..." id="navbar-search" />
+    </div>
+
+    <div class="nav-links" id="nav-links">
+      <span class="close-btn" id="close-btn">✕</span>
+      <a href="index.html">Home</a>
+      <a href="poems.html">Poems</a>
+      <a href="authors.html">Authors</a>
+      <a href="about.html">About</a>
+      <a href="submit.html">Submit</a>
+    </div>
+
+    <div class="nav-right">
+      <div class="search-toggle" id="search-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M10.5 3a7.5 7.5 0 015.9 12.09l3.7 3.7a1 1 0 01-1.42 1.42l-3.7-3.7A7.5 7.5 0 1110.5 3z"/>
+        </svg>
+      </div>
+      <div class="menu-toggle" id="menu-toggle">☰</div>
+    </div>
+
+    <!-- Mobile search dropdown -->
+    <div class="search-dropdown" id="search-dropdown">
+      <input type="text" placeholder="Search poems, authors..." />
+    </div>
+  </nav>
+</header>
 
 <!-- Recent Poems Section -->
 <section class="recent-poems-section" style="position: relative;">
   <div class="poem-header">
-    <div class="poem-sort">
-      <select id="sort-poems">
-        <option value="az">Sort: A → Z</option>
-        <option value="za">Sort: Z → A</option>
-      </select>
-    </div>
-<h2 class="poem-title" id="poem-count-title">All Poems</h2>
 
-    <div class="poem-search">
-      <input type="text" id="recent-poems-search" placeholder="Search..." />
-    </div>
   </div>
 
   <p class="poem-subtitle">
@@ -85,7 +316,6 @@
   </div>
 
   <button id="load-more-poems" class="load-more-btn" style="display:none;">Load More</button>
-
   <p id="last-synced" style="text-align:center; font-size:0.9em; color:gray;"></p>
 </section>
 
@@ -116,7 +346,10 @@ enableIndexedDbPersistence(db).catch(err => console.warn("Persistence error:", e
 const container = document.getElementById("recent-poems-container");
 const loadMoreBtn = document.getElementById("load-more-poems");
 const sortSelect = document.getElementById("sort-poems");
-const searchInput = document.getElementById("recent-poems-search");
+
+// Search: use navbar on desktop, dropdown on mobile
+const navbarSearch = document.getElementById("navbar-search");
+const mobileSearch = document.querySelector("#search-dropdown input");
 
 // State
 let allPoems = [];
@@ -140,35 +373,34 @@ async function renderPoemCard(poem, docId){
   const truncated = truncatePoem(poem.content, 8);
   const likes = typeof poem.likes === "number" ? poem.likes : 0;
 
-card.innerHTML = `
-  <h3 class="recent-poem-title">${poem.title}</h3>
-  <p class="poem-content">${truncated.preview}</p>
+  card.innerHTML = `
+    <h3 class="recent-poem-title">${poem.title}</h3>
+    <p class="poem-content">${truncated.preview}</p>
 
-  ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
+    ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
 
-  ${poem.categories && poem.categories.length > 0
-    ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>`
-    : ""
-  }
+    ${poem.categories && poem.categories.length > 0
+      ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>`
+      : ""
+    }
 
-  ${poem.author ? `<span class="author">– ${poem.author}</span>` : ""}
+    ${poem.author ? `<span class="author">– ${poem.author}</span>` : ""}
 
-  <div class="poem-actions">
-    <div class="comment-section">
-      <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
-      <button class="comment-btn">Post</button>
+    <div class="poem-actions">
+      <div class="comment-section">
+        <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+        <button class="comment-btn">Post</button>
+      </div>
+      <button class="like-btn">❤️</button>
+      <span class="like-count">${likes}</span>
+      <span class="message-count">💬 0</span>
     </div>
-    <button class="like-btn">❤️</button>
-    <span class="like-count">${likes}</span>
-    <span class="message-count">💬 0</span>
-  </div>
 
-  <div class="comment-list" style="display:none;"></div>
-`;
+    <div class="comment-list" style="display:none;"></div>
+  `;
 
   container.appendChild(card);
 
-  // --- Set like button active if user already liked ---
   const user = auth.currentUser;
   if(user){
     const likedBy = Array.isArray(poem.likedBy) ? poem.likedBy : [];
@@ -177,7 +409,6 @@ card.innerHTML = `
     }
   }
 
-  // Read More toggle
   if(truncated.truncated){
     const btn = card.querySelector(".read-more-btn");
     const p = card.querySelector(".poem-content");
@@ -192,14 +423,11 @@ card.innerHTML = `
     });
   }
 
-  // Fetch accurate comment count
   const commentsSnapshot = await getDocs(collection(db,"recentPoems",docId,"comments"));
   card.querySelector(".message-count").textContent = `💬 ${commentsSnapshot.size}`;
 }
 
-
 // ---------------- Load Poems ----------------
-// ---------------- Count Total Poems ----------------
 async function updatePoemCount() {
   const colRef = collection(db, "recentPoems");
   const snapshot = await getCountFromServer(colRef);
@@ -237,194 +465,70 @@ async function loadRecentPoems(initial=false){
     allPoems.push({...poem, id: docSnap.id});
   }
 
-  
-  // Always sort allPoems A → Z before rendering
   allPoems.sort((a,b) => a.title.localeCompare(b.title));
 
-  container.innerHTML = ""; // clear previous render
+  container.innerHTML = "";
   allPoems.forEach(p => renderPoemCard(p, p.id));
 
   lastVisible = snapshot.docs[snapshot.docs.length-1];
   loadMoreBtn.style.display = snapshot.size < poemsPerPage ? "none" : "block";
 }
 
-
 // ---------------- Sort + Search ----------------
-sortSelect.addEventListener("change", ()=> {
-  const order = sortSelect.value;
-  allPoems.sort((a,b) => order==="az"? a.title.localeCompare(b.title) : b.title.localeCompare(a.title));
-  container.innerHTML="";
-  allPoems.slice(0, poemsPerPage).forEach(p => renderPoemCard(p,p.id));
-});
+function setupSearch(inputEl){
+  inputEl.addEventListener("input", async () => {
+    const q = inputEl.value.trim().toLowerCase();
 
-searchInput.addEventListener("input", async () => {
-  const q = searchInput.value.trim().toLowerCase();
-
-  // If search box is empty, reload the default poems
-  if (q === "") {
-    container.innerHTML = "";
-    allPoems = [];
-    await loadRecentPoems(true);
-    return;
-  }
-
-  // ---------- 1. Local search ----------
-  const localMatches = allPoems.filter(poem =>
-    poem.title.toLowerCase().includes(q) ||
-    (poem.content && poem.content.toLowerCase().includes(q)) ||
-    (poem.categories && poem.categories.join(", ").toLowerCase().includes(q))
-  );
-
-  // ---------- 2. Firestore search ----------
-  const colRef = collection(db, "recentPoems");
-  const snapshot = await getDocs(query(colRef, orderBy("title"))); // pulls all titles alphabetically
-
-  const remoteMatches = [];
-  snapshot.forEach(docSnap => {
-    const poem = docSnap.data();
-    const id = docSnap.id;
-    if (
-      poem.title.toLowerCase().includes(q) ||
-      (poem.content && poem.content.toLowerCase().includes(q)) ||
-      (poem.categories && poem.categories.join(", ").toLowerCase().includes(q))
-    ) {
-      // avoid duplicates if already in localMatches
-      if (!localMatches.some(p => p.id === id)) {
-        remoteMatches.push({ ...poem, id });
-      }
-    }
-  });
-
-  // Combine both
-  const results = [...localMatches, ...remoteMatches];
-
-  // ---------- 3. Render results ----------
-  container.innerHTML = "";
-  if (results.length === 0) {
-    container.innerHTML = `<p style="text-align:center;">No poems found for "<strong>${q}</strong>".</p>`;
-    return;
-  }
-
-  results.forEach(p => renderPoemCard(p, p.id));
-});
-
-
-// ---------------- Likes / Comments ----------------
-// ---------------- Likes / Comments ----------------
-document.addEventListener("click", async e => {
-  const user = auth.currentUser;
-  const card = e.target.closest(".recent-poem-card");
-  if (!card) return;
-
-  // Like
-  if (e.target.classList.contains("like-btn")) {
-    if (!user) { alert("Sign in to like poems!"); return; }
-    const docRefPoem = doc(db, "recentPoems", card.dataset.id);
-    const countSpan = card.querySelector(".like-count");
-    const docSnap = await getDoc(docRefPoem);
-    if (!docSnap.exists()) return;
-    const data = docSnap.data();
-    const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
-    let likes = typeof data.likes === "number" ? data.likes : 0;
-
-    if (likedBy.includes(user.uid)) {
-      if (likes > 0) {
-        await updateDoc(docRefPoem, { likes: increment(-1), likedBy: likedBy.filter(uid => uid !== user.uid) });
-        likes--;
-      }
-      countSpan.textContent = likes;
-      e.target.classList.remove("liked");
-    } else {
-      await updateDoc(docRefPoem, { likes: increment(1), likedBy: arrayUnion(user.uid) });
-      countSpan.textContent = likes + 1;
-      e.target.classList.add("liked");
-    }
-  }
-
-  // Comment
-  if (e.target.classList.contains("comment-btn")) {
-    if (!user) { alert("Sign in to comment!"); return; }
-    const input = card.querySelector(".comment-input");
-    const commentList = card.querySelector(".comment-list");
-    const text = input.value.trim();
-    if (!text) return;
-
-    await addDoc(collection(db, "recentPoems", card.dataset.id, "comments"), {
-      userId: user.uid,
-      text,
-      timestamp: new Date()
-    });
-
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    let username = user.email;
-    if (userDoc.exists()) username = userDoc.data().username || user.email;
-
-    const div = document.createElement("div");
-    div.className = "comment";
-    div.style.background = "#f0f0f0";
-    div.style.padding = "8px 12px";
-    div.style.margin = "6px 0";
-    div.style.borderRadius = "6px";
-    div.textContent = `${username}: ${text}`;
-
-    // Prepend new comment at the top
-    commentList.prepend(div);
-    commentList.style.display = "block";
-
-    input.value = "";
-    input.style.height = "auto";
-
-    // Update comment count
-    const commentsSnapshot = await getDocs(collection(db, "recentPoems", card.dataset.id, "comments"));
-    card.querySelector(".message-count").textContent = `💬 ${commentsSnapshot.size}`;
-  }
-
-  // Show comments
-  if (e.target.classList.contains("message-count")) {
-    const commentList = card.querySelector(".comment-list");
-
-    // Toggle visibility
-    if (commentList.style.display === "block") {
-      commentList.style.display = "none";
+    if (q === "") {
+      container.innerHTML = "";
+      allPoems = [];
+      await loadRecentPoems(true);
       return;
     }
 
-    commentList.innerHTML = ""; // clear previous
-
-    // Fetch comments ordered by timestamp descending (newest first)
-    const commentsSnapshot = await getDocs(
-      query(
-        collection(db, "recentPoems", card.dataset.id, "comments"),
-        orderBy("timestamp", "desc")
-      )
+    const localMatches = allPoems.filter(poem =>
+      poem.title.toLowerCase().includes(q) ||
+      (poem.content && poem.content.toLowerCase().includes(q)) ||
+      (poem.categories && poem.categories.join(", ").toLowerCase().includes(q))
     );
 
-    for (const docSnap of commentsSnapshot.docs) {
-      const c = docSnap.data();
-      let username = "Anonymous";
+    const colRef = collection(db, "recentPoems");
+    const snapshot = await getDocs(query(colRef, orderBy("title")));
 
-      if (c.userId) {
-        const userDoc = await getDoc(doc(db, "users", c.userId));
-        if (userDoc.exists()) username = userDoc.data().username || "Anonymous";
+    const remoteMatches = [];
+    snapshot.forEach(docSnap => {
+      const poem = docSnap.data();
+      const id = docSnap.id;
+      if (
+        poem.title.toLowerCase().includes(q) ||
+        (poem.content && poem.content.toLowerCase().includes(q)) ||
+        (poem.categories && poem.categories.join(", ").toLowerCase().includes(q))
+      ) {
+        if (!localMatches.some(p => p.id === id)) {
+          remoteMatches.push({ ...poem, id });
+        }
       }
+    });
 
-      const div = document.createElement("div");
-      div.className = "comment";
-      div.style.background = "#f0f0f0";
-      div.style.padding = "8px 12px";
-      div.style.margin = "6px 0";
-      div.style.borderRadius = "6px";
-      div.textContent = `${username}: ${c.text}`;
-      commentList.appendChild(div);
+    const results = [...localMatches, ...remoteMatches];
+    container.innerHTML = "";
+    if (results.length === 0) {
+      container.innerHTML = `<p style="text-align:center;">No poems found for "<strong>${q}</strong>".</p>`;
+      return;
     }
+    results.forEach(p => renderPoemCard(p, p.id));
+  });
+}
 
-    commentList.style.display = "block";
-  }
-});
+setupSearch(navbarSearch);
+setupSearch(mobileSearch);
 
 // ---------------- Navbar Toggle ----------------
 document.getElementById("menu-toggle").addEventListener("click", ()=>document.getElementById("nav-links").classList.toggle("show"));
 document.querySelectorAll("#nav-links a").forEach(link=>link.addEventListener("click",()=>document.getElementById("nav-links").classList.remove("show")));
+document.getElementById("search-toggle").addEventListener("click", ()=>{
+  document.getElementById("search-dropdown").classList.toggle("show");
+});
 
 // ---------------- Offline Notice ----------------
 window.addEventListener("offline", ()=>{ 
@@ -440,14 +544,24 @@ onAuthStateChanged(auth,user=>{});
 
 // ---------------- Init ----------------
 document.addEventListener("DOMContentLoaded", ()=> {
-  updatePoemCount();  // 👈 show total number of poems in Firestore
+  updatePoemCount();
+  loadRecentPoems(true);
+  loadMoreBtn.addEventListener("click", ()=>loadRecentPoems(false));
+});
+</script>
+
+<script>// ---------------- Init ----------------
+document.addEventListener("DOMContentLoaded", ()=> {
+  updatePoemCount();
   loadRecentPoems(true);
   loadMoreBtn.addEventListener("click", ()=>loadRecentPoems(false));
 });
 
+// --- Close button functionality ---
+document.getElementById("close-btn").addEventListener("click", () => {
+  document.getElementById("nav-links").classList.remove("show");
+});
 </script>
-
+</script>
 </body>
 </html>
-
-

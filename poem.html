@@ -1,418 +1,362 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Poem | Rence Blunt Poetry</title>
-  <link rel="stylesheet" href="style.css">
-  <style>/* ==================== Mobile Inline Actions ==================== */
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Poem | Volant Poetry</title>
+<link rel="stylesheet" href="tes.css">
+<link rel="icon" type="image/png" href="images/logo.png">
+<style>/* --- Poem Section Styling --- */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #fdf6f0, #e2e9f0, #f7f0e5, #e8e0d8);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  color: #4b3f2f; /* classic text color */
+}
+
+/* Optional smooth animated gradient for subtle movement */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Keep the poem-section transparent so the gradient shows through */
+.poem-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  background-color: transparent; /* lets gradient show behind poem cards */
+}
+
+
+
+/* Poem Card - Classic Gradient Style */
+.poem-card,
+.recent-poem-card {
+  background: linear-gradient(160deg, #fdf6f0, #e2e9f0); /* classic gradient */
+  color: #4b3f2f; /* classic text color */
+  border-radius: var(--radius, 14px);
+  max-width: 700px;
+  width: 100%;
+  padding: 30px 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.poem-card:hover,
+.recent-poem-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+}
+
+/* Title and Content */
+#poem-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: #4b3f2f; /* matches classic theme */
+  margin: 0;
+}
+
+#poem-content {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #4b3f2f; /* classic text */
+  line-height: 1.6;
+}
+
+/* Author */
+.author {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: #6b5a4c; /* slightly muted for classic feel */
+}
+
+/* Actions Horizontal */
+.poem-actions-horizontal button {
+  background-color: #4b3f2f; /* classic dark accent */
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+}
+
+.poem-actions-horizontal button:hover {
+  background-color: #3a3227; /* darker hover */
+}
+
+/* Comment Section */
+.comment-section-inline input {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.comment-section-inline button {
+  background-color: #4b3f2f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.comment-section-inline button:hover {
+  background-color: #3a3227;
+}
+
+/* Comment List */
+.comment-list {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Scrollbar Styling for Comments */
+.comment-list::-webkit-scrollbar {
+  width: 6px;
+}
+.comment-list::-webkit-scrollbar-thumb {
+  background-color: #4b3f2f;
+  border-radius: 3px;
+}
+
+
+/* Like button highlight */
+.like-btn {
+  background-color: #4b3f2f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.like-btn.liked {
+  background-color: #e63946; /* red highlight when liked */
+  transform: scale(1.1); /* slight pop */
+}
+
+.like-btn span {
+  font-weight: bold;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-
-  /* Poem container */
-  #poem-container {
-    width: 95%;
-    padding: 12px;
-    margin: 90px auto 20px auto;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    font-size: 0.95rem;
+  .poem-card,
+  .recent-poem-card {
+    padding: 20px 15px;
+    width: 84%;
+    max-width: 100%;
+    margin-left: -8%; /* shifts the card slightly to the left */
   }
 
-  /* Actions inline */
-  .poem-actions-horizontal {
-    flex-direction: row;       
-    flex-wrap: wrap;           
-    align-items: center;
-    gap: 6px;
-    margin-top: 10px;
-  }
-
-  .like-btn, .message-count {
-    font-size: 0.95rem;
-    padding: 6px 10px;
-    border-radius: 6px;
-    background: #e0f0ff;
-    color: #004466;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;      
-  }
-
-  .like-btn.liked {
-    background: #ffd6d6;
-    color: #b20000;
-  }
-
-  .like-btn:hover, .message-count:hover {
-    background: #cce6ff;
-    transform: scale(1.05);
-  }
-
-  /* Comment input + button inline */
-  .comment-section-inline {
-    flex-direction: row;
-    gap: 6px;
-    flex: 1;                  
-    min-width: 0;             
-  }
-
-  #comment-input {
-    flex: 0 0 120px;           /* fixed reduced width */
-    font-size: 0.95rem;
-    padding: 6px 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    outline: none;
-    min-width: 0;
-  }
-
-  #comment-btn {
-    padding: 6px 10px;
-    font-size: 0.95rem;
-    background: #006699;
-    color: #fff;
-    border-radius: 6px;
-    cursor: pointer;
-    border: none;
-    white-space: nowrap;
-  }
-
-  #comment-btn:hover {
-    background: #004466;
-    transform: scale(1.03);
-  }
-
-  /* Comment list */
-  #comment-list {
-    font-size: 0.9rem;
-    margin-top: 8px;
-    max-height: 220px;
-    overflow-y: auto;
-    border-top: 1px solid #ccc;
-    padding-top: 6px;
-  }
-
-  .comment {
-    padding: 6px 10px;
-    margin: 4px 0;
-    border-radius: 8px;
-    background: #f9f9f9;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    word-wrap: break-word;
+  #poem-title {
+    font-size: 1.5rem;
   }
 }
-
-/* ==================== Desktop Inline Actions ==================== */
-@media (min-width: 769px) {
-
-  /* Poem container */
-  #poem-container {
-    width: 600px;                      /* wider container */
-    padding: 20px;
-    margin: 40px auto;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-    font-size: 1rem;
-  }
-
-  /* Actions inline */
-  .poem-actions-horizontal {
-    flex-direction: row;
-    flex-wrap: nowrap;                 /* no wrap on desktop */
-    align-items: center;
-    gap: 12px;
-    margin-top: 15px;
-  }
-
-  /* Like & message buttons */
-  .like-btn, .message-count {
-    font-size: 1rem;
-    padding: 8px 14px;
-    border-radius: 8px;
-    background: #e0f0ff;
-    color: #004466;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-  }
-
-  .like-btn.liked {
-    background: #ffd6d6;
-    color: #b20000;
-  }
-
-  .like-btn:hover, .message-count:hover {
-    background: #cce6ff;
-    transform: scale(1.05);
-  }
-
-  /* Comment input + button inline */
-  .comment-section-inline {
-    flex-direction: row;
-    gap: 10px;
-    flex: 1;                         /* takes remaining space */
-    min-width: 0;
-  }
-
-  #comment-input {
-    flex: 0 0 250px;                  /* wider input for desktop */
-    font-size: 1rem;
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    outline: none;
-    min-width: 0;
-  }
-
-  #comment-btn {
-    padding: 8px 12px;
-    font-size: 1rem;
-    background: #006699;
-    color: #fff;
-    border-radius: 8px;
-    cursor: pointer;
-    border: none;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-  }
-
-  #comment-btn:hover {
-    background: #004466;
-    transform: scale(1.03);
-  }
-
-  /* Comment list */
-  #comment-list {
-    font-size: 0.95rem;
-    margin-top: 10px;
-    max-height: 300px;
-    overflow-y: auto;
-    border-top: 1px solid #ccc;
-    padding-top: 8px;
-  }
-
-  .comment {
-    padding: 8px 12px;
-    margin: 5px 0;
-    border-radius: 10px;
-    background: #f9f9f9;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    word-wrap: break-word;
-  }
-}
-
 </style>
-  <link rel="icon" type="png" href="images/logo.png" />
 </head>
-
 <body>
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="logo">Rence Blunt</div>
-    <div class="menu-toggle" id="menu-toggle">☰</div>
-    <div class="nav-links" id="nav-links">
-      <a href="index.html">Home</a>
-      <a href="poems.html">Poems</a>
-      <a href="poemslink.html" class="active">Links</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
-      <a href="poemslink.html">Back</a>
-    </div>
-  </nav>
 
-  <!-- Poem Section -->
-  <section class="recent-poems-section">
-    <div id="poem-container" class="recent-poem-card">
-      <h3 id="poem-title">Loading...</h3>
-      <p id="poem-content"></p>
-      <span class="author" id="poem-author"></span>
+ 
+<section class="poem-section">
+  <div id="poem-container" class="poem-card">
+    <h2 id="poem-title"></h2>
+    <p id="poem-content"></p>
+    <span class="author" id="poem-author"></span>
 
-      <!-- Like, Message Count, Comment Input Inline -->
-      <div class="poem-actions-horizontal" style="display:flex; align-items:center; gap:10px; margin-top:10px;">
-        <button class="like-btn" id="like-btn">❤️ <span id="like-count">0</span></button>
-        <button class="message-count" id="message-count">💬 0</button>
-        <div class="comment-section-inline" style="display:flex; gap:5px; align-items:center;">
-          <input type="text" id="comment-input" placeholder="Write a comment..." />
-          <button class="comment-btn" id="comment-btn">Post</button>
-        </div>
+    <div class="poem-actions-horizontal" style="display:flex; gap:10px; margin-top:10px;">
+      <button class="like-btn" id="like-btn">❤️ <span id="like-count">0</span></button>
+      <button class="message-count" id="message-count">💬 0</button>
+      <div class="comment-section-inline" style="display:flex; gap:5px; align-items:center;">
+        <input type="text" id="comment-input" placeholder="Write a comment..." />
+        <button class="comment-btn" id="comment-btn">Post</button>
       </div>
-
-      <!-- Comment List (collapsed by default) -->
-      <div class="comment-list" id="comment-list" style="display:none; margin-top:10px;"></div>
     </div>
-  </section>
 
-  <!-- Firebase + Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, doc, getDoc, collection, getDocs, addDoc, updateDoc, arrayUnion, increment, enableIndexedDbPersistence, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    <div class="comment-list" id="comment-list" style="margin-top:10px;"></div>
+  </div>
+</section>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
-      authDomain: "silent-depth.firebaseapp.com",
-      projectId: "silent-depth",
-      storageBucket: "silent-depth.appspot.com",
-      messagingSenderId: "78008755450",
-      appId: "1:78008755450:web:3fd0f0f298a08820935543"
-    };
+<script type="module">import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc, updateDoc, arrayUnion, increment, enableIndexedDbPersistence, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+const firebaseConfig = {
+  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+  authDomain: "silent-depth.firebaseapp.com",
+  projectId: "silent-depth",
+  storageBucket: "silent-depth.appspot.com",
+  messagingSenderId: "78008755450",
+  appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
 
-    enableIndexedDbPersistence(db).catch(err => console.warn("Persistence error:", err.code));
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+enableIndexedDbPersistence(db).catch(err => console.warn("Persistence error:", err.code));
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const poemId = urlParams.get("id");
+const params = new URLSearchParams(window.location.search);
+const slug = params.get("slug");
 
-    const titleEl = document.getElementById("poem-title");
-    const contentEl = document.getElementById("poem-content");
-    const authorEl = document.getElementById("poem-author");
-    const likeBtn = document.getElementById("like-btn");
-    const likeCountEl = document.getElementById("like-count");
-    const commentInput = document.getElementById("comment-input");
-    const commentBtn = document.getElementById("comment-btn");
-    const commentList = document.getElementById("comment-list");
-    const messageCountEl = document.getElementById("message-count");
+const titleEl = document.getElementById("poem-title");
+const contentEl = document.getElementById("poem-content");
+const authorEl = document.getElementById("poem-author");
+const likeBtn = document.getElementById("like-btn");
+const likeCountEl = document.getElementById("like-count");
+const commentInput = document.getElementById("comment-input");
+const commentBtn = document.getElementById("comment-btn");
+const commentList = document.getElementById("comment-list");
+const messageCountEl = document.getElementById("message-count");
 
-    let currentUser = null;
+let currentUser = null;
+let poemDocRef = null;
 
-    onAuthStateChanged(auth, user => {
-      currentUser = user;
-      loadPoem(poemId);
-    });
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if(slug) loadPoem(slug);
+});
 
-    async function loadPoem(id){
-      if(!id){ titleEl.textContent="Poem not found"; return; }
-      const docRef = doc(db,"recentPoems",id);
-      const docSnap = await getDoc(docRef);
-      if(docSnap.exists()){
-        const data = docSnap.data();
-        titleEl.textContent = data.title || "Untitled";
-        contentEl.innerHTML = data.content.replace(/\n/g,"<br>");
-        authorEl.textContent = data.author ? `– ${data.author}` : "";
-        likeCountEl.textContent = typeof data.likes==="number"?data.likes:0;
-        if(currentUser && Array.isArray(data.likedBy) && data.likedBy.includes(currentUser.uid)){
-          likeBtn.classList.add("liked");
-        } else {
-          likeBtn.classList.remove("liked");
-        }
-        loadCommentsCount();
-      } else {
-        titleEl.textContent="Poem not found";
-        contentEl.textContent="";
-        authorEl.textContent="";
-      }
-    }
+async function loadPoem(slug) {
+  const collectionsToCheck = ["recentPoems", "classicPoems"]; // Check both
+  let found = false;
 
-    // ---------------- Like ----------------
-    likeBtn.addEventListener("click", async () => {
-      if(!currentUser){ alert("Sign in to like!"); return; }
-      const docRef = doc(db,"recentPoems",poemId);
-      const docSnap = await getDoc(docRef);
-      if(!docSnap.exists()) return;
+  for (const colName of collectionsToCheck) {
+    const colRef = collection(db, colName);
+    const snapshot = await getDocs(colRef);
+
+    if(snapshot.empty) continue;
+
+    const docSnap = snapshot.docs.find(docSnap => {
       const data = docSnap.data();
-      let likes = typeof data.likes==="number"?data.likes:0;
-      const likedBy = Array.isArray(data.likedBy)?data.likedBy:[];
-
-      if(likedBy.includes(currentUser.uid)){
-        await updateDoc(docRef,{ likes: increment(-1), likedBy: likedBy.filter(uid=>uid!==currentUser.uid) });
-        likeCountEl.textContent = likes-1;
-        likeBtn.classList.remove("liked");
-      } else {
-        await updateDoc(docRef,{ likes: increment(1), likedBy: arrayUnion(currentUser.uid) });
-        likeCountEl.textContent = likes+1;
-        likeBtn.classList.add("liked");
-      }
+      const docSlug = data.slug || (data.title ? data.title.toLowerCase().replace(/\s+/g, "-") : docSnap.id);
+      return docSlug === slug;
     });
+
+    if(docSnap) {
+      poemDocRef = doc(db, colName, docSnap.id);
+      const data = docSnap.data();
+
+      titleEl.textContent = data.title || "Untitled";
+      contentEl.innerHTML = data.content ? data.content.replace(/\n/g,"<br>") : "";
+      authorEl.textContent = data.authorName || data.author || data.username || "Anonymous";
+      likeCountEl.textContent = typeof data.likes==="number" ? data.likes : 0;
+
+      // Show/hide actions depending on collection
+      const actionsEl = document.querySelector(".poem-actions-horizontal");
+      if(colName === "classicPoems"){
+        actionsEl.style.display = "none"; // Hide actions for featured poems
+      } else {
+        actionsEl.style.display = "flex"; // Show actions for recent poems
+      }
+
+      if(currentUser && Array.isArray(data.likedBy) && data.likedBy.includes(currentUser.uid)){
+        likeBtn.classList.add("liked");
+      } else {
+        likeBtn.classList.remove("liked");
+      }
+
+      // Load comments only if recent poem
+      if(colName === "recentPoems") loadCommentsCount(colName, docSnap.id);
+
+      found = true;
+      break;
+    }
+  }
+
+  if(!found) {
+    titleEl.textContent = "Poem not found";
+    contentEl.innerHTML = "";
+    authorEl.textContent = "";
+    document.querySelector(".poem-actions-horizontal").style.display = "none"; // hide actions if no poem
+  }
+}
+
+// ---------------- Like ----------------
+likeBtn.addEventListener("click", async () => {
+  if(!currentUser){ alert("Sign in to like!"); return; }
+  if(!poemDocRef) return;
+
+  const docSnap = await getDoc(poemDocRef);
+  const data = docSnap.data();
+  let likes = typeof data.likes==="number"?data.likes:0;
+  const likedBy = Array.isArray(data.likedBy)?data.likedBy:[];
+
+  if(likedBy.includes(currentUser.uid)){
+    await updateDoc(poemDocRef, { likes: increment(-1), likedBy: likedBy.filter(uid=>uid!==currentUser.uid) });
+    likeCountEl.textContent = likes-1;
+    likeBtn.classList.remove("liked");
+  } else {
+    await updateDoc(poemDocRef, { likes: increment(1), likedBy: arrayUnion(currentUser.uid) });
+    likeCountEl.textContent = likes+1;
+    likeBtn.classList.add("liked");
+  }
+});
+
 // ---------------- Comment Post ----------------
 commentBtn.addEventListener("click", async () => {
-  if (!currentUser) { 
-    alert("Sign in to comment!"); 
-    return; 
-  }
+  if(!currentUser){ alert("Sign in to comment!"); return; }
+  if(!poemDocRef) return;
 
   const text = commentInput.value.trim();
-  if (!text) return;
+  if(!text) return;
 
-  try {
-    // Add comment to Firestore
-    await addDoc(collection(db, "recentPoems", poemId, "comments"), {
-      userId: currentUser.uid,
-      text,
-      timestamp: new Date()
-    });
+  await addDoc(collection(db, poemDocRef.parent.id, poemDocRef.id, "comments"), {
+    userId: currentUser.uid,
+    text,
+    timestamp: new Date()
+  });
 
-    commentInput.value = "";
-
-    // Get username
-    let username = currentUser.email;
-    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-    if (userDoc.exists()) username = userDoc.data().username || currentUser.email;
-
-    // Create comment element
-    const div = document.createElement("div");
-    div.className = "comment";
-    div.textContent = `${username}: ${text}`;
-
-    // Prepend so newest comment is on top
-    commentList.prepend(div);
-    commentList.style.display = "block";
-
-    // Update comment count
-    const snapshot = await getDocs(collection(db, "recentPoems", poemId, "comments"));
-    messageCountEl.textContent = `💬 ${snapshot.size}`;
-
-  } catch (err) {
-    console.error("Error posting comment:", err);
-  }
+  commentInput.value = "";
+  loadComments();
 });
 
-// ---------------- Load Comments Count ----------------
-async function loadCommentsCount() {
-  const q = query(collection(db, "recentPoems", poemId, "comments"), orderBy("timestamp", "desc"));
+// ---------------- Load Comments ----------------
+async function loadComments() {
+  if(!poemDocRef) return;
+
+  const q = query(collection(db, poemDocRef.parent.id, poemDocRef.id, "comments"), orderBy("timestamp","desc"));
   const snapshot = await getDocs(q);
   messageCountEl.textContent = `💬 ${snapshot.size}`;
-  commentList.style.display = "none"; // collapsed by default
+  
+  commentList.innerHTML = "";
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const div = document.createElement("div");
+    div.style.padding = "6px 0";
+    div.style.borderBottom = "1px solid #eee";
+    div.innerHTML = `<strong>${data.userId}</strong>: ${data.text}`;
+    commentList.appendChild(div);
+  });
+  commentList.style.display = snapshot.size ? "block" : "none";
 }
 
-// ---------------- Toggle Comments ----------------
-messageCountEl.addEventListener("click", async () => {
-  if (commentList.style.display === "block") {
-    commentList.style.display = "none";
-    return;
-  }
 
-  commentList.innerHTML = "";
-  const q = query(collection(db, "recentPoems", poemId, "comments"), orderBy("timestamp", "desc"));
-  const snapshot = await getDocs(q);
-
-  for (const docSnap of snapshot.docs) {
-    const c = docSnap.data();
-    let username = "Anonymous";
-    if (c.userId) {
-      const userDoc = await getDoc(doc(db, "users", c.userId));
-      if (userDoc.exists()) username = userDoc.data().username || "Anonymous";
-    }
-    const div = document.createElement("div");
-    div.className = "comment";
-    div.textContent = `${username}: ${c.text}`;
-    commentList.appendChild(div);
-  }
-
-  commentList.style.display = "block";
-});
-
-  </script>
-
-  <!-- Navbar toggle -->
-  <script>
-    const toggle = document.getElementById("menu-toggle");
-    const navLinks = document.getElementById("nav-links");
-    toggle.addEventListener("click",()=>navLinks.classList.toggle("show"));
-    navLinks.querySelectorAll("a").forEach(link=>link.addEventListener("click",()=>navLinks.classList.remove("show")));
-  </script>
+// ---------------- Navbar toggle ----------------
+const toggle = document.getElementById("menu-toggle");
+const navLinks = document.getElementById("nav-links");
+toggle.addEventListener("click", ()=>navLinks.classList.toggle("show"));
+navLinks.querySelectorAll("a").forEach(link => link.addEventListener("click", ()=>navLinks.classList.remove("show")));
+</script>
 </body>
 </html>
-

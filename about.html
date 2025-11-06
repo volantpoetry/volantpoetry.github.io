@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>About | Volant Poetry</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="about.css">
-    <link rel="icon" type="png" href="images/logo.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="about.css" />
+  <link rel="icon" type="image/png" href="images/logo.png" />
 
-      <!-- SEO Meta Tags -->
+  <!-- SEO Meta Tags -->
   <meta name="author" content="Rence Blunt">
   <meta name="description" content="Official author page of Rence Blunt — poet and founder of Volant Poetry. Explore his journey, mission, and the story behind his works.">
   <meta name="keywords" content="Rence Blunt, Volant Poetry, poet, poems, writer, modern poetry, poetry website, about poet, poetry mission">
 
-  <!-- Open Graph (Facebook & others) -->
+  <!-- Open Graph -->
   <meta property="og:title" content="About Rence Blunt | Volant Poetry">
   <meta property="og:description" content="Rence Blunt — poet and founder of Volant Poetry. Explore his story, poetry, and mission.">
   <meta property="og:image" content="https://volantpoetry.github.io/images/renceblunt.jpg">
@@ -26,20 +27,11 @@
   <meta name="twitter:description" content="Official author page of Rence Blunt — poet and founder of Volant Poetry.">
   <meta name="twitter:image" content="https://volantpoetry.github.io/images/renceblunt.jpg">
 
-  <!-- Canonical Link -->
+  <!-- Canonical -->
   <link rel="canonical" href="https://volantpoetry.github.io/about.html">
-
-  <!-- Author Link -->
   <link rel="author" href="https://volantpoetry.github.io/about.html">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://volantpoetry.github.io/images/logo.png">
-
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="about.css">
-
-  <!-- Structured Data (Author Schema) -->
+  <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -56,96 +48,129 @@
     "description": "Rence Blunt is a poet and writer exploring emotion, reflection, and meaning through words. Founder of Volant Poetry."
   }
   </script>
+
+  <style>
+    /* Mobile nav toggle */
+    #nav-links { display: none; }
+    #nav-links.show { display: flex; flex-direction: column; }
+  </style>
 </head>
 <body>
+
 <!-- Navbar -->
-<nav class="navbar">
-  <div class="logo">Volant Poetry</div>
-  <div class="menu-toggle" id="menu-toggle">☰</div>
-  <div class="nav-links" id="nav-links">
-    <a href="index.html">Home</a>
-    <a href="poems.html">Poems</a>
-             <a href="poemslink.html">Links</a>
-    <a href="about.html" class="active">About</a>
-    <a href="contact.html">Contact</a>
+<header>
+  <nav style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px;">
+    <!-- Logo + Text -->
+    <div class="logo" style="display: flex; align-items: center;">
+      <img src="images/logo.png" alt="Volant Poetry Logo" style="height: 40px; width: auto; margin-right: 5px;">
+      <span class="logo-highlight">Volant</span> Poetry
+    </div>
+
+    <!-- Nav Links -->
+    <div class="nav-links" id="nav-links" style="display: flex; gap: 30px; margin-left: 40px;">
+        <span class="close-btn" id="close-btn">✕</span>
+        <a href="index.html">Home</a>
+        <a href="poems.html">Poems</a>
+        <a href="poemslink.html">Links</a>
+        <a href="about.html" class="active">About</a>
+        <a href="contact.html">Contact</a>
+    </div>
+
+    <!-- Menu Toggle (mobile) -->
+    <div class="nav-right">
+      <div class="menu-toggle" id="menu-toggle">☰</div>
+    </div>
+  </nav>
+</header>
+
+<!-- About / Introduction -->
+<section class="about-section">
+  <div class="about-container">
+    <div class="about-text">
+      <h2>Welcome to Volant Poetry</h2>
+      <p>
+        Volant Poetry is a community-driven platform where poets, dreamers, and readers come together. 
+        Here, we explore emotions, stories, and reflections through words that move, inspire, and connect.
+      </p>
+      <p>
+        This space is built for collaboration, sharing, and the joy of poetry — a place where your voice can be heard.
+      </p>
+    </div>
   </div>
-</nav>
+</section>
 
-  <!-- About Content -->
-  <section class="about-section">
-    <div class="about-container">
-      <div class="about-text">
-        <h2>Hello, I’m Rence Blunt</h2>
-        <p>
-          Poetry has always been my open space — a way to pour emotions into words, 
-          and give voice to thoughts that often stay unspoken. Through rhythm, rhyme, free verse, and other forms, 
-          I try to capture the quiet depth of human experience.  
-        </p>
-        <p>
-          This site is a collection of my poems, reflections, and highlights. 
-          It’s a journey of self-expression, vulnerability, and creativity, 
-          and I hope that in these words you find something that speaks to you.
-        </p>
-      </div>
+<!-- Mission & Vision -->
+<section class="mission-section">
+  <div class="mission-container">
+    <div class="mission-block">
+      <h3>Our Mission</h3>
+      <p>
+        To foster a vibrant poetry community that heals, inspires, and gives voice to every poet and reader.
+      </p>
     </div>
-  </section>
-
-  <!-- Mission & Vision -->
-  <section class="mission-section">
-    <div class="mission-container">
-      <div class="mission-block">
-        <h3>My Mission</h3>
-        <p>
-          To weave poetry that heals, giving voice to the unspoken, and find pacing for every heart.
-        </p>
-      </div>
-      <div class="mission-block">
-        <h3>My Vision</h3>
-        <p>
-          To be a guiding light in the world of poetry.
-        </p>
-      </div>
+    <div class="mission-block">
+      <h3>Our Vision</h3>
+      <p>
+        To create a thriving, collaborative space where poetry enriches lives and builds meaningful connections.
+      </p>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="platform-section">
+<!-- Platform Section -->
+<section class="platform-section">
   <div class="platform-container">
     <h2>About This Platform</h2>
     <p>
-      Volant Poetry is more than just a personal space— it’s a platform for 
-      sharing emotions, inspiring creativity, and conveying messages through the beauty of words. From poems to quotes, reflections, and thoughts, it’s 
-      designed to give readers a place of comfort, inspiration, and reflection.
+      Volant Poetry is more than a website — it’s a creative home for poets and poetry lovers. 
+      Share your work, explore new voices, and immerse yourself in a community where every word matters.
     </p>
   </div>
 </section>
 
-  <!-- Dedication Section -->
-  <section class="dedication-section">
-    <div class="dedication-container">
-      <h2>Dedication</h2>
-      <p>
-        This platform is lovingly dedicated to all dreamers, poets, and seekers of meaning.  
-        To those who find comfort in words, and to every soul who has ever felt unseen —  
-        may these poems remind you that you are never alone.  
-      </p>
-    </div>
-      </div>
-      <div class="about-image">
-        <img src="images/renceblunt.jpg" alt="Rence Blunt" />
-        <div class="author-info">
-          <h3>Rence Blunt</h3>
-          <p><strong></strong></p>
-        </div>
-  </section>
+<!-- Dedication Section -->
+<section class="dedication-section">
+  <div class="dedication-container">
+    <h2>Dedication</h2>
+    <p>
+      This platform is dedicated to all poets, writers, and readers. 
+      To every voice seeking connection, and every soul looking for inspiration — 
+      may Volant Poetry be your space to create and belong.
+    </p>
+  </div>
+</section>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-container">
- <p>&copy; 2025 Volant Poetry. All rights reserved.</p>
+<!-- Author Image at the End -->
+<section class="author-section">
+  <div class="about-image" style="text-align: center; margin-top: 40px;">
+    <img src="images/renceblunt.jpg" alt="Rence Blunt" style="max-width: 300px; width: 100%; border-radius: 8px;">
+    <div class="author-info" style="margin-top: 10px;">
+      <h3>Rence Blunt</h3>
+      <p>Founder of Volant Poetry</p>
     </div>
-  </footer>
+  </div>
+</section>
 
-<script type="module" src="script.js"></script>
-<script src="script.js"></script>
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-container">
+    <p>&copy; 2025 Volant Poetry. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script type="module" src="test.js"></script>
+<script>
+  const menuToggle = document.getElementById("menu-toggle");
+  const navLinks = document.getElementById("nav-links");
+  const closeBtn = document.getElementById("close-btn");
+
+  // Toggle nav links with a class
+  menuToggle.addEventListener("click", () => navLinks.classList.toggle("show"));
+
+  // Hide nav links when X is clicked
+  closeBtn.addEventListener("click", () => navLinks.classList.remove("show"));
+</script>
+
 </body>
 </html>

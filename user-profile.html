@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile & Poems | Silent Depth</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
+<link rel="stylesheet" href="style.css" />
+<link rel="icon" type="image/png" href="images/logo.png" />
+<link rel="apple-touch-icon" href="images/logo.png" />
+
+<style>
+:root {
+  --primary: #4b2aad;
+  --bg: #f7f5ff;
+  --text: #1a1a1a;
+  --muted: #666;
+  --radius: 14px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  width: 100%;
+}
+
+/* Profile Section */
+.profile-container {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.profile-container h2 { color: var(--primary); margin-bottom: 1rem; }
+
+.profile-picture img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.8rem;
+  border: 3px solid var(--primary);
+}
+
+.profile-info { margin: 1rem 0; font-size: 1rem; color: #333; }
+.profile-info p { margin: 0.5rem 0; }
+
+.btn {
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 0.5rem;
+}
+
+.btn:hover { background: #6c3ddd; }
+
+#editProfileBtn { background: #fff; color: var(--primary); border: 1px solid var(--primary); }
+#editProfileBtn:hover { background: var(--primary); color: #fff; }
+
+/* Poems Section */
+.profile-poems {
+  width: 100%;
+  max-width: 900px;
+  margin: 40px auto;
+  transform: translateX(40px);
+}
+
+h2 {
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  margin: 20px auto 30px auto;
+  color: #4b2aad;
+}
+
+.profile-poems h3 {
+  color: var(--primary);
+  text-align: left;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 1.5rem;
+}
+
+.recent-poem-card {
+  background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
+  color: #4b3f2f;
+  border-radius: 12px;
+  padding: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.poem-content {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  overflow: hidden;
+}
+
+/* --- Force smaller comment box --- */
+.recent-poem-card .comment-section {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.recent-poem-card .comment-input {
+  flex: none !important;        /* stop auto-stretching */
+  width: 220px !important;      /* fixed smaller width */
+  max-width: 65% !important;    /* optional safety */
+
+}
+/* ─────────── Desktop Layout (Two-Column) ─────────── */
+@media (min-width: 900px) {
+  .profile-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    width: 90%;
+    max-width: 1100px;
+    margin-top: 50px;
+  }
+
+  .profile-container {
+    max-width: 100%;
+    margin: 0;
+    text-align: left;
+  }
+
+  .profile-container h2 {
+    text-align: left;
+  }
+
+  .interaction-panel {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    padding: 1.5rem;
+    height: fit-content;
+  }
+
+  .interaction-panel h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .interaction-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .interaction-panel li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .interaction-panel li:hover {
+    color: var(--primary);
+    background: #f7f5ff;
+    border-radius: 8px;
+    padding-left: 10px;
+  }
+}
+
+/* Poem section stays full width below both columns */
+.profile-poems {
+  grid-column: 1 / span 2;
+  width: 90%;
+  max-width: 1100px;
+  margin-top: 50px;
+  transform: none;
+}
+
+/* ─────────── Search Bar Styling ─────────── */
+/* ─────────── Search Bar Styling ─────────── */
+.search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Move to right */
+  gap: 10px;
+  margin: 20px auto 30px;
+  width: 100%;              /* Full width container */
+  max-width: 900px;         /* Keeps it aligned with your cards */
+  padding-right: 50px;      /* Push in from right edge */
+}
+
+.search-bar input {
+  flex: 0 1 250px;          /* Fixed input width but still responsive */
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  outline: none;
+  transition: 0.2s;
+  background: #fff;
+}
+
+.search-bar input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(75, 42, 173, 0.1);
+}
+
+.search-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px auto 30px;
+  width: 100%;
+  max-width: 900px;
+  padding-right: 50px;
+}
+
+.search-bar input {
+  width: 200px;
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1px solid #ddd;
+  border-radius: var(--radius);
+  outline: none;
+  transition: 0.2s;
+  background: #fff;
+}
+
+.search-bar input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(75, 42, 173, 0.1);
+}
+
+/* Flex container for profile picture + info */
+.profile-header-flex {
+  display: flex;
+  flex-direction: column; /* stack on mobile */
+  align-items: center;
+  gap: 20px;
+}
+
+/* Profile picture section with followers below */
+.profile-picture-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.follow-info-horizontal {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.follow-item {
+  text-align: center;
+}
+
+/* Profile info on the right */
+.profile-info-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+    line-height: 0.95; /* tighten lines */
+      margin-left: 10px; /* move closer to the profile picture */
+}
+.profile-info-right p {
+  margin: 4px 0; /* small vertical spacing between lines */
+}
+
+/* Desktop layout */
+@media (min-width: 900px) {
+  .profile-header-flex {
+    flex-direction: row; /* picture on left, info on right */
+    align-items: flex-start;
+  }
+
+  .profile-picture-section {
+    align-items: center;
+  }
+
+  .profile-info-right {
+    margin-left: 40px; /* space between picture and info */
+  }
+}
+@media (min-width: 900px) {
+  .profile-info-right {
+    margin-left: 20px; /* tighter spacing on desktop */
+  }
+}
+/* Move followers/following to the left on desktop */
+@media (min-width: 900px) {
+  .follow-info-horizontal {
+    justify-content: flex-start; /* align to the left instead of center */
+    margin-left: 0;              /* remove extra margin if any */
+  }
+}
+.interaction-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.interaction-panel li {
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.interaction-panel li a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;  /* remove underline */
+  color: var(--text);
+  width: 100%;
+  transition: 0.2s;
+}
+
+.interaction-panel li a:hover {
+  color: var(--primary);
+  background: #f7f5ff;
+  border-radius: 8px;
+  padding-left: 10px;
+}
+/* Full-width horizontal profile stats */
+.profile-stats-section {
+  width: 100%;               /* Take full page width */
+  background: #fff;          /* Optional background */
+  padding: 20px 40px;        /* Some spacing */
+  margin: 40px 0;            /* Top & bottom spacing */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  gap: 30px;                 /* Space between panels */
+  overflow-x: auto;          /* Allow horizontal scrolling if screen is small */
+  box-sizing: border-box;    /* Include padding in width */
+}
+
+/* Each panel item inside stats */
+.interaction-panel-horizontal {
+  display: flex;
+  gap: 40px;
+}
+
+.panel-item {
+  min-width: 200px;          /* Ensure panels don’t collapse */
+  flex: 1;                   /* Equal width stretch */
+  background: #f7f5ff;       /* Optional distinct background */
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Level bar */
+.level-bar {
+  width: 100%;
+  height: 12px;
+  background: #ddd;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+#levelProgress {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 6px;
+}
+
+
+/* Make sure the horizontal profile stats are responsive */
+.profile-stats-section {
+  width: 100%;
+  background:  #f7f5ff;
+  padding: 20px 40px;
+  margin: 40px 0;
+  box-shadow: 0 4px 12px  #f7f5ff;
+  display: flex;
+  overflow-x: auto;
+  gap: 30px;
+  box-sizing: border-box;
+}
+
+.interaction-panel-horizontal {
+  display: flex;
+  gap: 30px;
+}
+
+.panel-item {
+  min-width: 220px;
+  flex: 1;
+  background: #f7f5ff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px  #B8860B;
+}
+
+.badges-container img {
+  width: 40px;
+  height: 40px;
+}
+
+/* Shift the profile layout slightly to the right */
+.profile-layout {
+  margin-left: 40px; /* adjust px as needed */
+}
+
+/* Shift the horizontal stats section to the right as well */
+.profile-stats-section {
+  margin-left: 70px; /* match the layout shift */
+  margin-right: 40px; /* optional: keeps spacing consistent on the right */
+}
+
+/* Optional: shift poems section as well */
+.profile-poems {
+  margin-left: 40px; /* aligns poems with profile layout */
+  margin-right: 40px; 
+}
+
+.top-poem-link {
+  display: block;
+  color:  #B8860B;
+  text-decoration: none;
+  margin: 6px 0;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.top-poem-link:hover {
+  color: #1a73e8;
+}
+.profile-picture img {
+  width: 180px;           /* 🔥 bigger circle size */
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  border: 4px solid #ccc;
+  box-shadow: 0 0 15px rgba(0,0,0,0.15);
+  image-rendering: high-quality;
+  transition: transform 0.3s ease;
+}
+
+.profile-picture img:hover {
+  transform: scale(1.05); /* subtle hover zoom for polish */
+}
+
+
+/* --- Image Modal --- */
+.image-modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.85);
+  backdrop-filter: blur(3px);
+  align-items: center;
+  justify-content: center;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(255,255,255,0.2);
+  animation: zoomIn 0.3s ease;
+}
+
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.close-modal:hover {
+  color: #ff6666;
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+#topPoemContent span {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.logout-nav-btn {
+  display: inline-block;
+  margin-left: 20px;
+  padding: 6px 12px;
+  font-size: 14px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  z-index: 50; /* ensure it’s above other elements */
+}
+
+.logout-nav-btn:hover {
+  background: #6c3ddd;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+</style>
+</head>
+
+<body>
+<header>
+  <nav>
+    <div class="logo">
+      <img src="images/logo.png" alt="Volant Poetry Logo" class="nav-logo-img">
+      <span class="logo-text">
+        <span class="logo-highlight">Volant</span> Poetry
+      </span>
+    </div>
+
+    <div class="nav-links" id="nav-links">
+      <span class="close-btn" id="close-btn">✕</span>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+       <a href="contact.html">Contact Us</a> <!-- ✅ New link -->
+    </div>
+<div class="nav-right">
+
+<!-- Mobile Icons -->
+    <div class="mobile-icons">
+
+      <div class="menu-toggle" id="menu-toggle">☰</div>
+    </div>
+     <!-- Logout Button -->
+  <button id="logoutBtnNav" class="btn logout-nav-btn">Logout</button>
+  </div>
+</nav>
+</header>
+
+<!-- PROFILE + QUICK ACCESS WRAPPER -->
+<div class="profile-layout">
+
+  <!-- Profile Container (Left Column) -->
+  <div class="profile-container">
+    <h2>My Profile</h2>
+
+    <div class="profile-header-flex">
+      <div class="profile-picture-section">
+        <div class="profile-picture">
+          <img id="profilePic" src="images/default-avatar.png" alt="Profile Picture">
+          <input type="file" id="uploadPic" style="display:none;">
+          <button class="btn" id="changePicBtn">Change Picture</button>
+        </div>
+
+        <div class="follow-info-horizontal">
+          <div class="follow-item">
+            <strong id="followersCount">0</strong>
+            <span>Followers</span>
+          </div>
+          <div class="follow-item">
+            <strong id="followingCount">0</strong>
+            <span>Following</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-info-right">
+        <p><strong>Username:</strong> <span id="username"></span></p>
+        <p><strong>Email:</strong> <span id="email"></span></p>
+        <p><strong>Bio:</strong> <span id="bio"></span></p>
+        <p><strong>Joined:</strong> <span id="joined"></span></p>
+        <div class="profile-buttons">
+          <button class="btn" id="editProfileBtn">Edit Profile</button>
+   
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Access (Right Column) -->
+  <div class="interaction-panel">
+    <h3>Quick Access</h3>
+    <ul>
+      <li><a href="notifications.html">🔔 Notifications</a></li>
+      <li><a href="messages.html">✉ Messages</a></li>
+      <li><a href="account-preferences.html">⚙ Account Preferences</a></li>
+        <li><a href="submitpoems.html">📝 Submit Poems</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- HORIZONTAL PROFILE STATS (Full Width Section) -->
+<section class="profile-stats-section">
+  <div class="interaction-panel-horizontal">
+
+    <div class="panel-item">
+      <h3>Level</h3>
+      <strong>Level:</strong> <span id="userLevel"></span>
+      <div class="level-bar">
+        <div id="levelProgress" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="panel-item">
+      <h3>Achievements</h3>
+      <div class="badges-container">
+      </div>
+    </div>
+
+    <div class="panel-item">
+      <h3>Stats</h3>
+      <ul>
+        <li>Poems Submitted: <span id="poemCount"></span></li>
+        <li>Total Likes: <span id="likeCount"></span></li>
+        <li>Total Comments: <span id="commentCount"></span></li>
+      </ul>
+    </div>
+
+    <div class="panel-item">
+      <h3>3 Top Poems</h3>
+      <div class="top-poem">
+        <p id="topPoemContent"></p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Fullscreen image modal -->
+<div id="imageModal" class="image-modal">
+  <span class="close-modal">&times;</span>
+  <img class="modal-content" id="expandedImg">
+</div>
+
+<!-- POEMS SECTION -->
+<div class="profile-poems">
+  <h2>Your Submitted Poems</h2>
+  <!-- 🔍 Search Bar -->
+ <div class="search-bar">
+  <input 
+    type="text" 
+    id="searchInput" 
+    placeholder="Search your poems..."
+    autocomplete="off"
+  >
+</div>
+
+
+  <div id="poemsContainer">
+    <p class="empty-message"></p>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+  getFirestore, doc, getDoc, setDoc, updateDoc, 
+  collection, query, where, getDocs, onSnapshot 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+  authDomain: "silent-depth.firebaseapp.com",
+  projectId: "silent-depth",
+  storageBucket: "silent-depth.appspot.com",
+  messagingSenderId: "78008755450",
+  appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
+
+const usernameSpan = document.getElementById("username");
+const emailSpan = document.getElementById("email");
+const bioSpan = document.getElementById("bio");
+const joinedSpan = document.getElementById("joined");
+const profilePic = document.getElementById("profilePic");
+const logoutBtn = document.getElementById("logoutBtn");
+const editBtn = document.getElementById("editProfileBtn");
+const changePicBtn = document.getElementById("changePicBtn");
+const uploadPic = document.getElementById("uploadPic");
+const poemsContainer = document.getElementById("poemsContainer");
+const topPoemsContainer = document.getElementById("topPoems");
+
+let username = "";
+
+// --- Truncate poems by number of lines ---
+function truncatePoemByLines(text, maxLines = 8) {
+  const lines = text.split(/\r?\n/);
+  const truncated = lines.slice(0, maxLines).join("\n");
+  return {
+    preview: truncated + (lines.length > maxLines ? "\n..." : ""),
+    full: text,
+    truncated: lines.length > maxLines
+  };
+}
+
+// --- Update Achievements & Level (same as before) ---
+function updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
+  const badgesContainer = document.querySelector(".badges-container");
+  badgesContainer.innerHTML = "";
+  const badges = [];
+  if (poemCount >= 5) badges.push({ src: "images/LOGO R.jpg", title: "Poet Starter" });
+  if (totalLikes >= 15) badges.push({ src: "images/badge-likes.png", title: "Loved by Many" });
+  if (totalCommentsReceived >= 10) badges.push({ src: "images/logo.png", title: "Engaging Poet" });
+  if (totalCommentsMade >= 15) badges.push({ src: "images/badge-active.png", title: "Active Commenter" });
+  badges.forEach(badge => {
+    const img = document.createElement("img");
+    img.src = badge.src;
+    img.title = badge.title;
+    badgesContainer.appendChild(img);
+  });
+}
+
+function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
+  let score = 0;
+  score += Math.min(poemCount * 2, 25);
+  score += Math.min(totalLikes, 25);
+  score += Math.min(totalCommentsReceived * 2.5, 25);
+  score += Math.min(totalCommentsMade * 1.66, 25);
+  const level = Math.floor(score / 20) + 1;
+  const progress = Math.min((score % 20) * 5, 100);
+  document.getElementById("userLevel").textContent = level;
+  document.getElementById("levelProgress").style.width = progress + "%";
+}
+
+// --- Auth handling ---
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "users-login.html";
+    return;
+  }
+
+  const userRef = doc(db, "users", user.uid);
+  let userDoc = await getDoc(userRef);
+
+  if (!userDoc.exists()) {
+    await setDoc(userRef, {
+      username: user.displayName || user.email.split("@")[0],
+      email: user.email,
+      bio: "",
+      joined: new Date(),
+      photoURL: user.photoURL || ""
+    });
+    userDoc = await getDoc(userRef);
+  }
+
+  const data = userDoc.data();
+  username = data.username || user.email.split("@")[0];
+
+  if (usernameSpan) usernameSpan.textContent = username;
+  if (emailSpan) emailSpan.textContent = data.email || user.email;
+  if (bioSpan) bioSpan.textContent = data.bio || "No bio yet";
+  if (joinedSpan) {
+    joinedSpan.textContent = data.joined
+      ? (data.joined.seconds
+          ? new Date(data.joined.seconds * 1000).toDateString()
+          : new Date(data.joined).toDateString())
+      : "Unknown";
+  }
+  if (profilePic) profilePic.src = data.photoURL || "images/default-avatar.png";
+
+  // Fetch user's poems and the single top poem
+  await fetchUserPoems(username);
+  await fetchTopPoems();
+});
+
+// --- Fetch User Poems ---
+async function fetchUserPoems(username) {
+  try {
+    const q = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+    const querySnap = await getDocs(q);
+    const container = poemsContainer;
+    container.innerHTML = "";
+
+    let totalLikes = 0;
+    let totalCommentsReceived = 0;
+    let poemCount = querySnap.size;
+    let totalCommentsMade = 0;
+
+    if (querySnap.empty) {
+      container.innerHTML = `<p class="empty-message">You haven’t submitted any poems yet.</p>`;
+    } else {
+      for (const docSnap of querySnap.docs) {
+        const poem = docSnap.data();
+        const docId = docSnap.id;
+        const card = document.createElement("div");
+        card.className = "recent-poem-card";
+        card.dataset.id = docId;
+
+        const truncated = truncatePoemByLines(poem.content, 8);
+        const likes = typeof poem.likes === "number" ? poem.likes : 0;
+        totalLikes += likes;
+
+        const commentsSnap = await getDocs(collection(db, "recentPoems", docId, "comments"));
+        totalCommentsReceived += commentsSnap.size;
+
+        card.innerHTML = `
+          <div class="poem-display">
+            <h3 class="poem-title">${poem.title}</h3>
+            <p class="poem-author">by ${poem.author || username}</p>
+            <div class="poem-body">
+              <p class="poem-content">${truncated.preview}</p>
+              ${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}
+            </div>
+          </div>
+          ${poem.categories && poem.categories.length > 0 ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
+          <div class="poem-actions comment-aligned">
+            <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+            <button class="comment-btn">Post</button>
+            <button class="like-btn">❤️</button>
+            <span class="like-count">${likes}</span>
+            <span class="message-count">💬 ${commentsSnap.size}</span>
+          </div>
+          <div class="comment-list" style="display:none;"></div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    document.getElementById("poemCount").textContent = poemCount;
+    document.getElementById("likeCount").textContent = totalLikes;
+    document.getElementById("commentCount").textContent = totalCommentsReceived;
+
+    updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
+    updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
+  } catch (err) {
+    console.error("Error fetching poems:", err);
+    poemsContainer.innerHTML = `<p class='empty-message'>Error loading poems.</p>`;
+  }
+}
+// 💌 Helper: Add notification for the poem owner
+async function addNotification(poemId, poemOwnerUid, type, fromUser, text = "") {
+  if (!poemOwnerUid || poemOwnerUid === auth.currentUser.uid) return; // don't notify self
+
+  const userRef = doc(db, "users", poemOwnerUid);
+  try {
+    await runTransaction(db, async (tx) => {
+      const userSnap = await tx.get(userRef);
+      if (!userSnap.exists()) return;
+
+      const data = userSnap.data();
+      const notifications = Array.isArray(data.notifications) ? data.notifications : [];
+
+      // Add new notification
+      notifications.push({
+        type,               // "like" or "comment"
+        from: fromUser,     // username of the actor
+        poemId,             // which poem
+        text,               // comment text (if any)
+        read: false,
+        timestamp: new Date()
+      });
+
+      tx.update(userRef, { notifications });
+    });
+  } catch (err) {
+    console.error("Failed to add notification:", err);
+  }
+}
+
+// ✅ Listen for clicks within poems container (fixed + merged)
+poemsContainer.addEventListener("click", async (e) => {
+  const card = e.target.closest(".recent-poem-card");
+  if (!card) return;
+  const poemId = card.dataset.id;
+  if (!poemId) return;
+
+  // ❤️ LIKE BUTTON — each user can like only once
+  if (e.target.classList.contains("like-btn")) {
+    const likeBtn = e.target;
+    const countEl = card.querySelector(".like-count");
+    if (!countEl) return;
+
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      alert("Please sign in to like poems.");
+      return;
+    }
+    const userUid = currentUser.uid;
+
+    likeBtn.disabled = true;
+    const prevText = likeBtn.textContent;
+
+    try {
+      const poemRef = doc(db, "recentPoems", poemId);
+      await runTransaction(db, async (tx) => {
+        const snap = await tx.get(poemRef);
+        if (!snap.exists()) throw new Error("DOC_NOT_FOUND");
+
+        const data = snap.data();
+        const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
+        const currentLikes = typeof data.likes === "number" ? data.likes : 0;
+
+        if (likedBy.includes(userUid)) throw new Error("ALREADY_LIKED");
+
+        tx.update(poemRef, {
+          likes: currentLikes + 1,
+          likedBy: [...likedBy, userUid],
+        });
+      });
+
+      const prevCount = parseInt(countEl.textContent) || 0;
+      countEl.textContent = prevCount + 1;
+      likeBtn.classList.add("liked");
+      likeBtn.textContent = "❤️ Liked";
+      likeBtn.style.pointerEvents = "none";
+      console.log(`Like successful — poem:${poemId} user:${userUid}`);
+
+      // ✅ Add notification for poem owner
+      const poemSnap = await getDoc(doc(db, "recentPoems", poemId));
+      const poemOwner = poemSnap.data().submittedByUid || poemSnap.data().uid;
+      await addNotification(poemId, poemOwner, "like", username);
+
+    } catch (err) {
+      console.error("Like transaction failed:", err);
+
+      if (err.message === "ALREADY_LIKED") {
+        likeBtn.classList.add("liked");
+        likeBtn.textContent = "❤️ Liked";
+        likeBtn.style.pointerEvents = "none";
+        alert("You’ve already liked this poem.");
+      } else if (err.message === "DOC_NOT_FOUND") {
+        alert("This poem no longer exists.");
+      } else if (err.code === "permission-denied") {
+        alert("You don't have permission to like this poem (security rules).");
+      } else {
+        alert("Could not like the poem. Try again.");
+      }
+
+      if (err.message !== "ALREADY_LIKED") {
+        likeBtn.disabled = false;
+        likeBtn.textContent = prevText;
+      }
+    }
+  }
+
+  // 💬 VIEW COMMENTS (toggle visibility)
+  if (e.target.classList.contains("message-count")) {
+    const commentList = card.querySelector(".comment-list");
+    if (!commentList) return;
+
+    if (commentList.style.display === "none" || !commentList.style.display) {
+      commentList.style.display = "block";
+      commentList.innerHTML = `<p>Loading comments...</p>`;
+      try {
+        const commentsRef = collection(db, "recentPoems", poemId, "comments");
+        const snapshot = await getDocs(commentsRef);
+        if (snapshot.empty) {
+          commentList.innerHTML = `<p>No comments yet.</p>`;
+        } else {
+          commentList.innerHTML = "";
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const p = document.createElement("p");
+            p.innerHTML = `<strong>${data.user || "Anon"}:</strong> ${data.text}`;
+            commentList.appendChild(p);
+          });
+        }
+      } catch (err) {
+        console.error("Error loading comments:", err);
+        commentList.innerHTML = `<p>Error loading comments.</p>`;
+      }
+    } else {
+      commentList.style.display = "none";
+    }
+  }
+
+  // 📝 POST COMMENT
+  if (e.target.classList.contains("comment-btn")) {
+    const input = card.querySelector(".comment-input");
+    const text = input.value.trim();
+    if (!text) return alert("Comment cannot be empty.");
+
+    try {
+      const commentsRef = collection(db, "recentPoems", poemId, "comments");
+      await setDoc(doc(commentsRef), {
+        text,
+        user: username,
+        createdAt: new Date(),
+      });
+
+      input.value = "";
+      const messageCount = card.querySelector(".message-count");
+      const currentCount =
+        parseInt(messageCount.textContent.replace("💬", "")) || 0;
+      messageCount.textContent = `💬 ${currentCount + 1}`;
+
+      const commentList = card.querySelector(".comment-list");
+      if (commentList.style.display === "block") {
+        const p = document.createElement("p");
+        p.innerHTML = `<strong>${username}:</strong> ${text}`;
+        commentList.appendChild(p);
+      }
+
+      // ✅ Add notification for poem owner
+      const poemSnap = await getDoc(doc(db, "recentPoems", poemId));
+      const poemOwner = poemSnap.data().submittedByUid || poemSnap.data().uid;
+      await addNotification(poemId, poemOwner, "comment", username, text);
+
+    } catch (err) {
+      console.error("Error posting comment:", err);
+      alert("Failed to post comment.");
+    }
+  }
+
+  // 👁️ READ MORE toggle
+  if (e.target.classList.contains("read-more-btn")) {
+    const poemBody = card.querySelector(".poem-body");
+    const poemContent = poemBody.querySelector(".poem-content");
+    const isExpanded = e.target.textContent.includes("Less");
+
+    if (isExpanded) {
+      const poem = await getDoc(doc(db, "recentPoems", poemId));
+      const truncated = truncatePoemByLines(poem.data().content, 8);
+      poemContent.textContent = truncated.preview;
+      e.target.textContent = "Show More";
+    } else {
+      const poem = await getDoc(doc(db, "recentPoems", poemId));
+      poemContent.textContent = poem.data().content;
+      e.target.textContent = "Show Less";
+    }
+  }
+}); // ✅ Only one closing }); total
+
+// --- Fetch Top 5 Poems live ---
+// --- Fetch Top 3 Poems for this user only ---
+async function fetchTopPoem() {
+  try {
+    const q = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+    const snapshot = await getDocs(q);
+
+    const poems = [];
+
+    // Collect poem data and engagement score (likes + comments)
+    for (const docSnap of snapshot.docs) {
+      const poem = docSnap.data();
+      const commentsSnap = await getDocs(collection(db, "recentPoems", docSnap.id, "comments"));
+      const score = (poem.likes || 0) + commentsSnap.size;
+      poems.push({ ...poem, score, id: docSnap.id });
+    }
+
+    // Sort by engagement score (descending)
+    poems.sort((a, b) => b.score - a.score);
+
+    // Get top 3
+    const top3 = poems.slice(0, 3);
+
+    const topPoemContainer = document.querySelector(".top-poem");
+    topPoemContainer.innerHTML = ""; // clear existing content
+
+    if (top3.length === 0) {
+      topPoemContainer.innerHTML = `<p>No top poems yet. Your most liked poems will appear here!</p>`;
+      return;
+    }
+
+    top3.forEach(poem => {
+      // Create slug: lowercase title, replace spaces and remove special chars
+      const slug = poem.title
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9\-]/g, "");
+
+      const link = document.createElement("a");
+      link.href = `poem.html?slug=${slug}`;
+      link.textContent = poem.title;
+      link.className = "top-poem-link";
+
+      const item = document.createElement("div");
+      item.className = "top-poem-item";
+      item.appendChild(link);
+      topPoemContainer.appendChild(item);
+    });
+
+  } catch (err) {
+    console.error("Error fetching top poems:", err);
+  }
+}
+
+// --- Call after user is loaded ---
+// --- Fetch Top 3 Poem Titles for this user only (clickable + proper numbering) ---
+async function fetchTopPoems() {
+  try {
+    if (!username) return;
+
+    const poemsRef = collection(db, "recentPoems");
+    const q = query(poemsRef, where("submittedBy", "==", username));
+    const snapshot = await getDocs(q);
+
+    const topPoemContent = document.getElementById("topPoemContent");
+    if (!topPoemContent) return;
+
+    if (snapshot.empty) {
+      topPoemContent.textContent = "No poems yet.";
+      return;
+    }
+
+    const poems = [];
+
+    snapshot.forEach((docSnap) => {
+      const poem = docSnap.data();
+      if (!poem.title) return;
+
+      const likes = poem.likes || 0;
+      const comments = Array.isArray(poem.comments)
+        ? poem.comments.length
+        : 0;
+      const engagement = likes + comments;
+
+      // Create slug for linking
+      const slug =
+        poem.slug ||
+        poem.title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
+
+      poems.push({ slug, title: poem.title, engagement });
+    });
+
+    // Sort and take top 3
+    const top3 = poems.sort((a, b) => b.engagement - a.engagement).slice(0, 3);
+
+    // ✅ Number and title appear inline, not stacked
+ topPoemContent.innerHTML = top3.length
+  ? top3
+      .map(
+        (p, i) =>
+          `<div style="margin-bottom:4px;">
+            <span style="display:inline;">${i + 1}.</span>
+            <a href="poem.html?slug=${encodeURIComponent(
+              p.slug
+            )}" class="top-poem-link" style="display:inline;">${p.title}</a>
+          </div>`
+      )
+      .join("")
+  : "No top poems yet.";
+
+  } catch (error) {
+    console.error("Error fetching top poems:", error);
+  }
+}
+
+
+// --- Logout, Edit, Change Picture (same as before) ---
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "users-login.html";
+      } catch (err) {
+        console.error("Logout failed:", err);
+        alert("Log out failed, try again.");
+      }
+    });
+  }
+});
+
+editBtn.addEventListener("click", async () => {
+  const newUsername = prompt("Enter new username:", usernameSpan.textContent);
+  const newBio = prompt("Enter your bio:", bioSpan.textContent);
+  if (!newUsername && !newBio) return;
+  try {
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, { username: newUsername || usernameSpan.textContent, bio: newBio || bioSpan.textContent });
+    usernameSpan.textContent = newUsername || usernameSpan.textContent;
+    bioSpan.textContent = newBio || bioSpan.textContent;
+    if (newUsername) fetchUserPoems(newUsername);
+  } catch (err) { console.error(err); }
+});
+
+// --- Cloudinary Upload ---
+const cloudName = "dzoq4pgjn"; // <-- replace with your real Cloudinary cloud name
+const uploadPreset = "profile_pics"; // must match your Cloudinary preset name
+
+changePicBtn.addEventListener("click", () => uploadPic.click());
+
+uploadPic.addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", uploadPreset);
+
+  try {
+    // Upload directly to Cloudinary
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: "POST",
+      body: formData
+    });
+    const data = await res.json();
+const imageUrl = data.secure_url.replace(
+  '/upload/',
+  '/upload/c_fill,g_auto,f_auto,q_auto:best,h_600,w_600,r_max,e_sharpen/'
+);
+
+
+    // Update image instantly
+    profilePic.src = imageUrl;
+
+    // Save to Firestore for persistence
+    const user = auth.currentUser;
+    if (user) {
+      await updateDoc(doc(db, "users", user.uid), { photoURL: imageUrl });
+    }
+
+    console.log("✅ Uploaded to Cloudinary:", imageUrl);
+  } catch (err) {
+    console.error("❌ Cloudinary upload error:", err);
+  }
+});
+
+// --- Profile picture expand on click ---
+const modal = document.getElementById("imageModal");
+const expandedImg = document.getElementById("expandedImg");
+const closeModal = document.querySelector(".close-modal");
+const profilePicEl = document.getElementById("profilePic");
+
+profilePicEl.addEventListener("click", () => {
+  expandedImg.src = profilePicEl.src;
+  modal.style.display = "flex";
+});
+
+closeModal.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+  if (e.target === modal) modal.style.display = "none";
+});
+
+const menuToggle = document.getElementById("menu-toggle");
+const navLinks = document.getElementById("nav-links");
+const closeBtn = document.getElementById("close-btn");
+
+if (menuToggle) {
+  menuToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("show");
+  });
+}
+
+if (closeBtn) {
+  closeBtn.addEventListener("click", () => {
+    navLinks.classList.remove("show");
+  });
+}
+// --- Logout Nav Button ---
+const logoutBtnNav = document.getElementById("logoutBtnNav");
+if (logoutBtnNav) {
+  logoutBtnNav.addEventListener("click", async () => {
+    if (!auth.currentUser) {
+      alert("No user is logged in.");
+      return;
+    }
+    try {
+      await signOut(auth); // properly sign out
+      window.location.href = "users-login.html";
+    } catch (err) {
+      console.error("Logout failed:", err);
+      alert("Logout failed, try again.");
+    }
+  });
+}
+
+// --- Search Filter with Firestore ---
+const searchInput = document.getElementById("searchInput");
+let debounceTimeout;
+
+// Keep track of poems already in the DOM to avoid duplicates
+const loadedPoemIds = new Set(
+  Array.from(document.querySelectorAll(".recent-poem-card")).map(
+    card => card.dataset.id
+  )
+);
+
+searchInput.addEventListener("input", () => {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(async () => {
+    const filter = searchInput.value.trim().toLowerCase();
+    filterDOM(filter);
+    await searchFirestore(filter);
+  }, 300);
+});
+
+// --- Filter poems already in the DOM ---
+function filterDOM(filter) {
+  const cards = document.querySelectorAll(".recent-poem-card");
+  let anyVisible = false;
+
+  cards.forEach(card => {
+    const title = card.querySelector(".poem-title")?.textContent.toLowerCase() || "";
+    const content = card.querySelector(".poem-content")?.textContent.toLowerCase() || "";
+    const categories = card.dataset.categories?.toLowerCase() || "";
+
+    if (title.includes(filter) || content.includes(filter) || categories.includes(filter)) {
+      card.style.display = "block";
+      anyVisible = true;
+    } else {
+      card.style.display = "none";
+    }
+  });
+
+  showEmptyMessage(!anyVisible);
+}
+
+// --- Firestore search ---
+async function searchFirestore(filter) {
+  if (!filter) return;
+
+  const poemsRef = collection(db, "recentPoems");
+  const snapshot = await getDocs(poemsRef);
+
+  let anyNewResults = false;
+
+  snapshot.docs.forEach(doc => {
+    const data = doc.data();
+    const id = doc.id;
+
+    // Skip poems already in the DOM
+    if (loadedPoemIds.has(id)) return;
+
+    const title = (data.title || "").toLowerCase();
+    const content = (data.content || "").toLowerCase();
+    const categories = (data.categories || "").toLowerCase();
+
+    if (title.includes(filter) || content.includes(filter) || categories.includes(filter)) {
+      addPoemCardToDOM(id, data);
+      loadedPoemIds.add(id);
+      anyNewResults = true;
+    }
+  });
+
+  // Update empty message if no poems visible
+  const anyVisible = document.querySelectorAll(".recent-poem-card:not([style*='display: none'])").length > 0;
+  showEmptyMessage(!anyVisible);
+}
+
+// --- Helper: add new poem card to DOM ---
+function addPoemCardToDOM(id, data) {
+  const container = document.getElementById("poemsContainer"); // make sure this ID matches your container
+  const card = document.createElement("div");
+  card.className = "recent-poem-card";
+  card.dataset.id = id;
+  card.dataset.categories = data.categories || "";
+
+  card.innerHTML = `
+    <h3 class="poem-title">${data.title || ""}</h3>
+    <p class="poem-content">${data.content || ""}</p>
+  `;
+
+  container.appendChild(card);
+}
+
+// --- Helper: show/hide empty message ---
+function showEmptyMessage(show) {
+  const container = document.getElementById("poemsContainer");
+  let msg = container.querySelector(".empty-message");
+  if (show) {
+    if (!msg) {
+      msg = document.createElement("p");
+      msg.className = "empty-message";
+      container.appendChild(msg);
+    }
+    msg.textContent = "No poems match your search.";
+  } else if (msg) {
+    msg.textContent = "";
+  }
+}
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+

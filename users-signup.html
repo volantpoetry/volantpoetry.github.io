@@ -13,7 +13,7 @@
 
     <form id="signup-form" class="auth-form">
       <label for="signup-username">Username</label>
-      <input type="text" id="signup-username" placeholder="Choose a username" required>
+<input type="text" id="signup-username" placeholder="Create a username (Up 11 Characters)" required maxlength="11">
 
       <label for="signup-email">Email</label>
       <input type="email" id="signup-email" placeholder="Enter email" required>
@@ -32,6 +32,7 @@
   </div>
 
   <!-- Firebase Auth JS -->
+     <script type="module" src="usersaccount.js"></script>
   <script type="module" src="usersAccount.js"></script>
 
   <script type="module">
