@@ -2457,3 +2457,15 @@ html {
 
 
 
+/* Reduce logo text size on small screens */
+@media (max-width: 768px) {
+  .logo-text {
+    font-size: 1.4rem; /* smaller text on tablets */
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 1.4rem; /* even smaller on small phones */
+  }
+}
