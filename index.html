@@ -12,12 +12,6 @@
   <link rel="icon" type="image/png" href="images/logo.png" />
   <link rel="apple-touch-icon" href="images/logo.png" />
 
-  
-  <!-- Styles & Icons -->
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="images/logo.png" />
-  <link rel="apple-touch-icon" href="images/logo.png" />
-
   <!-- SEO -->
   <meta name="google-site-verification" content="soceiczGrFx4It0-P5sYiqRyMMycbq-GsCQ3yOh84hY" />
   <meta name="description" content="A platform for sharing emotions, inspiring creativity, and conveying messages through the beauty of words. From poems to quotes, reflections, and thoughts, it’s designed to give readers a place of comfort, inspiration, and reflection." />
@@ -460,6 +454,17 @@
   margin-bottom: 1rem;    /* adds subtle space before poem starts */
 }
 
+/* Reduce logo text size on small screens */
+@media (max-width: 768px) {
+  .logo-text {
+    font-size: 1.1rem; /* smaller text on tablets */
+  }
+}
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 0.80rem; /* even smaller on small phones */
+  }
+}
 </style>
 
 </head>
