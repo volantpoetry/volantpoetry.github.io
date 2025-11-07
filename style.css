@@ -2497,7 +2497,6 @@ html {
 }
 
 
-
 /* Tablet and small screens */
 @media (max-width: 768px) {
   .recent-poem-title,
@@ -2521,5 +2520,22 @@ html {
 
   .author {
     font-size: 0.75rem; /* even smaller on tiny phones */
+  }
+}
+
+
+@media (max-width: 768px) {
+  .author {
+    position: relative;
+    left: -14px;
+    font-size: 0.85rem !important; /* force size */
+  }
+}
+
+@media (max-width: 480px) {
+  .author {
+    position: relative;
+    left: -18px;
+    font-size: 0.75rem !important; /* force smaller size */
   }
 }
