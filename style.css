@@ -2539,3 +2539,62 @@ html {
     font-size: 0.75rem !important; /* force smaller size */
   }
 }
+
+
+@media (max-width: 480px) {
+
+  /* Recent Poems Container */
+  .recent-poems-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    padding-left: 0; /* remove side padding for full edge fit */
+  }
+
+  /* Individual Poem Card */
+  .recent-poem-card {
+    background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    border: 1px solid #e0d6b0;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+    font-family: 'Lato', sans-serif;
+    color: #4b3f2f;
+    line-height: 1.7;
+    width: 100%; /* take full width */
+    box-sizing: border-box;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    overflow: hidden;
+    padding-left: 20px; /* keep inner spacing */
+  }
+
+  /* Card hover effect */
+  .recent-poem-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 18px rgba(0,0,0,0.1);
+  }
+
+  /* Poem Title */
+  .recent-poem-card .poem-title {
+    font-family: 'Playfair Display', serif;
+    color: #4b2aad;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  /* Poem Content */
+  .recent-poem-card .poem-content {
+    white-space: pre-line;
+    margin-bottom: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: #4b3f2f;
+    line-height: 1.6;
+  }
+
+}
