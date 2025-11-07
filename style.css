@@ -2539,3 +2539,11 @@ html {
     font-size: 0.75rem !important; /* force smaller size */
   }
 }
+@media (max-width: 480px) {
+  .poem-content {
+    position: relative;
+    left: -20px !important; /* push fully to the edge */
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+}
