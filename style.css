@@ -2547,3 +2547,24 @@ html {
     padding-left: 0 !important;
   }
 }
+
+@media (max-width: 480px) {
+  .poem-actions {
+    position: relative;
+    left: -20px !important; /* push fully to the left edge */
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .recent-poem-card,
+  .poem-card,
+  .poem-container {
+    width: 100vw !important;        /* full viewport width */
+    margin: 0 !important;           /* remove default margins */
+    border-radius: 0 !important;    /* optional: remove rounded corners */
+    left: 0 !important;             /* ensure no offset */
+    right: 0 !important;
+  }
+}
