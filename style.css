@@ -2568,7 +2568,7 @@ html {
   font-family: 'Lato', sans-serif;
   color: #4b3f2f;
   line-height: 1.7;
-  width: 98%; /* increased width (was 83%) */
+  width: 99%; /* increased width (was 83%) */
   box-sizing: border-box;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   overflow: hidden;
@@ -2596,8 +2596,9 @@ html {
   white-space: pre-line;
   margin-bottom: 10px;
   font-family: 'Inter', sans-serif;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #4b3f2f;
   line-height: 1.6;
+   padding-left: 10px; /* adjust this to move right more or less */
 }
 }
