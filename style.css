@@ -2561,10 +2561,11 @@ html {
   .recent-poem-card,
   .poem-card,
   .poem-container {
-    width: 100vw !important;        /* full viewport width */
-    margin: 0 !important;           /* remove default margins */
-    border-radius: 0 !important;    /* optional: remove rounded corners */
-    left: 0 !important;             /* ensure no offset */
-    right: 0 !important;
+    width: 100%;              /* take full container width */
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box;   /* ensure padding doesn’t shrink width */
   }
 }
