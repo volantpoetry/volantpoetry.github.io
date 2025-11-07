@@ -2492,7 +2492,7 @@ html {
   .username,
   .recent-poems,
   .poems-section {
-    transform: translateX(-17px);
+    transform: translateX(-20px);
   }
 }
 
