@@ -2556,16 +2556,12 @@ html {
     padding-left: 0 !important;
   }
 }
-
 @media (max-width: 480px) {
   .recent-poem-card,
   .poem-card,
   .poem-container {
-    width: 100%;              /* take full container width */
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    box-sizing: border-box;   /* ensure padding doesn’t shrink width */
+    width: 94%;                /* almost full width */
+    margin: 0 auto;            /* center horizontally */
+    box-sizing: border-box;    /* include padding in width calc */
   }
 }
