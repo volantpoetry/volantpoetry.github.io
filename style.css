@@ -2568,7 +2568,7 @@ html {
   font-family: 'Lato', sans-serif;
   color: #4b3f2f;
   line-height: 1.7;
-  width: 96%; /* increased width (was 83%) */
+  width: 98%; /* increased width (was 83%) */
   box-sizing: border-box;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   overflow: hidden;
