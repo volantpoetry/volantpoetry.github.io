@@ -2469,3 +2469,57 @@ html {
     font-size: 1.4rem; /* even smaller on small phones */
   }
 }
+
+
+/* Shift all poem elements slightly left on small screens */
+@media (max-width: 768px) {
+  .poem-card,
+  .poem-title,
+  .poem-content,
+  .poem-author,
+  .username,
+  .recent-poems,
+  .poems-section {
+    transform: translateX(-17px);
+  }
+}
+
+@media (max-width: 480px) {
+  .poem-card,
+  .poem-title,
+  .poem-content,
+  .poem-author,
+  .username,
+  .recent-poems,
+  .poems-section {
+    transform: translateX(-17px);
+  }
+}
+
+
+
+/* Tablet and small screens */
+@media (max-width: 768px) {
+  .recent-poem-title,
+  .author {
+    position: relative;
+    left: -14px;
+  }
+
+  .author {
+    font-size: 0.75rem; /* smaller */
+  }
+}
+
+/* Very small phones */
+@media (max-width: 480px) {
+  .recent-poem-title,
+  .author {
+    position: relative;
+    left: -18px;
+  }
+
+  .author {
+    font-size: 0.75rem; /* even smaller on tiny phones */
+  }
+}
