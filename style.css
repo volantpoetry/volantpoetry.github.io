@@ -2607,20 +2607,14 @@ html {
 
   /* HERO SECTION */
   .hero-right h1 {
-    font-size: 2.2rem;
-    line-height: 1;
-    margin-top: 0.8rem;
     color: #fff;
     white-space: nowrap; /* force text to stay on one line */
-    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  
   }
 
  
   .hero-line-content p {
     color: #f0f0f0;
-    font-size: 0.85rem;
-    line-height: 1.4;
-    margin: 0;
     white-space: nowrap; /* keep tagline on one line too */
   }
 
@@ -2628,9 +2622,7 @@ html {
     background: #6a4bc4;
     font-size: 0.8rem;
     padding: 0.4rem 0.9rem; /* smaller and cute */
-    border-radius: 10px;
-    font-weight: 600;
-    margin-top: 0.6rem;
+
   }
 
   .cta-btn:hover {
