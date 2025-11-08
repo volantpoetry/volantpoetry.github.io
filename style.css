@@ -2038,7 +2038,7 @@ html {
 .community-content h2 {
   font-family: 'Playfair Display', serif;
   font-size: 2rem;
-  background: linear-gradient(90deg, #5a3cb3, #a67c52);
+  background: rgb(132, 124, 114);
   -webkit-background-clip: text; /* For Chrome, Safari, Edge */
   background-clip: text;          /* ✅ Standard version */
   -webkit-text-fill-color: transparent;
@@ -2087,6 +2087,13 @@ html {
   }
 }
 
+@media (max-width: 480px) {
+  .join-btn {
+    padding: 0.6rem 1.2rem; /* smaller padding */
+    font-size: 0.9rem;      /* slightly smaller text */
+    border-radius: 6px;     /* optional: slightly smaller rounding */
+  }
+}
 
 /* --- 🖼️ POETRY GALLERY SECTION --- */
 .gallery-section {
