@@ -2740,3 +2740,36 @@ html {
   top: 69px;            /* moves it down */
   left: 15px;           /* moves it slightly to the right */
 }
+
+
+/* Menu toggle container for small screens */
+@media (max-width: 480px) {
+  #nav-links {
+    position: absolute;      /* overlay over content */
+    top: 60px;               /* below header */
+    left: 0;
+    right: 0;                /* stretch to full width */
+    width: 100%;             /* full width */
+    background-color: #fff;  /* or your menu bg color */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1000;           /* ensure it’s on top */
+    display: none;           /* hidden by default */
+    flex-direction: column;  /* vertical menu */
+    padding: 10px 0;
+  }
+
+  #nav-links.show {
+    display: flex;           /* show when toggle clicked */
+  }
+
+  #logout-btn-mobile {
+    display: block;
+    width: 100%;             /* full width under menu items */
+    padding: 12px 20px;
+    color: red;
+    background: none;
+    border: none;
+    text-align: left;
+    margin-top: 10px;
+  }
+}
