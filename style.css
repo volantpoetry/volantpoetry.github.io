@@ -157,6 +157,7 @@
   background-attachment: scroll; /* ensures it moves normally */
   color: white;
   overflow: hidden;
+      white-space: nowrap; /* keep tagline on one line too */
 }
 
 .hero::before {
@@ -2615,7 +2616,7 @@ html {
  
   .hero-line-content p {
     color: #f0f0f0;
-    white-space: nowrap; /* keep tagline on one line too */
+
   }
 
   .cta-btn {
