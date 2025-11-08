@@ -2602,3 +2602,69 @@ html {
    padding-left: 10px; /* adjust this to move right more or less */
 }
 }
+
+@media (max-width: 480px) {
+
+  /* HERO SECTION */
+  .hero {
+    flex-direction: column; /* stack neatly on small screens */
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1.5rem 1rem;
+    min-height: 55vh;
+    background: url('images/rose - Copy.jpg') center / cover no-repeat;
+    text-align: center;
+  }
+
+  .hero-left img.hero-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  .hero-right h1 {
+    font-size: 2.2rem;
+    line-height: 1;
+    margin-top: 0.8rem;
+    color: #fff;
+    white-space: nowrap; /* force text to stay on one line */
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  }
+
+  .hero-right h1 span {
+    color: #b9a6ff; /* soft lavender accent */
+    text-indent: 0;
+    display: inline; /* inline so “Poetry” stays on same line */
+  }
+
+  .hero-line-content {
+    position: static;
+    transform: none;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .hero-line-content p {
+    color: #f0f0f0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 0;
+    white-space: nowrap; /* keep tagline on one line too */
+  }
+
+  .cta-btn {
+    background: #6a4bc4;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.9rem; /* smaller and cute */
+    border-radius: 10px;
+    font-weight: 600;
+    margin-top: 0.6rem;
+  }
+
+  .cta-btn:hover {
+    background: #5135a2;
+  }
+}
