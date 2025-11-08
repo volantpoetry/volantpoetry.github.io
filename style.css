@@ -760,6 +760,7 @@
   transform: translateY(-1px);
 }
 
+
 .poem-reactions {
   display: flex;
   align-items: center;
@@ -2026,7 +2027,7 @@ html {
   align-items: center;
   gap: 2rem;
   padding: 4rem 10%;
-  background: linear-gradient(120deg, #f7f5ff, #fdf6f0);
+  background: rgb(132, 124, 114);
   border-top: 1px solid #eee;
 }
 
@@ -2038,7 +2039,7 @@ html {
 .community-content h2 {
   font-family: 'Playfair Display', serif;
   font-size: 2rem;
-  background: rgb(132, 124, 114);
+  background: linear-gradient(90deg, #5a3cb3, #a67c52);
   -webkit-background-clip: text; /* For Chrome, Safari, Edge */
   background-clip: text;          /* ✅ Standard version */
   -webkit-text-fill-color: transparent;
@@ -2073,20 +2074,6 @@ html {
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
-@media (max-width: 768px) {
-  .community-section {
-    flex-direction: column;
-    text-align: center;
-    padding: 3rem 1rem;
-  }
-
-  .community-image img {
-    margin-top: 2rem;
-    width: 80%;
-  }
-}
-
 @media (max-width: 480px) {
   .join-btn {
     padding: 0.6rem 1.2rem; /* smaller padding */
@@ -2099,6 +2086,18 @@ html {
     font-size: 0.85rem; /* smaller for mobile */
     line-height: 1.4;   /* slightly tighter */
     margin: 0.8rem 0 1.5rem; /* reduce spacing */
+  }
+}
+@media (max-width: 768px) {
+  .community-section {
+    flex-direction: column;
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+
+  .community-image img {
+    margin-top: 2rem;
+    width: 80%;
   }
 }
 
@@ -2199,6 +2198,7 @@ html {
   font-size: 0.9rem;
   opacity: 0.85;
   font-style: italic;
+  color: black;
 }
 
 /* --- MOBILE RESPONSIVE FIX --- */
@@ -2620,6 +2620,8 @@ html {
 }
 
 @media (max-width: 480px) {
+
+
 
   .cta-btn:hover {
     background: #5135a2;
