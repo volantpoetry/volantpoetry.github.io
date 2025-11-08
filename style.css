@@ -2627,3 +2627,106 @@ html {
     background: #5135a2;
   }
 }
+
+
+
+/* Hide mobile logout on desktop */
+.logout-btn-mobile {
+  display: none;
+  margin-top: 1rem;
+  padding: 8px 16px;
+  background: #ff4b4b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-weight: 600;
+}
+
+/* Show mobile logout in menu on small screens */
+@media (max-width: 768px) {
+  .logout-btn-mobile {
+    display: block;
+  }
+
+  #nav-links.show {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #nav-links a,
+  .logout-btn-mobile {
+    width: 100%;
+    padding: 12px 16px;
+    box-sizing: border-box;
+  }
+}
+
+/* MOBILE LOGOUT FOR SMALLER SCREENS (<=480px) */
+@media (max-width: 480px) {
+  .logout-btn-mobile {
+    display: block;
+    margin-top: 10px;
+    padding: 10px 16px;
+    background: #ff4b4b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  /* Menu container */
+  #nav-links.show {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 90%;       /* almost full width */
+    padding: 10px;    /* small padding around links */
+  }
+
+  #nav-links a,
+  .logout-btn-mobile {
+    width: 100%;
+    padding: 12px 14px;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+  }
+}
+
+
+/* Disable click on mobile username */
+@media (max-width: 768px) {
+  #username-display-sm {
+    pointer-events: none; /* disables clicks */
+    cursor: default;      /* shows normal cursor instead of pointer */
+  }
+}
+
+/* Disable click on mobile username for screens ≤ 480px */
+@media (max-width: 480px) {
+  #username-display-sm {
+    pointer-events: none; /* disables clicks */
+    cursor: default;      /* normal cursor instead of pointer */
+  }
+}
+
+/* Hide mobile logout by default (desktop) */
+#logout-btn-mobile {
+  display: none;
+}
+
+/* Only show in menu toggle on small screens ≤480px */
+@media (max-width: 480px) {
+  #logout-btn-mobile {
+    display: block;
+  }
+}
+
+/* Optional: style it to look like the menu items */

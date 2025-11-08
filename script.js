@@ -503,11 +503,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-
-
 const usernameDisplay = document.getElementById("username-display");
 const usernameDisplaySm = document.getElementById("username-display-sm");
 const logoutBtn = document.getElementById("logout-btn");
+const logoutBtnMobile = document.getElementById("logout-btn-mobile");
 const loginLink = document.getElementById("login-link");
 
 // Handle auth state
@@ -524,15 +523,27 @@ onAuthStateChanged(auth, async (user) => {
 
     // Hide login link
     if (loginLink) loginLink.style.display = "none";
+
+    // Show mobile logout button only for 480px - 768px
+    if (logoutBtnMobile) {
+      logoutBtnMobile.style.display =
+        window.innerWidth <= 768 && window.innerWidth >= 480 ? "block" : "none";
+
+      logoutBtnMobile.onclick = async () => {
+        await signOut(auth);
+        window.location.href = "users-login.html";
+      };
+    }
   } else {
     usernameDisplay.textContent = "";
     usernameDisplaySm.textContent = "";
     if (loginLink) loginLink.style.display = "inline-block";
-    logoutBtn.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "none";
+    if (logoutBtnMobile) logoutBtnMobile.style.display = "none";
   }
 });
 
-// Toggle logout on desktop
+// Desktop username click toggles logout button
 usernameDisplay.addEventListener("click", () => {
   if (window.innerWidth > 768) {
     logoutBtn.style.display =
@@ -540,20 +551,24 @@ usernameDisplay.addEventListener("click", () => {
   }
 });
 
-// Toggle logout on mobile
+// Disable username click on smaller screens
 usernameDisplaySm.addEventListener("click", () => {
-  if (window.innerWidth <= 768) {
-    logoutBtn.style.display =
-      logoutBtn.style.display === "inline-block" ? "none" : "inline-block";
-  }
+  // do nothing
 });
 
-// Logout action
+// Logout action (desktop)
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
   window.location.reload();
 });
 
+// Update mobile logout visibility on resize
+window.addEventListener("resize", () => {
+  if (logoutBtnMobile) {
+    logoutBtnMobile.style.display =
+      window.innerWidth <= 768 && window.innerWidth >= 480 ? "block" : "none";
+  }
+});
 
 
 
