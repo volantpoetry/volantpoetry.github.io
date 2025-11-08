@@ -2094,6 +2094,14 @@ html {
     border-radius: 6px;     /* optional: slightly smaller rounding */
   }
 }
+@media (max-width: 480px) {
+  .community-content p {
+    font-size: 0.85rem; /* smaller for mobile */
+    line-height: 1.4;   /* slightly tighter */
+    margin: 0.8rem 0 1.5rem; /* reduce spacing */
+  }
+}
+
 
 /* --- 🖼️ POETRY GALLERY SECTION --- */
 .gallery-section {
