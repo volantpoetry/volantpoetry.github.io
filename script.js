@@ -503,6 +503,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+
 const usernameDisplay = document.getElementById("username-display");
 const usernameDisplaySm = document.getElementById("username-display-sm");
 const logoutBtn = document.getElementById("logout-btn");
@@ -524,17 +525,19 @@ onAuthStateChanged(auth, async (user) => {
     // Hide login link
     if (loginLink) loginLink.style.display = "none";
 
-    // Show mobile logout button only for 480px - 768px
-    if (logoutBtnMobile) {
-      logoutBtnMobile.style.display =
-        window.innerWidth <= 768 && window.innerWidth >= 480 ? "block" : "none";
+    // Show mobile logout in menu toggle for all non-desktop widths (<768px)
+    updateMobileLogoutVisibility();
 
+    // Mobile logout click
+    if (logoutBtnMobile) {
       logoutBtnMobile.onclick = async () => {
         await signOut(auth);
         window.location.href = "users-login.html";
       };
     }
+
   } else {
+    // Not logged in
     usernameDisplay.textContent = "";
     usernameDisplaySm.textContent = "";
     if (loginLink) loginLink.style.display = "inline-block";
@@ -551,12 +554,7 @@ usernameDisplay.addEventListener("click", () => {
   }
 });
 
-// Disable username click on smaller screens
-usernameDisplaySm.addEventListener("click", () => {
-  // do nothing
-});
-
-// Logout action (desktop)
+// Desktop logout click
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
   window.location.reload();
@@ -564,12 +562,21 @@ logoutBtn.addEventListener("click", async () => {
 
 // Update mobile logout visibility on resize
 window.addEventListener("resize", () => {
-  if (logoutBtnMobile) {
-    logoutBtnMobile.style.display =
-      window.innerWidth <= 768 && window.innerWidth >= 480 ? "block" : "none";
-  }
+  updateMobileLogoutVisibility();
 });
 
+// Function to handle mobile logout visibility
+// Function to handle mobile logout visibility
+function updateMobileLogoutVisibility() {
+  if (!logoutBtnMobile) return;
+
+  if (window.innerWidth <= 768) {
+    // Show mobile logout inside menu toggle
+    logoutBtnMobile.style.display = "inline-block"; // use inline-block
+  } else {
+    logoutBtnMobile.style.display = "none"; // hide on desktop
+  }
+}
 
 
 // --- UNIVERSAL SEARCH FOR ALL TABS (Desktop + Mobile) ---

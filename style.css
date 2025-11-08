@@ -2729,4 +2729,14 @@ html {
   }
 }
 
-/* Optional: style it to look like the menu items */
+#logout-btn-mobile {
+  background: none;
+  border: none;
+  color: red;           /* make it red */
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 10px;
+  position: relative;   /* allows independent movement */
+  top: 69px;            /* moves it down */
+  left: 15px;           /* moves it slightly to the right */
+}
