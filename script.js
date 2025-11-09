@@ -374,32 +374,61 @@ if (e.target.classList.contains("comment-btn")) {
   }
 }
 
+// SHOW COMMENTS
+if (e.target.classList.contains("message-count")) {
+  const card = e.target.closest(".recent-poem-card");
+  const docId = card.dataset.id;
+  const commentList = card.querySelector(".comment-list");
 
-  // SHOW COMMENTS
-  if (e.target.classList.contains("message-count")) {
-    const card = e.target.closest(".recent-poem-card");
-    const docId = card.dataset.id;
-    const commentList = card.querySelector(".comment-list");
-    if (commentList.style.display === "block") { commentList.style.display = "none"; return; }
+  // Toggle visibility
+  const isVisible = commentList.style.display === "block";
+  commentList.style.display = isVisible ? "none" : "block";
+  if (isVisible) return;
 
-    commentList.innerHTML = "";
+  commentList.innerHTML = "<p style='color:#888;'>Loading comments...</p>";
+
+  try {
     const commentsCol = collection(db, "recentPoems", docId, "comments");
-    const commentsSnapshot = await getDocs(query(commentsCol, orderBy("timestamp", "desc")));
-    for (const docSnap of commentsSnapshot.docs) {
-      const c = docSnap.data();
-      let username = "Anonymous";
+    const commentsSnapshot = await getDocs(commentsCol);
+    commentList.innerHTML = ""; // clear loading text
+
+    if (commentsSnapshot.empty) {
+      commentList.innerHTML = "<p style='color:#888;'>No comments yet.</p>";
+      return;
+    }
+
+    // Sort comments by timestamp ascending
+    const comments = commentsSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    comments.sort((a, b) => {
+      const ta = a.timestamp?.toMillis?.() || 0;
+      const tb = b.timestamp?.toMillis?.() || 0;
+      return ta - tb;
+    });
+
+    // Display comments
+    for (const c of comments) {
+      let displayName = c.user || "Anonymous"; // fallback to user field
       if (c.userId) {
-        const userDoc = await getDoc(doc(db, "users", c.userId));
-        if (userDoc.exists()) username = userDoc.data().username || "Anonymous";
+        try {
+          const userDoc = await getDoc(doc(db, "users", c.userId));
+          if (userDoc.exists()) displayName = userDoc.data().username || displayName;
+        } catch {
+          // keep fallback displayName if Firestore fetch fails
+        }
       }
+
       const div = document.createElement("div");
       div.className = "comment";
-      div.style.cssText = "background:#f0f0f0; padding:8px 12px; margin:6px 0; border-radius:6px;";
-      div.textContent = `${username}: ${c.text}`;
+      div.style.cssText = "background:#fff; padding:8px 12px; margin:6px 0; border-radius:6px;";
+      div.textContent = `${displayName}: ${c.text}`;
       commentList.appendChild(div);
     }
-    commentList.style.display = "block";
+  } catch (err) {
+    console.error("Error loading comments:", err);
+    commentList.innerHTML = "<p style='color:red;'>Failed to load comments.</p>";
   }
+}
+
 });
 
 // --- DOM Initialization & Tabs ---

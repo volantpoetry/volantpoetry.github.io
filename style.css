@@ -792,6 +792,7 @@
   color: #e74c3c;
 }
 
+
 @media (max-width: 600px) {
   .poem-actions {
     flex-direction: column;
