@@ -850,7 +850,6 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 // --- Load Recent Poems Links ---
 async function loadRecentPoemsLinks() {
   try {
@@ -862,14 +861,19 @@ async function loadRecentPoemsLinks() {
     const loadMoreBtn = document.getElementById("load-more-poems");
 
     // Map docs to structured poems
-    const poems = await Promise.all(snapshot.docs.map(async docSnap => {
+    const poems = await Promise.all(snapshot.docs.map(async (docSnap) => {
       const data = docSnap.data();
-      let username = "Anonymous";
 
+      // 🔹 Fallback: use submittedBy or author first
+      let displayName = data.submittedBy || data.author || "Anon";
+
+      // 🔹 Fetch username from users collection if userId exists
       if (data.userId) {
         try {
           const userDoc = await getDoc(doc(db, "users", data.userId));
-          if (userDoc.exists()) username = userDoc.data().username || "Anonymous";
+          if (userDoc.exists()) {
+            displayName = userDoc.data().username || displayName;
+          }
         } catch (err) {
           console.warn("Failed to fetch username:", err);
         }
@@ -877,12 +881,13 @@ async function loadRecentPoemsLinks() {
 
       return {
         title: data.title || "Untitled",
-        slug: data.slug || (data.title ? data.title.toLowerCase().replace(/\s+/g, "-") : docSnap.id),
-        username
+        slug: data.slug || 
+              (data.title ? data.title.toLowerCase().replace(/\s+/g, "-") : docSnap.id),
+        username: displayName,
       };
     }));
 
-    // Shuffle poems
+    // Shuffle poems randomly
     for (let i = poems.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [poems[i], poems[j]] = [poems[j], poems[i]];
@@ -891,10 +896,10 @@ async function loadRecentPoemsLinks() {
     const INITIAL_COUNT = 15;
     let displayedCount = 0;
 
+    // --- Function to render a batch of poems ---
     function renderPoems(count) {
       const slice = poems.slice(displayedCount, displayedCount + count);
 
-      // Create or append to <ul>
       let ul = container.querySelector("ul");
       if (!ul) {
         ul = document.createElement("ul");
@@ -904,7 +909,7 @@ async function loadRecentPoemsLinks() {
         container.appendChild(ul);
       }
 
-      slice.forEach(poem => {
+      slice.forEach((poem) => {
         const li = document.createElement("li");
         li.style.marginBottom = "12px";
         li.style.padding = "10px 15px";
@@ -920,8 +925,8 @@ async function loadRecentPoemsLinks() {
         a.textContent = poem.title;
         a.style.color = "#4b2aad";
         a.style.textDecoration = "none";
-        a.onmouseover = () => a.style.textDecoration = "underline";
-        a.onmouseout = () => a.style.textDecoration = "none";
+        a.onmouseover = () => (a.style.textDecoration = "underline");
+        a.onmouseout = () => (a.style.textDecoration = "none");
 
         const byLine = document.createElement("div");
         byLine.textContent = `by ${poem.username}`;
@@ -934,22 +939,20 @@ async function loadRecentPoemsLinks() {
 
       displayedCount += slice.length;
 
-      // Show button only if there are more poems
-      if (displayedCount < poems.length) {
-        loadMoreBtn.style.display = "inline-block";
-      } else {
-        loadMoreBtn.style.display = "none";
-      }
+      loadMoreBtn.style.display = displayedCount < poems.length ? "inline-block" : "none";
     }
 
     // Initially render first 15 poems
     renderPoems(INITIAL_COUNT);
 
-    // Load more on button click (5 at a time)
+    // Load 5 more on button click
     loadMoreBtn.addEventListener("click", () => renderPoems(5));
 
   } catch (err) {
     console.error("Error loading recent poem links:", err);
+    const container = document.getElementById("links-container");
+    if (container)
+      container.innerHTML = `<p>Error loading poems. Please refresh.</p>`;
   }
 }
 

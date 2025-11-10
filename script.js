@@ -1040,7 +1040,6 @@ document.addEventListener("DOMContentLoaded", loadRankingPoemsRich);
 
 
 
-
 // --- Load Ranking Poets ---
 async function loadRankingPoets() {
   try {
@@ -1050,7 +1049,7 @@ async function loadRankingPoets() {
       return;
     }
 
-    const poetsMap = {}; // { userId: { username, poemsWritten, likesReceived, commentsReceived, likesGiven, commentsGiven, score } }
+    const poetsMap = {}; // { uniqueUsername: { username, poemsWritten, likesReceived, commentsReceived, likesGiven, commentsGiven, score } }
 
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -1058,12 +1057,13 @@ async function loadRankingPoets() {
     const poemsSnapshot = await getDocs(collection(db, "recentPoems"));
     const usersSnapshot = await getDocs(collection(db, "users"));
 
-    // Initialize poets
+    // Initialize poets from users collection
     usersSnapshot.forEach(userDoc => {
       const data = userDoc.data();
-      poetsMap[userDoc.id] = {
+      const username = data.username || "Anonymous";
+      poetsMap[username] = {
         userId: userDoc.id,
-        username: data.username || "Anonymous",
+        username,
         poemsWritten: 0,
         likesReceived: 0,
         commentsReceived: 0,
@@ -1076,35 +1076,82 @@ async function loadRankingPoets() {
     // Count activity in the past week
     poemsSnapshot.forEach(docSnap => {
       const data = docSnap.data();
-      const poetId = data.userId;
-      if (!poetId || !poetsMap[poetId]) return;
 
-      const createdAt = data.createdAt ? data.createdAt.toDate() : new Date();
+      // Normalize a unique key using userId or username
+      const username = data.username || data.submittedBy || data.author || "Anonymous";
+
+      if (!poetsMap[username]) {
+        poetsMap[username] = {
+          userId: data.userId || null,
+          username,
+          poemsWritten: 0,
+          likesReceived: 0,
+          commentsReceived: 0,
+          likesGiven: 0,
+          commentsGiven: 0,
+          score: 0
+        };
+      }
+
+      const createdAt = data.timestamp ? data.timestamp.toDate() : new Date();
       if (createdAt >= weekAgo) {
-        poetsMap[poetId].poemsWritten += 1;
-        poetsMap[poetId].likesReceived += data.likes || 0;
-        poetsMap[poetId].commentsReceived += data.comments?.length || 0;
+        poetsMap[username].poemsWritten += 1;
+        poetsMap[username].likesReceived += data.likes || 0;
+        poetsMap[username].commentsReceived += data.comments?.length || 0;
       }
 
       // Likes given
       if (data.likedBy && Array.isArray(data.likedBy)) {
         data.likedBy.forEach(uid => {
-          if (poetsMap[uid]) poetsMap[uid].likesGiven += 1;
+          // Map UID to username if exists
+          const user = usersSnapshot.docs.find(u => u.id === uid);
+          const likerName = user ? user.data().username : "Anonymous";
+
+          if (!poetsMap[likerName]) {
+            poetsMap[likerName] = {
+              userId: uid,
+              username: likerName,
+              poemsWritten: 0,
+              likesReceived: 0,
+              commentsReceived: 0,
+              likesGiven: 0,
+              commentsGiven: 0,
+              score: 0
+            };
+          }
+          poetsMap[likerName].likesGiven += 1;
         });
       }
 
       // Comments given
       if (data.comments && Array.isArray(data.comments)) {
         data.comments.forEach(comment => {
-          const commenterId = comment.userId;
-          if (poetsMap[commenterId]) poetsMap[commenterId].commentsGiven += 1;
+          const commenterName = comment.user || comment.userId || "Anonymous";
+
+          if (!poetsMap[commenterName]) {
+            poetsMap[commenterName] = {
+              userId: comment.userId || null,
+              username: commenterName,
+              poemsWritten: 0,
+              likesReceived: 0,
+              commentsReceived: 0,
+              likesGiven: 0,
+              commentsGiven: 0,
+              score: 0
+            };
+          }
+          poetsMap[commenterName].commentsGiven += 1;
         });
       }
     });
 
     // Calculate score
     Object.values(poetsMap).forEach(poet => {
-      poet.score = poet.poemsWritten * 5 + poet.likesReceived * 3 + poet.commentsReceived * 2 + poet.likesGiven + poet.commentsGiven;
+      poet.score = poet.poemsWritten * 5 +
+                   poet.likesReceived * 3 +
+                   poet.commentsReceived * 2 +
+                   poet.likesGiven +
+                   poet.commentsGiven;
     });
 
     // Sort and take top 20
@@ -1126,7 +1173,7 @@ async function loadRankingPoets() {
       else if (index === 2) badge = "🥉";
 
       poetDiv.innerHTML = `
-        <a href="user-profile.html?uid=${encodeURIComponent(poet.userId)}" class="poet-link">
+        <a href="user-profile.html?uid=${encodeURIComponent(poet.userId || "")}" class="poet-link">
           ${badge} ${poet.username}
         </a>
         <p>
