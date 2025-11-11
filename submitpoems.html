@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit Your Poem | Volant Poetry</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary: #4b2aad;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --radius: 14px;
+}
+
+/* Full gradient background */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #a18cd1 100%);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Logo */
+.logo {
+  position: fixed;
+  top: 15px;
+  left: 20px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+  z-index: 2000;
+}
+
+/* Floating emojis */
+.floating {
+  position: absolute;
+  font-size: 2rem;
+  color: rgba(255,255,255,0.6);
+  animation: float 12s linear infinite alternate;
+  user-select: none;
+}
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(180deg); }
+  100% { transform: translateY(0) rotate(360deg); }
+}
+
+/* Container */
+.container {
+  max-width: 700px;
+  margin: 120px auto 50px auto;
+  padding: 30px;
+  background: rgba(255,255,255,0.85);
+  border-radius: var(--radius);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+/* Field containers */
+.field-container {
+  margin-bottom: 20px;
+}
+
+.field-container label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.field-container input,
+.field-container textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--muted);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+  background: rgba(255,255,255,0.95);
+}
+
+button {
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #37187f;
+}
+
+.success-message {
+  margin-top: 15px;
+  font-weight: 600;
+  color: green;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    margin: 100px 15px 30px 15px;
+    padding: 20px;
+  }
+  .logo {
+    font-size: 1.5rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="logo">Volant Poetry</div>
+
+<!-- Floating emojis -->
+<div class="floating" style="top: 10%; left: 5%;">✒️</div>
+<div class="floating" style="top: 20%; left: 80%;">📜</div>
+<div class="floating" style="top: 70%; left: 20%;">⭐</div>
+<div class="floating" style="top: 50%; left: 50%;">🖋️</div>
+<div class="floating" style="top: 80%; left: 70%;">🌙</div>
+
+<div class="container">
+  <h1 style="text-align:center; margin-bottom:30px;">Submit Your Poem</h1>
+  
+  <form id="recentPoemSubmitForm">
+
+    <div class="field-container">
+      <label for="title">Title</label>
+      <input type="text" id="title" placeholder="Your poem title" required>
+    </div>
+
+    <div class="field-container">
+      <label for="content">Full Content</label>
+      <textarea id="content" rows="6" placeholder="Write your poem..." required></textarea>
+    </div>
+
+    <div class="field-container">
+      <label for="categories">Categories (comma-separated)</label>
+      <input type="text" id="categories" placeholder="Love, Life, Nature..." required>
+    </div>
+
+    <div class="field-container">
+      <label for="author">Author (optional)</label>
+      <input type="text" id="author" placeholder="Your name or pen name">
+    </div>
+
+    <button type="submit">Submit Poem</button>
+    <p class="success-message" id="successMessage"></p>
+
+  </form>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+  getAuth, 
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  serverTimestamp, 
+  doc, 
+  getDoc 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ---------------- FIREBASE CONFIG ----------------
+const firebaseConfig = {
+  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+  authDomain: "silent-depth.firebaseapp.com",
+  projectId: "silent-depth",
+  storageBucket: "silent-depth.appspot.com",
+  messagingSenderId: "78008755450",
+  appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
+
+// ---------------- INIT ----------------
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUsername = "Anonymous"; // Default fallback
+
+// ---------------- AUTH STATE ----------------
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    alert("Please log in to submit a poem!");
+    window.location.href = "users-login.html";
+    return;
+  }
+
+  try {
+    // ✅ Fetch username from Firestore users collection
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists()) {
+      currentUsername = userDoc.data().username || "Anonymous";
+    } else if (user.displayName) {
+      currentUsername = user.displayName;
+    } else {
+      // Fallback if both Firestore & displayName missing
+      currentUsername = user.email.split("@")[0];
+    }
+
+    // Auto-fill the author field (optional)
+    const authorInput = document.getElementById("author");
+    if (authorInput) authorInput.value = currentUsername;
+
+  } catch (err) {
+    console.error("Error fetching username:", err);
+  }
+});
+
+// ---------------- POEM SUBMISSION ----------------
+const form = document.getElementById("recentPoemSubmitForm");
+const successMessage = document.getElementById("successMessage");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const title = document.getElementById("title").value.trim();
+  const content = document.getElementById("content").value.trim();
+  const categoriesInput = document.getElementById("categories").value.trim();
+  let author = document.getElementById("author").value.trim() || currentUsername;
+
+  if (!categoriesInput) {
+    alert("Please provide at least one category.");
+    return;
+  }
+
+  const categories = categoriesInput
+    .split(",")
+    .map(c => c.trim())
+    .filter(c => c);
+
+  try {
+    await addDoc(collection(db, "recentPoems"), {
+      title,
+      content,
+      author,
+      categories,
+      timestamp: serverTimestamp(),
+      submittedBy: currentUsername // ✅ also store username explicitly
+    });
+
+    successMessage.style.color = "green";
+    successMessage.textContent = "🎉 Hurray, poet! Your poem has been submitted ✨";
+    form.reset();
+    document.getElementById("author").value = currentUsername; // Refill username
+
+  } catch (err) {
+    successMessage.style.color = "red";
+    successMessage.textContent = "❌ Error submitting poem: " + err.message;
+  }
+});
+</script>
+
+
+
+</body>
+</html>

@@ -687,11 +687,10 @@ h2 {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { 
   getFirestore, doc, getDoc, setDoc, updateDoc, 
-  collection, query, where, getDocs, onSnapshot 
+  collection, query, where, getDocs, onSnapshot, runTransaction 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-import { runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -707,6 +706,11 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
+// --- Get ?uid from URL ---
+const urlParams = new URLSearchParams(window.location.search);
+const profileUid = urlParams.get("uid"); // null if it's your profile
+
+// --- DOM elements ---
 const usernameSpan = document.getElementById("username");
 const emailSpan = document.getElementById("email");
 const bioSpan = document.getElementById("bio");
@@ -718,8 +722,11 @@ const changePicBtn = document.getElementById("changePicBtn");
 const uploadPic = document.getElementById("uploadPic");
 const poemsContainer = document.getElementById("poemsContainer");
 const topPoemsContainer = document.getElementById("topPoems");
+const rankingContainer = document.getElementById("ranking-poets-container"); // your leaderboard container
 
-let username = "";
+let actorUsername = "";   // logged-in user's username (for actions/notifications)
+let profileUsername = ""; // the username of the profile being viewed (whose poems we show)
+let viewingOwnProfile = false;
 
 // --- Truncate poems by number of lines ---
 function truncatePoemByLines(text, maxLines = 8) {
@@ -735,6 +742,7 @@ function truncatePoemByLines(text, maxLines = 8) {
 // --- Update Achievements & Level (same as before) ---
 function updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   const badgesContainer = document.querySelector(".badges-container");
+  if (!badgesContainer) return;
   badgesContainer.innerHTML = "";
   const badges = [];
   if (poemCount >= 5) badges.push({ src: "images/LOGO R.jpg", title: "Poet Starter" });
@@ -757,9 +765,155 @@ function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalComments
   score += Math.min(totalCommentsMade * 1.66, 25);
   const level = Math.floor(score / 20) + 1;
   const progress = Math.min((score % 20) * 5, 100);
-  document.getElementById("userLevel").textContent = level;
-  document.getElementById("levelProgress").style.width = progress + "%";
+  const levelEl = document.getElementById("userLevel");
+  const levelProgressEl = document.getElementById("levelProgress");
+  if (levelEl) levelEl.textContent = level;
+  if (levelProgressEl) levelProgressEl.style.width = progress + "%";
 }
+
+// ---------------------- Ranking Poets (weekly leaderboard) ----------------------
+async function loadRankingPoets() {
+  try {
+    if (!rankingContainer) return; // no container, skip
+
+    const poetsMap = {}; // { uniqueUsername: { username, poemsWritten, likesReceived, commentsReceived, likesGiven, commentsGiven, score } }
+
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const poemsSnapshot = await getDocs(collection(db, "recentPoems"));
+    const usersSnapshot = await getDocs(collection(db, "users"));
+
+    // Initialize poets from users collection
+    usersSnapshot.forEach(userDoc => {
+      const data = userDoc.data();
+      const username = data.username || "Anonymous";
+      poetsMap[username] = {
+        userId: userDoc.id,
+        username,
+        poemsWritten: 0,
+        likesReceived: 0,
+        commentsReceived: 0,
+        likesGiven: 0,
+        commentsGiven: 0,
+        score: 0
+      };
+    });
+
+    // Count activity in the past week
+    poemsSnapshot.forEach(docSnap => {
+      const data = docSnap.data();
+
+      // Normalize a unique key using submittedBy or username
+      const submittedBy = data.submittedBy || data.username || data.author || "Anonymous";
+
+      if (!poetsMap[submittedBy]) {
+        poetsMap[submittedBy] = {
+          userId: data.userId || null,
+          username: submittedBy,
+          poemsWritten: 0,
+          likesReceived: 0,
+          commentsReceived: 0,
+          likesGiven: 0,
+          commentsGiven: 0,
+          score: 0
+        };
+      }
+
+      const createdAt = data.timestamp ? (data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp)) : new Date();
+      if (createdAt >= weekAgo) {
+        poetsMap[submittedBy].poemsWritten += 1;
+        poetsMap[submittedBy].likesReceived += data.likes || 0;
+        poetsMap[submittedBy].commentsReceived += Array.isArray(data.comments) ? data.comments.length : (data.commentsCount || 0);
+      }
+
+      // Likes given
+      if (data.likedBy && Array.isArray(data.likedBy)) {
+        data.likedBy.forEach(uid => {
+          const user = usersSnapshot.docs.find(u => u.id === uid);
+          const likerName = user ? (user.data().username || "Anonymous") : "Anonymous";
+
+          if (!poetsMap[likerName]) {
+            poetsMap[likerName] = {
+              userId: uid,
+              username: likerName,
+              poemsWritten: 0,
+              likesReceived: 0,
+              commentsReceived: 0,
+              likesGiven: 0,
+              commentsGiven: 0,
+              score: 0
+            };
+          }
+          poetsMap[likerName].likesGiven += 1;
+        });
+      }
+
+      // Comments given
+      if (data.comments && Array.isArray(data.comments)) {
+        data.comments.forEach(comment => {
+          const commenterName = comment.user || comment.userId || "Anonymous";
+
+          if (!poetsMap[commenterName]) {
+            poetsMap[commenterName] = {
+              userId: comment.userId || null,
+              username: commenterName,
+              poemsWritten: 0,
+              likesReceived: 0,
+              commentsReceived: 0,
+              likesGiven: 0,
+              commentsGiven: 0,
+              score: 0
+            };
+          }
+          poetsMap[commenterName].commentsGiven += 1;
+        });
+      }
+    });
+
+    // Calculate score
+    Object.values(poetsMap).forEach(poet => {
+      poet.score = poet.poemsWritten * 5 +
+                   poet.likesReceived * 3 +
+                   poet.commentsReceived * 2 +
+                   poet.likesGiven +
+                   poet.commentsGiven;
+    });
+
+    // Sort and take top 20
+    const sortedPoets = Object.values(poetsMap)
+      .filter(poet => poet.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 20);
+
+    // Render
+    rankingContainer.innerHTML = "";
+    sortedPoets.forEach((poet, index) => {
+      const poetDiv = document.createElement("div");
+      poetDiv.className = "ranking-poet";
+
+      // Top 3 badges
+      let badge = "";
+      if (index === 0) badge = "🏆";
+      else if (index === 1) badge = "🥈";
+      else if (index === 2) badge = "🥉";
+
+      poetDiv.innerHTML = `
+        <a href="user-profile.html?uid=${encodeURIComponent(poet.userId || "")}" class="poet-link">
+          ${badge} ${poet.username}
+        </a>
+        <p style="margin:4px 0; font-size:0.9rem; color:#555;">
+          Activity this week: ${poet.poemsWritten} poems · ${poet.likesReceived} likes · ${poet.commentsReceived} comments
+        </p>
+      `;
+      rankingContainer.appendChild(poetDiv);
+    });
+
+  } catch (err) {
+    console.error("Error loading ranking poets:", err);
+  }
+}
+// -------------------------------------------------------------------------------
 
 // --- Auth handling ---
 onAuthStateChanged(auth, async (user) => {
@@ -768,25 +922,41 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  const userRef = doc(db, "users", user.uid);
-  let userDoc = await getDoc(userRef);
-
-  if (!userDoc.exists()) {
-    await setDoc(userRef, {
+  // Fetch actor (logged-in) user's doc to know their username for actions
+  const actorRef = doc(db, "users", user.uid);
+  let actorDoc = await getDoc(actorRef);
+  if (!actorDoc.exists()) {
+    await setDoc(actorRef, {
       username: user.displayName || user.email.split("@")[0],
       email: user.email,
       bio: "",
       joined: new Date(),
       photoURL: user.photoURL || ""
     });
-    userDoc = await getDoc(userRef);
+    actorDoc = await getDoc(actorRef);
+  }
+  const actorData = actorDoc.data();
+  actorUsername = actorData.username || user.email.split("@")[0];
+
+  // Determine if we are viewing our own or another user’s profile
+  viewingOwnProfile = !profileUid || profileUid === user.uid;
+  const targetUid = viewingOwnProfile ? user.uid : profileUid;
+
+  // Load the target profile's data (profileUsername etc.)
+  const userRef = doc(db, "users", targetUid);
+  const userDoc = await getDoc(userRef);
+
+  if (!userDoc.exists()) {
+    alert("User not found.");
+    window.location.href = "index.html";
+    return;
   }
 
   const data = userDoc.data();
-  username = data.username || user.email.split("@")[0];
+  profileUsername = data.username || data.email.split("@")[0];
 
-  if (usernameSpan) usernameSpan.textContent = username;
-  if (emailSpan) emailSpan.textContent = data.email || user.email;
+  if (usernameSpan) usernameSpan.textContent = profileUsername;
+  if (emailSpan) emailSpan.textContent = data.email || "";
   if (bioSpan) bioSpan.textContent = data.bio || "No bio yet";
   if (joinedSpan) {
     joinedSpan.textContent = data.joined
@@ -797,15 +967,26 @@ onAuthStateChanged(auth, async (user) => {
   }
   if (profilePic) profilePic.src = data.photoURL || "images/default-avatar.png";
 
-  // Fetch user's poems and the single top poem
-  await fetchUserPoems(username);
-  await fetchTopPoems();
+  // If it's someone else's profile → disable editing (but still allow likes/comments on poems)
+  if (!viewingOwnProfile) {
+    if (editBtn) editBtn.style.display = "none";
+    if (changePicBtn) changePicBtn.style.display = "none";
+    if (uploadPic) uploadPic.style.display = "none";
+    document.getElementById("logoutBtn")?.remove();
+  }
+
+  // Fetch profile's poems and top poems
+  await fetchUserPoems(profileUsername);
+  await fetchTopPoems(profileUsername);
+
+  // Load ranking poets (optional leaderboard) — only once after user loads
+  await loadRankingPoets();
 });
 
-// --- Fetch User Poems ---
-async function fetchUserPoems(username) {
+// --- Fetch User Poems (for profile being viewed) ---
+async function fetchUserPoems(usernameToFetch) {
   try {
-    const q = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+    const q = query(collection(db, "recentPoems"), where("submittedBy", "==", usernameToFetch));
     const querySnap = await getDocs(q);
     const container = poemsContainer;
     container.innerHTML = "";
@@ -816,7 +997,7 @@ async function fetchUserPoems(username) {
     let totalCommentsMade = 0;
 
     if (querySnap.empty) {
-      container.innerHTML = `<p class="empty-message">You haven’t submitted any poems yet.</p>`;
+      container.innerHTML = `<p class="empty-message">No poems yet.</p>`;
     } else {
       for (const docSnap of querySnap.docs) {
         const poem = docSnap.data();
@@ -829,15 +1010,27 @@ async function fetchUserPoems(username) {
         const likes = typeof poem.likes === "number" ? poem.likes : 0;
         totalLikes += likes;
 
-        const commentsSnap = await getDocs(collection(db, "recentPoems", docId, "comments"));
-        totalCommentsReceived += commentsSnap.size;
+        // comments subcollection may be present as subcollection
+        let commentsSnapCount = 0;
+        try {
+          const commentsSnap = await getDocs(collection(db, "recentPoems", docId, "comments"));
+          commentsSnapCount = commentsSnap.size;
+        } catch (err) {
+          commentsSnapCount = Array.isArray(poem.comments) ? poem.comments.length : 0;
+        }
+        totalCommentsReceived += commentsSnapCount;
+
+        // Make author clickable — link to their profile page by uid if available, else by submittedBy
+        const authorLink = poem.submittedByUid
+          ? `<a href="user-profile.html?uid=${encodeURIComponent(poem.submittedByUid)}" class="author-link">${poem.author || poem.submittedBy || usernameToFetch}</a>`
+          : `<a href="user-profile.html?user=${encodeURIComponent(poem.submittedBy || usernameToFetch)}" class="author-link">${poem.author || poem.submittedBy || usernameToFetch}</a>`;
 
         card.innerHTML = `
           <div class="poem-display">
             <h3 class="poem-title">${poem.title}</h3>
-            <p class="poem-author">by ${poem.author || username}</p>
+            <p class="poem-author">by ${authorLink}</p>
             <div class="poem-body">
-              <p class="poem-content">${truncated.preview}</p>
+              <p class="poem-content">${truncated.preview.replace(/\n/g, "<br>")}</p>
               ${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}
             </div>
           </div>
@@ -847,7 +1040,7 @@ async function fetchUserPoems(username) {
             <button class="comment-btn">Post</button>
             <button class="like-btn">❤️</button>
             <span class="like-count">${likes}</span>
-            <span class="message-count">💬 ${commentsSnap.size}</span>
+            <span class="message-count">💬 ${commentsSnapCount}</span>
           </div>
           <div class="comment-list" style="display:none;"></div>
         `;
@@ -855,20 +1048,25 @@ async function fetchUserPoems(username) {
       }
     }
 
-    document.getElementById("poemCount").textContent = poemCount;
-    document.getElementById("likeCount").textContent = totalLikes;
-    document.getElementById("commentCount").textContent = totalCommentsReceived;
+    const poemCountEl = document.getElementById("poemCount");
+    const likeCountEl = document.getElementById("likeCount");
+    const commentCountEl = document.getElementById("commentCount");
+    if (poemCountEl) poemCountEl.textContent = poemCount;
+    if (likeCountEl) likeCountEl.textContent = totalLikes;
+    if (commentCountEl) commentCountEl.textContent = totalCommentsReceived;
 
     updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
     updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
   } catch (err) {
     console.error("Error fetching poems:", err);
-    poemsContainer.innerHTML = `<p class='empty-message'>Error loading poems.</p>`;
+    if (poemsContainer) poemsContainer.innerHTML = `<p class='empty-message'>Error loading poems.</p>`;
   }
 }
+
 // 💌 Helper: Add notification for the poem owner
 async function addNotification(poemId, poemOwnerUid, type, fromUser, text = "") {
-  if (!poemOwnerUid || poemOwnerUid === auth.currentUser.uid) return; // don't notify self
+  if (!poemOwnerUid || !auth.currentUser) return; // don't notify if missing
+  if (poemOwnerUid === auth.currentUser.uid) return; // don't notify self
 
   const userRef = doc(db, "users", poemOwnerUid);
   try {
@@ -879,7 +1077,6 @@ async function addNotification(poemId, poemOwnerUid, type, fromUser, text = "") 
       const data = userSnap.data();
       const notifications = Array.isArray(data.notifications) ? data.notifications : [];
 
-      // Add new notification
       notifications.push({
         type,               // "like" or "comment"
         from: fromUser,     // username of the actor
@@ -896,12 +1093,14 @@ async function addNotification(poemId, poemOwnerUid, type, fromUser, text = "") 
   }
 }
 
-// ✅ Listen for clicks within poems container (fixed + merged)
+// ✅ Unified click listener for poems container (likes, comments, read more)
 poemsContainer.addEventListener("click", async (e) => {
   const card = e.target.closest(".recent-poem-card");
   if (!card) return;
   const poemId = card.dataset.id;
   if (!poemId) return;
+
+  const currentUser = auth.currentUser;
 
   // ❤️ LIKE BUTTON — each user can like only once
   if (e.target.classList.contains("like-btn")) {
@@ -909,13 +1108,11 @@ poemsContainer.addEventListener("click", async (e) => {
     const countEl = card.querySelector(".like-count");
     if (!countEl) return;
 
-    const currentUser = auth.currentUser;
     if (!currentUser) {
       alert("Please sign in to like poems.");
       return;
     }
     const userUid = currentUser.uid;
-
     likeBtn.disabled = true;
     const prevText = likeBtn.textContent;
 
@@ -942,12 +1139,11 @@ poemsContainer.addEventListener("click", async (e) => {
       likeBtn.classList.add("liked");
       likeBtn.textContent = "❤️ Liked";
       likeBtn.style.pointerEvents = "none";
-      console.log(`Like successful — poem:${poemId} user:${userUid}`);
 
-      // ✅ Add notification for poem owner
+      // Add notification for poem owner
       const poemSnap = await getDoc(doc(db, "recentPoems", poemId));
       const poemOwner = poemSnap.data().submittedByUid || poemSnap.data().uid;
-      await addNotification(poemId, poemOwner, "like", username);
+      await addNotification(poemId, poemOwner, "like", actorUsername);
 
     } catch (err) {
       console.error("Like transaction failed:", err);
@@ -977,29 +1173,36 @@ poemsContainer.addEventListener("click", async (e) => {
     const commentList = card.querySelector(".comment-list");
     if (!commentList) return;
 
-    if (commentList.style.display === "none" || !commentList.style.display) {
-      commentList.style.display = "block";
+    const showComments = commentList.style.display === "none" || !commentList.style.display;
+    commentList.style.display = showComments ? "block" : "none";
+
+    if (showComments) {
       commentList.innerHTML = `<p>Loading comments...</p>`;
       try {
         const commentsRef = collection(db, "recentPoems", poemId, "comments");
         const snapshot = await getDocs(commentsRef);
-        if (snapshot.empty) {
-          commentList.innerHTML = `<p>No comments yet.</p>`;
-        } else {
-          commentList.innerHTML = "";
-          snapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            const p = document.createElement("p");
-            p.innerHTML = `<strong>${data.user || "Anon"}:</strong> ${data.text}`;
-            commentList.appendChild(p);
-          });
+
+        commentList.innerHTML = snapshot.empty ? `<p>No comments yet.</p>` : "";
+
+        for (const docSnap of snapshot.docs) {
+          const data = docSnap.data();
+          let displayName = data.user || "Anon";
+
+          if (data.userId) {
+            const userDoc = await getDoc(doc(db, "users", data.userId));
+            if (userDoc.exists()) {
+              displayName = userDoc.data().username || displayName;
+            }
+          }
+
+          const p = document.createElement("p");
+          p.innerHTML = `<strong>${displayName}:</strong> ${data.text}`;
+          commentList.appendChild(p);
         }
       } catch (err) {
         console.error("Error loading comments:", err);
         commentList.innerHTML = `<p>Error loading comments.</p>`;
       }
-    } else {
-      commentList.style.display = "none";
     }
   }
 
@@ -1009,31 +1212,37 @@ poemsContainer.addEventListener("click", async (e) => {
     const text = input.value.trim();
     if (!text) return alert("Comment cannot be empty.");
 
+    if (!auth.currentUser) {
+      alert("Please sign in to comment.");
+      return;
+    }
+
     try {
       const commentsRef = collection(db, "recentPoems", poemId, "comments");
       await setDoc(doc(commentsRef), {
         text,
-        user: username,
+        user: actorUsername,
+        userId: auth.currentUser.uid,
         createdAt: new Date(),
       });
 
       input.value = "";
       const messageCount = card.querySelector(".message-count");
       const currentCount =
-        parseInt(messageCount.textContent.replace("💬", "")) || 0;
-      messageCount.textContent = `💬 ${currentCount + 1}`;
+        parseInt((messageCount?.textContent || "").replace("💬", "")) || 0;
+      if (messageCount) messageCount.textContent = `💬 ${currentCount + 1}`;
 
       const commentList = card.querySelector(".comment-list");
       if (commentList.style.display === "block") {
         const p = document.createElement("p");
-        p.innerHTML = `<strong>${username}:</strong> ${text}`;
+        p.innerHTML = `<strong>${actorUsername}:</strong> ${text}`;
         commentList.appendChild(p);
       }
 
-      // ✅ Add notification for poem owner
+      // Add notification for poem owner
       const poemSnap = await getDoc(doc(db, "recentPoems", poemId));
       const poemOwner = poemSnap.data().submittedByUid || poemSnap.data().uid;
-      await addNotification(poemId, poemOwner, "comment", username, text);
+      await addNotification(poemId, poemOwner, "comment", actorUsername, text);
 
     } catch (err) {
       console.error("Error posting comment:", err);
@@ -1047,81 +1256,26 @@ poemsContainer.addEventListener("click", async (e) => {
     const poemContent = poemBody.querySelector(".poem-content");
     const isExpanded = e.target.textContent.includes("Less");
 
+    const poemSnap = await getDoc(doc(db, "recentPoems", poemId));
+
     if (isExpanded) {
-      const poem = await getDoc(doc(db, "recentPoems", poemId));
-      const truncated = truncatePoemByLines(poem.data().content, 8);
+      const truncated = truncatePoemByLines(poemSnap.data().content, 8);
       poemContent.textContent = truncated.preview;
       e.target.textContent = "Show More";
     } else {
-      const poem = await getDoc(doc(db, "recentPoems", poemId));
-      poemContent.textContent = poem.data().content;
+      poemContent.textContent = poemSnap.data().content;
       e.target.textContent = "Show Less";
     }
   }
-}); // ✅ Only one closing }); total
+});
 
-// --- Fetch Top 5 Poems live ---
-// --- Fetch Top 3 Poems for this user only ---
-async function fetchTopPoem() {
+// --- Fetch Top 3 Poems for this profile (clickable + numbering) ---
+async function fetchTopPoems(profileName) {
   try {
-    const q = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
-    const snapshot = await getDocs(q);
-
-    const poems = [];
-
-    // Collect poem data and engagement score (likes + comments)
-    for (const docSnap of snapshot.docs) {
-      const poem = docSnap.data();
-      const commentsSnap = await getDocs(collection(db, "recentPoems", docSnap.id, "comments"));
-      const score = (poem.likes || 0) + commentsSnap.size;
-      poems.push({ ...poem, score, id: docSnap.id });
-    }
-
-    // Sort by engagement score (descending)
-    poems.sort((a, b) => b.score - a.score);
-
-    // Get top 3
-    const top3 = poems.slice(0, 3);
-
-    const topPoemContainer = document.querySelector(".top-poem");
-    topPoemContainer.innerHTML = ""; // clear existing content
-
-    if (top3.length === 0) {
-      topPoemContainer.innerHTML = `<p>No top poems yet. Your most liked poems will appear here!</p>`;
-      return;
-    }
-
-    top3.forEach(poem => {
-      // Create slug: lowercase title, replace spaces and remove special chars
-      const slug = poem.title
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9\-]/g, "");
-
-      const link = document.createElement("a");
-      link.href = `poem.html?slug=${slug}`;
-      link.textContent = poem.title;
-      link.className = "top-poem-link";
-
-      const item = document.createElement("div");
-      item.className = "top-poem-item";
-      item.appendChild(link);
-      topPoemContainer.appendChild(item);
-    });
-
-  } catch (err) {
-    console.error("Error fetching top poems:", err);
-  }
-}
-
-// --- Call after user is loaded ---
-// --- Fetch Top 3 Poem Titles for this user only (clickable + proper numbering) ---
-async function fetchTopPoems() {
-  try {
-    if (!username) return;
+    if (!profileName) return;
 
     const poemsRef = collection(db, "recentPoems");
-    const q = query(poemsRef, where("submittedBy", "==", username));
+    const q = query(poemsRef, where("submittedBy", "==", profileName));
     const snapshot = await getDocs(q);
 
     const topPoemContent = document.getElementById("topPoemContent");
@@ -1139,48 +1293,36 @@ async function fetchTopPoems() {
       if (!poem.title) return;
 
       const likes = poem.likes || 0;
-      const comments = Array.isArray(poem.comments)
-        ? poem.comments.length
-        : 0;
+      const comments = Array.isArray(poem.comments) ? poem.comments.length : 0;
       const engagement = likes + comments;
 
-      // Create slug for linking
-      const slug =
-        poem.slug ||
-        poem.title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
-
+      const slug = poem.slug || poem.title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
       poems.push({ slug, title: poem.title, engagement });
     });
 
-    // Sort and take top 3
     const top3 = poems.sort((a, b) => b.engagement - a.engagement).slice(0, 3);
 
-    // ✅ Number and title appear inline, not stacked
- topPoemContent.innerHTML = top3.length
-  ? top3
-      .map(
-        (p, i) =>
-          `<div style="margin-bottom:4px;">
-            <span style="display:inline;">${i + 1}.</span>
-            <a href="poem.html?slug=${encodeURIComponent(
-              p.slug
-            )}" class="top-poem-link" style="display:inline;">${p.title}</a>
-          </div>`
-      )
-      .join("")
-  : "No top poems yet.";
-
+    topPoemContent.innerHTML = top3.length
+      ? top3
+          .map(
+            (p, i) =>
+              `<div style="margin-bottom:4px;">
+                <span style="display:inline;">${i + 1}.</span>
+                <a href="poem.html?slug=${encodeURIComponent(p.slug)}" class="top-poem-link" style="display:inline;">${p.title}</a>
+              </div>`
+          )
+          .join("")
+      : "No top poems yet.";
   } catch (error) {
     console.error("Error fetching top poems:", error);
   }
 }
 
-
-// --- Logout, Edit, Change Picture (same as before) ---
+// --- Logout handler on DOM ready ---
 document.addEventListener("DOMContentLoaded", () => {
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
+  const logoutBtnLocal = document.getElementById("logoutBtn");
+  if (logoutBtnLocal) {
+    logoutBtnLocal.addEventListener("click", async () => {
       try {
         await signOut(auth);
         window.location.href = "users-login.html";
@@ -1192,80 +1334,90 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-editBtn.addEventListener("click", async () => {
-  const newUsername = prompt("Enter new username:", usernameSpan.textContent);
-  const newBio = prompt("Enter your bio:", bioSpan.textContent);
-  if (!newUsername && !newBio) return;
-  try {
-    const userRef = doc(db, "users", auth.currentUser.uid);
-    await updateDoc(userRef, { username: newUsername || usernameSpan.textContent, bio: newBio || bioSpan.textContent });
-    usernameSpan.textContent = newUsername || usernameSpan.textContent;
-    bioSpan.textContent = newBio || bioSpan.textContent;
-    if (newUsername) fetchUserPoems(newUsername);
-  } catch (err) { console.error(err); }
-});
+// --- Edit Profile (only for your own) ---
+if (editBtn) {
+  editBtn.addEventListener("click", async () => {
+    if (!viewingOwnProfile) return alert("You cannot edit another user's profile.");
+    const newUsername = prompt("Enter new username:", usernameSpan.textContent);
+    const newBio = prompt("Enter your bio:", bioSpan.textContent);
+    if (!newUsername && !newBio) return;
+    try {
+      const userRef = doc(db, "users", auth.currentUser.uid);
+      await updateDoc(userRef, { username: newUsername || usernameSpan.textContent, bio: newBio || bioSpan.textContent });
+      usernameSpan.textContent = newUsername || usernameSpan.textContent;
+      bioSpan.textContent = newBio || bioSpan.textContent;
+      if (newUsername) await fetchUserPoems(newUsername);
+    } catch (err) { console.error(err); }
+  });
+}
 
-// --- Cloudinary Upload ---
-const cloudName = "dzoq4pgjn"; // <-- replace with your real Cloudinary cloud name
-const uploadPreset = "profile_pics"; // must match your Cloudinary preset name
+// --- Cloudinary Upload (only for your own profile) ---
+if (changePicBtn) {
+  const cloudName = "dzoq4pgjn"; // your Cloudinary cloud name
+  const uploadPreset = "profile_pics"; // must match your Cloudinary preset
 
-changePicBtn.addEventListener("click", () => uploadPic.click());
+  changePicBtn.addEventListener("click", () => {
+    if (!viewingOwnProfile) return alert("You cannot change another user's picture.");
+    uploadPic.click();
+  });
 
-uploadPic.addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  uploadPic.addEventListener("change", async (e) => {
+    if (!viewingOwnProfile) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", uploadPreset);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", uploadPreset);
 
-  try {
-    // Upload directly to Cloudinary
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-      method: "POST",
-      body: formData
-    });
-    const data = await res.json();
-const imageUrl = data.secure_url.replace(
-  '/upload/',
-  '/upload/c_fill,g_auto,f_auto,q_auto:best,h_600,w_600,r_max,e_sharpen/'
-);
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      const imageUrl = data.secure_url.replace(
+        '/upload/',
+        '/upload/c_fill,g_auto,f_auto,q_auto:best,h_600,w_600,r_max,e_sharpen/'
+      );
 
+      // Update image instantly
+      if (profilePic) profilePic.src = imageUrl;
 
-    // Update image instantly
-    profilePic.src = imageUrl;
+      // Save to Firestore for persistence
+      const user = auth.currentUser;
+      if (user) {
+        await updateDoc(doc(db, "users", user.uid), { photoURL: imageUrl });
+      }
 
-    // Save to Firestore for persistence
-    const user = auth.currentUser;
-    if (user) {
-      await updateDoc(doc(db, "users", user.uid), { photoURL: imageUrl });
+      console.log("✅ Uploaded to Cloudinary:", imageUrl);
+    } catch (err) {
+      console.error("❌ Cloudinary upload error:", err);
     }
-
-    console.log("✅ Uploaded to Cloudinary:", imageUrl);
-  } catch (err) {
-    console.error("❌ Cloudinary upload error:", err);
-  }
-});
+  });
+}
 
 // --- Profile picture expand on click ---
 const modal = document.getElementById("imageModal");
 const expandedImg = document.getElementById("expandedImg");
 const closeModal = document.querySelector(".close-modal");
 const profilePicEl = document.getElementById("profilePic");
-
-profilePicEl.addEventListener("click", () => {
-  expandedImg.src = profilePicEl.src;
-  modal.style.display = "flex";
-});
-
-closeModal.addEventListener("click", () => {
-  modal.style.display = "none";
-});
-
+if (profilePicEl) {
+  profilePicEl.addEventListener("click", () => {
+    if (expandedImg) expandedImg.src = profilePicEl.src;
+    if (modal) modal.style.display = "flex";
+  });
+}
+if (closeModal) {
+  closeModal.addEventListener("click", () => {
+    if (modal) modal.style.display = "none";
+  });
+}
 window.addEventListener("click", (e) => {
   if (e.target === modal) modal.style.display = "none";
 });
 
+// Menu toggle and nav
 const menuToggle = document.getElementById("menu-toggle");
 const navLinks = document.getElementById("nav-links");
 const closeBtn = document.getElementById("close-btn");
@@ -1275,12 +1427,12 @@ if (menuToggle) {
     navLinks.classList.toggle("show");
   });
 }
-
 if (closeBtn) {
   closeBtn.addEventListener("click", () => {
     navLinks.classList.remove("show");
   });
 }
+
 // --- Logout Nav Button ---
 const logoutBtnNav = document.getElementById("logoutBtnNav");
 if (logoutBtnNav) {
@@ -1310,14 +1462,16 @@ const loadedPoemIds = new Set(
   )
 );
 
-searchInput.addEventListener("input", () => {
-  clearTimeout(debounceTimeout);
-  debounceTimeout = setTimeout(async () => {
-    const filter = searchInput.value.trim().toLowerCase();
-    filterDOM(filter);
-    await searchFirestore(filter);
-  }, 300);
-});
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(async () => {
+      const filter = searchInput.value.trim().toLowerCase();
+      filterDOM(filter);
+      await searchFirestore(filter);
+    }, 300);
+  });
+}
 
 // --- Filter poems already in the DOM ---
 function filterDOM(filter) {
@@ -1327,7 +1481,7 @@ function filterDOM(filter) {
   cards.forEach(card => {
     const title = card.querySelector(".poem-title")?.textContent.toLowerCase() || "";
     const content = card.querySelector(".poem-content")?.textContent.toLowerCase() || "";
-    const categories = card.dataset.categories?.toLowerCase() || "";
+    const categories = (card.dataset.categories || "").toLowerCase();
 
     if (title.includes(filter) || content.includes(filter) || categories.includes(filter)) {
       card.style.display = "block";
@@ -1349,9 +1503,9 @@ async function searchFirestore(filter) {
 
   let anyNewResults = false;
 
-  snapshot.docs.forEach(doc => {
-    const data = doc.data();
-    const id = doc.id;
+  snapshot.docs.forEach(docSnap => {
+    const data = docSnap.data();
+    const id = docSnap.id;
 
     // Skip poems already in the DOM
     if (loadedPoemIds.has(id)) return;
@@ -1375,6 +1529,7 @@ async function searchFirestore(filter) {
 // --- Helper: add new poem card to DOM ---
 function addPoemCardToDOM(id, data) {
   const container = document.getElementById("poemsContainer"); // make sure this ID matches your container
+  if (!container) return;
   const card = document.createElement("div");
   card.className = "recent-poem-card";
   card.dataset.id = id;
@@ -1391,6 +1546,7 @@ function addPoemCardToDOM(id, data) {
 // --- Helper: show/hide empty message ---
 function showEmptyMessage(show) {
   const container = document.getElementById("poemsContainer");
+  if (!container) return;
   let msg = container.querySelector(".empty-message");
   if (show) {
     if (!msg) {
@@ -1403,8 +1559,8 @@ function showEmptyMessage(show) {
     msg.textContent = "";
   }
 }
-
 </script>
+
 
 </body>
 </html>
