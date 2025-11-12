@@ -143,6 +143,13 @@
       border-radius: 8px;
     }
 
+    @media (max-width: 480px) {
+  .nav-links {
+    padding: 75px 0 0 40px; /* reduce left padding */
+    width: 92%; /* optional: slightly smaller than full width */
+  }
+}
+
     /* HERO SECTION */
 .hero {
   display: flex;
