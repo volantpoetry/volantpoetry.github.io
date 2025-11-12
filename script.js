@@ -124,6 +124,7 @@ function truncatePoem(text, lines = 8) {
 }
 
 // --- Recent Poems with Pagination ---
+// --- Recent Poems with Pagination ---
 async function loadRecentPoems(initial = false) {
   if (reachedEnd) return;
   try {
@@ -153,9 +154,26 @@ async function loadRecentPoems(initial = false) {
       const truncated = truncatePoem(poem.content, 8);
       const likes = typeof poem.likes === "number" ? poem.likes : 0;
 
+      // --- Fetch poet username and profile link ---
+      const poetUid = poem.authorId || ""; // <-- Make sure your poems have this field
+      let displayName = poem.author || "Anonymous";
+      let profileLink = "#";
+
+      if (poetUid) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", poetUid));
+          if (userDoc.exists()) {
+            displayName = userDoc.data().username || displayName;
+            profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
+          }
+        } catch (err) {
+          console.warn("Failed to fetch poet username:", err);
+        }
+      }
+
       card.innerHTML = `
         <h3 class="recent-poem-title">${poem.title}</h3>
-        ${poem.author ? `<p class="author">by ${poem.author}</p>` : ""}
+<p class="author">by <a href="${profileLink}" class="author-link">${displayName}</a></p>
         <p class="poem-content">${truncated.preview}</p>
         ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
         ${poem.categories && poem.categories.length > 0
@@ -228,6 +246,7 @@ async function loadRecentPoems(initial = false) {
     console.error("Error fetching recent poems:", err);
   }
 }
+
 
 
 // --- Offline Notice ---
@@ -311,7 +330,10 @@ document.addEventListener("click", async (e) => {
   // COMMENT POST
 // COMMENT POST (with notification)
 if (e.target.classList.contains("comment-btn")) {
-  if (!user) { alert("Please sign in to comment!"); return; }
+  if (!user) { 
+    alert("Please sign in to comment!"); 
+    return; 
+  }
 
   const card = e.target.closest(".recent-poem-card");
   const docId = card.dataset.id;
@@ -321,33 +343,40 @@ if (e.target.classList.contains("comment-btn")) {
   if (!text) return;
 
   try {
-    // 1️⃣ Add comment to Firestore
-    await addDoc(collection(db, "recentPoems", docId, "comments"), {
-      userId: user.uid,
-      text,
-      timestamp: new Date()
-    });
-
-    // 2️⃣ Display comment immediately
+    // 1️⃣ Get current user's display name
     const userDoc = await getDoc(doc(db, "users", user.uid));
     let username = "Anonymous";
     if (userDoc.exists()) username = userDoc.data().username || user.email;
 
+    // 2️⃣ Add comment to Firestore, storing UID and username
+    await addDoc(collection(db, "recentPoems", docId, "comments"), {
+      userId: user.uid,    // UID of commenter
+      username,            // display name of commenter
+      text,
+      timestamp: new Date()
+    });
+
+    // 3️⃣ Display comment immediately with clickable username
     const div = document.createElement("div");
     div.className = "comment";
     div.style.cssText = "background:#f0f0f0; padding:8px 12px; margin:6px 0; border-radius:6px;";
-    div.textContent = `${username}: ${text}`;
+
+    div.innerHTML = `
+      <a href="user-profile.html?uid=${encodeURIComponent(user.uid)}" 
+         class="comment-author-link">${username}</a>: ${text}
+    `;
+
     commentList.prepend(div);
 
     input.value = "";
     input.style.height = "auto";
 
-    // 3️⃣ Update comment count
+    // 4️⃣ Update comment count
     const commentsSnapshot = await getDocs(collection(db, "recentPoems", docId, "comments"));
     const commentCount = commentsSnapshot.size;
     card.querySelector(".message-count").textContent = `💬 ${commentCount}`;
 
-    // 4️⃣ Send notification to poem owner
+    // 5️⃣ Send notification to poem owner (if not the commenter)
     const poemRef = doc(db, "recentPoems", docId);
     const poemSnap = await getDoc(poemRef);
 
@@ -355,7 +384,6 @@ if (e.target.classList.contains("comment-btn")) {
       const poemData = poemSnap.data();
       const poemOwnerId = poemData.userId;
 
-      // Only notify if commenter is not the owner
       if (poemOwnerId && poemOwnerId !== user.uid) {
         await addDoc(collection(db, "notifications"), {
           forUser: poemOwnerId,
@@ -408,10 +436,14 @@ if (e.target.classList.contains("message-count")) {
     // Display comments
     for (const c of comments) {
       let displayName = c.user || "Anonymous"; // fallback to user field
+      let userLink = "#"; // default if no userId
       if (c.userId) {
         try {
           const userDoc = await getDoc(doc(db, "users", c.userId));
-          if (userDoc.exists()) displayName = userDoc.data().username || displayName;
+          if (userDoc.exists()) {
+            displayName = userDoc.data().username || displayName;
+            userLink = `/user-profile.html?uid=${c.userId}`; // link to user profile page
+          }
         } catch {
           // keep fallback displayName if Firestore fetch fails
         }
@@ -420,7 +452,9 @@ if (e.target.classList.contains("message-count")) {
       const div = document.createElement("div");
       div.className = "comment";
       div.style.cssText = "background:#fff; padding:8px 12px; margin:6px 0; border-radius:6px;";
-      div.textContent = `${displayName}: ${c.text}`;
+      
+      div.innerHTML = `<a href="${userLink}" style="font-weight:600; #a67c52; text-decoration:none; margin-right:6px;">${displayName}</a>: ${c.text}`;
+      
       commentList.appendChild(div);
     }
   } catch (err) {

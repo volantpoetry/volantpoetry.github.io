@@ -249,6 +249,7 @@ form.addEventListener("submit", async (e) => {
       title,
       content,
       author,
+        authorId: auth.currentUser.uid, // <-- UID of poet
       categories,
       timestamp: serverTimestamp(),
       submittedBy: currentUsername // ✅ also store username explicitly
