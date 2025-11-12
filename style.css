@@ -2760,7 +2760,6 @@ html {
 /* Full-screen mobile nav for 480px and below */
 @media (max-width: 480px) {
 
-  #nav-links a,
   #logout-btn-mobile {
     width: 100%;
     padding: 15px 20px;
@@ -2915,3 +2914,5 @@ html {
   text-decoration: underline; /* Optional: underline on hover */
   cursor: pointer;
 }
+
+
