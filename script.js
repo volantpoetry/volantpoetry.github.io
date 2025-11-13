@@ -186,7 +186,7 @@ async function loadRecentPoems(initial = false) {
           </div>
           <button class="like-btn">❤️</button>
           <span class="like-count">${likes}</span>
-          <span class="message-count">💬 0</span>
+          <span class="message-count">💬</span>
         </div>
         <div class="comment-list" style="display:none;"></div>
       `;

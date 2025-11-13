@@ -143,13 +143,6 @@
       border-radius: 8px;
     }
 
-    @media (max-width: 480px) {
-  .nav-links {
-    padding: 75px 0 0 40px; /* reduce left padding */
-    width: 92%; /* optional: slightly smaller than full width */
-  }
-}
-
     /* HERO SECTION */
 .hero {
   display: flex;
@@ -2466,69 +2459,6 @@ html {
   }
 }
 
-
-
-/* --- MOBILE NAV PANEL FOR 480px AND BELOW --- */
-@media (max-width: 480px) {
-  .nav-links {
-    position: fixed;          /* overlay the page */
-    top: 0;
-    right: -100%;             /* hidden offscreen initially */
-    width: 92%;               /* menu width */
-    height: 100vh;            /* full viewport height */
-    background-color: #fff;   /* menu background */
-    display: flex;
-    flex-direction: column;
-    padding: 2rem 1.5rem;
-    gap: 1.5rem;
-    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
-    transition: right 0.3s ease-in-out;
-    z-index: 9999;
-  }
-
-  /* --- MENU IS EXPANDED --- */
-  .nav-links.show {
-    right: 0;                 /* slide in from right */
-  }
-
-  /* Close button inside menu */
-  .nav-links .close-btn {
-    align-self: flex-end;
-    font-size: 1.3rem;
-    cursor: pointer;
-    color: var(--primary);
-    margin-bottom: 1.5rem; /* pushes links further down */
-  }
-
-  /* Links styling */
-  .nav-links a {
-    font-size: 1.1rem;
-    font-weight: 500;
-    text-decoration: none;
-    color: #4b2aad;
-    transition: color 0.2s;
-    margin-top: 4.4rem;      /* optional: space from top */
-    margin-bottom: -5rem;    /* optional: spacing between links */
-    padding-left: 1rem;      /* shifts links to the right */
-  }
-
-  .nav-links a:hover {
-    color: #7b4cc2;
-  }
-
-  /* Optional: Add backdrop behind menu */
-  body.menu-open::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.3);
-    z-index: 9998;  /* behind menu but above content */
-  }
-}
-
 #poem-categories-container {
   padding: 2rem 1rem;
   background: none;
@@ -2923,3 +2853,23 @@ html {
 }
 
 
+/* --- NAV CONTAINER FIX FOR SMALL SCREENS --- */
+@media (max-width: 480px) {
+  nav, 
+  .navbar, 
+  .nav-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.8rem 1rem;  /* keep even padding on both sides */
+    margin: 0 auto;        /* ensure it stays centered */
+    box-sizing: border-box;
+  }
+
+  .nav-right {
+    gap: 0.6rem; /* slightly smaller icon spacing */
+  }
+
+  .menu-toggle, .search-toggle {
+    font-size: 1.3rem;
+  }
+}

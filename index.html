@@ -14,7 +14,7 @@
 
   <!-- SEO -->
   <meta name="google-site-verification" content="soceiczGrFx4It0-P5sYiqRyMMycbq-GsCQ3yOh84hY" />
-  <meta name="description" content="A platform for sharing emotions, inspiring creativity, and conveying messages through the beauty of words. From poems to quotes, reflections, and thoughts, it’s designed to give readers a place of comfort, inspiration, and reflection." />
+  <meta name="description" content="A platform for sharing emotions, inspiring creativity, and conveying messages through the beauty of words." />
   <meta name="keywords" content="Volant Poetry, Rence Blunt, poems, quotes, reflections, emotions, creative writing, poetry website, inspirational poetry, Ghana poet, African poetry, literary art" />
 
   <!-- Open Graph -->
@@ -519,41 +519,6 @@
   }
 }
 
-/* MOBILE LOGOUT FOR SMALLER SCREENS (<=480px) */
-@media (max-width: 480px) {
-  .logout-btn-mobile {
-    display: block;
-    margin-top: 10px;
-    padding: 10px 16px;
-    background: #ff4b4b;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    width: 100%;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.9rem;
-  }
-
-  /* Menu container */
-  #nav-links.show {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 90%;       /* almost full width */
-    padding: 10px;    /* small padding around links */
-  }
-
-  #nav-links a,
-  .logout-btn-mobile {
-    width: 100%;
-    padding: 12px 14px;
-    box-sizing: border-box;
-    font-size: 0.9rem;
-  }
-}
-
 
 /* Disable click on mobile username */
 @media (max-width: 768px) {
@@ -593,39 +558,6 @@
   position: relative;   /* allows independent movement */
   top: 69px;            /* moves it down */
   left: 15px;           /* moves it slightly to the right */
-}
-
-
-/* Menu toggle container for small screens */
-@media (max-width: 480px) {
-  #nav-links {
-    position: absolute;      /* overlay over content */
-    top: 60px;               /* below header */
-    left: 0;
-    right: 0;                /* stretch to full width */
-    width: 100%;             /* full width */
-    background-color: #fff;  /* or your menu bg color */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    z-index: 1000;           /* ensure it’s on top */
-    display: none;           /* hidden by default */
-    flex-direction: column;  /* vertical menu */
-    padding: 10px 0;
-  }
-
-  #nav-links.show {
-    display: flex;           /* show when toggle clicked */
-  }
-
-  #logout-btn-mobile {
-    display: block;
-    width: 100%;             /* full width under menu items */
-    padding: 12px 20px;
-    color: red;
-    background: none;
-    border: none;
-    text-align: left;
-    margin-top: 10px;
-  }
 }
 
 </style>
