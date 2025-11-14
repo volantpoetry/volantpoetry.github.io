@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Manage Users</title>
-  <link rel="stylesheet" href="style.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -17,6 +16,8 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
     }
 
     .header h1 {
@@ -25,12 +26,31 @@
       color: #333;
     }
 
+    #user-count {
+      font-size: 1rem;
+      color: #555;
+      margin-left: 10px;
+    }
+
     #users-search {
       padding: 6px 10px;
       font-size: 0.9rem;
       border: 1px solid #ccc;
       border-radius: 4px;
       width: 200px;
+    }
+
+    #delete-selected {
+      padding: 6px 12px;
+      background-color: #ff4d4d;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #delete-selected:hover {
+      background-color: #e60000;
     }
 
     table.users-table {
@@ -57,6 +77,15 @@
       background-color: #f9f9f9;
     }
 
+    table.users-table a {
+      color: #2a7ae2;
+      text-decoration: none;
+    }
+
+    table.users-table a:hover {
+      text-decoration: underline;
+    }
+
     .delete-btn {
       padding: 4px 8px;
       font-size: 0.85rem;
@@ -74,9 +103,8 @@
       .header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
       }
-      #users-search {
+      #users-search, #delete-selected {
         width: 100%;
       }
       table.users-table th,
@@ -86,121 +114,23 @@
       }
     }
   </style>
-
-  <script type="module">
-    // ---------- Firebase setup ----------
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
-      authDomain: "silent-depth.firebaseapp.com",
-      projectId: "silent-depth",
-      storageBucket: "silent-depth.appspot.com",
-      messagingSenderId: "78008755450",
-      appId: "1:78008755450:web:3fd0f0f298a08820935543"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    // ---------- Admin Authentication ----------
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        // Not signed in → redirect to admin login
-        window.location.href = "admin-login.html";
-        return;
-      }
-
-      try {
-        const adminDoc = await getDocs(collection(db, "admins"));
-        const isAdmin = adminDoc.docs.some(docSnap => docSnap.id === user.uid);
-        if (!isAdmin) {
-          alert("Access denied. Admins only.");
-          signOut(auth);
-          window.location.href = "admin-login.html";
-        }
-      } catch (error) {
-        console.error("Error checking admin status:", error);
-        signOut(auth);
-        window.location.href = "admin-login.html";
-      }
-    });
-
-    // ---------- Users Management ----------
-    const tableBody = document.getElementById("users-table-body");
-    const searchInput = document.getElementById("users-search");
-
-    async function loadUsers() {
-      tableBody.innerHTML = "";
-      try {
-        const usersCol = collection(db, "users");
-        const usersSnap = await getDocs(usersCol);
-
-        usersSnap.forEach(docSnap => {
-          const user = docSnap.data();
-          const tr = document.createElement("tr");
-          tr.dataset.docId = docSnap.id;
-
-          tr.innerHTML = `
-            <td>${user.username || "Anonymous"}</td>
-            <td>${user.email || "-"}</td>
-            <td>${user.joinedAt ? new Date(user.joinedAt.seconds * 1000).toLocaleString() : "-"}</td>
-            <td><button class="delete-btn">Delete</button></td>
-          `;
-          tableBody.appendChild(tr);
-        });
-      } catch (err) {
-        console.error("Error fetching users:", err);
-      }
-    }
-
-    async function deleteUser(docId, rowElement) {
-      if (!confirm("Are you sure you want to delete this user?")) return;
-      try {
-        await deleteDoc(doc(db, "users", docId));
-        rowElement.remove();
-        alert("User deleted successfully!");
-      } catch (err) {
-        console.error("Error deleting user:", err);
-        alert("Failed to delete user. Check console.");
-      }
-    }
-
-    searchInput.addEventListener("input", () => {
-      const q = searchInput.value.toLowerCase();
-      tableBody.querySelectorAll("tr").forEach(row => {
-        const match = Array.from(row.querySelectorAll("td")).some(td =>
-          td.textContent.toLowerCase().includes(q)
-        );
-        row.style.display = match ? "" : "none";
-      });
-    });
-
-    tableBody.addEventListener("click", (e) => {
-      if (e.target.classList.contains("delete-btn")) {
-        const row = e.target.closest("tr");
-        const docId = row.dataset.docId;
-        deleteUser(docId, row);
-      }
-    });
-
-    window.addEventListener("DOMContentLoaded", loadUsers);
-  </script>
-    <link rel="icon" type="png" href="images/logo.png" />
+  <link rel="icon" type="png" href="images/logo.png" />
 </head>
 <body>
 
 <div class="header">
-  <h1>Manage Users</h1>
+  <div>
+    <h1>Manage Users</h1>
+    <span id="user-count">0 users</span>
+  </div>
   <input type="text" id="users-search" placeholder="Search users...">
+  <button id="delete-selected">Delete Selected</button>
 </div>
 
 <table class="users-table">
   <thead>
     <tr>
+      <th><input type="checkbox" id="select-all"></th>
       <th>Username</th>
       <th>Email</th>
       <th>Joined At</th>
@@ -211,5 +141,157 @@
     <!-- Users data populated here -->
   </tbody>
 </table>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+  authDomain: "silent-depth.firebaseapp.com",
+  projectId: "silent-depth",
+  storageBucket: "silent-depth.appspot.com",
+  messagingSenderId: "78008755450",
+  appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const tableBody = document.getElementById("users-table-body");
+const searchInput = document.getElementById("users-search");
+const deleteSelectedBtn = document.getElementById("delete-selected");
+const selectAllCheckbox = document.getElementById("select-all");
+const userCountEl = document.getElementById("user-count");
+
+// ---------- Admin Authentication ----------
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "admin-login.html";
+    return;
+  }
+  try {
+    const adminDoc = await getDocs(collection(db, "admins"));
+    const isAdmin = adminDoc.docs.some(docSnap => docSnap.id === user.uid);
+    if (!isAdmin) {
+      alert("Access denied. Admins only.");
+      signOut(auth);
+      window.location.href = "admin-login.html";
+    }
+  } catch (error) {
+    console.error("Error checking admin status:", error);
+    signOut(auth);
+    window.location.href = "admin-login.html";
+  }
+});
+
+// ---------- Update User Count ----------
+function updateUserCount() {
+  const total = tableBody.querySelectorAll("tr").length;
+  userCountEl.textContent = `${total} user${total !== 1 ? 's' : ''}`;
+}
+
+// ---------- Load Users ----------
+async function loadUsers() {
+  tableBody.innerHTML = "";
+  try {
+    const usersCol = collection(db, "users");
+    const usersSnap = await getDocs(usersCol);
+
+    usersSnap.forEach(docSnap => {
+      const user = docSnap.data();
+      const tr = document.createElement("tr");
+      tr.dataset.docId = docSnap.id;
+
+      const joinedDate = user.joined
+        ? new Date(user.joined.seconds * 1000).toLocaleString()
+        : "-";
+
+      tr.innerHTML = `
+        <td><input type="checkbox" class="select-user"></td>
+        <td>${user.username || "Anonymous"}</td>
+        <td>${user.email ? `<a href="mailto:${user.email}">${user.email}</a>` : "-"}</td>
+        <td>${joinedDate}</td>
+        <td><button class="delete-btn">Delete</button></td>
+      `;
+      tableBody.appendChild(tr);
+    });
+
+    updateUserCount();
+  } catch (err) {
+    console.error("Error fetching users:", err);
+  }
+}
+
+// ---------- Delete Single User ----------
+async function deleteUser(docId, rowElement) {
+  if (!confirm("Are you sure you want to delete this user?")) return;
+  try {
+    await deleteDoc(doc(db, "users", docId));
+    rowElement.remove();
+    updateUserCount();
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    alert("Failed to delete user.");
+  }
+}
+
+// ---------- Delete Selected Users ----------
+async function deleteSelectedUsers() {
+  const selectedRows = tableBody.querySelectorAll("input.select-user:checked");
+  if (selectedRows.length === 0) {
+    alert("No users selected!");
+    return;
+  }
+
+  if (!confirm(`Delete ${selectedRows.length} selected user(s)?`)) return;
+
+  for (const checkbox of selectedRows) {
+    const row = checkbox.closest("tr");
+    const docId = row.dataset.docId;
+    try {
+      await deleteDoc(doc(db, "users", docId));
+      row.remove();
+    } catch (err) {
+      console.error("Error deleting user:", err);
+    }
+  }
+
+  updateUserCount();
+}
+
+// ---------- Search ----------
+searchInput.addEventListener("input", () => {
+  const q = searchInput.value.toLowerCase();
+  tableBody.querySelectorAll("tr").forEach(row => {
+    const match = Array.from(row.querySelectorAll("td")).some(td =>
+      td.textContent.toLowerCase().includes(q)
+    );
+    row.style.display = match ? "" : "none";
+  });
+});
+
+// ---------- Table Clicks ----------
+tableBody.addEventListener("click", e => {
+  if (e.target.classList.contains("delete-btn")) {
+    const row = e.target.closest("tr");
+    const docId = row.dataset.docId;
+    deleteUser(docId, row);
+  }
+});
+
+// ---------- Select All ----------
+selectAllCheckbox.addEventListener("change", () => {
+  const checked = selectAllCheckbox.checked;
+  tableBody.querySelectorAll("input.select-user").forEach(cb => cb.checked = checked);
+});
+
+deleteSelectedBtn.addEventListener("click", deleteSelectedUsers);
+
+window.addEventListener("DOMContentLoaded", loadUsers);
+</script>
+
 </body>
 </html>
