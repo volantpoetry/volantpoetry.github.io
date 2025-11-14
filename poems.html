@@ -324,6 +324,59 @@
   font-style: italic;
 }
 
+@media (max-width: 600px) {
+  .nav-logo-img {
+    width: 30px;  /* smaller logo image */
+  }
+
+  .logo-text {
+    font-size: 1rem; /* smaller text */
+  }
+
+  .logo {
+    margin-left: 10px; /* optional, keep it from touching the edge */
+  }
+}
+/* Small screens */
+@media (max-width: 600px) {
+  .page-title {
+    font-size: 1.2rem;  /* smaller font */
+    margin: 10px 0;      /* reduce spacing */
+    text-align: center;  /* optional: center on mobile */
+  }
+}
+/* Mobile Search Centered Outside Nav */
+@media (max-width: 768px) {
+  .search-container {
+    display: none;
+    position: absolute;       /* position relative to viewport */
+    top: 100%;                /* just below nav */
+    left: 50%;                /* center horizontally */
+    transform: translateX(-50%); /* true horizontal center */
+    width: 90%;               /* slightly narrower than full width */
+    max-width: 400px;         /* optional: limit width */
+    padding: 10px 15px;
+    background: #fff;
+    box-sizing: border-box;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border-radius: 8px;       /* rounded container */
+  }
+
+  .search-container.visible {
+    display: block;
+  }
+
+  .search-container input {
+    width: 90%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-size: 14px;
+  }
+}
 
 </style>
 </head>
