@@ -260,3 +260,17 @@
   }
 }
 
+
+@media (max-width: 600px) {
+  .nav-logo-img {
+    width: 30px;  /* smaller logo image */
+  }
+
+  .logo-text {
+    font-size: 1rem; /* smaller text */
+  }
+
+  .logo {
+    margin-left: 10px; /* optional, keep it from touching the edge */
+  }
+}

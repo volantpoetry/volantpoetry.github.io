@@ -178,28 +178,22 @@ body {
 </head>
 <body>
 
- 
 <section class="poem-section">
   <div id="poem-container" class="poem-card">
     <h2 id="poem-title"></h2>
     <p id="poem-content"></p>
-    <span class="author" id="poem-author"></span>
+<span class="author" id="poem-author">
+ <a id="poem-author-link" href="#" class="author-link"></a>
+</span>
 
-    <div class="poem-actions-horizontal" style="display:flex; gap:10px; margin-top:10px;">
-      <button class="like-btn" id="like-btn">❤️ <span id="like-count">0</span></button>
-      <button class="message-count" id="message-count">💬 0</button>
-      <div class="comment-section-inline" style="display:flex; gap:5px; align-items:center;">
-        <input type="text" id="comment-input" placeholder="Write a comment..." />
-        <button class="comment-btn" id="comment-btn">Post</button>
-      </div>
     </div>
 
     <div class="comment-list" id="comment-list" style="margin-top:10px;"></div>
   </div>
 </section>
-
-<script type="module">import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs, doc, getDoc, updateDoc, arrayUnion, increment, enableIndexedDbPersistence, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, arrayUnion, increment, enableIndexedDbPersistence, query, orderBy, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
@@ -237,8 +231,13 @@ onAuthStateChanged(auth, user => {
   if(slug) loadPoem(slug);
 });
 
+// Helper to generate slug from title
+function slugify(text) {
+  return text.toString().toLowerCase().trim().replace(/\s+/g, '-');
+}
+
 async function loadPoem(slug) {
-  const collectionsToCheck = ["recentPoems", "classicPoems"]; // Check both
+  const collectionsToCheck = ["recentPoems", "classicPoems"];
   let found = false;
 
   for (const colName of collectionsToCheck) {
@@ -247,9 +246,10 @@ async function loadPoem(slug) {
 
     if(snapshot.empty) continue;
 
+    // Look for matching slug or fallback to title
     const docSnap = snapshot.docs.find(docSnap => {
       const data = docSnap.data();
-      const docSlug = data.slug || (data.title ? data.title.toLowerCase().replace(/\s+/g, "-") : docSnap.id);
+      const docSlug = data.slug || (data.title ? slugify(data.title) : docSnap.id);
       return docSlug === slug;
     });
 
@@ -262,12 +262,11 @@ async function loadPoem(slug) {
       authorEl.textContent = data.authorName || data.author || data.username || "Anonymous";
       likeCountEl.textContent = typeof data.likes==="number" ? data.likes : 0;
 
-      // Show/hide actions depending on collection
       const actionsEl = document.querySelector(".poem-actions-horizontal");
       if(colName === "classicPoems"){
-        actionsEl.style.display = "none"; // Hide actions for featured poems
+        actionsEl.style.display = "none";
       } else {
-        actionsEl.style.display = "flex"; // Show actions for recent poems
+        actionsEl.style.display = "flex";
       }
 
       if(currentUser && Array.isArray(data.likedBy) && data.likedBy.includes(currentUser.uid)){
@@ -276,8 +275,7 @@ async function loadPoem(slug) {
         likeBtn.classList.remove("liked");
       }
 
-      // Load comments only if recent poem
-      if(colName === "recentPoems") loadCommentsCount(colName, docSnap.id);
+      if(colName === "recentPoems") loadComments();
 
       found = true;
       break;
@@ -288,75 +286,10 @@ async function loadPoem(slug) {
     titleEl.textContent = "Poem not found";
     contentEl.innerHTML = "";
     authorEl.textContent = "";
-    document.querySelector(".poem-actions-horizontal").style.display = "none"; // hide actions if no poem
+    document.querySelector(".poem-actions-horizontal").style.display = "none";
   }
 }
-
-// ---------------- Like ----------------
-likeBtn.addEventListener("click", async () => {
-  if(!currentUser){ alert("Sign in to like!"); return; }
-  if(!poemDocRef) return;
-
-  const docSnap = await getDoc(poemDocRef);
-  const data = docSnap.data();
-  let likes = typeof data.likes==="number"?data.likes:0;
-  const likedBy = Array.isArray(data.likedBy)?data.likedBy:[];
-
-  if(likedBy.includes(currentUser.uid)){
-    await updateDoc(poemDocRef, { likes: increment(-1), likedBy: likedBy.filter(uid=>uid!==currentUser.uid) });
-    likeCountEl.textContent = likes-1;
-    likeBtn.classList.remove("liked");
-  } else {
-    await updateDoc(poemDocRef, { likes: increment(1), likedBy: arrayUnion(currentUser.uid) });
-    likeCountEl.textContent = likes+1;
-    likeBtn.classList.add("liked");
-  }
-});
-
-// ---------------- Comment Post ----------------
-commentBtn.addEventListener("click", async () => {
-  if(!currentUser){ alert("Sign in to comment!"); return; }
-  if(!poemDocRef) return;
-
-  const text = commentInput.value.trim();
-  if(!text) return;
-
-  await addDoc(collection(db, poemDocRef.parent.id, poemDocRef.id, "comments"), {
-    userId: currentUser.uid,
-    text,
-    timestamp: new Date()
-  });
-
-  commentInput.value = "";
-  loadComments();
-});
-
-// ---------------- Load Comments ----------------
-async function loadComments() {
-  if(!poemDocRef) return;
-
-  const q = query(collection(db, poemDocRef.parent.id, poemDocRef.id, "comments"), orderBy("timestamp","desc"));
-  const snapshot = await getDocs(q);
-  messageCountEl.textContent = `💬 ${snapshot.size}`;
-  
-  commentList.innerHTML = "";
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    const div = document.createElement("div");
-    div.style.padding = "6px 0";
-    div.style.borderBottom = "1px solid #eee";
-    div.innerHTML = `<strong>${data.userId}</strong>: ${data.text}`;
-    commentList.appendChild(div);
-  });
-  commentList.style.display = snapshot.size ? "block" : "none";
-}
-
-
-// ---------------- Navbar toggle ----------------
-const toggle = document.getElementById("menu-toggle");
-const navLinks = document.getElementById("nav-links");
-toggle.addEventListener("click", ()=>navLinks.classList.toggle("show"));
-navLinks.querySelectorAll("a").forEach(link => link.addEventListener("click", ()=>navLinks.classList.remove("show")));
 </script>
+
 </body>
 </html>

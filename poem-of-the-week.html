@@ -1,134 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Poem of the Week - Volant Poetry</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="images/logo.png" />
-  <link rel="apple-touch-icon" href="images/logo.png" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-   <!-- Styles & Icons -->
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="images/logo.png" />
-  <link rel="apple-touch-icon" href="images/logo.png" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Poem of the Week - Volant Poetry</title>
+<link rel="stylesheet" href="style.css" />
+<link rel="icon" type="image/png" href="images/logo.png" />
+<link rel="apple-touch-icon" href="images/logo.png" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
-  <style>
-  .weekly-left {
-    max-width: 700px;  /* increase width */
-    width: 100%;        /* responsive width */
-  }
+<style>
+.weekly-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 5%;
+}
 
-  .weekly-card {
-    background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
-    padding: 2rem;
-    border-radius: 14px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    text-align: left;
-  }
+.weekly-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #4b2aad;
+  margin-bottom: 1rem;
+  text-align: center;
+}
 
-  /* On large screens, move content to the right and allow bigger width */
-  @media (min-width: 1200px) {
-    .weekly-container {
-      justify-content: flex-end; 
-      padding-right: 10%;
-    }
-    .weekly-left {
-      max-width: 600px;  /* bigger card on large screens */
-      width: 100%;
-    }
+.weekly-card {
+  background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
+  padding: 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 80%;
+  max-width: 600px;
+  text-align: left;
+}
 
-    .weekly-title {
-      text-align: center; /* title centered on large screens */
-    }
-  }
+#weekly-poem {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  font-style: italic;
+  color: #4b3f2f;
+}
+
+#poem-author {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #B8860B;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.toggle-poem {
+  margin-top: 0.5rem;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4b3f2f;
+  color: #fff;
+  cursor: pointer;
+}
+
+.toggle-poem:hover {
+  background-color: #3a3227;
+}
+
+@media (max-width: 768px) {
+  .weekly-container { padding: 2rem 3%; }
+  .weekly-title { font-size: 1.6rem; }
+  .weekly-card { width: 90%; padding: 1rem; }
+  #weekly-poem { font-size: 1rem; }
+  #poem-author { font-size: 0.9rem; }
+}
 </style>
-
 </head>
 <body>
 
-  <!-- Poem of the Week -->
 <section class="weekly-container">
-  <!-- Title outside the card, centered -->
   <h2 class="weekly-title">Poem of the Week</h2>
 
-  <!-- The card itself -->
   <div class="weekly-card poem-card">
     <div id="poem-title"></div>
-    <p id="weekly-poem"><em>Loading poem...</em></p>
+    <p id="weekly-poem"><em></em></p>
     <span id="poem-author" class="author"></span>
   </div>
 </section>
-
-<style>
-  .weekly-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* center everything horizontally */
-    padding: 4rem 5%;
-  }
-
-  .weekly-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #4b2aad;
-    margin-bottom: 1rem;
-    text-align: center; /* center above the card */
-  }
-
-  .weekly-card {
-    background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
-    padding: 1.5rem;
-    border-radius: 14px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    width: 80%; /* reduced width */
-    max-width: 600px;
-    text-align: left;
-  }
-
-  #weekly-poem {
-    font-size: 1.2rem; /* smaller text */
-    line-height: 1.5;
-    font-style: italic;
-    color: #4b3f2f;
-  }
-
-  #poem-author {
-    font-size: 0.95rem; /* smaller text */
-    font-weight: 500;
-    color: #B8860B;
-    display: block;
-    margin-top: 0.5rem;
-  }
-
-  /* On large screens, slightly shift card to the right */
-
-  @media (max-width: 768px) {
-  .weekly-container {
-    padding: 2rem 3%;
-  }
-
-  .weekly-title {
-    font-size: 1.6rem;
-  }
-
-  .weekly-card {
-    width: 90%; /* a little wider for small screens */
-    padding: 1rem;
-  }
-
-  #weekly-poem {
-    font-size: 1rem;
-  }
-
-  #poem-author {
-    font-size: 0.9rem;
-  }
-}
-
-</style>
-
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -153,17 +109,21 @@ async function loadWeeklyPoem() {
 
     const data = poemSnap.data();
     const title = data.title || "Untitled";
-    const author = data.author || "";
+    const author = data.authorName || data.author || "Anonymous";
+    const authorId = data.authorId || null;
     const content = data.content || "";
     const lines = content.split("\n");
-    const firstPart = lines.slice(0, 8).join("<br>");
-    const restPart = lines.slice(8).join("<br>");
+
+    // Show first 18 lines, toggle rest
+    const firstPart = lines.slice(0, 18).join("<br>");
+    const restPart = lines.slice(18).join("<br>");
 
     const poemContainer = document.getElementById("weekly-poem");
     const poemAuthor = document.getElementById("poem-author");
     const poemTitle = document.getElementById("poem-title");
 
     poemTitle.innerHTML = `<h3 class="poem-title">${title}</h3>`;
+
     const wrapperId = "poem-wrapper";
     poemContainer.innerHTML = `
       <div id="${wrapperId}">
@@ -171,13 +131,19 @@ async function loadWeeklyPoem() {
           <span class="first-lines">${firstPart}</span>
           <span class="more-lines" style="display:none;">${restPart ? "<br>" + restPart : ""}</span>
         </div>
-        ${lines.length > 8 ? '<button class="toggle-poem">Read more</button>' : ""}
+        ${lines.length > 18 ? '<button class="toggle-poem">Read more</button>' : ""}
       </div>
     `;
 
-    poemAuthor.innerHTML = author ? `<hr class="poem-separator"><div class="poem-author">~ ${author}</div>` : "";
+    // Display author in italic; link if profile exists
+    if (authorId) {
+      poemAuthor.innerHTML = `<hr class="poem-separator"><a href="user-profile.html?uid=${encodeURIComponent(authorId)}" style="font-style:italic;">By ${author}</a>`;
+    } else {
+      poemAuthor.innerHTML = `<hr class="poem-separator"><span style="font-style:italic;">By ${author}</span>`;
+    }
 
-    if (lines.length > 8) {
+    // Read more toggle
+    if (lines.length > 18) {
       const wrapper = document.getElementById(wrapperId);
       const toggleBtn = wrapper.querySelector(".toggle-poem");
       const moreLines = wrapper.querySelector(".more-lines");
@@ -192,9 +158,9 @@ async function loadWeeklyPoem() {
   }
 }
 
-// Call the function on page load
 document.addEventListener("DOMContentLoaded", loadWeeklyPoem);
 </script>
+
 
 </body>
 </html>

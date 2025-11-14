@@ -637,7 +637,8 @@ h2 {
     font-size: 0.8rem;      /* smaller text */
     padding: 5px 10px;      /* smaller button */
     width: auto;            /* optional: shrink to content */
-  }
+  
+}
 }
 
 @media (max-width: 600px) {
@@ -681,6 +682,20 @@ h2 {
   border-radius: 6px;
   border: 1px solid #ccc;
   font-size: 0.9rem;
+}
+@media (max-width: 600px) {
+  .profile-info-right,
+  .profile-info-right p,
+  .profile-info-right span,
+  .profile-info-right strong {
+    color: white !important;
+  }
+
+  .profile-buttons .btn {
+    color: white !important;
+    border-color: white !important;
+      background: transparent !important;
+  }
 }
 
 </style>
@@ -1121,6 +1136,13 @@ onAuthStateChanged(auth, async (user) => {
     if (uploadPic) uploadPic.style.display = "none";
     document.getElementById("logoutBtn")?.remove();
   }
+  if (viewingOwnProfile && editBtn) {
+  editBtn.style.display = "inline-block"; // make sure it's visible
+  editBtn.addEventListener("click", () => {
+    window.location.href = "edit-profile.html";
+  });
+}
+
 // If it's someone else's profile → hide Quick Access menu
 if (!viewingOwnProfile) {
   const quickAccessPanel = document.querySelector(".interaction-panel");

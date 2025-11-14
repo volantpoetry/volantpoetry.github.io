@@ -907,10 +907,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-
-
-
-
 // --- ✨ DYNAMIC POETRY GALLERY (3 Recent + 2 Classic | Responsive Display) ---
 async function loadPoetryGallery() {
   const galleryContainer = document.getElementById("poetry-gallery");
@@ -923,60 +919,63 @@ async function loadPoetryGallery() {
   try {
     // --- Fetch recent poems ---
     const recentSnap = await getDocs(collection(db, "recentPoems"));
-    const recentPoems = recentSnap.docs.map(doc => ({
-      id: doc.id,
-      title: doc.data().title || "Untitled",
-      content: doc.data().content || "",
-      author: doc.data().username || "Anonymous",
-      slug:
-        doc.data().slug ||
-        (doc.data().title
-          ? doc.data().title.toLowerCase().replace(/\s+/g, "-")
-          : doc.id),
+    const recentPoems = await Promise.all(recentSnap.docs.map(async (docSnap) => {
+      const data = docSnap.data();
+      let authorName = data.author || "Anonymous";
+
+      // Fetch username from users collection if authorId exists
+      if (data.authorId) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", data.authorId));
+          if (userDoc.exists()) authorName = userDoc.data().username || authorName;
+        } catch (err) {
+          console.warn("Failed to fetch poet username:", err);
+        }
+      }
+
+      return {
+        id: docSnap.id,
+        title: data.title || "Untitled",
+        content: data.content || "",
+        author: authorName,
+        slug: data.slug || (data.title ? data.title.toLowerCase().replace(/\s+/g, "-") : docSnap.id),
+        collection: "recentPoems",
+      };
     }));
 
     // --- Fetch classic/featured poems ---
     const classicSnap = await getDocs(collection(db, "classicPoems"));
-    const classicPoems = classicSnap.docs.map(doc => ({
-      id: doc.id,
-      title: doc.data().title || "Untitled",
-      content: doc.data().content || "",
-      author: doc.data().authorName || doc.data().author || "Anonymous",
-      slug:
-        doc.data().slug ||
-        (doc.data().title
-          ? doc.data().title.toLowerCase().replace(/\s+/g, "-")
-          : doc.id),
-    }));
+    const classicPoems = classicSnap.docs.map((docSnap) => {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        title: data.title || "Untitled",
+        content: data.content || "",
+        author: data.authorName || data.author || "Anonymous",
+        slug: data.slug || (data.title ? data.title.toLowerCase().replace(/\s+/g, "-") : docSnap.id),
+        collection: "classicPoems",
+      };
+    });
 
-    // --- Randomly select ---
+    // --- Randomly select poems ---
     const randomRecent = recentPoems.sort(() => 0.5 - Math.random()).slice(0, 3);
     const randomClassic = classicPoems.sort(() => 0.5 - Math.random()).slice(0, 2);
 
-    // --- Combine all (5 poems total) ---
     const allPoems = [...randomRecent, ...randomClassic];
 
     // --- Build gallery HTML ---
     const html = allPoems.map((p, index) => {
       const lines = (p.content || "").split(/\r?\n/);
       const preview = lines.slice(0, 6).join("\n");
-      const isClassic = index >= 3; // first 3 = recent, last 2 = classic
-      const collectionName = isClassic ? "classicPoems" : "recentPoems";
-      const url = `poem.html?collection=${collectionName}&slug=${encodeURIComponent(
-        p.slug
-      )}`;
-
-      // Add a class to control visibility on desktop
-      const visibilityClass = isClassic ? "classic" : "recent";
+      const url = `poem.html?collection=${p.collection}&slug=${encodeURIComponent(p.slug)}`;
+      const visibilityClass = index >= 3 ? "classic" : "recent";
 
       return `
         <div class="gallery-item fade-in ${visibilityClass}">
           <div class="gallery-overlay">
             <h3>${p.title}</h3>
-            <p style="white-space: pre-line;">${preview}${
-        lines.length > 6 ? "..." : ""
-      }</p>
-            <span class="author">– ${p.author}</span>
+            <p style="white-space: pre-line;">${preview}${lines.length > 6 ? "..." : ""}</p>
+            <span class="author">By ${p.author}</span>
             <a href="${url}" class="view-poem-btn"
               style="text-decoration:none; display:inline-block; margin-top:10px; padding:6px 12px; background:#4b2aad; color:#fff; border-radius:8px;">
               View Poem
@@ -1015,10 +1014,6 @@ function animateGalleryItems() {
 }
 
 document.addEventListener("DOMContentLoaded", loadPoetryGallery);
-
-
-
-
 
 
 // --- Load Ranking Poems Rich Cards ---
