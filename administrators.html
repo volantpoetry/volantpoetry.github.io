@@ -7,10 +7,15 @@
   <style>
     body { font-family: Arial, sans-serif; padding: 40px; background: #f9f9f9; }
     h2 { text-align: center; }
-    table { width: 100%; max-width: 700px; margin: 20px auto; border-collapse: collapse; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    table { width: 100%; max-width: 800px; margin: 20px auto; border-collapse: collapse; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
     th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
     th { background: #2a7ae2; color: #fff; }
     tr:hover { background: #f1f1f1; }
+    button.action-btn { margin-right: 5px; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
+    .promote-btn { background: #5cb85c; color: #fff; }
+    .promote-btn:hover { background: #4cae4c; }
+    .remove-btn { background: #d9534f; color: #fff; }
+    .remove-btn:hover { background: #c9302c; }
     .logout-btn {
       display: block;
       margin: 20px auto;
@@ -24,7 +29,7 @@
     }
     .logout-btn:hover { background: #c9302c; }
   </style>
-    <link rel="icon" type="png" href="images/logo.png" />
+  <link rel="icon" type="png" href="images/logo.png" />
 </head>
 <body>
 
@@ -36,6 +41,7 @@
         <th>Email</th>
         <th>Role</th>
         <th>Created At</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -46,19 +52,12 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { 
-      getAuth, 
-      onAuthStateChanged, 
-      signOut 
+      getAuth, onAuthStateChanged, signOut 
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { 
-      getFirestore, 
-      collection, 
-      getDocs, 
-      doc, 
-      getDoc 
+      getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc 
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // 🔐 Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
       authDomain: "silent-depth.firebaseapp.com",
@@ -76,7 +75,6 @@
     const tableBody = document.querySelector("#admins-table tbody");
     const logoutBtn = document.getElementById("logout");
 
-    // ✅ Secure: Only admins can access this page
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         window.location.href = "admin-login.html";
@@ -93,27 +91,61 @@
         return;
       }
 
-      // ✅ If the user is an admin, fetch all admins
+      const currentUserRole = adminSnap.data().role || "admin";
+
+      // Fetch all admins
       const querySnapshot = await getDocs(collection(db, "admins"));
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
         const tr = document.createElement("tr");
 
         const createdAt = data.createdAt?.toDate 
           ? data.createdAt.toDate().toLocaleString() 
           : "N/A";
 
+        // Actions buttons only for super-admin
+        let actions = "";
+        if (currentUserRole === "super-admin") {
+          actions = `
+            <button class="action-btn promote-btn">Make Super-Admin</button>
+            <button class="action-btn remove-btn">Remove</button>
+          `;
+        }
+
         tr.innerHTML = `
           <td>${data.username || "N/A"}</td>
           <td>${data.email || "N/A"}</td>
           <td>${data.role || "admin"}</td>
           <td>${createdAt}</td>
+          <td>${actions}</td>
         `;
+
         tableBody.appendChild(tr);
+
+        // Add event listeners for actions
+        if (currentUserRole === "super-admin") {
+          const promoteBtn = tr.querySelector(".promote-btn");
+          const removeBtn = tr.querySelector(".remove-btn");
+
+          promoteBtn?.addEventListener("click", async () => {
+            if (confirm(`Promote ${data.username} to super-admin?`)) {
+              await updateDoc(doc(db, "admins", docSnap.id), { role: "super-admin" });
+              alert(`${data.username} is now a super-admin.`);
+              location.reload();
+            }
+          });
+
+          removeBtn?.addEventListener("click", async () => {
+            if (confirm(`Remove ${data.username} from admins?`)) {
+              await deleteDoc(doc(db, "admins", docSnap.id));
+              alert(`${data.username} has been removed.`);
+              tr.remove();
+            }
+          });
+        }
       });
     });
 
-    // ✅ Logout button
     logoutBtn.addEventListener("click", async () => {
       await signOut(auth);
       window.location.href = "admin-login.html";
