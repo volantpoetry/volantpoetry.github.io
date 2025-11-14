@@ -1,138 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Poems | Volant Poetry</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Poems A–Z | Volant Poetry</title>
+  <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="png" href="images/logo.png" />
-  <meta name="description" content="Discover a growing collection of verses — arranged alphabetically so you can wander through words with ease.">
-  <link rel="author" href="https://volantpoetry.github.io/about.html">
-
-  <style>
-/* Entire page background */
-body {
-  background-color: #ffffff; /* page is white */
-  margin: 0;
-  font-family: 'Inter', sans-serif;
+<style>
+/* Individual Poem Card */
+.recent-poem-card {
+  background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
+  color: #4b3f2f;
 }
-
-/* Recent poems section */
-.recent-poems-section {
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  background-color: #ffffff; /* ensures section is white */
-}
-
-    .load-more-btn {
-      display: block;
-      margin: 20px auto;
-      padding: 10px 20px;
-      background: #333;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .load-more-btn:hover { background: #555; }
-    .offline-notice {
-      background: #ffcc00;
-      color: #000;
-      padding: 8px;
-      text-align: center;
-      font-size: 0.9em;
-    }
-
-    /* Navbar search visible on desktop */
-    .search-container {
-      display: flex;
-      align-items: center;
-      margin-left: 20px;
-    }
-    .search-container input {
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      outline: none;
-      width: 200px;
-    }
-    @media (max-width: 768px) {
-      .search-container { display: none; }
-      #search-dropdown { display: block; position: absolute; top: 60px; right: 20px; background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 5px 10px; z-index: 100; }
-    }
-
-    .recent-poems-section {
-  width: 100%;
-  max-width: 100%;
-  padding: 0;
-  margin: 0;
-}
-
+/* Recent Poems Container */
 .recent-poems-container {
-  width: 70%;
-  max-width: 100%;
-  margin: 0 0 0 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers all cards horizontally */
+  gap: 15px;
+  width: 100%;
+  margin: 0 auto;
   padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px; /* space between cards */
   box-sizing: border-box;
-  background-color: #ffffff; /* makes the gaps white */
-  padding: 10px; /* optional, gives a small padding around cards */
 }
 
+/* Individual Poem Card */
+.recent-poem-card {
+  background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
+  padding: 20px 25px;
+  border-radius: var(--radius);
+  border: 1px solid #e0d6b0;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+  font-family: 'Lato', sans-serif;
+  color: #4b3f2f;
+  line-height: 1.7;
+  width: 70%; /* reduced width */
+  max-width: 750px; /* prevent cards from stretching too wide */
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+  box-sizing: border-box;
+}
 
-/* Small screens: slightly shifted right and smaller gaps */
+/* Smaller screen adjustments */
 @media (max-width: 768px) {
-  .recent-poems-container {
-    width: 100%;
-    margin: 0 0 0 5%; /* small shift to the right */
-    gap: 5px; /* reduced gap between cards */
+  .recent-poem-card {
+    width: 90%;
   }
 }
 
-
-
-/* Card hover effect */
-.recent-poem-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 24px rgba(0,0,0,0.12);
- 
-}
-
-/* Poem Title */
-.recent-poem-card .poem-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  margin-bottom: 10px;
-  color: var(--primary);
-}
-
-/* Poem Content */
-.recent-poem-card .poem-content {
-  white-space: pre-line;
-  margin-bottom: 10px;
-}
-
-/* Read More / Show Less */
-.read-more-btn {
-  background: none;
-  border: none;
-  color: #960606;
-  cursor: pointer;
-  padding: 0;
-  font-size: 0.92rem;
-  font-weight: 500;
-  margin-bottom: 10px;
-}
-.read-more-btn:hover { color: #ff0000; }
-
-/* Poem Content */
-.poem-content {
-  font-size: 1rem;    /* larger readable content */
-  line-height: 1.5;     /* better spacing */
-  margin-bottom: 10px;
+@media (max-width: 480px) {
+  .recent-poem-card {
+    width: 95%;
+  }
 }
 
 /* Individual Poem Card */
@@ -141,187 +60,1053 @@ body {
   color: #4b3f2f;
 }
 
+
+/* 📌 Recent Poems Title */
 .recent-poem-title {
-  color: var(--primary); /* or replace with any color you want, e.g., #4b2aad */
-}
-
-/* Show logo on large screens */
-.nav-logo-img {
-  display: inline-block;
-  width: 40px; /* adjust size */
-  height: auto;
-  margin-right: 10px;
-  vertical-align: middle;
-}
-
-/* Ensure logo and text stay inline */
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Logo text styling */
-.logo-text {
-  font-family: 'Playfair Display', serif;
+  margin-bottom: 8px;
+  letter-spacing: 0.4px;
+  text-align: left;       /* align left for list style */
+    font-family: 'Playfair Display', serif;
+  color: var(--primary);
+  font-size: 1.6rem;
   font-weight: 700;
-  font-size: 1.3rem;
-  white-space: nowrap;
+  color: #4b2aad; /* Title color */
+  margin-bottom: 6px;
+}
+/* 📱 Responsive adjustment for small screens */
+@media (max-width: 600px) {
+  .recent-poem-title {
+    font-size: 1.2rem;   /* smaller on phones */
+    text-align: left; /* optional: center align for mobile */
+  }
 }
 
-/* Logo container */
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 4px; /* smaller gap brings image closer to text */
+.poem-separator {
+  width: 400px;
+  height: 2px;
+  background: #555; /* classic dark gray */
+  margin: 15px auto 5px auto; /* centers line above author */
+  border-radius: 2px;
 }
 
-/* Logo image */
-.nav-logo-img {
-  width: 40px;       /* adjust as needed */
-  height: auto;
-  margin: 0;         /* remove any extra margin */
-  vertical-align: middle;
-}
-
-/* Logo text */
-.logo-text {
-  font-family: 'Playfair Display', serif;
-  font-weight: 700;
-  font-size: 1.8rem;
-  white-space: nowrap;
-  line-height: 1;
-}
-
-
+/* Mobile view */
 @media (max-width: 768px) {
-  /* Logo image on small screens */
-  .nav-logo-img {
-    width: 30px;       /* smaller size for mobile */
-    height: auto;
-    margin: 0;
-    vertical-align: middle;
-  }
-
-  /* Logo text on small screens */
-  .logo-text {
-    font-size: 1.9rem;  /* reduce text size for mobile */
-    line-height: 1.1;   /* slightly looser spacing for readability */
-  }
-
-  /* Optional: adjust highlighted part */
-  .logo-highlight {
-    font-size: 1.7rem;  /* slightly bigger than surrounding text */
-    font-weight: 800;
-  }
-
-    /* "Poetry" part (normal text inside .logo-text) */
-  .logo-text:not(.logo-highlight) {
-    font-size: 1.7rem;  /* slightly smaller than "Volant" */
-       line-height: 1.1;   /* slightly looser spacing for readability */
+  .poem-separator {
+    width: 90%;       /* almost full width on mobile */
+    height: 2px;      /* keep thickness */
+    margin: 10px auto; /* slightly smaller margins */
   }
 }
 
-/* SEARCH CONTAINER */
-    .search-container {
-      flex-grow: 1;
-      max-width: 200px;
-    }
-
-    .search-container input {
-      width: 100%;
-      padding: 0.45rem 0.2rem;
-      border: 1px solid #ddd;
-      border-radius: 40px;
-      font-size: 0.95rem;
-      outline: none;
-      transition: 0.3s;
-    }
-
-    .search-container input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(75,42,173,0.1);
-    }
-
-    
-  </style>
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "Volant Poetry",
-    "url": "https://volantpoetry.github.io/index.html",
-    "author": {
-      "@type": "Person",
-      "name": "Rence Blunt",
-      "url": "https://volantpoetry.github.io/about.html",
-      "image": "https://volantpoetry.github.io/images/renceblunt.jpg"
-    }
+@media (max-width: 480px) {
+  .poem-separator {
+    width: 95%;       /* full width on very small screens */
+    margin: 8px auto; /* tighter spacing */
   }
-  </script>
+}
+
+/* 📱 Responsive adjustment for small screens */
+@media (max-width: 600px) {
+  .poem-title {
+    font-size: 1.2rem; /* smaller on phones */
+    text-align: left; /* optional: center on small screens */
+  }
+  }
+
+  /* 📌 Recent Poems Section Title */
+.recent-poems-heading {
+  text-align: center;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #222;
+}
+
+/* 📱 Responsive adjustment */
+@media (max-width: 600px) {
+  .recent-poems-heading {
+    font-size: 1.3rem;  /* shrink on small screens */
+  }
+}
+
+/* --- Page Title --- */
+.page-title {
+  text-align: center;             /* center horizontally */
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;                /* larger text */
+  font-weight: 700;
+  color: black;                 /* rich purple tone to match your theme */
+  margin: 30px 0 20px 0;          /* spacing above and below */
+}
+
+/* Responsive adjustment */
+@media (max-width: 600px) {
+  .page-title {
+    font-size: 1.6rem;
+  }
+}
+
+/* --- Load More Button --- */
+.load-more-btn {
+  display: block;
+  margin: 25px auto 50px auto;    /* centers the button and adds space below */
+  background-color: black;      /* same purple tone */
+  color: #fff;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Smaller screen button tweaks */
+@media (max-width: 480px) {
+  .load-more-btn {
+    font-size: 0.9rem;
+    padding: 8px 18px;
+  }
+}
+
+
+/* Username styles */
+.username-display, .username-sm {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  background: linear-gradient(90deg, #5a3cb3, #a67c52); /* soft purple → muted gold */
+  background-clip: text;              /* ✅ Standard */
+  -webkit-background-clip: text;      /* ✅ For Safari/Chrome */
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.3px;
+  font-style: normal;
+  transition: all 0.3s ease;
+}
+
+.username-display:hover, .username-sm:hover {
+  background: linear-gradient(90deg, #6a45d1, #c49b63); /* slightly brighter on hover */
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* Hide logout by default */
+.logout-btn {
+  display: none;           /* hidden initially */
+  margin-top: 5px;         /* spacing below username */
+  padding: 6px 12px;
+  background: #ff4b4b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Desktop vs Mobile visibility */
+.username-display { display: inline-block; } /* desktop */
+.username-sm { display: none; } /* hidden initially */
+
+#logoutBtn { display: none; } /* hide logout initially */
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .username-display { display: none; } /* hide desktop username */
+  .username-sm { display: inline-block; margin-right: 8px; } /* show mobile username */
+}
+
+
+/* --- Mobile Username & Logout Inline --- */
+@media (max-width: 768px) {
+  .nav-right {
+    display: flex;
+    align-items: center; /* vertical center */
+    gap: 8px;            /* spacing between username & logout */
+  }
+
+  #username-display-sm {
+    display: inline-block;
+    font-size: 1.2rem;   /* slightly bigger font */
+    font-weight: 600;
+    color: #4b2aad;
+    cursor: pointer;
+    margin-right: 0;      /* spacing handled by gap */
+  }
+
+  #logout-btn {
+    display: none;       /* hide initially */
+    font-size: 0.5rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    background: #ff4b4b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    width: 6px;            /* force smaller width */
+    
+  }
+
+  #logout-btn:hover {
+    background: #e03b3b;
+      width: 40px;           /* smaller hover width */
+  padding: 6px 8px;      /* adjust padding to match smaller width */
+  }
+}
+
+/* --- MOBILE ICONS (Search before Menu) --- */
+@media (max-width: 768px) {
+  .mobile-icons {
+    display: flex;
+    flex-direction: row;       /* horizontal layout */
+    align-items: center;
+    justify-content: flex-end; /* push them to the right side */
+    gap: 12px;                 /* space between icons */
+  }
+
+  .search-toggle, .menu-toggle {
+    display: inline-block;
+    font-size: 1.4rem;
+    color: var(--primary, #4b2aad);
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  .search-toggle:hover,
+  .menu-toggle:hover {
+    color: #6a45d1;
+  }
+}
+/* --- Desktop Search Container --- */
+.desktop-search-container {
+  display: none;             /* hidden by default */
+  margin-left: 100px;         /* push a bit to the right */
+  flex: 1;                   /* expand between logo and nav-links */
+  position: relative;
+}
+
+/* Input styling */
+.desktop-search-container input {
+  width: 85%;
+  max-width: 250px;           /* slightly wider */
+  padding: 8px 14px;          /* more comfortable padding */
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 20px;        /* rounded pill shape */
+  outline: none;
+  font-family: 'Lato', sans-serif;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* Hover / Focus effect */
+.desktop-search-container input:focus {
+  border-color: #4b2aad;
+  box-shadow: 0 4px 12px rgba(75,42,173,0.25);
+}
+
+/* Display on desktop only */
+@media (min-width: 769px) {
+  .desktop-search-container {
+    display: block;
+  }
+}
+
+/* Optional: placeholder styling */
+.desktop-search-container input::placeholder {
+  color: #888;
+  font-style: italic;
+}
+
+
+</style>
 </head>
 <body>
 
-<!-- Navbar -->
-<header>
+ <header>
   <nav>
     <div class="logo">
-      <img src="images/logo.png" alt="Volant Poetry Small Logo" class="nav-logo-img">
+      <img src="images/logo.png" alt="Volant Poetry Logo" class="nav-logo-img">
       <span class="logo-text">
         <span class="logo-highlight">Volant</span> Poetry
       </span>
     </div>
+   <!-- Desktop Search: visible only on desktop -->
+    <div class="desktop-search-container">
+      <input id="desktop-search-input" type="text" placeholder="Search poems, authors..." />
+    </div>
 
-    <!-- Desktop search -->
-  <div class="search-container">
+ <div class="search-container">
   <input id="global-search-input" type="text" placeholder="Search poems, authors..." />
 </div>
 
     <div class="nav-links" id="nav-links">
       <span class="close-btn" id="close-btn">✕</span>
       <a href="index.html">Home</a>
-      <a href="poems.html">Poems</a>
-      <a href="authors.html">Authors</a>
       <a href="about.html">About</a>
-      <a href="submit.html">Submit</a>
-    </div>
+       <a href="contact.html">Contact Us</a> <!-- ✅ New link -->
+        <a href="user-profile.html">My Profile</a>
+          <a href="all-categories.html" class="mobile-only">Categories</a> <!-- Mobile only -->
 
-    <div class="nav-right">
+        </div>
+<div class="nav-right">
+  <!-- Desktop username display -->
+
+  <!-- Search toggle -->
+<!-- Mobile Icons -->
+    <div class="mobile-icons">
       <div class="search-toggle" id="search-toggle">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-          <path d="M10.5 3a7.5 7.5 0 015.9 12.09l3.7 3.7a1 1 0 01-1.42 1.42l-3.7-3.7A7.5 7.5 0 1110.5 3z"/>
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="20" fill="none"
+          stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+          stroke-linejoin="round" viewBox="0 0 24 24">
+          <path
+            d="M10.5 3a7.5 7.5 0 015.9 12.09l3.7 3.7a1 1 0 01-1.42 1.42l-3.7-3.7A7.5 7.5 0 1110.5 3z" />
         </svg>
       </div>
       <div class="menu-toggle" id="menu-toggle">☰</div>
     </div>
+  </div>
+</nav>
 
-    <!-- Mobile search dropdown -->
-    <div class="search-dropdown" id="search-dropdown">
-      <input type="text" placeholder="Search poems, authors..." />
-    </div>
   </nav>
 </header>
 
-<!-- Recent Poems Section -->
-<section class="recent-poems-section" style="position: relative;">
-  <div class="poem-header">
 
-  </div>
+  <main>
+    <h1 class="page-title">Explore all Poems submitted from A–Z </h1>
+ <div id="recent-poems-container" class="recent-poems-container"></div>
+    <button id="load-more-poems" class="load-more-btn">Load More</button>
+  </main>
 
-  <p class="poem-subtitle">
-    Discover a growing collection of verses — arranged alphabetically so you can wander through words with ease.
-  </p>
+  <script type="module">
+    import { 
+      initializeApp 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-  <div id="recent-poems-container" class="recent-poems-container">
-    <p>Loading recent poems...</p>
-  </div>
+    import { 
+      getFirestore, collection, query, orderBy, limit, getDocs, doc, getDoc, 
+      enableIndexedDbPersistence, startAfter, updateDoc, increment, addDoc, arrayUnion 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <button id="load-more-poems" class="load-more-btn" style="display:none;">Load More</button>
-  <p id="last-synced" style="text-align:center; font-size:0.9em; color:gray;"></p>
-</section>
+    import { 
+      getAuth, onAuthStateChanged, signOut 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // --- Firebase config ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+      authDomain: "silent-depth.firebaseapp.com",
+      projectId: "silent-depth",
+      storageBucket: "silent-depth.appspot.com",
+      messagingSenderId: "78008755450",
+      appId: "1:78008755450:web:3fd0f0f298a08820935543"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    let lastVisible = null;
+    let reachedEnd = false;
+
+    // --- Truncate helper ---
+    function truncatePoem(content, lines = 8) {
+      const words = content?.split(" ") || [];
+      if (words.length <= lines * 10) return { preview: content, full: content, truncated: false };
+      const preview = words.slice(0, lines * 10).join(" ") + "...";
+      return { preview, full: content, truncated: true };
+    }
+
+    // --- A–Z Poems with Pagination (based on your recent poems function) ---
+    async function loadRecentPoems(initial = false) {
+      if (reachedEnd) return;
+      try {
+        const colRef = collection(db, "recentPoems");
+        let q = query(colRef, orderBy("title"), limit(10)); // ORDER BY TITLE (A–Z)
+        if (lastVisible && !initial)
+          q = query(colRef, orderBy("title"), startAfter(lastVisible), limit(10));
+
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) {
+          const loadMoreBtn = document.getElementById("load-more-poems");
+          if (loadMoreBtn) loadMoreBtn.style.display = "none";
+          reachedEnd = true;
+          return;
+        }
+
+        const container = document.getElementById("recent-poems-container");
+        if (initial) container.innerHTML = "";
+
+        snapshot.docs.forEach(async (docSnap) => {
+          const poem = docSnap.data();
+          const docId = docSnap.id;
+          const card = document.createElement("div");
+          card.className = "recent-poem-card";
+          card.dataset.id = docId;
+
+          const truncated = truncatePoem(poem.content, 8);
+          const likes = typeof poem.likes === "number" ? poem.likes : 0;
+
+          const poetUid = poem.authorId || "";
+          let displayName = poem.author || "Anonymous";
+          let profileLink = "#";
+
+          if (poetUid) {
+            try {
+              const userDoc = await getDoc(doc(db, "users", poetUid));
+              if (userDoc.exists()) {
+                displayName = userDoc.data().username || displayName;
+                profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
+              }
+            } catch (err) {
+              console.warn("Failed to fetch poet username:", err);
+            }
+          }
+
+          card.innerHTML = `
+            <h3 class="recent-poem-title">${poem.title}</h3>
+            <p class="author">by <a href="${profileLink}" class="author-link">${displayName}</a></p>
+            <p class="poem-content">${truncated.preview}</p>
+            ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
+            ${poem.categories && poem.categories.length > 0
+              ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>`
+              : ""}
+            <div class="poem-actions">
+              <div class="comment-section">
+                <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+                <button class="comment-btn">Post</button>
+              </div>
+              <button class="like-btn">❤️</button>
+              <span class="like-count">${likes}</span>
+              <span class="message-count">💬 0</span>
+            </div>
+            <div class="comment-list" style="display:none;"></div>
+          `;
+
+          container.appendChild(card);
+
+          // Count comments
+          const commentsCol = collection(db, "recentPoems", docId, "comments");
+          const commentsSnapshot = await getDocs(commentsCol);
+          card.querySelector(".message-count").textContent = `💬 ${commentsSnapshot.size}`;
+
+          // Read more toggle
+          if (truncated.truncated) {
+            const btn = card.querySelector(".read-more-btn");
+            const p = card.querySelector(".poem-content");
+            btn.addEventListener("click", () => {
+              if (btn.textContent === "Read More") {
+                p.textContent = truncated.full;
+                btn.textContent = "Show Less";
+              } else {
+                p.textContent = truncated.preview;
+                btn.textContent = "Read More";
+              }
+            });
+          }
+
+          // Auto-resize textarea
+          const textarea = card.querySelector(".comment-input");
+          textarea.addEventListener("input", () => {
+            textarea.style.height = "auto";
+            textarea.style.height = textarea.scrollHeight + "px";
+          });
+        });
+
+        lastVisible = snapshot.docs[snapshot.docs.length - 1];
+        if (snapshot.size < 10) {
+          const loadMoreBtn = document.getElementById("load-more-poems");
+          if (loadMoreBtn) loadMoreBtn.style.display = "none";
+          reachedEnd = true;
+        }
+      } catch (err) {
+        console.error("Error fetching poems A–Z:", err);
+      }
+    }
+
+    // --- Event listeners and handlers (identical to your recent poems logic) ---
+    window.addEventListener("DOMContentLoaded", () => {
+      setupOfflineNotice();
+      loadRecentPoems(true);
+    });
+
+    document.getElementById("load-more-poems").addEventListener("click", () => loadRecentPoems(false));
+
+    // --- Offline Notice ---
+    function setupOfflineNotice() {
+      window.addEventListener("offline", () => {
+        const notice = document.createElement("div");
+        notice.textContent = "⚠ You are offline. Viewing cached content.";
+        notice.className = "offline-notice";
+        document.body.prepend(notice);
+      });
+      window.addEventListener("online", () => {
+        document.querySelectorAll(".offline-notice").forEach(el => el.remove());
+      });
+    }
+
+    // --- Auth Navbar & Like/Comment/Reply Handlers (unchanged from your provided code) ---
+    onAuthStateChanged(auth, async (user) => {
+      const profileLink = document.getElementById("profile-link");
+      let userDisplay = document.getElementById("user-display");
+      if (!userDisplay) {
+        userDisplay = document.createElement("div");
+        userDisplay.id = "user-display";
+        userDisplay.className = "user-dropdown";
+        if (profileLink) {
+          profileLink.parentNode.insertBefore(userDisplay, profileLink);
+          profileLink.style.display = "none";
+        }
+      }
+
+      if (user) {
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
+        let username = user.email;
+        if (docSnap.exists()) username = docSnap.data().username || user.email;
+        userDisplay.innerHTML = `
+          <span class="username">${username}</span>
+          <div class="dropdown-content">
+            <a href="#" id="logout-link">Logout</a>
+          </div>
+        `;
+        document.getElementById("logout-link").onclick = async (e) => {
+          e.preventDefault();
+          await signOut(auth);
+          window.location.reload();
+        };
+      } else {
+        if (profileLink) profileLink.style.display = "inline-block";
+        if (userDisplay) userDisplay.remove();
+      }
+    });
+
+// --- Like / Comment Handler ---
+document.addEventListener("click", async (e) => {
+  const user = auth.currentUser;
+
+  // LIKE / UNLIKE
+  if (e.target.classList.contains("like-btn")) {
+    if (!user) { alert("Please sign in to like poems!"); return; }
+    const card = e.target.closest(".recent-poem-card");
+    const docId = card.dataset.id;
+    const countSpan = card.querySelector(".like-count");
+    const poemRef = doc(db, "recentPoems", docId);
+
+    try {
+      const docSnap = await getDoc(poemRef);
+      if (!docSnap.exists()) return;
+      const data = docSnap.data();
+      const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
+      let likes = typeof data.likes === "number" ? data.likes : 0;
+
+      if (likedBy.includes(user.uid)) {
+        if (likes > 0) await updateDoc(poemRef, { likes: increment(-1), likedBy: likedBy.filter(uid => uid !== user.uid) });
+        countSpan.textContent = likes - 1;
+        e.target.classList.remove("liked");
+      } else {
+        await updateDoc(poemRef, { likes: increment(1), likedBy: arrayUnion(user.uid) });
+        countSpan.textContent = likes + 1;
+        e.target.classList.add("liked");
+      }
+    } catch (err) { console.error("Error updating like:", err); }
+  }
+
+  // COMMENT POST
+// COMMENT POST (with notification)
+if (e.target.classList.contains("comment-btn")) {
+  if (!user) { 
+    alert("Please sign in to comment!"); 
+    return; 
+  }
+
+  const card = e.target.closest(".recent-poem-card");
+  const docId = card.dataset.id;
+  const input = card.querySelector(".comment-input");
+  const commentList = card.querySelector(".comment-list");
+  const text = input.value.trim();
+  if (!text) return;
+
+  try {
+    // 1️⃣ Get current user's display name
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    let username = "Anonymous";
+    if (userDoc.exists()) username = userDoc.data().username || user.email;
+
+    // 2️⃣ Add comment to Firestore, storing UID and username
+    await addDoc(collection(db, "recentPoems", docId, "comments"), {
+      userId: user.uid,    // UID of commenter
+      username,            // display name of commenter
+      text,
+      timestamp: new Date()
+    });
+
+    // 3️⃣ Display comment immediately with clickable username
+    const div = document.createElement("div");
+    div.className = "comment";
+    div.style.cssText = "background:#f0f0f0; padding:8px 12px; margin:6px 0; border-radius:6px;";
+
+    div.innerHTML = `
+      <a href="user-profile.html?uid=${encodeURIComponent(user.uid)}" 
+         class="comment-author-link">${username}</a>: ${text}
+    `;
+
+    commentList.prepend(div);
+
+    input.value = "";
+    input.style.height = "auto";
+
+    // 4️⃣ Update comment count
+    const commentsSnapshot = await getDocs(collection(db, "recentPoems", docId, "comments"));
+    const commentCount = commentsSnapshot.size;
+    card.querySelector(".message-count").textContent = `💬 ${commentCount}`;
+
+    // 5️⃣ Send notification to poem owner (if not the commenter)
+    const poemRef = doc(db, "recentPoems", docId);
+    const poemSnap = await getDoc(poemRef);
+
+    if (poemSnap.exists()) {
+      const poemData = poemSnap.data();
+      const poemOwnerId = poemData.userId;
+
+      if (poemOwnerId && poemOwnerId !== user.uid) {
+        await addDoc(collection(db, "notifications"), {
+          forUser: poemOwnerId,
+          fromUser: user.uid,
+          type: "comment",
+          poemId: docId,
+          text: text,
+          timestamp: new Date(),
+          read: false
+        });
+      }
+    }
+
+  } catch (err) {
+    console.error("Error posting comment:", err);
+  }
+}
+// SHOW COMMENTS
+if (e.target.classList.contains("message-count")) {
+  const card = e.target.closest(".recent-poem-card");
+  const docId = card.dataset.id;
+  const commentList = card.querySelector(".comment-list");
+
+  // Toggle visibility
+  const isVisible = commentList.style.display === "block";
+  commentList.style.display = isVisible ? "none" : "block";
+  if (isVisible) return;
+
+  commentList.innerHTML = "<p style='color:#888;'>Loading comments...</p>";
+
+  try {
+    const commentsCol = collection(db, "recentPoems", docId, "comments");
+    const commentsSnapshot = await getDocs(commentsCol);
+    commentList.innerHTML = ""; // clear loading text
+
+    if (commentsSnapshot.empty) {
+      commentList.innerHTML = "<p style='color:#888;'>No comments yet.</p>";
+      return;
+    }
+
+    // Get poem owner ID
+    const poemRef = doc(db, "recentPoems", docId);
+    const poemSnap = await getDoc(poemRef);
+    const poemOwnerId = poemSnap.exists() ? poemSnap.data().authorId || poemSnap.data().userId : null;
+
+    // Sort comments by timestamp ascending
+    const comments = commentsSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    comments.sort((a, b) => {
+      const ta = a.timestamp?.toMillis?.() || 0;
+      const tb = b.timestamp?.toMillis?.() || 0;
+      return ta - tb;
+    });
+
+    // Display comments
+    for (const c of comments) {
+      let displayName = c.user || "Anonymous";
+      let userLink = "#";
+      if (c.userId) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", c.userId));
+          if (userDoc.exists()) {
+            displayName = userDoc.data().username || displayName;
+            userLink = `/user-profile.html?uid=${c.userId}`;
+          }
+        } catch {}
+      }
+
+      const div = document.createElement("div");
+      div.className = "comment";
+      div.dataset.commentId = c.id;
+      div.style.cssText = "background:#fff; padding:8px 12px; margin:6px 0; border-radius:6px;";
+
+      div.innerHTML = `
+        <a href="${userLink}" style="font-weight:600; color:#a67c52; text-decoration:none; margin-right:6px;">${displayName}</a>: ${c.text}
+        <div class="comment-actions" style="margin-top:4px;">
+          <small class="reply-toggle" style="color:#5a3cb3; cursor:pointer;">Reply</small>
+        </div>
+        <div class="reply-section" style="margin-left:20px; margin-top:6px;"></div>
+      `;
+
+      commentList.appendChild(div);
+
+      // Load existing replies
+      const repliesCol = collection(db, "recentPoems", docId, "comments", c.id, "replies");
+      const repliesSnapshot = await getDocs(repliesCol);
+      if (!repliesSnapshot.empty) {
+        const replySection = div.querySelector(".reply-section");
+        repliesSnapshot.forEach(r => {
+          const reply = r.data();
+          replySection.innerHTML += `
+            <div style="background:#f7f7f7; padding:6px 10px; border-radius:6px; margin:4px 0;">
+              <a href="/user-profile.html?uid=${reply.userId}" style="font-weight:600; color:#5a3cb3; text-decoration:none;">${reply.username}</a>: ${reply.text}
+            </div>
+          `;
+        });
+      }
+    }
+  } catch (err) {
+    console.error("Error loading comments:", err);
+    commentList.innerHTML = "<p style='color:red;'>Failed to load comments.</p>";
+  }
+}
+
+// REPLY TOGGLE — show input box when “Reply” is clicked
+if (e.target.classList.contains("reply-toggle")) {
+  const commentDiv = e.target.closest(".comment");
+  const replySection = commentDiv.querySelector(".reply-section");
+
+  // If already open, close it
+  const existing = replySection.querySelector(".reply-input");
+  if (existing) {
+    existing.remove();
+    return;
+  }
+
+  const inputContainer = document.createElement("div");
+  inputContainer.className = "reply-input";
+  inputContainer.innerHTML = `
+    <textarea placeholder="Write a reply..." rows="1" style="width:95%; border-radius:6px; padding:6px; border:1px solid #ccc;"></textarea>
+    <button class="send-reply-btn" style="margin-top:4px; background:#5a3cb3; color:white; border:none; border-radius:6px; padding:4px 10px; cursor:pointer;">Send</button>
+  `;
+  replySection.appendChild(inputContainer);
+}
+
+// SEND REPLY — handle send button click
+if (e.target.classList.contains("send-reply-btn")) {
+  const user = auth.currentUser;
+  if (!user) { alert("Please sign in to reply."); return; }
+
+  const commentDiv = e.target.closest(".comment");
+  const card = e.target.closest(".recent-poem-card");
+  const docId = card.dataset.id;
+  const commentId = commentDiv.dataset.commentId;
+  const textarea = commentDiv.querySelector(".reply-input textarea");
+  const replyText = textarea.value.trim();
+  if (!replyText) return;
+
+  const replySection = commentDiv.querySelector(".reply-section");
+
+  try {
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    const username = userDoc.exists() ? userDoc.data().username || "User" : "User";
+
+    await addDoc(collection(db, "recentPoems", docId, "comments", commentId, "replies"), {
+      userId: user.uid,
+      username,
+      text: replyText,
+      timestamp: new Date()
+    });
+
+    // Append instantly
+    replySection.innerHTML += `
+      <div style="background:#f7f7f7; padding:6px 10px; border-radius:6px; margin:4px 0;">
+        <a href="/user-profile.html?uid=${user.uid}" style="font-weight:400; color:#5a3cb3; text-decoration:none;">${username}</a>: ${replyText}
+      </div>
+    `;
+    textarea.value = "";
+  } catch (err) {
+    console.error("Error sending reply:", err);
+    alert("Failed to send reply.");
+  }
+}
+});
+
+// --- DOM Elements ---
+const searchToggle = document.getElementById("search-toggle");
+const searchContainer = document.querySelector(".search-container");
+const searchInput = document.getElementById("global-search-input");
+
+// 🔍 Toggle visibility of search bar
+if (searchToggle && searchContainer) {
+  searchToggle.addEventListener("click", () => {
+    searchContainer.classList.toggle("visible");
+
+    if (searchContainer.classList.contains("visible")) {
+      searchInput.focus();
+    } else {
+      searchInput.value = "";
+      loadRecentPoems(true); // reload all poems when search closes
+    }
+  });
+}
+
+// 🔍 Minimal dynamic CSS
+const style = document.createElement("style");
+style.textContent = `
+  .search-container { display:none; transition:all .3s ease; }
+  .search-container.visible { display:block; }
+`;
+document.head.appendChild(style);
+
+// --- Real-time Search Handler ---
+searchInput.addEventListener("input", async (e) => {
+  const term = e.target.value.trim().toLowerCase();
+
+  if (!term) {
+    loadRecentPoems(true);
+    return;
+  }
+
+  poemsContainer.innerHTML =
+    "<p style='text-align:center;color:#555;'>Searching...</p>";
+
+  try {
+    const colRef = collection(db, "recentPoems");
+    const snapshot = await getDocs(query(colRef, orderBy("title")));
+
+    const results = snapshot.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((poem) =>
+        poem.title?.toLowerCase().includes(term) ||
+        poem.author?.toLowerCase().includes(term) ||
+        poem.content?.toLowerCase().includes(term)
+      );
+
+    poemsContainer.innerHTML = "";
+
+    if (results.length === 0) {
+      poemsContainer.innerHTML =
+        "<p style='text-align:center;color:#777;'>No poems found.</p>";
+      return;
+    }
+
+    for (const poem of results) {
+      const card = document.createElement("div");
+      card.className = "recent-poem-card";
+
+      // --- Matching your truncation system ---
+      const words = poem.content?.split(" ") || [];
+      const previewWords = words.slice(0, 50).join(" ");
+      const isTruncated = words.length > 50;
+
+      const truncated = {
+        preview: isTruncated ? previewWords + "..." : poem.content,
+        full: poem.content,
+        truncated: isTruncated
+      };
+
+      const displayName = poem.author || "Anonymous";
+      const profileLink = `/user-profile.html?uid=${encodeURIComponent(poem.authorId || "")}`;
+      const likes = poem.likes || 0;
+
+      card.dataset.id = poem.id;
+
+      // ⭐ FULL CARD LAYOUT ⭐
+      card.innerHTML = `
+        <h3 class="recent-poem-title">${poem.title}</h3>
+
+        <p class="author">
+          by <a href="${profileLink}" class="author-link">${displayName}</a>
+        </p>
+
+        <p class="poem-content">${truncated.preview}</p>
+
+        ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
+
+        ${
+          poem.categories && poem.categories.length > 0
+            ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>`
+            : ""
+        }
+
+        <div class="poem-actions">
+          <div class="comment-section">
+            <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+            <button class="comment-btn">Post</button>
+          </div>
+
+          <button class="like-btn">❤️</button>
+          <span class="like-count">${likes}</span>
+          <span class="message-count">💬</span>
+        </div>
+
+        <div class="comment-list" style="display:none;"></div>
+      `;
+
+      poemsContainer.appendChild(card);
+
+      // --- Read More / Show Less that shows full poem ---
+      if (truncated.truncated) {
+        const btn = card.querySelector(".read-more-btn");
+        const p = card.querySelector(".poem-content");
+
+        btn.addEventListener("click", () => {
+          const isExpanded = btn.dataset.expanded === "true";
+
+          if (!isExpanded) {
+            p.textContent = truncated.full;  // show full poem
+            btn.textContent = "Show Less";
+            btn.dataset.expanded = "true";
+          } else {
+            p.textContent = truncated.preview; // show preview again
+            btn.textContent = "Read More";
+            btn.dataset.expanded = "false";
+          }
+        });
+      }
+
+      // --- Fetch comment count dynamically ---
+      const messageCountEl = card.querySelector(".message-count");
+      const commentsCol = collection(db, "recentPoems", poem.id, "comments");
+      const commentsSnapshot = await getDocs(commentsCol);
+      const commentCount = commentsSnapshot.size;
+      messageCountEl.textContent = `💬 ${commentCount}`;
+    }
+
+  } catch (err) {
+    console.error("Error performing search:", err);
+    poemsContainer.innerHTML =
+      "<p style='text-align:center;color:red;'>Failed to search poems.</p>";
+  }
+
+  
+});
 
 
+// --- Desktop Search ---
+const desktopSearchInput = document.getElementById("desktop-search-input");
+const poemsContainer = document.getElementById("recent-poems-container");
+
+if (desktopSearchInput) {
+  desktopSearchInput.addEventListener("input", async (e) => {
+    const term = e.target.value.trim().toLowerCase();
+
+    if (!term) {
+      loadRecentPoems(true); // reload all poems if input is empty
+      return;
+    }
+
+    poemsContainer.innerHTML =
+      "<p style='text-align:center;color:#555;'>Searching...</p>";
+
+    try {
+      const colRef = collection(db, "recentPoems");
+      const snapshot = await getDocs(query(colRef, orderBy("title")));
+
+      const results = snapshot.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .filter(
+          (poem) =>
+            poem.title?.toLowerCase().includes(term) ||
+            poem.author?.toLowerCase().includes(term) ||
+            poem.content?.toLowerCase().includes(term)
+        );
+
+      poemsContainer.innerHTML = "";
+
+      if (results.length === 0) {
+        poemsContainer.innerHTML =
+          "<p style='text-align:center;color:#777;'>No poems found.</p>";
+        return;
+      }
+
+      for (const poem of results) {
+        const card = document.createElement("div");
+        card.className = "recent-poem-card";
+
+        // --- Truncate content ---
+        const words = poem.content?.split(" ") || [];
+        const previewWords = words.slice(0, 50).join(" ");
+        const isTruncated = words.length > 50;
+
+        const truncated = {
+          preview: isTruncated ? previewWords + "..." : poem.content,
+          full: poem.content,
+          truncated: isTruncated
+        };
+
+        const displayName = poem.author || "Anonymous";
+        const profileLink = `/user-profile.html?uid=${encodeURIComponent(poem.authorId || "")}`;
+        const likes = poem.likes || 0;
+
+        card.dataset.id = poem.id;
+
+        card.innerHTML = `
+          <h3 class="recent-poem-title">${poem.title}</h3>
+          <p class="author">by <a href="${profileLink}" class="author-link">${displayName}</a></p>
+          <p class="poem-content">${truncated.preview}</p>
+          ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
+          ${poem.categories && poem.categories.length > 0 ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
+          <div class="poem-actions">
+            <div class="comment-section">
+              <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+              <button class="comment-btn">Post</button>
+            </div>
+            <button class="like-btn">❤️</button>
+            <span class="like-count">${likes}</span>
+            <span class="message-count">💬</span>
+          </div>
+          <div class="comment-list" style="display:none;"></div>
+        `;
+
+        poemsContainer.appendChild(card);
+
+        // --- Read More / Show Less ---
+        if (truncated.truncated) {
+          const btn = card.querySelector(".read-more-btn");
+          const p = card.querySelector(".poem-content");
+
+          btn.addEventListener("click", () => {
+            const isExpanded = btn.dataset.expanded === "true";
+            if (!isExpanded) {
+              p.textContent = truncated.full;
+              btn.textContent = "Show Less";
+              btn.dataset.expanded = "true";
+            } else {
+              p.textContent = truncated.preview;
+              btn.textContent = "Read More";
+              btn.dataset.expanded = "false";
+            }
+          });
+        }
+
+        // --- Fetch comment count dynamically ---
+        const messageCountEl = card.querySelector(".message-count");
+        const commentsCol = collection(db, "recentPoems", poem.id, "comments");
+        const commentsSnapshot = await getDocs(commentsCol);
+        const commentCount = commentsSnapshot.size;
+        messageCountEl.textContent = `💬 ${commentCount}`;
+      }
+    } catch (err) {
+      console.error("Error performing desktop search:", err);
+      poemsContainer.innerHTML =
+        "<p style='text-align:center;color:red;'>Failed to search poems.</p>";
+    }
+  });
+}
+
+   // (Keep your full like/comment/reply logic here — it works identically)
+    // You can paste your entire large event listener block here unchanged.
+  </script>
+  
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("menu-toggle");
@@ -353,7 +1138,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
-<script type="module" src="script.js"></script>
 
 
 </body>

@@ -107,7 +107,14 @@ h2 {
   padding: 1.2rem;
   margin-bottom: 2rem;
 }
-
+/* Center on small screens */
+@media (max-width: 768px) {
+  .recent-poem-card {
+    margin-left: -5;
+    margin-right: auto;
+    width: 100%; /* optional: make it responsive */
+  }
+}
 .poem-content {
   white-space: pre-wrap;
   line-height: 1.7;
@@ -535,6 +542,84 @@ h2 {
   align-items: center;
   gap: 10px;
 }
+/* Move "My Profile" to left edge on small screens */
+@media (max-width: 899px) {
+  .profile-container {
+
+ 
+    text-align: left;   /* align text left */
+        width: 90%;         /* full width */
+           font-size: 0.9rem; /* smaller text */
+             background-color: #4CAF50; /* new background color */
+  }
+
+  .profile-header-flex {
+    align-items: flex-start; /* align picture + info to left */
+  }
+
+  .profile-info-right {
+    margin-left: 15px; /* small spacing from profile picture */
+    text-align: left;
+  }
+
+  .profile-picture-section {
+    align-items: flex-start; /* move picture to left */
+  }
+
+  .follow-info-horizontal {
+    justify-content: flex-start; /* followers left-aligned */
+  }
+  
+}
+
+/* Small screens (keep info to the right of image) */
+@media (max-width: 899px) {
+  .profile-header-flex {
+    flex-direction: row; /* side by side */
+    align-items: flex-start; /* top-aligned */
+    justify-content: flex-start; /* optional */
+    gap: 15px; /* space between image and info */
+  }
+
+  .profile-picture-section {
+    flex-shrink: 0; /* prevent shrinking */
+  }
+
+  .profile-info-right {
+    margin-left: 0; /* spacing handled by gap */
+    text-align: left;
+  }
+  
+}
+@media (max-width: 899px) {
+  .profile-picture {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* force left alignment */
+    padding-bottom: 0; /* optional, remove extra space */
+  }
+
+  #changePicBtn {
+    position: absolute;
+    bottom: -10px;  /* adjust vertical position */
+    left: 0 !important; /* force left alignment */
+    width: 110px; /* reduce width */
+    font-size: 0.7rem; /* smaller text */
+    padding: 5px 10px; /* adjust padding */
+  }
+}
+
+@media (max-width: 899px) {
+  #editProfileBtn {
+    font-size: 0.8rem;      /* smaller text */
+    padding: 5px 10px;      /* smaller button */
+    width: auto;            /* optional: shrink to content */
+  }
+}
+
+
+
 
 </style>
 </head>
@@ -559,12 +644,12 @@ h2 {
 
 <!-- Mobile Icons -->
     <div class="mobile-icons">
+  <!-- Logout Button -->
+  <button id="logoutBtnNav" class="btn logout-nav-btn">Logout</button>
+  </div>
 
       <div class="menu-toggle" id="menu-toggle">☰</div>
     </div>
-     <!-- Logout Button -->
-  <button id="logoutBtnNav" class="btn logout-nav-btn">Logout</button>
-  </div>
 </nav>
 </header>
 
@@ -573,7 +658,7 @@ h2 {
 
   <!-- Profile Container (Left Column) -->
   <div class="profile-container">
-    <h2>My Profile</h2>
+    <h2>Profile</h2>
 
     <div class="profile-header-flex">
       <div class="profile-picture-section">
