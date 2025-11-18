@@ -1,156 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Messages | Admin Panel</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>message | Volant Poetry</title>
+
 <style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background: #f5f5f5;
-  color: #333;
-}
+body { font-family: Inter, sans-serif; background: #f7f7f7; padding: 20px; margin: 0; }
+h1 { text-align: center; margin-bottom: 20px; font-weight: 600; }
+.card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);}
+.row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.author { font-weight: bold; font-size: 15px; }
+.time { font-size: 13px; color: #777; }
+.title { font-size: 16px; margin: 4px 0; font-weight: 600; }
+.content, .editor-notes { white-space: pre-line; font-size: 15px; line-height: 1.45; margin-top: 8px; }
+.editor-notes { background: #f2f2f2; padding: 8px; border-radius: 6px; font-style: italic; }
 
-h1 {
-  text-align: center;
-  margin-bottom: 15px;
-}
+.reply-form { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.reply-form textarea { width: 100%; min-height: 60px; padding: 8px; border-radius: 6px; border: 1px solid #ccc; resize: vertical; }
+.reply-form button { align-self: flex-end; padding: 6px 12px; border-radius: 6px; background: #4b2aad; color: white; border: none; cursor: pointer; }
 
-.bulk-actions {
-  text-align: center;
-  margin-bottom: 12px;
-}
-.bulk-actions button {
-  background: #e74c3c;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.9rem;
-}
-.bulk-actions button:hover {
-  background: #c0392b;
-}
-
-/* Table styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-thead {
-  background: #2c3e50;
-  color: #fff;
-}
-th, td {
-  padding: 12px 15px;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-tbody tr:nth-child(even) {
-  background: #f9f9f9;
-}
-button.delete-btn {
-  background: #e74c3c;
-  color: #fff;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-button.delete-btn:hover {
-  background: #c0392b;
-}
-
-/* --- Mobile Responsive --- */
-@media screen and (max-width: 768px) {
-  body {
-    margin: 10px;
-    font-size: 14px;
-  }
-
-  h1 {
-    font-size: 1.5em;
-    margin-bottom: 12px;
-  }
-
-  .bulk-actions button {
-    font-size: 0.8rem;
-    padding: 6px 10px;
-  }
-
-  table {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
-
-  th, td {
-    padding: 8px 10px;
-    font-size: 13px;
-  }
-
-  button.delete-btn {
-    padding: 4px 8px;
-    font-size: 12px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  h1 {
-    font-size: 1.3em;
-  }
-
-  th, td {
-    padding: 6px 8px;
-  }
-
-  .bulk-actions button {
-    font-size: 0.75rem;
-    padding: 5px 8px;
-  }
-
-  button.delete-btn {
-    padding: 3px 6px;
-    font-size: 11px;
-  }
-}
+.thread { margin-top: 10px; max-height: 300px; overflow-y: auto; display: flex; flex-direction: column-reverse; }
+.thread .reply { display: flex; flex-direction: column; margin-bottom: 6px; max-width: 70%; padding: 6px 10px; border-radius: 10px; }
+.thread .reply.user { background: #f2f2f2; align-self: flex-start; }
+.thread .reply.admin { background: #4b2aad; color: white; align-self: flex-end; }
+.thread .reply .from { font-weight: 600; margin-bottom: 2px; }
+.thread .reply .timestamp { font-size: 12px; color: #555; margin-left: 6px; }
 </style>
-  <link rel="icon" type="png" href="images/logo.png" />
 </head>
+
 <body>
 
 <h1>Messages</h1>
 
-<div class="bulk-actions">
-  <label><input type="checkbox" id="selectAll"> Select All</label>
-  <button id="deleteSelectedBtn">Delete Selected</button>
-</div>
-
-<table id="messagesTable">
-  <thead>
-    <tr>
-      <th></th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Message</th>
-      <th>Time (GMT)</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+<div id="worksBox"><div class="card">Loading messages</div></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { 
-  getFirestore, collection, getDocs, deleteDoc, doc, enableIndexedDbPersistence 
+  getFirestore, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, where 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // Firebase config
 const firebaseConfig = {
@@ -162,79 +52,129 @@ const firebaseConfig = {
   appId: "1:78008755450:web:3fd0f0f298a08820935543"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-// Enable offline persistence
-enableIndexedDbPersistence(db).catch((err) => console.warn("Offline persistence error:", err.code));
+const worksBox = document.getElementById("worksBox");
+let currentUser = null;
 
-const messagesTable = document.querySelector("#messagesTable tbody");
-const selectAllCheckbox = document.getElementById("selectAll");
-const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    worksBox.innerHTML = `<div class="card">Please log in to see your messages.</div>`;
+    return;
+  }
 
-// Load all messages in descending order (most recent first)
-const loadMessages = async () => {
-  messagesTable.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
-  const snapshot = await getDocs(collection(db, "messages"));
-  const messages = snapshot.docs.map(d => ({ id: d.id, ...d.data() }))
-    .sort((a,b) => {
-      if(!a.timestamp || !b.timestamp) return 0;
-      return b.timestamp.toMillis() - a.timestamp.toMillis();
+  currentUser = user;
+  loadUserMessages();
+});
+
+// ----------------------------------------------------------
+// LOAD USER'S OWN EDITED WORK MESSAGES
+// ----------------------------------------------------------
+function loadUserMessages() {
+  worksBox.innerHTML = `<div class="card">Loading...</div>`;
+
+  const q = query(
+    collection(db, "editedWorks"),
+    where("submittedById", "==", currentUser.uid),
+    orderBy("approvedAt", "desc")
+  );
+
+  onSnapshot(q, snapshot => {
+    worksBox.innerHTML = "";
+
+    if (snapshot.empty) {
+      worksBox.innerHTML = `<div class="card">No messages found.</div>`;
+      return;
+    }
+
+    snapshot.forEach(docItem => {
+      const w = docItem.data();
+      const workId = docItem.id;
+
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <div class="row">
+          <div class="author">${escapeHtml(w.username || "You")}</div>
+          <div class="time">${w.approvedAt?.toDate?.().toLocaleString() || "Unknown"}</div>
+        </div>
+        <div class="title">${escapeHtml(w.title || "Untitled Work")}</div>
+        <div class="content">${escapeHtml(w.content || "")}</div>
+        ${w.note ? `<div class="editor-notes">Editor: ${escapeHtml(w.note)}</div>` : ""}
+        
+        <div class="thread" id="thread-${workId}">
+            <div class="reply">Loading conversation...</div>
+        </div>
+
+        <div class="reply-form">
+          <textarea placeholder="Reply to editor..."></textarea>
+          <button>Send Reply</button>
+        </div>
+      `;
+
+      worksBox.appendChild(card);
+
+      const threadDiv = card.querySelector(`#thread-${workId}`);
+      const replyTextarea = card.querySelector("textarea");
+      const replyBtn = card.querySelector("button");
+
+      loadThread(workId, threadDiv);
+
+      replyBtn.addEventListener("click", async () => {
+        const text = replyTextarea.value.trim();
+        if (!text) return alert("Enter a reply.");
+
+        await addDoc(collection(db, `editedWorks/${workId}/messages`), {
+          fromId: currentUser.uid,
+          fromName: currentUser.displayName || currentUser.email || "User",
+          message: text,
+          timestamp: serverTimestamp()
+        });
+
+        replyTextarea.value = "";
+      });
     });
-
-  messagesTable.innerHTML = "";
-  messages.forEach(msg => {
-    const { id, name, email, message, timestamp } = msg;
-    let timeStr = timestamp?.toDate ? timestamp.toDate().toUTCString() : "N/A";
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td><input type="checkbox" class="msg-checkbox" data-id="${id}"></td>
-      <td>${name}</td>
-      <td><a href="mailto:${email}">${email}</a></td>
-      <td>${message}</td>
-      <td>${timeStr}</td>
-      <td><button class="delete-btn">Delete</button></td>
-    `;
-
-    // Single delete
-    tr.querySelector(".delete-btn").addEventListener("click", async () => {
-      if(confirm("Delete this message?")) {
-        await deleteDoc(doc(db, "messages", id));
-        tr.remove();
-      }
-    });
-
-    messagesTable.appendChild(tr);
   });
+}
 
-  if(messages.length===0) messagesTable.innerHTML = "<tr><td colspan='6'>No messages found.</td></tr>";
-};
+// ----------------------------------------------------------
+// LOAD THREAD MESSAGES
+// ----------------------------------------------------------
+function loadThread(workId, threadDiv) {
+  const q = query(
+    collection(db, `editedWorks/${workId}/messages`),
+    orderBy("timestamp", "asc")
+  );
 
-// Bulk delete
-deleteSelectedBtn.addEventListener("click", async () => {
-  const selected = Array.from(document.querySelectorAll(".msg-checkbox:checked"));
-  if(selected.length === 0) {
-    return alert("Please select at least one message to delete.");
-  }
+  onSnapshot(q, snapshot => {
+    threadDiv.innerHTML = "";
 
-  if(!confirm(`Delete ${selected.length} selected message(s)?`)) return;
+    if (snapshot.empty) {
+      threadDiv.innerHTML = `<div class="reply">No replies yet.</div>`;
+      return;
+    }
 
-  for(const cb of selected) {
-    const id = cb.getAttribute("data-id");
-    await deleteDoc(doc(db, "messages", id));
-    cb.closest("tr").remove();
-  }
-});
+    snapshot.forEach(msgDoc => {
+      const msg = msgDoc.data();
+      const isUserMessage = msg.fromId === currentUser.uid;
 
-// Select all toggle
-selectAllCheckbox.addEventListener("change", () => {
-  const checkboxes = document.querySelectorAll(".msg-checkbox");
-  checkboxes.forEach(cb => cb.checked = selectAllCheckbox.checked);
-});
+      threadDiv.innerHTML += `
+        <div class="reply ${isUserMessage ? "user" : "admin"}">
+          <div class="from">${escapeHtml(msg.fromName)}:</div>
+          <div>${escapeHtml(msg.message)}</div>
+          <div class="timestamp">${msg.timestamp?.toDate?.().toLocaleString() || "Unknown"}</div>
+        </div>
+      `;
+    });
+  });
+}
 
-// Initial load
-loadMessages();
+function escapeHtml(str) {
+  return String(str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
 </script>
 
 </body>

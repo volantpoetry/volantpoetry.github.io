@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login | Volant Poetry</title>
   <link rel="stylesheet" href="usersaccount.css">
-    <link rel="icon" type="png" href="images/logo.png" />
+  <link rel="icon" type="png" href="images/logo.png" />
 </head>
 <body>
 
@@ -30,24 +30,108 @@
   </div>
 
   <!-- Firebase Auth JS -->
-     <script type="module" src="usersaccount.js"></script>
-  <script type="module" src="usersAccount.js"></script>
-
   <script type="module">
-    import { auth, onAuthStateChanged } from './usersAccount.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      setPersistence,
+      browserLocalPersistence,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      doc,
+      getDoc,
+      setDoc,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const loginLink = document.getElementById("loginLink");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const userInfoDiv = document.getElementById("user-info");
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+      authDomain: "silent-depth.firebaseapp.com",
+      projectId: "silent-depth",
+      storageBucket: "silent-depth.firebasestorage.app",
+      messagingSenderId: "78008755450",
+      appId: "1:78008755450:web:3fd0f0f298a08820935543",
+      measurementId: "G-WSWDCB7KD8"
+    };
 
-    onAuthStateChanged(auth, (user) => {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    setPersistence(auth, browserLocalPersistence);
+
+    // LOGIN FORM
+    const loginForm = document.getElementById("login-form");
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      let loginInput = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value;
+
+      try {
+        let emailToUse = loginInput;
+
+        // If input is not email, search by username
+        if (!loginInput.includes("@")) {
+          const q = query(collection(db, "users"), where("username", "==", loginInput));
+          const querySnap = await getDocs(q);
+          if (querySnap.empty) {
+            document.getElementById("login-status").textContent = "⚠ No account found with that username.";
+            return;
+          }
+          emailToUse = querySnap.docs[0].data().email;
+        }
+
+        const userCred = await signInWithEmailAndPassword(auth, emailToUse, password);
+        const user = userCred.user;
+
+        // Ensure Firestore doc exists with "joined"
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (!userDocSnap.exists()) {
+          await setDoc(userDocRef, {
+            username: user.displayName || "Anonymous",
+            email: user.email,
+            bio: "",
+            joined: new Date()
+          });
+        } else {
+          const data = userDocSnap.data();
+          if (!data.joined) await updateDoc(userDocRef, { joined: new Date() });
+        }
+
+        document.getElementById("login-status").textContent = "✅ Login successful! Redirecting…";
+
+        // --- REDIRECT LOGIC ---
+        // Use query parameter 'redirect' if available, otherwise default to index.html
+        const params = new URLSearchParams(window.location.search);
+        let redirectUrl = params.get("redirect");
+
+        // Avoid redirecting to login itself or index.html unnecessarily
+        if (!redirectUrl || redirectUrl.includes("login") || redirectUrl.includes("index.html")) {
+          redirectUrl = "index.html";
+        }
+
+        setTimeout(() => {
+          window.location.href = redirectUrl;
+        }, 1200);
+
+      } catch (err) {
+        document.getElementById("login-status").textContent = "⚠ " + err.message;
+      }
+    });
+
+    // Optional: show login status if user is already logged in
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
-        loginLink.style.display = "none";
-        logoutBtn.style.display = "inline-block";
-      } else {
-        loginLink.style.display = "inline-block";
-        logoutBtn.style.display = "none";
-        userInfoDiv.textContent = "";
+        console.log("User already logged in:", user.email);
       }
     });
   </script>
