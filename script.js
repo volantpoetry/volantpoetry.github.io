@@ -1015,142 +1015,171 @@ function animateGalleryItems() {
 
 document.addEventListener("DOMContentLoaded", loadPoetryGallery);
 
-
-// --- Load Ranking Poems Rich Cards ---
+// --- Load Ranking Poems (Top 20) using Recent Poems structure ---
 async function loadRankingPoemsRich() {
   const container = document.getElementById("rank-poems");
-  container.innerHTML = "<h3>Ranking Poems</h3><p>Top 20 poems based on views, likes, and comments.</p>";
+  if (!container) return console.warn("No #rank-poems container found.");
+
+  container.innerHTML = `
+    <h3>Ranking Poems</h3>
+    <p>Top 20 poems based on views, likes, and comments.</p>
+    <div id="ranking-list"></div>
+  `;
+  const listEl = container.querySelector("#ranking-list");
+  listEl.innerHTML = ""; // clear
 
   try {
+    // fetch all poems
     const snapshot = await getDocs(collection(db, "recentPoems"));
-    if (snapshot.empty) return;
+    if (snapshot.empty) {
+      listEl.innerHTML = "<p style='color:#666;'>No poems found.</p>";
+      return;
+    }
 
+    // Build array with computed score and author info
     const poems = await Promise.all(snapshot.docs.map(async docSnap => {
-      const data = docSnap.data();
-      const views = data.views || 0;
-      const likes = data.likes || 0;
-      const comments = data.comments || 0;
-      const score = views + likes*3 + comments*5;
+      const data = docSnap.data() || {};
+      const views = typeof data.views === "number" ? data.views : 0;
+      const likes = typeof data.likes === "number" ? data.likes : 0;
+      const commentsStored = typeof data.comments === "number" ? data.comments : 0;
 
-      let username = "Anonymous";
-      if (data.userId) {
+      // -------------------------------
+      // FIX: Fetch real comment count FIRST
+      // -------------------------------
+      let realComments = commentsStored;
+      try {
+        const commentSnap = await getDocs(collection(db, "recentPoems", docSnap.id, "comments"));
+        realComments = commentSnap.size;
+      } catch {}
+
+      // -------------------------------
+      // FIX: Calculate score AFTER realComments
+      // -------------------------------
+      const score = views + likes * 3 + realComments * 5;
+
+      // resolve author info
+      const poetUid = data.authorId || data.userId || "";
+      let displayName = data.author || "Anonymous";
+      let profileLink = "#";
+
+      if (poetUid) {
         try {
-          const userDoc = await getDoc(doc(db, "users", data.userId));
-          if (userDoc.exists()) username = userDoc.data().username || "Anonymous";
-        } catch {}
+          const userDoc = await getDoc(doc(db, "users", poetUid));
+          if (userDoc.exists()) {
+            displayName = userDoc.data().username || displayName;
+            profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
+          }
+        } catch (err) {
+          console.warn("Failed to fetch author:", err);
+        }
       }
 
       return {
         id: docSnap.id,
         title: data.title || "Untitled",
         slug: data.slug || docSnap.id,
-        author: username,
+        authorId: poetUid,
+        authorName: displayName,
+        authorProfile: profileLink,
         content: data.content || "",
         likes,
-        comments,
+        likedBy: Array.isArray(data.likedBy) ? data.likedBy : [],
         views,
-        categories: data.categories || [],
-        score
+        categories: Array.isArray(data.categories)
+          ? data.categories
+          : (data.categories ? [data.categories] : []),
+        score,
+        commentsCount: realComments // updated
       };
     }));
 
-    // Sort by score descending
-    poems.sort((a,b) => b.score - a.score);
+    // sort by score desc and take top 20
+    poems.sort((a, b) => b.score - a.score);
+    const top = poems.slice(0, 20);
 
-    poems.slice(0,20).forEach((poem, index) => {
+    // render each card
+    await Promise.all(top.map(async (poem, index) => {
       const card = document.createElement("div");
-      card.className = "recent-poem-card firestore-result";
+      card.className = "recent-poem-card";
+      card.dataset.id = poem.id;
       card.dataset.slug = poem.slug;
 
-      const allLines = poem.content.split(/\r?\n/);
-      const truncated = allLines.length > 8;
-      const preview = allLines.slice(0,8).join("<br>");
-      const full = allLines.join("<br>");
+      const truncated = truncatePoem(poem.content, 8);
 
-// Inside poems.slice(0,20).forEach((poem, index) => { ... })
+      const commentDisplayCount = poem.commentsCount;
 
-card.innerHTML = `
-  <h3 class="recent-poem-title">
-    ${index+1}. ${poem.title}
-  </h3>
-  <p class="poem-content">${preview}</p>
-  ${truncated ? `<button class="read-more-btn">Read More</button>` : ""}
-  ${poem.categories.length ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
-  <span class="author">– ${poem.author}</span>
-  <div class="poem-actions">
-    <div class="comment-section">
-      <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
-      <button class="comment-btn">Post</button>
-    </div>
-    <button class="like-btn">❤️</button>
-    <span class="like-count">${poem.likes}</span>
-    <span class="message-count">💬 ${poem.comments}</span>
-  </div>
-  <div class="comment-list" style="display:none;"></div>
-`;
+      card.innerHTML = `
+        <h3 class="recent-poem-title">${index+1}. ${poem.title}
+          <small style="font-weight:400; color:#777;">(score: ${poem.score})</small>
+        </h3>
+        <p class="author">by <a href="${poem.authorProfile}" class="author-link">${poem.authorName}</a></p>
+        <p class="poem-content" style="white-space:pre-wrap;">${truncated.preview}</p>
+        ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
+        ${poem.categories.length ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
+        <div class="poem-actions">
+          <div class="comment-section">
+            <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+            <button class="comment-btn">Post</button>
+          </div>
+          <button class="like-btn">❤️</button>
+          <span class="like-count">${poem.likes}</span>
+          <span class="message-count">💬 ${commentDisplayCount}</span>
+        </div>
+        <div class="comment-list" style="display:none;"></div>
+      `;
 
-      // Read More / Show Less
-      if(truncated) {
+      if (index === 0) card.style.border = "2px solid gold";
+      else if (index === 1) card.style.border = "2px solid silver";
+      else if (index === 2) card.style.border = "2px solid #cd7f32";
+      else card.style.border = "1px solid #eee";
+
+      listEl.appendChild(card);
+
+      // mark liked by current user
+      const user = auth.currentUser;
+      if (user && Array.isArray(poem.likedBy) && poem.likedBy.includes(user.uid)) {
+        const btn = card.querySelector(".like-btn");
+        if (btn) btn.classList.add("liked");
+      }
+
+      // read more / show less
+      if (truncated.truncated) {
         const btn = card.querySelector(".read-more-btn");
-        const contentElem = card.querySelector(".poem-content");
+        const p = card.querySelector(".poem-content");
         let expanded = false;
         btn.addEventListener("click", () => {
+          if (!expanded) {
+            p.textContent = truncated.full;
+            btn.textContent = "Show Less";
+          } else {
+            p.textContent = truncated.preview;
+            btn.textContent = "Read More";
+          }
           expanded = !expanded;
-          contentElem.innerHTML = expanded ? full : preview;
-          btn.textContent = expanded ? "Show Less" : "Read More";
         });
       }
 
-      // Like button
-      const likeBtn = card.querySelector(".like-btn");
-      const likeCountElem = card.querySelector(".like-count");
-      likeBtn.addEventListener("click", async () => {
-        const newLikes = parseInt(likeCountElem.textContent) + 1;
-        likeCountElem.textContent = newLikes;
-        try {
-          await updateDoc(doc(db, "recentPoems", poem.id), { likes: newLikes });
-        } catch(err) { console.error(err); }
-      });
+      if (typeof addPoemSchema === "function") {
+        addPoemSchema({
+          title: poem.title,
+          description: poem.content ? poem.content.slice(0, 150) : "",
+          slug: poem.slug || poem.title.toLowerCase().replace(/\s+/g, "-"),
+          date: ""
+        });
+      }
+    }));
 
-      // Comment handler
-      const commentBtn = card.querySelector(".comment-btn");
-      const commentInput = card.querySelector(".comment-input");
-      const commentList = card.querySelector(".comment-list");
-      const messageCount = card.querySelector(".message-count");
+    if (!listEl.children.length) {
+      listEl.innerHTML = "<p style='color:#666;'>No poems to display.</p>";
+    }
 
-      commentBtn.addEventListener("click", async () => {
-        const comment = commentInput.value.trim();
-        if(!comment) return;
-        const commentEl = document.createElement("p");
-        commentEl.textContent = comment;
-        commentList.appendChild(commentEl);
-        commentList.style.display = "block";
-        commentInput.value = "";
-        const currentCount = parseInt(messageCount.textContent.replace("💬", "").trim()) || 0;
-        messageCount.textContent = `💬 ${currentCount+1}`;
-
-        // Optional: Update Firestore comments count
-        try {
-          await updateDoc(doc(db, "recentPoems", poem.id), { comments: currentCount+1 });
-        } catch(err) { console.error(err); }
-      });
-
-      // Optional: Top 3 badge border
-      if(index === 0) card.style.border = "2px solid gold";
-      else if(index === 1) card.style.border = "2px solid silver";
-      else if(index === 2) card.style.border = "2px solid #cd7f32";
-
-      container.appendChild(card);
-    });
-
-  } catch(err) {
+  } catch (err) {
     console.error("Error loading ranking poems:", err);
+    container.innerHTML += `<p style="color:red;">Failed to load ranking poems.</p>`;
   }
 }
 
-// Load on DOM ready
 document.addEventListener("DOMContentLoaded", loadRankingPoemsRich);
-
 
 
 // --- Load Ranking Poets ---

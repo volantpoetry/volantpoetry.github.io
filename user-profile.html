@@ -790,7 +790,7 @@ h2 {
 
     <div class="panel-item">
       <h3>Level</h3>
-      <strong>Level:</strong> <span id="userLevel"></span>
+      <strong></strong> <span id="userLevel"></span>
       <div class="level-bar">
         <div id="levelProgress" style="width:0%"></div>
       </div>
@@ -850,7 +850,8 @@ h2 {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { 
   getFirestore, doc, getDoc, setDoc, updateDoc, 
-  collection, query, where, getDocs, onSnapshot, runTransaction 
+  collection, query, where, getDocs, onSnapshot, runTransaction,
+  addDoc  
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -901,182 +902,140 @@ function truncatePoemByLines(text, maxLines = 8) {
     truncated: lines.length > maxLines
   };
 }
-
-// --- Update Achievements & Level (same as before) ---
-function updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
+// --- Update Achievements dynamically (Level code unchanged) ---
+async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   const badgesContainer = document.querySelector(".badges-container");
   if (!badgesContainer) return;
   badgesContainer.innerHTML = "";
+
+  // Keep the existing static badges as a fallback (optional)
   const badges = [];
-  if (poemCount >= 5) badges.push({ src: "images/LOGO R.jpg", title: "Poet Starter" });
-  if (totalLikes >= 15) badges.push({ src: "images/badge-likes.png", title: "Loved by Many" });
-  if (totalCommentsReceived >= 10) badges.push({ src: "images/logo.png", title: "Engaging Poet" });
-  if (totalCommentsMade >= 15) badges.push({ src: "images/badge-active.png", title: "Active Commenter" });
+
+  // Append fallback badges first
   badges.forEach(badge => {
     const img = document.createElement("img");
     img.src = badge.src;
     img.title = badge.title;
     badgesContainer.appendChild(img);
   });
+const userLevelEl = document.getElementById("userLevel");
+const levelProgressEl = document.getElementById("levelProgress");
+
+async function showUserLevel() {
+  const user = auth.currentUser;
+  if (!user) {
+    userLevelEl.textContent = "Sign in to see your level";
+    return;
+  }
+
+  // Fetch levels
+  const levelsSnap = await getDocs(collection(db, "levels"));
+  const levels = [];
+  levelsSnap.forEach(docSnap => levels.push(docSnap.data()));
+
+  // Sort levels by level number ascending
+  levels.sort((a,b) => a.level - b.level);
+
+  // Fetch user stats (replace with your actual way of counting)
+  // Example dummy data:
+  const userStats = {
+    poemsSubmitted: 5,
+    likesReceived: 12,
+    commentsMade: 75,
+    commentsReceived: 4
+  };
+
+  // Determine current level
+  let currentLevel = levels[0];
+  let nextLevel = null;
+
+  for (let i = 0; i < levels.length; i++) {
+    const lvl = levels[i];
+    const c = lvl.criteria || {};
+    if (
+      userStats.poemsSubmitted >= (c.poemsSubmitted || 0) &&
+      userStats.likesReceived >= (c.likesReceived || 0) &&
+      userStats.commentsMade >= (c.commentsMade || 0) &&
+      userStats.commentsReceived >= (c.commentsReceived || 0)
+    ) {
+      currentLevel = lvl;
+      nextLevel = levels[i+1] || null;
+    }
+  }
+
+  userLevelEl.textContent = `Level ${currentLevel.level}: ${currentLevel.name}`;
+
+  // Calculate progress percentage toward next level
+  if (nextLevel) {
+    const c = currentLevel.criteria;
+    const n = nextLevel.criteria;
+    let totalReq = 0;
+    let totalUser = 0;
+
+    const metrics = ["poemsSubmitted", "likesReceived", "commentsMade", "commentsReceived"];
+    metrics.forEach(key => {
+      totalReq += (n[key] || 0) - (c[key] || 0);
+      totalUser += Math.min(userStats[key] - (c[key] || 0), (n[key] || 0) - (c[key] || 0));
+    });
+
+    const progress = Math.max(0, Math.min(100, (totalUser / totalReq) * 100));
+    levelProgressEl.style.width = progress + "%";
+  } else {
+    // Max level reached
+    levelProgressEl.style.width = "100%";
+  }
 }
 
+auth.onAuthStateChanged(showUserLevel);
+
+  // Fetch admin-defined achievements from Firestore
+  try {
+    const snapshot = await getDocs(collection(db, "achievements"));
+    if (!snapshot.empty) {
+      const achievements = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+
+      // Filter achievements the user qualifies for
+      const earned = achievements.filter(a => {
+        if (!a.active) return false;
+        const { type, min } = a.condition;
+        switch(type) {
+          case "poemsSubmitted": return poemCount >= min;
+          case "likesReceived": return totalLikes >= min;
+          case "commentsMade": return totalCommentsMade >= min;
+          case "commentsReceived": return totalCommentsReceived >= min;
+          default: return false;
+        }
+      });
+
+      // Append earned badges dynamically
+      earned.forEach(badge => {
+        const img = document.createElement("img");
+        img.src = badge.imageUrl || "https://via.placeholder.com/50"; // fallback image
+        img.title = badge.title;
+        img.alt = badge.title;
+        badgesContainer.appendChild(img);
+      });
+    }
+  } catch (err) {
+    console.error("Error loading dynamic achievements:", err);
+  }
+}
+
+// --- Update Level (unchanged) ---
 function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   let score = 0;
-  score += Math.min(poemCount * 2, 25);
-  score += Math.min(totalLikes, 25);
-  score += Math.min(totalCommentsReceived * 2.5, 25);
-  score += Math.min(totalCommentsMade * 1.66, 25);
-  const level = Math.floor(score / 20) + 1;
-  const progress = Math.min((score % 20) * 5, 100);
+  score += Math.min(poemCount * 0, 0);
+  score += Math.min(totalLikes, 0);
+  score += Math.min(totalCommentsReceived * 0, 0);
+  score += Math.min(totalCommentsMade * 0, 0);
+  const level = Math.floor(score / 0) + 0;
+  const progress = Math.min((score % 0) * 0, 0);
   const levelEl = document.getElementById("userLevel");
   const levelProgressEl = document.getElementById("levelProgress");
   if (levelEl) levelEl.textContent = level;
   if (levelProgressEl) levelProgressEl.style.width = progress + "%";
 }
 
-// ---------------------- Ranking Poets (weekly leaderboard) ----------------------
-async function loadRankingPoets() {
-  try {
-    if (!rankingContainer) return; // no container, skip
-
-    const poetsMap = {}; // { uniqueUsername: { username, poemsWritten, likesReceived, commentsReceived, likesGiven, commentsGiven, score } }
-
-    const now = new Date();
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-    const poemsSnapshot = await getDocs(collection(db, "recentPoems"));
-    const usersSnapshot = await getDocs(collection(db, "users"));
-
-    // Initialize poets from users collection
-    usersSnapshot.forEach(userDoc => {
-      const data = userDoc.data();
-      const username = data.username || "Anonymous";
-      poetsMap[username] = {
-        userId: userDoc.id,
-        username,
-        poemsWritten: 0,
-        likesReceived: 0,
-        commentsReceived: 0,
-        likesGiven: 0,
-        commentsGiven: 0,
-        score: 0
-      };
-    });
-
-    // Count activity in the past week
-    poemsSnapshot.forEach(docSnap => {
-      const data = docSnap.data();
-
-      // Normalize a unique key using submittedBy or username
-      const submittedBy = data.submittedBy || data.username || data.author || "Anonymous";
-
-      if (!poetsMap[submittedBy]) {
-        poetsMap[submittedBy] = {
-          userId: data.userId || null,
-          username: submittedBy,
-          poemsWritten: 0,
-          likesReceived: 0,
-          commentsReceived: 0,
-          likesGiven: 0,
-          commentsGiven: 0,
-          score: 0
-        };
-      }
-
-      const createdAt = data.timestamp ? (data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp)) : new Date();
-      if (createdAt >= weekAgo) {
-        poetsMap[submittedBy].poemsWritten += 1;
-        poetsMap[submittedBy].likesReceived += data.likes || 0;
-        poetsMap[submittedBy].commentsReceived += Array.isArray(data.comments) ? data.comments.length : (data.commentsCount || 0);
-      }
-
-      // Likes given
-      if (data.likedBy && Array.isArray(data.likedBy)) {
-        data.likedBy.forEach(uid => {
-          const user = usersSnapshot.docs.find(u => u.id === uid);
-          const likerName = user ? (user.data().username || "Anonymous") : "Anonymous";
-
-          if (!poetsMap[likerName]) {
-            poetsMap[likerName] = {
-              userId: uid,
-              username: likerName,
-              poemsWritten: 0,
-              likesReceived: 0,
-              commentsReceived: 0,
-              likesGiven: 0,
-              commentsGiven: 0,
-              score: 0
-            };
-          }
-          poetsMap[likerName].likesGiven += 1;
-        });
-      }
-
-      // Comments given
-      if (data.comments && Array.isArray(data.comments)) {
-        data.comments.forEach(comment => {
-          const commenterName = comment.user || comment.userId || "Anonymous";
-
-          if (!poetsMap[commenterName]) {
-            poetsMap[commenterName] = {
-              userId: comment.userId || null,
-              username: commenterName,
-              poemsWritten: 0,
-              likesReceived: 0,
-              commentsReceived: 0,
-              likesGiven: 0,
-              commentsGiven: 0,
-              score: 0
-            };
-          }
-          poetsMap[commenterName].commentsGiven += 1;
-        });
-      }
-    });
-
-    // Calculate score
-    Object.values(poetsMap).forEach(poet => {
-      poet.score = poet.poemsWritten * 5 +
-                   poet.likesReceived * 3 +
-                   poet.commentsReceived * 2 +
-                   poet.likesGiven +
-                   poet.commentsGiven;
-    });
-
-    // Sort and take top 20
-    const sortedPoets = Object.values(poetsMap)
-      .filter(poet => poet.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 20);
-
-    // Render
-    rankingContainer.innerHTML = "";
-    sortedPoets.forEach((poet, index) => {
-      const poetDiv = document.createElement("div");
-      poetDiv.className = "ranking-poet";
-
-      // Top 3 badges
-      let badge = "";
-      if (index === 0) badge = "🏆";
-      else if (index === 1) badge = "🥈";
-      else if (index === 2) badge = "🥉";
-
-      poetDiv.innerHTML = `
-        <a href="user-profile.html?uid=${encodeURIComponent(poet.userId || "")}" class="poet-link">
-          ${badge} ${poet.username}
-        </a>
-        <p style="margin:4px 0; font-size:0.9rem; color:#555;">
-          Activity this week: ${poet.poemsWritten} poems · ${poet.likesReceived} likes · ${poet.commentsReceived} comments
-        </p>
-      `;
-      rankingContainer.appendChild(poetDiv);
-    });
-
-  } catch (err) {
-    console.error("Error loading ranking poets:", err);
-  }
-}
-// -------------------------------------------------------------------------------
 
 // --- Auth handling ---
 onAuthStateChanged(auth, async (user) => {
@@ -1453,9 +1412,13 @@ if (e.target.classList.contains("reply-toggle")) {
 }
 
 // SEND REPLY — handle send button click
+// SEND REPLY — handle send button click
 if (e.target.classList.contains("send-reply-btn")) {
   const user = auth.currentUser;
-  if (!user) { alert("Please sign in to reply."); return; }
+  if (!user) {
+    alert("Please sign in to reply.");
+    return;
+  }
 
   const commentDiv = e.target.closest(".comment");
   const card = e.target.closest(".recent-poem-card");
@@ -1468,9 +1431,11 @@ if (e.target.classList.contains("send-reply-btn")) {
   const replySection = commentDiv.querySelector(".reply-section");
 
   try {
+    // Fetch username of current user
     const userDoc = await getDoc(doc(db, "users", user.uid));
     const username = userDoc.exists() ? userDoc.data().username || "User" : "User";
 
+    // Add reply to Firestore
     await addDoc(collection(db, "recentPoems", docId, "comments", commentId, "replies"), {
       userId: user.uid,
       username,
@@ -1478,62 +1443,80 @@ if (e.target.classList.contains("send-reply-btn")) {
       timestamp: new Date()
     });
 
-    // Append instantly
-    replySection.innerHTML += `
-      <div style="background:#f7f7f7; padding:6px 10px; border-radius:6px; margin:4px 0;">
-        <a href="/user-profile.html?uid=${user.uid}" style="font-weight:400; color:#5a3cb3; text-decoration:none;">${username}</a>: ${replyText}
-      </div>
+    // Append instantly to UI
+    const replyDiv = document.createElement("div");
+    replyDiv.style.cssText = "background:#f7f7f7; padding:6px 10px; border-radius:6px; margin:4px 0;";
+    replyDiv.innerHTML = `
+      <a href="/user-profile.html?uid=${user.uid}" style="font-weight:400; color:#5a3cb3; text-decoration:none;">
+        ${username}
+      </a>: ${replyText}
     `;
+    replySection.appendChild(replyDiv);
+
+    // Clear textarea
     textarea.value = "";
+
   } catch (err) {
     console.error("Error sending reply:", err);
     alert("Failed to send reply.");
   }
 }
 
-  // 📝 POST COMMENT
-  if (e.target.classList.contains("comment-btn")) {
-    const input = card.querySelector(".comment-input");
-    const text = input.value.trim();
-    if (!text) return alert("Comment cannot be empty.");
+// 📝 POST COMMENT
+if (e.target.classList.contains("comment-btn")) {
+  const input = card.querySelector(".comment-input");
+  const text = input.value.trim();
+  if (!text) return alert("Comment cannot be empty.");
 
-    if (!auth.currentUser) {
-      alert("Please sign in to comment.");
-      return;
-    }
-
-    try {
-      const commentsRef = collection(db, "recentPoems", poemId, "comments");
-      await setDoc(doc(commentsRef), {
-        text,
-        user: actorUsername,
-        userId: auth.currentUser.uid,
-        createdAt: new Date(),
-      });
-
-      input.value = "";
-      const messageCount = card.querySelector(".message-count");
-      const currentCount =
-        parseInt((messageCount?.textContent || "").replace("💬", "")) || 0;
-      if (messageCount) messageCount.textContent = `💬 ${currentCount + 1}`;
-
-      const commentList = card.querySelector(".comment-list");
-      if (commentList.style.display === "block") {
-        const p = document.createElement("p");
-        p.innerHTML = `<strong>${actorUsername}:</strong> ${text}`;
-        commentList.appendChild(p);
-      }
-
-      // Add notification for poem owner
-      const poemSnap = await getDoc(doc(db, "recentPoems", poemId));
-      const poemOwner = poemSnap.data().submittedByUid || poemSnap.data().uid;
-      await addNotification(poemId, poemOwner, "comment", actorUsername, text);
-
-    } catch (err) {
-      console.error("Error posting comment:", err);
-      alert("Failed to post comment.");
-    }
+  if (!auth.currentUser) {
+    alert("Please sign in to comment.");
+    return;
   }
+
+  try {
+    const commentsRef = collection(db, "recentPoems", poemId, "comments");
+    const newCommentRef = doc(commentsRef); // generate new doc
+    await setDoc(newCommentRef, {
+      text,
+      user: actorUsername,
+      userId: auth.currentUser.uid,
+      createdAt: new Date(),
+    });
+
+    input.value = "";
+    const messageCount = card.querySelector(".message-count");
+    const currentCount =
+      parseInt((messageCount?.textContent || "").replace("💬", "")) || 0;
+    if (messageCount) messageCount.textContent = `💬 ${currentCount + 1}`;
+
+    const commentList = card.querySelector(".comment-list");
+    if (commentList.style.display === "block") {
+      // append new comment in the same structure as existing comments
+      const div = document.createElement("div");
+      div.className = "comment";
+      div.dataset.commentId = newCommentRef.id;
+      div.style.cssText = "background:#fff; padding:8px 12px; margin:6px 0; border-radius:6px;";
+      div.innerHTML = `
+        <a href="/user-profile.html?uid=${auth.currentUser.uid}" style="font-weight:600; color:#a67c52; text-decoration:none; margin-right:6px;">${actorUsername}</a>: ${text}
+        <div class="comment-actions" style="margin-top:4px;">
+          <small class="reply-toggle" style="color:#5a3cb3; cursor:pointer;">Reply</small>
+        </div>
+        <div class="reply-section" style="margin-left:20px; margin-top:6px;"></div>
+      `;
+      commentList.appendChild(div);
+    }
+
+    // Add notification for poem owner
+    const poemSnap = await getDoc(doc(db, "recentPoems", poemId));
+    const poemOwner = poemSnap.data().submittedByUid || poemSnap.data().uid;
+    await addNotification(poemId, poemOwner, "comment", actorUsername, text);
+
+  } catch (err) {
+    console.error("Error posting comment:", err);
+    alert("Failed to post comment.");
+  }
+}
+
 
   // 👁️ READ MORE toggle
   if (e.target.classList.contains("read-more-btn")) {
