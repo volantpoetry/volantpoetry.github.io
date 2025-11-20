@@ -702,6 +702,31 @@ h2 {
     margin-bottom: 18px !important;  /* gap between cards */
   }
     }
+
+    /* Container for all badges */
+  #badgesContainer {
+    display: flex;          /* Horizontal layout */
+    flex-wrap: wrap;        /* Wrap to next line if too many */
+    justify-content: flex-start; /* Align items to the left */
+    gap: 10px;              /* Space between badges */
+    margin-top: 10px;
+  }
+
+  /* Individual badges */
+  #badgesContainer img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;     /* Circular badges */
+    object-fit: cover;
+    border: 2px solid #5a3cb3;  /* Optional border for style */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow */
+    transition: transform 0.2s;    /* Hover effect */
+    cursor: default;
+  }
+
+  #badgesContainer img:hover {
+    transform: scale(1.1); /* Slight zoom on hover */
+  }
 </style>
 </head>
 
@@ -792,13 +817,17 @@ h2 {
 <section class="profile-stats-section">
   <div class="interaction-panel-horizontal">
 
-    <div class="panel-item">
-      <h3>Level</h3>
-      <strong></strong> <span id="userLevel"></span>
-      <div class="level-bar">
-        <div id="levelProgress" style="width:0%"></div>
-      </div>
-    </div>
+<div class="panel-item">
+  <h3>Flight Stage</h3>
+  <strong>Flight</strong> <span id="userLevel"></span> <!-- Using your existing ID -->
+  <div class="level-bar">
+    <div id="levelProgress" style="width:0%"></div>
+  </div>
+  <!-- Remaining info will appear here -->
+  <div id="flightInfo" style="margin-top:8px; font-size:14px; color:#333;"></div>
+</div>
+
+
 
     <div class="panel-item">
       <h3>Achievements</h3>
@@ -906,91 +935,11 @@ function truncatePoemByLines(text, maxLines = 8) {
     truncated: lines.length > maxLines
   };
 }
-// --- Update Achievements dynamically (Level code unchanged) ---
+// --- Update Achievements dynamically ---
 async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   const badgesContainer = document.querySelector(".badges-container");
   if (!badgesContainer) return;
   badgesContainer.innerHTML = "";
-
-  // Keep the existing static badges as a fallback (optional)
-  const badges = [];
-
-  // Append fallback badges first
-  badges.forEach(badge => {
-    const img = document.createElement("img");
-    img.src = badge.src;
-    img.title = badge.title;
-    badgesContainer.appendChild(img);
-  });
-const userLevelEl = document.getElementById("userLevel");
-const levelProgressEl = document.getElementById("levelProgress");
-
-async function showUserLevel() {
-  const user = auth.currentUser;
-  if (!user) {
-    userLevelEl.textContent = "Sign in to see your level";
-    return;
-  }
-
-  // Fetch levels
-  const levelsSnap = await getDocs(collection(db, "levels"));
-  const levels = [];
-  levelsSnap.forEach(docSnap => levels.push(docSnap.data()));
-
-  // Sort levels by level number ascending
-  levels.sort((a,b) => a.level - b.level);
-
-  // Fetch user stats (replace with your actual way of counting)
-  // Example dummy data:
-  const userStats = {
-    poemsSubmitted: 5,
-    likesReceived: 12,
-    commentsMade: 75,
-    commentsReceived: 4
-  };
-
-  // Determine current level
-  let currentLevel = levels[0];
-  let nextLevel = null;
-
-  for (let i = 0; i < levels.length; i++) {
-    const lvl = levels[i];
-    const c = lvl.criteria || {};
-    if (
-      userStats.poemsSubmitted >= (c.poemsSubmitted || 0) &&
-      userStats.likesReceived >= (c.likesReceived || 0) &&
-      userStats.commentsMade >= (c.commentsMade || 0) &&
-      userStats.commentsReceived >= (c.commentsReceived || 0)
-    ) {
-      currentLevel = lvl;
-      nextLevel = levels[i+1] || null;
-    }
-  }
-
-  userLevelEl.textContent = `Level ${currentLevel.level}: ${currentLevel.name}`;
-
-  // Calculate progress percentage toward next level
-  if (nextLevel) {
-    const c = currentLevel.criteria;
-    const n = nextLevel.criteria;
-    let totalReq = 0;
-    let totalUser = 0;
-
-    const metrics = ["poemsSubmitted", "likesReceived", "commentsMade", "commentsReceived"];
-    metrics.forEach(key => {
-      totalReq += (n[key] || 0) - (c[key] || 0);
-      totalUser += Math.min(userStats[key] - (c[key] || 0), (n[key] || 0) - (c[key] || 0));
-    });
-
-    const progress = Math.max(0, Math.min(100, (totalUser / totalReq) * 100));
-    levelProgressEl.style.width = progress + "%";
-  } else {
-    // Max level reached
-    levelProgressEl.style.width = "100%";
-  }
-}
-
-auth.onAuthStateChanged(showUserLevel);
 
   // Fetch admin-defined achievements from Firestore
   try {
@@ -1023,22 +972,93 @@ auth.onAuthStateChanged(showUserLevel);
   } catch (err) {
     console.error("Error loading dynamic achievements:", err);
   }
+
+  // Update level based on activity
+  updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
 }
 
-// --- Update Level (unchanged) ---
+// --- Update Level (user activity-based only) ---
 function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
-  let score = 0;
-  score += Math.min(poemCount * 0, 0);
-  score += Math.min(totalLikes, 0);
-  score += Math.min(totalCommentsReceived * 0, 0);
-  score += Math.min(totalCommentsMade * 0, 0);
-  const level = Math.floor(score / 0) + 0;
-  const progress = Math.min((score % 0) * 0, 0);
   const levelEl = document.getElementById("userLevel");
   const levelProgressEl = document.getElementById("levelProgress");
+
+  // Check if remaining info container exists; if not, create it
+  let levelInfoEl = document.querySelector(".panel-item .level-info");
+  if (!levelInfoEl) {
+    levelInfoEl = document.createElement("div");
+    levelInfoEl.className = "level-info";
+    levelInfoEl.style.marginTop = "8px";
+    levelInfoEl.style.fontSize = "14px";
+    levelInfoEl.style.color = "#333";
+    const panelItem = document.querySelector(".panel-item");
+    panelItem.appendChild(levelInfoEl);
+  }
+
+  // Starting requirements (low for first level)
+  let baseRequirements = {
+    poems: 2,
+    likes: 2,
+    commentsMade: 2,
+    commentsReceived: 1
+  };
+
+  let level = 1; // start at level 1
+  let progress = 0;
+
+  let poems = poemCount;
+  let likes = totalLikes;
+  let commentsMade = totalCommentsMade;
+  let commentsReceived = totalCommentsReceived;
+
+  let remaining = { poems: 0, likes: 0, commentsMade: 0, commentsReceived: 0 };
+
+  while (true) {
+    const poemProgress = Math.min(poems / baseRequirements.poems, 1);
+    const likesProgress = Math.min(likes / baseRequirements.likes, 1);
+    const commentsMadeProgress = Math.min(commentsMade / baseRequirements.commentsMade, 1);
+    const commentsReceivedProgress = Math.min(commentsReceived / baseRequirements.commentsReceived, 1);
+
+    const levelProgress = (poemProgress + likesProgress + commentsMadeProgress + commentsReceivedProgress) / 4;
+
+    if (levelProgress >= 1) {
+      // Level up
+      level++;
+      poems -= baseRequirements.poems;
+      likes -= baseRequirements.likes;
+      commentsMade -= baseRequirements.commentsMade;
+      commentsReceived -= baseRequirements.commentsReceived;
+
+      // Increase requirements for next level
+      baseRequirements.poems = Math.ceil(baseRequirements.poems * 1.5);
+      baseRequirements.likes = Math.ceil(baseRequirements.likes * 1.5);
+      baseRequirements.commentsMade = Math.ceil(baseRequirements.commentsMade * 1.5);
+      baseRequirements.commentsReceived = Math.ceil(baseRequirements.commentsReceived * 1.5);
+    } else {
+      // Calculate remaining to next level
+      remaining.poems = Math.max(baseRequirements.poems - poems, 0);
+      remaining.likes = Math.max(baseRequirements.likes - likes, 0);
+      remaining.commentsMade = Math.max(baseRequirements.commentsMade - commentsMade, 0);
+      remaining.commentsReceived = Math.max(baseRequirements.commentsReceived - commentsReceived, 0);
+
+      progress = levelProgress * 100;
+      break;
+    }
+  }
+
   if (levelEl) levelEl.textContent = level;
-  if (levelProgressEl) levelProgressEl.style.width = progress + "%";
+  if (levelProgressEl) levelProgressEl.style.width = `${progress}%`;
+
+  if (levelInfoEl) {
+    levelInfoEl.innerHTML = `
+      <strong>Remaining to next flight:</strong><br>
+      Poems: ${remaining.poems}<br>
+      Likes: ${remaining.likes}<br>
+      Comments Made: ${remaining.commentsMade}<br>
+      Comments Received: ${remaining.commentsReceived}
+    `;
+  }
 }
+
 
 
 // --- Auth handling ---

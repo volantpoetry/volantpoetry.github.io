@@ -15,6 +15,7 @@
   .achievement img { width: 50px; height: 50px; border-radius: 50%; margin-right: 12px; object-fit:cover; }
   .achievement-details { flex:1; }
   .achievement-actions button { margin-left: 6px; background:#888; }
+  .checkbox-container { margin-right: 12px; }
 </style>
 </head>
 <body>
@@ -49,11 +50,14 @@
   <button type="submit">Save Achievement</button>
 </form>
 
+<!-- Delete Selected Button -->
+<button id="deleteSelected" style="background:#e74c3c;">Delete Selected</button>
+
 <div id="achievementsList"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -67,12 +71,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --- Cloudinary Upload ---
 let selectedImageFile = null;
 document.getElementById("badgeImage").addEventListener("change", (e) => {
   selectedImageFile = e.target.files[0] || null;
 });
 
+// Upload image
 async function uploadToCloudinary(file) {
   if (!file) return "";
   const cloudName = "dzoq4pgjn";
@@ -95,11 +99,10 @@ async function uploadToCloudinary(file) {
   }
 }
 
-// --- Form Submission ---
+// Form submission
 const form = document.getElementById("achievementForm");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-
   const title = document.getElementById("title").value.trim();
   const description = document.getElementById("description").value.trim();
   const type = document.getElementById("conditionType").value;
@@ -107,30 +110,20 @@ form.addEventListener("submit", async (e) => {
   const active = document.getElementById("active").checked;
   const achId = document.getElementById("achId").value;
 
-  // Upload image
   let imageUrl = "";
-  if (selectedImageFile) {
-    imageUrl = await uploadToCloudinary(selectedImageFile);
-  }
+  if (selectedImageFile) imageUrl = await uploadToCloudinary(selectedImageFile);
 
   try {
     if (achId) {
-      // Update existing
       const achRef = doc(db, "achievements", achId);
       const updateData = { title, description, condition: { type, min }, active };
       if (imageUrl) updateData.imageUrl = imageUrl;
       await updateDoc(achRef, updateData);
     } else {
-      // New achievement
       await addDoc(collection(db, "achievements"), {
-        title,
-        description,
-        condition: { type, min },
-        imageUrl,
-        active
+        title, description, condition: { type, min }, imageUrl, active
       });
     }
-
     form.reset();
     document.getElementById("achId").value = "";
     selectedImageFile = null;
@@ -141,17 +134,19 @@ form.addEventListener("submit", async (e) => {
   }
 });
 
-// --- Load Achievements ---
+// Load achievements
 async function loadAchievements() {
   const list = document.getElementById("achievementsList");
   list.innerHTML = "";
   const snapshot = await getDocs(collection(db, "achievements"));
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    const id = docSnap.id;
+  const achievements = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+  achievements.sort((a, b) => a.title.localeCompare(b.title));
+
+  achievements.forEach(data => {
     const div = document.createElement("div");
     div.className = "achievement";
     div.innerHTML = `
+      <input type="checkbox" class="select-achievement checkbox-container" data-id="${data.id}">
       <img src="${data.imageUrl || 'https://via.placeholder.com/50'}" alt="badge">
       <div class="achievement-details">
         <strong>${data.title}</strong> - ${data.description} <br>
@@ -159,39 +154,52 @@ async function loadAchievements() {
         Active: ${data.active ? "Yes" : "No"}
       </div>
       <div class="achievement-actions">
-        <button onclick="editAchievement('${id}')">Edit</button>
-        <button onclick="deleteAchievement('${id}')">Delete</button>
+        <button onclick="editAchievement('${data.id}')">Edit</button>
+        <button onclick="deleteAchievement('${data.id}')">Delete</button>
       </div>
     `;
     list.appendChild(div);
   });
 }
 
-// --- Edit Achievement ---
+// Edit achievement
 window.editAchievement = async (id) => {
   const achRef = doc(db, "achievements", id);
-  const snap = await getDocs(collection(db, "achievements"));
-  const dataSnap = await achRef.get?.() || await (await fetch(doc(db, "achievements", id))).json()
-  const data = snap.data ? snap.data() : {};
-  if (!data) return;
+  const docSnap = await getDoc(achRef);
+  if (!docSnap.exists()) return;
+  const data = docSnap.data();
   document.getElementById("title").value = data.title || "";
   document.getElementById("description").value = data.description || "";
   document.getElementById("conditionType").value = data.condition.type || "poemsSubmitted";
   document.getElementById("conditionMin").value = data.condition.min || 1;
   document.getElementById("active").checked = data.active || false;
   document.getElementById("achId").value = id;
+  selectedImageFile = null;
 }
 
-// --- Delete Achievement ---
+// Delete single achievement
 window.deleteAchievement = async (id) => {
   if (!confirm("Are you sure you want to delete this achievement?")) return;
   await deleteDoc(doc(db, "achievements", id));
   loadAchievements();
 }
 
-// --- Initial Load ---
-loadAchievements();
+// Delete selected achievements
+document.getElementById("deleteSelected").addEventListener("click", async () => {
+  const checkboxes = document.querySelectorAll(".select-achievement:checked");
+  if (checkboxes.length === 0) return alert("Select at least one achievement to delete.");
+  if (!confirm(`Are you sure you want to delete ${checkboxes.length} selected achievement(s)?`)) return;
 
+  for (const cb of checkboxes) {
+    const id = cb.dataset.id;
+    await deleteDoc(doc(db, "achievements", id));
+  }
+  loadAchievements();
+});
+
+// Initial load
+loadAchievements();
 </script>
+
 </body>
 </html>
