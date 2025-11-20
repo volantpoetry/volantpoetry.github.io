@@ -1,7 +1,7 @@
 name: 🔥 Auto Sitemap Generator
 
 on:
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -25,7 +27,6 @@ jobs:
       - name: Create Firebase key file from GitHub secret
         run: |
           echo '${{ secrets.FIREBASE_KEY }}' > serviceAccountKey.json
-          # Optional: verify the file is not empty
           wc -c serviceAccountKey.json
 
       - name: Run sitemap generator
