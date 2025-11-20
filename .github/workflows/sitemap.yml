@@ -1,7 +1,7 @@
 name: 🔥 Auto Sitemap Generator
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual trigger
   push:
     branches:
       - main
@@ -25,6 +25,7 @@ jobs:
       - name: Create Firebase key file from GitHub secret
         run: |
           echo '${{ secrets.FIREBASE_KEY }}' > serviceAccountKey.json
+          # Optional: verify the file is not empty
           wc -c serviceAccountKey.json
 
       - name: Run sitemap generator
@@ -36,6 +37,6 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add sitemap.xml
           git commit -m "🗺️ Auto-update sitemap" || echo "No changes to commit"
-          git push
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
