@@ -978,11 +978,12 @@ async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, 
 }
 
 // --- Update Level (user activity-based only) ---
+
 function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   const levelEl = document.getElementById("userLevel");
   const levelProgressEl = document.getElementById("levelProgress");
 
-  // Check if remaining info container exists; if not, create it
+  // Ensure remaining info container exists
   let levelInfoEl = document.querySelector(".panel-item .level-info");
   if (!levelInfoEl) {
     levelInfoEl = document.createElement("div");
@@ -991,10 +992,10 @@ function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalComments
     levelInfoEl.style.fontSize = "14px";
     levelInfoEl.style.color = "#333";
     const panelItem = document.querySelector(".panel-item");
-    panelItem.appendChild(levelInfoEl);
+    if (panelItem) panelItem.appendChild(levelInfoEl);
   }
 
-  // Starting requirements (low for first level)
+  // Base requirements for first level
   let baseRequirements = {
     poems: 2,
     likes: 2,
@@ -1002,23 +1003,23 @@ function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalComments
     commentsReceived: 1
   };
 
-  let level = 1; // start at level 1
-  let progress = 0;
+  let level = 1;
 
   let poems = poemCount;
   let likes = totalLikes;
   let commentsMade = totalCommentsMade;
   let commentsReceived = totalCommentsReceived;
 
+  // Track what’s left to next level
   let remaining = { poems: 0, likes: 0, commentsMade: 0, commentsReceived: 0 };
 
   while (true) {
-    const poemProgress = Math.min(poems / baseRequirements.poems, 1);
-    const likesProgress = Math.min(likes / baseRequirements.likes, 1);
-    const commentsMadeProgress = Math.min(commentsMade / baseRequirements.commentsMade, 1);
-    const commentsReceivedProgress = Math.min(commentsReceived / baseRequirements.commentsReceived, 1);
+    const poemProgress = poems / baseRequirements.poems;
+    const likesProgress = likes / baseRequirements.likes;
+    const commentsMadeProgress = commentsMade / baseRequirements.commentsMade;
+    const commentsReceivedProgress = commentsReceived / baseRequirements.commentsReceived;
 
-    const levelProgress = (poemProgress + likesProgress + commentsMadeProgress + commentsReceivedProgress) / 4;
+    const levelProgress = Math.min((poemProgress + likesProgress + commentsMadeProgress + commentsReceivedProgress) / 4, 1);
 
     if (levelProgress >= 1) {
       // Level up
@@ -1034,19 +1035,19 @@ function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalComments
       baseRequirements.commentsMade = Math.ceil(baseRequirements.commentsMade * 1.5);
       baseRequirements.commentsReceived = Math.ceil(baseRequirements.commentsReceived * 1.5);
     } else {
-      // Calculate remaining to next level
+      // Remaining to next level
       remaining.poems = Math.max(baseRequirements.poems - poems, 0);
       remaining.likes = Math.max(baseRequirements.likes - likes, 0);
       remaining.commentsMade = Math.max(baseRequirements.commentsMade - commentsMade, 0);
       remaining.commentsReceived = Math.max(baseRequirements.commentsReceived - commentsReceived, 0);
 
-      progress = levelProgress * 100;
+      // Set progress bar
+      if (levelProgressEl) levelProgressEl.style.width = `${levelProgress * 100}%`;
       break;
     }
   }
 
   if (levelEl) levelEl.textContent = level;
-  if (levelProgressEl) levelProgressEl.style.width = `${progress}%`;
 
   if (levelInfoEl) {
     levelInfoEl.innerHTML = `
@@ -1205,7 +1206,7 @@ card.innerHTML = `
   <div class="comment-list" style="display:none;"></div>
 `;
 
-        container.appendChild(card);
+        container.prepend(card);
       }
     }
 

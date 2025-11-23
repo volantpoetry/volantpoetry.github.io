@@ -125,28 +125,36 @@ function truncatePoem(text, lines = 8) {
 
 // --- Recent Poems with Pagination ---
 // --- Recent Poems with Pagination ---
-async function loadRecentPoems(initial = false) {
+
+let loadedPoemIds = new Set();
+
+async function loadRecentPoems() {
   if (reachedEnd) return;
+
   try {
     const colRef = collection(db, "recentPoems");
-    let q = query(colRef, orderBy("timestamp", "desc"), limit(10));
-    if (lastVisible && !initial)
-      q = query(colRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(10));
-
+    // Order by timestamp descending (newest first)
+    const q = query(colRef, orderBy("timestamp", "desc"));
     const snapshot = await getDocs(q);
+
     if (snapshot.empty) {
+      reachedEnd = true;
       const loadMoreBtn = document.getElementById("load-more-poems");
       if (loadMoreBtn) loadMoreBtn.style.display = "none";
-      reachedEnd = true;
       return;
     }
 
     const container = document.getElementById("recent-poems-container");
-    if (initial) container.innerHTML = "";
+    container.innerHTML = ""; // clear existing poems if any
 
-    snapshot.docs.forEach(async (docSnap) => {
+    for (const docSnap of snapshot.docs) {
       const poem = docSnap.data();
       const docId = docSnap.id;
+
+      // Skip duplicates
+      if (loadedPoemIds.has(docId)) continue;
+      loadedPoemIds.add(docId);
+
       const card = document.createElement("div");
       card.className = "recent-poem-card";
       card.dataset.id = docId;
@@ -154,8 +162,8 @@ async function loadRecentPoems(initial = false) {
       const truncated = truncatePoem(poem.content, 8);
       const likes = typeof poem.likes === "number" ? poem.likes : 0;
 
-      // --- Fetch poet username and profile link ---
-      const poetUid = poem.authorId || ""; // <-- Make sure your poems have this field
+      // Poet info
+      const poetUid = poem.authorId || "";
       let displayName = poem.author || "Anonymous";
       let profileLink = "#";
 
@@ -166,19 +174,16 @@ async function loadRecentPoems(initial = false) {
             displayName = userDoc.data().username || displayName;
             profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
           }
-        } catch (err) {
-          console.warn("Failed to fetch poet username:", err);
-        }
+        } catch (err) { console.warn("Failed to fetch poet username:", err); }
       }
 
       card.innerHTML = `
         <h3 class="recent-poem-title">${poem.title}</h3>
-<p class="author">by <a href="${profileLink}" class="author-link">${displayName}</a></p>
+        <p class="author">by <a href="${profileLink}" class="author-link">${displayName}</a></p>
         <p class="poem-content">${truncated.preview}</p>
         ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
         ${poem.categories && poem.categories.length > 0
-          ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>`
-          : ""}
+          ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
         <div class="poem-actions">
           <div class="comment-section">
             <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
@@ -186,27 +191,13 @@ async function loadRecentPoems(initial = false) {
           </div>
           <button class="like-btn">❤️</button>
           <span class="like-count">${likes}</span>
-          <span class="message-count">💬</span>
+          <span class="message-count">💬 0</span>
         </div>
         <div class="comment-list" style="display:none;"></div>
       `;
 
+      // Append cards in the order from Firestore (newest first)
       container.appendChild(card);
-
-      // SEO schema
-      addPoemSchema({
-        title: poem.title,
-        description: poem.content ? poem.content.slice(0, 150) : "",
-        slug: poem.slug || poem.title.toLowerCase().replace(/\s+/g, "-"),
-        date: poem.timestamp
-          ? new Date(poem.timestamp.seconds * 1000).toISOString().split("T")[0]
-          : "",
-      });
-
-      // Mark liked poems
-      const user = auth.currentUser;
-      if (user && Array.isArray(poem.likedBy) && poem.likedBy.includes(user.uid))
-        card.querySelector(".like-btn").classList.add("liked");
 
       // Handle Read More toggle
       if (truncated.truncated) {
@@ -234,19 +225,21 @@ async function loadRecentPoems(initial = false) {
         textarea.style.height = "auto";
         textarea.style.height = textarea.scrollHeight + "px";
       });
-    });
-
-    lastVisible = snapshot.docs[snapshot.docs.length - 1];
-    if (snapshot.size < 10) {
-      const loadMoreBtn = document.getElementById("load-more-poems");
-      if (loadMoreBtn) loadMoreBtn.style.display = "none";
-      reachedEnd = true;
     }
+
+    reachedEnd = true; // All poems loaded
+    const loadMoreBtn = document.getElementById("load-more-poems");
+    if (loadMoreBtn) loadMoreBtn.style.display = "none";
+
   } catch (err) {
     console.error("Error fetching recent poems:", err);
   }
 }
 
+// Initial load
+window.addEventListener("DOMContentLoaded", () => {
+  loadRecentPoems();
+});
 
 
 // --- Offline Notice ---

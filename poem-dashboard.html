@@ -12,7 +12,6 @@
       background-color: #fafafa;
     }
 
-    /* Header with title and search */
     .header {
       display: flex;
       justify-content: space-between;
@@ -58,17 +57,16 @@
       background-color: #f9f9f9;
     }
 
-    /* Users list styling */
     .user-list {
       list-style: disc;
       padding-left: 20px;
       margin: 0;
     }
+
     .user-list li {
       margin-bottom: 2px;
     }
 
-    /* Responsive adjustments */
     @media screen and (max-width: 600px) {
       .header {
         flex-direction: column;
@@ -87,13 +85,8 @@
   </style>
 
   <script type="module">
-    import { 
-      initializeApp 
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-    import { 
-      getFirestore, collection, getDocs, doc, getDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -110,6 +103,18 @@
     const tableBody = document.getElementById("poems-table-body");
     const searchInput = document.getElementById("poems-search");
 
+    const userCache = {}; // cache to avoid repeated getDoc for same user
+
+    async function getUser(userId) {
+      if (!userId) return { username: "Anonymous", userId: null };
+      if (userCache[userId]) return { username: userCache[userId], userId };
+      const userRef = doc(db, "users", userId);
+      const userSnap = await getDoc(userRef);
+      const username = userSnap.exists() ? userSnap.data().username || "Anonymous" : "Anonymous";
+      userCache[userId] = username;
+      return { username, userId };
+    }
+
     async function loadPoems() {
       tableBody.innerHTML = "";
       try {
@@ -120,35 +125,36 @@
           const poem = docSnap.data();
           const docId = docSnap.id;
 
-          // Count comments
+          // Comments
           const commentsCol = collection(db, "recentPoems", docId, "comments");
           const commentsSnap = await getDocs(commentsCol);
           const commentCount = commentsSnap.size;
 
-          // Fetch usernames of commenters
-          const usernamesSet = new Set();
+          const commenterSet = new Set();
           for (const cDoc of commentsSnap.docs) {
-            const cData = cDoc.data();
-            if (cData.userId) {
-              const userRef = doc(db, "users", cData.userId);
-              const userSnap = await getDoc(userRef);
-              if (userSnap.exists()) usernamesSet.add(userSnap.data().username || "Anonymous");
-              else usernamesSet.add("Anonymous");
-            } else {
-              usernamesSet.add("Anonymous");
+            const user = await getUser(cDoc.data().userId);
+            commenterSet.add(`<a href="user-profile.html?userId=${user.userId}">${user.username}</a>`);
+          }
+          const commentersList = Array.from(commenterSet).map(name => `<li>${name}</li>`).join("");
+
+          // Likes (from likedBy array in poem)
+          const likerSet = new Set();
+          if (poem.likedBy && Array.isArray(poem.likedBy)) {
+            for (const userId of poem.likedBy) {
+              const user = await getUser(userId);
+              likerSet.add(`<a href="user-profile.html?userId=${user.userId}">${user.username}</a>`);
             }
           }
+          const likersList = Array.from(likerSet).map(name => `<li>${name}</li>`).join("");
 
-          // Create a list of usernames
-          const usernamesList = Array.from(usernamesSet).map(name => `<li>${name}</li>`).join("");
-
-          // Add table row
+          // Add row
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${poem.title || "Untitled"}</td>
             <td>${poem.likes || 0}</td>
             <td>${commentCount}</td>
-            <td><ul class="user-list">${usernamesList}</ul></td>
+            <td><ul class="user-list">${commentersList}</ul></td>
+            <td><ul class="user-list">${likersList}</ul></td>
           `;
           tableBody.appendChild(tr);
         }
@@ -161,9 +167,7 @@
       const q = searchInput.value.toLowerCase();
       tableBody.querySelectorAll("tr").forEach(row => {
         const cells = row.querySelectorAll("td");
-        const match = Array.from(cells).some(cell =>
-          cell.textContent.toLowerCase().includes(q)
-        );
+        const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(q));
         row.style.display = match ? "" : "none";
       });
     }
@@ -171,7 +175,7 @@
     searchInput.addEventListener("input", filterTable);
     window.addEventListener("DOMContentLoaded", loadPoems);
   </script>
-    <link rel="icon" type="png" href="images/logo.png" />
+  <link rel="icon" type="png" href="images/logo.png" />
 </head>
 <body>
 
@@ -186,7 +190,8 @@
         <th>Title</th>
         <th>Likes</th>
         <th>Comments</th>
-        <th>Users</th>
+        <th>Commenters</th>
+        <th>Likers</th>
       </tr>
     </thead>
     <tbody id="poems-table-body">
