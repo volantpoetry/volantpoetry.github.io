@@ -124,29 +124,37 @@ function truncatePoem(text, lines = 8) {
 }
 
 // --- Recent Poems with Pagination ---
-// --- Recent Poems with Pagination ---
-async function loadRecentPoems(initial = false) {
-  if (reachedEnd) return;
+
+
+let loading = false;
+const batchSize = 10;
+
+async function loadPoemsBatch() {
+  if (loading || reachedEnd) return;
+  loading = true;
+
+  const container = document.getElementById("recent-poems-container");
+  if (!container) return;
+
   try {
     const colRef = collection(db, "recentPoems");
-    let q = query(colRef, orderBy("timestamp", "desc"), limit(10));
-    if (lastVisible && !initial)
-      q = query(colRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(10));
+    let q = query(colRef, orderBy("timestamp", "desc"), limit(batchSize));
+    if (lastVisible) {
+      q = query(colRef, orderBy("timestamp", "desc"), startAfter(lastVisible), limit(batchSize));
+    }
 
     const snapshot = await getDocs(q);
     if (snapshot.empty) {
-      const loadMoreBtn = document.getElementById("load-more-poems");
-      if (loadMoreBtn) loadMoreBtn.style.display = "none";
       reachedEnd = true;
+      loading = false;
       return;
     }
 
-    const container = document.getElementById("recent-poems-container");
-    if (initial) container.innerHTML = "";
-
-    snapshot.docs.forEach(async (docSnap) => {
+    for (const docSnap of snapshot.docs) {
       const poem = docSnap.data();
       const docId = docSnap.id;
+
+      // Create poem card (reuse your previous card HTML creation)
       const card = document.createElement("div");
       card.className = "recent-poem-card";
       card.dataset.id = docId;
@@ -154,8 +162,8 @@ async function loadRecentPoems(initial = false) {
       const truncated = truncatePoem(poem.content, 8);
       const likes = typeof poem.likes === "number" ? poem.likes : 0;
 
-      // --- Fetch poet username and profile link ---
-      const poetUid = poem.authorId || ""; // <-- Make sure your poems have this field
+      // Author info
+      const poetUid = poem.authorId || "";
       let displayName = poem.author || "Anonymous";
       let profileLink = "#";
 
@@ -166,19 +174,15 @@ async function loadRecentPoems(initial = false) {
             displayName = userDoc.data().username || displayName;
             profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
           }
-        } catch (err) {
-          console.warn("Failed to fetch poet username:", err);
-        }
+        } catch (err) { console.warn(err); }
       }
 
       card.innerHTML = `
         <h3 class="recent-poem-title">${poem.title}</h3>
-<p class="author">by <a href="${profileLink}" class="author-link">${displayName}</a></p>
+        <p class="author">by <a href="${profileLink}" class="author-link">${displayName}</a></p>
         <p class="poem-content">${truncated.preview}</p>
         ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
-        ${poem.categories && poem.categories.length > 0
-          ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>`
-          : ""}
+        ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
         <div class="poem-actions">
           <div class="comment-section">
             <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
@@ -193,22 +197,7 @@ async function loadRecentPoems(initial = false) {
 
       container.appendChild(card);
 
-      // SEO schema
-      addPoemSchema({
-        title: poem.title,
-        description: poem.content ? poem.content.slice(0, 150) : "",
-        slug: poem.slug || poem.title.toLowerCase().replace(/\s+/g, "-"),
-        date: poem.timestamp
-          ? new Date(poem.timestamp.seconds * 1000).toISOString().split("T")[0]
-          : "",
-      });
-
-      // Mark liked poems
-      const user = auth.currentUser;
-      if (user && Array.isArray(poem.likedBy) && poem.likedBy.includes(user.uid))
-        card.querySelector(".like-btn").classList.add("liked");
-
-      // Handle Read More toggle
+      // Read More toggle
       if (truncated.truncated) {
         const btn = card.querySelector(".read-more-btn");
         const p = card.querySelector(".poem-content");
@@ -234,18 +223,29 @@ async function loadRecentPoems(initial = false) {
         textarea.style.height = "auto";
         textarea.style.height = textarea.scrollHeight + "px";
       });
-    });
+    }
 
     lastVisible = snapshot.docs[snapshot.docs.length - 1];
-    if (snapshot.size < 10) {
-      const loadMoreBtn = document.getElementById("load-more-poems");
-      if (loadMoreBtn) loadMoreBtn.style.display = "none";
-      reachedEnd = true;
-    }
+    if (snapshot.size < batchSize) reachedEnd = true;
+
+    loading = false;
   } catch (err) {
-    console.error("Error fetching recent poems:", err);
+    console.error("Error fetching poems:", err);
+    loading = false;
   }
 }
+
+// Load first batch
+window.addEventListener("DOMContentLoaded", () => {
+  loadPoemsBatch();
+});
+
+// Infinite scroll listener
+window.addEventListener("scroll", () => {
+  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+    loadPoemsBatch();
+  }
+});
 
 
 
