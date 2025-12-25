@@ -3019,4 +3019,20 @@ html {
   margin-top: 2px;
 }
 
+/* 🔽 Small screens only */
+@media (max-width: 768px) {
+  .author-img {
+    width: 34px !important;
+    height: 34px !important;
+  }
 
+  .author-link {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+  }
+
+  .author-line {
+    gap: 6px !important;
+    margin-left: -16px;   /* ⬅ pull to left edge */
+  }
+}
