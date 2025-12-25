@@ -6,6 +6,7 @@
 <title>Profile | Volant Poetry</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
   
 <link rel="stylesheet" href="style.css" />
 <link rel="icon" type="image/png" href="images/logo.png" />
@@ -727,6 +728,90 @@ h2 {
   #badgesContainer img:hover {
     transform: scale(1.1); /* Slight zoom on hover */
   }
+/* ─── Volant Classic Initial Avatar ─── */
+.volant-avatar {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 3rem;
+  letter-spacing: 2px;
+
+  /* Classic ink tone */
+  color: #2b1f14;
+
+  /* Paper-like background */
+  background:
+    radial-gradient(circle at top left, rgba(255,255,255,0.6), rgba(0,0,0,0.03)),
+    linear-gradient(135deg, #f6efe7, #e9dfd2);
+
+  /* Elegant frame */
+  border: 4px solid #b89b5e; /* antique gold */
+  box-shadow:
+    inset 0 0 0 6px #fdfaf5,
+    0 6px 18px rgba(0,0,0,0.18);
+
+  user-select: none;
+  position: relative;
+}
+
+/* Inner soft ring */
+.volant-avatar::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+/* Initials styling */
+/* ─── Default Generated User Name (Initials Avatar Only) ─── */
+#avatarInitials {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-weight: 700;
+  font-size: 3.2rem;     /* controls ONLY the initials size */
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.volant-avatar.stamp {
+  background: #2f1b12;
+  color: #f5e6c8;
+  border-color: #7a4b2e;
+  box-shadow:
+    inset 0 0 20px rgba(0,0,0,0.5),
+    0 8px 20px rgba(0,0,0,0.3);
+}
+/* Regenerate Avatar button styling */
+#regenerateAvatarBtn {
+  margin-left: 10px;        /* spacing from the previous button */
+  padding: 8px 16px;        /* button padding */
+  background-color: #4CAF50; /* green background */
+  color: #fff;              /* white text */
+  border: none;             /* remove default border */
+  border-radius: 6px;       /* rounded corners */
+  cursor: pointer;          /* pointer on hover */
+  font-size: 0.9rem;        /* slightly smaller font */
+  transition: background-color 0.3s, transform 0.2s; /* smooth hover effect */
+}
+
+/* Hover effect */
+#regenerateAvatarBtn:hover {
+  background-color: #45a049; /* slightly darker green */
+  transform: scale(1.05);    /* slight zoom effect */
+}
+
+/* Optional: active/pressed state */
+#regenerateAvatarBtn:active {
+  transform: scale(0.98);    /* press effect */
+}
+
 </style>
 </head>
 
@@ -769,10 +854,15 @@ h2 {
     <div class="profile-header-flex">
       <div class="profile-picture-section">
         <div class="profile-picture">
-          <img id="profilePic" src="images/default-avatar.png" alt="Profile Picture">
+<div id="profileAvatar" class="volant-avatar">
+  <span id="avatarInitials"></span>
+</div>
+
+<img id="profilePic" style="display:none;" alt="Profile Picture">
+
           <input type="file" id="uploadPic" style="display:none;">
           <button class="btn" id="changePicBtn">Change Picture</button>
-        </div>
+   <button id="regenerateAvatarBtn" style="display:none; margin-left: 10px;">Regenerate Avatar</button> </div>
 
         <div class="follow-info-horizontal">
           <div class="follow-item">
@@ -884,7 +974,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { 
   getFirestore, doc, getDoc, setDoc, updateDoc, 
   collection, query, where, getDocs, onSnapshot, runTransaction,
-  addDoc  
+  addDoc, deleteDoc  
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -1060,6 +1150,76 @@ function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalComments
   }
 }
 
+function getInitials(name = "") {
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?";
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function colorFromName(name = "") {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue}, 60%, 45%)`;
+}
+
+// --- Generate a PNG blob of initials with background color ---
+function generateAvatarImage(initials, bgColor, size = 180) {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, size, size);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `${size * 0.5}px 'Playfair Display', serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(initials, size / 2, size / 2);
+
+  return new Promise(resolve => {
+    canvas.toBlob(blob => resolve(blob), "image/png");
+  });
+}
+
+// --- Upload generated initials image to Cloudinary & update Firestore ---
+async function uploadAvatarToCloudinary(initials, bgColor, publicId = null) {
+  const blob = await generateAvatarImage(initials, bgColor);
+
+  const formData = new FormData();
+  formData.append("file", blob);
+  formData.append("upload_preset", "profile_pics"); // must match your Cloudinary preset
+  if (publicId) formData.append("public_id", publicId); // overwrite existing image
+
+  const cloudName = "dzoq4pgjn";
+
+  try {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: "POST",
+      body: formData
+    });
+    const data = await res.json();
+    const imageUrl = data.secure_url;
+
+    // Save for this user only
+    const user = auth.currentUser;
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, { 
+        photoURL: imageUrl,          
+        cachedAvatarURL: imageUrl    
+      });
+    }
+
+    return imageUrl;
+  } catch (err) {
+    console.error("Cloudinary upload failed:", err);
+    return null;
+  }
+}
 
 
 // --- Auth handling ---
@@ -1112,7 +1272,66 @@ onAuthStateChanged(auth, async (user) => {
           : new Date(data.joined).toDateString())
       : "Unknown";
   }
-  if (profilePic) profilePic.src = data.photoURL || "images/default-avatar.png";
+const avatarDiv = document.getElementById("profileAvatar");
+const avatarText = document.getElementById("avatarInitials");
+
+if (data.photoURL) {
+  profilePic.src = data.photoURL; // uploaded image
+  profilePic.style.display = "block";
+  avatarDiv.style.display = "none";
+} else if (data.cachedAvatarURL) {
+  profilePic.src = data.cachedAvatarURL; // cached Cloudinary initials
+  profilePic.style.display = "block";
+  avatarDiv.style.display = "none";
+} else {
+  // Generate & upload initials for first-time user
+  const initials = getInitials(profileUsername);
+  const bgColor = colorFromName(profileUsername);
+  avatarText.textContent = initials;
+  avatarDiv.style.background = bgColor;
+  avatarDiv.style.display = "flex";
+  profilePic.style.display = "none";
+
+  uploadAvatarToCloudinary(initials, bgColor).then(url => {
+    if (url) {
+      profilePic.src = url;
+      profilePic.style.display = "block";
+      avatarDiv.style.display = "none";
+    }
+  });
+}
+const regenerateAvatarBtn = document.getElementById("regenerateAvatarBtn");
+
+if (regenerateAvatarBtn && viewingOwnProfile) {
+  regenerateAvatarBtn.style.display = "inline-block";
+  regenerateAvatarBtn.addEventListener("click", async () => {
+    const initials = getInitials(profileUsername);
+    const bgColor = colorFromName(profileUsername);
+
+    try {
+      // Use the old photoURL filename (without domain) as public_id to overwrite
+      let publicId = null;
+      if (profilePic.src) {
+        const urlParts = profilePic.src.split("/");
+        const filename = urlParts[urlParts.length - 1].split(".")[0]; // remove extension
+        publicId = `profile_pics/${filename}`; // assuming folder preset
+      }
+
+      const newAvatarUrl = await uploadAvatarToCloudinary(initials, bgColor, publicId);
+      if (newAvatarUrl) {
+        profilePic.src = newAvatarUrl;
+        profilePic.style.display = "block";
+        document.getElementById("profileAvatar").style.display = "none";
+        alert("✅ Avatar regenerated and replaced successfully!");
+      } else {
+        alert("❌ Failed to regenerate avatar.");
+      }
+    } catch (err) {
+      console.error("Error regenerating avatar:", err);
+      alert("❌ Something went wrong.");
+    }
+  });
+}
 
   // If it's someone else's profile → disable editing (but still allow likes/comments on poems)
   if (!viewingOwnProfile) {
@@ -1206,7 +1425,16 @@ card.innerHTML = `
   <div class="comment-list" style="display:none;"></div>
 `;
 
-        container.prepend(card);
+// Only show delete button if user is viewing their own profile
+if (viewingOwnProfile) {
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "delete-btn";
+  deleteBtn.textContent = "🗑️ Delete";
+  deleteBtn.style.marginLeft = "8px";
+  card.querySelector(".poem-actions").appendChild(deleteBtn);
+}
+
+  container.appendChild(card);
       }
     }
 

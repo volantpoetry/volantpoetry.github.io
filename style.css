@@ -619,6 +619,7 @@
   .load-more-btn { padding: 8px 16px; font-size: 0.9rem; }
 }
 
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .recent-poem-card {
@@ -2583,7 +2584,7 @@ html {
   .recent-poem-title,
   .author {
     position: relative;
-    left: -14px;
+    left: -10px;
   }
 
   .author {
@@ -2596,7 +2597,7 @@ html {
   .recent-poem-title,
   .author {
     position: relative;
-    left: -18px;
+    left: -14px;
   }
 
   .author {
@@ -2608,7 +2609,7 @@ html {
 @media (max-width: 768px) {
   .author {
     position: relative;
-    left: -14px;
+    left: -9px;
     font-size: 0.85rem !important; /* force size */
   }
 }
@@ -2616,7 +2617,7 @@ html {
 @media (max-width: 480px) {
   .author {
     position: relative;
-    left: -18px;
+    left: -13px;
     font-size: 0.75rem !important; /* force smaller size */
   }
 }
@@ -2873,3 +2874,149 @@ html {
     font-size: 1.3rem;
   }
 }
+
+
+/* Load More Button */
+.load-more-btn {
+  padding: 10px 18px;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.25s ease, transform 0.2s ease, opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.load-more-btn:hover {
+  background: #6b1da6;
+  transform: translateY(-2px);
+}
+
+/* Show class */
+.load-more-btn.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .recent-poem-card { padding: 18px 20px; }
+  .recent-poem-card .poem-title { font-size: 1.25rem; }
+}
+
+@media (max-width: 480px) {
+  .recent-poem-card .poem-title { font-size: 1.1rem; }
+  .read-more-btn { font-size: 0.85rem; }
+  .load-more-btn { padding: 8px 16px; font-size: 0.9rem; }
+}
+
+
+
+
+
+
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.tab-btn {
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  background: #4b2aad;
+  color: #fff;
+}
+
+
+.platform-container ol {
+  list-style-position: inside; /* numbers inside the container */
+  padding-left: 0;             /* remove extra left padding */
+  margin-left: 0;              /* remove default margin */
+  text-align: left;            /* ensure left alignment */
+}
+
+.platform-container ol li {
+  margin-bottom: 8px;          /* optional spacing between items */
+}
+
+
+
+
+
+@media (max-width: 768px) {
+  .poem-content {
+    padding-left: 12px;
+  }
+}
+
+
+.ranking-poet-card {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ranking-poet-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.poet-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.poet-rank-badge {
+  font-size: 1.4rem;
+  width: 28px;
+  text-align: center;
+}
+
+.poet-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+
+}
+
+.poet-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.poet-username {
+  font-weight: 600;
+  color: #B8860B;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.poet-username:hover {
+  text-decoration: underline;
+}
+
+.poet-activity {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+

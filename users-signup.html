@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +5,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up | Volant Poetry</title>
   <link rel="stylesheet" href="usersaccount.css">
-    <link rel="icon" type="png" href="images/logo.png" />
+  <link rel="icon" type="png" href="images/logo.png" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 40px 12px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+
+    /* Password wrapper for eye icon */
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .password-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 1.2rem;
+      user-select: none;
+      color: #555;
+      transition: 0.2s;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    .password-eye.showing {
+      background-color: red;
+      color: white;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 6px;
+      background-color: #4b2aad;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .status {
+      margin-top: 10px;
+      text-align: center;
+      color: #d32f2f;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .links a {
+      color: #4b2aad;
+      text-decoration: none;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -14,13 +112,16 @@
 
     <form id="signup-form" class="auth-form">
       <label for="signup-username">Username</label>
-<input type="text" id="signup-username" placeholder="Create a username (Up 11 Characters)" required maxlength="11">
+      <input type="text" id="signup-username" placeholder="Create a username (Up 11 Characters)" required maxlength="11">
 
       <label for="signup-email">Email</label>
       <input type="email" id="signup-email" placeholder="Enter email" required>
 
       <label for="signup-password">Password</label>
-      <input type="password" id="signup-password" placeholder="Enter password" required>
+      <div class="password-wrapper">
+        <input type="password" id="signup-password" placeholder="Enter password" required>
+        <span id="toggle-password" class="password-eye">👁️</span>
+      </div>
 
       <button type="submit" class="btn-primary">Sign Up</button>
     </form>
@@ -33,24 +134,23 @@
   </div>
 
   <!-- Firebase Auth JS -->
-     <script type="module" src="usersaccount.js"></script>
+  <script type="module" src="usersaccount.js"></script>
   <script type="module" src="usersAccount.js"></script>
 
-  <script type="module">
-    import { auth, onAuthStateChanged } from './usersAccount.js';
+  <script>
+    // Toggle password visibility
+    const passwordInput = document.getElementById("signup-password");
+    const togglePassword = document.getElementById("toggle-password");
 
-    const loginLink = document.getElementById("loginLink");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const userInfoDiv = document.getElementById("user-info");
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loginLink.style.display = "none";
-        logoutBtn.style.display = "inline-block";
+    togglePassword.addEventListener("click", () => {
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        togglePassword.classList.add("showing"); // red background
+        togglePassword.textContent = "👁️"; // optional icon change
       } else {
-        loginLink.style.display = "inline-block";
-        logoutBtn.style.display = "none";
-        userInfoDiv.textContent = "";
+        passwordInput.type = "password";
+        togglePassword.classList.remove("showing"); // revert background
+        togglePassword.textContent = "👁️";
       }
     });
   </script>

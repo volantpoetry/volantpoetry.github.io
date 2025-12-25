@@ -6,6 +6,106 @@
   <title>Login | Volant Poetry</title>
   <link rel="stylesheet" href="usersaccount.css">
   <link rel="icon" type="png" href="images/logo.png" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 40px 12px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+
+    /* Password wrapper for eye icon */
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .password-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #555;
+      user-select: none;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+
+    /* Red background when active */
+    .password-eye.active {
+      background-color: #ff4d4d;
+      color: white;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 6px;
+      background-color: #4b2aad;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .status {
+      margin-top: 10px;
+      text-align: center;
+      color: #d32f2f;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .links a {
+      color: #4b2aad;
+      text-decoration: none;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+    
+  </style>
 </head>
 <body>
 
@@ -17,7 +117,10 @@
       <input type="text" id="login-email" placeholder="Enter email or username" required>
 
       <label for="login-password">Password</label>
-      <input type="password" id="login-password" placeholder="Enter password" required>
+      <div class="password-wrapper">
+        <input type="password" id="login-password" placeholder="Enter password" required>
+        <span id="toggle-password" class="password-eye">👁️</span>
+      </div>
 
       <button type="submit" class="btn-primary">Login</button>
     </form>
@@ -32,26 +135,9 @@
   <!-- Firebase Auth JS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      setPersistence,
-      browserLocalPersistence,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      query,
-      where,
-      getDocs,
-      doc,
-      getDoc,
-      setDoc,
-      updateDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
       authDomain: "silent-depth.firebaseapp.com",
@@ -67,7 +153,6 @@
     const db = getFirestore(app);
     setPersistence(auth, browserLocalPersistence);
 
-    // LOGIN FORM
     const loginForm = document.getElementById("login-form");
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -76,8 +161,6 @@
 
       try {
         let emailToUse = loginInput;
-
-        // If input is not email, search by username
         if (!loginInput.includes("@")) {
           const q = query(collection(db, "users"), where("username", "==", loginInput));
           const querySnap = await getDocs(q);
@@ -91,10 +174,8 @@
         const userCred = await signInWithEmailAndPassword(auth, emailToUse, password);
         const user = userCred.user;
 
-        // Ensure Firestore doc exists with "joined"
         const userDocRef = doc(db, "users", user.uid);
         const userDocSnap = await getDoc(userDocRef);
-
         if (!userDocSnap.exists()) {
           await setDoc(userDocRef, {
             username: user.displayName || "Anonymous",
@@ -109,29 +190,34 @@
 
         document.getElementById("login-status").textContent = "✅ Login successful! Redirecting…";
 
-        // --- REDIRECT LOGIC ---
-        // Use query parameter 'redirect' if available, otherwise default to index.html
         const params = new URLSearchParams(window.location.search);
         let redirectUrl = params.get("redirect");
-
-        // Avoid redirecting to login itself or index.html unnecessarily
         if (!redirectUrl || redirectUrl.includes("login") || redirectUrl.includes("index.html")) {
           redirectUrl = "index.html";
         }
 
-        setTimeout(() => {
-          window.location.href = redirectUrl;
-        }, 1200);
+        setTimeout(() => { window.location.href = redirectUrl; }, 1200);
 
       } catch (err) {
         document.getElementById("login-status").textContent = "⚠ " + err.message;
       }
     });
 
-    // Optional: show login status if user is already logged in
     onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        console.log("User already logged in:", user.email);
+      if (user) console.log("User already logged in:", user.email);
+    });
+
+    // Toggle password visibility with red background
+    const passwordInput = document.getElementById("login-password");
+    const togglePassword = document.getElementById("toggle-password");
+
+    togglePassword.addEventListener("click", () => {
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        togglePassword.classList.add("active"); // red background
+      } else {
+        passwordInput.type = "password";
+        togglePassword.classList.remove("active");
       }
     });
   </script>

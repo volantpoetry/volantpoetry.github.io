@@ -9,8 +9,9 @@
   
   <!-- Styles & Icons -->
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="images/logo.png" />
-  <link rel="apple-touch-icon" href="images/logo.png" />
+<!-- Favicons -->
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="apple-touch-icon" href="images/logo.png">
 
   <!-- SEO -->
   <meta name="google-site-verification" content="soceiczGrFx4It0-P5sYiqRyMMycbq-GsCQ3yOh84hY" />
@@ -69,7 +70,7 @@
   "@type": "Organization",
   "name": "Volant Poetry",
   "url": "https://volantpoetry.github.io",
-  "logo": "https://volantpoetry.github.io/images/logo.png",
+  "logo": "https://volantpoetry.github.io/images/logo2.png",
   "founder": {
     "@type": "Person",
     "name": "Rence Blunt",
@@ -646,13 +647,14 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-left">
-    <img src="images/logo.png" alt="Volant Poetry Logo" class="hero-logo">
+    <img src="images/logokk.png" alt="Volant Poetry Logo" class="hero-logo">
   </div>
   <div class="hero-right">
     <h1>Volant<br><span>Poetry</span></h1>
   </div>
   <div class="hero-line-content">
-    <p>Discover poetry that breathes life, emotion, and meaning.<br>Volant Poetry is where words take flight.</p>
+    <p> Volant Poetry is an open community where poets freely share their<br>
+    work, read others, and grow through thoughtful feedback.<br>Just voices, words, and connection.</p>
     <a href="poems.html" class="cta-btn">Explore Poems</a>
   </div>
 </section>
@@ -994,6 +996,45 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById(btn.dataset.tab).classList.add("active");
     });
   });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  const ACTIVE_TAB_KEY = "volant_active_tab";
+
+  function activateTab(tabId) {
+    tabBtns.forEach(b => b.classList.remove("active"));
+    tabContents.forEach(c => c.classList.remove("active"));
+
+    const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    const content = document.getElementById(tabId);
+
+    if (btn && content) {
+      btn.classList.add("active");
+      content.classList.add("active");
+    }
+  }
+
+  // 🔁 Restore saved tab on refresh
+  const savedTab = localStorage.getItem(ACTIVE_TAB_KEY);
+  if (savedTab) {
+    activateTab(savedTab);
+  } else {
+    activateTab(tabBtns[0].dataset.tab);
+  }
+
+  // 🖱️ Handle clicks
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const tabId = btn.dataset.tab;
+
+      activateTab(tabId);
+      localStorage.setItem(ACTIVE_TAB_KEY, tabId);
+    });
+  });
+});
 </script>
 
 </body>

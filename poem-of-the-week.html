@@ -10,85 +10,65 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
 <style>
-.weekly-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 4rem 5%;
-}
+.weekly-container { display:flex; flex-direction:column; align-items:center; padding:4rem 5%; }
+.weekly-title { font-family:'Playfair Display', serif; font-size:2rem; font-weight:700; color:#4b2aad; margin-bottom:1rem; text-align:center; }
+.weekly-card { background: linear-gradient(160deg, #fdf6f0, #e2e9f0); padding:1.5rem; border-radius:14px; box-shadow:0 4px 12px rgba(0,0,0,0.1); width:80%; max-width:600px; text-align:left; }
 
-.weekly-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: #4b2aad;
-  margin-bottom: 1rem;
-  text-align: center;
-}
+.author-line { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.author-img { width:50px; height:50px; border-radius:50%; object-fit:cover; }
+.author-link { font-size:1.1rem; font-weight:700; color:#B8860B; text-decoration:none; }
 
-.weekly-card {
-  background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
-  padding: 1.5rem;
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  width: 80%;
-  max-width: 600px;
-  text-align: left;
-}
+.recent-poem-title { font-family:'Playfair Display', serif; color:#4b2aad; margin-top:12px; }
+.poem-content { margin-top:8px; white-space:pre-wrap; font-style:normal; color:#4b3f2f; line-height:1.5; }
+.read-more-btn {  background: none; border: none; color: #960606; cursor: pointer; padding: 0; margin-top: 5px; font-size: 0.95rem; font-weight: none; text-decoration: none; transition: color 0.3s ease; font-family: 'Lato', sans-serif; }
 
-#weekly-poem {
-  font-size: 1.2rem;
-  line-height: 1.5;
-  font-style: italic;
-  color: #4b3f2f;
-}
-
-#poem-author {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #B8860B;
-  display: block;
-  margin-top: 0.5rem;
-}
-
-.toggle-poem {
-  margin-top: 0.5rem;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 8px;
-  background-color: #4b3f2f;
-  color: #fff;
-  cursor: pointer;
-}
-
-.toggle-poem:hover {
-  background-color: #3a3227;
-}
-
-@media (max-width: 768px) {
-  .weekly-container { padding: 2rem 3%; }
-  .weekly-title { font-size: 1.6rem; }
-  .weekly-card { width: 90%; padding: 1rem; }
-  #weekly-poem { font-size: 1rem; }
-  #poem-author { font-size: 0.9rem; }
-}
+.poem-actions { display:flex; align-items:center; gap:8px; margin-top:12px; }
+.comment-section { display:flex; gap:6px; }
+.comment-input { flex:1; border-radius:8px; border:1px solid #ccc; padding:6px 10px; resize:none; }
+.comment-btn, .like-btn { border:none; border-radius:8px; padding:6px 12px; background:#4b3f2f; color:#fff; cursor:pointer; }
+.like-btn.liked { background:#e63946; }
+.comment-list { margin-top:12px; display:flex; flex-direction:column; gap:6px; }
+.comment { background:#f0f0f0; padding:8px 12px; border-radius:6px; }
+.reply-section { margin-left:20px; margin-top:6px; }
+.reply-input textarea { width:95%; border-radius:6px; border:1px solid #ccc; padding:6px; resize:none; }
+.reply-input button { margin-top:4px; background:#5a3cb3; color:white; border:none; border-radius:6px; padding:4px 10px; cursor:pointer; }
+.offline-notice { background:#ffcc00; color:#333; padding:8px 12px; text-align:center; font-weight:600; }
+@media (max-width:768px){ .weekly-container{padding:2rem 3%;} .weekly-title{font-size:1.6rem;} .weekly-card{width:90%; padding:1rem;} }
 </style>
 </head>
 <body>
 
 <section class="weekly-container">
   <h2 class="weekly-title">Poem of the Week</h2>
+  <div class="weekly-card recent-poem-card" data-id="weeklyPoem">
+    <div class="author-line">
+      <img id="author-img" src="/images/default-avatar.png" alt="Author" class="author-img">
+      <a id="author-link" href="#" class="author-link">Anonymous</a>
+    </div>
 
-  <div class="weekly-card poem-card">
-    <div id="poem-title"></div>
-    <p id="weekly-poem"><em></em></p>
-    <span id="poem-author" class="author"></span>
+    <h3 id="poem-title" class="recent-poem-title"></h3>
+    <p id="poem-content" class="poem-content"></p>
+    <button id="read-more-btn" class="read-more-btn" style="display:none;">Read More</button>
+
+    <div class="poem-actions">
+      <div class="comment-section">
+        <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+        <button class="comment-btn">Post</button>
+      </div>
+      <button class="like-btn">❤️</button>
+      <span class="like-count">0</span>
+      <span class="message-count">💬 0</span>
+    </div>
+    <div class="comment-list" style="display:none;"></div>
   </div>
 </section>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { 
+  getFirestore, doc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, getDocs, addDoc, increment 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -98,69 +78,173 @@ const firebaseConfig = {
   messagingSenderId: "78008755450",
   appId: "1:78008755450:web:3fd0f0f298a08820935543"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-async function loadWeeklyPoem() {
+let currentUser = null;
+onAuthStateChanged(auth,user=>currentUser=user);
+
+// --- Offline Notice ---
+function setupOfflineNotice(){
+  window.addEventListener("offline",()=>{
+    const notice=document.createElement("div");
+    notice.textContent="⚠ You are offline. Viewing cached content.";
+    notice.className="offline-notice";
+    document.body.prepend(notice);
+  });
+  window.addEventListener("online",()=>document.querySelectorAll(".offline-notice").forEach(el=>el.remove()));
+}
+setupOfflineNotice();
+
+// --- Load weekly poem ---
+async function loadWeeklyPoem(){
+  const card = document.querySelector(".recent-poem-card");
+  const titleEl = card.querySelector("#poem-title");
+  const contentEl = card.querySelector("#poem-content");
+  const authorImgEl = card.querySelector("#author-img");
+  const authorLinkEl = card.querySelector("#author-link");
+  const readMoreBtn = card.querySelector("#read-more-btn");
+  const likeBtn = card.querySelector(".like-btn");
+  const likeCountEl = card.querySelector(".like-count");
+  const commentInput = card.querySelector(".comment-input");
+  const commentBtn = card.querySelector(".comment-btn");
+  const commentListEl = card.querySelector(".comment-list");
+  const messageCountEl = card.querySelector(".message-count");
+
   try {
-    const poemSnap = await getDoc(doc(db, "weeklyHighlights", "weeklyPoem"));
-    if (!poemSnap.exists()) return;
+    const snap = await getDoc(doc(db,"weeklyHighlights","weeklyPoem"));
+    if(!snap.exists()) return;
+    const data = snap.data();
 
-    const data = poemSnap.data();
-    const title = data.title || "Untitled";
-    const author = data.authorName || data.author || "Anonymous";
-    const authorId = data.authorId || null;
-    const content = data.content || "";
-    const lines = content.split("\n");
+    // --- Author ---
+    let displayName = data.authorName||data.author||"Anonymous";
+    let profileLink = "#";
+    let profileImage = "/images/default-avatar.png";
+    const poetUid = data.authorId||"";
 
-    // Show first 18 lines, toggle rest
-    const firstPart = lines.slice(0, 18).join("<br>");
+    if(poetUid){
+      try{
+        const userDoc = await getDoc(doc(db,"users",poetUid));
+        if(userDoc.exists()){
+          const userData = userDoc.data();
+          displayName = userData.username||displayName;
+          profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
+          if(userData.photoURL) profileImage=userData.photoURL;
+          else if(userData.cachedAvatarURL) profileImage=userData.cachedAvatarURL;
+        }
+      }catch(err){console.warn(err);}
+    }
+    authorImgEl.src = profileImage;
+    authorLinkEl.href = profileLink;
+    authorLinkEl.textContent = displayName;
+
+    // --- Title & Content ---
+    titleEl.textContent = data.title||"Untitled";
+    const lines=(data.content||"").split("\n");
+    const firstPart = lines.slice(0,18).join("<br>");
     const restPart = lines.slice(18).join("<br>");
-
-    const poemContainer = document.getElementById("weekly-poem");
-    const poemAuthor = document.getElementById("poem-author");
-    const poemTitle = document.getElementById("poem-title");
-
-    poemTitle.innerHTML = `<h3 class="poem-title">${title}</h3>`;
-
-    const wrapperId = "poem-wrapper";
-    poemContainer.innerHTML = `
-      <div id="${wrapperId}">
-        <div class="poem-text">
-          <span class="first-lines">${firstPart}</span>
-          <span class="more-lines" style="display:none;">${restPart ? "<br>" + restPart : ""}</span>
-        </div>
-        ${lines.length > 18 ? '<button class="toggle-poem">Read more</button>' : ""}
-      </div>
-    `;
-
-    // Display author in italic; link if profile exists
-    if (authorId) {
-      poemAuthor.innerHTML = `<hr class="poem-separator"><a href="user-profile.html?uid=${encodeURIComponent(authorId)}" style="font-style:italic;">By ${author}</a>`;
-    } else {
-      poemAuthor.innerHTML = `<hr class="poem-separator"><span style="font-style:italic;">By ${author}</span>`;
+    contentEl.innerHTML = firstPart;
+    if(restPart){
+      readMoreBtn.style.display="inline-block";
+      readMoreBtn.onclick=()=>{
+        const isExpanded = readMoreBtn.textContent==="Read Less";
+        contentEl.innerHTML = isExpanded?firstPart:firstPart+"<br>"+restPart;
+        readMoreBtn.textContent = isExpanded?"Read More":"Read Less";
+      };
     }
 
-    // Read more toggle
-    if (lines.length > 18) {
-      const wrapper = document.getElementById(wrapperId);
-      const toggleBtn = wrapper.querySelector(".toggle-poem");
-      const moreLines = wrapper.querySelector(".more-lines");
-      toggleBtn.addEventListener("click", () => {
-        const isHidden = moreLines.style.display === "none";
-        moreLines.style.display = isHidden ? "inline" : "none";
-        toggleBtn.textContent = isHidden ? "Read less" : "Read more";
+    // --- Likes ---
+    const likes = data.likes||0;
+    likeCountEl.textContent = likes;
+    if(currentUser && data.likedBy?.includes(currentUser.uid)) likeBtn.classList.add("liked");
+    likeBtn.addEventListener("click", async()=>{
+      if(!currentUser){ alert("Please sign in to like poems!"); return; }
+      const poemRef = doc(db,"weeklyHighlights","weeklyPoem");
+      const likedBy = data.likedBy||[];
+      let newLikes = likes;
+      if(likedBy.includes(currentUser.uid)){
+        await updateDoc(poemRef,{ likes: Math.max(likes-1,0), likedBy: arrayRemove(currentUser.uid) });
+        likeBtn.classList.remove("liked");
+        likeCountEl.textContent = Math.max(likes-1,0);
+      } else {
+        await updateDoc(poemRef,{ likes: likes+1, likedBy: arrayUnion(currentUser.uid) });
+        likeBtn.classList.add("liked");
+        likeCountEl.textContent = likes+1;
+      }
+    });
+
+    // --- Load Comments ---
+    async function refreshComments(){
+      commentListEl.innerHTML = "";
+      const commentsSnap = await getDocs(collection(db,"weeklyHighlights","weeklyPoem","comments"));
+      messageCountEl.textContent = `💬 ${commentsSnap.size}`;
+      commentsSnap.forEach(c=>{
+        const d=c.data();
+        const div = document.createElement("div");
+        div.className="comment";
+        div.dataset.commentId=c.id;
+        div.innerHTML=`<strong>${d.username||"Anonymous"}</strong>: ${d.text}<div class="reply-section"></div><small class="reply-toggle" style="cursor:pointer;color:#5a3cb3;">Reply</small>`;
+        commentListEl.appendChild(div);
       });
     }
-  } catch (err) {
-    console.error("Error fetching weekly highlights:", err);
-  }
+    await refreshComments();
+
+    // --- Post Comment ---
+    commentBtn.addEventListener("click", async()=>{
+      if(!currentUser){ alert("Please sign in to comment!"); return; }
+      const text = commentInput.value.trim();
+      if(!text) return;
+      const commentRef = await addDoc(collection(db,"weeklyHighlights","weeklyPoem","comments"),{
+        userId: currentUser.uid,
+        username: currentUser.displayName||"Anonymous",
+        text,
+        timestamp: new Date()
+      });
+      commentInput.value="";
+      await refreshComments();
+    });
+
+    // --- Toggle Comments Visibility ---
+    messageCountEl.addEventListener("click", ()=>{
+      commentListEl.style.display = commentListEl.style.display==="block"?"none":"block";
+    });
+
+    // --- Reply Toggle & Send Reply ---
+    commentListEl.addEventListener("click", async(e)=>{
+      if(e.target.classList.contains("reply-toggle")){
+        const commentDiv = e.target.closest(".comment");
+        const replySection = commentDiv.querySelector(".reply-section");
+        if(replySection.querySelector(".reply-input")){ replySection.innerHTML=""; return; }
+        const inputContainer = document.createElement("div");
+        inputContainer.className="reply-input";
+        inputContainer.innerHTML = `<textarea rows="1" placeholder="Write a reply..."></textarea><button class="send-reply-btn">Send</button>`;
+        replySection.appendChild(inputContainer);
+      }
+      if(e.target.classList.contains("send-reply-btn")){
+        if(!currentUser){ alert("Please sign in to reply."); return; }
+        const commentDiv = e.target.closest(".comment");
+        const commentId = commentDiv.dataset.commentId;
+        const textarea = commentDiv.querySelector(".reply-input textarea");
+        const replyText = textarea.value.trim();
+        if(!replyText) return;
+        await addDoc(collection(db,"weeklyHighlights","weeklyPoem","comments",commentId,"replies"),{
+          userId: currentUser.uid,
+          username: currentUser.displayName||"Anonymous",
+          text: replyText,
+          timestamp: new Date()
+        });
+        const replySection = commentDiv.querySelector(".reply-section");
+        replySection.innerHTML += `<div style="background:#f7f7f7; padding:6px 10px; border-radius:6px; margin:4px 0;"><strong>${currentUser.displayName||"Anonymous"}</strong>: ${replyText}</div>`;
+        textarea.value="";
+      }
+    });
+
+  } catch(err){ console.error(err); }
 }
 
 document.addEventListener("DOMContentLoaded", loadWeeklyPoem);
 </script>
-
 
 </body>
 </html>

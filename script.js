@@ -125,7 +125,6 @@ function truncatePoem(text, lines = 8) {
 
 // --- Recent Poems with Pagination ---
 
-
 let loading = false;
 const batchSize = 10;
 
@@ -162,38 +161,124 @@ async function loadPoemsBatch() {
       const truncated = truncatePoem(poem.content, 8);
       const likes = typeof poem.likes === "number" ? poem.likes : 0;
 
-      // Author info
-      const poetUid = poem.authorId || "";
-      let displayName = poem.author || "Anonymous";
-      let profileLink = "#";
+   // Helper functions for initials avatar
+function getInitials(name = "") {
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?";
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
-      if (poetUid) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", poetUid));
-          if (userDoc.exists()) {
-            displayName = userDoc.data().username || displayName;
-            profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
-          }
-        } catch (err) { console.warn(err); }
+function colorFromName(name = "") {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue}, 60%, 45%)`;
+}
+
+function generateAvatarImage(initials, bgColor, size = 180) {
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, size, size);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = `${size * 0.5}px 'Playfair Display', serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(initials, size / 2, size / 2);
+
+  return new Promise(resolve => {
+    canvas.toBlob(blob => resolve(blob), "image/png");
+  });
+}
+
+async function uploadAvatarToCloudinary(initials, bgColor, poetUid, publicId = null) {
+  const blob = await generateAvatarImage(initials, bgColor);
+  const formData = new FormData();
+  formData.append("file", blob);
+  formData.append("upload_preset", "profile_pics");
+  if (publicId) formData.append("public_id", publicId);
+
+  const cloudName = "dzoq4pgjn";
+
+  try {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: "POST",
+      body: formData
+    });
+    const data = await res.json();
+    const imageUrl = data.secure_url;
+
+    // Save cached avatar for this user
+    await updateDoc(doc(db, "users", poetUid), { cachedAvatarURL: imageUrl });
+    return imageUrl;
+  } catch (err) {
+    console.error("Cloudinary upload failed:", err);
+    return null;
+  }
+}
+
+// --- Author info for poem card ---
+const poetUid = poem.authorId || "";
+let displayName = poem.author || "Anonymous";
+let profileLink = "#";
+let profileImage = "/images/default-avatar.png"; // fallback
+
+if (poetUid) {
+  try {
+    const userDoc = await getDoc(doc(db, "users", poetUid));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      displayName = userData.username || displayName;
+      profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
+
+      if (userData.photoURL) {
+        profileImage = userData.photoURL; // uploaded photo
+      } else if (userData.cachedAvatarURL) {
+        profileImage = userData.cachedAvatarURL; // cached Cloudinary initials
+      } else {
+        // generate, upload, and use initials avatar
+        const initials = getInitials(displayName);
+        const bgColor = colorFromName(displayName);
+        const url = await uploadAvatarToCloudinary(initials, bgColor, poetUid);
+        if (url) profileImage = url;
       }
+    }
+  } catch (err) {
+    console.warn("Failed to fetch user info:", err);
+  }
+}
+card.innerHTML = `
+  <div class="author-line" style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+    <img src="${profileImage}" alt="${displayName}" class="author-img"
+         style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+    <a href="${profileLink}" class="author-link" style="font-size:1.2rem; font-weight:700;">${displayName}</a>
+  </div>
 
-      card.innerHTML = `
-        <h3 class="recent-poem-title">${poem.title}</h3>
-        <p class="author">by <a href="${profileLink}" class="author-link">${displayName}</a></p>
-        <p class="poem-content">${truncated.preview}</p>
-        ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
-        ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
-        <div class="poem-actions">
-          <div class="comment-section">
-            <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
-            <button class="comment-btn">Post</button>
-          </div>
-          <button class="like-btn">❤️</button>
-          <span class="like-count">${likes}</span>
-          <span class="message-count">💬</span>
-        </div>
-        <div class="comment-list" style="display:none;"></div>
-      `;
+  <h3 class="recent-poem-title" style="margin-top:12px;">
+    ${poem.title}
+  </h3>
+
+  <p class="poem-content" style="white-space:pre-wrap; margin-top:8px;">${truncated.preview}</p>
+  ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
+  ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
+
+  <div class="poem-actions">
+    <div class="comment-section">
+      <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+      <button class="comment-btn">Post</button>
+    </div>
+    <button class="like-btn">❤️</button>
+    <span class="like-count">${likes}</span>
+    <span class="message-count">💬</span>
+  </div>
+
+  <div class="comment-list" style="display:none;"></div>
+`;
 
       container.appendChild(card);
 
@@ -1093,81 +1178,115 @@ async function loadRankingPoemsRich() {
       };
     }));
 
-    // sort by score desc and take top 20
-    poems.sort((a, b) => b.score - a.score);
-    const top = poems.slice(0, 20);
+// sort by score desc and take top 20
+poems.sort((a, b) => b.score - a.score);
+const top = poems.slice(0, 20);
 
-    // render each card
-    await Promise.all(top.map(async (poem, index) => {
-      const card = document.createElement("div");
-      card.className = "recent-poem-card";
-      card.dataset.id = poem.id;
-      card.dataset.slug = poem.slug;
+// render each card sequentially
+for (let index = 0; index < top.length; index++) {
+  const poem = top[index];
+  const card = document.createElement("div");
+  card.className = "recent-poem-card";
+  card.dataset.id = poem.id;
+  card.dataset.slug = poem.slug;
 
-      const truncated = truncatePoem(poem.content, 8);
+  const truncated = truncatePoem(poem.content, 8);
+  const commentDisplayCount = poem.commentsCount;
 
-      const commentDisplayCount = poem.commentsCount;
-
-      card.innerHTML = `
-        <h3 class="recent-poem-title">${index+1}. ${poem.title}
-          <small style="font-weight:400; color:#777;">(score: ${poem.score})</small>
-        </h3>
-        <p class="author">by <a href="${poem.authorProfile}" class="author-link">${poem.authorName}</a></p>
-        <p class="poem-content" style="white-space:pre-wrap;">${truncated.preview}</p>
-        ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
-        ${poem.categories.length ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
-        <div class="poem-actions">
-          <div class="comment-section">
-            <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
-            <button class="comment-btn">Post</button>
-          </div>
-          <button class="like-btn">❤️</button>
-          <span class="like-count">${poem.likes}</span>
-          <span class="message-count">💬 ${commentDisplayCount}</span>
-        </div>
-        <div class="comment-list" style="display:none;"></div>
-      `;
-
-      if (index === 0) card.style.border = "2px solid gold";
-      else if (index === 1) card.style.border = "2px solid silver";
-      else if (index === 2) card.style.border = "2px solid #cd7f32";
-      else card.style.border = "1px solid #eee";
-
-      listEl.appendChild(card);
-
-      // mark liked by current user
-      const user = auth.currentUser;
-      if (user && Array.isArray(poem.likedBy) && poem.likedBy.includes(user.uid)) {
-        const btn = card.querySelector(".like-btn");
-        if (btn) btn.classList.add("liked");
+  // --- Fetch author profile image ---
+  let profileImage = "/images/default-avatar.png"; // fallback
+  if (poem.authorId) {
+    try {
+      const userDoc = await getDoc(doc(db, "users", poem.authorId));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.photoURL) profileImage = userData.photoURL;
+        else if (userData.cachedAvatarURL) profileImage = userData.cachedAvatarURL;
+        else {
+          const initials = getInitials(poem.authorName);
+          const bgColor = colorFromName(poem.authorName);
+          uploadAvatarToCloudinary(initials, bgColor, poem.authorId)
+            .then(url => {
+              if (url) card.querySelector(".author-img").src = url;
+            });
+        }
       }
+    } catch (err) {
+      console.warn("Failed to fetch author profile image:", err);
+    }
+  }
 
-      // read more / show less
-      if (truncated.truncated) {
-        const btn = card.querySelector(".read-more-btn");
-        const p = card.querySelector(".poem-content");
-        let expanded = false;
-        btn.addEventListener("click", () => {
-          if (!expanded) {
-            p.textContent = truncated.full;
-            btn.textContent = "Show Less";
-          } else {
-            p.textContent = truncated.preview;
-            btn.textContent = "Read More";
-          }
-          expanded = !expanded;
-        });
-      }
+  // --- Build card HTML ---
+  card.innerHTML = `
+    <div class="author-line" style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+      <img src="${profileImage}" alt="${poem.authorName}" class="author-img" 
+           style="width:48px; height:48px; border-radius:50%; object-fit:cover;">
+      <a href="${poem.authorProfile}" class="author-link" 
+         style="font-size:1.2rem; font-weight:700;">${poem.authorName}</a>
+    </div>
 
-      if (typeof addPoemSchema === "function") {
-        addPoemSchema({
-          title: poem.title,
-          description: poem.content ? poem.content.slice(0, 150) : "",
-          slug: poem.slug || poem.title.toLowerCase().replace(/\s+/g, "-"),
-          date: ""
-        });
+    <h3 class="recent-poem-title" style="margin-top:16px;">
+      ${index + 1}. ${poem.title}
+      <small style="font-weight:400; color:#777;">(score: ${poem.score})</small>
+    </h3>
+
+    <p class="poem-content" style="white-space:pre-wrap;">${truncated.preview}</p>
+    ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
+    ${poem.categories.length ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
+    <div class="poem-actions">
+      <div class="comment-section">
+        <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+        <button class="comment-btn">Post</button>
+      </div>
+      <button class="like-btn">❤️</button>
+      <span class="like-count">${poem.likes}</span>
+      <span class="message-count">💬 ${commentDisplayCount}</span>
+    </div>
+    <div class="comment-list" style="display:none;"></div>
+  `;
+
+  // border for top 3
+  if (index === 0) card.style.border = "2px solid gold";
+  else if (index === 1) card.style.border = "2px solid silver";
+  else if (index === 2) card.style.border = "2px solid #cd7f32";
+  else card.style.border = "1px solid #eee";
+
+  listEl.appendChild(card);
+
+  // mark liked by current user
+  const user = auth.currentUser;
+  if (user && Array.isArray(poem.likedBy) && poem.likedBy.includes(user.uid)) {
+    const btn = card.querySelector(".like-btn");
+    if (btn) btn.classList.add("liked");
+  }
+
+  // read more / show less
+  if (truncated.truncated) {
+    const btn = card.querySelector(".read-more-btn");
+    const p = card.querySelector(".poem-content");
+    let expanded = false;
+    btn.addEventListener("click", () => {
+      if (!expanded) {
+        p.textContent = truncated.full;
+        btn.textContent = "Show Less";
+      } else {
+        p.textContent = truncated.preview;
+        btn.textContent = "Read More";
       }
-    }));
+      expanded = !expanded;
+    });
+  }
+
+  if (typeof addPoemSchema === "function") {
+    addPoemSchema({
+      title: poem.title,
+      description: poem.content ? poem.content.slice(0, 150) : "",
+      slug: poem.slug || poem.title.toLowerCase().replace(/\s+/g, "-"),
+      date: ""
+    });
+  }
+}
+
 
     if (!listEl.children.length) {
       listEl.innerHTML = "<p style='color:#666;'>No poems to display.</p>";
@@ -1303,31 +1422,54 @@ async function loadRankingPoets() {
       .slice(0, 20);
 
     // Render
-    container.innerHTML = "";
-    sortedPoets.forEach((poet, index) => {
-      const poetDiv = document.createElement("div");
-      poetDiv.className = "ranking-poet";
+container.innerHTML = "";
+sortedPoets.forEach((poet, index) => {
+  const poetDiv = document.createElement("div");
+  poetDiv.className = "ranking-poet-card";
 
-      // Top 3 badges
-      let badge = "";
-      if (index === 0) badge = "🏆";
-      else if (index === 1) badge = "🥈";
-      else if (index === 2) badge = "🥉";
+  // Determine badge
+  let badge = "";
+  if (index === 0) badge = "🏆";
+  else if (index === 1) badge = "🥈";
+  else if (index === 2) badge = "🥉";
 
-      poetDiv.innerHTML = `
-        <a href="user-profile.html?uid=${encodeURIComponent(poet.userId || "")}" class="poet-link">
-          ${badge} ${poet.username}
-        </a>
-        <p>
-          Activity this week: ${poet.poemsWritten} poems written, 
-          ${poet.likesReceived} likes received, 
-          ${poet.commentsReceived} comments received, 
-          ${poet.likesGiven} likes given, 
-          ${poet.commentsGiven} comments given
+  // Fetch profile image (reuse your Cloudinary logic)
+  let profileImage = "/images/default-avatar.png";
+  if (poet.userId) {
+    try {
+      const userDoc = usersSnapshot.docs.find(u => u.id === poet.userId);
+      if (userDoc) {
+        const userData = userDoc.data();
+        if (userData.photoURL) profileImage = userData.photoURL;
+        else if (userData.cachedAvatarURL) profileImage = userData.cachedAvatarURL;
+        else {
+          const initials = getInitials(poet.username);
+          const bgColor = colorFromName(poet.username);
+          uploadAvatarToCloudinary(initials, bgColor, poet.userId)
+            .then(url => {
+              if (url) poetDiv.querySelector("img").src = url;
+            });
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to fetch poet profile image:", err);
+    }
+  }
+
+  poetDiv.innerHTML = `
+    <div class="poet-card-header">
+      <div class="poet-rank-badge">${badge}</div>
+      <img src="${profileImage}" alt="${poet.username}" class="poet-avatar">
+      <div class="poet-info">
+        <a href="user-profile.html?uid=${encodeURIComponent(poet.userId || "")}" class="poet-username">${poet.username}</a>
+        <p class="poet-activity">
+          ${poet.poemsWritten} poems · ${poet.likesReceived} likes · ${poet.commentsReceived} comments · ${poet.likesGiven} likes given · ${poet.commentsGiven} comments given
         </p>
-      `;
-      container.appendChild(poetDiv);
-    });
+      </div>
+    </div>
+  `;
+  container.appendChild(poetDiv);
+});
 
   } catch (err) {
     console.error("Error loading ranking poets:", err);
