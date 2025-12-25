@@ -41,6 +41,14 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
 .home-link { position:absolute; top:20px; right:20px; font-weight:600; color:#e63946; text-decoration:none; font-size:1rem; transition:color 0.3s; z-index:1000; }
 .home-link:hover { color:#e63946; }
 
+/* 🔽 Small screens only */
+@media (max-width: 768px) {
+  .home-link {
+    top: 12px;
+    right: 12px;
+    font-size: 0.85rem; /* smaller text */
+  }
+}
 
 </style>
 </head>
