@@ -3036,3 +3036,41 @@ html {
     margin-left: -16px;   /* ⬅ pull to left edge */
   }
 }
+
+
+/* 🔽 Small screens only */
+@media (max-width: 768px) {
+  .poet-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    /* ⬅➡ full bleed, NO side spacing */
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .poet-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .poet-username {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+  }
+
+  .poet-activity {
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .poet-rank-badge {
+    font-size: 1.1rem;
+    padding: 2px 6px;
+  }
+}
