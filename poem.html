@@ -38,7 +38,7 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
 .like-btn.liked { background:#e63946; }
 .comment-list { display:flex; flex-direction:column; gap:6px; margin-top:12px; }
 .comment { background:#f4ede7; border-radius:8px; padding:8px; }
-.home-link { position:absolute; top:20px; right:20px; font-weight:600; color:#4b3f2f; text-decoration:none; font-size:1rem; transition:color 0.3s; z-index:1000; }
+.home-link { position:absolute; top:20px; right:20px; font-weight:600; color:#e63946; text-decoration:none; font-size:1rem; transition:color 0.3s; z-index:1000; }
 .home-link:hover { color:#e63946; }
 
 
@@ -51,7 +51,7 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
     <!-- Author Image + Name -->
     <div class="author-line">
       <img id="author-img" src="/images/default-avatar.png" alt="Author">
-      <a id="author-link" href="#">Author</a>
+      <a id="author-link" href="#"></a>
     </div>
 
     <h2 id="poem-title"></h2>
@@ -65,14 +65,14 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
         </div>
         <button class="like-btn">❤️</button>
         <span class="like-count">0</span>
-        <span class="message-count">💬 0</span>
+        <span class="message-count">💬</span>
       </div>
       <div class="comment-list"></div>
     </div>
   </div>
 </section>
 
-<a href="index.html" class="home-link">Home</a>
+<a href="index.html" class="home-link">Discover More at Volant Poetry</a>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
