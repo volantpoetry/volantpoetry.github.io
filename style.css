@@ -3074,3 +3074,64 @@ html {
     padding: 2px 6px;
   }
 }
+
+
+/* ---------------- Collaborator Names ---------------- */
+.collaborator-line em {
+  font-style: normal;       /* optional */
+  font-weight: 400;
+color: #555555;
+
+        /* NEW distinct color from author */
+  font-size: 0.95rem;
+}
+
+.collaborator-line em a.collaborator-link {
+  color: inherit;           
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.collaborator-line em a.collaborator-link:hover {
+  color: #333333;
+/* darker shade on hover */
+  text-decoration: underline;
+}
+
+/* Reduce font size on small screens */
+@media (max-width: 768px) {
+  .collaborator-line em {
+    font-size: 0.82rem;     /* smaller for mobile/tablet */
+  }
+}
+
+
+
+
+.collaborators {
+  margin: -2px 0 8px 0 !important;   /* move up slightly */
+  padding-left: 0 !important;        /* flush left inside column */
+  font-size: 0.95rem;
+  color: #555555;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.3;
+  text-align: left !important;       /* force flush left */
+}
+
+.collaborators a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.collaborators a:hover {
+  color: #333333;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .collaborators {
+    font-size: 0.82rem !important;
+  }
+}

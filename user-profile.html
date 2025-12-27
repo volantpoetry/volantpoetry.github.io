@@ -812,6 +812,71 @@ h2 {
   transform: scale(0.98);    /* press effect */
 }
 
+
+/* Delete button inside poem card */
+.recent-poem-card .delete-btn {
+  background-color: #ff4d4d;       /* bright red for delete */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 8px;
+  transition: background-color 0.2s;
+}
+
+.recent-poem-card .delete-btn:hover {
+  background-color: #e60000;       /* darker red on hover */
+}
+
+.recent-poem-card .delete-btn:active {
+  transform: scale(0.95);          /* slight click animation */
+}
+
+
+@media screen and (max-width: 600px) {
+  .recent-poem-card .delete-btn {
+    font-size: 12px;
+    padding: 2px 6px;
+    margin-left: auto;
+  }
+}
+
+/* Default: show delete button on all screens at top-right of the card */
+.recent-poem-card {
+  position: relative; /* make sure absolute positioning works */
+}
+
+.recent-poem-card .delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 14px;
+  padding: 4px 8px;
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Small screens: make it smaller and compact */
+@media screen and (max-width: 600px) {
+  .recent-poem-card .delete-btn {
+    font-size: 12px;
+    padding: 2px 6px;
+  }
+
+  /* Optional: reduce size of other poem action buttons on small screens */
+  .recent-poem-card .poem-actions button,
+  .recent-poem-card .poem-actions textarea {
+    font-size: 12px;
+    padding: 4px 6px;
+  }
+}
+
+
 </style>
 </head>
 
@@ -819,7 +884,7 @@ h2 {
 <header>
   <nav>
     <div class="logo">
-      <img src="images/logo.png" alt="Volant Poetry Logo" class="nav-logo-img">
+      <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img">
       <span class="logo-text">
         <span class="logo-highlight">Volant</span> Poetry
       </span>
@@ -1020,11 +1085,12 @@ function truncatePoemByLines(text, maxLines = 8) {
   const lines = text.split(/\r?\n/);
   const truncated = lines.slice(0, maxLines).join("\n");
   return {
-    preview: truncated + (lines.length > maxLines ? "\n..." : ""),
+    preview: truncated,       // removed the "..." here
     full: text,
     truncated: lines.length > maxLines
   };
 }
+
 // --- Update Achievements dynamically ---
 async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   const badgesContainer = document.querySelector(".badges-container");
@@ -1284,13 +1350,19 @@ if (data.photoURL) {
   profilePic.style.display = "block";
   avatarDiv.style.display = "none";
 } else {
-  // Generate & upload initials for first-time user
+  // 🔐 ONLY generate locally — NEVER upload — NEVER save
   const initials = getInitials(profileUsername);
   const bgColor = colorFromName(profileUsername);
+
   avatarText.textContent = initials;
   avatarDiv.style.background = bgColor;
   avatarDiv.style.display = "flex";
   profilePic.style.display = "none";
+  if (!viewingOwnProfile) {
+  console.warn("Blocked avatar upload: not own profile");
+  return null;
+}
+
 
   uploadAvatarToCloudinary(initials, bgColor).then(url => {
     if (url) {
@@ -1406,13 +1478,15 @@ async function fetchUserPoems(usernameToFetch) {
           : `<a href="user-profile.html?user=${encodeURIComponent(poem.submittedBy || usernameToFetch)}" class="author-link">${poem.author || poem.submittedBy || usernameToFetch}</a>`;
 
 card.innerHTML = `
-  <div class="poem-display">
-    <h3 class="poem-title">${poem.title}</h3>
-    <div class="poem-body">
-      <p class="poem-content">${truncated.preview.replace(/\n/g, "<br>")}</p>
-      ${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}
-    </div>
+ <div class="poem-display">
+  <h3 class="poem-title">${poem.title}</h3>
+  <button class="delete-btn">🗑️ Delete</button> <!-- keep here, hidden by default in CSS for desktop -->
+  <div class="poem-body">
+    <p class="poem-content">${truncated.preview.replace(/\n/g, "<br>")}</p>
+    ${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}
   </div>
+</div>
+
   ${poem.categories && poem.categories.length > 0 ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
   <div class="poem-actions comment-aligned">
     <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
@@ -1432,6 +1506,14 @@ if (viewingOwnProfile) {
   deleteBtn.textContent = "🗑️ Delete";
   deleteBtn.style.marginLeft = "8px";
   card.querySelector(".poem-actions").appendChild(deleteBtn);
+}
+
+// Only show delete button if viewing own profile
+const deleteBtn = card.querySelector(".delete-btn");
+if (viewingOwnProfile) {
+  deleteBtn.style.display = "inline-block"; // show for own profile
+} else {
+  deleteBtn.style.display = "none"; // hide for other users
 }
 
   container.appendChild(card);
@@ -1491,6 +1573,21 @@ poemsContainer.addEventListener("click", async (e) => {
   if (!poemId) return;
 
   const currentUser = auth.currentUser;
+
+// DELETE POEM
+if (e.target.classList.contains("delete-btn")) {
+  if (!confirm("Are you sure you want to delete this poem?")) return;
+
+  try {
+    await deleteDoc(doc(db, "recentPoems", poemId));
+    card.remove(); // remove from DOM instantly
+    alert("Poem deleted successfully!");
+  } catch (err) {
+    console.error("Failed to delete poem:", err);
+    alert("Failed to delete poem.");
+  }
+}
+
 
   // ❤️ LIKE BUTTON — each user can like only once
   if (e.target.classList.contains("like-btn")) {

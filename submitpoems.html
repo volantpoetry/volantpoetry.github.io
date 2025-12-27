@@ -74,6 +74,22 @@ button:hover { background: #37187f; }
       <label for="author">Author</label>
       <input type="text" id="author" placeholder="Your name or pen name">
     </div>
+   <div class="field-container">
+  <label for="collaborators">Collaborators (optional)</label>
+  <input 
+    type="text"
+    id="collaborators"
+    placeholder="Type usernames, separated by commas"
+    list="collaboratorSuggestions"
+    autocomplete="off"
+  >
+  <small style="color:#6b6b6b;">
+    Example: poetOne, poetTwo
+  </small>
+  <datalist id="collaboratorSuggestions"></datalist>
+</div>
+
+
     <button type="submit">Submit Poem</button>
     <p class="success-message" id="successMessage"></p>
   </form>
@@ -82,9 +98,17 @@ button:hover { background: #37187f; }
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  doc,
+  getDoc,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ---------------- FIREBASE CONFIG ----------------
+/* ---------------- FIREBASE CONFIG ---------------- */
 const firebaseConfig = {
   apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
   authDomain: "silent-depth.firebaseapp.com",
@@ -94,80 +118,179 @@ const firebaseConfig = {
   appId: "1:78008755450:web:3fd0f0f298a08820935543"
 };
 
-// ---------------- INIT ----------------
+/* ---------------- INIT ---------------- */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUsername = "Anonymous";
+/* ---------------- ELEMENTS ---------------- */
+const form = document.getElementById("recentPoemSubmitForm");
+const successMessage = document.getElementById("successMessage");
+const collaboratorsInput = document.getElementById("collaborators");
+const collaboratorList = document.getElementById("collaboratorSuggestions");
 
-// ---------------- AUTH STATE & REDIRECT ----------------
+let currentUsername = "Anonymous";
+let knownUsers = [];
+
+/* ---------------- AUTH ---------------- */
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    // Redirect to login page with current page as redirect
-    window.location.href = `users-login.html?redirect=${encodeURIComponent(window.location.href)}`;
+    window.location.href =
+      `users-login.html?redirect=${encodeURIComponent(window.location.href)}`;
     return;
   }
 
-  try {
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    if (userDoc.exists()) {
-      currentUsername = userDoc.data().username || "Anonymous";
-    } else if (user.displayName) {
-      currentUsername = user.displayName;
-    } else {
-      currentUsername = user.email.split("@")[0];
-    }
+  const userDoc = await getDoc(doc(db, "users", user.uid));
+  currentUsername =
+    userDoc.exists() && userDoc.data().username
+      ? userDoc.data().username
+      : user.email.split("@")[0];
 
-    const authorInput = document.getElementById("author");
-    if (authorInput) authorInput.value = currentUsername;
+  document.getElementById("author").value = currentUsername;
 
-  } catch (err) {
-    console.error("Error fetching username:", err);
-  }
+  loadUsernames();
 });
 
-// ---------------- POEM SUBMISSION ----------------
-const form = document.getElementById("recentPoemSubmitForm");
-const successMessage = document.getElementById("successMessage");
+/* ---------------- LOAD USERS ---------------- */
+async function loadUsernames() {
+  knownUsers = [];
+  collaboratorList.innerHTML = "";
 
+  const snapshot = await getDocs(collection(db, "users"));
+
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    if (!data.username) return;
+
+    knownUsers.push({
+      uid: docSnap.id,
+      username: data.username
+    });
+  });
+}
+
+/* ---------------- SMART AUTOCOMPLETE ---------------- */
+collaboratorsInput.addEventListener("input", () => {
+  const raw = collaboratorsInput.value;
+
+  const parts = raw.split(",");
+  const current = parts[parts.length - 1].trim().toLowerCase();
+
+  const alreadySelected = parts
+    .slice(0, -1)
+    .map(p => p.trim().toLowerCase());
+
+  collaboratorList.innerHTML = "";
+
+  knownUsers.forEach(user => {
+    if (
+      user.username.toLowerCase().startsWith(current) &&
+      !alreadySelected.includes(user.username.toLowerCase())
+    ) {
+      const option = document.createElement("option");
+
+      option.value =
+        parts.slice(0, -1).join(", ") +
+        (parts.length > 1 ? ", " : "") +
+        user.username;
+
+      collaboratorList.appendChild(option);
+    }
+  });
+});
+
+/* ---------------- SUBMIT ---------------- */
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const title = document.getElementById("title").value.trim();
   const content = document.getElementById("content").value.trim();
   const categoriesInput = document.getElementById("categories").value.trim();
-  let author = document.getElementById("author").value.trim() || currentUsername;
+  const author = document.getElementById("author").value.trim() || currentUsername;
+  const collaboratorsRaw = collaboratorsInput.value.trim();
 
   if (!categoriesInput) {
     alert("Please provide at least one category.");
     return;
   }
 
-  const categories = categoriesInput.split(",").map(c => c.trim()).filter(c => c);
+  const categories = categoriesInput
+    .split(",")
+    .map(c => c.trim())
+    .filter(Boolean);
+
+  /* -------- VALIDATE COLLABORATORS -------- */
+  let collaborators = [];
+
+  if (collaboratorsRaw) {
+    const names = [...new Set(
+      collaboratorsRaw
+        .split(",")
+        .map(n => n.trim())
+        .filter(Boolean)
+    )];
+
+    for (const name of names) {
+      const user = knownUsers.find(
+        u => u.username.toLowerCase() === name.toLowerCase()
+      );
+
+      if (!user) {
+        alert(`❌ Collaborator "${name}" not found.`);
+        return;
+      }
+
+      if (user.uid === auth.currentUser.uid) {
+        alert("❌ You cannot add yourself as a collaborator.");
+        return;
+      }
+
+      collaborators.push({
+        uid: user.uid,
+        username: user.username
+      });
+    }
+  }
 
   try {
-    await addDoc(collection(db, "recentPoems"), {
+    const poemRef = await addDoc(collection(db, "recentPoems"), {
       title,
       content,
       author,
       authorId: auth.currentUser.uid,
       categories,
+      collaborators,
       timestamp: serverTimestamp(),
       submittedBy: currentUsername
     });
 
+    /* -------- NOTIFICATIONS -------- */
+    for (const collaborator of collaborators) {
+      await addDoc(collection(db, "notifications"), {
+        userId: collaborator.uid,
+        type: "collaboration",
+        poemId: poemRef.id,
+        message: `${currentUsername} added you as a collaborator on "${title}"`,
+        createdAt: serverTimestamp(),
+        read: false
+      });
+    }
+
     successMessage.style.color = "green";
-    successMessage.textContent = "🎉 Hurray, poet! Your poem has been submitted ✨";
+    successMessage.textContent =
+      "🎉 Poem submitted successfully with collaborators!";
+
     form.reset();
     document.getElementById("author").value = currentUsername;
 
   } catch (err) {
     successMessage.style.color = "red";
-    successMessage.textContent = "❌ Error submitting poem: " + err.message;
+    successMessage.textContent =
+      "❌ Error submitting poem: " + err.message;
   }
 });
 </script>
+
 
 </body>
 </html>
