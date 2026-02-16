@@ -1000,6 +1000,103 @@ h2 {
     padding: 0 10px;
   }
 }
+
+/* SMALL SCREENS ONLY - Stack everything under profile image */
+@media (max-width: 899px) {
+  .profile-header-flex {
+    flex-direction: column !important;
+    align-items: flex-start !important; /* Changed from center to flex-start */
+    display: flex !important;
+  }
+  
+  .profile-picture-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Keep picture centered */
+    order: 1;
+  }
+  
+  .profile-info-right {
+    width: 100%;
+    text-align: left !important; /* Changed from center to left */
+    margin-left: 0 !important;
+    order: 2;
+    display: block !important;
+    padding-left: 10px; /* Add slight padding from left edge */
+  }
+  
+  .follow-info-horizontal {
+    justify-content: center !important;
+    margin-top: 20px;
+    width: 100%;
+    order: 3;
+    display: flex !important;
+  }
+  
+  .profile-picture {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .profile-info-right p {
+    text-align: left !important; /* Left align all paragraphs */
+    margin: 8px 0;
+    color: white !important;
+  }
+  
+  .profile-info-right p strong {
+    display: inline-block;
+    min-width: 80px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .profile-info-right p span {
+    color: white;
+  }
+  
+  .profile-buttons {
+    display: flex;
+    justify-content: flex-start !important; /* Changed from center to flex-start */
+    margin-top: 15px;
+    padding-left: 10px; /* Match the padding of profile-info-right */
+  }
+  
+  #editProfileBtn {
+    color: white !important;
+    border-color: white !important;
+    background: transparent !important;
+    margin: 0; /* Remove auto margin */
+  }
+  
+  .follow-item {
+    color: white;
+  }
+  
+  .follow-item strong {
+    color: white;
+    display: block;
+    font-size: 1.2rem;
+  }
+  
+  .follow-item span {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+  }
+  
+  /* Hide the profile container title on small screens */
+  .profile-container h2 {
+    display: none;
+  }
+  
+  /* Adjust container background */
+  .profile-container {
+    background-color: #4b2aad !important;
+    padding: 20px !important;
+  }
+}
 </style>
 </head>
 
