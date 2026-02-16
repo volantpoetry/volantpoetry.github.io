@@ -444,9 +444,28 @@ h2 {
   box-shadow: 0 2px 8px  #B8860B;
 }
 
+.badges-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
 .badges-container img {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
+  border-radius: 0;  /* No circles - square/rectangular as in your gallery */
+  object-fit: cover;
+  border: none;  /* No border */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.badges-container img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(75, 42, 173, 0.3);
 }
 
 /* Shift the profile layout slightly to the right */
@@ -717,16 +736,16 @@ h2 {
   #badgesContainer img {
     width: 50px;
     height: 50px;
-    border-radius: 50%;     /* Circular badges */
+    border-radius: 0;  /* No circles - square/rectangular */
     object-fit: cover;
-    border: 2px solid #5a3cb3;  /* Optional border for style */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow */
-    transition: transform 0.2s;    /* Hover effect */
-    cursor: default;
+    border: none;  /* No border */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    cursor: pointer;
   }
 
   #badgesContainer img:hover {
-    transform: scale(1.1); /* Slight zoom on hover */
+    transform: scale(1.1);
   }
 /* ─── Volant Classic Initial Avatar ─── */
 .volant-avatar {
@@ -1097,6 +1116,138 @@ h2 {
     padding: 20px !important;
   }
 }
+
+/* Achievement Modal Styles - matching gallery page exactly */
+.preview-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(4px);
+  padding: 16px;
+}
+
+.preview-modal.active {
+  display: flex;
+}
+
+.preview-content {
+  max-width: 94%;
+  max-height: 90%;
+  position: relative;
+  animation: fadeUp 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0.6; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 60vh;
+  border-radius: 32px;
+  box-shadow: 0 18px 30px rgba(0, 0, 0, 0.5);
+  border: 3px solid white;
+  background: white;
+}
+
+.preview-close {
+  position: absolute;
+  top: -40px;
+  right: -8px;
+  width: 42px;
+  height: 42px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.preview-info {
+  margin-top: 20px;
+  text-align: center;
+  color: white;
+  text-shadow: 0 1px 4px black;
+  padding: 0 6px;
+}
+
+.preview-info h3 {
+  font-size: 20px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.preview-info p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* --- Image Modal --- */
+.image-modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.85);
+  backdrop-filter: blur(3px);
+  align-items: center;
+  justify-content: center;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  border-radius: 0 !important; /* Show full shape */
+  box-shadow: 0 0 30px rgba(255,255,255,0.2);
+  animation: zoomIn 0.3s ease;
+  background: transparent !important; /* Force transparent background */
+}
+
+/* Ensure the modal background is dark */
+.image-modal {
+  background-color: rgba(0,0,0,0.85);
+}
+
+.close-modal {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+  z-index: 1001;
+}
+
+.close-modal:hover {
+  color: #ff6666;
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
 </style>
 </head>
 
@@ -1114,7 +1265,7 @@ h2 {
       <span class="close-btn" id="close-btn">✕</span>
       <a href="index.html">Home</a>
       <a href="about.html">About</a>
-       <a href="contact.html">Contact Us</a> <!-- ✅ New link -->
+       <a href="contact.html">Contact Us</a>
     </div>
 <div class="nav-right">
 
@@ -1185,7 +1336,7 @@ h2 {
          <li><a href="user-edit-poems.html">Edit Your Poems</a></li>
              <li><a href="submit-draft.html">Save as Draft</a></li>
                   <li><a href="drafts-manager.html">Manage Draft Poems</a></li>
-                   <li><a href="gallery-achievements.html">🏆 Achievement Gallery 🏆</a></li>
+                   <li><a href="gallery-achievements.html">🏆 Volant Achievement Gallery 🏆</a></li>
 
     </ul>
   </div>
@@ -1198,20 +1349,16 @@ h2 {
 
 <div class="panel-item">
   <h3>Flight Stage</h3>
-  <strong>Flight</strong> <span id="userLevel"></span> <!-- Using your existing ID -->
+  <strong>Flight</strong> <span id="userLevel"></span>
   <div class="level-bar">
     <div id="levelProgress" style="width:0%"></div>
   </div>
-  <!-- Remaining info will appear here -->
   <div id="flightInfo" style="margin-top:8px; font-size:14px; color:#333;"></div>
 </div>
 
-
-
     <div class="panel-item">
       <h3>Achievements</h3>
-      <div class="badges-container">
-      </div>
+      <div class="badges-container" id="badgesContainer"></div>
     </div>
 
     <div class="panel-item">
@@ -1242,19 +1389,23 @@ h2 {
 <!-- POEMS SECTION -->
 <div class="profile-poems">
   <h2>My Submitted Poems</h2>
-  <!-- 🔍 Search Bar -->
- <div class="search-bar">
-  <input 
-    type="text" 
-    id="searchInput" 
-    placeholder="Search poems..."
-    autocomplete="on"
-  >
-</div>
-
-
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search poems..." autocomplete="on">
+  </div>
   <div id="poemsContainer">
     <p class="empty-message"></p>
+  </div>
+</div>
+
+<!-- Achievement Preview Modal - exactly like gallery page -->
+<div class="preview-modal" id="previewModal">
+  <div class="preview-content">
+    <button class="preview-close" id="closePreview">✕</button>
+    <img class="preview-image" id="previewImage" src="" alt="badge">
+    <div class="preview-info" id="previewInfo">
+      <h3 id="previewTitle"></h3>
+      <p id="previewDescription"></p>
+    </div>
   </div>
 </div>
 
@@ -1262,7 +1413,7 @@ h2 {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { 
   getFirestore, doc, getDoc, setDoc, updateDoc, 
-  collection, query, where, getDocs, onSnapshot, runTransaction,
+  collection, query, where, getDocs, runTransaction,
   addDoc, deleteDoc  
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1284,7 +1435,7 @@ const storage = getStorage(app);
 
 // --- Get ?uid from URL ---
 const urlParams = new URLSearchParams(window.location.search);
-const profileUid = urlParams.get("uid"); // null if it's your profile
+const profileUid = urlParams.get("uid");
 
 // --- DOM elements ---
 const realNameSpan = document.getElementById("realName");
@@ -1293,24 +1444,42 @@ const emailSpan = document.getElementById("email");
 const bioSpan = document.getElementById("bio");
 const joinedSpan = document.getElementById("joined");
 const profilePic = document.getElementById("profilePic");
-const logoutBtn = document.getElementById("logoutBtn");
 const editBtn = document.getElementById("editProfileBtn");
 const changePicBtn = document.getElementById("changePicBtn");
 const uploadPic = document.getElementById("uploadPic");
 const poemsContainer = document.getElementById("poemsContainer");
-const topPoemsContainer = document.getElementById("topPoems");
-const rankingContainer = document.getElementById("ranking-poets-container"); // your leaderboard container
 
-let actorUsername = "";   // logged-in user's username (for actions/notifications)
-let profileUsername = ""; // the username of the profile being viewed (whose poems we show)
+let actorUsername = "";
+let profileUsername = "";
 let viewingOwnProfile = false;
+
+// --- Modal functions - exactly like gallery page ---
+window.showPreview = function(imageUrl, title, description) {
+  document.getElementById('previewImage').src = imageUrl;
+  document.getElementById('previewTitle').textContent = title;
+  document.getElementById('previewDescription').textContent = description;
+  document.getElementById('previewModal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+};
+
+function hidePreview() {
+  document.getElementById('previewModal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+// Modal event listeners
+document.getElementById('closePreview').addEventListener('click', hidePreview);
+document.getElementById('previewModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('previewModal')) hidePreview();
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hidePreview(); });
 
 // --- Truncate poems by number of lines ---
 function truncatePoemByLines(text, maxLines = 8) {
   const lines = text.split(/\r?\n/);
   const truncated = lines.slice(0, maxLines).join("\n");
   return {
-    preview: truncated,       // removed the "..." here
+    preview: truncated,
     full: text,
     truncated: lines.length > maxLines
   };
@@ -1325,7 +1494,6 @@ async function fetchTotalCommentsMade(username) {
     const poemsRef = collection(db, "recentPoems");
     const snapshot = await getDocs(poemsRef);
     
-    // Loop through all poems to count comments by this user
     for (const poemDoc of snapshot.docs) {
       const commentsRef = collection(db, "recentPoems", poemDoc.id, "comments");
       const commentsSnap = await getDocs(commentsRef);
@@ -1349,12 +1517,11 @@ async function fetchTotalCommentsMade(username) {
 function showDefaultCommentBadges(container, totalCommentsMade) {
   container.innerHTML = "";
   
-  // Define default comment badges
   const commentBadges = [
-    { min: 1, title: "First Comment", icon: "💬", color: "#4CAF50" },
-    { min: 10, title: "Active Commenter", icon: "🗣️", color: "#2196F3" },
-    { min: 50, title: "Conversation Starter", icon: "⭐", color: "#9C27B0" },
-    { min: 100, title: "Comment Master", icon: "👑", color: "#FF9800" }
+    { min: 1, title: "First Comment", icon: "💬", color: "#4CAF50", description: "You made your first comment on a poem!" },
+    { min: 10, title: "Active Commenter", icon: "🗣️", color: "#2196F3", description: "You've made 10 comments on poems." },
+    { min: 50, title: "Conversation Starter", icon: "⭐", color: "#9C27B0", description: "50 comments! You're starting great conversations." },
+    { min: 100, title: "Comment Master", icon: "👑", color: "#FF9800", description: "100 comments! You're a true poetry community member." }
   ];
   
   let earnedAny = false;
@@ -1362,27 +1529,22 @@ function showDefaultCommentBadges(container, totalCommentsMade) {
   commentBadges.forEach(badge => {
     if (totalCommentsMade >= badge.min) {
       earnedAny = true;
-      // Create a visual badge (using emoji since we don't have images)
-      const badgeEl = document.createElement("div");
-      badgeEl.style.cssText = `
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: ${badge.color};
-        color: white;
-        font-size: 24px;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        border: 2px solid #5a3cb3;
-        cursor: default;
-      `;
-      badgeEl.title = `${badge.title} (${badge.min}+ comments)`;
-      badgeEl.textContent = badge.icon;
-      container.appendChild(badgeEl);
+      
+      const img = document.createElement("img");
+      // Create a colored square with emoji as fallback
+      img.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect width='50' height='50' fill='${badge.color.replace('#', '%23')}'/%3E%3Ctext x='25' y='35' font-size='24' text-anchor='middle' fill='white'%3E${badge.icon}%3C/text%3E%3C/svg%3E`;
+      img.alt = badge.title;
+      img.title = `${badge.title} (${badge.min}+ comments)`;
+      
+      img.addEventListener("click", () => {
+        showPreview(
+          img.src,
+          badge.title,
+          badge.description
+        );
+      });
+      
+      container.appendChild(img);
     }
   });
   
@@ -1391,22 +1553,21 @@ function showDefaultCommentBadges(container, totalCommentsMade) {
   }
 }
 
-// --- Update Achievements dynamically ---
+// --- Update Achievements dynamically with click handlers ---
 async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   const badgesContainer = document.querySelector(".badges-container");
   if (!badgesContainer) return;
   badgesContainer.innerHTML = "";
 
-  // Fetch admin-defined achievements from Firestore
   try {
     const snapshot = await getDocs(collection(db, "achievements"));
+    
     if (!snapshot.empty) {
       const achievements = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
 
-      // Filter achievements the user qualifies for
       const earned = achievements.filter(a => {
         if (!a.active) return false;
-        const { type, min } = a.condition;
+        const { type, min } = a.condition || {};
         switch(type) {
           case "poemsSubmitted": return poemCount >= min;
           case "likesReceived": return totalLikes >= min;
@@ -1416,40 +1577,42 @@ async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, 
         }
       });
 
-      // Append earned badges dynamically
       if (earned.length > 0) {
         earned.forEach(badge => {
           const img = document.createElement("img");
-          img.src = badge.imageUrl || "https://via.placeholder.com/50?text=Badge"; // fallback image
-          img.title = badge.title || `${badge.condition.type}: ${badge.condition.min}+`;
+          img.src = badge.imageUrl || `https://via.placeholder.com/50/5a67d8/ffffff?text=${badge.title?.charAt(0) || '🏆'}`;
           img.alt = badge.title || "Achievement Badge";
+          img.title = badge.title || "Achievement";
+          
+          img.addEventListener("click", () => {
+            showPreview(
+              badge.imageUrl || `https://via.placeholder.com/200/5a67d8/ffffff?text=${encodeURIComponent(badge.title?.charAt(0) || '🏆')}`,
+              badge.title || "Achievement",
+              badge.description || "You earned this achievement!"
+            );
+          });
+          
           badgesContainer.appendChild(img);
         });
       } else {
-        // Show placeholder message if no badges earned
         badgesContainer.innerHTML = '<p style="color: #888; font-size: 0.9rem; margin: 0;">No badges yet</p>';
       }
     } else {
-      // If no achievements collection exists yet, show default badges based on comments made
       showDefaultCommentBadges(badgesContainer, totalCommentsMade);
     }
   } catch (err) {
     console.error("Error loading dynamic achievements:", err);
-    // Fallback to default badges
     showDefaultCommentBadges(badgesContainer, totalCommentsMade);
   }
 
-  // Update level based on activity
   updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
 }
 
-// --- Update Level (user activity-based only) ---
-
+// --- Update Level function ---
 function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   const levelEl = document.getElementById("userLevel");
   const levelProgressEl = document.getElementById("levelProgress");
 
-  // Ensure remaining info container exists
   let levelInfoEl = document.querySelector(".panel-item .level-info");
   if (!levelInfoEl) {
     levelInfoEl = document.createElement("div");
@@ -1461,7 +1624,6 @@ function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalComments
     if (panelItem) panelItem.appendChild(levelInfoEl);
   }
 
-  // Base requirements for first level
   let baseRequirements = {
     poems: 2,
     likes: 2,
@@ -1470,13 +1632,10 @@ function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalComments
   };
 
   let level = 1;
-
   let poems = poemCount;
   let likes = totalLikes;
   let commentsMade = totalCommentsMade;
   let commentsReceived = totalCommentsReceived;
-
-  // Track what’s left to next level
   let remaining = { poems: 0, likes: 0, commentsMade: 0, commentsReceived: 0 };
 
   while (true) {
@@ -1488,26 +1647,22 @@ function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalComments
     const levelProgress = Math.min((poemProgress + likesProgress + commentsMadeProgress + commentsReceivedProgress) / 4, 1);
 
     if (levelProgress >= 1) {
-      // Level up
       level++;
       poems -= baseRequirements.poems;
       likes -= baseRequirements.likes;
       commentsMade -= baseRequirements.commentsMade;
       commentsReceived -= baseRequirements.commentsReceived;
 
-      // Increase requirements for next level
       baseRequirements.poems = Math.ceil(baseRequirements.poems * 1.5);
       baseRequirements.likes = Math.ceil(baseRequirements.likes * 1.5);
       baseRequirements.commentsMade = Math.ceil(baseRequirements.commentsMade * 1.5);
       baseRequirements.commentsReceived = Math.ceil(baseRequirements.commentsReceived * 1.5);
     } else {
-      // Remaining to next level
       remaining.poems = Math.max(baseRequirements.poems - poems, 0);
       remaining.likes = Math.max(baseRequirements.likes - likes, 0);
       remaining.commentsMade = Math.max(baseRequirements.commentsMade - commentsMade, 0);
       remaining.commentsReceived = Math.max(baseRequirements.commentsReceived - commentsReceived, 0);
 
-      // Set progress bar
       if (levelProgressEl) levelProgressEl.style.width = `${levelProgress * 100}%`;
       break;
     }
@@ -1542,19 +1697,27 @@ function colorFromName(name = "") {
 }
 
 // --- Generate a PNG blob of initials with background color ---
+// --- Generate a PNG blob of initials with background color - SAVE AS SQUARE ---
 function generateAvatarImage(initials, bgColor, size = 180) {
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = size;
   const ctx = canvas.getContext("2d");
 
+  // Fill with background color - full square, no circle clipping
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, size, size);
 
+  // Add text
   ctx.fillStyle = "#ffffff";
   ctx.font = `${size * 0.5}px 'Playfair Display', serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(initials, size / 2, size / 2);
+
+  // Add a subtle border to match styling
+  ctx.strokeStyle = "#b89b5e";
+  ctx.lineWidth = 4;
+  ctx.strokeRect(2, 2, size - 4, size - 4);
 
   return new Promise(resolve => {
     canvas.toBlob(blob => resolve(blob), "image/png");
@@ -1567,8 +1730,8 @@ async function uploadAvatarToCloudinary(initials, bgColor, publicId = null) {
 
   const formData = new FormData();
   formData.append("file", blob);
-  formData.append("upload_preset", "profile_pics"); // must match your Cloudinary preset
-  if (publicId) formData.append("public_id", publicId); // overwrite existing image
+  formData.append("upload_preset", "profile_pics");
+  if (publicId) formData.append("public_id", publicId);
 
   const cloudName = "dzoq4pgjn";
 
@@ -1578,26 +1741,29 @@ async function uploadAvatarToCloudinary(initials, bgColor, publicId = null) {
       body: formData
     });
     const data = await res.json();
+    
+    // Get the URL without any circle transformations
     const imageUrl = data.secure_url;
+    
+    // Remove any auto-cropping/circle transformations if present
+    const cleanUrl = imageUrl.replace(/\/upload\/.*?\//, '/upload/');
 
-    // Save for this user only
     const user = auth.currentUser;
     if (user) {
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, { 
-        photoURL: imageUrl,          
-        cachedAvatarURL: imageUrl    
+        photoURL: cleanUrl,          
+        cachedAvatarURL: cleanUrl    
       });
     }
 
-    return imageUrl;
+    return cleanUrl;
   } catch (err) {
     console.error("Cloudinary upload failed:", err);
     return null;
   }
 }
-
-
+ 
 // --- Auth handling ---
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
@@ -1605,7 +1771,6 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // Fetch actor (logged-in) user's doc to know their username for actions
   const actorRef = doc(db, "users", user.uid);
   let actorDoc = await getDoc(actorRef);
   if (!actorDoc.exists()) {
@@ -1622,11 +1787,9 @@ onAuthStateChanged(auth, async (user) => {
   const actorData = actorDoc.data();
   actorUsername = actorData.username || user.email.split("@")[0];
 
-  // Determine if we are viewing our own or another user’s profile
   viewingOwnProfile = !profileUid || profileUid === user.uid;
   const targetUid = viewingOwnProfile ? user.uid : profileUid;
 
-  // Load the target profile's data (profileUsername etc.)
   const userRef = doc(db, "users", targetUid);
   const userDoc = await getDoc(userRef);
 
@@ -1650,19 +1813,25 @@ onAuthStateChanged(auth, async (user) => {
           : new Date(data.joined).toDateString())
       : "Unknown";
   }
-const avatarDiv = document.getElementById("profileAvatar");
-const avatarText = document.getElementById("avatarInitials");
+  
+  const avatarDiv = document.getElementById("profileAvatar");
+  const avatarText = document.getElementById("avatarInitials");
+
+  // In the onAuthStateChanged function, update the avatar display section:
 
 if (data.photoURL) {
-  profilePic.src = data.photoURL; // uploaded image
+  // If there's a photo URL, use it
+  profilePic.src = data.photoURL;
   profilePic.style.display = "block";
+  profilePic.style.borderRadius = "50%"; // Make it circular for display
   avatarDiv.style.display = "none";
 } else if (data.cachedAvatarURL) {
-  profilePic.src = data.cachedAvatarURL; // cached Cloudinary initials
+  profilePic.src = data.cachedAvatarURL;
   profilePic.style.display = "block";
+  profilePic.style.borderRadius = "50%"; // Make it circular for display
   avatarDiv.style.display = "none";
 } else {
-  // 🔐 ONLY generate locally — NEVER upload — NEVER save
+  // Show the generated avatar
   const initials = getInitials(profileUsername);
   const bgColor = colorFromName(profileUsername);
 
@@ -1670,21 +1839,21 @@ if (data.photoURL) {
   avatarDiv.style.background = bgColor;
   avatarDiv.style.display = "flex";
   profilePic.style.display = "none";
-  if (!viewingOwnProfile) {
-  console.warn("Blocked avatar upload: not own profile");
-  return null;
+  
+  // Upload as square image
+  if (viewingOwnProfile) {
+    uploadAvatarToCloudinary(initials, bgColor).then(url => {
+      if (url) {
+        profilePic.src = url;
+        profilePic.style.display = "block";
+        profilePic.style.borderRadius = "50%"; // Make it circular for display
+        avatarDiv.style.display = "none";
+      }
+    });
+  }
 }
-
-
-  uploadAvatarToCloudinary(initials, bgColor).then(url => {
-    if (url) {
-      profilePic.src = url;
-      profilePic.style.display = "block";
-      avatarDiv.style.display = "none";
-    }
-  });
-}
-const regenerateAvatarBtn = document.getElementById("regenerateAvatarBtn");
+  
+  const regenerateAvatarBtn = document.getElementById("regenerateAvatarBtn");
 
 if (regenerateAvatarBtn && viewingOwnProfile) {
   regenerateAvatarBtn.style.display = "inline-block";
@@ -1693,18 +1862,18 @@ if (regenerateAvatarBtn && viewingOwnProfile) {
     const bgColor = colorFromName(profileUsername);
 
     try {
-      // Use the old photoURL filename (without domain) as public_id to overwrite
       let publicId = null;
       if (profilePic.src) {
         const urlParts = profilePic.src.split("/");
-        const filename = urlParts[urlParts.length - 1].split(".")[0]; // remove extension
-        publicId = `profile_pics/${filename}`; // assuming folder preset
+        const filename = urlParts[urlParts.length - 1].split(".")[0];
+        publicId = `profile_pics/${filename}`;
       }
 
       const newAvatarUrl = await uploadAvatarToCloudinary(initials, bgColor, publicId);
       if (newAvatarUrl) {
         profilePic.src = newAvatarUrl;
         profilePic.style.display = "block";
+        profilePic.style.borderRadius = "50%"; // Make it circular for display
         document.getElementById("profileAvatar").style.display = "none";
         alert("✅ Avatar regenerated and replaced successfully!");
       } else {
@@ -1717,44 +1886,35 @@ if (regenerateAvatarBtn && viewingOwnProfile) {
   });
 }
 
-  // If it's someone else's profile → disable editing (but still allow likes/comments on poems)
   if (!viewingOwnProfile) {
     if (editBtn) editBtn.style.display = "none";
     if (changePicBtn) changePicBtn.style.display = "none";
     if (uploadPic) uploadPic.style.display = "none";
-    document.getElementById("logoutBtn")?.remove();
   }
   if (viewingOwnProfile && editBtn) {
-  editBtn.style.display = "inline-block"; // make sure it's visible
-  editBtn.addEventListener("click", () => {
-    window.location.href = "edit-profile.html";
-  });
-}
-
-// If it's someone else's profile → hide Quick Access menu
-if (!viewingOwnProfile) {
-  const quickAccessPanel = document.querySelector(".interaction-panel");
-  if (quickAccessPanel) {
-    quickAccessPanel.style.display = "none";
+    editBtn.style.display = "inline-block";
+    editBtn.addEventListener("click", () => {
+      window.location.href = "edit-profile.html";
+    });
   }
-}
 
-  // Fetch profile's poems and top poems
+  if (!viewingOwnProfile) {
+    const quickAccessPanel = document.querySelector(".interaction-panel");
+    if (quickAccessPanel) {
+      quickAccessPanel.style.display = "none";
+    }
+  }
+
   await fetchUserPoems(profileUsername);
   await fetchTopPoems(profileUsername);
-
-  // Load ranking poets (optional leaderboard) — only once after user loads
-  await loadRankingPoets();
 });
 
-// --- Fetch User Poems (for profile being viewed) - SORTED IN MEMORY (NO INDEX NEEDED) ---
+// --- Fetch User Poems ---
 async function fetchUserPoems(usernameToFetch) {
   try {
-    // Simple query without orderBy - just filter by username
     const q = query(
       collection(db, "recentPoems"), 
       where("submittedBy", "==", usernameToFetch)
-      // No orderBy here to avoid index requirement
     );
     
     const querySnap = await getDocs(q);
@@ -1773,23 +1933,20 @@ async function fetchUserPoems(usernameToFetch) {
     if (querySnap.empty) {
       container.innerHTML = `<p class="empty-message">No poems yet.</p>`;
     } else {
-      // Convert to array and sort by timestamp in memory
       const poemsArray = [];
       
       for (const docSnap of querySnap.docs) {
         const poem = docSnap.data();
-        poem.id = docSnap.id; // Store the ID
+        poem.id = docSnap.id;
         poemsArray.push(poem);
       }
       
-      // Sort by timestamp descending (most recent first) in memory
       poemsArray.sort((a, b) => {
         const timeA = a.timestamp?.seconds || 0;
         const timeB = b.timestamp?.seconds || 0;
-        return timeB - timeA; // Descending order
+        return timeB - timeA;
       });
       
-      // Now render the sorted poems
       for (const poem of poemsArray) {
         const docId = poem.id;
         const card = document.createElement("div");
@@ -1809,53 +1966,40 @@ async function fetchUserPoems(usernameToFetch) {
         }
         totalCommentsReceived += commentsSnapCount;
 
-        const authorLink = poem.submittedByUid
-          ? `<a href="user-profile.html?uid=${encodeURIComponent(poem.submittedByUid)}" class="author-link">${poem.author || poem.submittedBy || usernameToFetch}</a>`
-          : `<a href="user-profile.html?user=${encodeURIComponent(poem.submittedBy || usernameToFetch)}" class="author-link">${poem.author || poem.submittedBy || usernameToFetch}</a>`;
-
         const dateStr = poem.timestamp 
           ? new Date(poem.timestamp.seconds * 1000).toLocaleDateString() + ' ' + new Date(poem.timestamp.seconds * 1000).toLocaleTimeString()
           : "";
 
-card.innerHTML = `
- <div class="poem-display">
-  <h3 class="poem-title">${poem.title}</h3>
-  ${dateStr ? `<small class="poem-date">${dateStr}</small>` : ""}
-  <button class="delete-btn">🗑️ Delete</button>
-  <div class="poem-body">
-    <p class="poem-content">${truncated.preview.replace(/\n/g, "<br>")}</p>
-    ${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}
-  </div>
-</div>
+        card.innerHTML = `
+          <div class="poem-display">
+            <h3 class="poem-title">${poem.title}</h3>
+            ${dateStr ? `<small class="poem-date">${dateStr}</small>` : ""}
+            <button class="delete-btn">🗑️ Delete</button>
+            <div class="poem-body">
+              <p class="poem-content">${truncated.preview.replace(/\n/g, "<br>")}</p>
+              ${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}
+            </div>
+          </div>
+          ${poem.categories && poem.categories.length > 0 ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
+          <div class="poem-actions comment-aligned">
+            <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+            <button class="comment-btn">Post</button>
+            <button class="like-btn">
+              ❤️ <span class="like-count">${likes}</span>
+            </button>
+            <span class="message-count">💬 ${commentsSnapCount}</span>
+          </div>
+          <div class="comment-list" style="display:none;"></div>
+        `;
 
-  ${poem.categories && poem.categories.length > 0 ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
-  <div class="poem-actions comment-aligned">
-    <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
-    <button class="comment-btn">Post</button>
-    <button class="like-btn">
-      ❤️ <span class="like-count">${likes}</span>
-    </button>
-    <span class="message-count">💬 ${commentsSnapCount}</span>
-  </div>
-  <div class="comment-list" style="display:none;"></div>
-`;
+        const deleteBtn = card.querySelector(".delete-btn");
+        if (viewingOwnProfile) {
+          deleteBtn.style.display = "inline-block";
+        } else {
+          deleteBtn.style.display = "none";
+        }
 
-if (viewingOwnProfile) {
-  const deleteBtn = document.createElement("button");
-  deleteBtn.className = "delete-btn";
-  deleteBtn.textContent = "🗑️ Delete";
-  deleteBtn.style.marginLeft = "8px";
-  card.querySelector(".poem-actions").appendChild(deleteBtn);
-}
-
-const deleteBtn = card.querySelector(".delete-btn");
-if (viewingOwnProfile) {
-  deleteBtn.style.display = "inline-block";
-} else {
-  deleteBtn.style.display = "none";
-}
-
-  container.appendChild(card);
+        container.appendChild(card);
       }
     }
 
@@ -1874,359 +2018,7 @@ if (viewingOwnProfile) {
   }
 }
 
-// 💌 Helper: Add notification for the poem owner
-async function addNotification(poemId, poemOwnerUid, type, fromUser, text = "") {
-  if (!poemOwnerUid || !auth.currentUser) return; // don't notify if missing
-  if (poemOwnerUid === auth.currentUser.uid) return; // don't notify self
-
-  const userRef = doc(db, "users", poemOwnerUid);
-  try {
-    await runTransaction(db, async (tx) => {
-      const userSnap = await tx.get(userRef);
-      if (!userSnap.exists()) return;
-
-      const data = userSnap.data();
-      const notifications = Array.isArray(data.notifications) ? data.notifications : [];
-
-      notifications.push({
-        type,               // "like" or "comment"
-        from: fromUser,     // username of the actor
-        poemId,             // which poem
-        text,               // comment text (if any)
-        read: false,
-        timestamp: new Date()
-      });
-
-      tx.update(userRef, { notifications });
-    });
-  } catch (err) {
-    console.error("Failed to add notification:", err);
-  }
-}
-
-// ✅ Unified click listener for poems container (likes, comments, read more)
-poemsContainer.addEventListener("click", async (e) => {
-  const card = e.target.closest(".recent-poem-card");
-  if (!card) return;
-  const poemId = card.dataset.id;
-  if (!poemId) return;
-
-  const currentUser = auth.currentUser;
-
-// DELETE POEM
-if (e.target.classList.contains("delete-btn")) {
-  if (!confirm("Are you sure you want to delete this poem?")) return;
-
-  try {
-    await deleteDoc(doc(db, "recentPoems", poemId));
-    card.remove(); // remove from DOM instantly
-    alert("Poem deleted successfully!");
-  } catch (err) {
-    console.error("Failed to delete poem:", err);
-    alert("Failed to delete poem.");
-  }
-}
-
-
-  // ❤️ LIKE BUTTON — each user can like only once
-  if (e.target.classList.contains("like-btn")) {
-    const likeBtn = e.target;
-    const countEl = card.querySelector(".like-count");
-    if (!countEl) return;
-
-    if (!currentUser) {
-      alert("Please sign in to like poems.");
-      return;
-    }
-    const userUid = currentUser.uid;
-    likeBtn.disabled = true;
-    const prevText = likeBtn.textContent;
-
-    try {
-      const poemRef = doc(db, "recentPoems", poemId);
-      await runTransaction(db, async (tx) => {
-        const snap = await tx.get(poemRef);
-        if (!snap.exists()) throw new Error("DOC_NOT_FOUND");
-
-        const data = snap.data();
-        const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
-        const currentLikes = typeof data.likes === "number" ? data.likes : 0;
-
-        if (likedBy.includes(userUid)) throw new Error("ALREADY_LIKED");
-
-        tx.update(poemRef, {
-          likes: currentLikes + 1,
-          likedBy: [...likedBy, userUid],
-        });
-      });
-
-      const prevCount = parseInt(countEl.textContent) || 0;
-      countEl.textContent = prevCount + 1;
-      likeBtn.classList.add("liked");
-      likeBtn.textContent = "❤️ Liked";
-      likeBtn.style.pointerEvents = "none";
-
-      // Add notification for poem owner
-      const poemSnap = await getDoc(doc(db, "recentPoems", poemId));
-      const poemOwner = poemSnap.data().submittedByUid || poemSnap.data().uid;
-      await addNotification(poemId, poemOwner, "like", actorUsername);
-
-    } catch (err) {
-      console.error("Like transaction failed:", err);
-
-      if (err.message === "ALREADY_LIKED") {
-        likeBtn.classList.add("liked");
-        likeBtn.textContent = "❤️ Liked";
-        likeBtn.style.pointerEvents = "none";
-        alert("You’ve already liked this poem.");
-      } else if (err.message === "DOC_NOT_FOUND") {
-        alert("This poem no longer exists.");
-      } else if (err.code === "permission-denied") {
-        alert("You don't have permission to like this poem (security rules).");
-      } else {
-        alert("Could not like the poem. Try again.");
-      }
-
-      if (err.message !== "ALREADY_LIKED") {
-        likeBtn.disabled = false;
-        likeBtn.textContent = prevText;
-      }
-    }
-  }
-// SHOW COMMENTS
-if (e.target.classList.contains("message-count")) {
-  const card = e.target.closest(".recent-poem-card");
-  const docId = card.dataset.id;
-  const commentList = card.querySelector(".comment-list");
-
-  // Toggle visibility
-  const isVisible = commentList.style.display === "block";
-  commentList.style.display = isVisible ? "none" : "block";
-  if (isVisible) return;
-
-  commentList.innerHTML = "<p style='color:#888;'>Loading comments...</p>";
-
-  try {
-    const commentsCol = collection(db, "recentPoems", docId, "comments");
-    const commentsSnapshot = await getDocs(commentsCol);
-    commentList.innerHTML = ""; // clear loading text
-
-    if (commentsSnapshot.empty) {
-      commentList.innerHTML = "<p style='color:#888;'>No comments yet.</p>";
-      return;
-    }
-
-    // Get poem owner ID
-    const poemRef = doc(db, "recentPoems", docId);
-    const poemSnap = await getDoc(poemRef);
-    const poemOwnerId = poemSnap.exists() ? poemSnap.data().authorId || poemSnap.data().userId : null;
-
-    // Sort comments by timestamp ascending
-    const comments = commentsSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    comments.sort((a, b) => {
-      const ta = a.timestamp?.toMillis?.() || 0;
-      const tb = b.timestamp?.toMillis?.() || 0;
-      return ta - tb;
-    });
-
-    // Display comments
-    for (const c of comments) {
-      let displayName = c.user || "Anonymous";
-      let userLink = "#";
-      if (c.userId) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", c.userId));
-          if (userDoc.exists()) {
-            displayName = userDoc.data().username || displayName;
-            userLink = `/user-profile.html?uid=${c.userId}`;
-          }
-        } catch {}
-      }
-
-      const div = document.createElement("div");
-      div.className = "comment";
-      div.dataset.commentId = c.id;
-      div.style.cssText = "background:#fff; padding:8px 12px; margin:6px 0; border-radius:6px;";
-
-      div.innerHTML = `
-        <a href="${userLink}" style="font-weight:600; color:#a67c52; text-decoration:none; margin-right:6px;">${displayName}</a>: ${c.text}
-        <div class="comment-actions" style="margin-top:4px;">
-          <small class="reply-toggle" style="color:#5a3cb3; cursor:pointer;">Reply</small>
-        </div>
-        <div class="reply-section" style="margin-left:20px; margin-top:6px;"></div>
-      `;
-
-      commentList.appendChild(div);
-
-      // Load existing replies
-      const repliesCol = collection(db, "recentPoems", docId, "comments", c.id, "replies");
-      const repliesSnapshot = await getDocs(repliesCol);
-      if (!repliesSnapshot.empty) {
-        const replySection = div.querySelector(".reply-section");
-        repliesSnapshot.forEach(r => {
-          const reply = r.data();
-          replySection.innerHTML += `
-            <div style="background:#f7f7f7; padding:6px 10px; border-radius:6px; margin:4px 0;">
-              <a href="/user-profile.html?uid=${reply.userId}" style="font-weight:600; color:#5a3cb3; text-decoration:none;">${reply.username}</a>: ${reply.text}
-            </div>
-          `;
-        });
-      }
-    }
-  } catch (err) {
-    console.error("Error loading comments:", err);
-    commentList.innerHTML = "<p style='color:red;'>Failed to load comments.</p>";
-  }
-}
-
-// REPLY TOGGLE — show input box when “Reply” is clicked
-if (e.target.classList.contains("reply-toggle")) {
-  const commentDiv = e.target.closest(".comment");
-  const replySection = commentDiv.querySelector(".reply-section");
-
-  // If already open, close it
-  const existing = replySection.querySelector(".reply-input");
-  if (existing) {
-    existing.remove();
-    return;
-  }
-
-  const inputContainer = document.createElement("div");
-  inputContainer.className = "reply-input";
-  inputContainer.innerHTML = `
-    <textarea placeholder="Write a reply..." rows="1" style="width:95%; border-radius:6px; padding:6px; border:1px solid #ccc;"></textarea>
-    <button class="send-reply-btn" style="margin-top:4px; background:#5a3cb3; color:white; border:none; border-radius:6px; padding:4px 10px; cursor:pointer;">Send</button>
-  `;
-  replySection.appendChild(inputContainer);
-}
-
-// SEND REPLY — handle send button click
-// SEND REPLY — handle send button click
-if (e.target.classList.contains("send-reply-btn")) {
-  const user = auth.currentUser;
-  if (!user) {
-    alert("Please sign in to reply.");
-    return;
-  }
-
-  const commentDiv = e.target.closest(".comment");
-  const card = e.target.closest(".recent-poem-card");
-  const docId = card.dataset.id;
-  const commentId = commentDiv.dataset.commentId;
-  const textarea = commentDiv.querySelector(".reply-input textarea");
-  const replyText = textarea.value.trim();
-  if (!replyText) return;
-
-  const replySection = commentDiv.querySelector(".reply-section");
-
-  try {
-    // Fetch username of current user
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    const username = userDoc.exists() ? userDoc.data().username || "User" : "User";
-
-    // Add reply to Firestore
-    await addDoc(collection(db, "recentPoems", docId, "comments", commentId, "replies"), {
-      userId: user.uid,
-      username,
-      text: replyText,
-      timestamp: new Date()
-    });
-
-    // Append instantly to UI
-    const replyDiv = document.createElement("div");
-    replyDiv.style.cssText = "background:#f7f7f7; padding:6px 10px; border-radius:6px; margin:4px 0;";
-    replyDiv.innerHTML = `
-      <a href="/user-profile.html?uid=${user.uid}" style="font-weight:400; color:#5a3cb3; text-decoration:none;">
-        ${username}
-      </a>: ${replyText}
-    `;
-    replySection.appendChild(replyDiv);
-
-    // Clear textarea
-    textarea.value = "";
-
-  } catch (err) {
-    console.error("Error sending reply:", err);
-    alert("Failed to send reply.");
-  }
-}
-
-// 📝 POST COMMENT
-if (e.target.classList.contains("comment-btn")) {
-  const input = card.querySelector(".comment-input");
-  const text = input.value.trim();
-  if (!text) return alert("Comment cannot be empty.");
-
-  if (!auth.currentUser) {
-    alert("Please sign in to comment.");
-    return;
-  }
-
-  try {
-    const commentsRef = collection(db, "recentPoems", poemId, "comments");
-    const newCommentRef = doc(commentsRef); // generate new doc
-    await setDoc(newCommentRef, {
-      text,
-      user: actorUsername,
-      userId: auth.currentUser.uid,
-      createdAt: new Date(),
-    });
-
-    input.value = "";
-    const messageCount = card.querySelector(".message-count");
-    const currentCount =
-      parseInt((messageCount?.textContent || "").replace("💬", "")) || 0;
-    if (messageCount) messageCount.textContent = `💬 ${currentCount + 1}`;
-
-    const commentList = card.querySelector(".comment-list");
-    if (commentList.style.display === "block") {
-      // append new comment in the same structure as existing comments
-      const div = document.createElement("div");
-      div.className = "comment";
-      div.dataset.commentId = newCommentRef.id;
-      div.style.cssText = "background:#fff; padding:8px 12px; margin:6px 0; border-radius:6px;";
-      div.innerHTML = `
-        <a href="/user-profile.html?uid=${auth.currentUser.uid}" style="font-weight:600; color:#a67c52; text-decoration:none; margin-right:6px;">${actorUsername}</a>: ${text}
-        <div class="comment-actions" style="margin-top:4px;">
-          <small class="reply-toggle" style="color:#5a3cb3; cursor:pointer;">Reply</small>
-        </div>
-        <div class="reply-section" style="margin-left:20px; margin-top:6px;"></div>
-      `;
-      commentList.appendChild(div);
-    }
-
-    // Add notification for poem owner
-    const poemSnap = await getDoc(doc(db, "recentPoems", poemId));
-    const poemOwner = poemSnap.data().submittedByUid || poemSnap.data().uid;
-    await addNotification(poemId, poemOwner, "comment", actorUsername, text);
-
-  } catch (err) {
-    console.error("Error posting comment:", err);
-    alert("Failed to post comment.");
-  }
-}
-
-
-  // 👁️ READ MORE toggle
-  if (e.target.classList.contains("read-more-btn")) {
-    const poemBody = card.querySelector(".poem-body");
-    const poemContent = poemBody.querySelector(".poem-content");
-    const isExpanded = e.target.textContent.includes("Less");
-
-    const poemSnap = await getDoc(doc(db, "recentPoems", poemId));
-
-    if (isExpanded) {
-      const truncated = truncatePoemByLines(poemSnap.data().content, 8);
-      poemContent.textContent = truncated.preview;
-      e.target.textContent = "Show More";
-    } else {
-      poemContent.textContent = poemSnap.data().content;
-      e.target.textContent = "Show Less";
-    }
-  }
-});
-
-// --- Fetch Top 3 Poems for this profile (clickable + numbering) ---
+// --- Fetch Top 3 Poems ---
 async function fetchTopPoems(profileName) {
   try {
     if (!profileName) return;
@@ -2275,11 +2067,10 @@ async function fetchTopPoems(profileName) {
   }
 }
 
-
-// --- Cloudinary Upload (only for your own profile) ---
+// --- Cloudinary Upload ---
 if (changePicBtn) {
-  const cloudName = "dzoq4pgjn"; // your Cloudinary cloud name
-  const uploadPreset = "profile_pics"; // must match your Cloudinary preset
+  const cloudName = "dzoq4pgjn";
+  const uploadPreset = "profile_pics";
 
   changePicBtn.addEventListener("click", () => {
     if (!viewingOwnProfile) return alert("You cannot change another user's picture.");
@@ -2301,15 +2092,15 @@ if (changePicBtn) {
         body: formData
       });
       const data = await res.json();
-      const imageUrl = data.secure_url.replace(
-        '/upload/',
-        '/upload/c_fill,g_auto,f_auto,q_auto:best,h_600,w_600,r_max,e_sharpen/'
-      );
+      
+      // Get the raw URL without any transformations
+      const imageUrl = data.secure_url;
 
-      // Update image instantly
-      if (profilePic) profilePic.src = imageUrl;
+      if (profilePic) {
+        profilePic.src = imageUrl;
+        profilePic.style.borderRadius = "50%"; // Make it circular for display
+      }
 
-      // Save to Firestore for persistence
       const user = auth.currentUser;
       if (user) {
         await updateDoc(doc(db, "users", user.uid), { photoURL: imageUrl });
@@ -2323,25 +2114,121 @@ if (changePicBtn) {
 }
 
 // --- Profile picture expand on click ---
+// --- Profile picture expand on click ---
 const modal = document.getElementById("imageModal");
 const expandedImg = document.getElementById("expandedImg");
 const closeModal = document.querySelector(".close-modal");
 const profilePicEl = document.getElementById("profilePic");
+const profileAvatar = document.getElementById("profileAvatar");
+
+// Function to show modal with image
+function showImageModal(imageSrc) {
+  if (expandedImg) {
+    expandedImg.src = imageSrc;
+    // Remove any border-radius that might be applied
+    expandedImg.style.borderRadius = "0";
+    expandedImg.style.maxWidth = "90%";
+    expandedImg.style.maxHeight = "90%";
+    expandedImg.style.objectFit = "contain";
+    expandedImg.style.background = "transparent"; // Ensure no background
+  }
+  if (modal) modal.style.display = "flex";
+}
+
+// Handle click on uploaded profile picture
 if (profilePicEl) {
   profilePicEl.addEventListener("click", () => {
-    if (expandedImg) expandedImg.src = profilePicEl.src;
-    if (modal) modal.style.display = "flex";
+    if (profilePicEl.src) {
+      showImageModal(profilePicEl.src);
+    }
   });
 }
+
+// Handle click on generated avatar
+if (profileAvatar) {
+  profileAvatar.addEventListener("click", () => {
+    // If there's an uploaded image, use that instead
+    if (profilePicEl && profilePicEl.style.display !== "none" && profilePicEl.src) {
+      showImageModal(profilePicEl.src);
+    } else {
+      // For generated avatar, create an image that preserves the circular styling
+      const initials = document.getElementById("avatarInitials")?.textContent || "?";
+      const bgColor = window.getComputedStyle(profileAvatar).backgroundColor;
+      
+      // Get the computed styles to match exactly
+      const avatarStyles = window.getComputedStyle(profileAvatar);
+      const borderColor = avatarStyles.borderColor;
+      const borderWidth = avatarStyles.borderWidth;
+      const boxShadow = avatarStyles.boxShadow;
+      
+      // Create a canvas to generate the avatar image
+      const canvas = document.createElement("canvas");
+      canvas.width = 500; // Higher resolution
+      canvas.height = 500;
+      const ctx = canvas.getContext("2d");
+      
+      // Clear canvas with transparency
+      ctx.clearRect(0, 0, 500, 500);
+      
+      // Draw the circular background
+      ctx.beginPath();
+      ctx.arc(250, 250, 240, 0, 2 * Math.PI); // Slightly smaller to account for border
+      ctx.fillStyle = bgColor;
+      ctx.fill();
+      
+      // Draw the inner shadow/ring effect (from the ::before pseudo-element)
+      ctx.beginPath();
+      ctx.arc(250, 250, 230, 0, 2 * Math.PI);
+      ctx.strokeStyle = "rgba(0,0,0,0.12)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Draw the border
+      ctx.beginPath();
+      ctx.arc(250, 250, 240, 0, 2 * Math.PI);
+      ctx.strokeStyle = borderColor || "#b89b5e";
+      ctx.lineWidth = parseInt(borderWidth) || 4;
+      ctx.stroke();
+      
+      // Draw the initials
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 200px 'Playfair Display', serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(initials, 250, 250);
+      
+      // Add a subtle radial gradient for depth (matching the original)
+      const gradient = ctx.createRadialGradient(150, 150, 50, 250, 250, 300);
+      gradient.addColorStop(0, "rgba(255,255,255,0.2)");
+      gradient.addColorStop(1, "rgba(0,0,0,0.1)");
+      ctx.fillStyle = gradient;
+      ctx.globalCompositeOperation = "overlay";
+      ctx.beginPath();
+      ctx.arc(250, 250, 250, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      // Convert to data URL and show in modal
+      const dataUrl = canvas.toDataURL("image/png");
+      showImageModal(dataUrl);
+    }
+  });
+}
+
+// Close modal handlers
 if (closeModal) {
   closeModal.addEventListener("click", () => {
     if (modal) modal.style.display = "none";
   });
 }
+
 window.addEventListener("click", (e) => {
   if (e.target === modal) modal.style.display = "none";
 });
 
+// Also make the avatar have pointer cursor to indicate it's clickable
+if (profileAvatar) {
+  profileAvatar.style.cursor = "pointer";
+}
 // Menu toggle and nav
 const menuToggle = document.getElementById("menu-toggle");
 const navLinks = document.getElementById("nav-links");
@@ -2357,6 +2244,7 @@ if (closeBtn) {
     navLinks.classList.remove("show");
   });
 }
+
 // --- Logout Nav Button ---
 const logoutBtnNav = document.getElementById("logoutBtnNav");
 if (logoutBtnNav) {
@@ -2366,7 +2254,7 @@ if (logoutBtnNav) {
       return;
     }
     try {
-      await signOut(auth); // properly sign out
+      await signOut(auth);
       window.location.href = "users-login.html";
     } catch (err) {
       console.error("Logout failed:", err);
@@ -2375,11 +2263,10 @@ if (logoutBtnNav) {
   });
 }
 
-// --- Search Filter with Firestore ---
+// --- Search Filter ---
 const searchInput = document.getElementById("searchInput");
 let debounceTimeout;
 
-// Keep track of poems already in the DOM to avoid duplicates
 const loadedPoemIds = new Set(
   Array.from(document.querySelectorAll(".recent-poem-card")).map(
     card => card.dataset.id
@@ -2397,7 +2284,6 @@ if (searchInput) {
   });
 }
 
-// --- Filter poems already in the DOM ---
 function filterDOM(filter) {
   const cards = document.querySelectorAll(".recent-poem-card");
   let anyVisible = false;
@@ -2418,7 +2304,6 @@ function filterDOM(filter) {
   showEmptyMessage(!anyVisible);
 }
 
-// --- Firestore search ---
 async function searchFirestore(filter) {
   if (!filter) return;
 
@@ -2431,7 +2316,6 @@ async function searchFirestore(filter) {
     const data = docSnap.data();
     const id = docSnap.id;
 
-    // Skip poems already in the DOM
     if (loadedPoemIds.has(id)) return;
 
     const title = (data.title || "").toLowerCase();
@@ -2445,14 +2329,12 @@ async function searchFirestore(filter) {
     }
   });
 
-  // Update empty message if no poems visible
   const anyVisible = document.querySelectorAll(".recent-poem-card:not([style*='display: none'])").length > 0;
   showEmptyMessage(!anyVisible);
 }
 
-// --- Helper: add new poem card to DOM ---
 function addPoemCardToDOM(id, data) {
-  const container = document.getElementById("poemsContainer"); // make sure this ID matches your container
+  const container = document.getElementById("poemsContainer");
   if (!container) return;
   const card = document.createElement("div");
   card.className = "recent-poem-card";
@@ -2467,7 +2349,6 @@ function addPoemCardToDOM(id, data) {
   container.appendChild(card);
 }
 
-// --- Helper: show/hide empty message ---
 function showEmptyMessage(show) {
   const container = document.getElementById("poemsContainer");
   if (!container) return;
@@ -2484,7 +2365,6 @@ function showEmptyMessage(show) {
   }
 }
 </script>
-
 
 </body>
 </html>
