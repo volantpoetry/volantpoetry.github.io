@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Password | Volant Poetry</title>
+  <link rel="stylesheet" href="usersaccount.css">
+  <link rel="icon" type="png" href="images/logo.png" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 500;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 6px;
+      background-color: #4b2aad;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background-color: #3a1f8a;
+    }
+
+    .status {
+      margin-top: 10px;
+      text-align: center;
+      color: #d32f2f;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .success {
+      color: #2e7d32;
+      background-color: #e8f5e9;
+    }
+
+    .links {
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .links a {
+      color: #4b2aad;
+      text-decoration: none;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .info-text {
+      font-size: 0.9rem;
+      color: #666;
+      text-align: center;
+      margin: 15px 0;
+    }
+
+    /* Spam warning styling */
+    .spam-warning {
+      font-size: 0.85rem;
+      margin-top: 8px;
+      color: #f57c00;
+      background-color: #fff3e0;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border-left: 3px solid #f57c00;
+      text-align: left;
+      display: inline-block;
+      width: auto;
+    }
+
+    .spam-warning i {
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    .tip-box {
+      background-color: #f0f4fa;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 15px 0 5px;
+      font-size: 0.85rem;
+      color: #1e3a5f;
+      text-align: left;
+      border-left: 3px solid #4b2aad;
+    }
+
+    .tip-box p {
+      margin: 5px 0;
+    }
+
+    .tip-box .emoji {
+      font-size: 1.1rem;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Reset Password</h2>
+    
+    <p class="info-text">Enter your email address and we'll send you a link to reset your password.</p>
+
+    <form id="reset-form" class="auth-form">
+      <label for="reset-email">Email Address</label>
+      <input type="email" id="reset-email" placeholder="Enter your email" required>
+
+      <button type="submit" class="btn-primary">Send Reset Link</button>
+    </form>
+
+    <div id="reset-status" class="status"></div>
+
+    <!-- Tip box that appears after sending (hidden by default) -->
+    <div id="spam-tip" class="tip-box" style="display: none;">
+      <p><span class="emoji">📧</span> <strong>Can't find the email?</strong></p>
+      <p>✓ Check your <strong>Spam</strong> or <strong>Junk</strong> folder</p>
+      <p>✓ Add <code>noreply@silent-depth.firebaseapp.com</code> to your contacts</p>
+      <p>✓ Wait a few minutes and refresh your inbox</p>
+      <p>✓ Still not seeing it? <a href="#" id="try-again-link">Click here</a> to try again</p>
+    </div>
+
+    <div class="links">
+      <p><a href="users-login.html">← Back to Login</a></p>
+      <p>Don't have an account? <a href="users-signup.html">Sign up</a></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+      authDomain: "silent-depth.firebaseapp.com",
+      projectId: "silent-depth",
+      storageBucket: "silent-depth.firebasestorage.app",
+      messagingSenderId: "78008755450",
+      appId: "1:78008755450:web:3fd0f0f298a08820935543",
+      measurementId: "G-WSWDCB7KD8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const resetForm = document.getElementById("reset-form");
+    const statusDiv = document.getElementById("reset-status");
+    const spamTip = document.getElementById("spam-tip");
+    const emailInput = document.getElementById("reset-email");
+    const tryAgainLink = document.getElementById("try-again-link");
+
+    // Handle "try again" click
+    tryAgainLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      spamTip.style.display = "none";
+      statusDiv.textContent = "";
+      // Focus on email input for quick retry
+      emailInput.focus();
+    });
+
+    resetForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = emailInput.value.trim();
+
+      // Clear previous status and hide spam tip
+      statusDiv.textContent = "";
+      statusDiv.className = "status";
+      spamTip.style.display = "none";
+
+      // Disable button to prevent double submission
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        
+        // Show success message with spam warning
+        statusDiv.innerHTML = `
+          ✅ Password reset email sent!<br>
+          <span style="font-size:0.9rem; display:block; margin-top:8px;">
+            ⏱️ If you don't see it in 5 minutes, check your spam folder.
+          </span>
+        `;
+        statusDiv.classList.add("success");
+        
+        // Show the spam tip box with helpful information
+        spamTip.style.display = "block";
+        
+        resetForm.reset(); // Clear the form
+      } catch (err) {
+        // Handle specific error messages
+        switch (err.code) {
+          case 'auth/user-not-found':
+            statusDiv.textContent = "⚠ No account found with this email address.";
+            break;
+          case 'auth/invalid-email':
+            statusDiv.textContent = "⚠ Please enter a valid email address.";
+            break;
+          case 'auth/too-many-requests':
+            statusDiv.textContent = "⚠ Too many attempts. Please try again later.";
+            break;
+          default:
+            statusDiv.textContent = "⚠ " + err.message;
+        }
+      } finally {
+        // Re-enable button
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Send Reset Link";
+      }
+    });
+
+    // Add a helpful tip when user focuses on email input
+    emailInput.addEventListener("focus", () => {
+      if (statusDiv.textContent.includes("spam")) {
+        // Keep the spam tip visible
+      }
+    });
+  </script>
+</body>
+</html>

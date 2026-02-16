@@ -89,6 +89,7 @@
 .recent-poem-card {
   background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
   color: #4b3f2f;
+  padding: 20px 25px 20px 50px !important; /* ADD THIS LINE */
 }
 
 /* Read More / Show Less */
@@ -566,6 +567,251 @@
   }
 }
 
+
+#links {
+  padding: 20px;
+}
+
+.links-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-radius: 12px;
+}
+
+.links-header h2 {
+  color: #4b2aad;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  font-family: 'Playfair Display', serif;
+}
+
+.links-header p {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.copy-all-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.copy-all-btn {
+  background: #4b2aad;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(75, 42, 173, 0.2);
+}
+
+.copy-all-btn:hover {
+  background: #5f3dc9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(75, 42, 173, 0.3);
+}
+
+.copy-all-btn:active {
+  transform: translateY(0);
+}
+
+.copy-feedback {
+  color: #28a745;
+  font-size: 0.9rem;
+  animation: fadeInOut 2s ease;
+}
+
+#links-container ul {
+  list-style: none;
+  padding: 0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+#links-container li {
+  margin-bottom: 12px;
+  padding: 15px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  border: 1px solid #eee;
+  position: relative;
+}
+
+#links-container li:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(75, 42, 173, 0.15);
+  border-color: #4b2aad;
+}
+
+.link-content {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+.link-content a {
+  color: #4b2aad;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+.link-content a:hover {
+  color: #6f4ae4;
+  text-decoration: underline;
+}
+
+.poet-name {
+  color: #B8860B;
+  font-style: italic;
+  font-size: 0.95rem;
+  margin-left: 15px;
+  white-space: nowrap;
+}
+
+.copy-individual-btn {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  opacity: 0.7;
+  margin-left: 10px;
+}
+
+.copy-individual-btn:hover {
+  color: #4b2aad;
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.copy-success {
+  position: absolute;
+  right: 50px;
+  background: #28a745;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.load-more-container {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.load-more-btn {
+  background: #4b2aad;
+  color: white;
+  border: none;
+  padding: 12px 35px;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #4b2aad;
+}
+
+.load-more-btn:hover {
+  background: white;
+  color: #4b2aad;
+  border: 1px solid #4b2aad;
+}
+
+.loading-links {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  20% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .links-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  #links-container li {
+    padding: 12px 15px;
+    flex-wrap: wrap;
+  }
+  
+  .link-content {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .poet-name {
+    margin-left: 0;
+    width: 100%;
+    text-align: left;
+  }
+  
+  .copy-individual-btn {
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
+    background: #f0f0f0;
+    margin-top: 8px;
+    border-radius: 20px;
+  }
+  
+  .copy-success {
+    position: static;
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+  }
+  
+  .copy-all-container {
+    flex-direction: column;
+  }
+  
+  .copy-all-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+
+
 </style>
 
 </head>
@@ -660,10 +906,10 @@
 </section>
 
 <!-- TABS SECTION -->
-<!-- TABS SECTION -->
 <section class="tabs-section">
   <div class="tabs-nav">
     <button class="tab-btn" data-tab="recent">Recent Poems</button>
+     <button class="tab-btn" data-tab="links">Links</button>
     <button class="tab-btn" data-tab="featured">Featured Poems</button>
     <button class="tab-btn" data-tab="weekly">Weekly Highlights</button>
     <button class="tab-btn" data-tab="rank-poems">Ranking Poems</button>
@@ -676,6 +922,30 @@
     <div class="tab-content active" id="recent">
       <div id="recent-poems-container" class="recent-poems-container"></div>
     </div>
+
+ <div class="tab-content" id="links">
+      <div class="links-header">
+        <h2>Shareable Poem Links</h2>
+        <p>Click any link to open the poem. Perfect for sharing with friends or on social media!</p>
+        
+        <div class="copy-all-container">
+          <button id="copy-all-links-btn" class="copy-all-btn">
+            <span></span> Copy All Links
+          </button>
+          <span id="copy-all-feedback" class="copy-feedback"></span>
+        </div>
+      </div>
+
+      <div id="links-container">
+        <!-- Poem links will be dynamically inserted here -->
+        <div class="loading-links">Loading poems...</div>
+      </div>
+
+      <div class="load-more-container">
+        <button id="load-more-poems" class="load-more-btn">Load More Poems</button>
+      </div>
+    </div>
+
 
     <!-- FEATURED POEMS -->
     <div class="tab-content" id="featured">
@@ -763,7 +1033,7 @@
        <a href="contact.html" style="margin:0 10px; color:#2C3E50; text-decoration:none;">Contact</a> 
   </div>
   <div class="footer-copy">
-    &copy; 2025 Volant Poetry. All Rights Reserved.
+    &copy; 2026 Volant Poetry. All Rights Reserved.
   </div>
 </footer>
 
@@ -785,111 +1055,234 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-// --- Load Recent Poems Links ---
-async function loadRecentPoemsLinks() {
+// --- Load ALL Poems Links (from multiple collections) ---
+async function loadAllPoemsLinks() {
   try {
-    const colRef = collection(db, "recentPoems");
-    const snapshot = await getDocs(colRef);
-    if (snapshot.empty) return;
-
     const container = document.getElementById("links-container");
     const loadMoreBtn = document.getElementById("load-more-poems");
+    
+    // Clear container and show loading
+    container.innerHTML = '<div class="loading-links">Loading poems...</div>';
+    
+    const poems = [];
+    const collections = ['recentPoems', 'featuredPoems', 'classicPoems']; // Add any other collections
 
-    // Map docs to structured poems
-    const poems = await Promise.all(snapshot.docs.map(async (docSnap) => {
-      const data = docSnap.data();
+    // Fetch from each collection
+    for (const collectionName of collections) {
+      const colRef = collection(db, collectionName);
+      const snapshot = await getDocs(colRef);
+      
+      if (snapshot.empty) continue;
 
-      // 🔹 Fallback: use submittedBy or author first
-      let displayName = data.submittedBy || data.author || "Anon";
+      // Process each poem in this collection
+      const collectionPoems = await Promise.all(snapshot.docs.map(async (docSnap) => {
+        const data = docSnap.data();
 
-      // 🔹 Fetch username from users collection if userId exists
-      if (data.userId) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", data.userId));
-          if (userDoc.exists()) {
-            displayName = userDoc.data().username || displayName;
+        // Get poet name
+        let displayName = data.submittedBy || data.author || data.authorName || "Anonymous";
+
+        // Fetch username from users collection if userId exists
+        const userId = data.userId || data.authorId;
+        if (userId) {
+          try {
+            const userDoc = await getDoc(doc(db, "users", userId));
+            if (userDoc.exists()) {
+              displayName = userDoc.data().username || displayName;
+            }
+          } catch (err) {
+            console.warn("Failed to fetch username:", err);
           }
-        } catch (err) {
-          console.warn("Failed to fetch username:", err);
         }
-      }
 
-      return {
-        title: data.title || "Untitled",
-        slug: data.slug || 
-              (data.title ? data.title.toLowerCase().replace(/\s+/g, "-") : docSnap.id),
-        username: displayName,
-      };
-    }));
+        // Create slug for URL
+        const slug = data.slug || 
+                    (data.title ? data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : docSnap.id);
 
-    // Shuffle poems randomly
+        return {
+          title: data.title || "Untitled",
+          slug: slug,
+          username: displayName,
+          collection: collectionName, // Store which collection it's from
+          id: docSnap.id
+        };
+      }));
+
+      poems.push(...collectionPoems);
+    }
+
+    if (poems.length === 0) {
+      container.innerHTML = '<p>No poems found.</p>';
+      return;
+    }
+
+    // Shuffle all poems randomly
     for (let i = poems.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [poems[i], poems[j]] = [poems[j], poems[i]];
     }
 
-    const INITIAL_COUNT = 15;
+    // Store all poems globally for copy functionality
+    window.allPoems = poems.map(poem => ({
+      title: poem.title,
+      poet: poem.username,
+      url: `poem.html?collection=${poem.collection}&slug=${poem.slug}`,
+      fullUrl: window.location.origin + `/poem.html?collection=${poem.collection}&slug=${poem.slug}`
+    }));
+
+    const INITIAL_COUNT = 20;
     let displayedCount = 0;
 
-    // --- Function to render a batch of poems ---
+    // Clear container and create fresh UL
+    container.innerHTML = '';
+    const ul = document.createElement("ul");
+    ul.id = "poems-list";
+    ul.style.listStyle = "none";
+    ul.style.padding = "0";
+    ul.style.marginTop = "10px";
+    container.appendChild(ul);
+
+    // Function to render a batch of poems
     function renderPoems(count) {
       const slice = poems.slice(displayedCount, displayedCount + count);
-
-      let ul = container.querySelector("ul");
-      if (!ul) {
-        ul = document.createElement("ul");
-        ul.style.listStyle = "disc inside";
-        ul.style.padding = "0";
-        ul.style.marginTop = "10px";
-        container.appendChild(ul);
-      }
 
       slice.forEach((poem) => {
         const li = document.createElement("li");
         li.style.marginBottom = "12px";
-        li.style.padding = "10px 15px";
-        li.style.background = "#f7f5ff";
-        li.style.borderRadius = "10px";
-        li.style.boxShadow = "0 2px 6px rgba(0,0,0,0.05)";
+        li.style.padding = "15px 20px";
+        li.style.background = "white";
+        li.style.borderRadius = "12px";
+        li.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)";
         li.style.display = "flex";
         li.style.justifyContent = "space-between";
         li.style.alignItems = "center";
+        li.style.border = "1px solid #eee";
 
+        // Create link container
+        const linkDiv = document.createElement("div");
+        linkDiv.className = "link-content";
+        linkDiv.style.flex = "1";
+        linkDiv.style.display = "flex";
+        linkDiv.style.justifyContent = "space-between";
+        linkDiv.style.alignItems = "center";
+        linkDiv.style.cursor = "pointer";
+        
+        // Create the link
         const a = document.createElement("a");
-        a.href = `poem.html?slug=${poem.slug}`;
+        a.href = `poem.html?collection=${poem.collection}&slug=${poem.slug}`;
+        a.target = "_blank";
         a.textContent = poem.title;
         a.style.color = "#4b2aad";
         a.style.textDecoration = "none";
+        a.style.fontWeight = "600";
+        a.style.fontSize = "1.1rem";
         a.onmouseover = () => (a.style.textDecoration = "underline");
         a.onmouseout = () => (a.style.textDecoration = "none");
 
-        const byLine = document.createElement("div");
-        byLine.textContent = `by ${poem.username}`;
-        byLine.className = "author";
+        // Poet name
+        const poetSpan = document.createElement("span");
+        poetSpan.className = "poet-name";
+        poetSpan.textContent = `by ${poem.username}`;
+        poetSpan.style.color = "#B8860B";
+        poetSpan.style.fontStyle = "italic";
+        poetSpan.style.fontSize = "0.95rem";
+        poetSpan.style.marginLeft = "15px";
 
-        li.appendChild(a);
-        li.appendChild(byLine);
+        linkDiv.appendChild(a);
+        linkDiv.appendChild(poetSpan);
+        
+        // Copy button
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-individual-btn";
+        copyBtn.innerHTML = "📋";
+        copyBtn.title = "Copy link";
+        copyBtn.style.background = "none";
+        copyBtn.style.border = "none";
+        copyBtn.style.color = "#999";
+        copyBtn.style.cursor = "pointer";
+        copyBtn.style.fontSize = "1.2rem";
+        copyBtn.style.padding = "8px 12px";
+        copyBtn.style.borderRadius = "8px";
+        copyBtn.style.transition = "all 0.2s";
+        
+        // Copy functionality
+        const fullUrl = window.location.origin + `/poem.html?collection=${poem.collection}&slug=${poem.slug}`;
+        copyBtn.onclick = async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          try {
+            await navigator.clipboard.writeText(fullUrl);
+            copyBtn.innerHTML = "✅";
+            copyBtn.style.color = "#28a745";
+            setTimeout(() => {
+              copyBtn.innerHTML = "📋";
+              copyBtn.style.color = "#999";
+            }, 2000);
+          } catch (err) {
+            alert("Failed to copy link");
+          }
+        };
+
+        li.appendChild(linkDiv);
+        li.appendChild(copyBtn);
+        
+        // Make the whole link div clickable
+        linkDiv.onclick = (e) => {
+          if (e.target.tagName !== 'A') {
+            window.open(a.href, '_blank');
+          }
+        };
+
         ul.appendChild(li);
       });
 
       displayedCount += slice.length;
-
       loadMoreBtn.style.display = displayedCount < poems.length ? "inline-block" : "none";
     }
 
-    // Initially render first 15 poems
+    // Initially render first batch
     renderPoems(INITIAL_COUNT);
 
-    // Load 5 more on button click
-    loadMoreBtn.addEventListener("click", () => renderPoems(5));
+    // Load more on button click
+    loadMoreBtn.onclick = () => renderPoems(10);
+
+    // Update copy all button functionality
+    const copyAllBtn = document.getElementById("copy-all-links-btn");
+    if (copyAllBtn) {
+      copyAllBtn.onclick = async () => {
+        if (!window.allPoems || window.allPoems.length === 0) {
+          alert("No poems to copy");
+          return;
+        }
+        
+        const links = window.allPoems.map(p => `${p.title} by ${p.poet}\n${p.fullUrl}`).join("\n\n");
+        
+        try {
+          await navigator.clipboard.writeText(links);
+          const feedback = document.getElementById("copy-all-feedback");
+          feedback.textContent = "✅ All links copied!";
+          setTimeout(() => {
+            feedback.textContent = "";
+          }, 3000);
+        } catch (err) {
+          alert("Failed to copy links");
+        }
+      };
+    }
 
   } catch (err) {
-    console.error("Error loading recent poem links:", err);
+    console.error("Error loading poems link:", err);
     const container = document.getElementById("links-container");
-    if (container)
-      container.innerHTML = `<p>Error loading poems. Please refresh.</p>`;
+    if (container) {
+      container.innerHTML = `<p style="color: red; text-align: center;">Error loading poems. Please refresh.</p>`;
+    }
   }
 }
+
+// Update the DOMContentLoaded call
+document.addEventListener("DOMContentLoaded", () => {
+  loadAllPoemsLinks(); // Changed from loadRecentPoemsLinks
+  loadFeaturedPoems();
+});
 
 // --- Load Featured Poems ---
 async function loadFeaturedPoems() {

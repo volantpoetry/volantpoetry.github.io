@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Profile | Volant Poetry</title>
   <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="png" href="images/logo.png" />
+  <link rel="icon" type="png" href="images/logo.png" />
   <style>
     body { font-family: sans-serif; background:#f5f5f5; padding:20px; }
     .profile-form { max-width:400px; margin:auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
@@ -15,6 +15,7 @@
     .profile-form button:disabled { opacity:0.6; cursor:not-allowed; }
     .success-msg { color:green; margin-top:10px; }
     .error-msg { color:red; margin-top:10px; }
+    
   </style>
 </head>
 <body>
@@ -22,6 +23,9 @@
   <h2 style="text-align:center;">Edit Your Profile</h2>
 
   <div class="profile-form">
+    <label>Real Name:</label>
+    <input type="text" id="editRealName" placeholder="Enter your real name (optional)">
+
     <label>Username:</label>
     <input type="text" id="editUsername" placeholder="Enter your username">
 
@@ -55,6 +59,7 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
+    const realNameInput = document.getElementById("editRealName");
     const usernameInput = document.getElementById("editUsername");
     const emailInput = document.getElementById("editEmail");
     const bioInput = document.getElementById("editBio");
@@ -78,12 +83,19 @@
 
       if (userDoc.exists()) {
         const data = userDoc.data();
+        realNameInput.value = data.realName || "";
         usernameInput.value = data.username || "";
         emailInput.value = data.email || "";
         bioInput.value = data.bio || "";
       } else {
         // Create a new document if missing
-        await setDoc(userRef, { username: user.displayName || "", email: user.email, bio: "" });
+        await setDoc(userRef, { 
+          realName: "",
+          username: user.displayName || "", 
+          email: user.email, 
+          bio: "" 
+        });
+        realNameInput.value = "";
         usernameInput.value = user.displayName || "";
         emailInput.value = user.email || "";
         bioInput.value = "";
@@ -93,6 +105,7 @@
     saveBtn.addEventListener("click", async () => {
       if (!currentUserUid) return;
 
+      const newRealName = realNameInput.value.trim();
       const newUsername = usernameInput.value.trim();
       const newEmail = emailInput.value.trim();
       const newBio = bioInput.value.trim();
@@ -111,6 +124,7 @@
       try {
         const userRef = doc(db, "users", currentUserUid);
         await updateDoc(userRef, {
+          realName: newRealName,
           username: newUsername,
           email: newEmail,
           bio: newBio

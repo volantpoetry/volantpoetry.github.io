@@ -308,9 +308,7 @@ card.innerHTML = `
     ${poem.title}
   </h3>
 
-  <p class="poem-content" style="white-space:pre-wrap; margin-top:8px;">
-    ${truncated.preview}
-  </p>
+<p class="poem-content" style="white-space:pre-wrap; margin-top:8px; margin-left:0; padding-left:0;">${truncated.preview.trim()}</p>
 
   ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
 

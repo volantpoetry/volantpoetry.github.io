@@ -876,7 +876,29 @@ h2 {
   }
 }
 
+/* Shift date, categories, and read more button to the right */
+.poem-date {
+  margin-left: 15px !important;
+  display: block;
+  color: #008080; /* Teal */
 
+}
+
+.poem-category-line {
+  margin-left: 15px !important;
+}
+
+.read-more-btn {
+  margin-left: 15px !important;
+}
+/* Small screens - maintain original alignment */
+@media (max-width: 768px) {
+  .poem-date,
+  .poem-category-line,
+  .read-more-btn {
+    margin-left: 0 !important;
+  }
+}
 </style>
 </head>
 
@@ -942,13 +964,13 @@ h2 {
       </div>
 
       <div class="profile-info-right">
+        <p><strong>Real Name:</strong> <span id="realName"></span></p>
         <p><strong>Username:</strong> <span id="username"></span></p>
         <p><strong>Email:</strong> <span id="email"></span></p>
         <p><strong>Bio:</strong> <span id="bio"></span></p>
         <p><strong>Joined:</strong> <span id="joined"></span></p>
         <div class="profile-buttons">
           <button class="btn" id="editProfileBtn">Edit Profile</button>
-   
         </div>
       </div>
     </div>
@@ -961,6 +983,7 @@ h2 {
       <li><a href="notifications.html">🔔 Notifications</a></li>
       <li><a href="messages.html">✉ Messages</a></li>
         <li><a href="submitpoems.html">📝 Submit Poems</a></li>
+         <li><a href="user-edit-poems.html">Edit Your Poems</a></li>
              <li><a href="submit-draft.html">Save as Draft</a></li>
                   <li><a href="drafts-manager.html">Manage Draft Poems</a></li>
     </ul>
@@ -1063,6 +1086,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const profileUid = urlParams.get("uid"); // null if it's your profile
 
 // --- DOM elements ---
+const realNameSpan = document.getElementById("realName");
 const usernameSpan = document.getElementById("username");
 const emailSpan = document.getElementById("email");
 const bioSpan = document.getElementById("bio");
@@ -1303,6 +1327,7 @@ onAuthStateChanged(auth, async (user) => {
       username: user.displayName || user.email.split("@")[0],
       email: user.email,
       bio: "",
+      realName: "",
       joined: new Date(),
       photoURL: user.photoURL || ""
     });
@@ -1328,6 +1353,7 @@ onAuthStateChanged(auth, async (user) => {
   const data = userDoc.data();
   profileUsername = data.username || data.email.split("@")[0];
 
+  if (realNameSpan) realNameSpan.textContent = data.realName || "Not set";
   if (usernameSpan) usernameSpan.textContent = profileUsername;
   if (emailSpan) emailSpan.textContent = data.email || "";
   if (bioSpan) bioSpan.textContent = data.bio || "No bio yet";
@@ -1436,9 +1462,16 @@ if (!viewingOwnProfile) {
 });
 
 // --- Fetch User Poems (for profile being viewed) ---
+// --- Fetch User Poems (for profile being viewed) - SORTED IN MEMORY (NO INDEX NEEDED) ---
 async function fetchUserPoems(usernameToFetch) {
   try {
-    const q = query(collection(db, "recentPoems"), where("submittedBy", "==", usernameToFetch));
+    // Simple query without orderBy - just filter by username
+    const q = query(
+      collection(db, "recentPoems"), 
+      where("submittedBy", "==", usernameToFetch)
+      // No orderBy here to avoid index requirement
+    );
+    
     const querySnap = await getDocs(q);
     const container = poemsContainer;
     container.innerHTML = "";
@@ -1451,9 +1484,25 @@ async function fetchUserPoems(usernameToFetch) {
     if (querySnap.empty) {
       container.innerHTML = `<p class="empty-message">No poems yet.</p>`;
     } else {
+      // Convert to array and sort by timestamp in memory
+      const poemsArray = [];
+      
       for (const docSnap of querySnap.docs) {
         const poem = docSnap.data();
-        const docId = docSnap.id;
+        poem.id = docSnap.id; // Store the ID
+        poemsArray.push(poem);
+      }
+      
+      // Sort by timestamp descending (most recent first) in memory
+      poemsArray.sort((a, b) => {
+        const timeA = a.timestamp?.seconds || 0;
+        const timeB = b.timestamp?.seconds || 0;
+        return timeB - timeA; // Descending order
+      });
+      
+      // Now render the sorted poems
+      for (const poem of poemsArray) {
+        const docId = poem.id;
         const card = document.createElement("div");
         card.className = "recent-poem-card";
         card.dataset.id = docId;
@@ -1462,7 +1511,6 @@ async function fetchUserPoems(usernameToFetch) {
         const likes = typeof poem.likes === "number" ? poem.likes : 0;
         totalLikes += likes;
 
-        // comments subcollection may be present as subcollection
         let commentsSnapCount = 0;
         try {
           const commentsSnap = await getDocs(collection(db, "recentPoems", docId, "comments"));
@@ -1472,15 +1520,19 @@ async function fetchUserPoems(usernameToFetch) {
         }
         totalCommentsReceived += commentsSnapCount;
 
-        // Make author clickable — link to their profile page by uid if available, else by submittedBy
         const authorLink = poem.submittedByUid
           ? `<a href="user-profile.html?uid=${encodeURIComponent(poem.submittedByUid)}" class="author-link">${poem.author || poem.submittedBy || usernameToFetch}</a>`
           : `<a href="user-profile.html?user=${encodeURIComponent(poem.submittedBy || usernameToFetch)}" class="author-link">${poem.author || poem.submittedBy || usernameToFetch}</a>`;
 
+        const dateStr = poem.timestamp 
+          ? new Date(poem.timestamp.seconds * 1000).toLocaleDateString() + ' ' + new Date(poem.timestamp.seconds * 1000).toLocaleTimeString()
+          : "";
+
 card.innerHTML = `
  <div class="poem-display">
   <h3 class="poem-title">${poem.title}</h3>
-  <button class="delete-btn">🗑️ Delete</button> <!-- keep here, hidden by default in CSS for desktop -->
+  ${dateStr ? `<small class="poem-date">${dateStr}</small>` : ""}
+  <button class="delete-btn">🗑️ Delete</button>
   <div class="poem-body">
     <p class="poem-content">${truncated.preview.replace(/\n/g, "<br>")}</p>
     ${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}
@@ -1499,7 +1551,6 @@ card.innerHTML = `
   <div class="comment-list" style="display:none;"></div>
 `;
 
-// Only show delete button if user is viewing their own profile
 if (viewingOwnProfile) {
   const deleteBtn = document.createElement("button");
   deleteBtn.className = "delete-btn";
@@ -1508,12 +1559,11 @@ if (viewingOwnProfile) {
   card.querySelector(".poem-actions").appendChild(deleteBtn);
 }
 
-// Only show delete button if viewing own profile
 const deleteBtn = card.querySelector(".delete-btn");
 if (viewingOwnProfile) {
-  deleteBtn.style.display = "inline-block"; // show for own profile
+  deleteBtn.style.display = "inline-block";
 } else {
-  deleteBtn.style.display = "none"; // hide for other users
+  deleteBtn.style.display = "none";
 }
 
   container.appendChild(card);
@@ -1531,7 +1581,7 @@ if (viewingOwnProfile) {
     updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
   } catch (err) {
     console.error("Error fetching poems:", err);
-    if (poemsContainer) poemsContainer.innerHTML = `<p class='empty-message'>Error loading poems.</p>`;
+    poemsContainer.innerHTML = `<p class='empty-message'>Error loading poems: ${err.message}</p>`;
   }
 }
 
@@ -2149,9 +2199,3 @@ function showEmptyMessage(show) {
 
 </body>
 </html>
-
-
-
-
-
-
