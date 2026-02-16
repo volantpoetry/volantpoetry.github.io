@@ -1248,6 +1248,44 @@ h2 {
   from { transform: scale(0.9); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* Add this to your existing CSS - Achievement badges: 5 in a row on small screens */
+@media screen and (max-width: 899px) {
+  .badges-container {
+    display: grid !important;
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 8px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+  
+  .badges-container img {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    max-width: 60px !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* For very small screens, keep 5 in a row but make badges smaller */
+@media screen and (max-width: 480px) {
+  .badges-container {
+    gap: 5px !important;
+  }
+  
+  .badges-container img {
+    max-width: 45px !important;
+  }
+}
+
+/* For extremely small screens, maintain 5 in a row with even smaller badges */
+@media screen and (max-width: 360px) {
+  .badges-container img {
+    max-width: 40px !important;
+  }
+}
 </style>
 </head>
 
