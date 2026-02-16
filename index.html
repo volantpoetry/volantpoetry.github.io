@@ -810,7 +810,45 @@
   }
 }
 
+/* Small screens adjustments */
+@media (max-width: 768px) {
+  .read-more-btn,
+  .poem-category-line em,
+  .poem-category {
+    margin-left: -8px !important;  /* MOVE MORE LEFT ON SMALL SCREENS */
+  }
+  
+  /* MOVE CATEGORIES UP - USING POSITION */
+  .poem-category-line em,
+  .poem-category {
+    position: relative !important;
+    top: -3px !important;   /* MOVE UP SLIGHTLY */
+    display: inline-block;  /* Ensures position works */
+  }
+  
+  .read-more-btn {
+    font-size: 0.7rem !important;  /* EVEN SMALLER ON MOBILE */
+  }
+}
 
+@media (max-width: 480px) {
+  .read-more-btn,
+  .poem-category-line em,
+  .poem-category {
+    margin-left: -10px !important;  /* MAX LEFT ON VERY SMALL SCREENS */
+  }
+  
+  /* MOVE CATEGORIES UP MORE ON VERY SMALL SCREENS */
+  .poem-category-line em,
+  .poem-category {
+    position: relative !important;
+    top: -23px !important;   /* MOVE UP MORE */
+  }
+  
+  .read-more-btn {
+    font-size: 0.65rem !important;  /* SMALLEST ON TINY SCREENS */
+  }
+}
 
 </style>
 

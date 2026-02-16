@@ -891,12 +891,113 @@ h2 {
 .read-more-btn {
   margin-left: 15px !important;
 }
-/* Small screens - maintain original alignment */
+/* Small screens - reduce font size, move left */
 @media (max-width: 768px) {
   .poem-date,
-  .poem-category-line,
+  p.poem-category-line,
   .read-more-btn {
+    margin-left: -5px !important;
+    font-size: 0.7rem !important;
+  }
+  
+  /* Move categories SLIGHTLY UP */
+  p.poem-category-line {
+    margin-top: -2px !important;  /* Slightly up, not too much */
+    margin-bottom: 6px !important;
+  }
+  
+  .poem-category-line em {
+    font-size: 0.7rem !important;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 600px) {
+  .poem-date,
+  p.poem-category-line,
+  .read-more-btn {
+    margin-left: -8px !important;
+    font-size: 0.65rem !important;
+  }
+  
+  /* Move categories SLIGHTLY UP */
+  p.poem-category-line {
+    margin-top: -3px !important;  /* Slightly more up */
+    margin-bottom: 5px !important;
+  }
+  
+  .poem-category-line em {
+    font-size: 0.65rem !important;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .poem-date,
+  p.poem-category-line,
+  .read-more-btn {
+    margin-left: -10px !important;
+    font-size: 0.6rem !important;
+  }
+  
+  /* Move categories SLIGHTLY UP */
+  p.poem-category-line {
+    margin-top: -4px !important;  /* Slightly more up */
+    margin-bottom: 4px !important;
+  }
+  
+  .poem-category-line em {
+    font-size: 0.6rem !important;
+  }
+}
+
+
+/* Fix for small screens - remove left margin from profile layout */
+@media (max-width: 899px) {
+  .profile-layout {
+    margin-left: 0 !important; /* Remove the 40px left margin on mobile */
+    width: 100%;
+    padding: 0 15px; /* Add small padding instead */
+    box-sizing: border-box;
+  }
+  
+  /* Also adjust the stats section */
+  .profile-stats-section {
     margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 20px 15px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Adjust poems section */
+  .profile-poems {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 15px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Make the Volant Quick panel full width on mobile */
+  .interaction-panel {
+    width: 100%;
+    margin-top: 20px;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 600px) {
+  .profile-layout {
+    padding: 0 10px;
+  }
+  
+  .profile-stats-section {
+    padding: 15px 10px;
+  }
+  
+  .profile-poems {
+    padding: 0 10px;
   }
 }
 </style>
@@ -980,12 +1081,15 @@ h2 {
   <div class="interaction-panel">
     <h3>Volant Quick</h3>
     <ul>
+      
       <li><a href="notifications.html">🔔 Notifications</a></li>
       <li><a href="messages.html">✉ Messages</a></li>
         <li><a href="submitpoems.html">📝 Submit Poems</a></li>
          <li><a href="user-edit-poems.html">Edit Your Poems</a></li>
              <li><a href="submit-draft.html">Save as Draft</a></li>
                   <li><a href="drafts-manager.html">Manage Draft Poems</a></li>
+                   <li><a href="gallery-achievements.html">🏆 Achievement Gallery 🏆</a></li>
+
     </ul>
   </div>
 
