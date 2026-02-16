@@ -1316,6 +1316,81 @@ function truncatePoemByLines(text, maxLines = 8) {
   };
 }
 
+// --- Fetch total comments made by the user across all poems ---
+async function fetchTotalCommentsMade(username) {
+  try {
+    if (!username) return 0;
+    
+    let totalComments = 0;
+    const poemsRef = collection(db, "recentPoems");
+    const snapshot = await getDocs(poemsRef);
+    
+    // Loop through all poems to count comments by this user
+    for (const poemDoc of snapshot.docs) {
+      const commentsRef = collection(db, "recentPoems", poemDoc.id, "comments");
+      const commentsSnap = await getDocs(commentsRef);
+      
+      commentsSnap.forEach(commentDoc => {
+        const commentData = commentDoc.data();
+        if (commentData.user === username || commentData.userId === auth.currentUser?.uid) {
+          totalComments++;
+        }
+      });
+    }
+    
+    return totalComments;
+  } catch (err) {
+    console.error("Error fetching total comments made:", err);
+    return 0;
+  }
+}
+
+// --- Show default comment badges if no achievements configured ---
+function showDefaultCommentBadges(container, totalCommentsMade) {
+  container.innerHTML = "";
+  
+  // Define default comment badges
+  const commentBadges = [
+    { min: 1, title: "First Comment", icon: "💬", color: "#4CAF50" },
+    { min: 10, title: "Active Commenter", icon: "🗣️", color: "#2196F3" },
+    { min: 50, title: "Conversation Starter", icon: "⭐", color: "#9C27B0" },
+    { min: 100, title: "Comment Master", icon: "👑", color: "#FF9800" }
+  ];
+  
+  let earnedAny = false;
+  
+  commentBadges.forEach(badge => {
+    if (totalCommentsMade >= badge.min) {
+      earnedAny = true;
+      // Create a visual badge (using emoji since we don't have images)
+      const badgeEl = document.createElement("div");
+      badgeEl.style.cssText = `
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: ${badge.color};
+        color: white;
+        font-size: 24px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        border: 2px solid #5a3cb3;
+        cursor: default;
+      `;
+      badgeEl.title = `${badge.title} (${badge.min}+ comments)`;
+      badgeEl.textContent = badge.icon;
+      container.appendChild(badgeEl);
+    }
+  });
+  
+  if (!earnedAny) {
+    container.innerHTML = '<p style="color: #888; font-size: 0.9rem; margin: 0;">Make your first comment to earn badges!</p>';
+  }
+}
+
 // --- Update Achievements dynamically ---
 async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   const badgesContainer = document.querySelector(".badges-container");
@@ -1342,16 +1417,26 @@ async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, 
       });
 
       // Append earned badges dynamically
-      earned.forEach(badge => {
-        const img = document.createElement("img");
-        img.src = badge.imageUrl || "https://via.placeholder.com/50"; // fallback image
-        img.title = badge.title;
-        img.alt = badge.title;
-        badgesContainer.appendChild(img);
-      });
+      if (earned.length > 0) {
+        earned.forEach(badge => {
+          const img = document.createElement("img");
+          img.src = badge.imageUrl || "https://via.placeholder.com/50?text=Badge"; // fallback image
+          img.title = badge.title || `${badge.condition.type}: ${badge.condition.min}+`;
+          img.alt = badge.title || "Achievement Badge";
+          badgesContainer.appendChild(img);
+        });
+      } else {
+        // Show placeholder message if no badges earned
+        badgesContainer.innerHTML = '<p style="color: #888; font-size: 0.9rem; margin: 0;">No badges yet</p>';
+      }
+    } else {
+      // If no achievements collection exists yet, show default badges based on comments made
+      showDefaultCommentBadges(badgesContainer, totalCommentsMade);
     }
   } catch (err) {
     console.error("Error loading dynamic achievements:", err);
+    // Fallback to default badges
+    showDefaultCommentBadges(badgesContainer, totalCommentsMade);
   }
 
   // Update level based on activity
@@ -1662,7 +1747,6 @@ if (!viewingOwnProfile) {
   await loadRankingPoets();
 });
 
-// --- Fetch User Poems (for profile being viewed) ---
 // --- Fetch User Poems (for profile being viewed) - SORTED IN MEMORY (NO INDEX NEEDED) ---
 async function fetchUserPoems(usernameToFetch) {
   try {
@@ -1681,6 +1765,10 @@ async function fetchUserPoems(usernameToFetch) {
     let totalCommentsReceived = 0;
     let poemCount = querySnap.size;
     let totalCommentsMade = 0;
+
+    if (viewingOwnProfile) {
+      totalCommentsMade = await fetchTotalCommentsMade(actorUsername);
+    }
 
     if (querySnap.empty) {
       container.innerHTML = `<p class="empty-message">No poems yet.</p>`;
