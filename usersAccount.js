@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
+  sendEmailVerification,
   signOut,
   setPersistence,
   browserLocalPersistence,
@@ -21,7 +22,6 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
   authDomain: "silent-depth.firebaseapp.com",
@@ -37,7 +37,83 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence);
 
-/* ---------------- SIGNUP ---------------- */
+export { auth, db, app };
+
+// DIAGNOSTIC FUNCTION
+async function forceCheckVerification(user) {
+  console.log("🔍 FORCE CHECKING VERIFICATION FOR:", user.email);
+  
+  // Method 1: Force token refresh
+  try {
+    await user.getIdToken(true);
+    console.log("✅ Token refreshed");
+  } catch (e) {
+    console.log("❌ Token refresh failed:", e);
+  }
+  
+  // Method 2: Multiple reloads with longer delays
+  for (let i = 0; i < 3; i++) {
+    await user.reload();
+    console.log(`Reload ${i+1}: emailVerified = ${user.emailVerified}`);
+    await new Promise(r => setTimeout(r, 1500)); // Increased delay
+  }
+  
+  // Method 3: Check Firestore
+  const userDoc = await getDoc(doc(db, "users", user.uid));
+  console.log("Firestore emailVerified:", userDoc.exists() ? userDoc.data().emailVerified : 'no doc');
+  
+  return user.emailVerified;
+}
+
+export function requireAuth() {
+  return new Promise((resolve) => {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const searchParams = window.location.search;
+    const fullPath = currentPage + searchParams;
+    
+    if (auth.currentUser) {
+      forceCheckVerification(auth.currentUser).then(isVerified => {
+        if (!isVerified) {
+          localStorage.setItem("pendingVerificationEmail", auth.currentUser.email);
+          window.location.href = `verify-email.html?redirect=${encodeURIComponent(fullPath)}`;
+          resolve(false);
+          return;
+        }
+        resolve(true);
+      });
+      return;
+    }
+    
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      unsubscribe();
+      
+      if (!user) {
+        localStorage.setItem("redirectAfterLogin", fullPath);
+        window.location.href = `users-login.html?redirect=${encodeURIComponent(fullPath)}`;
+        resolve(false);
+      } else {
+        const isVerified = await forceCheckVerification(user);
+        if (!isVerified) {
+          localStorage.setItem("pendingVerificationEmail", user.email);
+          window.location.href = `verify-email.html?redirect=${encodeURIComponent(fullPath)}`;
+          resolve(false);
+          return;
+        }
+        resolve(true);
+      }
+    });
+    
+    setTimeout(() => {
+      unsubscribe();
+      if (!auth.currentUser) {
+        localStorage.setItem("redirectAfterLogin", fullPath);
+        window.location.href = `users-login.html?redirect=${encodeURIComponent(fullPath)}`;
+        resolve(false);
+      }
+    }, 3000);
+  });
+}
+
 const signupForm = document.getElementById("signup-form");
 if (signupForm) {
   signupForm.addEventListener("submit", async (e) => {
@@ -45,62 +121,152 @@ if (signupForm) {
     const username = document.getElementById("signup-username").value.trim() || "Anonymous";
     const email = document.getElementById("signup-email").value;
     const password = document.getElementById("signup-password").value;
+    const statusEl = document.getElementById("signup-status");
 
     try {
-      // Check if username exists
       const q = query(collection(db, "users"), where("username", "==", username));
       const querySnap = await getDocs(q);
       if (!querySnap.empty) {
-        document.getElementById("signup-status").textContent = "⚠ Username already taken.";
+        statusEl.textContent = "⚠ Username already taken.";
         return;
       }
 
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCred.user.uid;
-
-      // Save user to Firestore with "joined"
+      
       await setDoc(doc(db, "users", uid), {
         username,
         email,
         bio: "",
-        joined: new Date() // ✅ this is the field profile will fetch
+        joined: new Date(),
+        emailVerified: false,
+        createdAt: new Date().toISOString()
       });
 
-      document.getElementById("signup-status").textContent = "✅ Account created! Redirecting to login…";
-      setTimeout(() => window.location.href = "users-login.html", 1200);
+      await sendEmailVerification(userCred.user, {
+        url: window.location.origin + '/users-login.html',
+        handleCodeInApp: true
+      });
+
+      localStorage.setItem("pendingVerificationEmail", email);
+      await signOut(auth);
+      
+      statusEl.textContent = "✅ Verification email sent! Please check your inbox.";
+      statusEl.style.color = "#2e7d32";
+      
+      setTimeout(() => {
+        window.location.href = "verify-email.html?email=" + encodeURIComponent(email);
+      }, 2000);
 
     } catch (err) {
-      document.getElementById("signup-status").textContent = "⚠ " + err.message;
+      statusEl.textContent = "⚠ " + err.message;
+      statusEl.style.color = "#d32f2f";
     }
   });
 }
 
-/* ---------------- LOGIN ---------------- */
+// FIXED LOGIN FORM
 const loginForm = document.getElementById("login-form");
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    let loginInput = document.getElementById("login-email").value.trim();
+    
+    // Get form elements
+    const loginInput = document.getElementById("login-email").value.trim();
     const password = document.getElementById("login-password").value;
+    const statusEl = document.getElementById("login-status");
+    const loginButton = e.target.querySelector('button[type="submit"]');
+    
+    // Disable button to prevent double submission
+    if (loginButton) {
+      loginButton.disabled = true;
+      loginButton.textContent = 'Checking...';
+    }
 
     try {
+      console.log("🔐 LOGIN ATTEMPT FOR:", loginInput);
+      statusEl.textContent = "⏳ Checking credentials...";
+      statusEl.style.color = "#1976d2";
+      
       let emailToUse = loginInput;
 
       // If input is not email, search by username
       if (!loginInput.includes("@")) {
+        console.log("Searching by username...");
         const q = query(collection(db, "users"), where("username", "==", loginInput));
         const querySnap = await getDocs(q);
+        
         if (querySnap.empty) {
-          document.getElementById("login-status").textContent = "⚠ No account found with that username.";
+          statusEl.textContent = "⚠ No account found with that username.";
+          statusEl.style.color = "#d32f2f";
+          if (loginButton) {
+            loginButton.disabled = false;
+            loginButton.textContent = 'Login';
+          }
           return;
         }
+        
         emailToUse = querySnap.docs[0].data().email;
+        console.log("Found email:", emailToUse);
       }
 
+      // Sign in
+      console.log("Attempting sign in...");
       const userCred = await signInWithEmailAndPassword(auth, emailToUse, password);
       const user = userCred.user;
+      
+      console.log("✅ LOGIN SUCCESSFUL FOR:", user.email);
+      console.log("📊 INITIAL emailVerified:", user.emailVerified);
 
-      // Ensure Firestore doc exists with "joined"
+      // CRITICAL: Force check verification like the test page does
+      statusEl.textContent = "⏳ Verifying email status...";
+      
+      // Multiple reloads with delays
+      for (let i = 0; i < 3; i++) {
+        await user.reload();
+        console.log(`Reload ${i+1}: emailVerified = ${user.emailVerified}`);
+        await new Promise(r => setTimeout(r, 1500));
+      }
+      
+      // Force token refresh
+      try {
+        await user.getIdToken(true);
+        console.log("Token refreshed");
+      } catch (e) {
+        console.log("Token refresh failed:", e);
+      }
+      
+      // Final reload
+      await user.reload();
+      
+      const isVerified = user.emailVerified;
+      console.log("📊 FINAL emailVerified AFTER CHECKS:", isVerified);
+
+      if (!isVerified) {
+        console.log("❌ EMAIL NOT VERIFIED - BLOCKING LOGIN");
+        
+        // Send new verification email
+        await sendEmailVerification(user);
+        
+        // Sign out immediately
+        await signOut(auth);
+        
+        // Store email for verification page
+        localStorage.setItem("pendingVerificationEmail", user.email);
+        
+        statusEl.textContent = "⚠ Email not verified. A new verification email has been sent.";
+        statusEl.style.color = "#f57c00";
+        
+        // Redirect to verification page
+        setTimeout(() => {
+          window.location.href = "verify-email.html?email=" + encodeURIComponent(user.email);
+        }, 2000);
+        return;
+      }
+
+      console.log("✅ EMAIL VERIFIED - ALLOWING LOGIN");
+      
+      // Update Firestore
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
 
@@ -109,64 +275,120 @@ if (loginForm) {
           username: user.displayName || "Anonymous",
           email: user.email,
           bio: "",
-          joined: new Date()
+          joined: new Date(),
+          emailVerified: true
         });
       } else {
-        // If doc exists but missing "joined", set it
-        const data = userDocSnap.data();
-        if (!data.joined) await updateDoc(userDocRef, { joined: new Date() });
+        await updateDoc(userDocRef, { 
+          emailVerified: true,
+          lastLogin: new Date()
+        });
       }
 
-      document.getElementById("login-status").textContent = "✅ Login successful! Redirecting…";
-      setTimeout(() => window.location.href = "index.html", 1200);
+      statusEl.textContent = "✅ Login successful! Redirecting…";
+      statusEl.style.color = "#2e7d32";
+      
+      // Get redirect URL
+      const params = new URLSearchParams(window.location.search);
+      let redirectUrl = params.get("redirect");
+      
+      if (!redirectUrl) {
+        redirectUrl = localStorage.getItem("redirectAfterLogin");
+      }
+      
+      if (!redirectUrl || 
+          redirectUrl.includes("login") || 
+          redirectUrl.includes("signup") || 
+          redirectUrl.includes("reset") ||
+          redirectUrl.includes("verify") ||
+          redirectUrl === "null" ||
+          redirectUrl === "undefined") {
+        redirectUrl = "index.html";
+      }
+
+      // Clear stored data
+      localStorage.removeItem("redirectAfterLogin");
+      localStorage.removeItem("pendingVerificationEmail");
+
+      setTimeout(() => { window.location.href = redirectUrl; }, 1200);
 
     } catch (err) {
-      document.getElementById("login-status").textContent = "⚠ " + err.message;
+      console.error("❌ LOGIN ERROR:", err);
+      statusEl.textContent = "⚠ " + err.message;
+      statusEl.style.color = "#d32f2f";
+      
+      // Re-enable button on error
+      if (loginButton) {
+        loginButton.disabled = false;
+        loginButton.textContent = 'Login';
+      }
     }
   });
-}
-
-/* ---------------- RESET PASSWORD ---------------- */
-const resetForm = document.getElementById("reset-form");
-if (resetForm) {
-  resetForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const email = document.getElementById("reset-email").value.trim();
-    try {
-      await sendPasswordResetEmail(auth, email);
-      document.getElementById("reset-status").textContent = "✅ Password reset email sent! Check your inbox.";
-    } catch (err) {
-      document.getElementById("reset-status").textContent = "⚠ " + err.message;
-    }
-  });
-}
-
-/* ---------------- LOGOUT + SHOW USER ---------------- */
-function logoutUser() {
-  signOut(auth).then(() => {
-    localStorage.removeItem("lastPage");
-    window.location.href = "users-login.html";
-  }).catch(err => alert("Failed to log out: " + err.message));
 }
 
 onAuthStateChanged(auth, async (user) => {
-  const userInfoDiv = document.getElementById("user-info");
-  const logoutBtn = document.getElementById("logoutBtn");
-
+  console.log("🔄 AUTH STATE CHANGED:", user ? user.email : "No user");
+  
+  const currentPath = window.location.pathname;
+  const currentPage = currentPath.split('/').pop();
+  
   if (user) {
-    const docRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(docRef);
+    // Reload user to get latest status
+    await user.reload();
+    const isVerified = user.emailVerified;
+    console.log("📊 AUTH STATE - Verified:", isVerified);
+    
+    const publicPages = ['verify-email.html', 'users-login.html', 'users-signup.html', 'users-reset.html'];
+    
+    if (!isVerified && !publicPages.includes(currentPage)) {
+      console.log("🚫 UNVERIFIED USER ON PROTECTED PAGE - SIGNING OUT");
+      await signOut(auth);
+      localStorage.setItem("pendingVerificationEmail", user.email);
+      window.location.href = "verify-email.html?email=" + encodeURIComponent(user.email);
+      return;
+    }
+    
+    // Update UI
+    const userInfoDiv = document.getElementById("user-info");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-    let username = "Anonymous";
-    if (docSnap.exists()) username = docSnap.data().username || "Anonymous";
+    if (userInfoDiv || logoutBtn) {
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+      let username = "Anonymous";
+      if (docSnap.exists()) username = docSnap.data().username || "Anonymous";
 
-    if (userInfoDiv) userInfoDiv.textContent = `👋 Welcome, ${username}`;
-    if (logoutBtn) {
-      logoutBtn.style.display = "inline-block";
-      logoutBtn.onclick = logoutUser;
+      if (userInfoDiv) userInfoDiv.textContent = ` Welcome, ${username}`;
+      if (logoutBtn) {
+        logoutBtn.style.display = "inline-block";
+        logoutBtn.onclick = logoutUser;
+      }
+    }
+    
+    const verifyBadge = document.getElementById("verify-badge");
+    if (verifyBadge) {
+      if (!isVerified) {
+        verifyBadge.style.display = "inline-block";
+        verifyBadge.innerHTML = ' <span style="color:orange; font-size:0.9rem;">(unverified)</span>';
+      } else {
+        verifyBadge.style.display = "none";
+      }
     }
   } else {
+    const userInfoDiv = document.getElementById("user-info");
+    const logoutBtn = document.getElementById("logoutBtn");
+    
     if (userInfoDiv) userInfoDiv.textContent = "";
     if (logoutBtn) logoutBtn.style.display = "none";
   }
 });
+
+function logoutUser() {
+  signOut(auth).then(() => {
+    localStorage.removeItem("redirectAfterLogin");
+    localStorage.removeItem("pendingVerificationEmail");
+    window.location.href = "users-login.html";
+  }).catch(err => alert("Failed to log out: " + err.message));
+}
+
+window.logoutUser = logoutUser;

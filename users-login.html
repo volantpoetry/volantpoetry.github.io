@@ -38,6 +38,7 @@
     }
 
     input[type="text"],
+    input[type="email"],
     input[type="password"] {
       width: 100%;
       padding: 12px 40px 12px 12px;
@@ -47,7 +48,6 @@
       font-size: 1rem;
     }
 
-    /* Password wrapper for eye icon */
     .password-wrapper {
       position: relative;
       width: 100%;
@@ -60,17 +60,11 @@
       transform: translateY(-50%);
       cursor: pointer;
       font-size: 1.2rem;
-      color: #555;
       user-select: none;
-      padding: 2px 6px;
+      color: #555;
+      transition: 0.2s;
+      padding: 2px 5px;
       border-radius: 4px;
-      transition: background 0.3s;
-    }
-
-    /* Red background when active */
-    .password-eye.active {
-      background-color: #ff4d4d;
-      color: white;
     }
 
     .btn-primary {
@@ -85,10 +79,32 @@
       cursor: pointer;
     }
 
+    .btn-primary:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
     .status {
       margin-top: 10px;
       text-align: center;
       color: #d32f2f;
+      padding: 10px;
+      border-radius: 4px;
+    }
+
+    .status.success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status.error {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    .status.info {
+      background-color: #e3f2fd;
+      color: #1565c0;
     }
 
     .links {
@@ -104,13 +120,11 @@
     .links a:hover {
       text-decoration: underline;
     }
-    
   </style>
 </head>
 <body>
-
   <div class="container">
-    <h2>Login</h2>
+    <h2>Login to Volant Poetry</h2>
 
     <form id="login-form" class="auth-form">
       <label for="login-email">Email or Username</label>
@@ -122,23 +136,39 @@
         <span id="toggle-password" class="password-eye">👁️</span>
       </div>
 
-      <button type="submit" class="btn-primary">Login</button>
+      <button type="submit" class="btn-primary" id="login-button">Login</button>
     </form>
 
-    <p id="login-status" class="status"></p>
-
+    <div id="login-status" class="status"></div>
+    
     <div class="links">
-        <p><a href="users-reset.html">Forgot Password?</a></p>
-      <p>Don’t have an account? <a href="users-signup.html">Sign up here</a></p>
+      <p><a href="users-reset.html">Forgot password?</a></p>
+      <p>Don't have an account? <a href="users-signup.html">Sign up here</a></p>
     </div>
   </div>
 
-  <!-- Firebase Auth JS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      sendEmailVerification,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      collection,
+      query,
+      where,
+      getDocs,
+      getDoc,
+      updateDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
       authDomain: "silent-depth.firebaseapp.com",
@@ -152,75 +182,172 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    setPersistence(auth, browserLocalPersistence);
 
-    const loginForm = document.getElementById("login-form");
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      let loginInput = document.getElementById("login-email").value.trim();
-      const password = document.getElementById("login-password").value;
+    // DOM Elements
+    const loginForm = document.getElementById('login-form');
+    const loginButton = document.getElementById('login-button');
+    const statusEl = document.getElementById('login-status');
 
-      try {
-        let emailToUse = loginInput;
-        if (!loginInput.includes("@")) {
-          const q = query(collection(db, "users"), where("username", "==", loginInput));
-          const querySnap = await getDocs(q);
-          if (querySnap.empty) {
-            document.getElementById("login-status").textContent = "⚠ No account found with that username.";
-            return;
-          }
-          emailToUse = querySnap.docs[0].data().email;
-        }
-
-        const userCred = await signInWithEmailAndPassword(auth, emailToUse, password);
-        const user = userCred.user;
-
-        const userDocRef = doc(db, "users", user.uid);
-        const userDocSnap = await getDoc(userDocRef);
-        if (!userDocSnap.exists()) {
-          await setDoc(userDocRef, {
-            username: user.displayName || "Anonymous",
-            email: user.email,
-            bio: "",
-            joined: new Date()
-          });
-        } else {
-          const data = userDocSnap.data();
-          if (!data.joined) await updateDoc(userDocRef, { joined: new Date() });
-        }
-
-        document.getElementById("login-status").textContent = "✅ Login successful! Redirecting…";
-
-        const params = new URLSearchParams(window.location.search);
-        let redirectUrl = params.get("redirect");
-        if (!redirectUrl || redirectUrl.includes("login") || redirectUrl.includes("index.html")) {
-          redirectUrl = "index.html";
-        }
-
-        setTimeout(() => { window.location.href = redirectUrl; }, 1200);
-
-      } catch (err) {
-        document.getElementById("login-status").textContent = "⚠ " + err.message;
-      }
-    });
-
-    onAuthStateChanged(auth, async (user) => {
-      if (user) console.log("User already logged in:", user.email);
-    });
-
-    // Toggle password visibility with red background
+    // Toggle password visibility
     const passwordInput = document.getElementById("login-password");
     const togglePassword = document.getElementById("toggle-password");
 
     togglePassword.addEventListener("click", () => {
       if (passwordInput.type === "password") {
         passwordInput.type = "text";
-        togglePassword.classList.add("active"); // red background
+        togglePassword.classList.add("showing");
       } else {
         passwordInput.type = "password";
-        togglePassword.classList.remove("active");
+        togglePassword.classList.remove("showing");
       }
     });
+
+    // Show status function
+    function showStatus(message, type = 'error') {
+      statusEl.textContent = message;
+      statusEl.className = 'status ' + type;
+    }
+
+    // Force check verification
+    async function forceCheckVerification(user) {
+      // Multiple reloads to ensure latest status
+      for (let i = 0; i < 3; i++) {
+        await user.reload();
+        await new Promise(r => setTimeout(r, 1000));
+      }
+      return user.emailVerified;
+    }
+
+    // Login form handler
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Disable button to prevent double submission
+      loginButton.disabled = true;
+      loginButton.textContent = 'Logging in...';
+      showStatus('', 'info');
+      
+      const loginInput = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      try {
+        let emailToUse = loginInput;
+
+        // If input is not email, search by username
+        if (!loginInput.includes('@')) {
+          const q = query(collection(db, 'users'), where('username', '==', loginInput));
+          const querySnap = await getDocs(q);
+          
+          if (querySnap.empty) {
+            showStatus('⚠ No account found with that username.', 'error');
+            loginButton.disabled = false;
+            loginButton.textContent = 'Login';
+            return;
+          }
+          
+          emailToUse = querySnap.docs[0].data().email;
+        }
+
+        // Attempt login
+        const userCred = await signInWithEmailAndPassword(auth, emailToUse, password);
+        const user = userCred.user;
+
+        // Force check verification
+        const isVerified = await forceCheckVerification(user);
+
+        if (!isVerified) {
+          // Send new verification email
+          await sendEmailVerification(user);
+          
+          // Sign out immediately
+          await signOut(auth);
+          
+          // Store email for verification page
+          localStorage.setItem('pendingVerificationEmail', user.email);
+          
+          showStatus('⚠ Email not verified. A new verification email has been sent.', 'error');
+          
+          // Redirect to verification page
+          setTimeout(() => {
+            window.location.href = 'verify-email.html?email=' + encodeURIComponent(user.email);
+          }, 2000);
+          return;
+        }
+
+        // Update Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (!userDocSnap.exists()) {
+          await setDoc(userDocRef, {
+            username: user.displayName || "Anonymous",
+            email: user.email,
+            bio: "",
+            joined: new Date(),
+            emailVerified: true
+          });
+        } else {
+          await updateDoc(userDocRef, { 
+            emailVerified: true,
+            lastLogin: new Date()
+          });
+        }
+
+        showStatus('✅ Login successful! Redirecting...', 'success');
+        
+        // Get redirect URL
+        const params = new URLSearchParams(window.location.search);
+        let redirectUrl = params.get('redirect');
+        
+        if (!redirectUrl) {
+          redirectUrl = localStorage.getItem('redirectAfterLogin');
+        }
+        
+        if (!redirectUrl || 
+            redirectUrl.includes('login') || 
+            redirectUrl.includes('signup') || 
+            redirectUrl.includes('reset') ||
+            redirectUrl.includes('verify') ||
+            redirectUrl === 'null' ||
+            redirectUrl === 'undefined') {
+          redirectUrl = 'index.html';
+        }
+
+        // Clear stored data
+        localStorage.removeItem('redirectAfterLogin');
+        localStorage.removeItem('pendingVerificationEmail');
+
+        setTimeout(() => { 
+          window.location.href = redirectUrl; 
+        }, 1200);
+
+      } catch (err) {
+        showStatus('⚠ ' + err.message, 'error');
+        loginButton.disabled = false;
+        loginButton.textContent = 'Login';
+      }
+    });
+
+    // Check if user is already logged in
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const isVerified = await forceCheckVerification(user);
+        
+        if (!isVerified) {
+          await signOut(auth);
+          localStorage.setItem('pendingVerificationEmail', user.email);
+          window.location.href = 'verify-email.html?email=' + encodeURIComponent(user.email);
+        }
+      }
+    });
+
+    // Check for email in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const email = urlParams.get('email');
+    if (email) {
+      document.getElementById('login-email').value = email;
+      showStatus('Please log in to continue', 'info');
+    }
   </script>
 </body>
 </html>

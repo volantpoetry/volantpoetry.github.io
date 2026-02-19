@@ -58,7 +58,6 @@
     }
 
     /* SEARCH CONTAINER */
-    /* SEARCH CONTAINER */
     .search-container {
       flex-grow: 1;
       max-width: 200px;
@@ -157,7 +156,7 @@
   background-attachment: scroll; /* ensures it moves normally */
   color: white;
   overflow: hidden;
-      white-space: nowrap; /* keep tagline on one line too */
+  white-space: nowrap; /* keep tagline on one line too */
 }
 
 .hero::before {
@@ -176,12 +175,11 @@
   top: -60px; /* move up by 50px, adjust as needed */
 }
 
-
     .hero-left img.hero-logo {
       width: 160px;
       border-radius: 10px;
       object-fit: contain;
-      box-shadow: 0 4px 12px rgba(164, 31, 31, 0.08);
+     
       transition: transform 0.3s ease;
         height: 220px; /* slightly bigger if you like */
           transition: top 0.3s ease;
@@ -1572,10 +1570,6 @@ font-family: 'Lato', sans-serif;
   }
 }
 
-
-
-
-
 .weekly-container {
   display: flex;
   justify-content: center;
@@ -2029,7 +2023,6 @@ html {
   align-items: center;
   gap: 2rem;
   padding: 4rem 10%;
-  background: rgb(132, 124, 114);
   border-top: 1px solid #eee;
 }
 
