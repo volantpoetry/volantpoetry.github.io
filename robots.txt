@@ -1,4 +1,50 @@
 User-agent: *
 Allow: /
 
+# Block admin pages only
+Disallow: /admin
+Disallow: /admin-
+Disallow: /admin.
+Disallow: /administrators
+Disallow: /dashboard
+Disallow: /manage
+Disallow: /testadmin
+Disallow: /editor
+Disallow: /addcategories
+Disallow: /Select-
+Disallow: /Manage-
+Disallow: /assign-
+
+# Block login/system pages (but NOT user profiles)
+Disallow: /login
+Disallow: /signup
+Disallow: /register
+Disallow: /verify
+Disallow: /reset
+Disallow: /forgot
+Disallow: /notifications
+Disallow: /messages
+
+# Block submission management (but allow viewing poems)
+Disallow: /submit
+Disallow: /submission-guidelines
+Disallow: /edit-
+Disallow: /drafts
+
+# Block specific system files
+Disallow: /verify.html
+Disallow: /verify-email.html
+Disallow: /users-signup.html
+Disallow: /users-reset.html
+Disallow: /users-login.html
+Disallow: /users-forgot.html
+Disallow: /user-edit-poems.html
+
+# IMPORTANT: Allow user profiles to be indexed!
+# Do NOT block these:
+# - /profile.html
+# - /users-profile.html  
+# - /user-profile.html
+# - /users-profile-page.html
+
 Sitemap: https://volantpoetry.github.io/sitemap.xml
