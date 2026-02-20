@@ -191,8 +191,102 @@
       margin: 8px 0;
     }
 
+    .poem-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
 
+    .comment-section {
+  display: flex;
+  gap: 5px;
+  flex: 0 1 45%; /* Changed from flex: 1 to take up less than half the container */
+  min-width: 200px; /* Ensures it doesn't get too small on mobile */
+}
 
+.comment-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: none;
+  font-family: inherit;
+}
+
+/* Adjust for very small screens */
+@media (max-width: 480px) {
+  .comment-section {
+    flex: 0 1 40%;
+    min-width: 150px;
+  }
+}
+
+    .comment-btn, .like-btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+   
+      color: white;
+      font-weight: 600;
+    }
+
+    .like-btn {
+      background: #ff6b6b;
+    }
+
+    .like-btn.liked {
+      background: #ff4444;
+    }
+
+    .like-count, .message-count {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .message-count {
+      cursor: pointer;
+    }
+
+    .comment-list {
+      margin-top: 15px;
+      padding: 10px;
+      background: rgba(0,0,0,0.02);
+      border-radius: 4px;
+    }
+
+    .comment {
+      background: #fff;
+      padding: 8px 12px;
+      margin: 6px 0;
+      border-radius: 6px;
+    }
+
+    .reply-toggle {
+      color: #5a3cb3;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .reply-section {
+      margin-left: 20px;
+      margin-top: 6px;
+    }
+
+    .read-more-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      padding: 0;
+      margin: 5px 0;
+    }
+
+    .read-more-btn:hover {
+      text-decoration: underline;
+    }
 
     /* Mobile search styles */
     .search-container {
@@ -408,15 +502,28 @@
   }
 }
 
-/* Reduce categories size only on smaller phones */
+/* For very small screens - even tighter */
 @media (max-width: 480px) {
   .poem-category-line {
-    font-size: 0.7rem !important;
+    margin-bottom: 0px !important;
+    margin-top: 0px !important;
   }
   
   .read-more-btn {
-    font-size: 0.75rem !important; /* Smaller read more text */
-    padding: 2px 0 !important; /* Reduce padding if needed */
+    margin-top: -7px !important; /* Pull it up even more */
+  }
+}
+/* Make end message smaller and centered on small screens */
+@media (max-width: 480px) {
+  .end-message {
+    font-size: 0.8rem !important;
+    text-align: center !important;
+    padding: 15px !important;
+    width: 90% !important;
+    margin: 10px auto !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    line-height: 1.3 !important;
   }
 }
   </style>
@@ -486,7 +593,7 @@
   
   <!-- End message (shown when all poems are loaded) -->
   <div id="end-message" class="end-message" style="display: none;">
-    ✨ You've discovered all poems.✨
+    ✨ You've discovered all poems. The journey continues... ✨
   </div>
 </main>
 
