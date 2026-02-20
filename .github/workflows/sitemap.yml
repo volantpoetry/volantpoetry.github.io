@@ -1,37 +1,48 @@
-name: Generate Sitemap
+name: 🔥 Auto Sitemap Generator
 
 on:
-  schedule:
-    - cron: '0 * * * *'  # Runs at the beginning of every hour
-  workflow_dispatch:      # Manual trigger
+  workflow_dispatch:  # Manual trigger
   push:
-    branches: [ main, master ]
+    branches:
+      - main
+  schedule:
+    - cron: '0 */12 * * *'  # Runs every 12 hours
+    # - cron: '0 0,12 * * *'  # Same as above - at midnight and noon
+    # - cron: '0 0 * * *'     # Once per day at midnight
+    # - cron: '0 */6 * * *'   # Every 6 hours
 
 jobs:
-  generate-sitemap:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          node-version: '18'
-          
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
       - name: Install dependencies
-        run: npm install firebase-admin
-        
-      - name: Create service account key from secret
-        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > serviceAccountKey.json
-        
-      - name: Generate sitemap
-        run: node generate-sitemap.js
-        
-      - name: Commit and push if changed
+        run: npm install
+
+      - name: Create Firebase key file from GitHub secret
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          echo '${{ secrets.FIREBASE_KEY }}' > serviceAccountKey.json
+          wc -c serviceAccountKey.json
+
+      - name: Run sitemap generator
+        run: node generate-sitemap.js
+
+      - name: Commit & push sitemap.xml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add sitemap.xml
-          git diff --quiet && git diff --staged --quiet || git commit -m "Automated sitemap update [skip ci]"
-          git push
+          git commit -m "🗺️ Auto-update sitemap" || echo "No changes to commit"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
