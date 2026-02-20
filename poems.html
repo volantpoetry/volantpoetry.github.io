@@ -403,7 +403,6 @@
 /* For very small screens - even tighter */
 @media (max-width: 480px) {
   .poem-category-line {
-       font-size: 0.8rem; /* Slightly smaller font */
     margin-bottom: 0px !important;
     margin-top: 0px !important;
   }
@@ -436,6 +435,13 @@
 @media (max-width: 480px) {
   .logo-text {
     font-size: 1rem !important;
+  }
+}
+
+/* Make categories smaller on small screens */
+@media (max-width: 780px) {
+  .poem-category-line {
+    font-size: 0.65rem !important;
   }
 }
   </style>
@@ -580,7 +586,7 @@
     const allLines = content?.split(/\r?\n/) || [];
     if (allLines.length <= lines) return { preview: content, full: content, truncated: false };
     return {
-      preview: allLines.slice(0, lines).join("\n") + "...",
+      preview: allLines.slice(0, lines).join("\n") + "",
       full: content,
       truncated: true
     };
