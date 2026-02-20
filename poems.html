@@ -192,6 +192,8 @@
     }
 
 
+
+
     /* Mobile search styles */
     .search-container {
       display: none;
@@ -406,15 +408,15 @@
   }
 }
 
-/* For very small screens - even tighter */
+/* Reduce categories size only on smaller phones */
 @media (max-width: 480px) {
   .poem-category-line {
-    margin-bottom: 0px !important;
-    margin-top: 0px !important;
+    font-size: 0.7rem !important;
   }
   
   .read-more-btn {
-    margin-top: -7px !important; /* Pull it up even more */
+    font-size: 0.75rem !important; /* Smaller read more text */
+    padding: 2px 0 !important; /* Reduce padding if needed */
   }
 }
   </style>
@@ -484,7 +486,7 @@
   
   <!-- End message (shown when all poems are loaded) -->
   <div id="end-message" class="end-message" style="display: none;">
-    ✨ You've discovered all poems. The journey continues... ✨
+    ✨ You've discovered all poems.✨
   </div>
 </main>
 
