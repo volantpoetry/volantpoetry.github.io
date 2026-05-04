@@ -245,6 +245,13 @@
             loginButton.textContent = 'Login';
             return;
           }
+
+          if (querySnap.size > 1) {
+            showStatus('⚠ Multiple accounts found with that username. Please login with your email instead.', 'error');
+            loginButton.disabled = false;
+            loginButton.textContent = 'Login';
+            return;
+          }
           
           emailToUse = querySnap.docs[0].data().email;
         }

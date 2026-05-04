@@ -5,119 +5,380 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
 <title>Terms & Conditions | Volant Poetry</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="images/logo.png" />
-  <link rel="apple-touch-icon" href="images/logo.png" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="images/logo.png" />
+<link rel="apple-touch-icon" href="images/logo.png" />
 <style>
-  body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f9f9f9;
-    color: #333;
-    line-height: 1.7;
-  }
-  header {
-    background: #4b3f72;
-    color: #fff;
-    padding: 2rem;
-    text-align: center;
-  }
-  header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.5rem;
-    margin: 0;
-  }
-  main {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
-  h2 {
-    color: #4b3f72;
-    font-family: 'Playfair Display', serif;
-  }
-  ul {
-    margin: 1rem 0;
-    padding-left: 1.5rem;
-  }
-  li {
-    margin-bottom: 0.8rem;
-  }
-  .highlight {
-    color: #d32f2f;
-    font-weight: bold;
-  }
-  
-    footer {
-      background: var(--accent-bg);
-      padding: 1.5rem;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-top: 2.5rem;
-    }
-  @media (max-width: 600px) {
-    header h1 { font-size: 1.8rem; }
-    h2 { font-size: 1.5rem; }
+  :root {
+    --primary: #4b2aad;
+    --primary-dark: #3a1f8a;
+    --primary-light: #6c3ddd;
+    --accent-gold: #b89b5e;
+    --accent-gold-dark: #9b7e48;
+    --bg-main: #f5f3ff;
+    --bg-card: #ffffff;
+    --text-primary: #1a1a1a;
+    --text-secondary: #4a4a4a;
+    --text-muted: #6b6b6b;
+    --border-light: #e8e4f0;
+    --border-gold: #d4c5a0;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.02);
   }
 
-  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .page-header {
+    background: var(--bg-card);
+    border-bottom: 2px solid var(--border-gold);
+    padding: 2.5rem 2rem 1.5rem;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-header .breadcrumb {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+
+  .page-header .breadcrumb a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .page-header .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  /* Main Container */
+  .terms-container {
+    max-width: 920px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+
+  /* Content Card */
+  .terms-card {
+    background: var(--bg-card);
+    border-radius: 0;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+  }
+
+  .terms-content {
+    padding: 2.5rem 3rem;
+  }
+
+  /* Intro */
+  .terms-intro {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .terms-intro strong {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  /* Sections */
+  .terms-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .terms-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .terms-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 1rem;
+    letter-spacing: -0.2px;
+  }
+
+  .terms-section p {
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+  }
+
+  /* Standard bullet points (circular dots) */
+  .terms-section ul {
+    margin: 0.75rem 0 0.5rem 0;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .terms-section li {
+    margin-bottom: 0.6rem;
+    padding-left: 1.5rem;
+    position: relative;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .terms-section li::before {
+    content: "●";
+    color: var(--accent-gold);
+    font-size: 0.75rem;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  /* Numbered list style */
+  .numbered-list {
+    margin: 0.75rem 0 0.5rem 0;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .numbered-list li {
+    margin-bottom: 0.6rem;
+    padding-left: 1.8rem;
+    position: relative;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    counter-increment: step-counter;
+  }
+
+  .numbered-list li::before {
+    content: counter(step-counter) ".";
+    color: var(--primary);
+    font-weight: 500;
+    font-size: 0.85rem;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  /* Highlight styles */
+  .highlight {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .warning {
+    color: #b33a3a;
+    font-weight: 500;
+  }
+
+  .accent-text {
+    color: var(--accent-gold-dark);
+    font-weight: 500;
+  }
+
+  /* Closing note */
+  .closing-note {
+    background: #faf9fe;
+    border-left: 3px solid var(--accent-gold);
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  .closing-note p {
+    margin: 0;
+    font-style: normal;
+  }
+
+  /* Footer */
+  .page-footer {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-light);
+    padding: 1.5rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .page-footer p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin: 0;
+  }
+
+  .page-footer a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .page-header {
+      padding: 1.8rem 1rem 1.2rem;
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+    }
+
+    .terms-content {
+      padding: 1.5rem;
+    }
+
+    .terms-section h2 {
+      font-size: 1.3rem;
+    }
+
+    .terms-section li {
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 550px) {
+    .terms-container {
+      padding: 0 1rem;
+      margin: 1.5rem auto;
+    }
+
+    .terms-content {
+      padding: 1.25rem;
+    }
+
+    .page-header h1 {
+      font-size: 1.75rem;
+    }
+
+    .terms-section h2 {
+      font-size: 1.2rem;
+    }
+
+    .terms-section li {
+      font-size: 0.85rem;
+      padding-left: 1.25rem;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .page-header, .page-footer {
+      background: none;
+      border: none;
+    }
+    .terms-card {
+      box-shadow: none;
+      border: 1px solid #ccc;
+    }
+    body {
+      background: white;
+    }
+  }
 </style>
 </head>
 <body>
 
-<header>
+<div class="page-header">
   <h1>Terms & Conditions</h1>
-</header>
+</div>
 
-<main>
-  <p>Welcome to <strong>Volant Poetry</strong>, a community where poets and readers connect through the beauty of words. By participating, submitting poems, or interacting with the platform, you agree to the following terms:</p>
+<div class="terms-container">
+  <div class="terms-card">
+    <div class="terms-content">
+      <div class="terms-intro">
+        Welcome to <strong>Volant Poetry</strong>. By accessing or using our platform, including submitting poems, commenting, or engaging with the community— you agree to be bound by these Terms &amp; Conditions. Please read them carefully.
+      </div>
 
-  <h2>1. Account Responsibilities</h2>
-  <ul>
-    <li>Create your account with accurate information.</li>
-    <li><span class="highlight">No multiple accounts.</span> Each person may only have one account to maintain fairness and community trust.</li>
-    <li>Keep your account credentials secure. You are responsible for all activity under your account.</li>
-  </ul>
+      <div class="terms-section">
+        <h2>1. Account Registration & Responsibilities</h2>
+        <p>To participate fully in the Volant Poetry community, you must create an account with accurate and current information.</p>
+        <ul>
+          <li>You are responsible for maintaining the confidentiality of your login credentials.</li>
+          <li><span class="highlight">One account per person.</span> Duplicate accounts are prohibited and will result in immediate termination.</li>
+          <li>All activity conducted through your account is your responsibility.</li>
+        </ul>
+      </div>
 
-  <h2>2. Submission Guidelines</h2>
-  <ul>
-    <li>All poems must be your own original work.</li>
-    <li>No AI-generated poems are allowed.</li>
-    <li>Plagiarism or content copied from others will lead to removal and may result in account suspension or termination.</li>
-    <li>Respect the community. Avoid harmful, offensive, explicit or defamatory content.</li>
-      <li>You are allowed to publish your poems elsewhere, being other online poetry platforms or magazines.</li>
-  </ul>
+      <div class="terms-section">
+        <h2>2. Poetry Submission Guidelines</h2>
+        <p>Volant Poetry celebrates original human creativity. All submitted work must adhere to the following standards:</p>
+        <ul>
+          <li>All poems must be your <span class="highlight">original work</span>. Plagiarism is strictly forbidden.</li>
+          <li><span class="warning">AI generated content is not permitted.</span> We celebrate authentic human expression.</li>
+          <li>You retain full ownership of your poems. By submitting, you grant Volant Poetry a non-exclusive license to display your work on the platform.</li>
+          <li>You may publish your poems elsewhere on other websites, in print, or in anthologies.</li>
+          <li>Content that is harassing, defamatory, obscene, or otherwise harmful is prohibited and will be removed.</li>
+        </ul>
+      </div>
 
-  <h2>3. Community Conduct</h2>
-  <ul>
-    <li>Be respectful to all members. Harassment, hate speech, or threats are strictly prohibited.</li>
-    <li>Engage constructively and encourage creativity.</li>
-    <li>Do not manipulate submissions, rankings, or metrics to gain unfair advantage.</li>
-  </ul>
+      <div class="terms-section">
+        <h2>3. Community Conduct</h2>
+        <ul>
+          <li>Treat all members with respect. Harassment, threats, hate speech, or personal attacks will not be tolerated.</li>
+          <li>Provide constructive feedback. Encourage fellow poets rather than diminishing their work.</li>
+          <li>Do not manipulate engagement metrics including likes, comments, or poem rankings through artificial means.</li>
+          <li>Report violations to the Volant Poetry team rather than engaging in conflict.</li>
+        </ul>
+      </div>
 
-  <h2>4. Platform Use</h2>
-  <ul>
-    <li>Use the website responsibly. Avoid automated scripts or excessive activity that may disrupt service.</li>
-    <li>We may monitor submissions and activity to ensure compliance with these terms.</li>
-  </ul>
+      <div class="terms-section">
+        <h2>4. Platform Use & Intellectual Property</h2>
+        <ul>
+          <li>The Volant Poetry name, logo, and design are our intellectual property. You may not copy or reproduce them without permission.</li>
+          <li>Automated scripts, bots, or any activity that disrupts platform performance is prohibited.</li>
+          <li>We reserve the right to remove any content that violates these terms, with or without notice.</li>
+          <li>Volant Poetry is not responsible for the content of user submitted poems or comments.</li>
+        </ul>
+      </div>
 
-  <h2>5. Violations & Consequences</h2>
-  <ul>
-    <li>Violating these rules may result in warnings, suspension, or termination of your account.</li>
-    <li>Accounts with multiple entries from duplicate accounts will be terminated immediately.</li>
-    <li>Content violating these Terms may be removed with or without prior notice.</li>
-  </ul>
+      <div class="terms-section">
+        <h2>5. Violations & Enforcement</h2>
+        <ul>
+          <li>First time violations typically result in a warning and content removal.</li>
+          <li>Repeated violations, duplicate accounts, or severe offenses including harassment and plagiarism will lead to <span class="warning">immediate account termination</span> without prior notice.</li>
+          <li>Banned users may not create new accounts to circumvent enforcement.</li>
+          <li>We reserve the right to suspend access to any user at our discretion.</li>
+        </ul>
+      </div>
 
-  <h2>6. Changes to Terms</h2>
-  <p>We may update these Terms from time to time. Continued use of Volant Poetry after updates means you accept the revised Terms.</p>
+      <div class="terms-section">
+        <h2>6. Limitation of Liability</h2>
+        <p>Volant Poetry is provided "as is" without warranties of any kind. We are not liable for any damages arising from your use of the platform, including but not limited to data loss, service interruptions, or disputes between users.</p>
+      </div>
 
-  <p>By participating in Volant Poetry, you help maintain a respectful, creative, and genuine community for all poets and readers.</p>
-</main>
+      <div class="terms-section">
+        <h2>7. Changes to These Terms</h2>
+        <p>We may update these Terms periodically to reflect changes in our practices or legal requirements. Continued use of Volant Poetry after changes are posted constitutes acceptance of the revised Terms. Material changes will be announced via email or platform notification.</p>
+      </div>
 
-<footer>
-  &copy; 2025 Volant Poetry. All Rights Reserved.
+      <div class="closing-note">
+        <p>By participating in Volant Poetry, you help sustain a respectful, authentic, and inspiring space for poets and readers alike. Thank you for being part of our community.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <p>© 2026 Volant Poetry. All rights reserved. | <a href="privacy.html">Privacy Policy</a> | <a href="contact.html">Contact</a></p>
 </footer>
 
 </body>

@@ -6,7 +6,7 @@
   <title>Volant Poetry</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
-  <meta name="google-site-verification" content="5BZdnhCtO7i-pbEoi-MeDUiPeAzkczyIqykiG_cxBr8" />
+  
   <!-- Styles & Icons -->
   <link rel="stylesheet" href="style.css" />
 <!-- Favicons -->
@@ -111,6 +111,17 @@
   font-size: 0.7rem;    /* bigger category text */
   font-style: italic;
   color:  #B8860B;}
+
+.category-link {
+  color: #B8860B;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.category-link:hover {
+  color: #8B4513;
+  text-decoration: underline;
+}
 
 #links-container ul {
   list-style: none;        
@@ -827,7 +838,14 @@
   }
   
   .read-more-btn {
-    font-size: 0.7rem !important;  /* EVEN SMALLER ON MOBILE */
+    font-size: 0.85rem !important;  /* LARGER ON MOBILE */
+  }
+  
+  /* Align action buttons and comment input to poem text */
+  .poem-actions,
+  .comment-section,
+  .poem-reactions {
+    margin-left: -8px !important;
   }
 }
 
@@ -846,7 +864,14 @@
   }
   
   .read-more-btn {
-    font-size: 0.65rem !important;  /* SMALLEST ON TINY SCREENS */
+    font-size: 0.8rem !important;  /* LARGER ON TINY SCREENS */
+  }
+  
+  /* Align action buttons and comment input to poem text on very small screens */
+  .poem-actions,
+  .comment-section,
+  .poem-reactions {
+    margin-left: -10px !important;
   }
 }
 
@@ -937,9 +962,12 @@
     <h1>Volant<br><span>Poetry</span></h1>
   </div>
   <div class="hero-line-content">
-    <p> Volant Poetry is an open community where poets freely share their<br>
-    work, read others, and grow through thoughtful feedback.<br>Just voices, words, and connection.</p>
-    <a href="poems.html" class="cta-btn">Explore Poems</a>
+    
+ <p>A space where words take breath-<br>
+where poets share, read, and grow together.<br>
+Just voices, words, and connection.</p>
+<a href="poems.html" class="cta-btn">Explore Poems</a>
+
   </div>
 </section>
 

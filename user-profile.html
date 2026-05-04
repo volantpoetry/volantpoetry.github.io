@@ -13,6 +13,7 @@
 <link rel="apple-touch-icon" href="images/logo.png" />
 
 <style>
+/* YOUR EXACT SAME CSS - NO CHANGES */
 :root {
   --primary: #4b2aad;
   --bg: #f7f5ff;
@@ -1471,7 +1472,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
-// --- Get ?uid from URL ---
+// --- Get ?uid from URL (ADDED FOR PUBLIC VIEWING) ---
 const urlParams = new URLSearchParams(window.location.search);
 const profileUid = urlParams.get("uid");
 
@@ -1489,7 +1490,7 @@ const poemsContainer = document.getElementById("poemsContainer");
 
 let actorUsername = "";
 let profileUsername = "";
-let viewingOwnProfile = false;
+let viewingOwnProfile = false;  // ADDED: track if viewing own profile
 
 // --- Modal functions - exactly like gallery page ---
 window.showPreview = function(imageUrl, title, description) {
@@ -1802,31 +1803,42 @@ async function uploadAvatarToCloudinary(initials, bgColor, publicId = null) {
   }
 }
  
-// --- Auth handling ---
+// --- Auth handling (MODIFIED: support public viewing with ?uid) ---
 onAuthStateChanged(auth, async (user) => {
-  if (!user) {
+  // If no user logged in AND no uid in URL, redirect to login
+  if (!user && !profileUid) {
     window.location.href = "users-login.html";
     return;
   }
 
-  const actorRef = doc(db, "users", user.uid);
-  let actorDoc = await getDoc(actorRef);
-  if (!actorDoc.exists()) {
-    await setDoc(actorRef, {
-      username: user.displayName || user.email.split("@")[0],
-      email: user.email,
-      bio: "",
-      realName: "",
-      joined: new Date(),
-      photoURL: user.photoURL || ""
-    });
-    actorDoc = await getDoc(actorRef);
+  // Get actor info if logged in
+  if (user) {
+    const actorRef = doc(db, "users", user.uid);
+    let actorDoc = await getDoc(actorRef);
+    if (!actorDoc.exists()) {
+      await setDoc(actorRef, {
+        username: user.displayName || user.email.split("@")[0],
+        email: user.email,
+        bio: "",
+        realName: "",
+        joined: new Date(),
+        photoURL: user.photoURL || ""
+      });
+      actorDoc = await getDoc(actorRef);
+    }
+    const actorData = actorDoc.data();
+    actorUsername = actorData.username || user.email.split("@")[0];
   }
-  const actorData = actorDoc.data();
-  actorUsername = actorData.username || user.email.split("@")[0];
 
-  viewingOwnProfile = !profileUid || profileUid === user.uid;
-  const targetUid = viewingOwnProfile ? user.uid : profileUid;
+  // Determine which profile to show (from URL or logged-in user)
+  viewingOwnProfile = (user && (!profileUid || profileUid === user.uid));
+  const targetUid = (profileUid && profileUid !== "undefined") ? profileUid : (user ? user.uid : null);
+
+  if (!targetUid) {
+    alert("No user specified.");
+    window.location.href = "index.html";
+    return;
+  }
 
   const userRef = doc(db, "users", targetUid);
   const userDoc = await getDoc(userRef);
@@ -1842,7 +1854,8 @@ onAuthStateChanged(auth, async (user) => {
 
   if (realNameSpan) realNameSpan.textContent = data.realName || "Not set";
   if (usernameSpan) usernameSpan.textContent = profileUsername;
-  if (emailSpan) emailSpan.textContent = data.email || "";
+  // Hide email for public viewers
+  if (emailSpan) emailSpan.textContent = viewingOwnProfile ? (data.email || "") : "🔒 Private";
   if (bioSpan) bioSpan.textContent = data.bio || "No bio yet";
   if (joinedSpan) {
     joinedSpan.textContent = data.joined
@@ -1855,99 +1868,92 @@ onAuthStateChanged(auth, async (user) => {
   const avatarDiv = document.getElementById("profileAvatar");
   const avatarText = document.getElementById("avatarInitials");
 
-  // In the onAuthStateChanged function, update the avatar display section:
-
-if (data.photoURL) {
-  // If there's a photo URL, use it
-  profilePic.src = data.photoURL;
-  profilePic.style.display = "block";
-  profilePic.style.borderRadius = "50%"; // Make it circular for display
-  avatarDiv.style.display = "none";
-} else if (data.cachedAvatarURL) {
-  profilePic.src = data.cachedAvatarURL;
-  profilePic.style.display = "block";
-  profilePic.style.borderRadius = "50%"; // Make it circular for display
-  avatarDiv.style.display = "none";
-} else {
-  // Show the generated avatar
-  const initials = getInitials(profileUsername);
-  const bgColor = colorFromName(profileUsername);
-
-  avatarText.textContent = initials;
-  avatarDiv.style.background = bgColor;
-  avatarDiv.style.display = "flex";
-  profilePic.style.display = "none";
+  if (data.photoURL) {
+    profilePic.src = data.photoURL;
+    profilePic.style.display = "block";
+    profilePic.style.borderRadius = "50%";
+    avatarDiv.style.display = "none";
+  } else if (data.cachedAvatarURL) {
+    profilePic.src = data.cachedAvatarURL;
+    profilePic.style.display = "block";
+    profilePic.style.borderRadius = "50%";
+    avatarDiv.style.display = "none";
+  } else {
+    const initials = getInitials(profileUsername);
+    const bgColor = colorFromName(profileUsername);
+    avatarText.textContent = initials;
+    avatarDiv.style.background = bgColor;
+    avatarDiv.style.display = "flex";
+    profilePic.style.display = "none";
+    
+    if (viewingOwnProfile && user) {
+      uploadAvatarToCloudinary(initials, bgColor).then(url => {
+        if (url) {
+          profilePic.src = url;
+          profilePic.style.display = "block";
+          profilePic.style.borderRadius = "50%";
+          avatarDiv.style.display = "none";
+        }
+      });
+    }
+  }
   
-  // Upload as square image
-  if (viewingOwnProfile) {
-    uploadAvatarToCloudinary(initials, bgColor).then(url => {
-      if (url) {
-        profilePic.src = url;
-        profilePic.style.display = "block";
-        profilePic.style.borderRadius = "50%"; // Make it circular for display
-        avatarDiv.style.display = "none";
+  const regenerateAvatarBtn = document.getElementById("regenerateAvatarBtn");
+  if (regenerateAvatarBtn && viewingOwnProfile && user) {
+    regenerateAvatarBtn.style.display = "inline-block";
+    regenerateAvatarBtn.addEventListener("click", async () => {
+      const initials = getInitials(profileUsername);
+      const bgColor = colorFromName(profileUsername);
+      try {
+        let publicId = null;
+        if (profilePic.src) {
+          const urlParts = profilePic.src.split("/");
+          const filename = urlParts[urlParts.length - 1].split(".")[0];
+          publicId = `profile_pics/${filename}`;
+        }
+        const newAvatarUrl = await uploadAvatarToCloudinary(initials, bgColor, publicId);
+        if (newAvatarUrl) {
+          profilePic.src = newAvatarUrl;
+          profilePic.style.display = "block";
+          profilePic.style.borderRadius = "50%";
+          document.getElementById("profileAvatar").style.display = "none";
+          alert("✅ Avatar regenerated and replaced successfully!");
+        } else {
+          alert("❌ Failed to regenerate avatar.");
+        }
+      } catch (err) {
+        console.error("Error regenerating avatar:", err);
+        alert("❌ Something went wrong.");
       }
     });
   }
-}
-  
-  const regenerateAvatarBtn = document.getElementById("regenerateAvatarBtn");
 
-if (regenerateAvatarBtn && viewingOwnProfile) {
-  regenerateAvatarBtn.style.display = "inline-block";
-  regenerateAvatarBtn.addEventListener("click", async () => {
-    const initials = getInitials(profileUsername);
-    const bgColor = colorFromName(profileUsername);
-
-    try {
-      let publicId = null;
-      if (profilePic.src) {
-        const urlParts = profilePic.src.split("/");
-        const filename = urlParts[urlParts.length - 1].split(".")[0];
-        publicId = `profile_pics/${filename}`;
-      }
-
-      const newAvatarUrl = await uploadAvatarToCloudinary(initials, bgColor, publicId);
-      if (newAvatarUrl) {
-        profilePic.src = newAvatarUrl;
-        profilePic.style.display = "block";
-        profilePic.style.borderRadius = "50%"; // Make it circular for display
-        document.getElementById("profileAvatar").style.display = "none";
-        alert("✅ Avatar regenerated and replaced successfully!");
-      } else {
-        alert("❌ Failed to regenerate avatar.");
-      }
-    } catch (err) {
-      console.error("Error regenerating avatar:", err);
-      alert("❌ Something went wrong.");
-    }
-  });
-}
-
+  // HIDE edit/upload buttons for public viewers (CHANGE FOR PUBLIC VIEWING)
   if (!viewingOwnProfile) {
     if (editBtn) editBtn.style.display = "none";
     if (changePicBtn) changePicBtn.style.display = "none";
     if (uploadPic) uploadPic.style.display = "none";
+    if (regenerateAvatarBtn) regenerateAvatarBtn.style.display = "none";
+    
+    // HIDE the Volant Quick panel for public viewers
+    const quickAccessPanel = document.querySelector(".interaction-panel");
+    if (quickAccessPanel) {
+      quickAccessPanel.style.display = "none";
+    }
   }
-  if (viewingOwnProfile && editBtn) {
+  
+  if (viewingOwnProfile && editBtn && user) {
     editBtn.style.display = "inline-block";
     editBtn.addEventListener("click", () => {
       window.location.href = "edit-profile.html";
     });
   }
 
-  if (!viewingOwnProfile) {
-    const quickAccessPanel = document.querySelector(".interaction-panel");
-    if (quickAccessPanel) {
-      quickAccessPanel.style.display = "none";
-    }
-  }
-
   await fetchUserPoems(profileUsername);
   await fetchTopPoems(profileUsername);
 });
 
-// --- Fetch User Poems ---
+// --- Fetch User Poems (NO CHANGES - keep original) ---
 async function fetchUserPoems(usernameToFetch) {
   try {
     const q = query(
@@ -2056,7 +2062,7 @@ async function fetchUserPoems(usernameToFetch) {
   }
 }
 
-// --- Fetch Top 3 Poems ---
+// --- Fetch Top 3 Poems (NO CHANGES) ---
 async function fetchTopPoems(profileName) {
   try {
     if (!profileName) return;
@@ -2105,7 +2111,7 @@ async function fetchTopPoems(profileName) {
   }
 }
 
-// --- Cloudinary Upload ---
+// --- Cloudinary Upload (NO CHANGES) ---
 if (changePicBtn) {
   const cloudName = "dzoq4pgjn";
   const uploadPreset = "profile_pics";
@@ -2131,12 +2137,11 @@ if (changePicBtn) {
       });
       const data = await res.json();
       
-      // Get the raw URL without any transformations
       const imageUrl = data.secure_url;
 
       if (profilePic) {
         profilePic.src = imageUrl;
-        profilePic.style.borderRadius = "50%"; // Make it circular for display
+        profilePic.style.borderRadius = "50%";
       }
 
       const user = auth.currentUser;
@@ -2151,29 +2156,25 @@ if (changePicBtn) {
   });
 }
 
-// --- Profile picture expand on click ---
-// --- Profile picture expand on click ---
+// --- Profile picture expand on click (NO CHANGES) ---
 const modal = document.getElementById("imageModal");
 const expandedImg = document.getElementById("expandedImg");
 const closeModal = document.querySelector(".close-modal");
 const profilePicEl = document.getElementById("profilePic");
 const profileAvatar = document.getElementById("profileAvatar");
 
-// Function to show modal with image
 function showImageModal(imageSrc) {
   if (expandedImg) {
     expandedImg.src = imageSrc;
-    // Remove any border-radius that might be applied
     expandedImg.style.borderRadius = "0";
     expandedImg.style.maxWidth = "90%";
     expandedImg.style.maxHeight = "90%";
     expandedImg.style.objectFit = "contain";
-    expandedImg.style.background = "transparent"; // Ensure no background
+    expandedImg.style.background = "transparent";
   }
   if (modal) modal.style.display = "flex";
 }
 
-// Handle click on uploaded profile picture
 if (profilePicEl) {
   profilePicEl.addEventListener("click", () => {
     if (profilePicEl.src) {
@@ -2182,60 +2183,46 @@ if (profilePicEl) {
   });
 }
 
-// Handle click on generated avatar
 if (profileAvatar) {
   profileAvatar.addEventListener("click", () => {
-    // If there's an uploaded image, use that instead
     if (profilePicEl && profilePicEl.style.display !== "none" && profilePicEl.src) {
       showImageModal(profilePicEl.src);
     } else {
-      // For generated avatar, create an image that preserves the circular styling
       const initials = document.getElementById("avatarInitials")?.textContent || "?";
       const bgColor = window.getComputedStyle(profileAvatar).backgroundColor;
-      
-      // Get the computed styles to match exactly
       const avatarStyles = window.getComputedStyle(profileAvatar);
       const borderColor = avatarStyles.borderColor;
       const borderWidth = avatarStyles.borderWidth;
-      const boxShadow = avatarStyles.boxShadow;
       
-      // Create a canvas to generate the avatar image
       const canvas = document.createElement("canvas");
-      canvas.width = 500; // Higher resolution
+      canvas.width = 500;
       canvas.height = 500;
       const ctx = canvas.getContext("2d");
       
-      // Clear canvas with transparency
       ctx.clearRect(0, 0, 500, 500);
-      
-      // Draw the circular background
       ctx.beginPath();
-      ctx.arc(250, 250, 240, 0, 2 * Math.PI); // Slightly smaller to account for border
+      ctx.arc(250, 250, 240, 0, 2 * Math.PI);
       ctx.fillStyle = bgColor;
       ctx.fill();
       
-      // Draw the inner shadow/ring effect (from the ::before pseudo-element)
       ctx.beginPath();
       ctx.arc(250, 250, 230, 0, 2 * Math.PI);
       ctx.strokeStyle = "rgba(0,0,0,0.12)";
       ctx.lineWidth = 2;
       ctx.stroke();
       
-      // Draw the border
       ctx.beginPath();
       ctx.arc(250, 250, 240, 0, 2 * Math.PI);
       ctx.strokeStyle = borderColor || "#b89b5e";
       ctx.lineWidth = parseInt(borderWidth) || 4;
       ctx.stroke();
       
-      // Draw the initials
       ctx.fillStyle = "#ffffff";
       ctx.font = "bold 200px 'Playfair Display', serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(initials, 250, 250);
       
-      // Add a subtle radial gradient for depth (matching the original)
       const gradient = ctx.createRadialGradient(150, 150, 50, 250, 250, 300);
       gradient.addColorStop(0, "rgba(255,255,255,0.2)");
       gradient.addColorStop(1, "rgba(0,0,0,0.1)");
@@ -2245,14 +2232,12 @@ if (profileAvatar) {
       ctx.arc(250, 250, 250, 0, 2 * Math.PI);
       ctx.fill();
       
-      // Convert to data URL and show in modal
       const dataUrl = canvas.toDataURL("image/png");
       showImageModal(dataUrl);
     }
   });
 }
 
-// Close modal handlers
 if (closeModal) {
   closeModal.addEventListener("click", () => {
     if (modal) modal.style.display = "none";
@@ -2263,10 +2248,10 @@ window.addEventListener("click", (e) => {
   if (e.target === modal) modal.style.display = "none";
 });
 
-// Also make the avatar have pointer cursor to indicate it's clickable
 if (profileAvatar) {
   profileAvatar.style.cursor = "pointer";
 }
+
 // Menu toggle and nav
 const menuToggle = document.getElementById("menu-toggle");
 const navLinks = document.getElementById("nav-links");
@@ -2301,7 +2286,7 @@ if (logoutBtnNav) {
   });
 }
 
-// --- Search Filter ---
+// --- Search Filter (NO CHANGES) ---
 const searchInput = document.getElementById("searchInput");
 let debounceTimeout;
 

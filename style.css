@@ -3129,3 +3129,314 @@ color: #555555;
   }
 }
 
+
+/* ============================================
+   MOBILE-FRIENDLY COMMENT LIST STYLES
+   ============================================ */
+
+/* Base comment list styles */
+.comment-list {
+  margin: 16px 0 24px 0;
+  width: 100%;
+  padding: 16px;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
+
+/* Individual comment styling - LEFT BORDER REMOVED */
+.comment-list .comment {
+  background: #faf8f5;
+  padding: 14px 16px;
+  margin: 10px 0;
+  border-radius: 16px;
+  transition: background 0.2s;
+  /* border-left: 3px solid #B8860B; - REMOVED */
+}
+
+.comment-list .comment:hover {
+  background: #f5f0ea;
+}
+
+/* Comment author name - MATCHES CATEGORIES COLOR (#B8860B) */
+.comment-list .comment-author-link {
+  font-weight: 700;
+  color: #B8860B;
+  text-decoration: none;
+  font-size: 0.95rem;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+/* Also style any author name that's not using comment-author-link class */
+.comment-list .comment > a:first-child,
+.comment-list .comment > span:first-child {
+  font-weight: 700;
+  color: #B8860B;
+  text-decoration: none;
+}
+
+/* Comment text */
+.comment-list .comment > span:not(.comment-author-link) {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #3a2c1f;
+  word-break: break-word;
+}
+
+/* Reply toggle button */
+.comment-list .reply-toggle {
+  color: #5a3cb3;
+  cursor: pointer;
+  font-size: 0.7rem;
+  margin-top: 8px;
+  display: inline-block;
+  padding: 4px 12px;
+  background: #f0edf7;
+  border-radius: 20px;
+  transition: all 0.2s;
+}
+
+.comment-list .reply-toggle:hover {
+  background: #e0daf0;
+  transform: scale(1.02);
+}
+
+/* Reply section container */
+.comment-list .reply-section {
+  margin-left: 16px;
+  margin-top: 12px;
+  padding-left: 12px;
+  border-left: 2px solid #e0d6c8;
+}
+
+/* Reply styling - author name also matches categories color */
+.comment-list .reply-section > div span:first-child,
+.comment-list .reply-section > div a:first-child {
+  font-weight: 600;
+  color: #B8860B;
+  text-decoration: none;
+}
+
+.comment-list .reply-section > div {
+  background: #f5f2ee;
+  padding: 8px 12px;
+  border-radius: 12px;
+  margin: 6px 0;
+  font-size: 0.88rem;
+}
+
+/* Reply input area */
+.comment-list .reply-input {
+  margin-top: 12px;
+  animation: fadeIn 0.2s ease;
+}
+
+.comment-list .reply-input textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid #e0d6c8;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+  background: #ffffff;
+  transition: border 0.2s;
+}
+
+.comment-list .reply-input textarea:focus {
+  outline: none;
+  border-color: #B8860B;
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1);
+}
+
+.comment-list .send-reply-btn {
+  margin-top: 8px;
+  background: #B8860B;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.comment-list .send-reply-btn:hover {
+  background: #9a6b08;
+}
+
+/* Empty state message */
+.comment-list p {
+  text-align: center;
+  color: #a0917e;
+  padding: 20px;
+  font-style: italic;
+}
+
+/* ============================================
+   PHONE-SPECIFIC STYLES (max-width: 768px)
+   ============================================ */
+@media (max-width: 768px) {
+  .comment-list {
+    padding: 12px;
+    margin: 12px 0 20px 0;
+    border-radius: 18px;
+  }
+
+  .comment-list .comment {
+    padding: 12px 14px;
+    margin: 8px 0;
+    border-radius: 14px;
+  }
+
+  .comment-list .comment-author-link {
+    font-size: 0.9rem;
+  }
+
+  .comment-list .comment > span:not(.comment-author-link) {
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .comment-list .reply-toggle {
+    font-size: 0.68rem;
+    padding: 3px 10px;
+    margin-top: 6px;
+  }
+
+  .comment-list .reply-section {
+    margin-left: 8px;
+    padding-left: 8px;
+  }
+
+  .comment-list .reply-section > div {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+
+  .comment-list .reply-input textarea {
+    padding: 10px;
+    font-size: 0.85rem;
+    border-radius: 14px;
+  }
+
+  .comment-list .send-reply-btn {
+    padding: 7px 18px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ============================================
+   SMALL PHONES (max-width: 480px)
+   ============================================ */
+@media (max-width: 480px) {
+  .comment-list {
+    padding: 10px;
+    margin: 8px 0 16px 0;
+    border-radius: 16px;
+  }
+
+  .comment-list .comment {
+    padding: 10px 12px;
+    margin: 6px 0;
+    border-radius: 12px;
+  }
+
+  .comment-list .comment-author-link {
+    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .comment-list .comment > span:not(.comment-author-link) {
+    font-size: 0.85rem;
+    display: block;
+    margin-left: 0;
+  }
+
+  .comment-list .reply-toggle {
+    font-size: 0.65rem;
+    padding: 3px 10px;
+  }
+
+  .comment-list .reply-section {
+    margin-left: 6px;
+    padding-left: 8px;
+  }
+
+  .comment-list .reply-section > div {
+    padding: 6px 10px;
+    font-size: 0.82rem;
+  }
+
+  .comment-list .reply-section > div span:first-child,
+  .comment-list .reply-section > div a:first-child {
+    font-size: 0.82rem;
+  }
+
+  .comment-list .reply-input textarea {
+    padding: 10px;
+    font-size: 0.82rem;
+  }
+
+  .comment-list .send-reply-btn {
+    padding: 6px 16px;
+    font-size: 0.75rem;
+    width: 100%;
+  }
+}
+
+/* Animation for reply input */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading state */
+.comment-list:has(> p:first-child) {
+  text-align: center;
+  color: #a0917e;
+}
+
+/* Remove left border from reply section */
+.comment-list .reply-section {
+  margin-left: 16px;
+  margin-top: 12px;
+  padding-left: 12px;
+  border-left: none; /* REMOVED the border */
+}
+
+/* Or if you want to completely remove it with no trace */
+.comment-list .reply-section {
+  margin-left: 16px;
+  margin-top: 12px;
+  padding-left: 12px;
+  border-left: 0;
+}
+
+/* For smaller screens, also remove it there */
+@media (max-width: 768px) {
+  .comment-list .reply-section {
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .comment-list .reply-section {
+    margin-left: 6px;
+    padding-left: 8px;
+    border-left: none;
+  }
+}
