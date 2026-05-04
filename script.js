@@ -24,14 +24,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth();
 
-// Enable offline persistence
-enableIndexedDbPersistence(db).catch(err => {
-  if (err.code === 'failed-precondition') {
-    console.warn("Persistence failed: multiple tabs open");
-  } else if (err.code === 'unimplemented') {
-    console.warn("Persistence not supported in this browser");
-  }
-});
 
 // ============================================
 // RENCE BLUNT FILTER - UID for filtering
@@ -58,6 +50,21 @@ function escapeHtml(str) {
   });
 }
 
+// --- Truncate helper function ---
+function truncatePoem(text, lines = 8) {
+  if (!text || typeof text !== 'string') {
+    return { preview: '', full: '', truncated: false };
+  }
+  const allLines = text.split(/\r?\n/);
+  if (allLines.length <= lines) {
+    return { preview: text, full: text, truncated: false };
+  }
+  return {
+    preview: allLines.slice(0, lines).join("\n"),
+    full: text,
+    truncated: true
+  };
+}
 // Track pagination
 let lastVisible = null;
 let reachedEnd = false;
@@ -96,7 +103,7 @@ function addPoemSchema(poem) {
   script.textContent = JSON.stringify(schema, null, 2);
   document.head.appendChild(script);
 }
-
+// --- Weekly Highlights ---
 // --- Weekly Highlights ---
 async function loadWeeklyHighlights() {
   try {
@@ -104,8 +111,22 @@ async function loadWeeklyHighlights() {
     if (quoteSnap.exists()) {
       const data = quoteSnap.data();
       const quoteHTML = data.quote.replace(/\n/g, "<br>");
-      document.getElementById("weekly-quote").innerHTML = `<em>“${quoteHTML}”</em>`;
-      document.getElementById("quote-author").innerHTML = data.author ? `<br>~ ${data.author}` : "";
+      
+      // Null check for quote elements
+      const quoteElement = document.getElementById("weekly-quote");
+      const authorElement = document.getElementById("quote-author");
+      
+      if (quoteElement) {
+        quoteElement.innerHTML = `<em>“${quoteHTML}”</em>`;
+      } else {
+        console.error("Element 'weekly-quote' not found");
+      }
+      
+      if (authorElement) {
+        authorElement.innerHTML = data.author ? `<br>~ ${data.author}` : "";
+      } else {
+        console.error("Element 'quote-author' not found");
+      }
     }
 
     const poemSnap = await getDoc(doc(db, "weeklyHighlights", "weeklyPoem"));
@@ -122,7 +143,18 @@ async function loadWeeklyHighlights() {
       const poemAuthor = document.getElementById("poem-author");
       const poemTitle = document.getElementById("poem-title");
 
-      poemTitle.innerHTML = `<h3 class="poem-title">${title}</h3>`;
+      // Null checks for poem elements
+      if (!poemTitle) {
+        console.error("Element 'poem-title' not found");
+      } else {
+        poemTitle.innerHTML = `<h3 class="poem-title">${title}</h3>`;
+      }
+      
+      if (!poemContainer) {
+        console.error("Element 'weekly-poem' not found");
+        return;
+      }
+      
       const wrapperId = "poem-wrapper";
       poemContainer.innerHTML = `
         <div id="${wrapperId}">
@@ -133,35 +165,32 @@ async function loadWeeklyHighlights() {
           ${lines.length > 8 ? '<button class="toggle-poem">Read more</button>' : ""}
         </div>
       `;
-      poemAuthor.innerHTML = author ? `<hr class="poem-separator"><div class="poem-author">~ ${author}</div>` : "";
+      
+      if (poemAuthor) {
+        poemAuthor.innerHTML = author ? `<hr class="poem-separator"><div class="poem-author">~ ${author}</div>` : "";
+      } else {
+        console.error("Element 'poem-author' not found");
+      }
 
       if (lines.length > 8) {
         const wrapper = document.getElementById(wrapperId);
-        const toggleBtn = wrapper.querySelector(".toggle-poem");
-        const moreLines = wrapper.querySelector(".more-lines");
-        toggleBtn.addEventListener("click", () => {
-          const isHidden = moreLines.style.display === "none";
-          moreLines.style.display = isHidden ? "inline" : "none";
-          toggleBtn.textContent = isHidden ? "Read less" : "Read more";
-        });
+        if (wrapper) {
+          const toggleBtn = wrapper.querySelector(".toggle-poem");
+          const moreLines = wrapper.querySelector(".more-lines");
+          if (toggleBtn && moreLines) {
+            toggleBtn.addEventListener("click", () => {
+              const isHidden = moreLines.style.display === "none";
+              moreLines.style.display = isHidden ? "inline" : "none";
+              toggleBtn.textContent = isHidden ? "Read less" : "Read more";
+            });
+          }
+        }
       }
     }
   } catch (err) {
     console.error("Error fetching weekly highlights:", err);
   }
 }
-
-// --- Truncate helper ---
-function truncatePoem(text, lines = 8) {
-  const allLines = text.split(/\r?\n/);
-  if (allLines.length <= lines) return { preview: text, full: text, truncated: false };
-  return {
-    preview: allLines.slice(0, lines).join("\n"),
-    full: text,
-    truncated: true
-  };
-}
-
 // --- Recent Poems with Pagination (FILTERED for Rence Blunt) ---
 
 let loading = false;
@@ -750,7 +779,6 @@ document.addEventListener("click", async (e) => {
 
 // --- DOM Initialization & Tabs ---
 document.addEventListener("DOMContentLoaded", () => {
-  loadWeeklyHighlights();
   setupOfflineNotice();
 
   // Fade-in animation on scroll
