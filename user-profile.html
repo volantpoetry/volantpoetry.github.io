@@ -6,14 +6,13 @@
 <title>Profile | Volant Poetry</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
-  
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css" />
 <link rel="icon" type="image/png" href="images/logo.png" />
 <link rel="apple-touch-icon" href="images/logo.png" />
 
 <style>
-/* YOUR EXACT SAME CSS - NO CHANGES */
+/* YOUR EXACT SAME CSS - PRESERVED */
 :root {
   --primary: #4b2aad;
   --bg: #f7f5ff;
@@ -37,7 +36,7 @@ header {
   width: 100%;
 }
 
-/* Profile Section */
+/* Profile Section - White background on ALL screens */
 .profile-container {
   background: #fff;
   padding: 2rem;
@@ -49,7 +48,10 @@ header {
   margin-top: 40px;
 }
 
-.profile-container h2 { color: var(--primary); margin-bottom: 1rem; }
+.profile-container h2 { 
+  color: var(--primary); 
+  margin-bottom: 1rem; 
+}
 
 .profile-picture img {
   width: 100px;
@@ -60,8 +62,15 @@ header {
   border: 3px solid var(--primary);
 }
 
-.profile-info { margin: 1rem 0; font-size: 1rem; color: #333; }
-.profile-info p { margin: 0.5rem 0; }
+.profile-info { 
+  margin: 1rem 0; 
+  font-size: 1rem; 
+  color: #333; 
+}
+
+.profile-info p { 
+  margin: 0.5rem 0; 
+}
 
 .btn {
   padding: 0.5rem 1rem;
@@ -74,10 +83,20 @@ header {
   margin-top: 0.5rem;
 }
 
-.btn:hover { background: #6c3ddd; }
+.btn:hover { 
+  background: #6c3ddd; 
+}
 
-#editProfileBtn { background: #fff; color: var(--primary); border: 1px solid var(--primary); }
-#editProfileBtn:hover { background: var(--primary); color: #fff; }
+#editProfileBtn { 
+  background: #fff; 
+  color: var(--primary); 
+  border: 1px solid var(--primary); 
+}
+
+#editProfileBtn:hover { 
+  background: var(--primary); 
+  color: #fff; 
+}
 
 /* Poems Section */
 .profile-poems {
@@ -109,36 +128,23 @@ h2 {
   padding: 1.2rem;
   margin-bottom: 2rem;
 }
-/* Center on small screens */
+
 @media (max-width: 768px) {
   .recent-poem-card {
-    margin-left: -5;
+    margin-left: 0;
     margin-right: auto;
-    width: 100%; /* optional: make it responsive */
+    width: 100%;
   }
 }
+
 .poem-content {
   white-space: pre-wrap;
   line-height: 1.7;
   overflow: hidden;
-    padding-left: 12px; /* moves text slightly to the right */
+  padding-left: 12px;
 }
 
-/* --- Force smaller comment box --- */
-.recent-poem-card .comment-section {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-}
-
-.recent-poem-card .comment-input {
-  flex: none !important;        /* stop auto-stretching */
-  width: 220px !important;      /* fixed smaller width */
-  max-width: 65% !important;    /* optional safety */
-
-}
-/* ─────────── Desktop Layout (Two-Column) ─────────── */
+/* Desktop Layout (Two-Column) */
 @media (min-width: 900px) {
   .profile-layout {
     display: grid;
@@ -207,90 +213,14 @@ h2 {
   transform: none;
 }
 
-/* ─────────── Search Bar Styling ─────────── */
-/* ─────────── Search Bar Styling ─────────── */
-.search-bar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end; /* Move to right */
-  gap: 10px;
-  margin: 20px auto 30px;
-  width: 100%;              /* Full width container */
-  max-width: 900px;         /* Keeps it aligned with your cards */
-  padding-right: 50px;      /* Push in from right edge */
-}
-
-.search-bar input {
-  flex: 0 1 250px;          /* Fixed input width but still responsive */
-  padding: 10px 14px;
-  font-size: 15px;
-  border: 1px solid #ddd;
-  border-radius: var(--radius);
-  outline: none;
-  transition: 0.2s;
-  background: #fff;
-}
-
-.search-bar input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(75, 42, 173, 0.1);
-}
-.search-bar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin: 10px 0 20px;
-  width: 100%;
-  padding-right: 15px; /* tighter spacing */
-}
-
-.search-bar input {
-  width: 150px;               /* smaller width */
-  padding: 6px 10px;          /* reduced height */
-  font-size: 14px;            /* slightly smaller text */
-  border: 1px solid #ccc;
-  border-radius: 10px;        /* cute rounded shape */
-  outline: none;
-  transition: 0.2s;
-  background: #fafafa;        /* soft cute look */
-}
-
-/* Cute hover & focus effect */
-.search-bar input:focus {
-  border-color: #999;
-  background: #fff;
-  box-shadow: 0 0 4px rgba(0,0,0,0.1);
-}
-
-
-.search-bar input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(75, 42, 173, 0.1);
-}
-@media (max-width: 600px) {
-  .search-bar {
-    width: 50%;             /* narrower on small screens */
-    margin-left: auto;      /* push container to the right */
-    justify-content: flex-end;
-    padding-right: 10px;
-  }
-
-  .search-bar input {
-    width: 50px !important; /* force small width */
-    padding: 5px 8px;
-    font-size: 12px;
-  }
-}
-
 /* Flex container for profile picture + info */
 .profile-header-flex {
   display: flex;
-  flex-direction: column; /* stack on mobile */
+  flex-direction: column;
   align-items: center;
   gap: 20px;
 }
 
-/* Profile picture section with followers below */
 .profile-picture-section {
   display: flex;
   flex-direction: column;
@@ -308,23 +238,23 @@ h2 {
   text-align: center;
 }
 
-/* Profile info on the right */
 .profile-info-right {
   display: flex;
   flex-direction: column;
   gap: 10px;
   text-align: left;
-    line-height: 0.95; /* tighten lines */
-      margin-left: 10px; /* move closer to the profile picture */
-}
-.profile-info-right p {
-  margin: 4px 0; /* small vertical spacing between lines */
+  line-height: 0.95;
+  margin-left: 10px;
 }
 
-/* Desktop layout */
+.profile-info-right p {
+  margin: 4px 0;
+}
+
+/* Desktop layout adjustments */
 @media (min-width: 900px) {
   .profile-header-flex {
-    flex-direction: row; /* picture on left, info on right */
+    flex-direction: row;
     align-items: flex-start;
   }
 
@@ -333,21 +263,213 @@ h2 {
   }
 
   .profile-info-right {
-    margin-left: 40px; /* space between picture and info */
+    margin-left: 20px;
   }
-}
-@media (min-width: 900px) {
-  .profile-info-right {
-    margin-left: 20px; /* tighter spacing on desktop */
-  }
-}
-/* Move followers/following to the left on desktop */
-@media (min-width: 900px) {
+
   .follow-info-horizontal {
-    justify-content: flex-start; /* align to the left instead of center */
-    margin-left: 0;              /* remove extra margin if any */
+    justify-content: flex-start;
+    margin-left: 0;
   }
 }
+
+/* MOBILE LAYOUT - Keep white background, no forced white text */
+@media (max-width: 899px) {
+  .profile-layout {
+    margin-left: 0 !important;
+    width: 100%;
+    padding: 0 15px;
+    box-sizing: border-box;
+  }
+
+  /* Keep profile container white - NO purple background */
+  .profile-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 20px 0;
+    padding: 1.5rem;
+    background: #fff !important;
+    text-align: left;
+  }
+
+  /* Keep title visible */
+  .profile-container h2 {
+    display: block;
+    text-align: left;
+  }
+
+  /* Keep dark text - NO white text */
+  .profile-info-right p,
+  .profile-info-right span,
+  .profile-info-right strong {
+    color: #333 !important;
+  }
+
+  .profile-info-right p strong {
+    color: #666 !important;
+  }
+
+  /* Keep normal button styling */
+  .profile-buttons .btn,
+  #editProfileBtn {
+    color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    background: #fff !important;
+  }
+
+  /* Keep followers text dark */
+  .follow-item,
+  .follow-item strong,
+  .follow-item span {
+    color: #333 !important;
+  }
+
+  /* Make Volant Quick panel full width */
+  .interaction-panel {
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  /* Profile header flex adjustments */
+  .profile-header-flex {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .profile-picture-section {
+    flex-shrink: 0;
+  }
+
+  .profile-info-right {
+    margin-left: 0;
+    text-align: left;
+  }
+
+  /* Stats section adjustments */
+  .profile-stats-section {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 20px 15px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Poems section adjustments */
+  .profile-poems {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 15px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Change picture button position */
+  .profile-picture {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 0;
+  }
+
+  #changePicBtn {
+    position: absolute;
+    bottom: -10px;
+    left: 0 !important;
+    width: 110px;
+    font-size: 0.7rem;
+    padding: 5px 10px;
+  }
+
+  #editProfileBtn {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    width: auto;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 600px) {
+  h2 {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .nav-logo-img {
+    width: 40px;
+  }
+
+  .logo-text {
+    font-size: 1rem;
+  }
+
+  .logo {
+    margin-left: 10px;
+  }
+
+  .profile-layout {
+    padding: 0 10px;
+  }
+
+  .profile-stats-section {
+    padding: 15px 10px;
+  }
+
+  .profile-poems {
+    padding: 0 10px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .recent-poem-card {
+    margin-bottom: 18px !important;
+  }
+}
+
+/* Search Bar Styling */
+.search-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 10px 0 20px;
+  width: 100%;
+  padding-right: 15px;
+}
+
+.search-bar input {
+  width: 150px;
+  padding: 6px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  transition: 0.2s;
+  background: #fafafa;
+}
+
+.search-bar input:focus {
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(75, 42, 173, 0.1);
+}
+
+@media (max-width: 600px) {
+  .search-bar {
+    width: 50%;
+    margin-left: auto;
+    justify-content: flex-end;
+    padding-right: 10px;
+  }
+
+  .search-bar input {
+    width: 50px !important;
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+}
+
+/* Interaction Panel */
 .interaction-panel ul {
   list-style: none;
   padding: 0;
@@ -363,7 +485,7 @@ h2 {
   display: flex;
   align-items: center;
   gap: 10px;
-  text-decoration: none;  /* remove underline */
+  text-decoration: none;
   color: var(--text);
   width: 100%;
   transition: 0.2s;
@@ -375,59 +497,16 @@ h2 {
   border-radius: 8px;
   padding-left: 10px;
 }
-/* Full-width horizontal profile stats */
-.profile-stats-section {
-  width: 100%;               /* Take full page width */
-  background: #fff;          /* Optional background */
-  padding: 20px 40px;        /* Some spacing */
-  margin: 40px 0;            /* Top & bottom spacing */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  display: flex;
-  gap: 30px;                 /* Space between panels */
-  overflow-x: auto;          /* Allow horizontal scrolling if screen is small */
-  box-sizing: border-box;    /* Include padding in width */
-}
 
-/* Each panel item inside stats */
-.interaction-panel-horizontal {
-  display: flex;
-  gap: 40px;
-}
-
-.panel-item {
-  min-width: 200px;          /* Ensure panels don’t collapse */
-  flex: 1;                   /* Equal width stretch */
-  background: #f7f5ff;       /* Optional distinct background */
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-/* Level bar */
-.level-bar {
-  width: 100%;
-  height: 12px;
-  background: #ddd;
-  border-radius: 6px;
-  margin-top: 8px;
-}
-#levelProgress {
-  height: 100%;
-  background: var(--primary);
-  border-radius: 6px;
-}
-
-
-/* Make sure the horizontal profile stats are responsive */
+/* Profile Stats Section */
 .profile-stats-section {
   width: 100%;
-  background:  #f7f5ff;
+  background: #f7f5ff;
   padding: 20px 40px;
   margin: 40px 0;
-  box-shadow: 0 4px 12px  #f7f5ff;
   display: flex;
-  overflow-x: auto;
   gap: 30px;
+  overflow-x: auto;
   box-sizing: border-box;
 }
 
@@ -442,9 +521,24 @@ h2 {
   background: #f7f5ff;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px  #B8860B;
+  box-shadow: 0 2px 8px #B8860B;
 }
 
+.level-bar {
+  width: 100%;
+  height: 12px;
+  background: #ddd;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+#levelProgress {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 6px;
+}
+
+/* Badges Container */
 .badges-container {
   display: flex;
   flex-wrap: wrap;
@@ -455,9 +549,9 @@ h2 {
 .badges-container img {
   width: 50px;
   height: 50px;
-  border-radius: 0;  /* No circles - square/rectangular as in your gallery */
+  border-radius: 0;
   object-fit: cover;
-  border: none;  /* No border */
+  border: none;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
@@ -469,26 +563,46 @@ h2 {
   box-shadow: 0 4px 12px rgba(75, 42, 173, 0.3);
 }
 
-/* Shift the profile layout slightly to the right */
-.profile-layout {
-  margin-left: 40px; /* adjust px as needed */
+/* Responsive badges */
+@media screen and (max-width: 899px) {
+  .badges-container {
+    display: grid !important;
+    grid-template-columns: repeat(6, 1fr) !important;
+    gap: 8px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+  }
+  
+  .badges-container img {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+    max-width: 60px !important;
+    margin: 0 auto !important;
+  }
 }
 
-/* Shift the horizontal stats section to the right as well */
-.profile-stats-section {
-  margin-left: 70px; /* match the layout shift */
-  margin-right: 40px; /* optional: keeps spacing consistent on the right */
+@media screen and (max-width: 480px) {
+  .badges-container {
+    gap: 5px !important;
+  }
+  
+  .badges-container img {
+    max-width: 45px !important;
+  }
 }
 
-/* Optional: shift poems section as well */
-.profile-poems {
-  margin-left: 40px; /* aligns poems with profile layout */
-  margin-right: 40px; 
+@media screen and (max-width: 360px) {
+  .badges-container img {
+    max-width: 40px !important;
+  }
 }
 
+/* Top Poem Link */
 .top-poem-link {
   display: block;
-  color:  #B8860B;
+  color: #B8860B;
   text-decoration: none;
   margin: 6px 0;
   font-weight: 600;
@@ -498,8 +612,10 @@ h2 {
 .top-poem-link:hover {
   color: #1a73e8;
 }
+
+/* Profile Picture */
 .profile-picture img {
-  width: 180px;           /* 🔥 bigger circle size */
+  width: 180px;
   height: 180px;
   border-radius: 50%;
   object-fit: cover;
@@ -511,13 +627,12 @@ h2 {
 }
 
 .profile-picture img:hover {
-  transform: scale(1.05); /* subtle hover zoom for polish */
+  transform: scale(1.05);
 }
 
-
-/* --- Image Modal --- */
+/* Image Modal */
 .image-modal {
-  display: none; /* Hidden by default */
+  display: none;
   position: fixed;
   z-index: 1000;
   left: 0;
@@ -558,11 +673,176 @@ h2 {
   from { transform: scale(0.9); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
-#topPoemContent span {
-  display: block;
-  margin-bottom: 4px;
+
+/* Comment aligned */
+.comment-aligned {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 15px;
 }
 
+.comment-aligned .comment-input {
+  flex: 1;
+  max-width: 200px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+
+/* Poem date, category, read more */
+.poem-date {
+  margin-left: 15px !important;
+  display: block;
+  color: #008080;
+}
+
+.poem-category-line {
+  margin-left: 15px !important;
+}
+
+.read-more-btn {
+  margin-left: 15px !important;
+  background: none;
+  border: none;
+  color: #960606;
+  cursor: pointer;
+}
+
+/* Responsive adjustments for poem elements */
+@media (max-width: 768px) {
+  .poem-date,
+  p.poem-category-line,
+  .read-more-btn {
+    margin-left: -5px !important;
+    font-size: 0.7rem !important;
+  }
+  
+  p.poem-category-line {
+    margin-top: -2px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  .poem-category-line em {
+    font-size: 0.7rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .poem-date,
+  p.poem-category-line,
+  .read-more-btn {
+    margin-left: -8px !important;
+    font-size: 0.65rem !important;
+  }
+  
+  p.poem-category-line {
+    margin-top: -3px !important;
+    margin-bottom: 5px !important;
+  }
+  
+  .poem-category-line em {
+    font-size: 0.65rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .poem-date,
+  p.poem-category-line,
+  .read-more-btn {
+    margin-left: -10px !important;
+    font-size: 0.6rem !important;
+  }
+  
+  p.poem-category-line {
+    margin-top: -4px !important;
+    margin-bottom: 4px !important;
+  }
+  
+  .poem-category-line em {
+    font-size: 0.6rem !important;
+  }
+}
+
+/* Volant Avatar */
+.volant-avatar {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 3rem;
+  letter-spacing: 2px;
+  color: #2b1f14;
+  background: radial-gradient(circle at top left, rgba(255,255,255,0.6), rgba(0,0,0,0.03)), linear-gradient(135deg, #f6efe7, #e9dfd2);
+  border: 4px solid #b89b5e;
+  box-shadow: inset 0 0 0 6px #fdfaf5, 0 6px 18px rgba(0,0,0,0.18);
+  user-select: none;
+  position: relative;
+}
+
+.volant-avatar::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+#avatarInitials {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  font-weight: 700;
+  font-size: 3.2rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Regenerate Avatar Button */
+#regenerateAvatarBtn {
+  margin-left: 10px;
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+#regenerateAvatarBtn:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+#regenerateAvatarBtn:active {
+  transform: scale(0.98);
+}
+
+/* Delete button inside poem card */
+.recent-poem-card .delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.recent-poem-card .delete-btn:hover {
+  background-color: #e60000;
+}
+
+/* Nav and Logout */
 .logout-nav-btn {
   display: inline-block;
   margin-left: 20px;
@@ -573,7 +853,6 @@ h2 {
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  z-index: 50; /* ensure it’s above other elements */
 }
 
 .logout-nav-btn:hover {
@@ -585,540 +864,8 @@ h2 {
   align-items: center;
   gap: 10px;
 }
-/* Move "My Profile" to left edge on small screens */
-@media (max-width: 899px) {
-  .profile-container {
 
- 
-    text-align: left;   /* align text left */
-        width: 80%;         /* full width */
-           font-size: 0.9rem; /* smaller text */
-             background-color: #4b2aad; /* new background color */
-  }
-
-  .profile-header-flex {
-    align-items: flex-start; /* align picture + info to left */
-  }
-
-  .profile-info-right {
-    margin-left: 15px; /* small spacing from profile picture */
-    text-align: left;
-  }
-
-  .profile-picture-section {
-    align-items: flex-start; /* move picture to left */
-  }
-
-  .follow-info-horizontal {
-    justify-content: flex-start; /* followers left-aligned */
-  }
-  
-}
-
-/* Small screens (keep info to the right of image) */
-@media (max-width: 899px) {
-  .profile-header-flex {
-    flex-direction: row; /* side by side */
-    align-items: flex-start; /* top-aligned */
-    justify-content: flex-start; /* optional */
-    gap: 15px; /* space between image and info */
-  }
-
-  .profile-picture-section {
-    flex-shrink: 0; /* prevent shrinking */
-  }
-
-  .profile-info-right {
-    margin-left: 0; /* spacing handled by gap */
-    text-align: left;
-  }
-  
-}
-@media (max-width: 899px) {
-  .profile-picture {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; /* force left alignment */
-    padding-bottom: 0; /* optional, remove extra space */
-  }
-
-  #changePicBtn {
-    position: absolute;
-    bottom: -10px;  /* adjust vertical position */
-    left: 0 !important; /* force left alignment */
-    width: 110px; /* reduce width */
-    font-size: 0.7rem; /* smaller text */
-    padding: 5px 10px; /* adjust padding */
-  }
-}
-
-@media (max-width: 899px) {
-  #editProfileBtn {
-    font-size: 0.8rem;      /* smaller text */
-    padding: 5px 10px;      /* smaller button */
-    width: auto;            /* optional: shrink to content */
-  
-}
-}
-
-@media (max-width: 600px) {
-  h2 {
-    font-size: 1.2rem;
-    text-align: center;
-  }
-}
-
-@media (max-width: 600px) {
-  .nav-logo-img {
-    width: 40px;  /* smaller logo image */
-  }
-
-  .logo-text {
-    font-size: 1rem; /* smaller text */
-  }
-
-  .logo {
-    margin-left: 10px; /* optional, keep it from touching the edge */
-  }
-}
-/* Shift title and author slightly to the right */
-.poem-title,
-.poem-author {
-  margin-left: 15px; /* adjust as needed */
-}
-
-/* Reduce width of comment input and align with card */
-.comment-aligned {
-  display: flex;
-  align-items: center;
-  gap: 8px; /* space between inputs and buttons */
-  margin-left: 15px; /* same offset as title/author */
-}
-
-.comment-aligned .comment-input {
-  flex: 1;       /* input takes remaining space */
-  max-width: 200px; /* reduced width */
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 0.9rem;
-}
-@media (max-width: 600px) {
-  .profile-info-right,
-  .profile-info-right p,
-  .profile-info-right span,
-  .profile-info-right strong {
-    color: white !important;
-  }
-
-  .profile-buttons .btn {
-    color: white !important;
-    border-color: white !important;
-      background: transparent !important;
-  }
-}
-@media (max-width: 480px) {
-  .recent-poem-card {
-    margin-bottom: 18px !important;  /* gap between cards */
-  }
-    }
-
-    /* Container for all badges */
-  #badgesContainer {
-    display: flex;          /* Horizontal layout */
-    flex-wrap: wrap;        /* Wrap to next line if too many */
-    justify-content: flex-start; /* Align items to the left */
-    gap: 10px;              /* Space between badges */
-    margin-top: 10px;
-  }
-
-  /* Individual badges */
-  #badgesContainer img {
-    width: 50px;
-    height: 50px;
-    border-radius: 0;  /* No circles - square/rectangular */
-    object-fit: cover;
-    border: none;  /* No border */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
-    cursor: pointer;
-  }
-
-  #badgesContainer img:hover {
-    transform: scale(1.1);
-  }
-/* ─── Volant Classic Initial Avatar ─── */
-.volant-avatar {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-family: 'Playfair Display', serif;
-  font-weight: 700;
-  font-size: 3rem;
-  letter-spacing: 2px;
-
-  /* Classic ink tone */
-  color: #2b1f14;
-
-  /* Paper-like background */
-  background:
-    radial-gradient(circle at top left, rgba(255,255,255,0.6), rgba(0,0,0,0.03)),
-    linear-gradient(135deg, #f6efe7, #e9dfd2);
-
-  /* Elegant frame */
-  border: 4px solid #b89b5e; /* antique gold */
-  box-shadow:
-    inset 0 0 0 6px #fdfaf5,
-    0 6px 18px rgba(0,0,0,0.18);
-
-  user-select: none;
-  position: relative;
-}
-
-/* Inner soft ring */
-.volant-avatar::before {
-  content: "";
-  position: absolute;
-  inset: 10px;
-  border-radius: 50%;
-  border: 1px solid rgba(0,0,0,0.12);
-}
-
-/* Initials styling */
-/* ─── Default Generated User Name (Initials Avatar Only) ─── */
-#avatarInitials {
-  font-family: 'Libre Baskerville', Georgia, serif;
-  font-weight: 700;
-  font-size: 3.2rem;     /* controls ONLY the initials size */
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  line-height: 1;
-}
-
-.volant-avatar.stamp {
-  background: #2f1b12;
-  color: #f5e6c8;
-  border-color: #7a4b2e;
-  box-shadow:
-    inset 0 0 20px rgba(0,0,0,0.5),
-    0 8px 20px rgba(0,0,0,0.3);
-}
-/* Regenerate Avatar button styling */
-#regenerateAvatarBtn {
-  margin-left: 10px;        /* spacing from the previous button */
-  padding: 8px 16px;        /* button padding */
-  background-color: #4CAF50; /* green background */
-  color: #fff;              /* white text */
-  border: none;             /* remove default border */
-  border-radius: 6px;       /* rounded corners */
-  cursor: pointer;          /* pointer on hover */
-  font-size: 0.9rem;        /* slightly smaller font */
-  transition: background-color 0.3s, transform 0.2s; /* smooth hover effect */
-}
-
-/* Hover effect */
-#regenerateAvatarBtn:hover {
-  background-color: #45a049; /* slightly darker green */
-  transform: scale(1.05);    /* slight zoom effect */
-}
-
-/* Optional: active/pressed state */
-#regenerateAvatarBtn:active {
-  transform: scale(0.98);    /* press effect */
-}
-
-
-/* Delete button inside poem card */
-.recent-poem-card .delete-btn {
-  background-color: #ff4d4d;       /* bright red for delete */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-left: 8px;
-  transition: background-color 0.2s;
-}
-
-.recent-poem-card .delete-btn:hover {
-  background-color: #e60000;       /* darker red on hover */
-}
-
-.recent-poem-card .delete-btn:active {
-  transform: scale(0.95);          /* slight click animation */
-}
-
-
-@media screen and (max-width: 600px) {
-  .recent-poem-card .delete-btn {
-    font-size: 12px;
-    padding: 2px 6px;
-    margin-left: auto;
-  }
-}
-
-/* Default: show delete button on all screens at top-right of the card */
-.recent-poem-card {
-  position: relative; /* make sure absolute positioning works */
-}
-
-.recent-poem-card .delete-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  font-size: 14px;
-  padding: 4px 8px;
-  background: #ff4d4d;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* Small screens: make it smaller and compact */
-@media screen and (max-width: 600px) {
-  .recent-poem-card .delete-btn {
-    font-size: 12px;
-    padding: 2px 6px;
-  }
-
-  /* Optional: reduce size of other poem action buttons on small screens */
-  .recent-poem-card .poem-actions button,
-  .recent-poem-card .poem-actions textarea {
-    font-size: 12px;
-    padding: 4px 6px;
-  }
-}
-
-/* Shift date, categories, and read more button to the right */
-.poem-date {
-  margin-left: 15px !important;
-  display: block;
-  color: #008080; /* Teal */
-
-}
-
-.poem-category-line {
-  margin-left: 15px !important;
-}
-
-.read-more-btn {
-  margin-left: 15px !important;
-}
-/* Small screens - reduce font size, move left */
-@media (max-width: 768px) {
-  .poem-date,
-  p.poem-category-line,
-  .read-more-btn {
-    margin-left: -5px !important;
-    font-size: 0.7rem !important;
-  }
-  
-  /* Move categories SLIGHTLY UP */
-  p.poem-category-line {
-    margin-top: -2px !important;  /* Slightly up, not too much */
-    margin-bottom: 6px !important;
-  }
-  
-  .poem-category-line em {
-    font-size: 0.7rem !important;
-  }
-}
-
-/* Even smaller screens */
-@media (max-width: 600px) {
-  .poem-date,
-  p.poem-category-line,
-  .read-more-btn {
-    margin-left: -8px !important;
-    font-size: 0.65rem !important;
-  }
-  
-  /* Move categories SLIGHTLY UP */
-  p.poem-category-line {
-    margin-top: -3px !important;  /* Slightly more up */
-    margin-bottom: 5px !important;
-  }
-  
-  .poem-category-line em {
-    font-size: 0.65rem !important;
-  }
-}
-
-/* Very small screens */
-@media (max-width: 480px) {
-  .poem-date,
-  p.poem-category-line,
-  .read-more-btn {
-    margin-left: -10px !important;
-    font-size: 0.6rem !important;
-  }
-  
-  /* Move categories SLIGHTLY UP */
-  p.poem-category-line {
-    margin-top: -4px !important;  /* Slightly more up */
-    margin-bottom: 4px !important;
-  }
-  
-  .poem-category-line em {
-    font-size: 0.6rem !important;
-  }
-}
-
-
-/* Fix for small screens - remove left margin from profile layout */
-@media (max-width: 899px) {
-  .profile-layout {
-    margin-left: 0 !important; /* Remove the 40px left margin on mobile */
-    width: 100%;
-    padding: 0 15px; /* Add small padding instead */
-    box-sizing: border-box;
-  }
-  
-  /* Also adjust the stats section */
-  .profile-stats-section {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    padding: 20px 15px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  /* Adjust poems section */
-  .profile-poems {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    padding: 0 15px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  /* Make the Volant Quick panel full width on mobile */
-  .interaction-panel {
-    width: 100%;
-    margin-top: 20px;
-  }
-}
-
-/* Even smaller screens */
-@media (max-width: 600px) {
-  .profile-layout {
-    padding: 0 10px;
-  }
-  
-  .profile-stats-section {
-    padding: 15px 10px;
-  }
-  
-  .profile-poems {
-    padding: 0 10px;
-  }
-}
-
-/* SMALL SCREENS ONLY - Stack everything under profile image */
-@media (max-width: 899px) {
-  .profile-header-flex {
-    flex-direction: column !important;
-    align-items: flex-start !important; /* Changed from center to flex-start */
-    display: flex !important;
-  }
-  
-  .profile-picture-section {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Keep picture centered */
-    order: 1;
-  }
-  
-  .profile-info-right {
-    width: 100%;
-    text-align: left !important; /* Changed from center to left */
-    margin-left: 0 !important;
-    order: 2;
-    display: block !important;
-    padding-left: 10px; /* Add slight padding from left edge */
-  }
-  
-  .follow-info-horizontal {
-    justify-content: center !important;
-    margin-top: 20px;
-    width: 100%;
-    order: 3;
-    display: flex !important;
-  }
-  
-  .profile-picture {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .profile-info-right p {
-    text-align: left !important; /* Left align all paragraphs */
-    margin: 8px 0;
-    color: white !important;
-  }
-  
-  .profile-info-right p strong {
-    display: inline-block;
-    min-width: 80px;
-    color: rgba(255, 255, 255, 0.8);
-  }
-  
-  .profile-info-right p span {
-    color: white;
-  }
-  
-  .profile-buttons {
-    display: flex;
-    justify-content: flex-start !important; /* Changed from center to flex-start */
-    margin-top: 15px;
-    padding-left: 10px; /* Match the padding of profile-info-right */
-  }
-  
-  #editProfileBtn {
-    color: white !important;
-    border-color: white !important;
-    background: transparent !important;
-    margin: 0; /* Remove auto margin */
-  }
-  
-  .follow-item {
-    color: white;
-  }
-  
-  .follow-item strong {
-    color: white;
-    display: block;
-    font-size: 1.2rem;
-  }
-  
-  .follow-item span {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-  }
-  
-  /* Hide the profile container title on small screens */
-  .profile-container h2 {
-    display: none;
-  }
-  
-  /* Adjust container background */
-  .profile-container {
-    background-color: #4b2aad !important;
-    padding: 20px !important;
-  }
-}
-
-/* Achievement Modal Styles - matching gallery page exactly */
+/* Preview Modal */
 .preview-modal {
   display: none;
   position: fixed;
@@ -1197,302 +944,153 @@ h2 {
   font-size: 14px;
   opacity: 0.9;
 }
+/* Audio Section Styling */
+.audio-section { background: #f0ede8; border-radius: 12px; padding: 12px; margin: 15px 0; }
+.audio-section label { font-weight: 600; color: #4b2aad; margin-bottom: 8px; display: block; }
+.audio-controls { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.audio-controls button { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.record-audio-btn { background: #dc3545; color: white; }
+.upload-audio-btn { background: #28a745; color: white; }
+.delete-audio-btn { background: #ff4d4d; color: white; border: none; border-radius: 6px; padding: 4px 12px; cursor: pointer; }
+.recording-status { font-size: 0.85rem; color: #666; margin-top: 8px; }
+.recording-timer { font-size: 1.3rem; font-weight: bold; color: #dc3545; margin: 8px 0; font-family: monospace; background: #fff; display: inline-block; padding: 4px 12px; border-radius: 20px; }
+audio { width: 100%; border-radius: 8px; margin-top: 8px; }
 
-/* --- Image Modal --- */
-.image-modal {
-  display: none; /* Hidden by default */
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.85);
-  backdrop-filter: blur(3px);
-  align-items: center;
-  justify-content: center;
+/* Top 3 Poems - Simple inline numbering */
+#topPoemContent div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
-.image-modal img {
-  max-width: 90%;
-  max-height: 90%;
-  object-fit: contain;
-  border-radius: 0 !important; /* Show full shape */
-  box-shadow: 0 0 30px rgba(255,255,255,0.2);
-  animation: zoomIn 0.3s ease;
-  background: transparent !important; /* Force transparent background */
-}
-
-/* Ensure the modal background is dark */
-.image-modal {
-  background-color: rgba(0,0,0,0.85);
-}
-
-.close-modal {
-  position: absolute;
-  top: 20px;
-  right: 40px;
-  color: white;
-  font-size: 40px;
+#topPoemContent div span {
   font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-  z-index: 1001;
+  color: #4b2aad;
+  min-width: 28px;
 }
 
-.close-modal:hover {
-  color: #ff6666;
+#topPoemContent .top-poem-link {
+  flex: 1;
+  color: #B8860B;
+  text-decoration: none;
 }
 
-@keyframes zoomIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-/* Add this to your existing CSS - Achievement badges: 5 in a row on small screens */
-@media screen and (max-width: 899px) {
-  .badges-container {
-    display: grid !important;
-    grid-template-columns: repeat(6, 1fr) !important;
-    gap: 8px !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
-  }
-  
-  .badges-container img {
-    width: 100% !important;
-    height: auto !important;
-    aspect-ratio: 1 / 1 !important;
-    max-width: 60px !important;
-    margin: 0 auto !important;
-  }
-}
-
-/* For very small screens, keep 5 in a row but make badges smaller */
-@media screen and (max-width: 480px) {
-  .badges-container {
-    gap: 5px !important;
-  }
-  
-  .badges-container img {
-    max-width: 45px !important;
-  }
-}
-
-/* For extremely small screens, maintain 5 in a row with even smaller badges */
-@media screen and (max-width: 360px) {
-  .badges-container img {
-    max-width: 40px !important;
-  }
+#topPoemContent .top-poem-link:hover {
+  color: #4b2aad;
+  text-decoration: underline;
 }
 </style>
 </head>
-
 <body>
+
 <header>
   <nav>
     <div class="logo">
       <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img">
-      <span class="logo-text">
-        <span class="logo-highlight">Volant</span> Poetry
-      </span>
+      <span class="logo-text"><span class="logo-highlight">Volant</span> Poetry</span>
     </div>
-
     <div class="nav-links" id="nav-links">
       <span class="close-btn" id="close-btn">✕</span>
       <a href="index.html">Home</a>
       <a href="about.html">About</a>
-       <a href="contact.html">Contact Us</a>
+      <a href="contact.html">Contact Us</a>
     </div>
-<div class="nav-right">
-
-<!-- Mobile Icons -->
-    <div class="mobile-icons">
-  <!-- Logout Button -->
-  <button id="logoutBtnNav" class="btn logout-nav-btn">Logout</button>
-  </div>
-
+    <div class="nav-right">
+      <div class="mobile-icons"><button id="logoutBtnNav" class="btn logout-nav-btn">Logout</button></div>
       <div class="menu-toggle" id="menu-toggle">☰</div>
     </div>
-</nav>
+  </nav>
 </header>
 
-<!-- PROFILE + QUICK ACCESS WRAPPER -->
 <div class="profile-layout">
-
-  <!-- Profile Container (Left Column) -->
   <div class="profile-container">
     <h2>Profile</h2>
-
     <div class="profile-header-flex">
       <div class="profile-picture-section">
         <div class="profile-picture">
-<div id="profileAvatar" class="volant-avatar">
-  <span id="avatarInitials"></span>
-</div>
-
-<img id="profilePic" style="display:none;" alt="Profile Picture">
-
+          <div id="profileAvatar" class="volant-avatar"><span id="avatarInitials"></span></div>
+          <img id="profilePic" style="display:none;" alt="Profile Picture">
           <input type="file" id="uploadPic" style="display:none;">
           <button class="btn" id="changePicBtn">Change Picture</button>
-   <button id="regenerateAvatarBtn" style="display:none; margin-left: 10px;">Regenerate Avatar</button> </div>
-
+          <button id="regenerateAvatarBtn" style="display:none;">Regenerate Avatar</button>
+        </div>
         <div class="follow-info-horizontal">
-          <div class="follow-item">
-            <strong id="followersCount">0</strong>
-            <span>Followers</span>
-          </div>
-          <div class="follow-item">
-            <strong id="followingCount">0</strong>
-            <span>Following</span>
-          </div>
+          <div class="follow-item"><strong id="followersCount">0</strong><span>Followers</span></div>
+          <div class="follow-item"><strong id="followingCount">0</strong><span>Following</span></div>
         </div>
       </div>
-
       <div class="profile-info-right">
         <p><strong>Real Name:</strong> <span id="realName"></span></p>
         <p><strong>Username:</strong> <span id="username"></span></p>
         <p><strong>Email:</strong> <span id="email"></span></p>
         <p><strong>Bio:</strong> <span id="bio"></span></p>
         <p><strong>Joined:</strong> <span id="joined"></span></p>
-        <div class="profile-buttons">
-          <button class="btn" id="editProfileBtn">Edit Profile</button>
-        </div>
+        <div class="profile-buttons"><button class="btn" id="editProfileBtn">Edit Profile</button></div>
       </div>
     </div>
   </div>
 
-  <!-- Quick Access (Right Column) -->
   <div class="interaction-panel">
     <h3>Volant Quick</h3>
     <ul>
-      
       <li><a href="notifications.html">🔔 Notifications</a></li>
       <li><a href="messages.html">✉ Messages</a></li>
-        <li><a href="submitpoems.html">📝 Submit Poems</a></li>
-         <li><a href="user-edit-poems.html">Edit Your Poems</a></li>
-             <li><a href="submit-draft.html">Save as Draft</a></li>
-                  <li><a href="drafts-manager.html">Manage Draft Poems</a></li>
-                   <li><a href="gallery-achievements.html">🏆 Volant Achievement Gallery 🏆</a></li>
-
+      <li><a href="submitpoems.html">📝 Submit Poems</a></li>
+      <li><a href="user-edit-poems.html">Edit Your Poems</a></li>
+      <li><a href="submit-draft.html">Save as Draft</a></li>
+      <li><a href="drafts-manager.html">Manage Draft Poems</a></li>
+      <li><a href="gallery-achievements.html">🏆 Volant Achievement Gallery 🏆</a></li>
     </ul>
   </div>
-
 </div>
 
-<!-- HORIZONTAL PROFILE STATS (Full Width Section) -->
 <section class="profile-stats-section">
   <div class="interaction-panel-horizontal">
-
-<div class="panel-item">
-  <h3>Flight Stage</h3>
-  <strong>Flight</strong> <span id="userLevel"></span>
-  <div class="level-bar">
-    <div id="levelProgress" style="width:0%"></div>
-  </div>
-  <div id="flightInfo" style="margin-top:8px; font-size:14px; color:#333;"></div>
-</div>
-
-    <div class="panel-item">
-      <h3>Achievements</h3>
-      <div class="badges-container" id="badgesContainer"></div>
-    </div>
-
-    <div class="panel-item">
-      <h3>Stats</h3>
-      <ul>
-        <li>Poems Submitted: <span id="poemCount"></span></li>
-        <li>Total Likes: <span id="likeCount"></span></li>
-        <li>Total Comments: <span id="commentCount"></span></li>
-      </ul>
-    </div>
-
-    <div class="panel-item">
-      <h3>3 Top Poems</h3>
-      <div class="top-poem">
-        <p id="topPoemContent"></p>
-      </div>
-    </div>
-
+    <div class="panel-item"><h3>Flight Stage</h3><strong>Flight</strong> <span id="userLevel"></span><div class="level-bar"><div id="levelProgress" style="width:0%"></div></div><div id="flightInfo"></div></div>
+    <div class="panel-item"><h3>Achievements</h3><div class="badges-container" id="badgesContainer"></div></div>
+    <div class="panel-item"><h3>Stats</h3><ul><li>Poems Submitted: <span id="poemCount"></span></li><li>Total Likes: <span id="likeCount"></span></li><li>Total Comments: <span id="commentCount"></span></li></ul></div>
+    <div class="panel-item"><h3>3 Top Poems</h3><div class="top-poem"><p id="topPoemContent"></p></div></div>
   </div>
 </section>
 
-<!-- Fullscreen image modal -->
-<div id="imageModal" class="image-modal">
-  <span class="close-modal">&times;</span>
-  <img class="modal-content" id="expandedImg">
-</div>
+<div id="imageModal" class="image-modal"><span class="close-modal">&times;</span><img class="modal-content" id="expandedImg"></div>
+<div class="preview-modal" id="previewModal"><div class="preview-content"><button class="preview-close" id="closePreview">✕</button><img class="preview-image" id="previewImage" src=""><div class="preview-info"><h3 id="previewTitle"></h3><p id="previewDescription"></p></div></div></div>
 
-<!-- POEMS SECTION -->
 <div class="profile-poems">
   <h2>My Submitted Poems</h2>
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search poems..." autocomplete="on">
-  </div>
-  <div id="poemsContainer">
-    <p class="empty-message"></p>
-  </div>
-</div>
-
-<!-- Achievement Preview Modal - exactly like gallery page -->
-<div class="preview-modal" id="previewModal">
-  <div class="preview-content">
-    <button class="preview-close" id="closePreview">✕</button>
-    <img class="preview-image" id="previewImage" src="" alt="badge">
-    <div class="preview-info" id="previewInfo">
-      <h3 id="previewTitle"></h3>
-      <p id="previewDescription"></p>
-    </div>
-  </div>
+  <div class="search-bar"><input type="text" id="searchInput" placeholder="Search poems..."></div>
+  <div id="poemsContainer"></div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { 
-  getFirestore, doc, getDoc, setDoc, updateDoc, 
-  collection, query, where, getDocs, runTransaction,
-  addDoc, deleteDoc  
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
-  authDomain: "silent-depth.firebaseapp.com",
-  projectId: "silent-depth",
-  storageBucket: "silent-depth.appspot.com",
-  messagingSenderId: "78008755450",
-  appId: "1:78008755450:web:3fd0f0f298a08820935543"
-};
-
+const firebaseConfig = { apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU", authDomain: "silent-depth.firebaseapp.com", projectId: "silent-depth", storageBucket: "silent-depth.appspot.com", messagingSenderId: "78008755450", appId: "1:78008755450:web:3fd0f0f298a08820935543" };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-const storage = getStorage(app);
 
-// --- Get ?uid from URL (ADDED FOR PUBLIC VIEWING) ---
+// Helper functions
+function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+function truncatePoemByLines(text, maxLines = 8) { const lines = text.split(/\r?\n/); const truncated = lines.slice(0, maxLines).join("\n"); return { preview: truncated, full: text, truncated: lines.length > maxLines }; }
+function getInitials(name) { const parts = name.trim().split(" "); if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?"; return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase(); }
+function colorFromName(name) { let hash = 0; for (let i = 0; i < name.length; i++) { hash = name.charCodeAt(i) + ((hash << 5) - hash); } const hue = Math.abs(hash) % 360; return `hsl(${hue}, 60%, 45%)`; }
+
 const urlParams = new URLSearchParams(window.location.search);
 const profileUid = urlParams.get("uid");
-
-// --- DOM elements ---
-const realNameSpan = document.getElementById("realName");
-const usernameSpan = document.getElementById("username");
-const emailSpan = document.getElementById("email");
-const bioSpan = document.getElementById("bio");
-const joinedSpan = document.getElementById("joined");
-const profilePic = document.getElementById("profilePic");
+let actorUsername = "", profileUsername = "", viewingOwnProfile = false;
+const poemsContainer = document.getElementById("poemsContainer");
 const editBtn = document.getElementById("editProfileBtn");
 const changePicBtn = document.getElementById("changePicBtn");
 const uploadPic = document.getElementById("uploadPic");
-const poemsContainer = document.getElementById("poemsContainer");
+const profilePic = document.getElementById("profilePic");
+const avatarDiv = document.getElementById("profileAvatar");
+const avatarText = document.getElementById("avatarInitials");
 
-let actorUsername = "";
-let profileUsername = "";
-let viewingOwnProfile = false;  // ADDED: track if viewing own profile
-
-// --- Modal functions - exactly like gallery page ---
+// Modal functions
 window.showPreview = function(imageUrl, title, description) {
   document.getElementById('previewImage').src = imageUrl;
   document.getElementById('previewTitle').textContent = title;
@@ -1500,894 +1098,526 @@ window.showPreview = function(imageUrl, title, description) {
   document.getElementById('previewModal').classList.add('active');
   document.body.style.overflow = 'hidden';
 };
-
-function hidePreview() {
-  document.getElementById('previewModal').classList.remove('active');
-  document.body.style.overflow = 'auto';
-}
-
-// Modal event listeners
+function hidePreview() { document.getElementById('previewModal').classList.remove('active'); document.body.style.overflow = 'auto'; }
 document.getElementById('closePreview').addEventListener('click', hidePreview);
-document.getElementById('previewModal').addEventListener('click', (e) => {
-  if (e.target === document.getElementById('previewModal')) hidePreview();
-});
+document.getElementById('previewModal').addEventListener('click', (e) => { if (e.target === document.getElementById('previewModal')) hidePreview(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hidePreview(); });
 
-// --- Truncate poems by number of lines ---
-function truncatePoemByLines(text, maxLines = 8) {
-  const lines = text.split(/\r?\n/);
-  const truncated = lines.slice(0, maxLines).join("\n");
-  return {
-    preview: truncated,
-    full: text,
-    truncated: lines.length > maxLines
-  };
-}
-
-// --- Fetch total comments made by the user across all poems ---
 async function fetchTotalCommentsMade(username) {
-  try {
-    if (!username) return 0;
-    
-    let totalComments = 0;
-    const poemsRef = collection(db, "recentPoems");
-    const snapshot = await getDocs(poemsRef);
-    
-    for (const poemDoc of snapshot.docs) {
-      const commentsRef = collection(db, "recentPoems", poemDoc.id, "comments");
-      const commentsSnap = await getDocs(commentsRef);
-      
-      commentsSnap.forEach(commentDoc => {
-        const commentData = commentDoc.data();
-        if (commentData.user === username || commentData.userId === auth.currentUser?.uid) {
-          totalComments++;
-        }
-      });
-    }
-    
-    return totalComments;
-  } catch (err) {
-    console.error("Error fetching total comments made:", err);
-    return 0;
+  if (!username) return 0;
+  let totalComments = 0;
+  const poemsRef = collection(db, "recentPoems");
+  const snapshot = await getDocs(poemsRef);
+  for (const poemDoc of snapshot.docs) {
+    const commentsSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments"));
+    commentsSnap.forEach(commentDoc => { const commentData = commentDoc.data(); if (commentData.user === username || commentData.userId === auth.currentUser?.uid) totalComments++; });
   }
+  return totalComments;
 }
 
-// --- Show default comment badges if no achievements configured ---
 function showDefaultCommentBadges(container, totalCommentsMade) {
   container.innerHTML = "";
-  
   const commentBadges = [
     { min: 1, title: "First Comment", icon: "💬", color: "#4CAF50", description: "You made your first comment on a poem!" },
     { min: 10, title: "Active Commenter", icon: "🗣️", color: "#2196F3", description: "You've made 10 comments on poems." },
     { min: 50, title: "Conversation Starter", icon: "⭐", color: "#9C27B0", description: "50 comments! You're starting great conversations." },
     { min: 100, title: "Comment Master", icon: "👑", color: "#FF9800", description: "100 comments! You're a true poetry community member." }
   ];
-  
   let earnedAny = false;
-  
   commentBadges.forEach(badge => {
     if (totalCommentsMade >= badge.min) {
       earnedAny = true;
-      
       const img = document.createElement("img");
-      // Create a colored square with emoji as fallback
       img.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect width='50' height='50' fill='${badge.color.replace('#', '%23')}'/%3E%3Ctext x='25' y='35' font-size='24' text-anchor='middle' fill='white'%3E${badge.icon}%3C/text%3E%3C/svg%3E`;
-      img.alt = badge.title;
-      img.title = `${badge.title} (${badge.min}+ comments)`;
-      
-      img.addEventListener("click", () => {
-        showPreview(
-          img.src,
-          badge.title,
-          badge.description
-        );
-      });
-      
+      img.alt = badge.title; img.title = `${badge.title} (${badge.min}+ comments)`;
+      img.addEventListener("click", () => showPreview(img.src, badge.title, badge.description));
       container.appendChild(img);
     }
   });
-  
-  if (!earnedAny) {
-    container.innerHTML = '<p style="color: #888; font-size: 0.9rem; margin: 0;">Make your first comment to earn badges!</p>';
-  }
+  if (!earnedAny) container.innerHTML = '<p style="color: #888; font-size: 0.9rem; margin: 0;">Make your first comment to earn badges!</p>';
 }
 
-// --- Update Achievements dynamically with click handlers ---
 async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   const badgesContainer = document.querySelector(".badges-container");
   if (!badgesContainer) return;
   badgesContainer.innerHTML = "";
-
   try {
     const snapshot = await getDocs(collection(db, "achievements"));
-    
     if (!snapshot.empty) {
       const achievements = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
-
-      const earned = achievements.filter(a => {
-        if (!a.active) return false;
-        const { type, min } = a.condition || {};
-        switch(type) {
-          case "poemsSubmitted": return poemCount >= min;
-          case "likesReceived": return totalLikes >= min;
-          case "commentsMade": return totalCommentsMade >= min;
-          case "commentsReceived": return totalCommentsReceived >= min;
-          default: return false;
-        }
-      });
-
-      if (earned.length > 0) {
-        earned.forEach(badge => {
-          const img = document.createElement("img");
-          img.src = badge.imageUrl || `https://via.placeholder.com/50/5a67d8/ffffff?text=${badge.title?.charAt(0) || '🏆'}`;
-          img.alt = badge.title || "Achievement Badge";
-          img.title = badge.title || "Achievement";
-          
-          img.addEventListener("click", () => {
-            showPreview(
-              badge.imageUrl || `https://via.placeholder.com/200/5a67d8/ffffff?text=${encodeURIComponent(badge.title?.charAt(0) || '🏆')}`,
-              badge.title || "Achievement",
-              badge.description || "You earned this achievement!"
-            );
-          });
-          
-          badgesContainer.appendChild(img);
-        });
-      } else {
-        badgesContainer.innerHTML = '<p style="color: #888; font-size: 0.9rem; margin: 0;">No badges yet</p>';
-      }
-    } else {
-      showDefaultCommentBadges(badgesContainer, totalCommentsMade);
-    }
-  } catch (err) {
-    console.error("Error loading dynamic achievements:", err);
-    showDefaultCommentBadges(badgesContainer, totalCommentsMade);
-  }
-
+      const earned = achievements.filter(a => { if (!a.active) return false; const { type, min } = a.condition || {}; switch(type) {
+        case "poemsSubmitted": return poemCount >= min; case "likesReceived": return totalLikes >= min; case "commentsMade": return totalCommentsMade >= min; case "commentsReceived": return totalCommentsReceived >= min; default: return false; } });
+      if (earned.length > 0) { earned.forEach(badge => { const img = document.createElement("img"); img.src = badge.imageUrl || `https://via.placeholder.com/50/5a67d8/ffffff?text=${badge.title?.charAt(0) || '🏆'}`; img.alt = badge.title || "Achievement Badge"; img.title = badge.title || "Achievement"; img.addEventListener("click", () => showPreview(badge.imageUrl || `https://via.placeholder.com/200/5a67d8/ffffff?text=${encodeURIComponent(badge.title?.charAt(0) || '🏆')}`, badge.title || "Achievement", badge.description || "You earned this achievement!")); badgesContainer.appendChild(img); }); }
+      else { badgesContainer.innerHTML = '<p style="color: #888; font-size: 0.9rem; margin: 0;">No badges yet</p>'; }
+    } else { showDefaultCommentBadges(badgesContainer, totalCommentsMade); }
+  } catch (err) { showDefaultCommentBadges(badgesContainer, totalCommentsMade); }
   updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
 }
 
-// --- Update Level function ---
 function updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   const levelEl = document.getElementById("userLevel");
   const levelProgressEl = document.getElementById("levelProgress");
-
   let levelInfoEl = document.querySelector(".panel-item .level-info");
-  if (!levelInfoEl) {
-    levelInfoEl = document.createElement("div");
-    levelInfoEl.className = "level-info";
-    levelInfoEl.style.marginTop = "8px";
-    levelInfoEl.style.fontSize = "14px";
-    levelInfoEl.style.color = "#333";
-    const panelItem = document.querySelector(".panel-item");
-    if (panelItem) panelItem.appendChild(levelInfoEl);
-  }
-
-  let baseRequirements = {
-    poems: 2,
-    likes: 2,
-    commentsMade: 2,
-    commentsReceived: 1
-  };
-
-  let level = 1;
-  let poems = poemCount;
-  let likes = totalLikes;
-  let commentsMade = totalCommentsMade;
-  let commentsReceived = totalCommentsReceived;
-  let remaining = { poems: 0, likes: 0, commentsMade: 0, commentsReceived: 0 };
-
+  if (!levelInfoEl) { levelInfoEl = document.createElement("div"); levelInfoEl.className = "level-info"; levelInfoEl.style.marginTop = "8px"; levelInfoEl.style.fontSize = "14px"; levelInfoEl.style.color = "#333"; document.querySelector(".panel-item")?.appendChild(levelInfoEl); }
+  let baseRequirements = { poems: 2, likes: 2, commentsMade: 2, commentsReceived: 1 };
+  let level = 1, poems = poemCount, likes = totalLikes, commentsMade = totalCommentsMade, commentsReceived = totalCommentsReceived, remaining = { poems: 0, likes: 0, commentsMade: 0, commentsReceived: 0 };
   while (true) {
-    const poemProgress = poems / baseRequirements.poems;
-    const likesProgress = likes / baseRequirements.likes;
-    const commentsMadeProgress = commentsMade / baseRequirements.commentsMade;
-    const commentsReceivedProgress = commentsReceived / baseRequirements.commentsReceived;
-
+    const poemProgress = poems / baseRequirements.poems, likesProgress = likes / baseRequirements.likes, commentsMadeProgress = commentsMade / baseRequirements.commentsMade, commentsReceivedProgress = commentsReceived / baseRequirements.commentsReceived;
     const levelProgress = Math.min((poemProgress + likesProgress + commentsMadeProgress + commentsReceivedProgress) / 4, 1);
-
-    if (levelProgress >= 1) {
-      level++;
-      poems -= baseRequirements.poems;
-      likes -= baseRequirements.likes;
-      commentsMade -= baseRequirements.commentsMade;
-      commentsReceived -= baseRequirements.commentsReceived;
-
-      baseRequirements.poems = Math.ceil(baseRequirements.poems * 1.5);
-      baseRequirements.likes = Math.ceil(baseRequirements.likes * 1.5);
-      baseRequirements.commentsMade = Math.ceil(baseRequirements.commentsMade * 1.5);
-      baseRequirements.commentsReceived = Math.ceil(baseRequirements.commentsReceived * 1.5);
-    } else {
-      remaining.poems = Math.max(baseRequirements.poems - poems, 0);
-      remaining.likes = Math.max(baseRequirements.likes - likes, 0);
-      remaining.commentsMade = Math.max(baseRequirements.commentsMade - commentsMade, 0);
-      remaining.commentsReceived = Math.max(baseRequirements.commentsReceived - commentsReceived, 0);
-
-      if (levelProgressEl) levelProgressEl.style.width = `${levelProgress * 100}%`;
-      break;
-    }
+    if (levelProgress >= 1) { level++; poems -= baseRequirements.poems; likes -= baseRequirements.likes; commentsMade -= baseRequirements.commentsMade; commentsReceived -= baseRequirements.commentsReceived; baseRequirements.poems = Math.ceil(baseRequirements.poems * 1.5); baseRequirements.likes = Math.ceil(baseRequirements.likes * 1.5); baseRequirements.commentsMade = Math.ceil(baseRequirements.commentsMade * 1.5); baseRequirements.commentsReceived = Math.ceil(baseRequirements.commentsReceived * 1.5); }
+    else { remaining.poems = Math.max(baseRequirements.poems - poems, 0); remaining.likes = Math.max(baseRequirements.likes - likes, 0); remaining.commentsMade = Math.max(baseRequirements.commentsMade - commentsMade, 0); remaining.commentsReceived = Math.max(baseRequirements.commentsReceived - commentsReceived, 0); if (levelProgressEl) levelProgressEl.style.width = `${levelProgress * 100}%`; break; }
   }
-
   if (levelEl) levelEl.textContent = level;
-
-  if (levelInfoEl) {
-    levelInfoEl.innerHTML = `
-      <strong>Remaining to next flight:</strong><br>
-      Poems: ${remaining.poems}<br>
-      Likes: ${remaining.likes}<br>
-      Comments Made: ${remaining.commentsMade}<br>
-      Comments Received: ${remaining.commentsReceived}
-    `;
-  }
+  if (levelInfoEl) levelInfoEl.innerHTML = `<strong>Remaining to next flight:</strong><br>Poems: ${remaining.poems}<br>Likes: ${remaining.likes}<br>Comments Made: ${remaining.commentsMade}<br>Comments Received: ${remaining.commentsReceived}`;
 }
 
-function getInitials(name = "") {
-  const parts = name.trim().split(" ");
-  if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?";
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-
-function colorFromName(name = "") {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const hue = Math.abs(hash) % 360;
-  return `hsl(${hue}, 60%, 45%)`;
-}
-
-// --- Generate a PNG blob of initials with background color ---
-// --- Generate a PNG blob of initials with background color - SAVE AS SQUARE ---
 function generateAvatarImage(initials, bgColor, size = 180) {
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = size;
-  const ctx = canvas.getContext("2d");
-
-  // Fill with background color - full square, no circle clipping
-  ctx.fillStyle = bgColor;
-  ctx.fillRect(0, 0, size, size);
-
-  // Add text
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `${size * 0.5}px 'Playfair Display', serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(initials, size / 2, size / 2);
-
-  // Add a subtle border to match styling
-  ctx.strokeStyle = "#b89b5e";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(2, 2, size - 4, size - 4);
-
-  return new Promise(resolve => {
-    canvas.toBlob(blob => resolve(blob), "image/png");
-  });
+  const canvas = document.createElement("canvas"); canvas.width = canvas.height = size; const ctx = canvas.getContext("2d");
+  ctx.fillStyle = bgColor; ctx.fillRect(0, 0, size, size);
+  ctx.fillStyle = "#ffffff"; ctx.font = `${size * 0.5}px 'Playfair Display', serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(initials, size / 2, size / 2);
+  ctx.strokeStyle = "#b89b5e"; ctx.lineWidth = 4; ctx.strokeRect(2, 2, size - 4, size - 4);
+  return new Promise(resolve => canvas.toBlob(resolve, "image/png"));
 }
 
-// --- Upload generated initials image to Cloudinary & update Firestore ---
 async function uploadAvatarToCloudinary(initials, bgColor, publicId = null) {
   const blob = await generateAvatarImage(initials, bgColor);
-
-  const formData = new FormData();
-  formData.append("file", blob);
-  formData.append("upload_preset", "profile_pics");
-  if (publicId) formData.append("public_id", publicId);
-
-  const cloudName = "dzoq4pgjn";
-
-  try {
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-      method: "POST",
-      body: formData
-    });
-    const data = await res.json();
-    
-    // Get the URL without any circle transformations
-    const imageUrl = data.secure_url;
-    
-    // Remove any auto-cropping/circle transformations if present
-    const cleanUrl = imageUrl.replace(/\/upload\/.*?\//, '/upload/');
-
-    const user = auth.currentUser;
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, { 
-        photoURL: cleanUrl,          
-        cachedAvatarURL: cleanUrl    
-      });
-    }
-
-    return cleanUrl;
-  } catch (err) {
-    console.error("Cloudinary upload failed:", err);
-    return null;
-  }
+  const formData = new FormData(); formData.append("file", blob); formData.append("upload_preset", "profile_pics"); if (publicId) formData.append("public_id", publicId);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/dzoq4pgjn/image/upload`, { method: "POST", body: formData });
+  const data = await res.json();
+  const cleanUrl = data.secure_url.replace(/\/upload\/.*?\//, '/upload/');
+  if (auth.currentUser) await updateDoc(doc(db, "users", auth.currentUser.uid), { photoURL: cleanUrl, cachedAvatarURL: cleanUrl });
+  return cleanUrl;
 }
- 
-// --- Auth handling (MODIFIED: support public viewing with ?uid) ---
-onAuthStateChanged(auth, async (user) => {
-  // If no user logged in AND no uid in URL, redirect to login
-  if (!user && !profileUid) {
-    window.location.href = "users-login.html";
+
+// Audio upload to Cloudinary - NO transformation parameter
+async function uploadAudioToCloudinary(file, poemId, statusDiv, poemTitle, username) {
+  if (file.size > 9 * 1024 * 1024) {
+    statusDiv.innerHTML = '❌ File too large. Maximum size is 9MB.';
     return;
   }
-
-  // Get actor info if logged in
-  if (user) {
-    const actorRef = doc(db, "users", user.uid);
-    let actorDoc = await getDoc(actorRef);
-    if (!actorDoc.exists()) {
-      await setDoc(actorRef, {
-        username: user.displayName || user.email.split("@")[0],
-        email: user.email,
-        bio: "",
-        realName: "",
-        joined: new Date(),
-        photoURL: user.photoURL || ""
-      });
-      actorDoc = await getDoc(actorRef);
-    }
-    const actorData = actorDoc.data();
-    actorUsername = actorData.username || user.email.split("@")[0];
+  if (!file.type.startsWith('audio/') && !file.name.toLowerCase().match(/\.(mp3|m4a|wav)$/)) {
+    statusDiv.innerHTML = '❌ Please upload an audio file (MP3, M4A, or WAV).';
+    return;
   }
+  
+  const cleanUsername = (username || 'anonymous').toLowerCase().replace(/[^a-z0-9]/g, '_');
+  const cleanTitle = (poemTitle || 'untitled').toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 50);
+  const timestamp = Date.now();
+  const customFilename = `${cleanUsername}_${cleanTitle}_${timestamp}`;
+  
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "profile_pics");
+  formData.append("resource_type", "auto");
+  formData.append("public_id", `poetry_audio/${customFilename}`);
+  // Removed transformation parameter - not allowed with unsigned upload
+  
+  try {
+    const res = await fetch(`https://api.cloudinary.com/v1_1/dzoq4pgjn/auto/upload`, { 
+      method: "POST", 
+      body: formData 
+    });
+    const data = await res.json();
+    if (data.secure_url) {
+      await updateDoc(doc(db, "recentPoems", poemId), { 
+        audioUrl: data.secure_url,
+        audioFilename: customFilename + '.mp3',
+        audioFormat: "mp3",
+        hasAudio: true
+      });
+      statusDiv.innerHTML = '✅ Audio uploaded! Refreshing...';
+      setTimeout(() => fetchUserPoems(profileUsername), 1500);
+    } else {
+      throw new Error(data.error?.message || 'Upload failed');
+    }
+  } catch (err) { 
+    console.error("Upload error:", err);
+    statusDiv.innerHTML = '❌ Upload failed. Please retry.'; 
+  }
+}
 
+// Setup audio event listeners with working timer
+function setupAudioEventListeners() {
+  let mediaRecorder, audioChunks, activeStream;
+  let recordingInterval;
+  let recordingStartTime;
+  
+  document.querySelectorAll('.record-audio-btn').forEach(btn => {
+    const poemId = btn.dataset.poemId;
+    const existingAudio = document.querySelector(`audio[data-audio-id="${poemId}"]`);
+    if (existingAudio && existingAudio.src) {
+      btn.style.display = 'none';
+      const uploadBtn = document.querySelector(`.upload-audio-btn[data-poem-id="${poemId}"]`);
+      if (uploadBtn) uploadBtn.style.display = 'none';
+    }
+    
+    btn.removeEventListener('click', btn._listener);
+    btn._listener = async (e) => {
+      e.preventDefault();
+      const poemId = btn.dataset.poemId;
+      const statusDiv = document.querySelector(`.recording-status[data-poem-id="${poemId}"]`);
+      const recordBtn = btn;
+      const stopBtn = document.createElement('button');
+      const poemTitle = document.querySelector(`.recent-poem-card[data-id="${poemId}"] .poem-title`)?.textContent || "untitled";
+      const username = profileUsername || 'anonymous';
+      
+      // Clear status div
+      statusDiv.innerHTML = '';
+      
+      // Create timer display
+      const timerDisplay = document.createElement('div');
+      timerDisplay.className = 'recording-timer';
+      timerDisplay.textContent = '00:00';
+      statusDiv.appendChild(timerDisplay);
+      
+      const recordingMsg = document.createElement('div');
+      recordingMsg.textContent = '🔴 Recording... Click Stop when finished.';
+      recordingMsg.style.marginTop = '8px';
+      statusDiv.appendChild(recordingMsg);
+      
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        activeStream = stream;
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        
+        mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+        mediaRecorder.onstop = async () => {
+          if (recordingInterval) clearInterval(recordingInterval);
+          statusDiv.innerHTML = '📤 Uploading...';
+          const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
+          const audioFile = new File([audioBlob], `recording_${Date.now()}.mp3`, { type: 'audio/mpeg' });
+          await uploadAudioToCloudinary(audioFile, poemId, statusDiv, poemTitle, username);
+          if (activeStream) activeStream.getTracks().forEach(track => track.stop());
+          activeStream = null;
+        };
+        
+        mediaRecorder.start();
+        recordingStartTime = Date.now();
+        recordingInterval = setInterval(() => {
+          const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+          const minutes = Math.floor(elapsed / 60);
+          const seconds = elapsed % 60;
+          timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+        
+        recordBtn.style.display = 'none';
+        stopBtn.textContent = '⏹️ Stop Recording';
+        stopBtn.style.cssText = 'background:#6c757d; color:white; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:8px;';
+        stopBtn.addEventListener('click', () => { 
+          if (mediaRecorder && mediaRecorder.state === 'recording') { 
+            mediaRecorder.stop(); 
+            stopBtn.remove(); 
+            recordBtn.style.display = 'inline-block'; 
+          } 
+        });
+        statusDiv.appendChild(stopBtn);
+      } catch (err) { 
+        statusDiv.innerHTML = '❌ Microphone access denied. Please check permissions.'; 
+      }
+    };
+    btn.addEventListener('click', btn._listener);
+  });
+
+  document.querySelectorAll('.upload-audio-btn').forEach(btn => {
+    const poemId = btn.dataset.poemId;
+    const existingAudio = document.querySelector(`audio[data-audio-id="${poemId}"]`);
+    if (existingAudio && existingAudio.src) {
+      btn.style.display = 'none';
+    }
+    
+    btn.removeEventListener('click', btn._uploadListener);
+    btn._uploadListener = (e) => { 
+      e.preventDefault(); 
+      const poemId = btn.dataset.poemId;
+      const poemTitle = document.querySelector(`.recent-poem-card[data-id="${poemId}"] .poem-title`)?.textContent || "untitled";
+      const username = profileUsername || 'anonymous';
+      const fileInput = document.querySelector(`.audio-file-input[data-poem-id="${poemId}"]`);
+      fileInput.dataset.poemTitle = poemTitle;
+      fileInput.dataset.username = username;
+      fileInput.click(); 
+    };
+    btn.addEventListener('click', btn._uploadListener);
+  });
+
+  document.querySelectorAll('.audio-file-input').forEach(input => {
+    input.removeEventListener('change', input._changeListener);
+    input._changeListener = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const poemId = input.dataset.poemId;
+      const poemTitle = input.dataset.poemTitle || "untitled";
+      const username = input.dataset.username || profileUsername || 'anonymous';
+      const statusDiv = document.querySelector(`.recording-status[data-poem-id="${poemId}"]`);
+      
+      const cleanUsername = username.toLowerCase().replace(/[^a-z0-9]/g, '_');
+      const cleanTitle = poemTitle.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 50);
+      const timestamp = Date.now();
+      const newFileName = `${cleanUsername}_${cleanTitle}_${timestamp}.mp3`;
+      const renamedFile = new File([file], newFileName, { type: file.type });
+      
+      await uploadAudioToCloudinary(renamedFile, poemId, statusDiv, poemTitle, username);
+    };
+    input.addEventListener('change', input._changeListener);
+  });
+
+  document.removeEventListener('click', window._deleteAudioHandler);
+  window._deleteAudioHandler = async (e) => {
+    if (e.target.classList.contains('delete-audio-btn')) {
+      const poemId = e.target.dataset.poemId;
+      if (confirm('Remove this audio recording?')) {
+        await updateDoc(doc(db, "recentPoems", poemId), { audioUrl: null, audioFilename: null, audioFormat: null, hasAudio: false });
+        fetchUserPoems(profileUsername);
+      }
+    }
+  };
+  document.addEventListener('click', window._deleteAudioHandler);
+}
+
+// Fetch Poems with Audio - HIDE buttons after upload
+async function fetchUserPoems(usernameToFetch) {
+  try {
+    const q = query(collection(db, "recentPoems"), where("submittedBy", "==", usernameToFetch));
+    const querySnap = await getDocs(q);
+    poemsContainer.innerHTML = "";
+    let totalLikes = 0, totalCommentsReceived = 0, poemCount = querySnap.size, totalCommentsMade = 0;
+    if (viewingOwnProfile) totalCommentsMade = await fetchTotalCommentsMade(actorUsername);
+    if (querySnap.empty) { poemsContainer.innerHTML = `<p>No poems yet.</p>`; updateAchievements(0, 0, 0, totalCommentsMade); updateLevel(0, 0, 0, totalCommentsMade); return; }
+    
+    const poemsArray = [];
+    querySnap.forEach(docSnap => { const p = docSnap.data(); p.id = docSnap.id; poemsArray.push(p); });
+    poemsArray.sort((a,b) => (b.timestamp?.seconds||0) - (a.timestamp?.seconds||0));
+    
+    for (const poem of poemsArray) {
+      const docId = poem.id;
+      const card = document.createElement("div"); card.className = "recent-poem-card"; card.dataset.id = docId;
+      const truncated = truncatePoemByLines(poem.content, 8);
+      const likes = poem.likes || 0; totalLikes += likes;
+      let commentsSnapCount = 0;
+      try { const csnap = await getDocs(collection(db, "recentPoems", docId, "comments")); commentsSnapCount = csnap.size; } catch(e) { commentsSnapCount = 0; }
+      totalCommentsReceived += commentsSnapCount;
+      const dateStr = poem.timestamp ? new Date(poem.timestamp.seconds*1000).toLocaleDateString() + ' ' + new Date(poem.timestamp.seconds*1000).toLocaleTimeString() : "";
+      
+      let audioSectionHTML = '';
+      const hasAudio = poem.audioUrl && poem.audioUrl !== '';
+      
+      if (viewingOwnProfile) {
+        const existingAudioUrl = poem.audioUrl || '';
+        const hideButtons = hasAudio ? 'style="display:none;"' : '';
+        audioSectionHTML = `
+          <div class="audio-section">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label>🎙️ Spoken Version</label>
+              ${existingAudioUrl ? `<button class="delete-audio-btn" data-poem-id="${docId}" style="background:#ff4d4d; padding:4px 12px;">🗑️ Remove Audio</button>` : ''}
+            </div>
+            ${existingAudioUrl ? `<audio controls src="${existingAudioUrl}" data-audio-id="${docId}"></audio>` : ''}
+            <div class="audio-controls" ${hideButtons}>
+              <button class="record-audio-btn" data-poem-id="${docId}" style="background:#dc3545; padding:8px 16px;">🎙️ Record</button>
+              <button class="upload-audio-btn" data-poem-id="${docId}" style="background:#28a745; padding:8px 16px;">📁 Upload</button>
+              <input type="file" class="audio-file-input" data-poem-id="${docId}" accept="audio/mpeg,audio/mp4,audio/wav" style="display:none;">
+            </div>
+            ${!hasAudio ? `<div class="recording-status" data-poem-id="${docId}"></div>` : ''}
+          </div>
+        `;
+      } else if (poem.audioUrl) { 
+        audioSectionHTML = `<div class="audio-section"><label>🎙️ Listen to the poet's voice:</label><audio controls src="${poem.audioUrl}"></audio></div>`; 
+      }
+      
+      card.innerHTML = `<div class="poem-display"><h3 class="poem-title">${escapeHtml(poem.title)}</h3>${dateStr ? `<small class="poem-date">${escapeHtml(dateStr)}</small>` : ""}<button class="delete-btn" data-id="${docId}">🗑️ Delete</button><div class="poem-body"><p class="poem-content">${escapeHtml(truncated.preview).replace(/\n/g, "<br>")}</p>${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}</div></div>${audioSectionHTML}${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(c=>escapeHtml(c)).join(", ")}</em></p>` : ""}<div class="poem-actions comment-aligned"><textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea><button class="comment-btn">Post</button><button class="like-btn">❤️ <span class="like-count">${likes}</span></button><span class="message-count">💬 ${commentsSnapCount}</span></div><div class="comment-list" style="display:none;"></div>`;
+      
+      if (!viewingOwnProfile) card.querySelector('.delete-btn')?.remove();
+      poemsContainer.appendChild(card);
+    }
+    
+    document.getElementById("poemCount").innerText = poemCount;
+    document.getElementById("likeCount").innerText = totalLikes;
+    document.getElementById("commentCount").innerText = totalCommentsReceived;
+    updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
+    if (viewingOwnProfile) setupAudioEventListeners();
+    attachDeleteListeners();
+  } catch(e) { poemsContainer.innerHTML = `<p>Error loading poems.</p>`; }
+}
+function attachDeleteListeners() { document.querySelectorAll('.delete-btn').forEach(btn => { btn._del = async () => { if (confirm('Delete this poem?')) { await deleteDoc(doc(db, "recentPoems", btn.dataset.id)); fetchUserPoems(profileUsername); } }; btn.addEventListener('click', btn._del); }); }
+
+async function fetchTopPoems(profileName) {
+  const snapshot = await getDocs(query(collection(db, "recentPoems"), where("submittedBy", "==", profileName)));
+  const poems = []; snapshot.forEach(docSnap => { const p = docSnap.data(); if(p.title) poems.push({ title: p.title, slug: p.slug || p.title.toLowerCase().replace(/\s+/g, "-"), engagement: (p.likes||0) + (p.comments?.length||0) }); });
+  const top3 = poems.sort((a,b)=>b.engagement - a.engagement).slice(0,3);
+  const topPoemContent = document.getElementById("topPoemContent");
+  topPoemContent.innerHTML = top3.length ? top3.map((p,i)=> `<div><span>${i+1}.</span> <a href="poem.html?slug=${encodeURIComponent(p.slug)}" class="top-poem-link">${escapeHtml(p.title)}</a></div>`).join("") : "No top poems yet.";
+}
+
+// Auth handling
+onAuthStateChanged(auth, async (user) => {
+  // If no user logged in AND no uid in URL, redirect to login
+  if (!user && !profileUid) { 
+    window.location.href = "users-login.html"; 
+    return; 
+  }
+  
+  // Get actor info if logged in
+  if (user) { 
+    const actorRef = doc(db, "users", user.uid); 
+    let actorDoc = await getDoc(actorRef); 
+    if (!actorDoc.exists()) { 
+      await setDoc(actorRef, { 
+        username: user.displayName || user.email.split("@")[0], 
+        email: user.email, 
+        bio: "", 
+        realName: "", 
+        joined: new Date(), 
+        photoURL: user.photoURL || "" 
+      }); 
+      actorDoc = await getDoc(actorRef); 
+    } 
+    actorUsername = actorDoc.data()?.username || user.email.split("@")[0]; 
+  }
+  
   // Determine which profile to show (from URL or logged-in user)
   viewingOwnProfile = (user && (!profileUid || profileUid === user.uid));
   const targetUid = (profileUid && profileUid !== "undefined") ? profileUid : (user ? user.uid : null);
-
-  if (!targetUid) {
-    alert("No user specified.");
-    window.location.href = "index.html";
-    return;
-  }
-
-  const userRef = doc(db, "users", targetUid);
-  const userDoc = await getDoc(userRef);
-
-  if (!userDoc.exists()) {
-    alert("User not found.");
-    window.location.href = "index.html";
-    return;
-  }
-
-  const data = userDoc.data();
-  profileUsername = data.username || data.email.split("@")[0];
-
-  if (realNameSpan) realNameSpan.textContent = data.realName || "Not set";
-  if (usernameSpan) usernameSpan.textContent = profileUsername;
-  // Hide email for public viewers
-  if (emailSpan) emailSpan.textContent = viewingOwnProfile ? (data.email || "") : "🔒 Private";
-  if (bioSpan) bioSpan.textContent = data.bio || "No bio yet";
-  if (joinedSpan) {
-    joinedSpan.textContent = data.joined
-      ? (data.joined.seconds
-          ? new Date(data.joined.seconds * 1000).toDateString()
-          : new Date(data.joined).toDateString())
-      : "Unknown";
+  
+  if (!targetUid) return;
+  
+  const userDoc = await getDoc(doc(db, "users", targetUid));
+  if (!userDoc.exists()) { 
+    alert("User not found."); 
+    window.location.href = "index.html"; 
+    return; 
   }
   
+  const data = userDoc.data();
+  profileUsername = data.username || data.email.split("@")[0];
+  
+  // Update profile info
+  document.getElementById("realName").innerText = data.realName || "Not set";
+  document.getElementById("username").innerText = profileUsername;
+  document.getElementById("email").innerText = viewingOwnProfile ? (data.email || "") : "🔒 Private";
+  document.getElementById("bio").innerText = data.bio || "No bio yet";
+  document.getElementById("joined").innerText = data.joined?.seconds ? new Date(data.joined.seconds*1000).toDateString() : "Unknown";
+  
+  // Handle avatar display - FIXED
   const avatarDiv = document.getElementById("profileAvatar");
   const avatarText = document.getElementById("avatarInitials");
-
-  if (data.photoURL) {
+  const profilePic = document.getElementById("profilePic");
+  
+  if (data.photoURL && data.photoURL !== "") {
+    // User has uploaded a photo
     profilePic.src = data.photoURL;
     profilePic.style.display = "block";
     profilePic.style.borderRadius = "50%";
     avatarDiv.style.display = "none";
-  } else if (data.cachedAvatarURL) {
+  } 
+  else if (data.cachedAvatarURL && data.cachedAvatarURL !== "") {
+    // User has a cached avatar
     profilePic.src = data.cachedAvatarURL;
     profilePic.style.display = "block";
     profilePic.style.borderRadius = "50%";
     avatarDiv.style.display = "none";
-  } else {
+  } 
+  else {
+    // Show generated initials avatar (no upload for public viewers)
     const initials = getInitials(profileUsername);
     const bgColor = colorFromName(profileUsername);
-    avatarText.textContent = initials;
+    avatarText.innerText = initials;
     avatarDiv.style.background = bgColor;
     avatarDiv.style.display = "flex";
     profilePic.style.display = "none";
     
+    // ONLY generate and upload avatar for own profile (when user is logged in)
     if (viewingOwnProfile && user) {
-      uploadAvatarToCloudinary(initials, bgColor).then(url => {
-        if (url) {
-          profilePic.src = url;
-          profilePic.style.display = "block";
-          profilePic.style.borderRadius = "50%";
-          avatarDiv.style.display = "none";
-        }
+      uploadAvatarToCloudinary(initials, bgColor).then(url => { 
+        if(url) { 
+          profilePic.src = url; 
+          profilePic.style.display = "block"; 
+          avatarDiv.style.display = "none"; 
+        } 
+      }).catch(err => {
+        console.error("Avatar upload failed:", err);
       });
     }
   }
   
+  // Handle regenerate avatar button - only for own profile
   const regenerateAvatarBtn = document.getElementById("regenerateAvatarBtn");
-  if (regenerateAvatarBtn && viewingOwnProfile && user) {
-    regenerateAvatarBtn.style.display = "inline-block";
-    regenerateAvatarBtn.addEventListener("click", async () => {
-      const initials = getInitials(profileUsername);
-      const bgColor = colorFromName(profileUsername);
-      try {
-        let publicId = null;
-        if (profilePic.src) {
-          const urlParts = profilePic.src.split("/");
-          const filename = urlParts[urlParts.length - 1].split(".")[0];
-          publicId = `profile_pics/${filename}`;
-        }
-        const newAvatarUrl = await uploadAvatarToCloudinary(initials, bgColor, publicId);
-        if (newAvatarUrl) {
-          profilePic.src = newAvatarUrl;
-          profilePic.style.display = "block";
-          profilePic.style.borderRadius = "50%";
-          document.getElementById("profileAvatar").style.display = "none";
-          alert("✅ Avatar regenerated and replaced successfully!");
-        } else {
-          alert("❌ Failed to regenerate avatar.");
-        }
-      } catch (err) {
-        console.error("Error regenerating avatar:", err);
-        alert("❌ Something went wrong.");
-      }
-    });
-  }
-
-  // HIDE edit/upload buttons for public viewers (CHANGE FOR PUBLIC VIEWING)
-  if (!viewingOwnProfile) {
-    if (editBtn) editBtn.style.display = "none";
-    if (changePicBtn) changePicBtn.style.display = "none";
-    if (uploadPic) uploadPic.style.display = "none";
-    if (regenerateAvatarBtn) regenerateAvatarBtn.style.display = "none";
-    
-    // HIDE the Volant Quick panel for public viewers
-    const quickAccessPanel = document.querySelector(".interaction-panel");
-    if (quickAccessPanel) {
-      quickAccessPanel.style.display = "none";
+  if (regenerateAvatarBtn) {
+    if (viewingOwnProfile && user) { 
+      regenerateAvatarBtn.style.display = "inline-block"; 
+      regenerateAvatarBtn.onclick = async () => { 
+        const initials = getInitials(profileUsername); 
+        const bgColor = colorFromName(profileUsername); 
+        const newUrl = await uploadAvatarToCloudinary(initials, bgColor); 
+        if(newUrl) { 
+          profilePic.src = newUrl; 
+          profilePic.style.display = "block"; 
+          avatarDiv.style.display = "none"; 
+          alert("Avatar updated!"); 
+        } 
+      }; 
+    } else {
+      regenerateAvatarBtn.style.display = "none";
     }
   }
   
-  if (viewingOwnProfile && editBtn && user) {
-    editBtn.style.display = "inline-block";
-    editBtn.addEventListener("click", () => {
-      window.location.href = "edit-profile.html";
-    });
+  // Handle edit/upload buttons visibility
+  if (!viewingOwnProfile) { 
+    if (editBtn) editBtn.style.display = "none"; 
+    if (changePicBtn) changePicBtn.style.display = "none"; 
+    if (regenerateAvatarBtn) regenerateAvatarBtn.style.display = "none"; 
+    const quickPanel = document.querySelector(".interaction-panel");
+    if (quickPanel) quickPanel.style.display = "none";
+    
+    // Hide logout button for public viewers
+    const logoutBtnNav = document.getElementById("logoutBtnNav");
+    if (logoutBtnNav) logoutBtnNav.style.display = "none";
+  } 
+  else { 
+    // Show logout button only when viewing own profile
+    const logoutBtnNav = document.getElementById("logoutBtnNav");
+    if (logoutBtnNav && user) logoutBtnNav.style.display = "inline-block";
+    
+    if (editBtn) editBtn.onclick = () => window.location.href = "edit-profile.html"; 
+    if (changePicBtn) changePicBtn.onclick = () => uploadPic.click(); 
+    if (uploadPic) {
+      uploadPic.onchange = async (e) => { 
+        const file = e.target.files[0]; 
+        if(!file) return; 
+        const fd = new FormData(); 
+        fd.append("file", file); 
+        fd.append("upload_preset","profile_pics"); 
+        const res = await fetch(`https://api.cloudinary.com/v1_1/dzoq4pgjn/image/upload`, { method: "POST", body: fd }); 
+        const imgUrl = (await res.json()).secure_url; 
+        if(imgUrl) { 
+          profilePic.src = imgUrl; 
+          profilePic.style.display = "block"; 
+          avatarDiv.style.display = "none"; 
+          await updateDoc(doc(db, "users", user.uid), { photoURL: imgUrl }); 
+        } 
+      };
+    }
   }
-
+  
   await fetchUserPoems(profileUsername);
   await fetchTopPoems(profileUsername);
 });
 
-// --- Fetch User Poems (NO CHANGES - keep original) ---
-async function fetchUserPoems(usernameToFetch) {
-  try {
-    const q = query(
-      collection(db, "recentPoems"), 
-      where("submittedBy", "==", usernameToFetch)
-    );
-    
-    const querySnap = await getDocs(q);
-    const container = poemsContainer;
-    container.innerHTML = "";
+// Image modal
+const modal = document.getElementById("imageModal"), expandedImg = document.getElementById("expandedImg"), closeModal = document.querySelector(".close-modal"), profilePicEl = document.getElementById("profilePic"), profileAvatarEl = document.getElementById("profileAvatar");
+function showImageModal(imageSrc) { expandedImg.src = imageSrc; modal.style.display = "flex"; }
+if (profilePicEl) profilePicEl.addEventListener("click", () => { if (profilePicEl.src) showImageModal(profilePicEl.src); });
+if (profileAvatarEl) profileAvatarEl.addEventListener("click", () => { if (profilePicEl && profilePicEl.style.display !== "none" && profilePicEl.src) showImageModal(profilePicEl.src); else { const canvas = document.createElement("canvas"); canvas.width = 500; canvas.height = 500; const ctx = canvas.getContext("2d"); ctx.fillStyle = "#4b2aad"; ctx.fillRect(0,0,500,500); ctx.fillStyle = "#fff"; ctx.font = "bold 200px 'Playfair Display'"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(avatarText.innerText, 250, 250); showImageModal(canvas.toDataURL()); } });
+if (closeModal) closeModal.addEventListener("click", () => modal.style.display = "none");
+window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
 
-    let totalLikes = 0;
-    let totalCommentsReceived = 0;
-    let poemCount = querySnap.size;
-    let totalCommentsMade = 0;
+// Menu and logout
+document.getElementById("menu-toggle")?.addEventListener("click", () => document.getElementById("nav-links").classList.toggle("show"));
+document.getElementById("close-btn")?.addEventListener("click", () => document.getElementById("nav-links").classList.remove("show"));
+document.getElementById("logoutBtnNav")?.addEventListener("click", async () => { await signOut(auth); window.location.href = "users-login.html"; });
 
-    if (viewingOwnProfile) {
-      totalCommentsMade = await fetchTotalCommentsMade(actorUsername);
-    }
-
-    if (querySnap.empty) {
-      container.innerHTML = `<p class="empty-message">No poems yet.</p>`;
-    } else {
-      const poemsArray = [];
-      
-      for (const docSnap of querySnap.docs) {
-        const poem = docSnap.data();
-        poem.id = docSnap.id;
-        poemsArray.push(poem);
-      }
-      
-      poemsArray.sort((a, b) => {
-        const timeA = a.timestamp?.seconds || 0;
-        const timeB = b.timestamp?.seconds || 0;
-        return timeB - timeA;
-      });
-      
-      for (const poem of poemsArray) {
-        const docId = poem.id;
-        const card = document.createElement("div");
-        card.className = "recent-poem-card";
-        card.dataset.id = docId;
-
-        const truncated = truncatePoemByLines(poem.content, 8);
-        const likes = typeof poem.likes === "number" ? poem.likes : 0;
-        totalLikes += likes;
-
-        let commentsSnapCount = 0;
-        try {
-          const commentsSnap = await getDocs(collection(db, "recentPoems", docId, "comments"));
-          commentsSnapCount = commentsSnap.size;
-        } catch (err) {
-          commentsSnapCount = Array.isArray(poem.comments) ? poem.comments.length : 0;
-        }
-        totalCommentsReceived += commentsSnapCount;
-
-        const dateStr = poem.timestamp 
-          ? new Date(poem.timestamp.seconds * 1000).toLocaleDateString() + ' ' + new Date(poem.timestamp.seconds * 1000).toLocaleTimeString()
-          : "";
-
-        card.innerHTML = `
-          <div class="poem-display">
-            <h3 class="poem-title">${poem.title}</h3>
-            ${dateStr ? `<small class="poem-date">${dateStr}</small>` : ""}
-            <button class="delete-btn">🗑️ Delete</button>
-            <div class="poem-body">
-              <p class="poem-content">${truncated.preview.replace(/\n/g, "<br>")}</p>
-              ${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}
-            </div>
-          </div>
-          ${poem.categories && poem.categories.length > 0 ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ""}
-          <div class="poem-actions comment-aligned">
-            <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
-            <button class="comment-btn">Post</button>
-            <button class="like-btn">
-              ❤️ <span class="like-count">${likes}</span>
-            </button>
-            <span class="message-count">💬 ${commentsSnapCount}</span>
-          </div>
-          <div class="comment-list" style="display:none;"></div>
-        `;
-
-        const deleteBtn = card.querySelector(".delete-btn");
-        if (viewingOwnProfile) {
-          deleteBtn.style.display = "inline-block";
-        } else {
-          deleteBtn.style.display = "none";
-        }
-
-        container.appendChild(card);
-      }
-    }
-
-    const poemCountEl = document.getElementById("poemCount");
-    const likeCountEl = document.getElementById("likeCount");
-    const commentCountEl = document.getElementById("commentCount");
-    if (poemCountEl) poemCountEl.textContent = poemCount;
-    if (likeCountEl) likeCountEl.textContent = totalLikes;
-    if (commentCountEl) commentCountEl.textContent = totalCommentsReceived;
-
-    updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
-    updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
-  } catch (err) {
-    console.error("Error fetching poems:", err);
-    poemsContainer.innerHTML = `<p class='empty-message'>Error loading poems: ${err.message}</p>`;
-  }
-}
-
-// --- Fetch Top 3 Poems (NO CHANGES) ---
-async function fetchTopPoems(profileName) {
-  try {
-    if (!profileName) return;
-
-    const poemsRef = collection(db, "recentPoems");
-    const q = query(poemsRef, where("submittedBy", "==", profileName));
-    const snapshot = await getDocs(q);
-
-    const topPoemContent = document.getElementById("topPoemContent");
-    if (!topPoemContent) return;
-
-    if (snapshot.empty) {
-      topPoemContent.textContent = "No poems yet.";
-      return;
-    }
-
-    const poems = [];
-
-    snapshot.forEach((docSnap) => {
-      const poem = docSnap.data();
-      if (!poem.title) return;
-
-      const likes = poem.likes || 0;
-      const comments = Array.isArray(poem.comments) ? poem.comments.length : 0;
-      const engagement = likes + comments;
-
-      const slug = poem.slug || poem.title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
-      poems.push({ slug, title: poem.title, engagement });
-    });
-
-    const top3 = poems.sort((a, b) => b.engagement - a.engagement).slice(0, 3);
-
-    topPoemContent.innerHTML = top3.length
-      ? top3
-          .map(
-            (p, i) =>
-              `<div style="margin-bottom:4px;">
-                <span style="display:inline;">${i + 1}.</span>
-                <a href="poem.html?slug=${encodeURIComponent(p.slug)}" class="top-poem-link" style="display:inline;">${p.title}</a>
-              </div>`
-          )
-          .join("")
-      : "No top poems yet.";
-  } catch (error) {
-    console.error("Error fetching top poems:", error);
-  }
-}
-
-// --- Cloudinary Upload (NO CHANGES) ---
-if (changePicBtn) {
-  const cloudName = "dzoq4pgjn";
-  const uploadPreset = "profile_pics";
-
-  changePicBtn.addEventListener("click", () => {
-    if (!viewingOwnProfile) return alert("You cannot change another user's picture.");
-    uploadPic.click();
-  });
-
-  uploadPic.addEventListener("change", async (e) => {
-    if (!viewingOwnProfile) return;
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", uploadPreset);
-
-    try {
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-        method: "POST",
-        body: formData
-      });
-      const data = await res.json();
-      
-      const imageUrl = data.secure_url;
-
-      if (profilePic) {
-        profilePic.src = imageUrl;
-        profilePic.style.borderRadius = "50%";
-      }
-
-      const user = auth.currentUser;
-      if (user) {
-        await updateDoc(doc(db, "users", user.uid), { photoURL: imageUrl });
-      }
-
-      console.log("✅ Uploaded to Cloudinary:", imageUrl);
-    } catch (err) {
-      console.error("❌ Cloudinary upload error:", err);
-    }
-  });
-}
-
-// --- Profile picture expand on click (NO CHANGES) ---
-const modal = document.getElementById("imageModal");
-const expandedImg = document.getElementById("expandedImg");
-const closeModal = document.querySelector(".close-modal");
-const profilePicEl = document.getElementById("profilePic");
-const profileAvatar = document.getElementById("profileAvatar");
-
-function showImageModal(imageSrc) {
-  if (expandedImg) {
-    expandedImg.src = imageSrc;
-    expandedImg.style.borderRadius = "0";
-    expandedImg.style.maxWidth = "90%";
-    expandedImg.style.maxHeight = "90%";
-    expandedImg.style.objectFit = "contain";
-    expandedImg.style.background = "transparent";
-  }
-  if (modal) modal.style.display = "flex";
-}
-
-if (profilePicEl) {
-  profilePicEl.addEventListener("click", () => {
-    if (profilePicEl.src) {
-      showImageModal(profilePicEl.src);
-    }
-  });
-}
-
-if (profileAvatar) {
-  profileAvatar.addEventListener("click", () => {
-    if (profilePicEl && profilePicEl.style.display !== "none" && profilePicEl.src) {
-      showImageModal(profilePicEl.src);
-    } else {
-      const initials = document.getElementById("avatarInitials")?.textContent || "?";
-      const bgColor = window.getComputedStyle(profileAvatar).backgroundColor;
-      const avatarStyles = window.getComputedStyle(profileAvatar);
-      const borderColor = avatarStyles.borderColor;
-      const borderWidth = avatarStyles.borderWidth;
-      
-      const canvas = document.createElement("canvas");
-      canvas.width = 500;
-      canvas.height = 500;
-      const ctx = canvas.getContext("2d");
-      
-      ctx.clearRect(0, 0, 500, 500);
-      ctx.beginPath();
-      ctx.arc(250, 250, 240, 0, 2 * Math.PI);
-      ctx.fillStyle = bgColor;
-      ctx.fill();
-      
-      ctx.beginPath();
-      ctx.arc(250, 250, 230, 0, 2 * Math.PI);
-      ctx.strokeStyle = "rgba(0,0,0,0.12)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      
-      ctx.beginPath();
-      ctx.arc(250, 250, 240, 0, 2 * Math.PI);
-      ctx.strokeStyle = borderColor || "#b89b5e";
-      ctx.lineWidth = parseInt(borderWidth) || 4;
-      ctx.stroke();
-      
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 200px 'Playfair Display', serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(initials, 250, 250);
-      
-      const gradient = ctx.createRadialGradient(150, 150, 50, 250, 250, 300);
-      gradient.addColorStop(0, "rgba(255,255,255,0.2)");
-      gradient.addColorStop(1, "rgba(0,0,0,0.1)");
-      ctx.fillStyle = gradient;
-      ctx.globalCompositeOperation = "overlay";
-      ctx.beginPath();
-      ctx.arc(250, 250, 250, 0, 2 * Math.PI);
-      ctx.fill();
-      
-      const dataUrl = canvas.toDataURL("image/png");
-      showImageModal(dataUrl);
-    }
-  });
-}
-
-if (closeModal) {
-  closeModal.addEventListener("click", () => {
-    if (modal) modal.style.display = "none";
-  });
-}
-
-window.addEventListener("click", (e) => {
-  if (e.target === modal) modal.style.display = "none";
-});
-
-if (profileAvatar) {
-  profileAvatar.style.cursor = "pointer";
-}
-
-// Menu toggle and nav
-const menuToggle = document.getElementById("menu-toggle");
-const navLinks = document.getElementById("nav-links");
-const closeBtn = document.getElementById("close-btn");
-
-if (menuToggle) {
-  menuToggle.addEventListener("click", () => {
-    navLinks.classList.toggle("show");
-  });
-}
-if (closeBtn) {
-  closeBtn.addEventListener("click", () => {
-    navLinks.classList.remove("show");
-  });
-}
-
-// --- Logout Nav Button ---
-const logoutBtnNav = document.getElementById("logoutBtnNav");
-if (logoutBtnNav) {
-  logoutBtnNav.addEventListener("click", async () => {
-    if (!auth.currentUser) {
-      alert("No user is logged in.");
-      return;
-    }
-    try {
-      await signOut(auth);
-      window.location.href = "users-login.html";
-    } catch (err) {
-      console.error("Logout failed:", err);
-      alert("Logout failed, try again.");
-    }
-  });
-}
-
-// --- Search Filter (NO CHANGES) ---
+// Search filter
 const searchInput = document.getElementById("searchInput");
 let debounceTimeout;
-
-const loadedPoemIds = new Set(
-  Array.from(document.querySelectorAll(".recent-poem-card")).map(
-    card => card.dataset.id
-  )
-);
-
-if (searchInput) {
-  searchInput.addEventListener("input", () => {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(async () => {
-      const filter = searchInput.value.trim().toLowerCase();
-      filterDOM(filter);
-      await searchFirestore(filter);
-    }, 300);
-  });
-}
-
-function filterDOM(filter) {
-  const cards = document.querySelectorAll(".recent-poem-card");
-  let anyVisible = false;
-
-  cards.forEach(card => {
-    const title = card.querySelector(".poem-title")?.textContent.toLowerCase() || "";
-    const content = card.querySelector(".poem-content")?.textContent.toLowerCase() || "";
-    const categories = (card.dataset.categories || "").toLowerCase();
-
-    if (title.includes(filter) || content.includes(filter) || categories.includes(filter)) {
-      card.style.display = "block";
-      anyVisible = true;
-    } else {
-      card.style.display = "none";
-    }
-  });
-
-  showEmptyMessage(!anyVisible);
-}
-
-async function searchFirestore(filter) {
-  if (!filter) return;
-
-  const poemsRef = collection(db, "recentPoems");
-  const snapshot = await getDocs(poemsRef);
-
-  let anyNewResults = false;
-
-  snapshot.docs.forEach(docSnap => {
-    const data = docSnap.data();
-    const id = docSnap.id;
-
-    if (loadedPoemIds.has(id)) return;
-
-    const title = (data.title || "").toLowerCase();
-    const content = (data.content || "").toLowerCase();
-    const categories = (data.categories || "").toLowerCase();
-
-    if (title.includes(filter) || content.includes(filter) || categories.includes(filter)) {
-      addPoemCardToDOM(id, data);
-      loadedPoemIds.add(id);
-      anyNewResults = true;
-    }
-  });
-
-  const anyVisible = document.querySelectorAll(".recent-poem-card:not([style*='display: none'])").length > 0;
-  showEmptyMessage(!anyVisible);
-}
-
-function addPoemCardToDOM(id, data) {
-  const container = document.getElementById("poemsContainer");
-  if (!container) return;
-  const card = document.createElement("div");
-  card.className = "recent-poem-card";
-  card.dataset.id = id;
-  card.dataset.categories = data.categories || "";
-
-  card.innerHTML = `
-    <h3 class="poem-title">${data.title || ""}</h3>
-    <p class="poem-content">${data.content || ""}</p>
-  `;
-
-  container.appendChild(card);
-}
-
-function showEmptyMessage(show) {
-  const container = document.getElementById("poemsContainer");
-  if (!container) return;
-  let msg = container.querySelector(".empty-message");
-  if (show) {
-    if (!msg) {
-      msg = document.createElement("p");
-      msg.className = "empty-message";
-      container.appendChild(msg);
-    }
-    msg.textContent = "No poems match your search.";
-  } else if (msg) {
-    msg.textContent = "";
-  }
-}
+if (searchInput) { searchInput.addEventListener("input", () => { clearTimeout(debounceTimeout); debounceTimeout = setTimeout(() => { const filter = searchInput.value.trim().toLowerCase(); document.querySelectorAll(".recent-poem-card").forEach(card => { const title = card.querySelector(".poem-title")?.textContent.toLowerCase() || ""; const content = card.querySelector(".poem-content")?.textContent.toLowerCase() || ""; card.style.display = (title.includes(filter) || content.includes(filter)) ? "block" : "none"; }); }, 300); }); }
 </script>
-
 </body>
 </html>
