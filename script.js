@@ -422,11 +422,11 @@ async function loadPoemsBatch() {
         }
       }
 
-  // --- AUDIO SECTION: Check if poem has audio URL ---
+// --- AUDIO SECTION: Check if poem has audio URL ---
 let audioHTML = '';
 if (poem.audioUrl) {
   audioHTML = `
-    <div class="poem-audio-section" style="margin: 15px 0; padding: 8px 12px; background: #f0ede8; border-radius: 12px; display: block; width: auto; max-width: 45%; min-width: 240px;">
+    <div class="poem-audio-section">
       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
         <span style="font-size: 0.75rem; color: #4b2aad; font-weight: 600;">🎙️ Spoken Version</span>
       </div>

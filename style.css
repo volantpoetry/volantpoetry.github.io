@@ -3440,3 +3440,32 @@ color: #555555;
     border-left: none;
   }
 }
+/* Audio Section Styles - Desktop (Left aligned) */
+.poem-audio-section {
+  margin: 15px 0;
+  padding: 8px 12px;
+  background: #f0ede8;
+  border-radius: 12px;
+  display: block;
+  width: auto;
+  max-width: 45%;
+  min-width: 240px;
+}
+
+/* Small screens - Keep it on the left, just like desktop */
+@media (max-width: 768px) {
+  .poem-audio-section {
+    max-width: 90%;  /* Slightly wider on mobile but still left aligned */
+    margin-left: 0;   /* Force left alignment */
+    margin-right: auto; /* Push to the left */
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .poem-audio-section {
+    max-width: 95%;
+    margin-left: 0;
+    margin-right: auto;
+  }
+}
