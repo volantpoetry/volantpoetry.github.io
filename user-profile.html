@@ -310,11 +310,11 @@ h2 {
   }
 
   /* Profile picture */
-  .profile-picture img,
-  .volant-avatar {
-    width: 100px !important;
-    height: 100px !important;
-  }
+ .profile-picture img,
+.volant-avatar {
+  width: 165px !important;
+  height: 165px !important;
+}
 
   /* Profile info */
   .profile-info-right {
@@ -916,6 +916,23 @@ h2 {
   background: #6c3ddd;
 }
 
+/* Login Nav Button */
+.login-nav-btn {
+  display: inline-block;
+  margin-left: 20px;
+  padding: 6px 16px;
+  font-size: 14px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.login-nav-btn:hover {
+  background: #6c3ddd;
+}
+
 .nav-right {
   display: flex;
   align-items: center;
@@ -1037,6 +1054,363 @@ audio { width: 100%; border-radius: 8px; margin-top: 8px; }
   color: #4b2aad;
   text-decoration: underline;
 }
+
+.profile-card {
+  background: #f4f1ec;
+  width: 95%;
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 25px 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+}
+/* Main Card */
+.profile-card {
+  background: #f4f1ec;
+  width: 94%;
+  max-width: 420px;
+  margin: 30px auto;
+  padding: 28px 20px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+}
+
+/* Title */
+.profile-title {
+  font-size: 28px;
+  margin-bottom: 18px;
+}
+
+/* Avatar */
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.avatar {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #6a4bc4;
+  box-shadow: 0 0 18px rgba(106,75,196,0.7);
+  transition: 0.3s;
+}
+
+/* Floating buttons */
+.avatar-actions {
+  position: absolute;
+  right: -8px;
+  bottom: 5px;
+  display: flex;
+  gap: 6px;
+}
+
+.icon-btn {
+  border: none;
+  background: #fff;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* USERNAME (PRIMARY) */
+.username-main {
+  font-size: 22px;
+  font-weight: 600;
+  color: #B8860B;
+  margin-top: 10px;
+}
+
+/* REAL NAME (SECONDARY) */
+.real-name {
+  font-size: 15px;
+  color: #777;
+  margin-bottom: 12px;
+}
+
+/* Cards */
+.card-box {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 14px;
+  margin: 14px 0;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  text-align: left;
+}
+
+.card-box h4 {
+  margin-bottom: 8px;
+  font-size: 17px;
+}
+
+/* Stats */
+.stats-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  text-align: center;
+}
+
+.stats-row strong {
+  font-size: 20px;
+}
+
+.stats-row span {
+  font-size: 13px;
+  color: #777;
+}
+
+.divider {
+  width: 1px;
+  height: 35px;
+  background: #ddd;
+}
+
+/* Edit Button */
+.edit-btn {
+  width: auto;
+  display: inline-block;
+  padding: 12px 28px;
+  margin: 18px auto 0;
+  border-radius: 14px;
+  border: none;
+  background: #f3f0ff;
+  color: #5a3cb3;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(106,75,196,0.35);
+  cursor: pointer;
+}
+
+.edit-btn:active {
+  transform: scale(0.97);
+  background: #6a4bc4;
+  color: white;
+}
+
+@media (max-width: 600px) {
+
+  body {
+    background: #f2f2f2;
+  }
+
+  /* Main Card */
+  .profile-card {
+    background: #f4f1ec;
+    width: 94%;
+    max-width: 420px;
+    margin: 20px auto;
+    padding: 24px 18px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+  }
+
+  /* Title */
+  .profile-title {
+    font-size: 26px;
+    margin-bottom: 18px;
+  }
+
+  /* Avatar Wrapper */
+  .avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+
+  .avatar {
+  width: 165px;
+  height: 165px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #6a4bc4;
+  box-shadow:
+    0 0 0 4px rgba(106,75,196,0.15),
+    0 0 18px rgba(106,75,196,0.6);
+}
+
+  /* Floating Buttons */
+  .avatar-actions {
+    position: absolute;
+    right: -6px;
+    bottom: 6px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .icon-btn {
+    border: none;
+    background: #fff;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  }
+
+  /* NAME (MAIN) */
+  .name {
+    font-size: 24px;
+    margin-top: 12px;
+    font-weight: 500;
+  }
+
+  /* USERNAME (SUBTLE PURPLE) */
+  .username {
+    color: #B8860B;
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
+
+  /* Cards */
+  .card-box {
+    background: #ffffff;
+    padding: 16px;
+    border-radius: 14px;
+    margin: 12px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-align: left;
+  }
+
+  .card-box h4 {
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+
+  /* Stats */
+  .stats-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+  }
+
+  .stats-row strong {
+    display: block;
+    font-size: 18px;
+  }
+
+  .stats-row span {
+    font-size: 13px;
+    color: #666;
+  }
+
+  .divider {
+    width: 1px;
+    height: 35px;
+    background: #ddd;
+  }
+
+  /* Edit Button (LIKE IMAGE) */
+  .edit-btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: 14px;
+    border: none;
+    background: #eee;
+    color: #6a4bc4;
+    font-weight: 600;
+    margin-top: 16px;
+    box-shadow: 0 0 12px rgba(106,75,196,0.4);
+    cursor: pointer;
+  }
+
+}
+/* Identity block wrapper (IMPORTANT) */
+.identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 12px;
+  line-height: 1.2;
+}
+.username-main {
+  font-size: 22px;
+  font-weight: 600;
+  color: #B8860B;
+  margin: 0;
+}
+
+.real-name {
+  font-size: 14px;
+  color: #777;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+/* Email row hide when private - COMPLETE HIDE */
+.email-row-private {
+  display: none !important;
+}
+
+/* Email privacy toggle styling - only visible on own profile */
+.email-privacy-toggle {
+  background: #f0f0f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+}
+
+.email-privacy-toggle h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.privacy-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.privacy-btn {
+  padding: 5px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.privacy-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.privacy-btn.public.active {
+  background: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.privacy-btn.private.active {
+  background: #f44336;
+  border-color: #f44336;
+}
+
+.follow-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 15px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+.follow-btn.following {
+  background: #f44336;
+}
 </style>
 </head>
 <body>
@@ -1054,40 +1428,99 @@ audio { width: 100%; border-radius: 8px; margin-top: 8px; }
       <a href="contact.html">Contact Us</a>
     </div>
     <div class="nav-right">
+      <!-- LOGIN BUTTON - shows when no user is signed in -->
+      <button id="loginNavBtn" class="btn login-nav-btn" style="display: none;">Login</button>
       <div class="mobile-icons"><button id="logoutBtnNav" class="btn logout-nav-btn">Logout</button></div>
       <div class="menu-toggle" id="menu-toggle">☰</div>
     </div>
   </nav>
 </header>
 
+
 <div class="profile-layout">
+
+  <!-- LEFT: PROFILE -->
   <div class="profile-container">
-    <h2>Profile</h2>
-    <div class="profile-header-flex">
-      <div class="profile-picture-section">
-        <div class="profile-picture">
-          <div id="profileAvatar" class="volant-avatar"><span id="avatarInitials"></span></div>
-          <img id="profilePic" style="display:none;" alt="Profile Picture">
-          <input type="file" id="uploadPic" style="display:none;">
-          <button class="btn" id="changePicBtn">Change Picture</button>
-          <button id="regenerateAvatarBtn" style="display:none;">Regenerate Avatar</button>
+
+    <h2 class="profile-title">Profile</h2>
+
+    <!-- Avatar + Identity -->
+    <div class="profile-picture-section center">
+      
+      <div class="profile-picture avatar-wrapper">
+        
+        <div id="profileAvatar" class="volant-avatar">
+          <span id="avatarInitials"></span>
         </div>
-        <div class="follow-info-horizontal">
-          <div class="follow-item"><strong id="followersCount">0</strong><span>Followers</span></div>
-          <div class="follow-item"><strong id="followingCount">0</strong><span>Following</span></div>
+
+        <img id="profilePic" style="display:none;" alt="Profile Picture">
+
+        <!-- Floating buttons -->
+        <div class="avatar-actions">
+          <button class="icon-btn" id="changePicBtn">✏️</button>
+          <button class="icon-btn" id="regenerateAvatarBtn">⟳</button>
         </div>
+
+        <input type="file" id="uploadPic" style="display:none;">
       </div>
-      <div class="profile-info-right">
-        <p><strong>Real Name:</strong> <span id="realName"></span></p>
-        <p><strong>Username:</strong> <span id="username"></span></p>
-        <p><strong>Email:</strong> <span id="email"></span></p>
-        <p><strong>Bio:</strong> <span id="bio"></span></p>
-        <p><strong>Joined:</strong> <span id="joined"></span></p>
-        <div class="profile-buttons"><button class="btn" id="editProfileBtn">Edit Profile</button></div>
+
+<!-- USERNAME FIRST with Follow Button -->
+<div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
+  <h3 class="username-main" id="username"></h3>
+  <button id="followActionBtn" class="follow-btn" style="display: none;">Follow</button>
+</div>
+      <!-- REAL NAME BELOW -->
+      <p class="real-name" id="realName"></p>
+
+    </div>
+
+    <!-- Stats -->
+    <div class="card-box">
+      <h4>Stats</h4>
+      <div class="stats-row">
+        <div>
+          <strong id="followersCount">0</strong>
+          <span>Followers</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div>
+          <strong id="followingCount">0</strong>
+          <span>Following</span>
+        </div>
       </div>
     </div>
+
+    <!-- Info - Email row (will be hidden if private AND not owner) -->
+    <div class="card-box">
+      <h4>Info</h4>
+      <p id="emailRow"><strong>Email:</strong> <span id="email"></span></p>
+      <hr>
+      <p><strong>Joined:</strong> <span id="joined"></span></p>
+    </div>
+
+    <!-- Email Privacy Toggle - ONLY SHOWN WHEN VIEWING OWN PROFILE -->
+    <div id="emailPrivacyToggle" class="card-box email-privacy-toggle" style="display: none;">
+      <h4>📧 Email Privacy</h4>
+      <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Control who can see your email address</p>
+      <div class="privacy-buttons">
+        <button id="privacyPublicBtn" class="privacy-btn public">🌍 Public</button>
+        <button id="privacyPrivateBtn" class="privacy-btn private">🔒 Private (Hide)</button>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="card-box">
+      <h4>About</h4>
+      <p id="bio"></p>
+    </div>
+
+    <button class="edit-btn" id="editProfileBtn">Edit Profile</button>
+
   </div>
 
+  <!-- RIGHT: VOLANT PANEL -->
   <div class="interaction-panel">
     <h3>Volant Quick</h3>
     <ul>
@@ -1097,9 +1530,10 @@ audio { width: 100%; border-radius: 8px; margin-top: 8px; }
       <li><a href="user-edit-poems.html">Edit Your Poems</a></li>
       <li><a href="submit-draft.html">Save as Draft</a></li>
       <li><a href="drafts-manager.html">Manage Draft Poems</a></li>
-      <li><a href="gallery-achievements.html">🏆 Volant Achievement Gallery 🏆</a></li>
+      <li><a href="gallery-achievements.html">🏆 Achievement Gallery</a></li>
     </ul>
   </div>
+
 </div>
 
 <section class="profile-stats-section">
@@ -1122,7 +1556,7 @@ audio { width: 100%; border-radius: 8px; margin-top: 8px; }
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, addDoc, deleteDoc, increment, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = { apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU", authDomain: "silent-depth.firebaseapp.com", projectId: "silent-depth", storageBucket: "silent-depth.appspot.com", messagingSenderId: "78008755450", appId: "1:78008755450:web:3fd0f0f298a08820935543" };
@@ -1133,12 +1567,97 @@ const auth = getAuth(app);
 // Helper functions
 function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
 function truncatePoemByLines(text, maxLines = 8) { const lines = text.split(/\r?\n/); const truncated = lines.slice(0, maxLines).join("\n"); return { preview: truncated, full: text, truncated: lines.length > maxLines }; }
-function getInitials(name) { const parts = name.trim().split(" "); if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?"; return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase(); }
+function getInitials(name) { const parts = name.trim().split(" "); if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?"; return (parts[0][0] + parts[parts.length-1][0]).toUpperCase(); }
 function colorFromName(name) { let hash = 0; for (let i = 0; i < name.length; i++) { hash = name.charCodeAt(i) + ((hash << 5) - hash); } const hue = Math.abs(hash) % 360; return `hsl(${hue}, 60%, 45%)`; }
+
+// ========== FOLLOW SYSTEM ==========
+async function handleFollow(followerId, followedId) {
+  if (!followerId || !followedId || followerId === followedId) return;
+  const docId = `${followerId}_${followedId}`;
+  const followRef = doc(db, "social", docId);
+  const docSnap = await getDoc(followRef);
+  const batch = writeBatch(db);
+  if (docSnap.exists()) {
+    batch.delete(followRef);
+    batch.update(doc(db, "users", followedId), { followerCount: increment(-1) });
+    batch.update(doc(db, "users", followerId), { followingCount: increment(-1) });
+  } else {
+    batch.set(followRef, { followerId, followedId, createdAt: serverTimestamp() });
+    batch.update(doc(db, "users", followedId), { followerCount: increment(1) });
+    batch.update(doc(db, "users", followerId), { followingCount: increment(1) });
+  }
+  await batch.commit();
+  await updateFollowUI(followerId, followedId);
+  await refreshUserCounts(followedId);
+  if (followerId === currentUserUid && viewingOwnProfile) await refreshUserCounts(followerId);
+}
+
+async function checkIfFollowing(followerId, followedId) {
+  if (!followerId || !followedId) return false;
+  const docId = `${followerId}_${followedId}`;
+  const docSnap = await getDoc(doc(db, "social", docId));
+  return docSnap.exists();
+}
+
+async function updateFollowUI(followerId, followedId) {
+  if (!followerId || !followedId || followerId === followedId) return;
+  const isFollowing = await checkIfFollowing(followerId, followedId);
+  const followBtn = document.getElementById("followActionBtn");
+  if (followBtn) {
+    followBtn.textContent = isFollowing ? "Unfollow" : "Follow";
+    followBtn.classList.toggle("following", isFollowing);
+  }
+  await refreshUserCounts(followedId);
+}
+
+async function refreshUserCounts(uid) {
+  if (!uid) return;
+  const userDoc = await getDoc(doc(db, "users", uid));
+  if (userDoc.exists()) {
+    const data = userDoc.data();
+    document.getElementById("followersCount").innerText = data.followerCount || 0;
+    if (uid === currentUserUid) document.getElementById("followingCount").innerText = data.followingCount || 0;
+  }
+}
+
+async function ensureUserHasCountFields(uid) {
+  if (!uid) return;
+  const userRef = doc(db, "users", uid);
+  const userDoc = await getDoc(userRef);
+  if (userDoc.exists()) {
+    const data = userDoc.data();
+    if (data.followerCount === undefined || data.followingCount === undefined) {
+      await updateDoc(userRef, { followerCount: 0, followingCount: 0 });
+    }
+  }
+}
+
+async function loadFollowButtonAndCounts(viewerUid, targetUid) {
+  if (!viewerUid || !targetUid) return;
+  await refreshUserCounts(targetUid);
+  if (viewerUid === targetUid) {
+    const followBtn = document.getElementById("followActionBtn");
+    if (followBtn) followBtn.style.display = "none";
+    await refreshUserCounts(viewerUid);
+  } else {
+    const followBtn = document.getElementById("followActionBtn");
+    if (followBtn) {
+      followBtn.style.display = "inline-block";
+      followBtn.onclick = () => handleFollow(viewerUid, targetUid);
+      const isFollowing = await checkIfFollowing(viewerUid, targetUid);
+      followBtn.textContent = isFollowing ? "Unfollow" : "Follow";
+      followBtn.classList.toggle("following", isFollowing);
+    }
+  }
+}
+// ========== END FOLLOW SYSTEM ==========
 
 const urlParams = new URLSearchParams(window.location.search);
 const profileUid = urlParams.get("uid");
 let actorUsername = "", profileUsername = "", viewingOwnProfile = false;
+let profileEmailPrivacy = "public";
+let currentUserUid = null;
+let targetProfileUid = null;
 const poemsContainer = document.getElementById("poemsContainer");
 const editBtn = document.getElementById("editProfileBtn");
 const changePicBtn = document.getElementById("changePicBtn");
@@ -1146,6 +1665,46 @@ const uploadPic = document.getElementById("uploadPic");
 const profilePic = document.getElementById("profilePic");
 const avatarDiv = document.getElementById("profileAvatar");
 const avatarText = document.getElementById("avatarInitials");
+
+// Email elements
+const emailRow = document.getElementById("emailRow");
+const emailSpan = document.getElementById("email");
+const emailPrivacyToggle = document.getElementById("emailPrivacyToggle");
+const privacyPublicBtn = document.getElementById("privacyPublicBtn");
+const privacyPrivateBtn = document.getElementById("privacyPrivateBtn");
+
+// Function to apply email visibility (HIDE completely when private AND not owner)
+function applyEmailVisibility(isPrivate, isOwner) {
+  if (!emailRow) return;
+  if (isPrivate && !isOwner) {
+    emailRow.classList.add("email-row-private");
+  } else {
+    emailRow.classList.remove("email-row-private");
+  }
+}
+
+// Save email privacy setting to Firestore
+async function saveEmailPrivacy(uid, privacy) {
+  if (!uid) return;
+  try {
+    await updateDoc(doc(db, "users", uid), { emailPrivacy: privacy });
+    profileEmailPrivacy = privacy;
+    if (viewingOwnProfile) {
+      applyEmailVisibility(privacy === "private", true);
+      if (privacy === "public") {
+        privacyPublicBtn.classList.add("active");
+        privacyPrivateBtn.classList.remove("active");
+      } else {
+        privacyPublicBtn.classList.remove("active");
+        privacyPrivateBtn.classList.add("active");
+      }
+    } else {
+      applyEmailVisibility(privacy === "private", false);
+    }
+  } catch (err) {
+    console.error("Error saving email privacy:", err);
+  }
+}
 
 // Modal functions
 window.showPreview = function(imageUrl, title, description) {
@@ -1246,68 +1805,35 @@ async function uploadAvatarToCloudinary(initials, bgColor, publicId = null) {
   return cleanUrl;
 }
 
-// Audio upload to Cloudinary - NO transformation parameter
 async function uploadAudioToCloudinary(file, poemId, statusDiv, poemTitle, username) {
-  if (file.size > 9 * 1024 * 1024) {
-    statusDiv.innerHTML = '❌ File too large. Maximum size is 9MB.';
-    return;
-  }
-  if (!file.type.startsWith('audio/') && !file.name.toLowerCase().match(/\.(mp3|m4a|wav)$/)) {
-    statusDiv.innerHTML = '❌ Please upload an audio file (MP3, M4A, or WAV).';
-    return;
-  }
-  
+  if (file.size > 9 * 1024 * 1024) { statusDiv.innerHTML = '❌ File too large. Maximum size is 9MB.'; return; }
+  if (!file.type.startsWith('audio/') && !file.name.toLowerCase().match(/\.(mp3|m4a|wav)$/)) { statusDiv.innerHTML = '❌ Please upload an audio file (MP3, M4A, or WAV).'; return; }
   const cleanUsername = (username || 'anonymous').toLowerCase().replace(/[^a-z0-9]/g, '_');
   const cleanTitle = (poemTitle || 'untitled').toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 50);
   const timestamp = Date.now();
   const customFilename = `${cleanUsername}_${cleanTitle}_${timestamp}`;
-  
   const formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", "profile_pics");
   formData.append("resource_type", "auto");
   formData.append("public_id", `poetry_audio/${customFilename}`);
-  // Removed transformation parameter - not allowed with unsigned upload
-  
   try {
-    const res = await fetch(`https://api.cloudinary.com/v1_1/dzoq4pgjn/auto/upload`, { 
-      method: "POST", 
-      body: formData 
-    });
+    const res = await fetch(`https://api.cloudinary.com/v1_1/dzoq4pgjn/auto/upload`, { method: "POST", body: formData });
     const data = await res.json();
     if (data.secure_url) {
-      await updateDoc(doc(db, "recentPoems", poemId), { 
-        audioUrl: data.secure_url,
-        audioFilename: customFilename + '.mp3',
-        audioFormat: "mp3",
-        hasAudio: true
-      });
+      await updateDoc(doc(db, "recentPoems", poemId), { audioUrl: data.secure_url, audioFilename: customFilename + '.mp3', audioFormat: "mp3", hasAudio: true });
       statusDiv.innerHTML = '✅ Audio uploaded! Refreshing...';
       setTimeout(() => fetchUserPoems(profileUsername), 1500);
-    } else {
-      throw new Error(data.error?.message || 'Upload failed');
-    }
-  } catch (err) { 
-    console.error("Upload error:", err);
-    statusDiv.innerHTML = '❌ Upload failed. Please retry.'; 
-  }
+    } else { throw new Error(data.error?.message || 'Upload failed'); }
+  } catch (err) { console.error("Upload error:", err); statusDiv.innerHTML = '❌ Upload failed. Please retry.'; }
 }
 
-// Setup audio event listeners with working timer
 function setupAudioEventListeners() {
-  let mediaRecorder, audioChunks, activeStream;
-  let recordingInterval;
-  let recordingStartTime;
-  
+  let mediaRecorder, audioChunks, activeStream, recordingInterval, recordingStartTime;
   document.querySelectorAll('.record-audio-btn').forEach(btn => {
     const poemId = btn.dataset.poemId;
     const existingAudio = document.querySelector(`audio[data-audio-id="${poemId}"]`);
-    if (existingAudio && existingAudio.src) {
-      btn.style.display = 'none';
-      const uploadBtn = document.querySelector(`.upload-audio-btn[data-poem-id="${poemId}"]`);
-      if (uploadBtn) uploadBtn.style.display = 'none';
-    }
-    
+    if (existingAudio && existingAudio.src) { btn.style.display = 'none'; const uploadBtn = document.querySelector(`.upload-audio-btn[data-poem-id="${poemId}"]`); if (uploadBtn) uploadBtn.style.display = 'none'; }
     btn.removeEventListener('click', btn._listener);
     btn._listener = async (e) => {
       e.preventDefault();
@@ -1317,121 +1843,45 @@ function setupAudioEventListeners() {
       const stopBtn = document.createElement('button');
       const poemTitle = document.querySelector(`.recent-poem-card[data-id="${poemId}"] .poem-title`)?.textContent || "untitled";
       const username = profileUsername || 'anonymous';
-      
-      // Clear status div
       statusDiv.innerHTML = '';
-      
-      // Create timer display
-      const timerDisplay = document.createElement('div');
-      timerDisplay.className = 'recording-timer';
-      timerDisplay.textContent = '00:00';
-      statusDiv.appendChild(timerDisplay);
-      
-      const recordingMsg = document.createElement('div');
-      recordingMsg.textContent = '🔴 Recording... Click Stop when finished.';
-      recordingMsg.style.marginTop = '8px';
-      statusDiv.appendChild(recordingMsg);
-      
+      const timerDisplay = document.createElement('div'); timerDisplay.className = 'recording-timer'; timerDisplay.textContent = '00:00'; statusDiv.appendChild(timerDisplay);
+      const recordingMsg = document.createElement('div'); recordingMsg.textContent = '🔴 Recording... Click Stop when finished.'; recordingMsg.style.marginTop = '8px'; statusDiv.appendChild(recordingMsg);
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         activeStream = stream;
         mediaRecorder = new MediaRecorder(stream);
         audioChunks = [];
-        
         mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
-        mediaRecorder.onstop = async () => {
-          if (recordingInterval) clearInterval(recordingInterval);
-          statusDiv.innerHTML = '📤 Uploading...';
-          const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' });
-          const audioFile = new File([audioBlob], `recording_${Date.now()}.mp3`, { type: 'audio/mpeg' });
-          await uploadAudioToCloudinary(audioFile, poemId, statusDiv, poemTitle, username);
-          if (activeStream) activeStream.getTracks().forEach(track => track.stop());
-          activeStream = null;
-        };
-        
+        mediaRecorder.onstop = async () => { if (recordingInterval) clearInterval(recordingInterval); statusDiv.innerHTML = '📤 Uploading...'; const audioBlob = new Blob(audioChunks, { type: 'audio/mpeg' }); const audioFile = new File([audioBlob], `recording_${Date.now()}.mp3`, { type: 'audio/mpeg' }); await uploadAudioToCloudinary(audioFile, poemId, statusDiv, poemTitle, username); if (activeStream) activeStream.getTracks().forEach(track => track.stop()); activeStream = null; };
         mediaRecorder.start();
         recordingStartTime = Date.now();
-        recordingInterval = setInterval(() => {
-          const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
-          const minutes = Math.floor(elapsed / 60);
-          const seconds = elapsed % 60;
-          timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }, 1000);
-        
+        recordingInterval = setInterval(() => { const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000); const minutes = Math.floor(elapsed / 60); const seconds = elapsed % 60; timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`; }, 1000);
         recordBtn.style.display = 'none';
-        stopBtn.textContent = '⏹️ Stop Recording';
-        stopBtn.style.cssText = 'background:#6c757d; color:white; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:8px;';
-        stopBtn.addEventListener('click', () => { 
-          if (mediaRecorder && mediaRecorder.state === 'recording') { 
-            mediaRecorder.stop(); 
-            stopBtn.remove(); 
-            recordBtn.style.display = 'inline-block'; 
-          } 
-        });
+        stopBtn.textContent = '⏹️ Stop Recording'; stopBtn.style.cssText = 'background:#6c757d; color:white; border:none; border-radius:8px; padding:8px 16px; cursor:pointer; margin-top:8px;';
+        stopBtn.addEventListener('click', () => { if (mediaRecorder && mediaRecorder.state === 'recording') { mediaRecorder.stop(); stopBtn.remove(); recordBtn.style.display = 'inline-block'; } });
         statusDiv.appendChild(stopBtn);
-      } catch (err) { 
-        statusDiv.innerHTML = '❌ Microphone access denied. Please check permissions.'; 
-      }
+      } catch (err) { statusDiv.innerHTML = '❌ Microphone access denied. Please check permissions.'; }
     };
     btn.addEventListener('click', btn._listener);
   });
-
   document.querySelectorAll('.upload-audio-btn').forEach(btn => {
     const poemId = btn.dataset.poemId;
     const existingAudio = document.querySelector(`audio[data-audio-id="${poemId}"]`);
-    if (existingAudio && existingAudio.src) {
-      btn.style.display = 'none';
-    }
-    
+    if (existingAudio && existingAudio.src) btn.style.display = 'none';
     btn.removeEventListener('click', btn._uploadListener);
-    btn._uploadListener = (e) => { 
-      e.preventDefault(); 
-      const poemId = btn.dataset.poemId;
-      const poemTitle = document.querySelector(`.recent-poem-card[data-id="${poemId}"] .poem-title`)?.textContent || "untitled";
-      const username = profileUsername || 'anonymous';
-      const fileInput = document.querySelector(`.audio-file-input[data-poem-id="${poemId}"]`);
-      fileInput.dataset.poemTitle = poemTitle;
-      fileInput.dataset.username = username;
-      fileInput.click(); 
-    };
+    btn._uploadListener = (e) => { e.preventDefault(); const poemId = btn.dataset.poemId; const poemTitle = document.querySelector(`.recent-poem-card[data-id="${poemId}"] .poem-title`)?.textContent || "untitled"; const username = profileUsername || 'anonymous'; const fileInput = document.querySelector(`.audio-file-input[data-poem-id="${poemId}"]`); fileInput.dataset.poemTitle = poemTitle; fileInput.dataset.username = username; fileInput.click(); };
     btn.addEventListener('click', btn._uploadListener);
   });
-
   document.querySelectorAll('.audio-file-input').forEach(input => {
     input.removeEventListener('change', input._changeListener);
-    input._changeListener = async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const poemId = input.dataset.poemId;
-      const poemTitle = input.dataset.poemTitle || "untitled";
-      const username = input.dataset.username || profileUsername || 'anonymous';
-      const statusDiv = document.querySelector(`.recording-status[data-poem-id="${poemId}"]`);
-      
-      const cleanUsername = username.toLowerCase().replace(/[^a-z0-9]/g, '_');
-      const cleanTitle = poemTitle.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 50);
-      const timestamp = Date.now();
-      const newFileName = `${cleanUsername}_${cleanTitle}_${timestamp}.mp3`;
-      const renamedFile = new File([file], newFileName, { type: file.type });
-      
-      await uploadAudioToCloudinary(renamedFile, poemId, statusDiv, poemTitle, username);
-    };
+    input._changeListener = async (e) => { const file = e.target.files[0]; if (!file) return; const poemId = input.dataset.poemId; const poemTitle = input.dataset.poemTitle || "untitled"; const username = input.dataset.username || profileUsername || 'anonymous'; const statusDiv = document.querySelector(`.recording-status[data-poem-id="${poemId}"]`); const cleanUsername = username.toLowerCase().replace(/[^a-z0-9]/g, '_'); const cleanTitle = poemTitle.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 50); const timestamp = Date.now(); const newFileName = `${cleanUsername}_${cleanTitle}_${timestamp}.mp3`; const renamedFile = new File([file], newFileName, { type: file.type }); await uploadAudioToCloudinary(renamedFile, poemId, statusDiv, poemTitle, username); };
     input.addEventListener('change', input._changeListener);
   });
-
   document.removeEventListener('click', window._deleteAudioHandler);
-  window._deleteAudioHandler = async (e) => {
-    if (e.target.classList.contains('delete-audio-btn')) {
-      const poemId = e.target.dataset.poemId;
-      if (confirm('Remove this audio recording?')) {
-        await updateDoc(doc(db, "recentPoems", poemId), { audioUrl: null, audioFilename: null, audioFormat: null, hasAudio: false });
-        fetchUserPoems(profileUsername);
-      }
-    }
-  };
+  window._deleteAudioHandler = async (e) => { if (e.target.classList.contains('delete-audio-btn')) { const poemId = e.target.dataset.poemId; if (confirm('Remove this audio recording?')) { await updateDoc(doc(db, "recentPoems", poemId), { audioUrl: null, audioFilename: null, audioFormat: null, hasAudio: false }); fetchUserPoems(profileUsername); } } };
   document.addEventListener('click', window._deleteAudioHandler);
 }
 
-// Fetch Poems with Audio - HIDE buttons after upload
 async function fetchUserPoems(usernameToFetch) {
   try {
     const q = query(collection(db, "recentPoems"), where("submittedBy", "==", usernameToFetch));
@@ -1440,11 +1890,9 @@ async function fetchUserPoems(usernameToFetch) {
     let totalLikes = 0, totalCommentsReceived = 0, poemCount = querySnap.size, totalCommentsMade = 0;
     if (viewingOwnProfile) totalCommentsMade = await fetchTotalCommentsMade(actorUsername);
     if (querySnap.empty) { poemsContainer.innerHTML = `<p>No poems yet.</p>`; updateAchievements(0, 0, 0, totalCommentsMade); updateLevel(0, 0, 0, totalCommentsMade); return; }
-    
     const poemsArray = [];
     querySnap.forEach(docSnap => { const p = docSnap.data(); p.id = docSnap.id; poemsArray.push(p); });
     poemsArray.sort((a,b) => (b.timestamp?.seconds||0) - (a.timestamp?.seconds||0));
-    
     for (const poem of poemsArray) {
       const docId = poem.id;
       const card = document.createElement("div"); card.className = "recent-poem-card"; card.dataset.id = docId;
@@ -1454,38 +1902,17 @@ async function fetchUserPoems(usernameToFetch) {
       try { const csnap = await getDocs(collection(db, "recentPoems", docId, "comments")); commentsSnapCount = csnap.size; } catch(e) { commentsSnapCount = 0; }
       totalCommentsReceived += commentsSnapCount;
       const dateStr = poem.timestamp ? new Date(poem.timestamp.seconds*1000).toLocaleDateString() + ' ' + new Date(poem.timestamp.seconds*1000).toLocaleTimeString() : "";
-      
       let audioSectionHTML = '';
       const hasAudio = poem.audioUrl && poem.audioUrl !== '';
-      
       if (viewingOwnProfile) {
         const existingAudioUrl = poem.audioUrl || '';
         const hideButtons = hasAudio ? 'style="display:none;"' : '';
-        audioSectionHTML = `
-          <div class="audio-section">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <label>🎙️ Spoken Version</label>
-              ${existingAudioUrl ? `<button class="delete-audio-btn" data-poem-id="${docId}" style="background:#ff4d4d; padding:4px 12px;">🗑️ Remove Audio</button>` : ''}
-            </div>
-            ${existingAudioUrl ? `<audio controls src="${existingAudioUrl}" data-audio-id="${docId}"></audio>` : ''}
-            <div class="audio-controls" ${hideButtons}>
-              <button class="record-audio-btn" data-poem-id="${docId}" style="background:#dc3545; padding:8px 16px;">🎙️ Record</button>
-              <button class="upload-audio-btn" data-poem-id="${docId}" style="background:#28a745; padding:8px 16px;">📁 Upload</button>
-              <input type="file" class="audio-file-input" data-poem-id="${docId}" accept="audio/mpeg,audio/mp4,audio/wav" style="display:none;">
-            </div>
-            ${!hasAudio ? `<div class="recording-status" data-poem-id="${docId}"></div>` : ''}
-          </div>
-        `;
-      } else if (poem.audioUrl) { 
-        audioSectionHTML = `<div class="audio-section"><label>🎙️ Listen to the poet's voice:</label><audio controls src="${poem.audioUrl}"></audio></div>`; 
-      }
-      
+        audioSectionHTML = `<div class="audio-section"><div style="display:flex; justify-content:space-between; align-items:center;"><label>🎙️ Spoken Version</label>${existingAudioUrl ? `<button class="delete-audio-btn" data-poem-id="${docId}" style="background:#ff4d4d; padding:4px 12px;">🗑️ Remove Audio</button>` : ''}</div>${existingAudioUrl ? `<audio controls src="${existingAudioUrl}" data-audio-id="${docId}"></audio>` : ''}<div class="audio-controls" ${hideButtons}><button class="record-audio-btn" data-poem-id="${docId}" style="background:#dc3545; padding:8px 16px;">🎙️ Record</button><button class="upload-audio-btn" data-poem-id="${docId}" style="background:#28a745; padding:8px 16px;">📁 Upload</button><input type="file" class="audio-file-input" data-poem-id="${docId}" accept="audio/mpeg,audio/mp4,audio/wav" style="display:none;"></div>${!hasAudio ? `<div class="recording-status" data-poem-id="${docId}"></div>` : ''}</div>`;
+      } else if (poem.audioUrl) { audioSectionHTML = `<div class="audio-section"><label>🎙️ Listen to the poet's voice:</label><audio controls src="${poem.audioUrl}"></audio></div>`; }
       card.innerHTML = `<div class="poem-display"><h3 class="poem-title">${escapeHtml(poem.title)}</h3>${dateStr ? `<small class="poem-date">${escapeHtml(dateStr)}</small>` : ""}<button class="delete-btn" data-id="${docId}">🗑️ Delete</button><div class="poem-body"><p class="poem-content">${escapeHtml(truncated.preview).replace(/\n/g, "<br>")}</p>${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}</div></div>${audioSectionHTML}${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(c=>escapeHtml(c)).join(", ")}</em></p>` : ""}<div class="poem-actions comment-aligned"><textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea><button class="comment-btn">Post</button><button class="like-btn">❤️ <span class="like-count">${likes}</span></button><span class="message-count">💬 ${commentsSnapCount}</span></div><div class="comment-list" style="display:none;"></div>`;
-      
       if (!viewingOwnProfile) card.querySelector('.delete-btn')?.remove();
       poemsContainer.appendChild(card);
     }
-    
     document.getElementById("poemCount").innerText = poemCount;
     document.getElementById("likeCount").innerText = totalLikes;
     document.getElementById("commentCount").innerText = totalCommentsReceived;
@@ -1506,152 +1933,131 @@ async function fetchTopPoems(profileName) {
 
 // Auth handling
 onAuthStateChanged(auth, async (user) => {
-  // If no user logged in AND no uid in URL, redirect to login
+  const loginBtn = document.getElementById("loginNavBtn");
+  const logoutBtnNav = document.getElementById("logoutBtnNav");
+  
+  if (!user) {
+    if (loginBtn) loginBtn.style.display = "inline-block";
+    if (logoutBtnNav) logoutBtnNav.style.display = "none";
+  } else {
+    if (loginBtn) loginBtn.style.display = "none";
+    if (logoutBtnNav) logoutBtnNav.style.display = "inline-block";
+    currentUserUid = user.uid;
+  }
+  
   if (!user && !profileUid) { 
     window.location.href = "users-login.html"; 
     return; 
   }
   
-  // Get actor info if logged in
   if (user) { 
     const actorRef = doc(db, "users", user.uid); 
     let actorDoc = await getDoc(actorRef); 
     if (!actorDoc.exists()) { 
-      await setDoc(actorRef, { 
-        username: user.displayName || user.email.split("@")[0], 
-        email: user.email, 
-        bio: "", 
-        realName: "", 
-        joined: new Date(), 
-        photoURL: user.photoURL || "" 
-      }); 
+      await setDoc(actorRef, { username: user.displayName || user.email.split("@")[0], email: user.email, bio: "", realName: "", joined: new Date(), photoURL: user.photoURL || "", emailPrivacy: "public", followerCount: 0, followingCount: 0 }); 
       actorDoc = await getDoc(actorRef); 
     } 
     actorUsername = actorDoc.data()?.username || user.email.split("@")[0]; 
   }
   
-  // Determine which profile to show (from URL or logged-in user)
   viewingOwnProfile = (user && (!profileUid || profileUid === user.uid));
-  const targetUid = (profileUid && profileUid !== "undefined") ? profileUid : (user ? user.uid : null);
+  targetProfileUid = (profileUid && profileUid !== "undefined") ? profileUid : (user ? user.uid : null);
+  if (!targetProfileUid) return;
   
-  if (!targetUid) return;
+  await ensureUserHasCountFields(targetProfileUid);
   
-  const userDoc = await getDoc(doc(db, "users", targetUid));
-  if (!userDoc.exists()) { 
-    alert("User not found."); 
-    window.location.href = "index.html"; 
-    return; 
-  }
+  const userDoc = await getDoc(doc(db, "users", targetProfileUid));
+  if (!userDoc.exists()) { alert("User not found."); window.location.href = "index.html"; return; }
   
   const data = userDoc.data();
   profileUsername = data.username || data.email.split("@")[0];
+  profileEmailPrivacy = data.emailPrivacy || "public";
   
-  // Update profile info
   document.getElementById("realName").innerText = data.realName || "Not set";
   document.getElementById("username").innerText = profileUsername;
-  document.getElementById("email").innerText = viewingOwnProfile ? (data.email || "") : "🔒 Private";
+  
+  // Apply email visibility
+  applyEmailVisibility(profileEmailPrivacy === "private", viewingOwnProfile);
+  if (viewingOwnProfile || profileEmailPrivacy === "public") {
+    emailSpan.innerText = data.email || "";
+  } else {
+    emailSpan.innerText = "";
+  }
+  
   document.getElementById("bio").innerText = data.bio || "No bio yet";
   document.getElementById("joined").innerText = data.joined?.seconds ? new Date(data.joined.seconds*1000).toDateString() : "Unknown";
   
-  // Handle avatar display - FIXED
-  const avatarDiv = document.getElementById("profileAvatar");
-  const avatarText = document.getElementById("avatarInitials");
-  const profilePic = document.getElementById("profilePic");
+  // Setup email privacy toggle (only for own profile)
+  if (viewingOwnProfile && user && user.uid === targetProfileUid) {
+    emailPrivacyToggle.style.display = "block";
+    if (profileEmailPrivacy === "public") {
+      privacyPublicBtn.classList.add("active");
+      privacyPrivateBtn.classList.remove("active");
+    } else {
+      privacyPublicBtn.classList.remove("active");
+      privacyPrivateBtn.classList.add("active");
+    }
+    privacyPublicBtn.onclick = () => saveEmailPrivacy(user.uid, "public");
+    privacyPrivateBtn.onclick = () => saveEmailPrivacy(user.uid, "private");
+  } else {
+    emailPrivacyToggle.style.display = "none";
+  }
   
+  // Avatar handling
   if (data.photoURL && data.photoURL !== "") {
-    // User has uploaded a photo
     profilePic.src = data.photoURL;
     profilePic.style.display = "block";
     profilePic.style.borderRadius = "50%";
     avatarDiv.style.display = "none";
-  } 
-  else if (data.cachedAvatarURL && data.cachedAvatarURL !== "") {
-    // User has a cached avatar
+  } else if (data.cachedAvatarURL && data.cachedAvatarURL !== "") {
     profilePic.src = data.cachedAvatarURL;
     profilePic.style.display = "block";
     profilePic.style.borderRadius = "50%";
     avatarDiv.style.display = "none";
-  } 
-  else {
-    // Show generated initials avatar (no upload for public viewers)
+  } else {
     const initials = getInitials(profileUsername);
     const bgColor = colorFromName(profileUsername);
     avatarText.innerText = initials;
     avatarDiv.style.background = bgColor;
     avatarDiv.style.display = "flex";
     profilePic.style.display = "none";
-    
-    // ONLY generate and upload avatar for own profile (when user is logged in)
     if (viewingOwnProfile && user) {
-      uploadAvatarToCloudinary(initials, bgColor).then(url => { 
-        if(url) { 
-          profilePic.src = url; 
-          profilePic.style.display = "block"; 
-          avatarDiv.style.display = "none"; 
-        } 
-      }).catch(err => {
-        console.error("Avatar upload failed:", err);
-      });
+      uploadAvatarToCloudinary(initials, bgColor).then(url => { if(url) { profilePic.src = url; profilePic.style.display = "block"; avatarDiv.style.display = "none"; } }).catch(err => console.error("Avatar upload failed:", err));
     }
   }
   
-  // Handle regenerate avatar button - only for own profile
-  const regenerateAvatarBtn = document.getElementById("regenerateAvatarBtn");
-  if (regenerateAvatarBtn) {
+  const regenerateAvatarBtnLocal = document.getElementById("regenerateAvatarBtn");
+  if (regenerateAvatarBtnLocal) {
     if (viewingOwnProfile && user) { 
-      regenerateAvatarBtn.style.display = "inline-block"; 
-      regenerateAvatarBtn.onclick = async () => { 
-        const initials = getInitials(profileUsername); 
-        const bgColor = colorFromName(profileUsername); 
-        const newUrl = await uploadAvatarToCloudinary(initials, bgColor); 
-        if(newUrl) { 
-          profilePic.src = newUrl; 
-          profilePic.style.display = "block"; 
-          avatarDiv.style.display = "none"; 
-          alert("Avatar updated!"); 
-        } 
-      }; 
-    } else {
-      regenerateAvatarBtn.style.display = "none";
-    }
+      regenerateAvatarBtnLocal.style.display = "inline-block"; 
+      regenerateAvatarBtnLocal.onclick = async () => { const initials = getInitials(profileUsername); const bgColor = colorFromName(profileUsername); const newUrl = await uploadAvatarToCloudinary(initials, bgColor); if(newUrl) { profilePic.src = newUrl; profilePic.style.display = "block"; avatarDiv.style.display = "none"; alert("Avatar updated!"); } }; 
+    } else { regenerateAvatarBtnLocal.style.display = "none"; }
   }
   
-  // Handle edit/upload buttons visibility
   if (!viewingOwnProfile) { 
     if (editBtn) editBtn.style.display = "none"; 
     if (changePicBtn) changePicBtn.style.display = "none"; 
-    if (regenerateAvatarBtn) regenerateAvatarBtn.style.display = "none"; 
+    if (regenerateAvatarBtnLocal) regenerateAvatarBtnLocal.style.display = "none"; 
     const quickPanel = document.querySelector(".interaction-panel");
     if (quickPanel) quickPanel.style.display = "none";
-    
-    // Hide logout button for public viewers
-    const logoutBtnNav = document.getElementById("logoutBtnNav");
     if (logoutBtnNav) logoutBtnNav.style.display = "none";
-  } 
-  else { 
-    // Show logout button only when viewing own profile
-    const logoutBtnNav = document.getElementById("logoutBtnNav");
+  } else { 
     if (logoutBtnNav && user) logoutBtnNav.style.display = "inline-block";
-    
     if (editBtn) editBtn.onclick = () => window.location.href = "edit-profile.html"; 
     if (changePicBtn) changePicBtn.onclick = () => uploadPic.click(); 
     if (uploadPic) {
-      uploadPic.onchange = async (e) => { 
-        const file = e.target.files[0]; 
-        if(!file) return; 
-        const fd = new FormData(); 
-        fd.append("file", file); 
-        fd.append("upload_preset","profile_pics"); 
-        const res = await fetch(`https://api.cloudinary.com/v1_1/dzoq4pgjn/image/upload`, { method: "POST", body: fd }); 
-        const imgUrl = (await res.json()).secure_url; 
-        if(imgUrl) { 
-          profilePic.src = imgUrl; 
-          profilePic.style.display = "block"; 
-          avatarDiv.style.display = "none"; 
-          await updateDoc(doc(db, "users", user.uid), { photoURL: imgUrl }); 
-        } 
-      };
+      uploadPic.onchange = async (e) => { const file = e.target.files[0]; if(!file) return; const fd = new FormData(); fd.append("file", file); fd.append("upload_preset","profile_pics"); const res = await fetch(`https://api.cloudinary.com/v1_1/dzoq4pgjn/image/upload`, { method: "POST", body: fd }); const imgUrl = (await res.json()).secure_url; if(imgUrl) { profilePic.src = imgUrl; profilePic.style.display = "block"; avatarDiv.style.display = "none"; await updateDoc(doc(db, "users", user.uid), { photoURL: imgUrl }); } };
     }
+  }
+  
+  // LOAD FOLLOW BUTTON AND COUNTS - INTEGRATED HERE
+  if (user) {
+    await loadFollowButtonAndCounts(currentUserUid, targetProfileUid);
+  } else {
+    // For non-logged in users viewing a profile
+    await refreshUserCounts(targetProfileUid);
+    const followBtn = document.getElementById("followActionBtn");
+    if (followBtn) followBtn.style.display = "none";
   }
   
   await fetchUserPoems(profileUsername);
@@ -1659,10 +2065,10 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // Image modal
-const modal = document.getElementById("imageModal"), expandedImg = document.getElementById("expandedImg"), closeModal = document.querySelector(".close-modal"), profilePicEl = document.getElementById("profilePic"), profileAvatarEl = document.getElementById("profileAvatar");
+const modal = document.getElementById("imageModal"), expandedImg = document.getElementById("expandedImg"), closeModal = document.querySelector(".close-modal");
 function showImageModal(imageSrc) { expandedImg.src = imageSrc; modal.style.display = "flex"; }
-if (profilePicEl) profilePicEl.addEventListener("click", () => { if (profilePicEl.src) showImageModal(profilePicEl.src); });
-if (profileAvatarEl) profileAvatarEl.addEventListener("click", () => { if (profilePicEl && profilePicEl.style.display !== "none" && profilePicEl.src) showImageModal(profilePicEl.src); else { const canvas = document.createElement("canvas"); canvas.width = 500; canvas.height = 500; const ctx = canvas.getContext("2d"); ctx.fillStyle = "#4b2aad"; ctx.fillRect(0,0,500,500); ctx.fillStyle = "#fff"; ctx.font = "bold 200px 'Playfair Display'"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(avatarText.innerText, 250, 250); showImageModal(canvas.toDataURL()); } });
+if (profilePic) profilePic.addEventListener("click", () => { if (profilePic.src) showImageModal(profilePic.src); });
+if (avatarDiv) avatarDiv.addEventListener("click", () => { if (profilePic && profilePic.style.display !== "none" && profilePic.src) showImageModal(profilePic.src); else { const canvas = document.createElement("canvas"); canvas.width = 500; canvas.height = 500; const ctx = canvas.getContext("2d"); ctx.fillStyle = "#4b2aad"; ctx.fillRect(0,0,500,500); ctx.fillStyle = "#fff"; ctx.font = "bold 200px 'Playfair Display'"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(avatarText.innerText, 250, 250); showImageModal(canvas.toDataURL()); } });
 if (closeModal) closeModal.addEventListener("click", () => modal.style.display = "none");
 window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
 
@@ -1670,6 +2076,7 @@ window.addEventListener("click", (e) => { if (e.target === modal) modal.style.di
 document.getElementById("menu-toggle")?.addEventListener("click", () => document.getElementById("nav-links").classList.toggle("show"));
 document.getElementById("close-btn")?.addEventListener("click", () => document.getElementById("nav-links").classList.remove("show"));
 document.getElementById("logoutBtnNav")?.addEventListener("click", async () => { await signOut(auth); window.location.href = "users-login.html"; });
+document.getElementById("loginNavBtn")?.addEventListener("click", () => { window.location.href = "users-login.html"; });
 
 // Search filter
 const searchInput = document.getElementById("searchInput");

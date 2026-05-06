@@ -3441,3 +3441,27 @@ color: #555555;
   }
 }
 
+.follow-btn-on-card {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-left: auto;
+  transition: all 0.2s;
+}
+
+.follow-btn-on-card:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+.follow-btn-on-card.following {
+  background: #f44336;
+}
+
+.follow-btn-on-card.following:hover {
+  background: #d32f2f;
+}
