@@ -1411,6 +1411,137 @@ audio { width: 100%; border-radius: 8px; margin-top: 8px; }
 .follow-btn.following {
   background: #f44336;
 }
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between image and text */
+}
+
+.nav-logo-img {
+  display: block;
+  height: 40px;  /* adjust as needed */
+  width: auto;
+  order: 1; /* ensures image is first (left) */
+}
+
+.logo-text {
+  order: 2; /* text stays right of image */
+  white-space: nowrap;
+}
+
+/* On desktop, the nav container should also use flex */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* optional, for nav layout */
+}
+
+.username-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a73e8;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  position: relative;
+}
+
+.verified-badge:hover {
+  transform: scale(1.1);
+}
+
+.verified-badge::after {
+  content: "Verified Poet";
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  font-size: 11px;
+  font-weight: normal;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 100;
+  font-family: 'Inter', sans-serif;
+}
+
+.verified-badge:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Unverified Badge Style */
+.unverified-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ff9800;
+  color: white;
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 4px;
+  position: relative;
+}
+
+.unverified-badge:hover {
+  background: #e68900;
+  transform: scale(1.02);
+}
+
+.unverified-badge::after {
+  content: "Verify your email to get the Verified Poet badge";
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  font-size: 11px;
+  font-weight: normal;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 100;
+  font-family: 'Inter', sans-serif;
+  width: max-content;
+  max-width: 200px;
+  white-space: normal;
+  text-align: center;
+}
+
+.unverified-badge:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+
 </style>
 </head>
 <body>
@@ -1464,9 +1595,13 @@ audio { width: 100%; border-radius: 8px; margin-top: 8px; }
         <input type="file" id="uploadPic" style="display:none;">
       </div>
 
-<!-- USERNAME FIRST with Follow Button -->
+<!-- USERNAME FIRST with Follow Button and Badges -->
 <div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
-  <h3 class="username-main" id="username"></h3>
+  <div class="username-wrapper">
+    <h3 class="username-main" id="username"></h3>
+    <span id="verifiedBadge" class="verified-badge" style="display: none;">✓</span>
+    <span id="unverifiedBadge" class="unverified-badge" style="display: none;">⚠️ Unverified</span>
+  </div>
   <button id="followActionBtn" class="follow-btn" style="display: none;">Follow</button>
 </div>
       <!-- REAL NAME BELOW -->
@@ -1475,26 +1610,31 @@ audio { width: 100%; border-radius: 8px; margin-top: 8px; }
     </div>
 
     <!-- Stats -->
-    <div class="card-box">
-      <h4>Stats</h4>
-      <div class="stats-row">
-        <div>
-          <strong id="followersCount">0</strong>
-          <span>Followers</span>
-        </div>
-
-        <div class="divider"></div>
-
-        <div>
-          <strong id="followingCount">0</strong>
-          <span>Following</span>
-        </div>
-      </div>
+<div class="card-box">
+  <div class="stats-row">
+    <div>
+      <strong id="followersCount">0</strong>
+      <span>Followers</span>
     </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <strong id="totalViewsCount">0</strong>
+      <span>Reads</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <strong id="followingCount">0</strong>
+      <span>Following</span>
+    </div>
+  </div>
+</div>
 
     <!-- Info - Email row (will be hidden if private AND not owner) -->
     <div class="card-box">
-      <h4>Info</h4>
       <p id="emailRow"><strong>Email:</strong> <span id="email"></span></p>
       <hr>
       <p><strong>Joined:</strong> <span id="joined"></span></p>
@@ -1752,6 +1892,59 @@ function showDefaultCommentBadges(container, totalCommentsMade) {
   });
   if (!earnedAny) container.innerHTML = '<p style="color: #888; font-size: 0.9rem; margin: 0;">Make your first comment to earn badges!</p>';
 }
+async function calculateTotalViews(username) {
+  if (!username) return 0;
+  let totalViews = 0;
+  const q = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+  const querySnap = await getDocs(q);
+  
+  for (const docSnap of querySnap.docs) {
+    const poem = docSnap.data();
+    // Use 'views' instead of 'viewCount' to match your index.html
+    totalViews += poem.views || 0;
+  }
+  return totalViews;
+}
+
+// Function to check if user is verified and show appropriate badge
+// Function to show verification badge ONLY to the profile owner
+async function updateVerificationBadge(userId, isOwnProfile = false) {
+  if (!userId) return;
+  
+  const verifiedBadge = document.getElementById("verifiedBadge");
+  const unverifiedBadge = document.getElementById("unverifiedBadge");
+  
+  if (!verifiedBadge || !unverifiedBadge) return;
+  
+  // Only show badges if viewing your OWN profile
+  if (!isOwnProfile) {
+    verifiedBadge.style.display = "none";
+    unverifiedBadge.style.display = "none";
+    return;
+  }
+  
+  try {
+    const userDoc = await getDoc(doc(db, "users", userId));
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const isVerified = userData.isVerified === true || userData.emailVerified === true;
+      
+      if (isVerified) {
+        verifiedBadge.style.display = "inline-flex";
+        unverifiedBadge.style.display = "none";
+      } else {
+        unverifiedBadge.style.display = "inline-flex";
+        unverifiedBadge.innerHTML = "⚠️ Unverified";
+        unverifiedBadge.onclick = () => {
+          window.location.href = "verify-email.html";
+        };
+        verifiedBadge.style.display = "none";
+      }
+    }
+  } catch (err) {
+    // Silent fail - no console logs
+  }
+}
 
 async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
   const badgesContainer = document.querySelector(".badges-container");
@@ -1973,7 +2166,14 @@ onAuthStateChanged(auth, async (user) => {
   profileUsername = data.username || data.email.split("@")[0];
   profileEmailPrivacy = data.emailPrivacy || "public";
   
-  document.getElementById("realName").innerText = data.realName || "Not set";
+  const realNameElement = document.getElementById("realName");
+if (data.realName && data.realName.trim() !== "") {
+  realNameElement.innerText = data.realName;
+  realNameElement.style.display = "block";
+} else {
+  realNameElement.innerText = "";
+  realNameElement.style.display = "none";
+}
   document.getElementById("username").innerText = profileUsername;
   
   // Apply email visibility
@@ -2059,7 +2259,14 @@ onAuthStateChanged(auth, async (user) => {
     const followBtn = document.getElementById("followActionBtn");
     if (followBtn) followBtn.style.display = "none";
   }
-  
+  // Calculate and display total views
+// After you set profileUsername and have targetProfileUid
+const totalViews = await calculateTotalViews(profileUsername);
+document.getElementById("totalViewsCount").innerText = totalViews;
+
+// Update verification badge (pass isOwnProfile as second parameter)
+await updateVerificationBadge(targetProfileUid, viewingOwnProfile);
+
   await fetchUserPoems(profileUsername);
   await fetchTopPoems(profileUsername);
 });

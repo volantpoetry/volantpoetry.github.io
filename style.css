@@ -3467,3 +3467,25 @@ color: #555555;
 }
 
 
+/* Force hide hero-left and hero-right on ALL devices under 1024px */
+@media (max-width: 1024px) {
+  .hero-left,
+  .hero-right {
+    display: none !important;
+  }
+  
+  .hero {
+    justify-content: center !important;
+    padding: 2rem 1rem !important;
+  }
+  
+  .hero-line-content {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    text-align: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+  }
+}

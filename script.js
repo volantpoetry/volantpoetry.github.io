@@ -455,7 +455,43 @@ async function checkFollowStatus(poetId, currentUid) {
   }
 }
 
-// Function to handle follow/unfollow
+// Function to send notification (ADDED)
+async function sendNotification(forUserId, fromUserId, type, data) {
+  if (!forUserId || !fromUserId || forUserId === fromUserId) return;
+  
+  try {
+    const userDoc = await getDoc(doc(db, "users", fromUserId));
+    const fromUserName = userDoc.exists() ? userDoc.data().username : "Someone";
+    
+    const notification = {
+      forUser: forUserId,
+      fromUser: fromUserId,
+      fromUserName: fromUserName,
+      type: type,
+      timestamp: serverTimestamp(),
+      read: false
+    };
+    
+    if (type === 'like' || type === 'comment') {
+      notification.poemId = data.poemId;
+      notification.poemTitle = data.poemTitle;
+    }
+    if (type === 'comment') {
+      notification.commentText = data.commentText;
+    }
+    if (type === 'reply') {
+      notification.commentId = data.commentId;
+      notification.replyText = data.replyText;
+      notification.poemId = data.poemId;
+    }
+    
+    await addDoc(collection(db, "notifications"), notification);
+  } catch (err) {
+    console.warn("Error sending notification:", err);
+  }
+}
+
+// Function to handle follow/unfollow (UPDATED with notification)
 async function handleFollowFromPoem(poetId, buttonElement) {
   if (!currentUserId || !poetId || currentUserId === poetId) return;
   
@@ -483,6 +519,9 @@ async function handleFollowFromPoem(poetId, buttonElement) {
       buttonElement.textContent = "Following";
       buttonElement.classList.add("following");
       buttonElement.style.background = "#f44336";
+      
+      // Send follow notification
+      await sendNotification(poetId, currentUserId, 'follow', {});
     }
   } catch (err) {
     console.error("Error handling follow:", err);
@@ -711,34 +750,36 @@ async function loadPoemsBatch() {
         : '';
 
       // MAIN POEM CARD HTML WITH VIEW COUNT
-      card.innerHTML = `
-        <div class="author-line" style="display:flex; align-items:center; gap:10px; margin-bottom:2px;">
-          <img src="${profileImage}" alt="${displayName}" class="author-img" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
-          <a href="${profileLink}" class="author-link" style="font-size:1.2rem; font-weight:700;">${displayName}</a>
+card.innerHTML = `
+  <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img src="${profileImage}" alt="${displayName}" class="author-img" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+      <div class="author-info">
+        <a href="${profileLink}" class="author-link" style="font-size:1.2rem; font-weight:700;">${displayName}</a>
+        <div class="follow-button-container" style="margin-top: 4px;">
           ${followButtonHTML}
         </div>
-        ${collaboratorsHTML}
-        <h3 class="recent-poem-title" style="margin-top:12px;">${poem.title || "Untitled"}</h3>
-        <p class="poem-content" style="white-space:pre-wrap; margin-top:8px; margin-left:0; padding-left:0;">${truncated.preview.trim()}</p>
-        ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
-        ${audioHTML}
-        ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${cat}</a>`).join(", ")}</em></p>` : ""}
-        
-        <!-- VIEW COUNT DISPLAY -->
-        <div class="poem-stats" style="display: flex; gap: 15px; margin: 10px 0 8px 0; font-size: 0.8rem; color: #888; border-top: 1px solid #eee; padding-top: 8px;">
-          <span class="view-count">👁️ ${viewCount} ${viewCount === 1 ? 'read' : 'reads'}</span>
-        </div>
-        
-        <div class="poem-actions">
-          <div class="comment-section">
-            <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
-            <button class="comment-btn">Post</button>
-          </div>
-          <button class="like-btn">❤️</button>
-          <span class="like-count">${likes}</span>
-          <span class="message-count">💬</span>
-        </div>
-      `;
+      </div>
+    </div>
+    <span class="view-count-inline" style="font-size:0.85rem; color:#333;">${viewCount} Reads</span>
+  </div>
+  ${collaboratorsHTML}
+  <h3 class="recent-poem-title" style="margin-top:12px;">${poem.title || "Untitled"}</h3>
+  <p class="poem-content" style="white-space:pre-wrap; margin-top:8px; margin-left:0; padding-left:0;">${truncated.preview.trim()}</p>
+  ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
+  ${audioHTML}
+  ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${cat}</a>`).join(", ")}</em></p>` : ""}
+  
+  <div class="poem-actions">
+    <div class="comment-section">
+      <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+      <button class="comment-btn">Post</button>
+    </div>
+    <button class="like-btn">❤️</button>
+    <span class="like-count">${likes}</span>
+    <span class="message-count">💬</span>
+  </div>
+`;
 
       container.appendChild(card);
 
@@ -895,11 +936,11 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
-// --- Like / Comment / Reply Handler - COMPLETE FIXED VERSION ---
+// --- Like / Comment / Reply Handler with Notifications ---
 document.addEventListener("click", async (e) => {
   const user = auth.currentUser;
 
-  // LIKE / UNLIKE
+  // LIKE / UNLIKE with notification
   if (e.target.classList.contains("like-btn")) {
     if (!user) { 
       redirectToLogin();
@@ -917,6 +958,7 @@ document.addEventListener("click", async (e) => {
       const data = docSnap.data();
       const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
       let likes = typeof data.likes === "number" ? data.likes : 0;
+      const poemOwnerId = data.userId;
 
       if (likedBy.includes(user.uid)) {
         if (likes > 0) await updateDoc(poemRef, { likes: increment(-1), likedBy: likedBy.filter(uid => uid !== user.uid) });
@@ -926,11 +968,17 @@ document.addEventListener("click", async (e) => {
         await updateDoc(poemRef, { likes: increment(1), likedBy: arrayUnion(user.uid) });
         countSpan.textContent = likes + 1;
         e.target.classList.add("liked");
+        
+        // Send like notification
+        await sendNotification(poemOwnerId, user.uid, 'like', {
+          poemId: docId,
+          poemTitle: data.title || "Untitled"
+        });
       }
     } catch (err) { console.error("Error updating like:", err); }
   }
 
-  // COMMENT POST
+  // COMMENT POST with notification
   if (e.target.classList.contains("comment-btn")) {
     if (!user) { 
       redirectToLogin();
@@ -982,14 +1030,11 @@ document.addEventListener("click", async (e) => {
         const poemData = poemSnap.data();
         const poemOwnerId = poemData.userId;
         if (poemOwnerId && poemOwnerId !== user.uid) {
-          await addDoc(collection(db, "notifications"), {
-            forUser: poemOwnerId,
-            fromUser: user.uid,
-            type: "comment",
+          // Send comment notification
+          await sendNotification(poemOwnerId, user.uid, 'comment', {
             poemId: docId,
-            text: text,
-            timestamp: new Date(),
-            read: false
+            poemTitle: poemData.title || "Untitled",
+            commentText: text
           });
         }
       }
@@ -1118,7 +1163,7 @@ document.addEventListener("click", async (e) => {
     }
   }
 
-  // SEND REPLY - COMPLETE WORKING VERSION
+  // SEND REPLY with notification
   if (e.target.classList.contains("send-reply-btn")) {
     e.preventDefault();
     e.stopPropagation();
@@ -1133,17 +1178,14 @@ document.addEventListener("click", async (e) => {
     const sendBtn = e.target;
     const originalText = sendBtn.textContent;
     
-    // Disable button and show loading
     sendBtn.textContent = "Sending...";
     sendBtn.disabled = true;
     sendBtn.style.opacity = "0.6";
 
     try {
-      // Find comment div
       const commentDiv = e.target.closest(".comment");
       if (!commentDiv) throw new Error("Could not find comment");
       
-      // Find poem card
       let card = commentDiv.closest(".recent-poem-card");
       if (!card) {
         const commentList = commentDiv.closest(".comment-list");
@@ -1160,7 +1202,6 @@ document.addEventListener("click", async (e) => {
       const commentId = commentDiv.dataset.commentId;
       if (!docId || !commentId) throw new Error("Missing comment or poem ID");
       
-      // Find reply input
       const replyInputDiv = commentDiv.querySelector(".reply-input");
       if (!replyInputDiv) throw new Error("Reply input not found");
       
@@ -1172,11 +1213,9 @@ document.addEventListener("click", async (e) => {
       
       const replySection = commentDiv.querySelector(".reply-section");
       
-      // Get user info
       const userDoc = await getDoc(doc(db, "users", user.uid));
       const username = userDoc.exists() ? userDoc.data().username || user.email.split('@')[0] : "User";
 
-      // Add reply to Firestore
       const repliesRef = collection(db, "recentPoems", docId, "comments", commentId, "replies");
       const replyDoc = await addDoc(repliesRef, {
         userId: user.uid,
@@ -1185,7 +1224,23 @@ document.addEventListener("click", async (e) => {
         timestamp: serverTimestamp()
       });
 
-      // Create reply HTML
+      // Get comment owner for notification
+      const commentDoc = await getDoc(doc(db, "recentPoems", docId, "comments", commentId));
+      const commentOwnerId = commentDoc.exists() ? commentDoc.data().userId : null;
+      
+      const poemDoc = await getDoc(doc(db, "recentPoems", docId));
+      const poemTitle = poemDoc.exists() ? poemDoc.data().title : "Untitled";
+
+      // Send reply notification
+      if (commentOwnerId && commentOwnerId !== user.uid) {
+        await sendNotification(commentOwnerId, user.uid, 'reply', {
+          poemId: docId,
+          poemTitle: poemTitle,
+          commentId: commentId,
+          replyText: replyText
+        });
+      }
+
       const replyUsernameLink = `<a href="/user-profile.html?uid=${encodeURIComponent(user.uid)}"
                                    style="font-weight:600; color:#B8860B; text-decoration:none; cursor:pointer;"
                                    onmouseover="this.style.textDecoration='underline'"
@@ -1198,31 +1253,25 @@ document.addEventListener("click", async (e) => {
       replyDiv.setAttribute('data-reply-id', replyDoc.id);
       replyDiv.innerHTML = `${replyUsernameLink}: ${escapeHtml(replyText)}`;
       
-      // Insert before the reply input or append to section
       if (replyInputDiv) {
         replySection.insertBefore(replyDiv, replyInputDiv);
       } else {
         replySection.appendChild(replyDiv);
       }
       
-      // Clear and remove input
       textarea.value = "";
       replyInputDiv.remove();
       
-      // Show success message
       const tempMsg = document.createElement("div");
       tempMsg.style.cssText = "color:green; font-size:12px; margin-top:5px;";
       tempMsg.textContent = "✓ Reply posted!";
       replySection.appendChild(tempMsg);
       setTimeout(() => tempMsg.remove(), 2000);
       
-      console.log("Reply posted successfully!");
-      
     } catch (err) {
       console.error("Error sending reply:", err);
       alert(err.message || "Failed to send reply. Please try again.");
     } finally {
-      // Re-enable button
       sendBtn.textContent = originalText;
       sendBtn.disabled = false;
       sendBtn.style.opacity = "1";

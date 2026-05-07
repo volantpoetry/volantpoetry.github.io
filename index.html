@@ -892,6 +892,26 @@
     min-width: 240px !important;
   }
 }
+
+/* Hide the logo text on desktop (screens wider than 768px) */
+@media (min-width: 769px) {
+  .logo-text {
+    display: none !important;
+  }
+  
+  /* Optional: Adjust logo image size if needed */
+  .nav-logo-img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Keep the text visible on mobile */
+@media (max-width: 768px) {
+  .logo-text {
+    display: inline-block;
+  }
+}
 </style>
 
 </head>

@@ -3,118 +3,610 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Notifications | Silent Depth</title>
+  <title>Notifications | Volant Poetry</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="images/logo.png">
   <style>
-    body { font-family: 'Inter', sans-serif; margin: 0; padding: 20px; background: #fafafa; }
-    h1 { font-family: 'Playfair Display', serif; margin-bottom: 20px; }
-    .notification-card { background: #fff; padding: 16px; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; }
-    .notification-card.unread { border-left: 4px solid #ff6347; }
-    .notification-card p { margin: 0 0 8px 0; }
-    .poem-title { font-weight: 700; }
-    .from-user { font-style: italic; color: #555; }
-    .timestamp { font-size: 12px; color: #999; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f6f5fc 0%, #f0eef9 100%);
+      min-height: 100vh;
+    }
+
+    header {
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo-img {
+      height: 40px;
+      width: auto;
+    }
+
+    .logo-text {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #4b2aad;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .notifications-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: #1a1a1a;
+    }
+
+    .mark-read-btn {
+      background: #4b2aad;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .mark-read-btn:hover {
+      background: #3a1f8a;
+      transform: translateY(-2px);
+    }
+
+    .notification-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .notification-item {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      transition: all 0.3s;
+      border-left: 4px solid #4b2aad;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .notification-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .notification-item.unread {
+      background: #f0edff;
+      border-left-color: #ff9800;
+    }
+
+    .notification-item.read {
+      opacity: 0.7;
+    }
+
+    .notification-icon {
+      font-size: 28px;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-message {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 5px;
+      line-height: 1.5;
+    }
+
+    .notification-message strong {
+      color: #4b2aad;
+    }
+
+    .notification-time {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .notification-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 16px;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .empty-state p {
+      color: #999;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 10px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #666;
+      border-radius: 20px;
+      transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+      background: #4b2aad;
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 0 15px;
+      }
+      
+      .notification-item {
+        padding: 12px 15px;
+      }
+      
+      .notification-icon {
+        font-size: 24px;
+        min-width: 40px;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <h1>Notifications</h1>
-  <div id="notifications"></div>
+<header>
+  <nav>
+    <div class="logo">
+      <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img">
+      <span class="logo-text">Volant Poetry</span>
+    </div>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html">Home</a>
+      <a href="poems.html">Poems</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="user-profile.html">My Profile</a>
+    </div>
+    <div class="menu-toggle" id="menu-toggle">☰</div>
+  </nav>
+</header>
 
-  <script type="module">
-    import { 
-      initializeApp 
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+<div class="container">
+  <div class="notifications-header">
+    <h1>🔔 Notifications</h1>
+    <button id="markAllReadBtn" class="mark-read-btn">Mark all as read</button>
+  </div>
 
-    import { 
-      getFirestore, collection, query, orderBy, getDocs, doc, getDoc, updateDoc 
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="all">All</button>
+    <button class="tab-btn" data-tab="likes">❤️ Likes</button>
+    <button class="tab-btn" data-tab="comments">💬 Comments</button>
+    <button class="tab-btn" data-tab="replies">↩️ Replies</button>
+    <button class="tab-btn" data-tab="follows">👥 Follows</button>
+  </div>
 
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  <div id="allTab" class="tab-content active">
+    <div id="allNotifications" class="notification-list"></div>
+  </div>
+  <div id="likesTab" class="tab-content">
+    <div id="likesNotifications" class="notification-list"></div>
+  </div>
+  <div id="commentsTab" class="tab-content">
+    <div id="commentsNotifications" class="notification-list"></div>
+  </div>
+  <div id="repliesTab" class="tab-content">
+    <div id="repliesNotifications" class="notification-list"></div>
+  </div>
+  <div id="followsTab" class="tab-content">
+    <div id="followsNotifications" class="notification-list"></div>
+  </div>
+</div>
 
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
-      authDomain: "silent-depth.firebaseapp.com",
-      projectId: "silent-depth",
-      storageBucket: "silent-depth.appspot.com",
-      messagingSenderId: "78008755450",
-      appId: "1:78008755450:web:3fd0f0f298a08820935543"
-    };
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+  getFirestore, 
+  collection, 
+  query, 
+  where, 
+  getDocs, 
+  getDoc, 
+  doc, 
+  updateDoc, 
+  orderBy, 
+  limit,
+  Timestamp,
+  writeBatch
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth();
+const firebaseConfig = {
+  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+  authDomain: "silent-depth.firebaseapp.com",
+  projectId: "silent-depth",
+  storageBucket: "silent-depth.appspot.com",
+  messagingSenderId: "78008755450",
+  appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
 
-    const notificationsDiv = document.getElementById("notifications");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        notificationsDiv.innerHTML = "<p>Please sign in to see your notifications.</p>";
-        return;
-      }
+let currentUser = null;
 
-      // Fetch notifications for the signed-in user
-      const q = query(
-        collection(db, "notifications"),
-        orderBy("timestamp", "desc")
-      );
+// Format time
+function formatTime(timestamp) {
+  if (!timestamp) return "Just now";
+  
+  let date;
+  if (timestamp.toDate) {
+    date = timestamp.toDate();
+  } else if (timestamp.seconds) {
+    date = new Date(timestamp.seconds * 1000);
+  } else {
+    date = new Date(timestamp);
+  }
+  
+  const now = new Date();
+  const diff = now - date;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+  return date.toLocaleDateString();
+}
 
-      const snapshot = await getDocs(q);
+// Get notification icon
+function getNotificationIcon(type) {
+  switch(type) {
+    case 'like': return '❤️';
+    case 'comment': return '💬';
+    case 'reply': return '↩️';
+    case 'follow': return '👥';
+    default: return '🔔';
+  }
+}
 
-      const userNotifications = snapshot.docs
-        .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
-        .filter(notif => notif.forUser === user.uid);
+// Get notification message
+function getNotificationMessage(notification) {
+  const username = notification.fromUserName || 'Someone';
+  
+  switch(notification.type) {
+    case 'like':
+      return `<strong>${escapeHtml(username)}</strong> liked your poem "${escapeHtml(notification.poemTitle || 'a poem')}"`;
+    case 'comment':
+      return `<strong>${escapeHtml(username)}</strong> commented on your poem "${escapeHtml(notification.poemTitle || 'a poem')}":<br> <em>"${escapeHtml(notification.commentText?.substring(0, 100))}${notification.commentText?.length > 100 ? '...' : ''}"</em>`;
+    case 'reply':
+      return `<strong>${escapeHtml(username)}</strong> replied to your comment: <em>"${escapeHtml(notification.replyText?.substring(0, 100))}${notification.replyText?.length > 100 ? '...' : ''}"</em>`;
+    case 'follow':
+      return `<strong>${escapeHtml(username)}</strong> started following you`;
+    default:
+      return notification.message || 'New notification';
+  }
+}
 
-      if (userNotifications.length === 0) {
-        notificationsDiv.innerHTML = "<p>No notifications yet.</p>";
-        return;
-      }
+// Escape HTML
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
 
-      userNotifications.forEach(async (notif) => {
-        // Fetch commenter username
-        let fromUsername = "Someone";
-        if (notif.fromUser) {
-          const userDoc = await getDoc(doc(db, "users", notif.fromUser));
-          if (userDoc.exists()) fromUsername = userDoc.data().username || "Someone";
-        }
+// Get poem title by ID
+async function getPoemTitle(poemId) {
+  if (!poemId) return null;
+  try {
+    const poemDoc = await getDoc(doc(db, "recentPoems", poemId));
+    if (poemDoc.exists()) {
+      return poemDoc.data().title || "Untitled";
+    }
+  } catch (err) {
+    console.warn("Error fetching poem title:", err);
+  }
+  return null;
+}
 
-        // Fetch poem title
-        let poemTitle = "a poem";
-        if (notif.poemId) {
-          const poemDoc = await getDoc(doc(db, "recentPoems", notif.poemId));
-          if (poemDoc.exists()) poemTitle = poemDoc.data().title || "a poem";
-        }
-
-        // Format timestamp
-        const time = notif.timestamp?.toDate?.();
-        const timeStr = time ? time.toLocaleString() : "";
-
-        // Render notification
-        const div = document.createElement("div");
-        div.className = "notification-card" + (notif.read ? "" : " unread");
-        div.innerHTML = `
-          <p><span class="from-user">${fromUsername}</span> commented on your poem <span class="poem-title">"${poemTitle}"</span>:</p>
-          <p>"${notif.text}"</p>
-          <p class="timestamp">${timeStr}</p>
-        `;
-
-        // Mark notification as read on click
-        div.addEventListener("click", async () => {
-          if (!notif.read) {
-            await updateDoc(doc(db, "notifications", notif.id), { read: true });
-            div.classList.remove("unread");
+// Load notifications
+async function loadNotifications() {
+  if (!currentUser) return;
+  
+  try {
+    const notificationsRef = collection(db, "notifications");
+   const q = query(
+  notificationsRef, 
+  where("forUser", "==", currentUser.uid),
+  orderBy("timestamp", "desc"),
+  limit(100)
+);
+    
+    const snapshot = await getDocs(q);
+    const notifications = [];
+    
+    for (const docSnap of snapshot.docs) {
+      const notification = { id: docSnap.id, ...docSnap.data() };
+      
+      // Get sender username if not already stored
+      if (notification.fromUser && !notification.fromUserName) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", notification.fromUser));
+          if (userDoc.exists()) {
+            notification.fromUserName = userDoc.data().username;
+            notification.displayName = userDoc.data().username;
           }
-          // Optional: redirect to the poem page
-          // window.location.href = `poem.html?id=${notif.poemId}`;
-        });
+        } catch (err) {
+          notification.fromUserName = "Someone";
+        }
+      }
+      
+      // Get poem title if missing
+      if ((notification.type === 'like' || notification.type === 'comment') && notification.poemId && !notification.poemTitle) {
+        notification.poemTitle = await getPoemTitle(notification.poemId);
+      }
+      
+      notifications.push(notification);
+    }
+    
+    renderNotifications(notifications);
+    
+    // Update unread count in title
+    const unreadCount = notifications.filter(n => !n.read).length;
+    if (unreadCount > 0) {
+      document.title = `(${unreadCount}) Notifications | Volant Poetry`;
+    } else {
+      document.title = `Notifications | Volant Poetry`;
+    }
+    
+    return notifications;
+  } catch (err) {
+    console.error("Error loading notifications:", err);
+    const container = document.getElementById("allNotifications");
+    if (container) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><h3>Error loading notifications</h3><p>Please refresh the page</p></div>';
+    }
+  }
+}
 
-        notificationsDiv.appendChild(div);
-      });
+// Render notifications
+function renderNotifications(notifications) {
+  const containers = {
+    all: document.getElementById("allNotifications"),
+    likes: document.getElementById("likesNotifications"),
+    comments: document.getElementById("commentsNotifications"),
+    replies: document.getElementById("repliesNotifications"),
+    follows: document.getElementById("followsNotifications")
+  };
+  
+  // Clear all containers
+  Object.values(containers).forEach(container => {
+    if (container) container.innerHTML = '';
+  });
+  
+  if (notifications.length === 0) {
+    const emptyHTML = `<div class="empty-state"><div class="empty-state-icon">🔔</div><h3>No notifications yet</h3><p>When someone likes, comments, or follows you, you'll see it here!</p></div>`;
+    Object.values(containers).forEach(container => {
+      if (container) container.innerHTML = emptyHTML;
     });
-  </script>
+    return;
+  }
+  
+  // Filter and render for each tab
+  const filtered = {
+    all: notifications,
+    likes: notifications.filter(n => n.type === 'like'),
+    comments: notifications.filter(n => n.type === 'comment'),
+    replies: notifications.filter(n => n.type === 'reply'),
+    follows: notifications.filter(n => n.type === 'follow')
+  };
+  
+  for (const [tab, notifs] of Object.entries(filtered)) {
+    const container = containers[tab];
+    if (!container) continue;
+    
+    if (notifs.length === 0) {
+      container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><h3>No ${tab === 'all' ? '' : tab} notifications</h3></div>`;
+      continue;
+    }
+    
+    notifs.forEach(notification => {
+      const notificationDiv = document.createElement("div");
+      notificationDiv.className = `notification-item ${notification.read ? 'read' : 'unread'}`;
+      notificationDiv.dataset.id = notification.id;
+      
+      let linkUrl = "#";
+      if (notification.type === 'like' || notification.type === 'comment') {
+        linkUrl = `poem.html?id=${notification.poemId}`;
+      } else if (notification.type === 'follow') {
+        linkUrl = `user-profile.html?uid=${notification.fromUser}`;
+      }
+      
+      notificationDiv.innerHTML = `
+        <div class="notification-icon">${getNotificationIcon(notification.type)}</div>
+        <div class="notification-content">
+          <div class="notification-message">${getNotificationMessage(notification)}</div>
+          <div class="notification-time">${formatTime(notification.timestamp)}</div>
+        </div>
+      `;
+      
+      // Click to mark as read and navigate
+      notificationDiv.addEventListener("click", async () => {
+        if (!notification.read) {
+          await markAsRead(notification.id);
+          notificationDiv.classList.remove("unread");
+          notificationDiv.classList.add("read");
+        }
+        if (linkUrl !== "#") {
+          window.location.href = linkUrl;
+        }
+      });
+      
+      container.appendChild(notificationDiv);
+    });
+  }
+}
 
+// Mark single notification as read
+async function markAsRead(notificationId) {
+  if (!notificationId) return;
+  try {
+    await updateDoc(doc(db, "notifications", notificationId), { read: true });
+  } catch (err) {
+    console.error("Error marking as read:", err);
+  }
+}
+
+// Mark all notifications as read
+async function markAllAsRead() {
+  if (!currentUser) return;
+  
+  try {
+    const notificationsRef = collection(db, "notifications");
+    const q = query(notificationsRef, where("forUser", "==", currentUser.uid), where("read", "==", false));
+    const snapshot = await getDocs(q);
+    
+    const batch = writeBatch(db);
+    snapshot.docs.forEach(docSnap => {
+      batch.update(doc(db, "notifications", docSnap.id), { read: true });
+    });
+    
+    await batch.commit();
+    
+    // Reload notifications
+    await loadNotifications();
+  } catch (err) {
+    console.error("Error marking all as read:", err);
+  }
+}
+
+// Tab switching
+function setupTabs() {
+  const tabs = document.querySelectorAll(".tab-btn");
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      const tabId = tab.dataset.tab;
+      
+      // Update active tab
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      
+      // Update active content
+      document.querySelectorAll(".tab-content").forEach(content => {
+        content.classList.remove("active");
+      });
+      document.getElementById(`${tabId}Tab`).classList.add("active");
+    });
+  });
+}
+
+// Auth state
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "users-login.html?redirect=notifications.html";
+    return;
+  }
+  
+  currentUser = user;
+  await loadNotifications();
+  setupTabs();
+  
+  // Mark all as read button
+  const markAllBtn = document.getElementById("markAllReadBtn");
+  if (markAllBtn) {
+    markAllBtn.addEventListener("click", markAllAsRead);
+  }
+});
+
+// Menu toggle for mobile
+document.getElementById("menu-toggle")?.addEventListener("click", () => {
+  document.getElementById("nav-links")?.classList.toggle("show");
+});
+</script>
 </body>
 </html>

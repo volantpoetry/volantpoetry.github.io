@@ -312,11 +312,17 @@
     // Get email from URL or localStorage
     const urlParams = new URLSearchParams(window.location.search);
     const urlEmail = urlParams.get('email');
+    const redirectTarget = urlParams.get('redirect');
     const mode = urlParams.get('mode');
     const oobCode = urlParams.get('oobCode');
     
     let currentEmail = urlEmail || localStorage.getItem('pendingVerificationEmail') || 'your email';
     displayEmail.textContent = currentEmail;
+
+    const loginLink = document.querySelector('.links a[href="users-login.html"]');
+    if (loginLink && redirectTarget) {
+      loginLink.href = `users-login.html?redirect=${encodeURIComponent(redirectTarget)}`;
+    }
 
     // Check if user just clicked verification link
     if (mode === 'verifyEmail' && oobCode) {
@@ -430,7 +436,8 @@
         } else {
           showStatus('Please log in first to resend verification', 'info');
           setTimeout(() => {
-            window.location.href = `users-login.html?email=${encodeURIComponent(currentEmail)}`;
+            const redirectQuery = redirectTarget ? `&redirect=${encodeURIComponent(redirectTarget)}` : '';
+            window.location.href = `users-login.html?email=${encodeURIComponent(currentEmail)}${redirectQuery}`;
           }, 2000);
         }
       } catch (err) {
@@ -453,7 +460,8 @@
         if (!auth.currentUser) {
           showStatus('⏳ Please log in to check verification status', 'info');
           setTimeout(() => {
-            window.location.href = `users-login.html?email=${encodeURIComponent(currentEmail)}`;
+            const redirectQuery = redirectTarget ? `&redirect=${encodeURIComponent(redirectTarget)}` : '';
+            window.location.href = `users-login.html?email=${encodeURIComponent(currentEmail)}${redirectQuery}`;
           }, 2000);
           return;
         }
@@ -476,6 +484,7 @@
           
           if (userDocSnap.exists()) {
             await updateDoc(userDocRef, { emailVerified: true });
+            isVerified: true
           }
           
           showStatus('✅ Email verified! Redirecting to login...', 'success');
@@ -484,7 +493,8 @@
           await signOut(auth);
           
           setTimeout(() => {
-            window.location.href = 'users-login.html?verified=true';
+            const redirectQuery = redirectTarget ? `&redirect=${encodeURIComponent(redirectTarget)}` : '';
+            window.location.href = `users-login.html?verified=true${redirectQuery}`;
           }, 2000);
         } else {
           // Show detailed error message
