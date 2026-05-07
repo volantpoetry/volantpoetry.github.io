@@ -958,7 +958,7 @@ document.addEventListener("click", async (e) => {
       const data = docSnap.data();
       const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
       let likes = typeof data.likes === "number" ? data.likes : 0;
-      const poemOwnerId = data.userId;
+      const poemOwnerId = data.userId || data.authorId || null;
 
       if (likedBy.includes(user.uid)) {
         if (likes > 0) await updateDoc(poemRef, { likes: increment(-1), likedBy: likedBy.filter(uid => uid !== user.uid) });
@@ -1028,7 +1028,7 @@ document.addEventListener("click", async (e) => {
       const poemSnap = await getDoc(poemRef);
       if (poemSnap.exists()) {
         const poemData = poemSnap.data();
-        const poemOwnerId = poemData.userId;
+        const poemOwnerId = poemData.userId || poemData.authorId || null;
         if (poemOwnerId && poemOwnerId !== user.uid) {
           // Send comment notification
           await sendNotification(poemOwnerId, user.uid, 'comment', {
