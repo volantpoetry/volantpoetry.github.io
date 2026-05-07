@@ -394,6 +394,31 @@ async function getPoemTitle(poemId) {
   return null;
 }
 
+// Slugify a string for poem URLs
+function slugify(text) {
+  if (!text) return "";
+  return text.toString().toLowerCase().trim()
+    .replace(/[\s\_]+/g, "-")
+    .replace(/[^a-z0-9\-]/g, "")
+    .replace(/\-+/g, "-")
+    .replace(/^\-+|\-+$/g, "");
+}
+
+// Get poem slug by ID
+async function getPoemSlug(poemId) {
+  if (!poemId) return null;
+  try {
+    const poemDoc = await getDoc(doc(db, "recentPoems", poemId));
+    if (poemDoc.exists()) {
+      const data = poemDoc.data();
+      return data.slug || slugify(data.title || poemId);
+    }
+  } catch (err) {
+    console.warn("Error fetching poem slug:", err);
+  }
+  return null;
+}
+
 // Load notifications
 async function loadNotifications() {
   if (!currentUser) return;
@@ -427,8 +452,13 @@ async function loadNotifications() {
       }
       
       // Get poem title if missing
-      if ((notification.type === 'like' || notification.type === 'comment') && notification.poemId && !notification.poemTitle) {
+      if ((notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply') && notification.poemId && !notification.poemTitle) {
         notification.poemTitle = await getPoemTitle(notification.poemId);
+      }
+
+      // Get poem slug for link navigation
+      if ((notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply') && notification.poemId) {
+        notification.poemSlug = await getPoemSlug(notification.poemId);
       }
       
       notifications.push(notification);
@@ -501,8 +531,10 @@ function renderNotifications(notifications) {
       notificationDiv.dataset.id = notification.id;
       
       let linkUrl = "#";
-      if (notification.type === 'like' || notification.type === 'comment') {
-        linkUrl = `poem.html?id=${notification.poemId}`;
+      if (notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply') {
+        if (notification.poemSlug) {
+          linkUrl = `poem.html?slug=${encodeURIComponent(notification.poemSlug)}`;
+        }
       } else if (notification.type === 'follow') {
         linkUrl = `user-profile.html?uid=${notification.fromUser}`;
       }
