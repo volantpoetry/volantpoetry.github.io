@@ -37,12 +37,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence);
 
-const authUrlParams = new URLSearchParams(window.location.search);
-const preservedRedirect = authUrlParams.get('redirect');
-if (preservedRedirect) {
-  localStorage.setItem('redirectAfterLogin', preservedRedirect);
-}
-
 export { auth, db, app };
 
 // DIAGNOSTIC FUNCTION
@@ -159,12 +153,9 @@ if (signupForm) {
       
       statusEl.textContent = "✅ Verification email sent! Please check your inbox.";
       statusEl.style.color = "#2e7d32";
-
-      const redirectFromSignup = localStorage.getItem('redirectAfterLogin');
-      const redirectQuery = redirectFromSignup ? `&redirect=${encodeURIComponent(redirectFromSignup)}` : '';
       
       setTimeout(() => {
-        window.location.href = "verify-email.html?email=" + encodeURIComponent(email) + redirectQuery;
+        window.location.href = "verify-email.html?email=" + encodeURIComponent(email);
       }, 2000);
 
     } catch (err) {
@@ -214,15 +205,7 @@ if (loginForm) {
           }
           return;
         }
-        if (querySnap.size > 1) {
-          statusEl.textContent = "⚠ Multiple accounts found with that username. Please login with your email instead.";
-          statusEl.style.color = "#d32f2f";
-          if (loginButton) {
-            loginButton.disabled = false;
-            loginButton.textContent = 'Login';
-          }
-          return;
-        }        
+        
         emailToUse = querySnap.docs[0].data().email;
         console.log("Found email:", emailToUse);
       }
