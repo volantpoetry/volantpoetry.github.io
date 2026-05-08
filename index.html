@@ -112,6 +112,17 @@
   font-style: italic;
   color:  #B8860B;}
 
+.category-link {
+  color: #B8860B;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.category-link:hover {
+  color: #8B4513;
+  text-decoration: underline;
+}
+
 #links-container ul {
   list-style: none;        
   padding: 0;
@@ -827,7 +838,14 @@
   }
   
   .read-more-btn {
-    font-size: 0.7rem !important;  /* EVEN SMALLER ON MOBILE */
+    font-size: 0.85rem !important;  /* LARGER ON MOBILE */
+  }
+  
+  /* Align action buttons and comment input to poem text */
+  .poem-actions,
+  .comment-section,
+  .poem-reactions {
+    margin-left: -8px !important;
   }
 }
 
@@ -846,10 +864,54 @@
   }
   
   .read-more-btn {
-    font-size: 0.65rem !important;  /* SMALLEST ON TINY SCREENS */
+    font-size: 0.8rem !important;  /* LARGER ON TINY SCREENS */
+  }
+  
+  /* Align action buttons and comment input to poem text on very small screens */
+  .poem-actions,
+  .comment-section,
+  .poem-reactions {
+    margin-left: -10px !important;
   }
 }
 
+/* Force audio section to match poem-content alignment */
+.poem-audio-section {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* On all screen sizes, keep exactly the same */
+@media (max-width: 768px) {
+  .poem-audio-section {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: fit-content !important;
+    max-width: 45% !important;
+    min-width: 240px !important;
+  }
+}
+
+/* Hide the logo text on desktop (screens wider than 768px) */
+@media (min-width: 769px) {
+  .logo-text {
+    display: none !important;
+  }
+  
+  /* Optional: Adjust logo image size if needed */
+  .nav-logo-img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Keep the text visible on mobile */
+@media (max-width: 768px) {
+  .logo-text {
+    display: inline-block;
+  }
+}
 </style>
 
 </head>
@@ -937,9 +999,12 @@
     <h1>Volant<br><span>Poetry</span></h1>
   </div>
   <div class="hero-line-content">
-    <p> Volant Poetry is an open community where poets freely share their<br>
-    work, read others, and grow through thoughtful feedback.<br>Just voices, words, and connection.</p>
-    <a href="poems.html" class="cta-btn">Explore Poems</a>
+    
+ <p>A space where words take breath-<br>
+where poets share, read, and grow together.<br>
+Just voices, words, and connection.</p>
+<a href="poems.html" class="cta-btn">Explore Poems</a>
+
   </div>
 </section>
 
@@ -1045,7 +1110,7 @@
     <h2>Join the Volant Poetry Community</h2>
     <p>Be part of a world where words take flight.  
     Share your poems, connect with fellow poets, and celebrate creativity every day.</p>
-    <a href="users-signup.html" class="join-btn">Join the Community</a>
+    <a href="users-signup.html?redirect=index.html" class="join-btn">Join the Community</a>
   </div>
   <div class="community-image">
     <img src="images/community-art.png" alt="Poetry Community">
@@ -1390,7 +1455,6 @@ async function loadFeaturedPoems() {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  loadRecentPoemsLinks();
   loadFeaturedPoems();
 });
 

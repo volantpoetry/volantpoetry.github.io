@@ -144,7 +144,7 @@
     
     <div class="links">
       <p><a href="users-reset.html">Forgot password?</a></p>
-      <p>Don't have an account? <a href="users-signup.html">Sign up here</a></p>
+      <p>Don't have an account? <a href="users-signup.html?redirect=users-login.html">Sign up here</a></p>
     </div>
   </div>
 
@@ -241,6 +241,13 @@
           
           if (querySnap.empty) {
             showStatus('⚠ No account found with that username.', 'error');
+            loginButton.disabled = false;
+            loginButton.textContent = 'Login';
+            return;
+          }
+
+          if (querySnap.size > 1) {
+            showStatus('⚠ Multiple accounts found with that username. Please login with your email instead.', 'error');
             loginButton.disabled = false;
             loginButton.textContent = 'Login';
             return;

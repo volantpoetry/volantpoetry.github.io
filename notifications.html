@@ -2,119 +2,894 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
-  <title>Notifications | Silent Depth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Notifications | Volant Poetry</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/logo.png">
   <style>
-    body { font-family: 'Inter', sans-serif; margin: 0; padding: 20px; background: #fafafa; }
-    h1 { font-family: 'Playfair Display', serif; margin-bottom: 20px; }
-    .notification-card { background: #fff; padding: 16px; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; }
-    .notification-card.unread { border-left: 4px solid #ff6347; }
-    .notification-card p { margin: 0 0 8px 0; }
-    .poem-title { font-weight: 700; }
-    .from-user { font-style: italic; color: #555; }
-    .timestamp { font-size: 12px; color: #999; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f6f5fc 0%, #f0eef9 100%);
+      min-height: 100vh;
+    }
+
+    header {
+      background: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-logo-img {
+      height: 40px;
+      width: auto;
+    }
+
+    .logo-text {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #4b2aad;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4a5568;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #4b2aad;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #4b2aad;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .notifications-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: #1a1a1a;
+    }
+
+    .mark-read-btn {
+      background: #4b2aad;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .mark-read-btn:hover {
+      background: #3a1f8a;
+      transform: translateY(-2px);
+    }
+
+    .tabs-wrapper {
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      margin-bottom: 25px;
+      padding-bottom: 8px;
+    }
+
+    .tabs {
+      display: inline-flex;
+      gap: 8px;
+      background: transparent;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 8px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #666;
+      border-radius: 40px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: #4b2aad;
+      color: white;
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: #e9e4ff;
+      color: #4b2aad;
+    }
+
+    .tabs-wrapper::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .tabs-wrapper::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .tabs-wrapper::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 10px;
+    }
+
+    .notification-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .notification-item {
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      transition: all 0.3s;
+      border-left: 4px solid #4b2aad;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .notification-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .notification-item.unread {
+      background: #f0edff;
+      border-left-color: #ff9800;
+    }
+
+    .notification-item.read {
+      opacity: 0.7;
+    }
+
+    .notification-icon {
+      font-size: 28px;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-message {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 5px;
+      line-height: 1.5;
+    }
+
+    .notification-message strong {
+      color: #4b2aad;
+    }
+
+    .notification-time {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 16px;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .empty-state h3 {
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .empty-state p {
+      color: #999;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .collab-badge {
+      display: inline-block;
+      background: #e9e4ff;
+      color: #4b2aad;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    @media (max-width: 650px) {
+      .container {
+        padding: 0 15px;
+      }
+      
+      .notification-item {
+        padding: 12px 15px;
+      }
+      
+      .notification-icon {
+        font-size: 24px;
+        min-width: 40px;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        z-index: 99;
+      }
+      
+      .nav-links.show {
+        display: flex;
+      }
+      
+      .menu-toggle {
+        display: block;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <h1>Notifications</h1>
-  <div id="notifications"></div>
+<header>
+  <nav>
+    <div class="logo">
+      <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img" onerror="this.style.display='none'">
+      <span class="logo-text">Volant Poetry</span>
+    </div>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html">Home</a>
+      <a href="poems.html">Poems</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="user-profile.html">My Profile</a>
+    </div>
+    <div class="menu-toggle" id="menu-toggle">☰</div>
+  </nav>
+</header>
 
-  <script type="module">
-    import { 
-      initializeApp 
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+<div class="container">
+  <div class="notifications-header">
+    <h1>🔔 Notifications</h1>
+    <button id="markAllReadBtn" class="mark-read-btn">Mark all as read</button>
+  </div>
 
-    import { 
-      getFirestore, collection, query, orderBy, getDocs, doc, getDoc, updateDoc 
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <div class="tabs-wrapper">
+    <div class="tabs" id="tabsContainer">
+      <button class="tab-btn active" data-tab="all">📬 All</button>
+      <button class="tab-btn" data-tab="likes">❤️ Likes</button>
+      <button class="tab-btn" data-tab="comments">💬 Comments</button>
+      <button class="tab-btn" data-tab="replies">↩️ Replies</button>
+      <button class="tab-btn" data-tab="follows">👥 Follows</button>
+      <button class="tab-btn" data-tab="collaborations">🤝 Collaborations</button>
+    </div>
+  </div>
 
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  <div id="allTab" class="tab-content active">
+    <div id="allNotifications" class="notification-list"></div>
+  </div>
+  <div id="likesTab" class="tab-content">
+    <div id="likesNotifications" class="notification-list"></div>
+  </div>
+  <div id="commentsTab" class="tab-content">
+    <div id="commentsNotifications" class="notification-list"></div>
+  </div>
+  <div id="repliesTab" class="tab-content">
+    <div id="repliesNotifications" class="notification-list"></div>
+  </div>
+  <div id="followsTab" class="tab-content">
+    <div id="followsNotifications" class="notification-list"></div>
+  </div>
+  <div id="collaborationsTab" class="tab-content">
+    <div id="collaborationsNotifications" class="notification-list"></div>
+  </div>
+</div>
 
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
-      authDomain: "silent-depth.firebaseapp.com",
-      projectId: "silent-depth",
-      storageBucket: "silent-depth.appspot.com",
-      messagingSenderId: "78008755450",
-      appId: "1:78008755450:web:3fd0f0f298a08820935543"
-    };
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { 
+  getFirestore, 
+  collection, 
+  query, 
+  where, 
+  getDocs, 
+  getDoc, 
+  doc, 
+  updateDoc, 
+  orderBy, 
+  limit,
+  writeBatch,
+  Timestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth();
+const firebaseConfig = {
+  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+  authDomain: "silent-depth.firebaseapp.com",
+  projectId: "silent-depth",
+  storageBucket: "silent-depth.appspot.com",
+  messagingSenderId: "78008755450",
+  appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
 
-    const notificationsDiv = document.getElementById("notifications");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        notificationsDiv.innerHTML = "<p>Please sign in to see your notifications.</p>";
-        return;
+let currentUser = null;
+let existingCollaborationsLoaded = false;
+
+function formatTime(timestamp) {
+  if (!timestamp) return "Just now";
+  
+  let date;
+  if (timestamp.toDate) {
+    date = timestamp.toDate();
+  } else if (timestamp.seconds) {
+    date = new Date(timestamp.seconds * 1000);
+  } else {
+    date = new Date(timestamp);
+  }
+  
+  const now = new Date();
+  const diff = now - date;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+  return date.toLocaleDateString();
+}
+
+function getNotificationIcon(type) {
+  switch(type) {
+    case 'like': return '❤️';
+    case 'comment': return '💬';
+    case 'reply': return '↩️';
+    case 'follow': return '👥';
+    case 'collaboration': return '🤝';
+    default: return '🔔';
+  }
+}
+
+function getNotificationMessage(notification) {
+  const username = notification.fromUserName || 'Someone';
+  
+  switch(notification.type) {
+    case 'like':
+      return `<strong>${escapeHtml(username)}</strong> liked your poem "${escapeHtml(notification.poemTitle || 'a poem')}"`;
+    case 'comment':
+      return `<strong>${escapeHtml(username)}</strong> commented on your poem "${escapeHtml(notification.poemTitle || 'a poem')}":<br> <em>"${escapeHtml(notification.commentText?.substring(0, 100))}${notification.commentText?.length > 100 ? '...' : ''}"</em>`;
+    case 'reply':
+      return `<strong>${escapeHtml(username)}</strong> replied to your comment: <em>"${escapeHtml(notification.replyText?.substring(0, 100))}${notification.replyText?.length > 100 ? '...' : ''}"</em>`;
+    case 'follow':
+      return `<strong>${escapeHtml(username)}</strong> started following you`;
+    case 'collaboration':
+      // Different message based on whether this is an invitation or an existing collaborator addition
+      if (notification.isExistingCollaborator && notification.workTitle) {
+        return `<strong>${escapeHtml(username)}</strong> added you as a collaborator on "<strong>${escapeHtml(notification.workTitle)}</strong>" ✨ You are now part of this creative team!`;
+      } else if (notification.message) {
+        return `<strong>${escapeHtml(username)}</strong> ${escapeHtml(notification.message)}`;
+      } else if (notification.collaborationTitle) {
+        return `<strong>${escapeHtml(username)}</strong> invited you to collaborate on "<strong>${escapeHtml(notification.collaborationTitle)}</strong>" 🤝`;
+      } else if (notification.poemTitle) {
+        return `<strong>${escapeHtml(username)}</strong> requested a collaboration on your poem "${escapeHtml(notification.poemTitle)}"`;
       }
+      return `<strong>${escapeHtml(username)}</strong> wants to collaborate with you on a poetic project`;
+    default:
+      return notification.message || 'New notification';
+  }
+}
 
-      // Fetch notifications for the signed-in user
-      const q = query(
-        collection(db, "notifications"),
-        orderBy("timestamp", "desc")
-      );
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
 
-      const snapshot = await getDocs(q);
+async function getPoemTitle(poemId) {
+  if (!poemId) return null;
+  try {
+    const poemDoc = await getDoc(doc(db, "recentPoems", poemId));
+    if (poemDoc.exists()) {
+      return poemDoc.data().title || "Untitled";
+    }
+  } catch (err) {
+    console.warn("Error fetching poem title:", err);
+  }
+  return null;
+}
 
-      const userNotifications = snapshot.docs
-        .map(docSnap => ({ id: docSnap.id, ...docSnap.data() }))
-        .filter(notif => notif.forUser === user.uid);
+function slugify(text) {
+  if (!text) return "";
+  return text.toString().toLowerCase().trim()
+    .replace(/[\s\_]+/g, "-")
+    .replace(/[^a-z0-9\-]/g, "")
+    .replace(/\-+/g, "-")
+    .replace(/^\-+|\-+$/g, "");
+}
 
-      if (userNotifications.length === 0) {
-        notificationsDiv.innerHTML = "<p>No notifications yet.</p>";
-        return;
-      }
+async function getPoemSlug(poemId) {
+  if (!poemId) return null;
+  try {
+    const poemDoc = await getDoc(doc(db, "recentPoems", poemId));
+    if (poemDoc.exists()) {
+      const data = poemDoc.data();
+      return data.slug || slugify(data.title || poemId);
+    }
+  } catch (err) {
+    console.warn("Error fetching poem slug:", err);
+  }
+  return null;
+}
 
-      userNotifications.forEach(async (notif) => {
-        // Fetch commenter username
-        let fromUsername = "Someone";
-        if (notif.fromUser) {
-          const userDoc = await getDoc(doc(db, "users", notif.fromUser));
-          if (userDoc.exists()) fromUsername = userDoc.data().username || "Someone";
-        }
-
-        // Fetch poem title
-        let poemTitle = "a poem";
-        if (notif.poemId) {
-          const poemDoc = await getDoc(doc(db, "recentPoems", notif.poemId));
-          if (poemDoc.exists()) poemTitle = poemDoc.data().title || "a poem";
-        }
-
-        // Format timestamp
-        const time = notif.timestamp?.toDate?.();
-        const timeStr = time ? time.toLocaleString() : "";
-
-        // Render notification
-        const div = document.createElement("div");
-        div.className = "notification-card" + (notif.read ? "" : " unread");
-        div.innerHTML = `
-          <p><span class="from-user">${fromUsername}</span> commented on your poem <span class="poem-title">"${poemTitle}"</span>:</p>
-          <p>"${notif.text}"</p>
-          <p class="timestamp">${timeStr}</p>
-        `;
-
-        // Mark notification as read on click
-        div.addEventListener("click", async () => {
-          if (!notif.read) {
-            await updateDoc(doc(db, "notifications", notif.id), { read: true });
-            div.classList.remove("unread");
+// Fetch works where current user has been added as a collaborator
+// Uses type "collaboration" for consistency
+async function fetchExistingCollaborationsAsNotifications() {
+  if (!currentUser) return [];
+  if (existingCollaborationsLoaded) return [];
+  
+  console.log("Fetching existing collaborations where user is a collaborator...");
+  const collaborationNotifs = [];
+  
+  try {
+    // Query collaborations collection where current user is in collaborators array
+    const collabQuery = query(
+      collection(db, "collaborations"),
+      where("collaborators", "array-contains", currentUser.uid)
+    );
+    const collabSnapshot = await getDocs(collabQuery);
+    
+    for (const collabDoc of collabSnapshot.docs) {
+      const collabData = collabDoc.data();
+      
+      // Get the person who added the user (owner/creator)
+      const addedBy = collabData.ownerId || collabData.createdBy || collabData.addedBy;
+      let addedByName = "A poet";
+      
+      if (addedBy && addedBy !== currentUser.uid) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", addedBy));
+          if (userDoc.exists()) {
+            addedByName = userDoc.data().username || "A poet";
           }
-          // Optional: redirect to the poem page
-          // window.location.href = `poem.html?id=${notif.poemId}`;
-        });
-
-        notificationsDiv.appendChild(div);
+        } catch(e) {}
+      } else if (addedBy === currentUser.uid) {
+        // Skip if user added themselves
+        continue;
+      }
+      
+      const workTitle = collabData.title || collabData.workTitle || "a poetry work";
+      const poemId = collabData.poemId || collabData.workId;
+      let poemSlug = null;
+      if (poemId) {
+        poemSlug = await getPoemSlug(poemId);
+      }
+      
+      const createdAt = collabData.createdAt || collabData.timestamp || Timestamp.now();
+      
+      // Use type "collaboration" - unified collaboration type
+      collaborationNotifs.push({
+        id: `collab_existing_${collabDoc.id}`,
+        type: 'collaboration',
+        fromUser: addedBy,
+        fromUserName: addedByName,
+        collaborationId: collabDoc.id,
+        workTitle: workTitle,
+        poemId: poemId,
+        poemSlug: poemSlug,
+        timestamp: createdAt,
+        read: false,
+        isExistingCollaborator: true
       });
-    });
-  </script>
+    }
+    
+    // Also check recentPoems collection for direct collaborator additions
+    const poemsQuery = query(
+      collection(db, "recentPoems"),
+      where("collaborators", "array-contains", currentUser.uid)
+    );
+    const poemsSnapshot = await getDocs(poemsQuery);
+    
+    for (const poemDoc of poemsSnapshot.docs) {
+      const poemData = poemDoc.data();
+      const addedBy = poemData.ownerId || poemData.authorId || poemData.createdBy;
+      let addedByName = "The author";
+      
+      if (addedBy && addedBy !== currentUser.uid) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", addedBy));
+          if (userDoc.exists()) {
+            addedByName = userDoc.data().username || "The author";
+          }
+        } catch(e) {}
+      } else if (addedBy === currentUser.uid) {
+        continue;
+      }
+      
+      const poemSlug = poemData.slug || slugify(poemData.title || poemDoc.id);
+      const createdAt = poemData.createdAt || poemData.timestamp || Timestamp.now();
+      
+      const alreadyExists = collaborationNotifs.some(n => n.poemId === poemDoc.id);
+      if (!alreadyExists) {
+        collaborationNotifs.push({
+          id: `collab_existing_poem_${poemDoc.id}`,
+          type: 'collaboration',
+          fromUser: addedBy,
+          fromUserName: addedByName,
+          poemId: poemDoc.id,
+          workTitle: poemData.title || "a poem",
+          poemSlug: poemSlug,
+          timestamp: createdAt,
+          read: false,
+          isExistingCollaborator: true
+        });
+      }
+    }
+    
+  } catch (err) {
+    console.warn("Error fetching existing collaborations:", err);
+  }
+  
+  existingCollaborationsLoaded = true;
+  return collaborationNotifs;
+}
 
+async function loadNotifications() {
+  if (!currentUser) return;
+  
+  try {
+    // 1. Fetch regular notifications from 'notifications' collection
+    const notificationsRef = collection(db, "notifications");
+    const q = query(
+      notificationsRef, 
+      where("forUser", "==", currentUser.uid),
+      orderBy("timestamp", "desc"),
+      limit(150)
+    );
+    
+    const snapshot = await getDocs(q);
+    let notifications = [];
+    
+    for (const docSnap of snapshot.docs) {
+      const notification = { id: docSnap.id, ...docSnap.data() };
+      notification.timestamp = notification.timestamp || notification.createdAt || null;
+      notification.fromUser = notification.fromUser || notification.userId || null;
+      
+      if (notification.fromUser && !notification.fromUserName) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", notification.fromUser));
+          if (userDoc.exists()) {
+            notification.fromUserName = userDoc.data().username;
+          } else {
+            notification.fromUserName = "Someone";
+          }
+        } catch (err) {
+          notification.fromUserName = "Someone";
+        }
+      }
+      
+      if ((notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply' || notification.type === 'collaboration') && notification.poemId && !notification.poemTitle) {
+        notification.poemTitle = await getPoemTitle(notification.poemId);
+      }
+      
+      if (notification.type === 'collaboration' && notification.collaborationId && !notification.collaborationTitle) {
+        try {
+          const collabDoc = await getDoc(doc(db, "collaborations", notification.collaborationId));
+          if (collabDoc.exists()) {
+            notification.collaborationTitle = collabDoc.data().title || "poetry collaboration";
+          } else {
+            notification.collaborationTitle = notification.poemTitle || "a new collaboration";
+          }
+        } catch (e) {
+          notification.collaborationTitle = notification.poemTitle || "a creative collaboration";
+        }
+      }
+      
+      if ((notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply' || notification.type === 'collaboration') && notification.poemId) {
+        notification.poemSlug = await getPoemSlug(notification.poemId);
+      }
+      
+      notifications.push(notification);
+    }
+    
+    // 2. Fetch existing collaborations where user was added (type "collaboration")
+    const existingCollabNotifs = await fetchExistingCollaborationsAsNotifications();
+    
+    // Merge and remove duplicates
+    const existingWorkIds = new Set();
+    notifications.forEach(n => {
+      if (n.collaborationId) existingWorkIds.add(n.collaborationId);
+      if (n.poemId) existingWorkIds.add(n.poemId);
+    });
+    
+    const newCollabNotifs = existingCollabNotifs.filter(c => {
+      const workId = c.collaborationId || c.poemId;
+      return !existingWorkIds.has(workId);
+    });
+    
+    notifications = [...notifications, ...newCollabNotifs];
+    
+    notifications.sort((a, b) => {
+      const timeA = a.timestamp?.toDate?.() || new Date(a.timestamp);
+      const timeB = b.timestamp?.toDate?.() || new Date(b.timestamp);
+      return timeB - timeA;
+    });
+    
+    renderNotifications(notifications);
+    
+    const unreadCount = notifications.filter(n => !n.read).length;
+    if (unreadCount > 0) {
+      document.title = `(${unreadCount}) Notifications | Volant Poetry`;
+    } else {
+      document.title = `Notifications | Volant Poetry`;
+    }
+    
+    return notifications;
+  } catch (err) {
+    console.error("Error loading notifications:", err);
+    const container = document.getElementById("allNotifications");
+    if (container) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Unable to load notifications</h3><p>Please check your connection and try again.</p></div>';
+    }
+  }
+}
+
+function renderNotifications(notifications) {
+  const containers = {
+    all: document.getElementById("allNotifications"),
+    likes: document.getElementById("likesNotifications"),
+    comments: document.getElementById("commentsNotifications"),
+    replies: document.getElementById("repliesNotifications"),
+    follows: document.getElementById("followsNotifications"),
+    collaborations: document.getElementById("collaborationsNotifications")
+  };
+  
+  Object.values(containers).forEach(container => {
+    if (container) container.innerHTML = '';
+  });
+  
+  if (notifications.length === 0) {
+    const emptyHTML = `<div class="empty-state"><div class="empty-state-icon">🔔</div><h3>No notifications yet</h3><p>When someone likes, comments, adds you as a collaborator, or follows you, you'll see it here!</p></div>`;
+    Object.values(containers).forEach(container => {
+      if (container) container.innerHTML = emptyHTML;
+    });
+    return;
+  }
+  
+  const filtered = {
+    all: notifications,
+    likes: notifications.filter(n => n.type === 'like'),
+    comments: notifications.filter(n => n.type === 'comment'),
+    replies: notifications.filter(n => n.type === 'reply'),
+    follows: notifications.filter(n => n.type === 'follow'),
+    collaborations: notifications.filter(n => n.type === 'collaboration')
+  };
+  
+  for (const [tab, notifs] of Object.entries(filtered)) {
+    const container = containers[tab];
+    if (!container) continue;
+    
+    if (notifs.length === 0) {
+      let emptyMsg = `📭 No ${tab === 'all' ? '' : tab} notifications`;
+      if (tab === 'collaborations') emptyMsg = '🤝 No collaboration invitations or collaborator additions yet';
+      container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">✨</div><h3>${emptyMsg}</h3></div>`;
+      continue;
+    }
+    
+    notifs.forEach(notification => {
+      const notificationDiv = document.createElement("div");
+      notificationDiv.className = `notification-item ${notification.read ? 'read' : 'unread'}`;
+      notificationDiv.dataset.id = notification.id;
+      
+      let linkUrl = "#";
+      if (notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply') {
+        if (notification.poemSlug) {
+          linkUrl = `poem.html?slug=${encodeURIComponent(notification.poemSlug)}`;
+        }
+      } else if (notification.type === 'follow') {
+        linkUrl = `user-profile.html?uid=${notification.fromUser}`;
+      } else if (notification.type === 'collaboration') {
+        if (notification.collaborationId) {
+          linkUrl = `collaboration.html?id=${encodeURIComponent(notification.collaborationId)}`;
+        } else if (notification.poemSlug) {
+          linkUrl = `poem.html?slug=${encodeURIComponent(notification.poemSlug)}`;
+        } else {
+          linkUrl = `collaborations.html`;
+        }
+      }
+      
+      notificationDiv.innerHTML = `
+        <div class="notification-icon">${getNotificationIcon(notification.type)}</div>
+        <div class="notification-content">
+          <div class="notification-message">${getNotificationMessage(notification)}</div>
+          <div class="notification-time">${formatTime(notification.timestamp)} ${notification.isExistingCollaborator ? '<span class="collab-badge">Existing collaborator</span>' : ''}</div>
+        </div>
+      `;
+      
+      notificationDiv.addEventListener("click", async () => {
+        if (!notification.read && !notification.isExistingCollaborator) {
+          await markAsRead(notification.id);
+          notificationDiv.classList.remove("unread");
+          notificationDiv.classList.add("read");
+        }
+        if (linkUrl !== "#") {
+          window.location.href = linkUrl;
+        }
+      });
+      
+      container.appendChild(notificationDiv);
+    });
+  }
+}
+
+async function markAsRead(notificationId) {
+  if (!notificationId || notificationId.startsWith('collab_existing_')) return;
+  try {
+    await updateDoc(doc(db, "notifications", notificationId), { read: true });
+  } catch (err) {
+    console.error("Error marking as read:", err);
+  }
+}
+
+async function markAllAsRead() {
+  if (!currentUser) return;
+  
+  try {
+    const notificationsRef = collection(db, "notifications");
+    const q = query(notificationsRef, where("forUser", "==", currentUser.uid), where("read", "==", false));
+    const snapshot = await getDocs(q);
+    
+    const batch = writeBatch(db);
+    snapshot.docs.forEach(docSnap => {
+      batch.update(doc(db, "notifications", docSnap.id), { read: true });
+    });
+    
+    await batch.commit();
+    await loadNotifications();
+  } catch (err) {
+    console.error("Error marking all as read:", err);
+  }
+}
+
+function setupTabs() {
+  const tabs = document.querySelectorAll(".tab-btn");
+  
+  function activateTab(tabId) {
+    tabs.forEach(tab => {
+      if (tab.dataset.tab === tabId) {
+        tab.classList.add("active");
+      } else {
+        tab.classList.remove("active");
+      }
+    });
+    
+    document.querySelectorAll(".tab-content").forEach(content => {
+      content.classList.remove("active");
+    });
+    const activeContent = document.getElementById(`${tabId}Tab`);
+    if (activeContent) activeContent.classList.add("active");
+  }
+  
+  tabs.forEach(tab => {
+    tab.addEventListener("click", (e) => {
+      e.preventDefault();
+      const tabId = tab.dataset.tab;
+      activateTab(tabId);
+    });
+  });
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "users-login.html?redirect=notifications.html";
+    return;
+  }
+  
+  currentUser = user;
+  await loadNotifications();
+  setupTabs();
+  
+  const markAllBtn = document.getElementById("markAllReadBtn");
+  if (markAllBtn) {
+    markAllBtn.addEventListener("click", markAllAsRead);
+  }
+});
+
+document.getElementById("menu-toggle")?.addEventListener("click", () => {
+  document.getElementById("nav-links")?.classList.toggle("show");
+});
+</script>
 </body>
 </html>

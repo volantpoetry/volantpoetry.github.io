@@ -562,6 +562,62 @@
   // Set to track loaded poem IDs to prevent duplicates
   const loadedPoemIds = new Set();
 
+  // Track follow states
+  let currentUserId = null;
+  let followStates = new Map();
+
+  // Function to check if current user follows a poet
+  async function checkFollowStatus(poetId, currentUid) {
+    if (!currentUid || !poetId || currentUid === poetId) return false;
+    if (followStates.has(poetId)) return followStates.get(poetId);
+    
+    try {
+      const docId = `${currentUid}_${poetId}`;
+      const followRef = doc(db, "social", docId);
+      const docSnap = await getDoc(followRef);
+      const isFollowing = docSnap.exists();
+      followStates.set(poetId, isFollowing);
+      return isFollowing;
+    } catch (err) {
+      console.warn("Error checking follow status:", err);
+      return false;
+    }
+  }
+
+  // Function to handle follow/unfollow
+  async function handleFollowFromPoem(poetId, buttonElement) {
+    if (!currentUserId || !poetId || currentUserId === poetId) return;
+    
+    try {
+      const docId = `${currentUserId}_${poetId}`;
+      const followRef = doc(db, "social", docId);
+      const docSnap = await getDoc(followRef);
+      const batch = writeBatch(db);
+      
+      if (docSnap.exists()) {
+        batch.delete(followRef);
+        batch.update(doc(db, "users", poetId), { followerCount: increment(-1) });
+        batch.update(doc(db, "users", currentUserId), { followingCount: increment(-1) });
+        await batch.commit();
+        followStates.set(poetId, false);
+        buttonElement.textContent = "Follow";
+        buttonElement.classList.remove("following");
+        buttonElement.style.background = "#4CAF50";
+      } else {
+        batch.set(followRef, { followerId: currentUserId, followedId: poetId, createdAt: serverTimestamp() });
+        batch.update(doc(db, "users", poetId), { followerCount: increment(1) });
+        batch.update(doc(db, "users", currentUserId), { followingCount: increment(1) });
+        await batch.commit();
+        followStates.set(poetId, true);
+        buttonElement.textContent = "Following";
+        buttonElement.classList.add("following");
+        buttonElement.style.background = "#f44336";
+      }
+    } catch (err) {
+      console.error("Error handling follow:", err);
+    }
+  }
+
   // Helper functions
   function getInitials(name = "") {
     const parts = name.trim().split(" ");
@@ -676,12 +732,68 @@
 
         const truncated = truncatePoem(poem.content, 8);
         const likes = typeof poem.likes === "number" ? poem.likes : 0;
+        const viewCount = typeof poem.views === "number" ? poem.views : 0;
 
-        // Get author info
-        const poetUid = poem.authorId || "";
-        let displayName = poem.author || "Anonymous";
+        // Helper functions for avatar
+        function getInitials(name = "") {
+          const parts = name.trim().split(" ");
+          if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?";
+          return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+
+        function colorFromName(name = "") {
+          let hash = 0;
+          for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+          }
+          const hue = Math.abs(hash) % 360;
+          return `hsl(${hue}, 60%, 45%)`;
+        }
+
+        function generateAvatarImage(initials, bgColor, size = 180) {
+          const canvas = document.createElement("canvas");
+          canvas.width = canvas.height = size;
+          const ctx = canvas.getContext("2d");
+          ctx.fillStyle = bgColor;
+          ctx.fillRect(0, 0, size, size);
+          ctx.fillStyle = "#ffffff";
+          ctx.font = `${size * 0.5}px 'Playfair Display', serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText(initials, size / 2, size / 2);
+          return new Promise(resolve => {
+            canvas.toBlob(blob => resolve(blob), "image/png");
+          });
+        }
+
+        async function uploadAvatarToCloudinary(initials, bgColor, poetUid, publicId = null) {
+          const blob = await generateAvatarImage(initials, bgColor);
+          const formData = new FormData();
+          formData.append("file", blob);
+          formData.append("upload_preset", "profile_pics");
+          if (publicId) formData.append("public_id", publicId);
+          const cloudName = "dzoq4pgjn";
+          try {
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+              method: "POST",
+              body: formData
+            });
+            const data = await res.json();
+            const imageUrl = data.secure_url;
+            await updateDoc(doc(db, "users", poetUid), { cachedAvatarURL: imageUrl });
+            return imageUrl;
+          } catch (err) {
+            console.error("Cloudinary upload failed:", err);
+            return null;
+          }
+        }
+        
+        // Author info
+        const poetUid = poem.authorId;
+        let displayName = "Anonymous Poet";
         let profileLink = "#";
         let profileImage = "/images/default-avatar.png";
+        let isFollowing = false;
 
         if (poetUid) {
           try {
@@ -690,83 +802,102 @@
               const userData = userDoc.data();
               displayName = userData.username || displayName;
               profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
-
               if (userData.photoURL) {
                 profileImage = userData.photoURL;
               } else if (userData.cachedAvatarURL) {
                 profileImage = userData.cachedAvatarURL;
               } else {
-                // Generate avatar asynchronously but don't wait for it
                 const initials = getInitials(displayName);
                 const bgColor = colorFromName(displayName);
-                uploadAvatarToCloudinary(initials, bgColor, poetUid).then(url => {
-                  if (url) {
-                    const img = card.querySelector(".author-img");
-                    if (img) img.src = url;
-                  }
-                });
+                const url = await uploadAvatarToCloudinary(initials, bgColor, poetUid);
+                if (url) profileImage = url;
               }
+            }
+            if (currentUserId && currentUserId !== poetUid) {
+              isFollowing = await checkFollowStatus(poetUid, currentUserId);
             }
           } catch (err) {
             console.warn("Failed to fetch user info:", err);
           }
         }
 
-        // Handle collaborators
+        // Collaborators info
         let collaboratorsHTML = "";
         if (Array.isArray(poem.collaborators) && poem.collaborators.length > 0) {
           try {
             const collaboratorLinks = [];
             for (const collaborator of poem.collaborators) {
               if (!collaborator.uid) continue;
-              
               let collabName = collaborator.username || "Unknown";
+              let collabLink = "#";
               const collabDoc = await getDoc(doc(db, "users", collaborator.uid));
               if (collabDoc.exists()) {
-                collabName = collabDoc.data().username || collabName;
+                const collabData = collabDoc.data();
+                collabName = collabData.username || collabName;
+                collabLink = `/user-profile.html?uid=${encodeURIComponent(collaborator.uid)}`;
               }
-              collaboratorLinks.push(
-                `<a href="/user-profile.html?uid=${encodeURIComponent(collaborator.uid)}" class="collaborator-link">${collabName}</a>`
-              );
+              collaboratorLinks.push(`<a href="${collabLink}" class="collaborator-link">${collabName}</a>`);
             }
             if (collaboratorLinks.length) {
-              collaboratorsHTML = `
-                <div class="collaborator-line">
-                  <em>Co-written with ${collaboratorLinks.join(", ")}</em>
-                </div>
-              `;
+              collaboratorsHTML = `<div class="collaborator-line" style="margin-top:4px; font-size:0.95rem; color:#555;"><em>Co-written with ${collaboratorLinks.join(", ")}</em></div>`;
             }
           } catch (err) {
             console.warn("Failed to fetch collaborators:", err);
           }
         }
 
-        // Build card HTML
-        card.innerHTML = `
-          <div class="author-line">
-            <img src="${profileImage}" alt="${displayName}" class="author-img" loading="lazy">
-            <a href="${profileLink}" class="author-link">${displayName}</a>
-          </div>
-          ${collaboratorsHTML}
-          <h3 class="recent-poem-title">${poem.title}</h3>
-          <p class="poem-content">${truncated.preview}</p>
-          ${truncated.truncated ? '<button class="read-more-btn">Read More</button>' : ''}
-          ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ''}
-          <div class="poem-actions">
-            <div class="comment-section">
-              <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
-              <button class="comment-btn">Post</button>
-            </div>
-            <button class="like-btn">❤️</button>
-            <span class="like-count">${likes}</span>
-            <span class="message-count">💬 0</span>
-          </div>
-          <div class="comment-list" style="display:none;"></div>
-        `;
+        // Audio section
+        let audioHTML = '';
+        if (poem.audioUrl) {
+          audioHTML = `<div class="poem-audio-section" style="margin: 15px 0 15px 0 !important; padding: 8px 12px !important; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;"><span style="font-size: 0.75rem; color: #4b2aad; font-weight: 600;">🎙️ Spoken Version</span></div><audio controls style="width: 100%; border-radius: 8px; height: 35px;" preload="metadata"><source src="${poem.audioUrl}" type="audio/mpeg">Your browser does not support the audio element.</audio></div>`;
+        }
+
+        // Follow button
+        const followButtonHTML = (currentUserId && currentUserId !== poetUid && poetUid) 
+          ? `<button class="follow-btn-on-card ${isFollowing ? 'following' : ''}" data-poet-id="${poetUid}" style="background: ${isFollowing ? '#f44336' : '#4CAF50'}; color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-size: 12px; margin-left: auto; transition: all 0.2s;">${isFollowing ? 'Following' : 'Follow'}</button>`
+          : '';
+
+        // MAIN POEM CARD HTML WITH VIEW COUNT
+card.innerHTML = `
+  <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img src="${profileImage}" alt="${displayName}" class="author-img" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+      <div class="author-info">
+        <a href="${profileLink}" class="author-link" style="font-size:1.2rem; font-weight:700;">${displayName}</a>
+        <div class="follow-button-container" style="margin-top: 4px;">
+          ${followButtonHTML}
+        </div>
+      </div>
+    </div>
+    <span class="view-count-inline" style="font-size:0.85rem; color:#333;">${viewCount} Reads</span>
+  </div>
+  ${collaboratorsHTML}
+  <h3 class="recent-poem-title" style="margin-top:12px;">${poem.title || "Untitled"}</h3>
+  <p class="poem-content" style="white-space:pre-wrap; margin-top:8px; margin-left:0; padding-left:0;">${truncated.preview.trim()}</p>
+  ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
+  ${audioHTML}
+  ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${cat}</a>`).join(", ")}</em></p>` : ""}
+  
+  <div class="poem-actions">
+    <div class="comment-section">
+      <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+      <button class="comment-btn">Post</button>
+    </div>
+    <button class="like-btn">❤️</button>
+    <span class="like-count">${likes}</span>
+    <span class="message-count">💬</span>
+  </div>
+`;
 
         container.appendChild(card);
 
-        // Set up read more functionality
+        // Add comment list
+        const commentListDiv = document.createElement("div");
+        commentListDiv.className = "comment-list";
+        commentListDiv.style.display = "none";
+        container.appendChild(commentListDiv);
+
+        // Read More toggle
         if (truncated.truncated) {
           const btn = card.querySelector(".read-more-btn");
           const p = card.querySelector(".poem-content");
@@ -781,18 +912,31 @@
           });
         }
 
-        // Get comment count asynchronously
-        getDocs(collection(db, "recentPoems", docId, "comments")).then(commentsSnapshot => {
-          card.querySelector(".message-count").textContent = `💬 ${commentsSnapshot.size}`;
-        }).catch(err => console.warn("Failed to get comment count:", err));
+        // Count comments
+        const commentsCol = collection(db, "recentPoems", docId, "comments");
+        const commentsSnapshot = await getDocs(commentsCol);
+        const msgSpan = card.querySelector(".message-count");
+        if (msgSpan) msgSpan.textContent = `💬 ${commentsSnapshot.size}`;
 
-        // Auto-resize textarea
+        // Auto-resize comment box
         const textarea = card.querySelector(".comment-input");
-        textarea.addEventListener("input", () => {
-          textarea.style.height = "auto";
-          textarea.style.height = textarea.scrollHeight + "px";
-        });
-      }
+        if (textarea) {
+          textarea.addEventListener("input", () => {
+            textarea.style.height = "auto";
+            textarea.style.height = textarea.scrollHeight + "px";
+          });
+        }
+      
+      // Attach follow button event listeners
+      document.querySelectorAll('.follow-btn-on-card').forEach(btn => {
+        const poetId = btn.dataset.poetId;
+        btn.removeEventListener('click', btn._followHandler);
+        btn._followHandler = async (e) => {
+          e.stopPropagation();
+          await handleFollowFromPoem(poetId, btn);
+        };
+        btn.addEventListener('click', btn._followHandler);
+      });
 
       lastVisible = snapshot.docs[snapshot.docs.length - 1];
       
@@ -1382,6 +1526,17 @@ async function performSearch(searchTerm) {
 
     // Load initial poems
     loadPoems(true);
+  });
+
+  // Auth State Listener
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUserId = user.uid;
+      followStates.clear();
+    } else {
+      currentUserId = null;
+      followStates.clear();
+    }
   });
 
 </script>

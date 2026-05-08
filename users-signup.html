@@ -154,6 +154,23 @@
         togglePassword.textContent = "👁️";
       }
     });
+
+    const signupParams = new URLSearchParams(window.location.search);
+    const redirectAfterSignup = signupParams.get('redirect');
+
+    if (redirectAfterSignup) {
+      const loginLink = document.querySelector('.links a[href="users-login.html"]');
+      if (loginLink) {
+        loginLink.href = `users-login.html?redirect=${encodeURIComponent(redirectAfterSignup)}`;
+      }
+
+      const signupForm = document.getElementById('signup-form');
+      if (signupForm) {
+        signupForm.addEventListener('submit', () => {
+          localStorage.setItem('redirectAfterLogin', redirectAfterSignup);
+        });
+      }
+    }
   </script>
 </body>
 </html>
