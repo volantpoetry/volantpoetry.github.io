@@ -178,6 +178,27 @@
       text-decoration: underline;
     }
 
+    .category-link {
+      color: #B8860B;
+      text-decoration: none;
+    }
+
+    .category-link:hover {
+      text-decoration: underline;
+    }
+
+    .poem-audio-section {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 0 !important;
+    }
+
+    .poem-audio-section audio {
+      width: 100%;
+      border-radius: 8px;
+      height: 35px;
+    }
+
     .poem-content {
       white-space: pre-wrap;
       margin-top: 8px;
@@ -518,7 +539,8 @@
 
   import { 
     getFirestore, collection, query, orderBy, limit, getDocs, doc, getDoc, 
-    enableIndexedDbPersistence, startAfter, updateDoc, increment, addDoc, arrayUnion
+    enableIndexedDbPersistence, startAfter, updateDoc, increment, addDoc, arrayUnion,
+    serverTimestamp, writeBatch
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   import { 
@@ -539,6 +561,43 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const auth = getAuth(app);
+  let currentUserId = null;
+  let domReady = false;
+  let authReady = false;
+  let initialLoadStarted = false;
+
+  function refreshFollowButtons() {
+    document.querySelectorAll('.follow-btn-on-card').forEach(async (btn) => {
+      const poetId = btn.dataset.poetId;
+      if (!poetId) return;
+
+      if (!currentUserId) {
+        btn.style.display = 'none';
+        return;
+      }
+
+      btn.style.display = 'inline-flex';
+      const isFollowing = await checkFollowStatus(poetId, currentUserId);
+      btn.textContent = isFollowing ? 'Following' : 'Follow';
+      btn.classList.toggle('following', isFollowing);
+      btn.style.background = isFollowing ? '#f44336' : '#4CAF50';
+    });
+  }
+
+  function maybeStartInitialLoad() {
+    if (domReady && authReady && !initialLoadStarted) {
+      initialLoadStarted = true;
+      loadPoems(true);
+    }
+  }
+
+  // Track auth state and current user ID
+  onAuthStateChanged(auth, async (user) => {
+    currentUserId = user ? user.uid : null;
+    authReady = true;
+    maybeStartInitialLoad();
+    refreshFollowButtons();
+  });
 
   // Enable offline persistence
   enableIndexedDbPersistence(db).catch(err => {
@@ -549,74 +608,337 @@
     }
   });
 
-  // State variables
-  let lastVisible = null;
-  let reachedEnd = false;
-  let isLoading = false;
-  let initialLoadComplete = false;
-  let isSearchMode = false;
-  let currentSearchTerm = '';
-  let searchTimeout = null;
-  const POEMS_PER_BATCH = 15;
+  // Helper function to escape HTML
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+// Function to check follow status
+async function checkFollowStatus(poetId, currentUid) {
+  if (!currentUid || !poetId || currentUid === poetId) return false;
+  if (followStates.has(poetId)) return followStates.get(poetId);
+  
+  try {
+    const docId = `${currentUid}_${poetId}`;
+    const followRef = doc(db, "social", docId);
+    const docSnap = await getDoc(followRef);
+    const isFollowing = docSnap.exists();
+    followStates.set(poetId, isFollowing);
+    return isFollowing;
+  } catch (err) {
+    console.warn("Error checking follow status:", err);
+    return false;
+  }
+}
+
+// Function to send notification (ADDED)
+async function sendNotification(forUserId, fromUserId, type, data) {
+  if (!forUserId || !fromUserId || forUserId === fromUserId) return;
+  
+  try {
+    const userDoc = await getDoc(doc(db, "users", fromUserId));
+    const fromUserName = userDoc.exists() ? userDoc.data().username : "Someone";
+    
+    const notification = {
+      forUser: forUserId,
+      fromUser: fromUserId,
+      fromUserName: fromUserName,
+      type: type,
+      timestamp: serverTimestamp(),
+      read: false
+    };
+    
+    if (type === 'like' || type === 'comment') {
+      notification.poemId = data.poemId;
+      notification.poemTitle = data.poemTitle;
+    }
+    if (type === 'comment') {
+      notification.commentText = data.commentText;
+    }
+    if (type === 'reply') {
+      notification.commentId = data.commentId;
+      notification.replyText = data.replyText;
+      notification.poemId = data.poemId;
+    }
+    
+    await addDoc(collection(db, "notifications"), notification);
+  } catch (err) {
+    console.warn("Error sending notification:", err);
+  }
+}
+
+// Function to handle follow/unfollow (UPDATED with notification)
+async function handleFollowFromPoem(poetId, buttonElement) {
+  if (!currentUserId || !poetId || currentUserId === poetId) return;
+  
+  try {
+    const docId = `${currentUserId}_${poetId}`;
+    const followRef = doc(db, "social", docId);
+    const docSnap = await getDoc(followRef);
+    const batch = writeBatch(db);
+    
+    if (docSnap.exists()) {
+      batch.delete(followRef);
+      batch.update(doc(db, "users", poetId), { followerCount: increment(-1) });
+      batch.update(doc(db, "users", currentUserId), { followingCount: increment(-1) });
+      await batch.commit();
+      followStates.set(poetId, false);
+      buttonElement.textContent = "Follow";
+      buttonElement.classList.remove("following");
+      buttonElement.style.background = "#4CAF50";
+    } else {
+      batch.set(followRef, { followerId: currentUserId, followedId: poetId, createdAt: serverTimestamp() });
+      batch.update(doc(db, "users", poetId), { followerCount: increment(1) });
+      batch.update(doc(db, "users", currentUserId), { followingCount: increment(1) });
+      await batch.commit();
+      followStates.set(poetId, true);
+      buttonElement.textContent = "Following";
+      buttonElement.classList.add("following");
+      buttonElement.style.background = "#f44336";
+      
+      // Send follow notification
+      await sendNotification(poetId, currentUserId, 'follow', {});
+    }
+  } catch (err) {
+    console.error("Error handling follow:", err);
+    }
+  }
+
+  // Helper function to get comment list
+  function getCommentList(card) {
+    if (!card) return null;
+    const nextSibling = card.nextElementSibling;
+    if (nextSibling && nextSibling.classList.contains("comment-list")) return nextSibling;
+    return null;
+  }
+
+  // Redirect to login function
+  function redirectToLogin() {
+    const currentPage = window.location.href;
+    localStorage.setItem('redirectAfterLogin', currentPage);
+    window.location.href = `users-login.html?redirect=${encodeURIComponent(currentPage)}`;
+  }
+
+// ============================================
+// PERFECT READ COUNT TRACKING CONFIGURATION
+// ============================================
+const READ_TRACKING_KEY = 'poem_read_tracking';
+const READ_TIMEOUT_MINUTES = 30;     // Don't count again for 30 minutes
+const READ_DELAY_SECONDS = 8;         // 8 seconds - Perfect balance for genuine reads
+const VIEW_THRESHOLD = 0.6;           // 60% of poem must be visible (not just a glimpse)
+
+// Track active timers for each poem
+const activeTimers = new Map();
+const viewStartTimes = new Map();     // Track when user started viewing
+
+// Get read tracking from sessionStorage
+function getReadTracking() {
+  const stored = sessionStorage.getItem(READ_TRACKING_KEY);
+  if (!stored) return {};
+  
+  try {
+    const tracking = JSON.parse(stored);
+    const now = Date.now();
+    const cleaned = {};
+    for (const [poemId, timestamp] of Object.entries(tracking)) {
+      if (now - timestamp < READ_TIMEOUT_MINUTES * 60 * 1000) {
+        cleaned[poemId] = timestamp;
+      }
+    }
+    return cleaned;
+  } catch (e) {
+    return {};
+  }
+}
+
+// Save read tracking to sessionStorage
+function saveReadTracking(tracking) {
+  try {
+    sessionStorage.setItem(READ_TRACKING_KEY, JSON.stringify(tracking));
+  } catch (e) {
+    // Silent fail
+  }
+}
+
+// Check if poem was recently read
+function wasRecentlyRead(poemId) {
+  const tracking = getReadTracking();
+  const now = Date.now();
+  return tracking[poemId] && (now - tracking[poemId] < READ_TIMEOUT_MINUTES * 60 * 1000);
+}
+
+// Actually record the view to Firebase
+async function recordViewToFirebase(poemId) {
+  // Double check before recording
+  if (wasRecentlyRead(poemId)) {
+    return false;
+  }
+  
+  try {
+    const poemRef = doc(db, "recentPoems", poemId);
+    await updateDoc(poemRef, {
+      views: increment(1)
+    });
+    
+    // Update session storage
+    const tracking = getReadTracking();
+    tracking[poemId] = Date.now();
+    saveReadTracking(tracking);
+    
+    // Update the view count on the card if it exists
+    const card = document.querySelector(`.recent-poem-card[data-id="${poemId}"]`);
+    if (card) {
+      let viewCountSpan = card.querySelector('.view-count-inline');
+      if (!viewCountSpan) viewCountSpan = card.querySelector('.view-count');
+      if (!viewCountSpan) viewCountSpan = card.querySelector('.read-count');
+      
+      if (viewCountSpan) {
+        const currentText = viewCountSpan.textContent;
+        const match = currentText.match(/\d+/);
+        if (match) {
+          const currentCount = parseInt(match[0]);
+          const newCount = currentCount + 1;
+          
+          if (currentText.includes('👁️')) {
+            viewCountSpan.innerHTML = `👁️ ${newCount} ${newCount === 1 ? 'read' : 'reads'}`;
+          } else if (currentText.includes('reads')) {
+            viewCountSpan.textContent = `${newCount} reads`;
+          } else {
+            viewCountSpan.textContent = `${newCount}`;
+          }
+          
+          viewCountSpan.style.transition = 'all 0.3s ease';
+          viewCountSpan.style.color = '#4CAF50';
+          viewCountSpan.style.transform = 'scale(1.1)';
+          setTimeout(() => {
+            viewCountSpan.style.color = '#888';
+            viewCountSpan.style.transform = 'scale(1)';
+          }, 1000);
+        }
+      }
+    }
+    
+    return true;
+  } catch (err) {
+    // Silent fail
+    return false;
+  }
+}
+
+// Start tracking a poem when it becomes visible
+function startTrackingPoem(poemId) {
+  if (!poemId) return;
+  
+  // Check if already counted recently
+  if (wasRecentlyRead(poemId)) {
+    return;
+  }
+  
+  // Check if timer already exists
+  if (activeTimers.has(poemId)) {
+    return;
+  }
+  
+  // Record when user started viewing
+  viewStartTimes.set(poemId, Date.now());
+  
+  // Set timer to record view after 8 seconds
+  const timer = setTimeout(async () => {
+    // Check if user actually viewed for full duration
+    const viewDuration = Date.now() - (viewStartTimes.get(poemId) || Date.now());
+    
+    if (!wasRecentlyRead(poemId)) {
+      if (viewDuration >= READ_DELAY_SECONDS * 1000) {
+        await recordViewToFirebase(poemId);
+      }
+    }
+    
+    // Clean up
+    activeTimers.delete(poemId);
+    viewStartTimes.delete(poemId);
+  }, READ_DELAY_SECONDS * 1000);
+  
+  activeTimers.set(poemId, timer);
+}
+
+// Stop tracking a poem (user scrolled away before required time)
+function stopTrackingPoem(poemId) {
+  if (!poemId) return;
+  
+  const timer = activeTimers.get(poemId);
+  if (timer) {
+    clearTimeout(timer);
+    activeTimers.delete(poemId);
+    viewStartTimes.delete(poemId);
+  }
+}
+
+// Setup Intersection Observer for view tracking (silent version)
+function setupReadTracking() {
+  if (!window.IntersectionObserver) {
+    return;
+  }
+  
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      const card = entry.target;
+      const poemId = card.dataset.id;
+      
+      if (!poemId) continue;
+      
+      // Poem is visible enough (60% or more in viewport)
+      if (entry.isIntersecting && entry.intersectionRatio >= VIEW_THRESHOLD) {
+        startTrackingPoem(poemId);
+      } 
+      // Poem is not visible enough (below 60%)
+      else {
+        stopTrackingPoem(poemId);
+      }
+    }
+  }, {
+    threshold: [0, VIEW_THRESHOLD],
+    rootMargin: "0px"
+  });
+  
+  // Observe existing and future poem cards
+  function observePoemCards() {
+    const cards = document.querySelectorAll('.recent-poem-card:not([data-read-tracked])');
+    cards.forEach(card => {
+      card.setAttribute('data-read-tracked', 'true');
+      observer.observe(card);
+    });
+  }
+  
+  // Initial observation
+  observePoemCards();
+  
+  // Watch for dynamically added cards (infinite scroll)
+  const container = document.getElementById('poems-container');
+  if (container) {
+    const mutationObserver = new MutationObserver(() => {
+      observePoemCards();
+    });
+    mutationObserver.observe(container, { childList: true, subtree: false });
+  }
+}
+
+// Initialize tracking when page loads (silent)
+document.addEventListener("DOMContentLoaded", () => {
+  domReady = true;
+  setupReadTracking();
+  maybeStartInitialLoad();
+});
   
   // Set to track loaded poem IDs to prevent duplicates
   const loadedPoemIds = new Set();
-
-  // Track follow states
-  let currentUserId = null;
-  let followStates = new Map();
-
-  // Function to check if current user follows a poet
-  async function checkFollowStatus(poetId, currentUid) {
-    if (!currentUid || !poetId || currentUid === poetId) return false;
-    if (followStates.has(poetId)) return followStates.get(poetId);
-    
-    try {
-      const docId = `${currentUid}_${poetId}`;
-      const followRef = doc(db, "social", docId);
-      const docSnap = await getDoc(followRef);
-      const isFollowing = docSnap.exists();
-      followStates.set(poetId, isFollowing);
-      return isFollowing;
-    } catch (err) {
-      console.warn("Error checking follow status:", err);
-      return false;
-    }
-  }
-
-  // Function to handle follow/unfollow
-  async function handleFollowFromPoem(poetId, buttonElement) {
-    if (!currentUserId || !poetId || currentUserId === poetId) return;
-    
-    try {
-      const docId = `${currentUserId}_${poetId}`;
-      const followRef = doc(db, "social", docId);
-      const docSnap = await getDoc(followRef);
-      const batch = writeBatch(db);
-      
-      if (docSnap.exists()) {
-        batch.delete(followRef);
-        batch.update(doc(db, "users", poetId), { followerCount: increment(-1) });
-        batch.update(doc(db, "users", currentUserId), { followingCount: increment(-1) });
-        await batch.commit();
-        followStates.set(poetId, false);
-        buttonElement.textContent = "Follow";
-        buttonElement.classList.remove("following");
-        buttonElement.style.background = "#4CAF50";
-      } else {
-        batch.set(followRef, { followerId: currentUserId, followedId: poetId, createdAt: serverTimestamp() });
-        batch.update(doc(db, "users", poetId), { followerCount: increment(1) });
-        batch.update(doc(db, "users", currentUserId), { followingCount: increment(1) });
-        await batch.commit();
-        followStates.set(poetId, true);
-        buttonElement.textContent = "Following";
-        buttonElement.classList.add("following");
-        buttonElement.style.background = "#f44336";
-      }
-    } catch (err) {
-      console.error("Error handling follow:", err);
-    }
-  }
+  const POEMS_PER_BATCH = 12;
+  let lastVisible = null;
+  let reachedEnd = false;
+  let isSearchMode = false;
+  let isLoading = false;
+  let initialLoadComplete = false;
 
   // Helper functions
   function getInitials(name = "") {
@@ -660,6 +982,9 @@
     reachedEnd = false;
     loadedPoemIds.clear();
   }
+
+  // Track follow states to avoid repeated DB calls
+  const followStates = new Map();
 
   // Load poems alphabetically A-Z with infinite scroll
   async function loadPoems(initial = false) {
@@ -734,66 +1059,11 @@
         const likes = typeof poem.likes === "number" ? poem.likes : 0;
         const viewCount = typeof poem.views === "number" ? poem.views : 0;
 
-        // Helper functions for avatar
-        function getInitials(name = "") {
-          const parts = name.trim().split(" ");
-          if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?";
-          return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-        }
-
-        function colorFromName(name = "") {
-          let hash = 0;
-          for (let i = 0; i < name.length; i++) {
-            hash = name.charCodeAt(i) + ((hash << 5) - hash);
-          }
-          const hue = Math.abs(hash) % 360;
-          return `hsl(${hue}, 60%, 45%)`;
-        }
-
-        function generateAvatarImage(initials, bgColor, size = 180) {
-          const canvas = document.createElement("canvas");
-          canvas.width = canvas.height = size;
-          const ctx = canvas.getContext("2d");
-          ctx.fillStyle = bgColor;
-          ctx.fillRect(0, 0, size, size);
-          ctx.fillStyle = "#ffffff";
-          ctx.font = `${size * 0.5}px 'Playfair Display', serif`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          ctx.fillText(initials, size / 2, size / 2);
-          return new Promise(resolve => {
-            canvas.toBlob(blob => resolve(blob), "image/png");
-          });
-        }
-
-        async function uploadAvatarToCloudinary(initials, bgColor, poetUid, publicId = null) {
-          const blob = await generateAvatarImage(initials, bgColor);
-          const formData = new FormData();
-          formData.append("file", blob);
-          formData.append("upload_preset", "profile_pics");
-          if (publicId) formData.append("public_id", publicId);
-          const cloudName = "dzoq4pgjn";
-          try {
-            const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-              method: "POST",
-              body: formData
-            });
-            const data = await res.json();
-            const imageUrl = data.secure_url;
-            await updateDoc(doc(db, "users", poetUid), { cachedAvatarURL: imageUrl });
-            return imageUrl;
-          } catch (err) {
-            console.error("Cloudinary upload failed:", err);
-            return null;
-          }
-        }
-        
-        // Author info
-        const poetUid = poem.authorId;
-        let displayName = "Anonymous Poet";
+        // Get author info
+        const poetUid = poem.authorId || "";
+        let displayName = poem.author || "Anonymous";
         let profileLink = "#";
         let profileImage = "/images/default-avatar.png";
-        let isFollowing = false;
 
         if (poetUid) {
           try {
@@ -802,22 +1072,35 @@
               const userData = userDoc.data();
               displayName = userData.username || displayName;
               profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
+
               if (userData.photoURL) {
                 profileImage = userData.photoURL;
               } else if (userData.cachedAvatarURL) {
                 profileImage = userData.cachedAvatarURL;
               } else {
+                // Generate avatar asynchronously but don't wait for it
                 const initials = getInitials(displayName);
                 const bgColor = colorFromName(displayName);
-                const url = await uploadAvatarToCloudinary(initials, bgColor, poetUid);
-                if (url) profileImage = url;
+                uploadAvatarToCloudinary(initials, bgColor, poetUid).then(url => {
+                  if (url) {
+                    const img = card.querySelector(".author-img");
+                    if (img) img.src = url;
+                  }
+                });
               }
-            }
-            if (currentUserId && currentUserId !== poetUid) {
-              isFollowing = await checkFollowStatus(poetUid, currentUserId);
             }
           } catch (err) {
             console.warn("Failed to fetch user info:", err);
+          }
+        }
+
+        // Check follow status
+        let isFollowing = false;
+        if (currentUserId && currentUserId !== poetUid && poetUid) {
+          try {
+            isFollowing = await checkFollowStatus(poetUid, currentUserId);
+          } catch (err) {
+            console.warn("Failed to check follow status:", err);
           }
         }
 
@@ -853,51 +1136,50 @@
         }
 
         // Follow button
-        const followButtonHTML = (currentUserId && currentUserId !== poetUid && poetUid) 
+        const followButtonHTML = (currentUserId && currentUserId !== poetUid && poetUid)
           ? `<button class="follow-btn-on-card ${isFollowing ? 'following' : ''}" data-poet-id="${poetUid}" style="background: ${isFollowing ? '#f44336' : '#4CAF50'}; color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-size: 12px; margin-left: auto; transition: all 0.2s;">${isFollowing ? 'Following' : 'Follow'}</button>`
           : '';
 
-        // MAIN POEM CARD HTML WITH VIEW COUNT
-card.innerHTML = `
-  <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <img src="${profileImage}" alt="${displayName}" class="author-img" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
-      <div class="author-info">
-        <a href="${profileLink}" class="author-link" style="font-size:1.2rem; font-weight:700;">${displayName}</a>
-        <div class="follow-button-container" style="margin-top: 4px;">
-          ${followButtonHTML}
-        </div>
-      </div>
-    </div>
-    <span class="view-count-inline" style="font-size:0.85rem; color:#333;">${viewCount} Reads</span>
-  </div>
-  ${collaboratorsHTML}
-  <h3 class="recent-poem-title" style="margin-top:12px;">${poem.title || "Untitled"}</h3>
-  <p class="poem-content" style="white-space:pre-wrap; margin-top:8px; margin-left:0; padding-left:0;">${truncated.preview.trim()}</p>
-  ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
-  ${audioHTML}
-  ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${cat}</a>`).join(", ")}</em></p>` : ""}
-  
-  <div class="poem-actions">
-    <div class="comment-section">
-      <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
-      <button class="comment-btn">Post</button>
-    </div>
-    <button class="like-btn">❤️</button>
-    <span class="like-count">${likes}</span>
-    <span class="message-count">💬</span>
-  </div>
-`;
+        // Build card HTML
+        card.innerHTML = `
+          <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <img src="${profileImage}" alt="${displayName}" class="author-img" loading="lazy">
+              <div class="author-info">
+                <a href="${profileLink}" class="author-link" style="font-size:1.2rem; font-weight:700;">${displayName}</a>
+                <div class="follow-button-container" style="margin-top: 4px;">
+                  ${followButtonHTML}
+                </div>
+              </div>
+            </div>
+            <span class="view-count-inline" style="font-size:0.85rem; color:#333;">${viewCount} Reads</span>
+          </div>
+          ${collaboratorsHTML}
+          <h3 class="recent-poem-title">${poem.title}</h3>
+          <p class="poem-content">${truncated.preview}</p>
+          ${truncated.truncated ? '<button class="read-more-btn">Read More</button>' : ''}
+          ${audioHTML}
+          ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${cat}</a>`).join(", ")}</em></p>` : ''}
+          <div class="poem-actions">
+            <div class="comment-section">
+              <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+              <button class="comment-btn">Post</button>
+            </div>
+            <button class="like-btn">❤️</button>
+            <span class="like-count">${likes}</span>
+            <span class="message-count">💬 0</span>
+          </div>
+        `;
 
         container.appendChild(card);
 
-        // Add comment list
+        // Add comment list as a sibling AFTER the card (like your working HTML)
         const commentListDiv = document.createElement("div");
         commentListDiv.className = "comment-list";
         commentListDiv.style.display = "none";
         container.appendChild(commentListDiv);
 
-        // Read More toggle
+        // Set up read more functionality
         if (truncated.truncated) {
           const btn = card.querySelector(".read-more-btn");
           const p = card.querySelector(".poem-content");
@@ -912,20 +1194,20 @@ card.innerHTML = `
           });
         }
 
-        // Count comments
-        const commentsCol = collection(db, "recentPoems", docId, "comments");
-        const commentsSnapshot = await getDocs(commentsCol);
-        const msgSpan = card.querySelector(".message-count");
-        if (msgSpan) msgSpan.textContent = `💬 ${commentsSnapshot.size}`;
+        // Get comment count asynchronously
+        getDocs(collection(db, "recentPoems", docId, "comments")).then(commentsSnapshot => {
+          card.querySelector(".message-count").textContent = `💬 ${commentsSnapshot.size}`;
+        }).catch(err => console.warn("Failed to get comment count:", err));
 
-        // Auto-resize comment box
+        // Auto-resize textarea
         const textarea = card.querySelector(".comment-input");
-        if (textarea) {
-          textarea.addEventListener("input", () => {
-            textarea.style.height = "auto";
-            textarea.style.height = textarea.scrollHeight + "px";
-          });
-        }
+        textarea.addEventListener("input", () => {
+          textarea.style.height = "auto";
+          textarea.style.height = textarea.scrollHeight + "px";
+        });
+      }
+
+      lastVisible = snapshot.docs[snapshot.docs.length - 1];
       
       // Attach follow button event listeners
       document.querySelectorAll('.follow-btn-on-card').forEach(btn => {
@@ -937,8 +1219,6 @@ card.innerHTML = `
         };
         btn.addEventListener('click', btn._followHandler);
       });
-
-      lastVisible = snapshot.docs[snapshot.docs.length - 1];
       
       if (snapshot.size < POEMS_PER_BATCH) {
         if (loadingIndicator) loadingIndicator.style.display = "none";
@@ -1088,6 +1368,7 @@ async function performSearch(searchTerm) {
 
       const truncated = truncatePoem(poem.content, 8);
       const likes = typeof poem.likes === "number" ? poem.likes : 0;
+      const viewCount = typeof poem.views === "number" ? poem.views : 0;
 
       // Get author info
       const poetUid = poem.authorId || "";
@@ -1110,15 +1391,71 @@ async function performSearch(searchTerm) {
         }
       }
 
+      // Check follow status
+      let isFollowing = false;
+      if (currentUserId && currentUserId !== poetUid && poetUid) {
+        try {
+          isFollowing = await checkFollowStatus(poetUid, currentUserId);
+        } catch (err) {
+          console.warn("Failed to check follow status:", err);
+        }
+      }
+
+      // Collaborators info
+      let collaboratorsHTML = "";
+      if (Array.isArray(poem.collaborators) && poem.collaborators.length > 0) {
+        try {
+          const collaboratorLinks = [];
+          for (const collaborator of poem.collaborators) {
+            if (!collaborator.uid) continue;
+            let collabName = collaborator.username || "Unknown";
+            let collabLink = "#";
+            const collabDoc = await getDoc(doc(db, "users", collaborator.uid));
+            if (collabDoc.exists()) {
+              const collabData = collabDoc.data();
+              collabName = collabData.username || collabName;
+              collabLink = `/user-profile.html?uid=${encodeURIComponent(collaborator.uid)}`;
+            }
+            collaboratorLinks.push(`<a href="${collabLink}" class="collaborator-link">${collabName}</a>`);
+          }
+          if (collaboratorLinks.length) {
+            collaboratorsHTML = `<div class="collaborator-line" style="margin-top:4px; font-size:0.95rem; color:#555;"><em>Co-written with ${collaboratorLinks.join(", ")}</em></div>`;
+          }
+        } catch (err) {
+          console.warn("Failed to fetch collaborators:", err);
+        }
+      }
+
+      // Audio section
+      let audioHTML = '';
+      if (poem.audioUrl) {
+        audioHTML = `<div class="poem-audio-section" style="margin: 15px 0 15px 0 !important; padding: 8px 12px !important; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;"><span style="font-size: 0.75rem; color: #4b2aad; font-weight: 600;">🎙️ Spoken Version</span></div><audio controls style="width: 100%; border-radius: 8px; height: 35px;" preload="metadata"><source src="${poem.audioUrl}" type="audio/mpeg">Your browser does not support the audio element.</audio></div>`;
+      }
+
+      // Follow button
+      const followButtonHTML = (currentUserId && currentUserId !== poetUid && poetUid)
+        ? `<button class="follow-btn-on-card ${isFollowing ? 'following' : ''}" data-poet-id="${poetUid}" style="background: ${isFollowing ? '#f44336' : '#4CAF50'}; color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-size: 12px; margin-left: auto; transition: all 0.2s;">${isFollowing ? 'Following' : 'Follow'}</button>`
+        : '';
+
       card.innerHTML = `
-        <div class="author-line">
-          <img src="${profileImage}" alt="${displayName}" class="author-img" loading="lazy">
-          <a href="${profileLink}" class="author-link">${displayName}</a>
+        <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <img src="${profileImage}" alt="${displayName}" class="author-img" loading="lazy">
+            <div class="author-info">
+              <a href="${profileLink}" class="author-link" style="font-size:1.2rem; font-weight:700;">${displayName}</a>
+              <div class="follow-button-container" style="margin-top: 4px;">
+                ${followButtonHTML}
+              </div>
+            </div>
+          </div>
+          <span class="view-count-inline" style="font-size:0.85rem; color:#333;">${viewCount} Reads</span>
         </div>
+        ${collaboratorsHTML}
         <h3 class="recent-poem-title">${poem.title}</h3>
         <p class="poem-content">${truncated.preview}</p>
         ${truncated.truncated ? '<button class="read-more-btn">Read More</button>' : ''}
-        ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.join(", ")}</em></p>` : ''}
+        ${audioHTML}
+        ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${cat}</a>`).join(", ")}</em></p>` : ''}
         <div class="poem-actions">
           <div class="comment-section">
             <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
@@ -1128,10 +1465,15 @@ async function performSearch(searchTerm) {
           <span class="like-count">${likes}</span>
           <span class="message-count">💬 0</span>
         </div>
-        <div class="comment-list" style="display:none;"></div>
       `;
 
       container.appendChild(card);
+
+      // Add comment list as a sibling AFTER the card
+      const commentListDiv = document.createElement("div");
+      commentListDiv.className = "comment-list";
+      commentListDiv.style.display = "none";
+      container.appendChild(commentListDiv);
 
       // 🔧 FIX: Add read more functionality for search results
       if (truncated.truncated) {
@@ -1165,6 +1507,17 @@ async function performSearch(searchTerm) {
       });
     }
 
+    // Attach follow button event listeners for search results
+    document.querySelectorAll('.follow-btn-on-card').forEach(btn => {
+      const poetId = btn.dataset.poetId;
+      btn.removeEventListener('click', btn._followHandler);
+      btn._followHandler = async (e) => {
+        e.stopPropagation();
+        await handleFollowFromPoem(poetId, btn);
+      };
+      btn.addEventListener('click', btn._followHandler);
+    });
+
   } catch (err) {
     console.error("Search error:", err);
     // Check if search was cancelled
@@ -1188,7 +1541,7 @@ async function performSearch(searchTerm) {
     // Like handler
     if (e.target.classList.contains("like-btn")) {
       if (!user) { 
-        alert("Please sign in to like poems!"); 
+        redirectToLogin();
         return; 
       }
       
@@ -1236,63 +1589,58 @@ async function performSearch(searchTerm) {
       }
 
       const card = e.target.closest(".recent-poem-card");
+      if (!card) return;
       const docId = card.dataset.id;
       const input = card.querySelector(".comment-input");
-      const commentList = card.querySelector(".comment-list");
+      const commentList = getCommentList(card);
       const text = input.value.trim();
-      
       if (!text) return;
 
       try {
-        // Get user info
         const userDoc = await getDoc(doc(db, "users", user.uid));
         let username = "Anonymous";
         if (userDoc.exists()) username = userDoc.data().username || user.email;
 
-        // Add comment
-        await addDoc(collection(db, "recentPoems", docId, "comments"), {
+        const newCommentRef = await addDoc(collection(db, "recentPoems", docId, "comments"), {
           userId: user.uid,
-          username,
+          username: username,
           text,
-          timestamp: new Date()
+          timestamp: serverTimestamp()
         });
 
-        // Display comment immediately
         const div = document.createElement("div");
         div.className = "comment";
+        div.dataset.commentId = newCommentRef.id;
+        div.dataset.userId = user.uid;
+        div.style.cssText = "background:#f0f0f0; padding:8px 12px; margin:6px 0; border-radius:6px;";
         div.innerHTML = `
-          <a href="user-profile.html?uid=${encodeURIComponent(user.uid)}" 
-             style="font-weight:600; color:#a67c52; text-decoration:none;">${username}</a>: ${text}
+          <a href="user-profile.html?uid=${encodeURIComponent(user.uid)}" class="comment-author-link" style="font-weight:600; color:#5a3cb3; text-decoration:none;">${escapeHtml(username)}</a>: ${escapeHtml(text)}
+          <div><small class="reply-toggle" style="color:#5a3cb3; cursor:pointer;">Reply</small></div>
+          <div class="reply-section" style="margin-left:20px; margin-top:5px;"></div>
         `;
-        commentList.prepend(div);
-        commentList.style.display = "block";
 
+        if (commentList) commentList.prepend(div);
         input.value = "";
         input.style.height = "auto";
 
-        // Update comment count
         const commentsSnapshot = await getDocs(collection(db, "recentPoems", docId, "comments"));
-        card.querySelector(".message-count").textContent = `💬 ${commentsSnapshot.size}`;
+        const commentCount = commentsSnapshot.size;
+        card.querySelector(".message-count").textContent = `💬 ${commentCount}`;
 
-        // Send notification to poem owner
         const poemRef = doc(db, "recentPoems", docId);
         const poemSnap = await getDoc(poemRef);
         if (poemSnap.exists()) {
           const poemData = poemSnap.data();
-          const poemOwnerId = poemData.userId || poemData.authorId;
+          const poemOwnerId = poemData.userId || poemData.authorId || null;
           if (poemOwnerId && poemOwnerId !== user.uid) {
-            await addDoc(collection(db, "notifications"), {
-              forUser: poemOwnerId,
-              fromUser: user.uid,
-              type: "comment",
+            // Send comment notification
+            await sendNotification(poemOwnerId, user.uid, 'comment', {
               poemId: docId,
-              text: text,
-              timestamp: new Date(),
-              read: false
+              poemTitle: poemData.title || "Untitled",
+              commentText: text
             });
           }
         }
-
       } catch (err) {
         console.error("Error posting comment:", err);
         alert("Failed to post comment. Please try again.");
@@ -1301,140 +1649,234 @@ async function performSearch(searchTerm) {
 
     // Show comments handler
     if (e.target.classList.contains("message-count")) {
+      e.preventDefault();
+      e.stopPropagation();
+      
       const card = e.target.closest(".recent-poem-card");
+      if (!card) return;
       const docId = card.dataset.id;
-      const commentList = card.querySelector(".comment-list");
-
+      const commentList = getCommentList(card);
+      if (!commentList) return;
+      
       const isVisible = commentList.style.display === "block";
       commentList.style.display = isVisible ? "none" : "block";
-      
       if (isVisible) return;
 
       commentList.innerHTML = "<p style='color:#888;'>Loading comments...</p>";
 
       try {
         const commentsCol = collection(db, "recentPoems", docId, "comments");
-        const commentsSnapshot = await getDocs(commentsCol);
+        const commentsSnapshot = await getDocs(query(commentsCol, orderBy("timestamp", "asc")));
         commentList.innerHTML = "";
-
+        
         if (commentsSnapshot.empty) {
-          commentList.innerHTML = "<p style='color:#888;'>No comments yet.</p>";
+          commentList.innerHTML = "<p style='color:#888;'>No comments yet. Be the first!</p>";
           return;
         }
 
-        const comments = commentsSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        comments.sort((a, b) => {
-          const ta = a.timestamp?.toMillis?.() || 0;
-          const tb = b.timestamp?.toMillis?.() || 0;
-          return ta - tb;
-        });
-
-        for (const c of comments) {
-          let displayName = c.username || "Anonymous";
-          let userLink = "#";
-          
-          if (c.userId) {
-            try {
-              const userDoc = await getDoc(doc(db, "users", c.userId));
-              if (userDoc.exists()) {
-                displayName = userDoc.data().username || displayName;
-                userLink = `/user-profile.html?uid=${c.userId}`;
-              }
-            } catch {}
-          }
-
+        for (const docSnap of commentsSnapshot.docs) {
+          const comment = docSnap.data();
           const div = document.createElement("div");
           div.className = "comment";
-          div.dataset.commentId = c.id;
+          div.dataset.commentId = docSnap.id;
+          div.dataset.userId = comment.userId || "";
+          div.style.cssText = "background:#fff; padding:8px 12px; margin:6px 0; border-radius:6px; border:1px solid #eee;";
+          
+          const usernameLink = comment.userId 
+            ? `<a href="/user-profile.html?uid=${encodeURIComponent(comment.userId)}" style="font-weight:600; color:#5a3cb3; text-decoration:none; cursor:pointer;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${escapeHtml(comment.username || "Anonymous")}</a>`
+            : `<span style="font-weight:600; color:#5a3cb3;">${escapeHtml(comment.username || "Anonymous")}</span>`;
+          
           div.innerHTML = `
-            <a href="${userLink}" style="font-weight:600; color:#a67c52; text-decoration:none;">${displayName}</a>: ${c.text}
-            <div class="comment-actions" style="margin-top:4px;">
-              <small class="reply-toggle" style="color:#5a3cb3; cursor:pointer;">Reply</small>
-            </div>
-            <div class="reply-section" style="margin-left:20px; margin-top:6px;"></div>
+            ${usernameLink}: ${escapeHtml(comment.text)}
+            <div><small class="reply-toggle" style="color:#5a3cb3; cursor:pointer;">Reply</small></div>
+            <div class="reply-section" style="margin-left:20px; margin-top:5px;"></div>
           `;
           commentList.appendChild(div);
-
-          // Load replies
-          const repliesCol = collection(db, "recentPoems", docId, "comments", c.id, "replies");
-          const repliesSnapshot = await getDocs(repliesCol);
-          if (!repliesSnapshot.empty) {
-            const replySection = div.querySelector(".reply-section");
-            repliesSnapshot.forEach(r => {
-              const reply = r.data();
-              replySection.innerHTML += `
-                <div style="background:#f7f7f7; padding:6px 10px; border-radius:6px; margin:4px 0;">
-                  <a href="/user-profile.html?uid=${reply.userId}" style="font-weight:600; color:#5a3cb3; text-decoration:none;">${reply.username}</a>: ${reply.text}
-                </div>
-              `;
-            });
+          
+          // LOAD EXISTING REPLIES
+          try {
+            const repliesCol = collection(db, "recentPoems", docId, "comments", docSnap.id, "replies");
+            const repliesSnapshot = await getDocs(query(repliesCol, orderBy("timestamp", "asc")));
+            if (!repliesSnapshot.empty) {
+              const replySection = div.querySelector(".reply-section");
+              repliesSnapshot.forEach(replyDoc => {
+                const reply = replyDoc.data();
+                const replyUsernameLink = reply.userId
+                  ? `<a href="/user-profile.html?uid=${encodeURIComponent(reply.userId)}" style="font-weight:600; color:#B8860B; text-decoration:none; cursor:pointer;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${escapeHtml(reply.username)}</a>`
+                  : `<span style="font-weight:600; color:#B8860B;">${escapeHtml(reply.username)}</span>`;
+                
+                const replyDiv = document.createElement("div");
+                replyDiv.style.cssText = "background:#f7f7f7; padding:6px 10px; margin:4px 0; border-radius:6px; font-size:0.9rem;";
+                replyDiv.setAttribute('data-reply-id', replyDoc.id);
+                replyDiv.innerHTML = `${replyUsernameLink}: ${escapeHtml(reply.text)}`;
+                replySection.appendChild(replyDiv);
+              });
+            }
+          } catch (replyErr) {
+            console.error("Error loading replies:", replyErr);
           }
         }
       } catch (err) {
         console.error("Error loading comments:", err);
-        commentList.innerHTML = "<p style='color:red;'>Failed to load comments.</p>";
+        commentList.innerHTML = "<p style='color:red;'>Error loading comments.</p>";
       }
     }
 
     // Reply toggle
     if (e.target.classList.contains("reply-toggle")) {
+      e.preventDefault();
+      e.stopPropagation();
+      
       const commentDiv = e.target.closest(".comment");
+      if (!commentDiv) return;
+      
       const replySection = commentDiv.querySelector(".reply-section");
+      if (!replySection) return;
 
+      // Remove existing reply input if any
       const existing = replySection.querySelector(".reply-input");
       if (existing) {
         existing.remove();
         return;
       }
 
+      // Create reply input form
       const inputContainer = document.createElement("div");
       inputContainer.className = "reply-input";
+      inputContainer.style.marginTop = "8px";
       inputContainer.innerHTML = `
-        <textarea placeholder="Write a reply..." rows="1" style="width:95%; border-radius:6px; padding:6px; border:1px solid #ccc;"></textarea>
-        <button class="send-reply-btn" style="margin-top:4px; background:#5a3cb3; color:white; border:none; border-radius:6px; padding:4px 10px; cursor:pointer;">Send</button>
+        <textarea placeholder="Write a reply..." rows="2" style="width:100%; padding:8px; border-radius:8px; border:1px solid #ccc; font-family:inherit; resize:vertical;"></textarea>
+        <div style="display:flex; gap:8px; margin-top:6px;">
+          <button class="send-reply-btn" style="background:#5a3cb3; color:white; border:none; border-radius:6px; padding:6px 12px; cursor:pointer;">Send Reply</button>
+          <button class="cancel-reply-btn" style="background:#ccc; color:#333; border:none; border-radius:6px; padding:6px 12px; cursor:pointer;">Cancel</button>
+        </div>
       `;
       replySection.appendChild(inputContainer);
+      
+      const textarea = inputContainer.querySelector("textarea");
+      if (textarea) textarea.focus();
+      
+      const cancelBtn = inputContainer.querySelector(".cancel-reply-btn");
+      if (cancelBtn) {
+        cancelBtn.addEventListener("click", (cancelEvent) => {
+          cancelEvent.preventDefault();
+          cancelEvent.stopPropagation();
+          inputContainer.remove();
+        });
+      }
     }
 
     // Send reply
     if (e.target.classList.contains("send-reply-btn")) {
-      const user = auth.currentUser;
-      if (!user) { 
+      e.preventDefault();
+      e.stopPropagation();
+      
+      if (!auth.currentUser) { 
         alert("Please sign in to reply."); 
         return; 
       }
 
-      const commentDiv = e.target.closest(".comment");
-      const card = e.target.closest(".recent-poem-card");
-      const docId = card.dataset.id;
-      const commentId = commentDiv.dataset.commentId;
-      const textarea = commentDiv.querySelector(".reply-input textarea");
-      const replyText = textarea.value.trim();
+      const user = auth.currentUser;
+      const sendBtn = e.target;
+      const originalText = sendBtn.textContent;
       
-      if (!replyText) return;
-
-      const replySection = commentDiv.querySelector(".reply-section");
+      sendBtn.textContent = "Sending...";
+      sendBtn.disabled = true;
+      sendBtn.style.opacity = "0.6";
 
       try {
+        const commentDiv = e.target.closest(".comment");
+        if (!commentDiv) throw new Error("Could not find comment");
+        
+        let card = commentDiv.closest(".recent-poem-card");
+        if (!card) {
+          const commentList = commentDiv.closest(".comment-list");
+          if (commentList) {
+            card = commentList.previousElementSibling;
+            while (card && !card.classList.contains("recent-poem-card")) {
+              card = card.previousElementSibling;
+            }
+          }
+        }
+        if (!card) throw new Error("Could not find poem card");
+        
+        const docId = card.dataset.id;
+        const commentId = commentDiv.dataset.commentId;
+        if (!docId || !commentId) throw new Error("Missing comment or poem ID");
+        
+        const replyInputDiv = commentDiv.querySelector(".reply-input");
+        if (!replyInputDiv) throw new Error("Reply input not found");
+        
+        const textarea = replyInputDiv.querySelector("textarea");
+        if (!textarea) throw new Error("Textarea not found");
+        
+        const replyText = textarea.value.trim();
+        if (!replyText) throw new Error("Please enter a reply");
+        
+        const replySection = commentDiv.querySelector(".reply-section");
+        
         const userDoc = await getDoc(doc(db, "users", user.uid));
-        const username = userDoc.exists() ? userDoc.data().username || "User" : "User";
+        const username = userDoc.exists() ? userDoc.data().username || user.email.split('@')[0] : "User";
 
-        await addDoc(collection(db, "recentPoems", docId, "comments", commentId, "replies"), {
+        const repliesRef = collection(db, "recentPoems", docId, "comments", commentId, "replies");
+        const replyDoc = await addDoc(repliesRef, {
           userId: user.uid,
-          username,
+          username: username,
           text: replyText,
-          timestamp: new Date()
+          timestamp: serverTimestamp()
         });
 
-        replySection.innerHTML += `
-          <div style="background:#f7f7f7; padding:6px 10px; border-radius:6px; margin:4px 0;">
-            <a href="/user-profile.html?uid=${user.uid}" style="font-weight:400; color:#5a3cb3; text-decoration:none;">${username}</a>: ${replyText}
-          </div>
-        `;
+        // Get comment owner for notification
+        const commentDoc = await getDoc(doc(db, "recentPoems", docId, "comments", commentId));
+        const commentOwnerId = commentDoc.exists() ? commentDoc.data().userId : null;
+        
+        const poemDoc = await getDoc(doc(db, "recentPoems", docId));
+        const poemTitle = poemDoc.exists() ? poemDoc.data().title : "Untitled";
+
+        // Send reply notification
+        if (commentOwnerId && commentOwnerId !== user.uid) {
+          await sendNotification(commentOwnerId, user.uid, 'reply', {
+            poemId: docId,
+            poemTitle: poemTitle,
+            commentId: commentId,
+            replyText: replyText
+          });
+        }
+
+        const replyUsernameLink = `<a href="/user-profile.html?uid=${encodeURIComponent(user.uid)}"
+                                   style="font-weight:600; color:#B8860B; text-decoration:none; cursor:pointer;"
+                                   onmouseover="this.style.textDecoration='underline'"
+                                   onmouseout="this.style.textDecoration='none'">
+                                   ${escapeHtml(username)}
+                                 </a>`;
+
+        const replyDiv = document.createElement("div");
+        replyDiv.style.cssText = "background:#f7f7f7; padding:6px 10px; margin:4px 0; border-radius:6px; font-size:0.9rem;";
+        replyDiv.setAttribute('data-reply-id', replyDoc.id);
+        replyDiv.innerHTML = `${replyUsernameLink}: ${escapeHtml(replyText)}`;
+        
+        if (replyInputDiv) {
+          replySection.insertBefore(replyDiv, replyInputDiv);
+        } else {
+          replySection.appendChild(replyDiv);
+        }
+        
         textarea.value = "";
+        replyInputDiv.remove();
+        
+        const tempMsg = document.createElement("div");
+        tempMsg.style.cssText = "color:green; font-size:12px; margin-top:5px;";
+        tempMsg.textContent = "✓ Reply posted!";
+        replySection.appendChild(tempMsg);
+        setTimeout(() => tempMsg.remove(), 2000);
+        
       } catch (err) {
         console.error("Error sending reply:", err);
-        alert("Failed to send reply.");
+        alert(err.message || "Failed to send reply. Please try again.");
+      } finally {
+        sendBtn.textContent = originalText;
+        sendBtn.disabled = false;
+        sendBtn.style.opacity = "1";
       }
     }
   });
@@ -1524,19 +1966,7 @@ async function performSearch(searchTerm) {
       document.querySelectorAll(".offline-notice").forEach(el => el.remove());
     });
 
-    // Load initial poems
-    loadPoems(true);
-  });
-
-  // Auth State Listener
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      currentUserId = user.uid;
-      followStates.clear();
-    } else {
-      currentUserId = null;
-      followStates.clear();
-    }
+    // Load initial poems will start once auth and DOM are ready
   });
 
 </script>

@@ -578,7 +578,7 @@
   font-size: 0.85rem;
   color: #777;
   font-style: italic;
-  margin-bottom: 10px;
+ margin-bottom : 10px;
 }
 
 /* Actions */
@@ -2845,7 +2845,6 @@ html {
   text-decoration: underline; /* Optional: underline on hover */
   cursor: pointer;
 }
-
 
 /* --- NAV CONTAINER FIX FOR SMALL SCREENS --- */
 @media (max-width: 480px) {

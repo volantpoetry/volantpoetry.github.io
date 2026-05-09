@@ -1540,7 +1540,16 @@ nav {
   opacity: 1;
   visibility: visible;
 }
+/* Hide divider anywhere after hidden email row */
+#emailRow.email-row-private ~ hr {
+  display: none !important;
+}
 
+/* Smooth transition when hiding/showing */
+#emailRow,
+#emailRow + hr {
+  transition: all 0.3s ease;
+}
 
 </style>
 </head>
@@ -1755,8 +1764,12 @@ async function refreshUserCounts(uid) {
   const userDoc = await getDoc(doc(db, "users", uid));
   if (userDoc.exists()) {
     const data = userDoc.data();
+    
+    // ✅ Show FOLLOWERS count (always public)
     document.getElementById("followersCount").innerText = data.followerCount || 0;
-    if (uid === currentUserUid) document.getElementById("followingCount").innerText = data.followingCount || 0;
+    
+    // ✅ Show FOLLOWING count (always public - REMOVED the if condition!)
+    document.getElementById("followingCount").innerText = data.followingCount || 0;
   }
 }
 
@@ -1773,14 +1786,27 @@ async function ensureUserHasCountFields(uid) {
 }
 
 async function loadFollowButtonAndCounts(viewerUid, targetUid) {
-  if (!viewerUid || !targetUid) return;
+  if (!targetUid) return;
+  
+  // ✅ ALWAYS show BOTH followers AND following counts - even for public visitors
   await refreshUserCounts(targetUid);
+  
+  // Handle follow button (ONLY for logged-in users viewing someone else)
+  const followBtn = document.getElementById("followActionBtn");
+  
+  // If no one is logged in (public view)
+  if (!viewerUid) {
+    if (followBtn) followBtn.style.display = "none";
+    return; // Counts (followers + following) already displayed by refreshUserCounts
+  }
+  
+  // Logged in user viewing their own profile
   if (viewerUid === targetUid) {
-    const followBtn = document.getElementById("followActionBtn");
     if (followBtn) followBtn.style.display = "none";
     await refreshUserCounts(viewerUid);
-  } else {
-    const followBtn = document.getElementById("followActionBtn");
+  } 
+  // Logged in user viewing someone else's profile
+  else {
     if (followBtn) {
       followBtn.style.display = "inline-block";
       followBtn.onclick = () => handleFollow(viewerUid, targetUid);
