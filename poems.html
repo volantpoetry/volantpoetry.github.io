@@ -460,7 +460,86 @@
   }
 }
 
+/* Simple CSS to make the logo show properly on large screens */
 
+/* Ensure the logo container doesn't get hidden or compressed */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0; /* Prevents logo from shrinking */
+  min-width: fit-content; /* Ensures logo takes needed space */
+}
+
+/* Logo image styling */
+.nav-logo-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Logo text styling */
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: 600;
+  white-space: nowrap; /* Prevents text from wrapping */
+  flex-shrink: 0;
+}
+
+/* For larger screens, you can even make the logo bigger */
+@media (min-width: 1200px) {
+  .nav-logo-img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .logo-text {
+    font-size: 1.6rem;
+  }
+  
+  .logo {
+    gap: 15px;
+  }
+}
+
+/* Ensure nav has enough space for the logo */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px 20px;
+  flex-wrap: wrap; /* Allows wrapping on smaller screens if needed */
+}
+
+/* On large screens, prevent nav items from overlapping */
+@media (min-width: 769px) {
+  nav {
+    flex-wrap: nowrap;
+  }
+  
+  .logo {
+    margin-right: 20px;
+  }
+}
+/* Reduce logo image size */
+.nav-logo-img {
+  width: 37px !important;
+  height: 37px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* Adjust the gap between logo image and text if needed */
+.logo {
+  gap: 8px !important;
+}
+
+/* If you want the text smaller too */
+.logo-text {
+  font-size: 1.1rem !important;
+}
   </style>
 </head>
 <body>

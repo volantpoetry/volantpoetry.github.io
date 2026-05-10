@@ -759,6 +759,12 @@ h2 {
   margin-left: 15px !important;
 }
 
+.poem-category-line a,
+.category-link {
+  color: #B8860B;
+  text-decoration: none;
+}
+
 .read-more-btn {
   margin-left: 15px !important;
   background: none;
@@ -939,6 +945,26 @@ h2 {
   gap: 10px;
 }
 
+.nav-badge {
+  display: inline-flex;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 6px;
+  margin-left: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  background: #e3342f;
+  border-radius: 999px;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-badge:empty {
+  display: none;
+}
+
 /* Preview Modal */
 .preview-modal {
   display: none;
@@ -967,6 +993,114 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+/* Full badges modal */
+.badges-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2100;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.badges-modal.active {
+  display: flex;
+}
+
+.badges-modal-content {
+  width: min(1100px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  animation: fadeUp 0.2s ease;
+}
+
+.badges-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.badges-modal-header h3 {
+  margin: 0;
+  color: var(--primary);
+  font-size: 1.6rem;
+}
+
+.badges-modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #333;
+}
+
+.badges-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.badges-modal-item {
+  text-align: center;
+  padding: 12px;
+  background: #f8f6ff;
+  border-radius: 18px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.badges-modal-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(75, 42, 173, 0.12);
+}
+
+.badges-modal-item img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 2px solid var(--primary);
+}
+
+.badges-modal-item .badge-title {
+  font-weight: 700;
+  color: #4b2aad;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.badges-modal-item .badge-description {
+  color: #575757;
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 900px) {
+  .badges-modal-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .badges-modal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 500px) {
+  .badges-modal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @keyframes fadeUp {
@@ -1673,8 +1807,8 @@ nav {
   <div class="interaction-panel">
     <h3>Volant Quick</h3>
     <ul>
-      <li><a href="notifications.html">🔔 Notifications</a></li>
-      <li><a href="messages.html">✉ Messages</a></li>
+      <li><a href="notifications.html" id="notificationsLink">🔔 Notifications <span class="nav-badge" id="notificationsBadge"></span></a></li>
+      <li><a href="messages.html" id="messagesLink">✉ Messages <span class="nav-badge" id="messagesBadge"></span></a></li>
       <li><a href="submitpoems.html">📝 Submit Poems</a></li>
       <li><a href="user-edit-poems.html">Edit Your Poems</a></li>
       <li><a href="submit-draft.html">Save as Draft</a></li>
@@ -1697,6 +1831,16 @@ nav {
 <div id="imageModal" class="image-modal"><span class="close-modal">&times;</span><img class="modal-content" id="expandedImg"></div>
 <div class="preview-modal" id="previewModal"><div class="preview-content"><button class="preview-close" id="closePreview">✕</button><img class="preview-image" id="previewImage" src=""><div class="preview-info"><h3 id="previewTitle"></h3><p id="previewDescription"></p></div></div></div>
 
+<div class="badges-modal" id="badgesModal">
+  <div class="badges-modal-content">
+    <div class="badges-modal-header">
+      <h3>All Achievements</h3>
+      <button class="badges-modal-close" id="closeBadgesModal">✕</button>
+    </div>
+    <div class="badges-modal-grid" id="badgesModalGrid"></div>
+  </div>
+</div>
+
 <div class="profile-poems">
   <h2>My Submitted Poems</h2>
   <div class="search-bar"><input type="text" id="searchInput" placeholder="Search poems..."></div>
@@ -1705,7 +1849,7 @@ nav {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, addDoc, deleteDoc, increment, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, addDoc, deleteDoc, increment, arrayUnion, writeBatch, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = { apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU", authDomain: "silent-depth.firebaseapp.com", projectId: "silent-depth", storageBucket: "silent-depth.appspot.com", messagingSenderId: "78008755450", appId: "1:78008755450:web:3fd0f0f298a08820935543" };
@@ -1718,6 +1862,134 @@ function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, fun
 function truncatePoemByLines(text, maxLines = 8) { const lines = text.split(/\r?\n/); const truncated = lines.slice(0, maxLines).join("\n"); return { preview: truncated, full: text, truncated: lines.length > maxLines }; }
 function getInitials(name) { const parts = name.trim().split(" "); if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?"; return (parts[0][0] + parts[parts.length-1][0]).toUpperCase(); }
 function colorFromName(name) { let hash = 0; for (let i = 0; i < name.length; i++) { hash = name.charCodeAt(i) + ((hash << 5) - hash); } const hue = Math.abs(hash) % 360; return `hsl(${hue}, 60%, 45%)`; }
+
+const READ_TRACKING_KEY = 'poem_read_tracking';
+const READ_TIMEOUT_MINUTES = 30;
+const READ_DELAY_SECONDS = 8;
+const VIEW_THRESHOLD = 0.6;
+const activeTimers = new Map();
+const viewStartTimes = new Map();
+
+function getReadTracking() {
+  try {
+    const stored = sessionStorage.getItem(READ_TRACKING_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch (err) {
+    return {};
+  }
+}
+
+function saveReadTracking(tracking) {
+  try {
+    sessionStorage.setItem(READ_TRACKING_KEY, JSON.stringify(tracking));
+  } catch (err) {
+    // ignore storage failures
+  }
+}
+
+function wasRecentlyRead(poemId) {
+  if (!poemId) return false;
+  const tracking = getReadTracking();
+  const timestamp = tracking[poemId];
+  if (!timestamp) return false;
+  return Date.now() - timestamp < READ_TIMEOUT_MINUTES * 60 * 1000;
+}
+
+async function recordViewToFirebase(poemId) {
+  if (!poemId || wasRecentlyRead(poemId)) return false;
+  try {
+    await updateDoc(doc(db, 'recentPoems', poemId), { views: increment(1) });
+    const tracking = getReadTracking();
+    tracking[poemId] = Date.now();
+    saveReadTracking(tracking);
+
+    // Update the view count on the visible card immediately.
+    const card = document.querySelector(`.recent-poem-card[data-id="${poemId}"]`);
+    if (card) {
+      const viewCountSpan = card.querySelector('.view-count-inline');
+      if (viewCountSpan) {
+        const currentText = viewCountSpan.textContent || '';
+        const match = currentText.match(/\d+/);
+        if (match) {
+          const currentCount = parseInt(match[0], 10);
+          const newCount = currentCount + 1;
+          if (currentText.includes('👁️')) {
+            viewCountSpan.innerHTML = `👁️ ${newCount}`;
+          } else {
+            viewCountSpan.textContent = `${newCount} Reads`;
+          }
+          viewCountSpan.style.transition = 'transform 0.2s ease, color 0.2s ease';
+          viewCountSpan.style.color = '#4CAF50';
+          viewCountSpan.style.transform = 'scale(1.05)';
+          setTimeout(() => {
+            viewCountSpan.style.color = '#333';
+            viewCountSpan.style.transform = 'scale(1)';
+          }, 600);
+        }
+      }
+    }
+
+    return true;
+  } catch (err) {
+    console.warn('Error recording poem view:', err);
+    return false;
+  }
+}
+
+function startTrackingPoem(poemId) {
+  if (!poemId) return;
+  if (wasRecentlyRead(poemId) || activeTimers.has(poemId)) return;
+  viewStartTimes.set(poemId, Date.now());
+  const timer = setTimeout(async () => {
+    const elapsed = Date.now() - (viewStartTimes.get(poemId) || Date.now());
+    if (!wasRecentlyRead(poemId) && elapsed >= READ_DELAY_SECONDS * 1000) {
+      await recordViewToFirebase(poemId);
+    }
+    activeTimers.delete(poemId);
+    viewStartTimes.delete(poemId);
+  }, READ_DELAY_SECONDS * 1000);
+  activeTimers.set(poemId, timer);
+}
+
+function stopTrackingPoem(poemId) {
+  if (!poemId) return;
+  const timer = activeTimers.get(poemId);
+  if (timer) {
+    clearTimeout(timer);
+    activeTimers.delete(poemId);
+  }
+  viewStartTimes.delete(poemId);
+}
+
+function setupReadTracking() {
+  if (!window.IntersectionObserver) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const card = entry.target;
+      const poemId = card?.dataset?.id;
+      if (!poemId) return;
+      if (entry.isIntersecting && entry.intersectionRatio >= VIEW_THRESHOLD) {
+        startTrackingPoem(poemId);
+      } else {
+        stopTrackingPoem(poemId);
+      }
+    });
+  }, {
+    threshold: [0, VIEW_THRESHOLD],
+    rootMargin: '0px'
+  });
+
+  function observePoemCards() {
+    document.querySelectorAll('.recent-poem-card:not([data-read-tracked])').forEach(card => {
+      card.dataset.readTracked = 'true';
+      observer.observe(card);
+    });
+  }
+
+  observePoemCards();
+  const mutationObserver = new MutationObserver(() => observePoemCards());
+  mutationObserver.observe(document.body, { childList: true, subtree: true });
+}
 
 // ========== FOLLOW SYSTEM ==========
 async function handleFollow(followerId, followedId) {
@@ -1782,6 +2054,161 @@ async function ensureUserHasCountFields(uid) {
     if (data.followerCount === undefined || data.followingCount === undefined) {
       await updateDoc(userRef, { followerCount: 0, followingCount: 0 });
     }
+  }
+}
+
+function redirectToLogin() {
+  const currentPage = window.location.href;
+  localStorage.setItem('redirectAfterLogin', currentPage);
+  window.location.href = `users-login.html?redirect=${encodeURIComponent(currentPage)}`;
+}
+
+async function sendNotification(forUserId, fromUserId, type, data) {
+  if (!forUserId || !fromUserId || forUserId === fromUserId) return;
+  try {
+    const userDoc = await getDoc(doc(db, 'users', fromUserId));
+    const fromUserName = userDoc.exists() ? userDoc.data().username : 'Someone';
+    const notification = {
+      forUser: forUserId,
+      fromUser: fromUserId,
+      fromUserName,
+      type,
+      timestamp: serverTimestamp(),
+      read: false
+    };
+    if (type === 'like' || type === 'comment') {
+      notification.poemId = data.poemId;
+      notification.poemTitle = data.poemTitle;
+    }
+    if (type === 'comment') {
+      notification.commentText = data.commentText;
+    }
+    if (type === 'reply') {
+      notification.commentId = data.commentId;
+      notification.replyText = data.replyText;
+      notification.poemId = data.poemId;
+    }
+    await addDoc(collection(db, 'notifications'), notification);
+  } catch (err) {
+    console.warn('Error sending notification:', err);
+  }
+}
+
+function setNavBadgeCount(elementId, count) {
+  const badge = document.getElementById(elementId);
+  if (!badge) return;
+  badge.textContent = count > 0 ? String(count) : '';
+}
+
+async function updateUnreadNotificationCount() {
+  try {
+    if (!auth.currentUser) return;
+    const notifsQuery = query(
+      collection(db, 'notifications'),
+      where('forUser', '==', auth.currentUser.uid),
+      where('read', '==', false)
+    );
+    const snapshot = await getDocs(notifsQuery);
+    setNavBadgeCount('notificationsBadge', snapshot.size);
+  } catch (err) {
+    console.warn('Error fetching unread notifications:', err);
+  }
+}
+
+async function updateUnreadMessageCount() {
+  try {
+    if (!auth.currentUser) return;
+    const convQuery = query(collection(db, 'conversations'), where('participants', 'array-contains', auth.currentUser.uid));
+    const convSnapshot = await getDocs(convQuery);
+    let unreadMessages = 0;
+    for (const convDoc of convSnapshot.docs) {
+      const messagesQuery = query(collection(db, 'conversations', convDoc.id, 'messages'), where('read', '==', false));
+      const messagesSnapshot = await getDocs(messagesQuery);
+      messagesSnapshot.forEach(msgDoc => {
+        const msg = msgDoc.data();
+        if (msg.senderId !== auth.currentUser.uid) {
+          unreadMessages += 1;
+        }
+      });
+    }
+    setNavBadgeCount('messagesBadge', unreadMessages);
+  } catch (err) {
+    console.warn('Error fetching unread messages:', err);
+  }
+}
+
+function getCommentList(card) {
+  if (!card) return null;
+  const nextSibling = card.nextElementSibling;
+  if (nextSibling && nextSibling.classList.contains('comment-list')) return nextSibling;
+  return null;
+}
+
+async function loadCommentList(card) {
+  if (!card) return;
+  const docId = card.dataset.id;
+  const commentList = getCommentList(card);
+  if (!commentList) return;
+
+  const isVisible = commentList.style.display === 'block';
+  commentList.style.display = isVisible ? 'none' : 'block';
+  if (isVisible) return;
+
+  commentList.innerHTML = "<p style='color:#888;'>Loading comments...</p>";
+
+  try {
+    const commentsCol = collection(db, "recentPoems", docId, "comments");
+    const commentsSnapshot = await getDocs(query(commentsCol, orderBy("timestamp", "asc")));
+    commentList.innerHTML = "";
+
+    if (commentsSnapshot.empty) {
+      commentList.innerHTML = "<p style='color:#888;'>No comments yet. Be the first!</p>";
+      return;
+    }
+
+    for (const docSnap of commentsSnapshot.docs) {
+      const comment = docSnap.data();
+      const div = document.createElement('div');
+      div.className = 'comment';
+      div.dataset.commentId = docSnap.id;
+      div.dataset.userId = comment.userId || '';
+      div.style.cssText = 'background:#fff; padding:8px 12px; margin:6px 0; border-radius:6px; border:1px solid #eee;';
+
+      const usernameLink = comment.userId
+        ? `<a href="user-profile.html?uid=${encodeURIComponent(comment.userId)}" style="font-weight:600; color:#5a3cb3; text-decoration:none; cursor:pointer;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${escapeHtml(comment.username || 'Anonymous')}</a>`
+        : `<span style="font-weight:600; color:#5a3cb3;">${escapeHtml(comment.username || 'Anonymous')}</span>`;
+
+      div.innerHTML = `
+        ${usernameLink}: ${escapeHtml(comment.text)}
+        <div><small class="reply-toggle" style="color:#5a3cb3; cursor:pointer;">Reply</small></div>
+        <div class="reply-section" style="margin-left:20px; margin-top:5px;"></div>
+      `;
+      commentList.appendChild(div);
+
+      try {
+        const repliesCol = collection(db, "recentPoems", docId, "comments", docSnap.id, "replies");
+        const repliesSnapshot = await getDocs(query(repliesCol, orderBy("timestamp", "asc")));
+        if (!repliesSnapshot.empty) {
+          const replySection = div.querySelector('.reply-section');
+          repliesSnapshot.forEach(replyDoc => {
+            const reply = replyDoc.data();
+            const replyUsernameLink = reply.userId
+              ? `<a href="user-profile.html?uid=${encodeURIComponent(reply.userId)}" style="font-weight:600; color:#B8860B; text-decoration:none; cursor:pointer;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${escapeHtml(reply.username || 'Anonymous')}</a>`
+              : `<span style="font-weight:600; color:#B8860B;">${escapeHtml(reply.username || 'Anonymous')}</span>`;
+            const replyDiv = document.createElement('div');
+            replyDiv.style.cssText = 'background:#f7f7f7; padding:6px 10px; margin:4px 0; border-radius:6px; font-size:0.9rem;';
+            replyDiv.setAttribute('data-reply-id', replyDoc.id);
+            replyDiv.innerHTML = `${replyUsernameLink}: ${escapeHtml(reply.text)}`;
+            replySection.appendChild(replyDiv);
+          });
+        }
+      } catch (replyErr) {
+        console.error('Error loading replies:', replyErr);
+      }
+    }
+  } catch (err) {
+    console.error('Error loading comments:', err);
+    commentList.innerHTML = "<p style='color:red;'>Error loading comments.</p>";
   }
 }
 
@@ -1883,7 +2310,44 @@ window.showPreview = function(imageUrl, title, description) {
 function hidePreview() { document.getElementById('previewModal').classList.remove('active'); document.body.style.overflow = 'auto'; }
 document.getElementById('closePreview').addEventListener('click', hidePreview);
 document.getElementById('previewModal').addEventListener('click', (e) => { if (e.target === document.getElementById('previewModal')) hidePreview(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hidePreview(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { hidePreview(); hideAllBadges(); } });
+
+function showAllBadges(badges) {
+  const badgesModal = document.getElementById('badgesModal');
+  const badgesModalGrid = document.getElementById('badgesModalGrid');
+  badgesModalGrid.innerHTML = '';
+  badges.forEach(badge => {
+    const item = document.createElement('div');
+    item.className = 'badges-modal-item';
+    const img = document.createElement('img');
+    img.src = badge.imageUrl || `https://via.placeholder.com/100/5a67d8/ffffff?text=${badge.title?.charAt(0) || '🏆'}`;
+    img.alt = badge.title || 'Achievement';
+    const title = document.createElement('div');
+    title.className = 'badge-title';
+    title.textContent = badge.title || 'Achievement';
+    const desc = document.createElement('div');
+    desc.className = 'badge-description';
+    desc.textContent = badge.description || 'Earned achievement';
+    item.appendChild(img);
+    item.appendChild(title);
+    item.appendChild(desc);
+    item.addEventListener('click', () => showPreview(img.src, badge.title || 'Achievement', badge.description || 'Earned achievement'));
+    badgesModalGrid.appendChild(item);
+  });
+  badgesModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function hideAllBadges() {
+  const badgesModal = document.getElementById('badgesModal');
+  badgesModal.classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+document.getElementById('closeBadgesModal').addEventListener('click', hideAllBadges);
+document.getElementById('badgesModal').addEventListener('click', (e) => { if (e.target === document.getElementById('badgesModal')) hideAllBadges(); });
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideAllBadges(); });
 
 async function fetchTotalCommentsMade(username) {
   if (!username) return 0;
@@ -1982,7 +2446,7 @@ async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, 
       const achievements = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
       const earned = achievements.filter(a => { if (!a.active) return false; const { type, min } = a.condition || {}; switch(type) {
         case "poemsSubmitted": return poemCount >= min; case "likesReceived": return totalLikes >= min; case "commentsMade": return totalCommentsMade >= min; case "commentsReceived": return totalCommentsReceived >= min; default: return false; } });
-      if (earned.length > 0) { earned.forEach(badge => { const img = document.createElement("img"); img.src = badge.imageUrl || `https://via.placeholder.com/50/5a67d8/ffffff?text=${badge.title?.charAt(0) || '🏆'}`; img.alt = badge.title || "Achievement Badge"; img.title = badge.title || "Achievement"; img.addEventListener("click", () => showPreview(badge.imageUrl || `https://via.placeholder.com/200/5a67d8/ffffff?text=${encodeURIComponent(badge.title?.charAt(0) || '🏆')}`, badge.title || "Achievement", badge.description || "You earned this achievement!")); badgesContainer.appendChild(img); }); }
+      if (earned.length > 0) { const displayedBadges = earned.slice(0, 11); displayedBadges.forEach(badge => { const img = document.createElement("img"); img.src = badge.imageUrl || `https://via.placeholder.com/50/5a67d8/ffffff?text=${badge.title?.charAt(0) || '🏆'}`; img.alt = badge.title || "Achievement Badge"; img.title = badge.title || "Achievement"; img.addEventListener("click", () => showPreview(badge.imageUrl || `https://via.placeholder.com/200/5a67d8/ffffff?text=${encodeURIComponent(badge.title?.charAt(0) || '🏆')}`, badge.title || "Achievement", badge.description || "You earned this achievement!")); badgesContainer.appendChild(img); }); if (earned.length > 11) { const viewAllLink = document.createElement("button"); viewAllLink.type = "button"; viewAllLink.textContent = "View All →"; viewAllLink.style.display = "block"; viewAllLink.style.marginTop = "12px"; viewAllLink.style.color = "#5a3cb3"; viewAllLink.style.background = "none"; viewAllLink.style.border = "none"; viewAllLink.style.padding = "0"; viewAllLink.style.fontSize = "0.95rem"; viewAllLink.style.fontWeight = "600"; viewAllLink.style.cursor = "pointer"; viewAllLink.style.transition = "color 0.2s"; viewAllLink.addEventListener("mouseenter", () => viewAllLink.style.color = "#7a5cd8"); viewAllLink.addEventListener("mouseleave", () => viewAllLink.style.color = "#5a3cb3"); viewAllLink.addEventListener("click", () => showAllBadges(earned)); badgesContainer.appendChild(viewAllLink); } }
       else { badgesContainer.innerHTML = '<p style="color: #888; font-size: 0.9rem; margin: 0;">No badges yet</p>'; }
     } else { showDefaultCommentBadges(badgesContainer, totalCommentsMade); }
   } catch (err) { showDefaultCommentBadges(badgesContainer, totalCommentsMade); }
@@ -2126,8 +2590,8 @@ async function fetchUserPoems(usernameToFetch) {
       if (viewingOwnProfile) {
         const existingAudioUrl = poem.audioUrl || '';
         const hideButtons = hasAudio ? 'style="display:none;"' : '';
-        audioSectionHTML = `<div class="audio-section"><div style="display:flex; justify-content:space-between; align-items:center;"><label>🎙️ Spoken Version</label>${existingAudioUrl ? `<button class="delete-audio-btn" data-poem-id="${docId}" style="background:#ff4d4d; padding:4px 12px;">🗑️ Remove Audio</button>` : ''}</div>${existingAudioUrl ? `<audio controls src="${existingAudioUrl}" data-audio-id="${docId}"></audio>` : ''}<div class="audio-controls" ${hideButtons}><button class="record-audio-btn" data-poem-id="${docId}" style="background:#dc3545; padding:8px 16px;">🎙️ Record</button><button class="upload-audio-btn" data-poem-id="${docId}" style="background:#28a745; padding:8px 16px;">📁 Upload</button><input type="file" class="audio-file-input" data-poem-id="${docId}" accept="audio/mpeg,audio/mp4,audio/wav" style="display:none;"></div>${!hasAudio ? `<div class="recording-status" data-poem-id="${docId}"></div>` : ''}</div>`;
-      } else if (poem.audioUrl) { audioSectionHTML = `<div class="audio-section"><label>🎙️ Listen to the poet's voice:</label><audio controls src="${poem.audioUrl}"></audio></div>`; }
+        audioSectionHTML = `<div class="audio-section" style="margin: 15px 0 15px 0; padding: 8px 12px; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:5px;"><label>🎙️ Spoken Version</label>${existingAudioUrl ? `<button class="delete-audio-btn" data-poem-id="${docId}" style="background:#ff4d4d; padding:4px 12px;">🗑️ Remove Audio</button>` : ''}</div>${existingAudioUrl ? `<audio controls src="${existingAudioUrl}" data-audio-id="${docId}" style="width:100%; border-radius:8px; height:35px;"></audio>` : ''}<div class="audio-controls" ${hideButtons}><button class="record-audio-btn" data-poem-id="${docId}" style="background:#dc3545; padding:8px 16px;">🎙️ Record</button><button class="upload-audio-btn" data-poem-id="${docId}" style="background:#28a745; padding:8px 16px;">📁 Upload</button><input type="file" class="audio-file-input" data-poem-id="${docId}" accept="audio/mpeg,audio/mp4,audio/wav" style="display:none;"></div>${!hasAudio ? `<div class="recording-status" data-poem-id="${docId}"></div>` : ''}</div>`;
+      } else if (poem.audioUrl) { audioSectionHTML = `<div class="audio-section" style="margin: 15px 0 15px 0; padding: 8px 12px; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><label>🎙️ Listen to the poet's voice:</label><audio controls src="${poem.audioUrl}" style="width:100%; border-radius:8px; height:35px;"></audio></div>`; }
 
       // Helper functions for avatar
       function getInitials(name = "") {
@@ -2230,7 +2694,7 @@ async function fetchUserPoems(usernameToFetch) {
           ${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}
         </div>
         ${audioSectionHTML}
-        ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(c=>escapeHtml(c)).join(", ")}</em></p>` : ""}
+        ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${escapeHtml(cat)}</a>`).join(", ")}</em></p>` : ""}
         <div class="poem-actions">
           <div class="comment-section">
             <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
@@ -2240,10 +2704,13 @@ async function fetchUserPoems(usernameToFetch) {
           <span class="like-count">${likes}</span>
           <span class="message-count">💬 ${commentsSnapCount}</span>
         </div>
-        <div class="comment-list" style="display:none;"></div>
       `;
       if (!viewingOwnProfile) card.querySelector('.delete-btn')?.remove();
       poemsContainer.appendChild(card);
+      const commentListDiv = document.createElement('div');
+      commentListDiv.className = 'comment-list';
+      commentListDiv.style.display = 'none';
+      poemsContainer.appendChild(commentListDiv);
     }
     document.getElementById("poemCount").innerText = poemCount;
     document.getElementById("likeCount").innerText = totalLikes;
@@ -2254,6 +2721,220 @@ async function fetchUserPoems(usernameToFetch) {
   } catch(e) { poemsContainer.innerHTML = `<p>Error loading poems.</p>`; }
 }
 function attachDeleteListeners() { document.querySelectorAll('.delete-btn').forEach(btn => { btn._del = async () => { if (confirm('Delete this poem?')) { await deleteDoc(doc(db, "recentPoems", btn.dataset.id)); fetchUserPoems(profileUsername); } }; btn.addEventListener('click', btn._del); }); }
+
+document.addEventListener('click', async (e) => {
+  const user = auth.currentUser;
+
+  if (e.target.classList.contains('like-btn')) {
+    if (!user) { redirectToLogin(); return; }
+    const card = e.target.closest('.recent-poem-card');
+    if (!card) return;
+    const docId = card.dataset.id;
+    const countSpan = card.querySelector('.like-count');
+
+    try {
+      const poemRef = doc(db, 'recentPoems', docId);
+      const poemSnap = await getDoc(poemRef);
+      if (!poemSnap.exists()) return;
+      const poemData = poemSnap.data();
+      const likedBy = Array.isArray(poemData.likedBy) ? poemData.likedBy : [];
+      let likes = typeof poemData.likes === 'number' ? poemData.likes : 0;
+      const poemOwnerId = poemData.userId || poemData.authorId || null;
+
+      if (likedBy.includes(user.uid)) {
+        await updateDoc(poemRef, {
+          likes: increment(-1),
+          likedBy: likedBy.filter(uid => uid !== user.uid)
+        });
+        if (countSpan) countSpan.textContent = `${Math.max(likes - 1, 0)}`;
+        e.target.classList.remove('liked');
+      } else {
+        await updateDoc(poemRef, {
+          likes: increment(1),
+          likedBy: arrayUnion(user.uid)
+        });
+        if (countSpan) countSpan.textContent = `${likes + 1}`;
+        e.target.classList.add('liked');
+        if (poemOwnerId && poemOwnerId !== user.uid) {
+          await sendNotification(poemOwnerId, user.uid, 'like', {
+            poemId: docId,
+            poemTitle: poemData.title || 'Untitled'
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Error updating like:', err);
+    }
+  }
+
+  if (e.target.classList.contains('comment-btn')) {
+    if (!user) { redirectToLogin(); return; }
+    const card = e.target.closest('.recent-poem-card');
+    if (!card) return;
+    const docId = card.dataset.id;
+    const input = card.querySelector('.comment-input');
+    const commentList = getCommentList(card);
+    const text = input?.value.trim();
+    if (!text) return;
+
+    try {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const username = userDoc.exists() ? userDoc.data().username || user.email.split('@')[0] : user.email.split('@')[0];
+      await addDoc(collection(db, 'recentPoems', docId, 'comments'), {
+        userId: user.uid,
+        username,
+        text,
+        timestamp: serverTimestamp()
+      });
+
+      input.value = '';
+      input.style.height = 'auto';
+
+      if (commentList && commentList.style.display === 'block') {
+        commentList.style.display = 'none';
+        await loadCommentList(card);
+      }
+
+      const commentsSnapshot = await getDocs(collection(db, 'recentPoems', docId, 'comments'));
+      const countEl = card.querySelector('.message-count');
+      if (countEl) countEl.textContent = `💬 ${commentsSnapshot.size}`;
+
+      const poemRef = doc(db, 'recentPoems', docId);
+      const poemSnap = await getDoc(poemRef);
+      if (poemSnap.exists()) {
+        const poemData = poemSnap.data();
+        const poemOwnerId = poemData.userId || poemData.authorId || null;
+        if (poemOwnerId && poemOwnerId !== user.uid) {
+          await sendNotification(poemOwnerId, user.uid, 'comment', {
+            poemId: docId,
+            poemTitle: poemData.title || 'Untitled',
+            commentText: text
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Error posting comment:', err);
+      alert('Failed to post comment. Please try again.');
+    }
+  }
+
+  if (e.target.classList.contains('message-count')) {
+    e.preventDefault();
+    e.stopPropagation();
+    const card = e.target.closest('.recent-poem-card');
+    if (!card) return;
+    await loadCommentList(card);
+  }
+
+  if (e.target.classList.contains('read-more-btn')) {
+    const card = e.target.closest('.recent-poem-card');
+    if (!card) return;
+    const paragraph = card.querySelector('.poem-content');
+    if (!paragraph) return;
+    const docId = card.dataset.id;
+    const poem = await getDoc(doc(db, 'recentPoems', docId));
+    if (!poem.exists()) return;
+    const fullText = poem.data().content || '';
+    if (e.target.textContent.trim() === 'Show More' || e.target.textContent.trim() === 'Read More') {
+      paragraph.textContent = fullText;
+      e.target.textContent = 'Show Less';
+    } else {
+      const truncated = truncatePoemByLines(fullText, 8);
+      paragraph.textContent = truncated.preview;
+      e.target.textContent = 'Show More';
+    }
+    return;
+  }
+
+  if (e.target.classList.contains('reply-toggle')) {
+    e.preventDefault();
+    e.stopPropagation();
+    const commentDiv = e.target.closest('.comment');
+    if (!commentDiv) return;
+    const replySection = commentDiv.querySelector('.reply-section');
+    if (!replySection) return;
+
+    const existing = replySection.querySelector('.reply-input');
+    if (existing) { existing.remove(); return; }
+
+    const inputContainer = document.createElement('div');
+    inputContainer.className = 'reply-input';
+    inputContainer.style.marginTop = '8px';
+    inputContainer.innerHTML = `
+      <textarea placeholder="Write a reply..." rows="2" style="width:100%; padding:8px; border-radius:8px; border:1px solid #ccc; font-family:inherit; resize:vertical;"></textarea>
+      <div style="display:flex; gap:8px; margin-top:6px;">
+        <button class="send-reply-btn" style="background:#5a3cb3; color:white; border:none; border-radius:6px; padding:6px 12px; cursor:pointer;">Send Reply</button>
+        <button class="cancel-reply-btn" style="background:#ccc; color:#333; border:none; border-radius:6px; padding:6px 12px; cursor:pointer;">Cancel</button>
+      </div>
+    `;
+    replySection.appendChild(inputContainer);
+    const cancelBtn = inputContainer.querySelector('.cancel-reply-btn');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', (cancelEvent) => { cancelEvent.preventDefault(); cancelEvent.stopPropagation(); inputContainer.remove(); });
+    }
+  }
+
+  if (e.target.classList.contains('send-reply-btn')) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) { alert('Please sign in to reply.'); redirectToLogin(); return; }
+
+    const commentDiv = e.target.closest('.comment');
+    if (!commentDiv) return;
+    const commentList = commentDiv.closest('.comment-list');
+    const card = commentList ? commentList.previousElementSibling : commentDiv.closest('.recent-poem-card');
+    if (!card || !card.classList.contains('recent-poem-card')) return;
+    const docId = card.dataset.id;
+    const commentId = commentDiv.dataset.commentId;
+    const replyInputDiv = commentDiv.querySelector('.reply-input');
+    const textarea = replyInputDiv?.querySelector('textarea');
+    const replyText = textarea?.value.trim();
+    if (!replyText) { alert('Please enter a reply'); return; }
+
+    try {
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const username = userDoc.exists() ? userDoc.data().username || user.email.split('@')[0] : user.email.split('@')[0];
+      const repliesRef = collection(db, 'recentPoems', docId, 'comments', commentId, 'replies');
+      const replyDoc = await addDoc(repliesRef, {
+        userId: user.uid,
+        username,
+        text: replyText,
+        timestamp: serverTimestamp()
+      });
+
+      const commentDoc = await getDoc(doc(db, 'recentPoems', docId, 'comments', commentId));
+      const commentOwnerId = commentDoc.exists() ? commentDoc.data().userId : null;
+      const poemDoc = await getDoc(doc(db, 'recentPoems', docId));
+      const poemTitle = poemDoc.exists() ? poemDoc.data().title : 'Untitled';
+      if (commentOwnerId && commentOwnerId !== user.uid) {
+        await sendNotification(commentOwnerId, user.uid, 'reply', {
+          poemId: docId,
+          poemTitle,
+          commentId,
+          replyText
+        });
+      }
+
+      const replySection = commentDiv.querySelector('.reply-section');
+      const replyUsernameLink = `<a href="user-profile.html?uid=${encodeURIComponent(user.uid)}" style="font-weight:600; color:#B8860B; text-decoration:none; cursor:pointer;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${escapeHtml(username)}</a>`;
+      const replyDiv = document.createElement('div');
+      replyDiv.style.cssText = 'background:#f7f7f7; padding:6px 10px; margin:4px 0; border-radius:6px; font-size:0.9rem;';
+      replyDiv.setAttribute('data-reply-id', replyDoc.id);
+      replyDiv.innerHTML = `${replyUsernameLink}: ${escapeHtml(replyText)}`;
+      if (replySection) replySection.insertBefore(replyDiv, replyInputDiv);
+      replyInputDiv.remove();
+
+      const tempMsg = document.createElement('div');
+      tempMsg.style.cssText = 'color:green; font-size:12px; margin-top:5px;';
+      tempMsg.textContent = '✓ Reply posted!';
+      if (replySection) replySection.appendChild(tempMsg);
+      setTimeout(() => tempMsg.remove(), 2000);
+    } catch (err) {
+      console.error('Error sending reply:', err);
+      alert('Failed to send reply. Please try again.');
+    }
+  }
+});
 
 async function fetchTopPoems(profileName) {
   const snapshot = await getDocs(query(collection(db, "recentPoems"), where("submittedBy", "==", profileName)));
@@ -2275,6 +2956,8 @@ onAuthStateChanged(auth, async (user) => {
     if (loginBtn) loginBtn.style.display = "none";
     if (logoutBtnNav) logoutBtnNav.style.display = "inline-block";
     currentUserUid = user.uid;
+    updateUnreadNotificationCount();
+    updateUnreadMessageCount();
   }
   
   if (!user && !profileUid) { 
@@ -2407,6 +3090,7 @@ document.getElementById("totalViewsCount").innerText = totalViews;
 await updateVerificationBadge(targetProfileUid, viewingOwnProfile);
 
   await fetchUserPoems(profileUsername);
+  setupReadTracking();
   await fetchTopPoems(profileUsername);
 });
 
