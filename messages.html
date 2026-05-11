@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Volant Messenger | Poets' Private Chat</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Favicons -->
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="apple-touch-icon" href="images/logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -80,14 +84,19 @@
       .nav-links.show { display: flex; }
       .menu-toggle { display: block; }
     }
+    .nav-logo-img {
+  display: block;
+  height: 32px;
+  width: auto;
+}
   </style>
 </head>
 <body>
 <header>
   <nav>
-    <div class="logo">
-      <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img" onerror="this.style.display='none'">
-      <span class="logo-text">Volant Poetry</span>
+  <div class="logo">
+      <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img">
+      <span class="logo-text"><span class="logo-highlight">Volant</span> Poetry</span>
     </div>
     <div class="nav-links" id="nav-links">
       <a href="index.html">Home</a>

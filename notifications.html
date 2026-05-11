@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Notifications | Volant Poetry</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="images/logo.png">
-  <style>
+ <!-- Favicons -->
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="apple-touch-icon" href="images/logo.png">
+ <style>
     * {
       margin: 0;
       padding: 0;
@@ -45,6 +47,7 @@
     .nav-logo-img {
       height: 40px;
       width: auto;
+      display: block;
     }
 
     .logo-text {
@@ -179,6 +182,7 @@
       gap: 12px;
     }
 
+    /* NOTIFICATION CARD - clickable area for marking as read, but not for navigation */
     .notification-item {
       background: white;
       border-radius: 12px;
@@ -186,15 +190,15 @@
       display: flex;
       align-items: flex-start;
       gap: 15px;
-      transition: all 0.3s;
+      transition: all 0.2s ease;
       border-left: 4px solid #4b2aad;
       cursor: pointer;
       position: relative;
     }
 
     .notification-item:hover {
-      transform: translateX(5px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      background: #fefefe;
     }
 
     .notification-item.unread {
@@ -202,34 +206,88 @@
       border-left-color: #ff9800;
     }
 
+    .notification-item.unread:hover {
+      background: #e8e4ff;
+    }
+
     .notification-item.read {
-      opacity: 0.7;
+      opacity: 0.75;
     }
 
     .notification-icon {
       font-size: 28px;
       min-width: 50px;
       text-align: center;
+      user-select: none;
+      pointer-events: none;
     }
 
     .notification-content {
       flex: 1;
+      pointer-events: none; /* Let parent handle clicks, but clickable spans will re-enable */
     }
 
     .notification-message {
       font-size: 15px;
-      color: #333;
-      margin-bottom: 5px;
+      color: #1e1e2a;
+      margin-bottom: 6px;
       line-height: 1.5;
+      word-break: break-word;
     }
 
-    .notification-message strong {
+    /* Clickable spans inside message: poem title and username */
+    .clickable-link {
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-block;
+      pointer-events: auto; /* Re-enable clicks on these elements */
+      position: relative;
+      z-index: 2;
+    }
+
+    .clickable-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Author/username specific style - color #B8860B (goldenrod) */
+    .clickable-user {
+      cursor: pointer;
+      font-weight: 600;
+      color: #B8860B;
+      text-decoration: none;
+      pointer-events: auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .clickable-user:hover {
+      text-decoration: underline;
+      color: #9a6e0a;
+    }
+
+    /* Poem title link style */
+    .poem-title-link {
+      font-weight: 700;
       color: #4b2aad;
+      cursor: pointer;
+      border-bottom: 1px dashed #c2b5f0;
+      pointer-events: auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .poem-title-link:hover {
+      border-bottom: 1px solid #4b2aad;
+      color: #2c1a6e;
     }
 
     .notification-time {
       font-size: 12px;
       color: #999;
+      margin-top: 4px;
+      pointer-events: none;
     }
 
     .empty-state {
@@ -270,6 +328,7 @@
       font-size: 11px;
       font-weight: 600;
       margin-left: 8px;
+      pointer-events: none;
     }
 
     @media (max-width: 650px) {
@@ -311,6 +370,51 @@
         display: block;
       }
     }
+    /* ========== VOLANT POETRY LOGO ========== */
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #4b2aad;
+  text-decoration: none;
+  gap: 0.6rem;
+  cursor: default;
+}
+
+.logo-highlight {
+  color: #fff;
+  text-shadow: 
+    0 0 2px #4b2aad,
+    0 0 4px #4b2aad,
+    0 0 6px #4b2aad;
+}
+
+.nav-logo-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+/* Mobile adjustment */
+@media (max-width: 768px) {
+  .logo {
+    font-size: 1.4rem;
+  }
+  
+  .nav-logo-img {
+    display: inline-block;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1.2rem;
+  }
+}
   </style>
 </head>
 <body>
@@ -319,7 +423,7 @@
   <nav>
     <div class="logo">
       <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img" onerror="this.style.display='none'">
-      <span class="logo-text">Volant Poetry</span>
+      <span class="logo-text"><span class="logo-highlight">Volant</span> Poetry</span>
     </div>
     <div class="nav-links" id="nav-links">
       <a href="index.html">Home</a>
@@ -334,13 +438,13 @@
 
 <div class="container">
   <div class="notifications-header">
-    <h1>🔔 Notifications</h1>
+    <h1> Notifications</h1>
     <button id="markAllReadBtn" class="mark-read-btn">Mark all as read</button>
   </div>
 
   <div class="tabs-wrapper">
     <div class="tabs" id="tabsContainer">
-      <button class="tab-btn active" data-tab="all">📬 All</button>
+      <button class="tab-btn active" data-tab="all"> All</button>
       <button class="tab-btn" data-tab="likes">❤️ Likes</button>
       <button class="tab-btn" data-tab="comments">💬 Comments</button>
       <button class="tab-btn" data-tab="replies">↩️ Replies</button>
@@ -405,22 +509,15 @@ let existingCollaborationsLoaded = false;
 
 function formatTime(timestamp) {
   if (!timestamp) return "Just now";
-  
   let date;
-  if (timestamp.toDate) {
-    date = timestamp.toDate();
-  } else if (timestamp.seconds) {
-    date = new Date(timestamp.seconds * 1000);
-  } else {
-    date = new Date(timestamp);
-  }
-  
+  if (timestamp.toDate) date = timestamp.toDate();
+  else if (timestamp.seconds) date = new Date(timestamp.seconds * 1000);
+  else date = new Date(timestamp);
   const now = new Date();
   const diff = now - date;
   const minutes = Math.floor(diff / 60000);
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
-  
   if (minutes < 1) return "Just now";
   if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
   if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
@@ -439,35 +536,6 @@ function getNotificationIcon(type) {
   }
 }
 
-function getNotificationMessage(notification) {
-  const username = notification.fromUserName || 'Someone';
-  
-  switch(notification.type) {
-    case 'like':
-      return `<strong>${escapeHtml(username)}</strong> liked your poem "${escapeHtml(notification.poemTitle || 'a poem')}"`;
-    case 'comment':
-      return `<strong>${escapeHtml(username)}</strong> commented on your poem "${escapeHtml(notification.poemTitle || 'a poem')}":<br> <em>"${escapeHtml(notification.commentText?.substring(0, 100))}${notification.commentText?.length > 100 ? '...' : ''}"</em>`;
-    case 'reply':
-      return `<strong>${escapeHtml(username)}</strong> replied to your comment: <em>"${escapeHtml(notification.replyText?.substring(0, 100))}${notification.replyText?.length > 100 ? '...' : ''}"</em>`;
-    case 'follow':
-      return `<strong>${escapeHtml(username)}</strong> started following you`;
-    case 'collaboration':
-      // Different message based on whether this is an invitation or an existing collaborator addition
-      if (notification.isExistingCollaborator && notification.workTitle) {
-        return `<strong>${escapeHtml(username)}</strong> added you as a collaborator on "<strong>${escapeHtml(notification.workTitle)}</strong>" ✨ You are now part of this creative team!`;
-      } else if (notification.message) {
-        return `<strong>${escapeHtml(username)}</strong> ${escapeHtml(notification.message)}`;
-      } else if (notification.collaborationTitle) {
-        return `<strong>${escapeHtml(username)}</strong> invited you to collaborate on "<strong>${escapeHtml(notification.collaborationTitle)}</strong>" 🤝`;
-      } else if (notification.poemTitle) {
-        return `<strong>${escapeHtml(username)}</strong> requested a collaboration on your poem "${escapeHtml(notification.poemTitle)}"`;
-      }
-      return `<strong>${escapeHtml(username)}</strong> wants to collaborate with you on a poetic project`;
-    default:
-      return notification.message || 'New notification';
-  }
-}
-
 function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/[&<>]/g, function(m) {
@@ -478,88 +546,112 @@ function escapeHtml(str) {
   });
 }
 
-async function getPoemTitle(poemId) {
-  if (!poemId) return null;
-  try {
-    const poemDoc = await getDoc(doc(db, "recentPoems", poemId));
-    if (poemDoc.exists()) {
-      return poemDoc.data().title || "Untitled";
-    }
-  } catch (err) {
-    console.warn("Error fetching poem title:", err);
-  }
-  return null;
-}
-
-function slugify(text) {
-  if (!text) return "";
-  return text.toString().toLowerCase().trim()
-    .replace(/[\s\_]+/g, "-")
-    .replace(/[^a-z0-9\-]/g, "")
-    .replace(/\-+/g, "-")
-    .replace(/^\-+|\-+$/g, "");
-}
-
-async function getPoemSlug(poemId) {
-  if (!poemId) return null;
+async function getPoemSlugAndTitle(poemId) {
+  if (!poemId) return { slug: null, title: null };
   try {
     const poemDoc = await getDoc(doc(db, "recentPoems", poemId));
     if (poemDoc.exists()) {
       const data = poemDoc.data();
-      return data.slug || slugify(data.title || poemId);
+      const title = data.title || "Untitled";
+      let slug = data.slug;
+      if (!slug && title) {
+        slug = title.toString().toLowerCase().trim()
+          .replace(/[\s\_]+/g, "-")
+          .replace(/[^a-z0-9\-]/g, "")
+          .replace(/\-+/g, "-")
+          .replace(/^\-+|\-+$/g, "");
+      }
+      return { slug, title };
     }
-  } catch (err) {
-    console.warn("Error fetching poem slug:", err);
-  }
-  return null;
+  } catch (err) { console.warn(err); }
+  return { slug: null, title: null };
 }
 
-// Fetch works where current user has been added as a collaborator
-// Uses type "collaboration" for consistency
+// Build notification HTML - ONLY username and poem title are clickable links
+// Username gets color #B8860B
+function buildNotificationHTML(notification, poemSlug, poemTitle) {
+  const usernameRaw = notification.fromUserName || 'Someone';
+  const safeUsername = escapeHtml(usernameRaw);
+  let messageHtml = '';
+  const type = notification.type;
+  const commentExcerpt = notification.commentText ? escapeHtml(notification.commentText.substring(0, 100)) : '';
+  const replyExcerpt = notification.replyText ? escapeHtml(notification.replyText.substring(0, 100)) : '';
+  
+  // Username link - color #B8860B (goldenrod)
+  const userProfileUrl = `user-profile.html?uid=${notification.fromUser || ''}`;
+  const usernameLink = `<span class="clickable-user" data-href="${userProfileUrl}" data-id="${notification.id}" data-read="${notification.read}">${safeUsername}</span>`;
+  
+  if (type === 'like') {
+    const poemDisplay = poemTitle ? 
+      `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(poemSlug || '')}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(poemTitle)}”</span>` : 
+      'a poem';
+    messageHtml = `${usernameLink} liked your poem ${poemDisplay}`;
+  } 
+  else if (type === 'comment') {
+    const poemDisplay = poemTitle ? 
+      `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(poemSlug || '')}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(poemTitle)}”</span>` : 
+      'a poem';
+    const snippet = commentExcerpt ? `<br><em>"${commentExcerpt}${notification.commentText?.length > 100 ? '...' : ''}"</em>` : '';
+    messageHtml = `${usernameLink} commented on ${poemDisplay}:${snippet}`;
+  }
+  else if (type === 'reply') {
+    const snippet = replyExcerpt ? `<br><em>"${replyExcerpt}${notification.replyText?.length > 100 ? '...' : ''}"</em>` : '';
+    messageHtml = `${usernameLink} replied to your comment: ${snippet}`;
+  }
+  else if (type === 'follow') {
+    messageHtml = `${usernameLink} started following you`;
+  }
+  else if (type === 'collaboration') {
+    if (notification.isExistingCollaborator && notification.workTitle) {
+      const workDisplay = notification.poemSlug ? 
+        `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(notification.poemSlug)}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(notification.workTitle)}”</span>` :
+        `<strong>“${escapeHtml(notification.workTitle)}”</strong>`;
+      messageHtml = `${usernameLink} added you as a collaborator on ${workDisplay} ✨ You are now part of this creative team!`;
+    } 
+    else if (notification.collaborationTitle) {
+      const collabUrl = `collaboration.html?id=${encodeURIComponent(notification.collaborationId || '')}`;
+      const collabDisplay = `<span class="clickable-link poem-title-link" data-href="${collabUrl}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(notification.collaborationTitle)}”</span>`;
+      messageHtml = `${usernameLink} invited you to collaborate on ${collabDisplay} 🤝`;
+    }
+    else if (poemTitle) {
+      const poemDisplay = `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(poemSlug || '')}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(poemTitle)}”</span>`;
+      messageHtml = `${usernameLink} requested a collaboration on your poem ${poemDisplay}`;
+    }
+    else {
+      messageHtml = `${usernameLink} wants to collaborate with you on a poetic project`;
+    }
+  }
+  else {
+    messageHtml = notification.message ? `${usernameLink} ${escapeHtml(notification.message)}` : 'New notification';
+  }
+  return messageHtml;
+}
+
 async function fetchExistingCollaborationsAsNotifications() {
   if (!currentUser) return [];
   if (existingCollaborationsLoaded) return [];
-  
-  console.log("Fetching existing collaborations where user is a collaborator...");
   const collaborationNotifs = [];
-  
   try {
-    // Query collaborations collection where current user is in collaborators array
-    const collabQuery = query(
-      collection(db, "collaborations"),
-      where("collaborators", "array-contains", currentUser.uid)
-    );
+    const collabQuery = query(collection(db, "collaborations"), where("collaborators", "array-contains", currentUser.uid));
     const collabSnapshot = await getDocs(collabQuery);
-    
     for (const collabDoc of collabSnapshot.docs) {
       const collabData = collabDoc.data();
-      
-      // Get the person who added the user (owner/creator)
       const addedBy = collabData.ownerId || collabData.createdBy || collabData.addedBy;
       let addedByName = "A poet";
-      
       if (addedBy && addedBy !== currentUser.uid) {
         try {
           const userDoc = await getDoc(doc(db, "users", addedBy));
-          if (userDoc.exists()) {
-            addedByName = userDoc.data().username || "A poet";
-          }
+          if (userDoc.exists()) addedByName = userDoc.data().username || "A poet";
         } catch(e) {}
-      } else if (addedBy === currentUser.uid) {
-        // Skip if user added themselves
-        continue;
-      }
-      
+      } else if (addedBy === currentUser.uid) continue;
       const workTitle = collabData.title || collabData.workTitle || "a poetry work";
       const poemId = collabData.poemId || collabData.workId;
       let poemSlug = null;
       if (poemId) {
-        poemSlug = await getPoemSlug(poemId);
+        const slugData = await getPoemSlugAndTitle(poemId);
+        poemSlug = slugData.slug;
       }
-      
       const createdAt = collabData.createdAt || collabData.timestamp || Timestamp.now();
-      
-      // Use type "collaboration" - unified collaboration type
       collaborationNotifs.push({
         id: `collab_existing_${collabDoc.id}`,
         type: 'collaboration',
@@ -574,33 +666,19 @@ async function fetchExistingCollaborationsAsNotifications() {
         isExistingCollaborator: true
       });
     }
-    
-    // Also check recentPoems collection for direct collaborator additions
-    const poemsQuery = query(
-      collection(db, "recentPoems"),
-      where("collaborators", "array-contains", currentUser.uid)
-    );
+    const poemsQuery = query(collection(db, "recentPoems"), where("collaborators", "array-contains", currentUser.uid));
     const poemsSnapshot = await getDocs(poemsQuery);
-    
     for (const poemDoc of poemsSnapshot.docs) {
       const poemData = poemDoc.data();
       const addedBy = poemData.ownerId || poemData.authorId || poemData.createdBy;
       let addedByName = "The author";
-      
       if (addedBy && addedBy !== currentUser.uid) {
         try {
           const userDoc = await getDoc(doc(db, "users", addedBy));
-          if (userDoc.exists()) {
-            addedByName = userDoc.data().username || "The author";
-          }
+          if (userDoc.exists()) addedByName = userDoc.data().username || "The author";
         } catch(e) {}
-      } else if (addedBy === currentUser.uid) {
-        continue;
-      }
-      
-      const poemSlug = poemData.slug || slugify(poemData.title || poemDoc.id);
-      const createdAt = poemData.createdAt || poemData.timestamp || Timestamp.now();
-      
+      } else continue;
+      const poemSlugObj = await getPoemSlugAndTitle(poemDoc.id);
       const alreadyExists = collaborationNotifs.some(n => n.poemId === poemDoc.id);
       if (!alreadyExists) {
         collaborationNotifs.push({
@@ -610,120 +688,82 @@ async function fetchExistingCollaborationsAsNotifications() {
           fromUserName: addedByName,
           poemId: poemDoc.id,
           workTitle: poemData.title || "a poem",
-          poemSlug: poemSlug,
-          timestamp: createdAt,
+          poemSlug: poemSlugObj.slug,
+          timestamp: poemData.createdAt || poemData.timestamp || Timestamp.now(),
           read: false,
           isExistingCollaborator: true
         });
       }
     }
-    
-  } catch (err) {
-    console.warn("Error fetching existing collaborations:", err);
-  }
-  
+  } catch (err) { console.warn(err); }
   existingCollaborationsLoaded = true;
   return collaborationNotifs;
 }
 
 async function loadNotifications() {
-  if (!currentUser) return;
-  
+  if (!currentUser) return [];
   try {
-    // 1. Fetch regular notifications from 'notifications' collection
     const notificationsRef = collection(db, "notifications");
-    const q = query(
-      notificationsRef, 
-      where("forUser", "==", currentUser.uid),
-      orderBy("timestamp", "desc"),
-      limit(150)
-    );
-    
+    const q = query(notificationsRef, where("forUser", "==", currentUser.uid), orderBy("timestamp", "desc"), limit(150));
     const snapshot = await getDocs(q);
     let notifications = [];
-    
     for (const docSnap of snapshot.docs) {
       const notification = { id: docSnap.id, ...docSnap.data() };
       notification.timestamp = notification.timestamp || notification.createdAt || null;
       notification.fromUser = notification.fromUser || notification.userId || null;
-      
       if (notification.fromUser && !notification.fromUserName) {
         try {
           const userDoc = await getDoc(doc(db, "users", notification.fromUser));
-          if (userDoc.exists()) {
-            notification.fromUserName = userDoc.data().username;
-          } else {
-            notification.fromUserName = "Someone";
-          }
-        } catch (err) {
-          notification.fromUserName = "Someone";
-        }
+          notification.fromUserName = userDoc.exists() ? userDoc.data().username : "Someone";
+        } catch (err) { notification.fromUserName = "Someone"; }
       }
-      
-      if ((notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply' || notification.type === 'collaboration') && notification.poemId && !notification.poemTitle) {
-        notification.poemTitle = await getPoemTitle(notification.poemId);
+      if ((notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply' || notification.type === 'collaboration') && notification.poemId) {
+        const { slug, title } = await getPoemSlugAndTitle(notification.poemId);
+        notification.poemTitle = title || notification.poemTitle;
+        notification.poemSlug = slug;
       }
-      
       if (notification.type === 'collaboration' && notification.collaborationId && !notification.collaborationTitle) {
         try {
           const collabDoc = await getDoc(doc(db, "collaborations", notification.collaborationId));
-          if (collabDoc.exists()) {
-            notification.collaborationTitle = collabDoc.data().title || "poetry collaboration";
-          } else {
-            notification.collaborationTitle = notification.poemTitle || "a new collaboration";
-          }
-        } catch (e) {
-          notification.collaborationTitle = notification.poemTitle || "a creative collaboration";
-        }
+          if (collabDoc.exists()) notification.collaborationTitle = collabDoc.data().title || "poetry collaboration";
+        } catch (e) {}
       }
-      
-      if ((notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply' || notification.type === 'collaboration') && notification.poemId) {
-        notification.poemSlug = await getPoemSlug(notification.poemId);
-      }
-      
       notifications.push(notification);
     }
-    
-    // 2. Fetch existing collaborations where user was added (type "collaboration")
     const existingCollabNotifs = await fetchExistingCollaborationsAsNotifications();
-    
-    // Merge and remove duplicates
-    const existingWorkIds = new Set();
-    notifications.forEach(n => {
-      if (n.collaborationId) existingWorkIds.add(n.collaborationId);
-      if (n.poemId) existingWorkIds.add(n.poemId);
-    });
-    
-    const newCollabNotifs = existingCollabNotifs.filter(c => {
-      const workId = c.collaborationId || c.poemId;
-      return !existingWorkIds.has(workId);
-    });
-    
+    const existingIds = new Set();
+    notifications.forEach(n => { if (n.collaborationId) existingIds.add(n.collaborationId); if (n.poemId) existingIds.add(n.poemId); });
+    const newCollabNotifs = existingCollabNotifs.filter(c => !existingIds.has(c.collaborationId || c.poemId));
     notifications = [...notifications, ...newCollabNotifs];
-    
-    notifications.sort((a, b) => {
-      const timeA = a.timestamp?.toDate?.() || new Date(a.timestamp);
-      const timeB = b.timestamp?.toDate?.() || new Date(b.timestamp);
-      return timeB - timeA;
-    });
-    
+    notifications.sort((a,b) => (b.timestamp?.toDate?.() || new Date(b.timestamp)) - (a.timestamp?.toDate?.() || new Date(a.timestamp)));
     renderNotifications(notifications);
-    
     const unreadCount = notifications.filter(n => !n.read).length;
-    if (unreadCount > 0) {
-      document.title = `(${unreadCount}) Notifications | Volant Poetry`;
-    } else {
-      document.title = `Notifications | Volant Poetry`;
-    }
-    
+    document.title = unreadCount ? `(${unreadCount}) Notifications | Volant Poetry` : `Notifications | Volant Poetry`;
     return notifications;
   } catch (err) {
-    console.error("Error loading notifications:", err);
+    console.error(err);
     const container = document.getElementById("allNotifications");
-    if (container) {
-      container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Unable to load notifications</h3><p>Please check your connection and try again.</p></div>';
-    }
+    if(container) container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Unable to load notifications</h3><p>Please check your connection</p></div>';
   }
+}
+
+async function markAsRead(notificationId) {
+  if (!notificationId || notificationId.startsWith('collab_existing_')) return;
+  try {
+    await updateDoc(doc(db, "notifications", notificationId), { read: true });
+  } catch (err) { console.error(err); }
+}
+
+async function markAllAsRead() {
+  if (!currentUser) return;
+  try {
+    const q = query(collection(db, "notifications"), where("forUser", "==", currentUser.uid), where("read", "==", false));
+    const snapshot = await getDocs(q);
+    const batch = writeBatch(db);
+    snapshot.docs.forEach(docSnap => batch.update(doc(db, "notifications", docSnap.id), { read: true }));
+    await batch.commit();
+    await loadNotifications();
+  } catch (err) { console.error(err); }
 }
 
 function renderNotifications(notifications) {
@@ -735,19 +775,12 @@ function renderNotifications(notifications) {
     follows: document.getElementById("followsNotifications"),
     collaborations: document.getElementById("collaborationsNotifications")
   };
-  
-  Object.values(containers).forEach(container => {
-    if (container) container.innerHTML = '';
-  });
-  
+  Object.values(containers).forEach(c => { if(c) c.innerHTML = ''; });
   if (notifications.length === 0) {
-    const emptyHTML = `<div class="empty-state"><div class="empty-state-icon">🔔</div><h3>No notifications yet</h3><p>When someone likes, comments, adds you as a collaborator, or follows you, you'll see it here!</p></div>`;
-    Object.values(containers).forEach(container => {
-      if (container) container.innerHTML = emptyHTML;
-    });
+    const emptyHTML = `<div class="empty-state"><div class="empty-state-icon">🔔</div><h3>No notifications yet</h3><p>When someone interacts, you'll see it here!</p></div>`;
+    Object.values(containers).forEach(c => { if(c) c.innerHTML = emptyHTML; });
     return;
   }
-  
   const filtered = {
     all: notifications,
     likes: notifications.filter(n => n.type === 'like'),
@@ -756,57 +789,63 @@ function renderNotifications(notifications) {
     follows: notifications.filter(n => n.type === 'follow'),
     collaborations: notifications.filter(n => n.type === 'collaboration')
   };
-  
   for (const [tab, notifs] of Object.entries(filtered)) {
     const container = containers[tab];
     if (!container) continue;
-    
     if (notifs.length === 0) {
-      let emptyMsg = `📭 No ${tab === 'all' ? '' : tab} notifications`;
-      if (tab === 'collaborations') emptyMsg = '🤝 No collaboration invitations or collaborator additions yet';
-      container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">✨</div><h3>${emptyMsg}</h3></div>`;
+      container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">✨</div><h3>No ${tab === 'all' ? '' : tab} notifications</h3></div>`;
       continue;
     }
-    
     notifs.forEach(notification => {
+      const poemSlug = notification.poemSlug || null;
+      const poemTitle = notification.poemTitle || null;
+      const messageHtmlContent = buildNotificationHTML(notification, poemSlug, poemTitle);
       const notificationDiv = document.createElement("div");
       notificationDiv.className = `notification-item ${notification.read ? 'read' : 'unread'}`;
       notificationDiv.dataset.id = notification.id;
-      
-      let linkUrl = "#";
-      if (notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply') {
-        if (notification.poemSlug) {
-          linkUrl = `poem.html?slug=${encodeURIComponent(notification.poemSlug)}`;
-        }
-      } else if (notification.type === 'follow') {
-        linkUrl = `user-profile.html?uid=${notification.fromUser}`;
-      } else if (notification.type === 'collaboration') {
-        if (notification.collaborationId) {
-          linkUrl = `collaboration.html?id=${encodeURIComponent(notification.collaborationId)}`;
-        } else if (notification.poemSlug) {
-          linkUrl = `poem.html?slug=${encodeURIComponent(notification.poemSlug)}`;
-        } else {
-          linkUrl = `collaborations.html`;
-        }
-      }
-      
+      notificationDiv.dataset.read = notification.read;
       notificationDiv.innerHTML = `
         <div class="notification-icon">${getNotificationIcon(notification.type)}</div>
         <div class="notification-content">
-          <div class="notification-message">${getNotificationMessage(notification)}</div>
+          <div class="notification-message">${messageHtmlContent}</div>
           <div class="notification-time">${formatTime(notification.timestamp)} ${notification.isExistingCollaborator ? '<span class="collab-badge">Existing collaborator</span>' : ''}</div>
         </div>
       `;
       
-      notificationDiv.addEventListener("click", async () => {
-        if (!notification.read && !notification.isExistingCollaborator) {
+      // Handle click on the notification item itself -> mark as read
+      notificationDiv.addEventListener('click', async (e) => {
+        // If the click target is a clickable link (username or poem title), do NOT mark as read here,
+        // let the link's own handler do the marking and navigation.
+        const target = e.target;
+        const isClickable = target.closest('.clickable-user, .clickable-link, .poem-title-link');
+        if (isClickable) return;
+        
+        // Otherwise, mark as read without navigation
+        if (!notification.read && !notification.id?.startsWith('collab_existing_')) {
           await markAsRead(notification.id);
+          notification.read = true;
           notificationDiv.classList.remove("unread");
           notificationDiv.classList.add("read");
         }
-        if (linkUrl !== "#") {
-          window.location.href = linkUrl;
-        }
+      });
+      
+      // Attach click handlers to clickable elements (username and poem title)
+      const clickableSpans = notificationDiv.querySelectorAll('.clickable-user, .clickable-link, .poem-title-link');
+      clickableSpans.forEach(span => {
+        span.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          // Mark as read if unread
+          if (!notification.read && !notification.id?.startsWith('collab_existing_')) {
+            await markAsRead(notification.id);
+            notification.read = true;
+            notificationDiv.classList.remove("unread");
+            notificationDiv.classList.add("read");
+          }
+          const url = span.getAttribute('data-href');
+          if (url && url !== '#') {
+            window.location.href = url;
+          }
+        });
       });
       
       container.appendChild(notificationDiv);
@@ -814,61 +853,18 @@ function renderNotifications(notifications) {
   }
 }
 
-async function markAsRead(notificationId) {
-  if (!notificationId || notificationId.startsWith('collab_existing_')) return;
-  try {
-    await updateDoc(doc(db, "notifications", notificationId), { read: true });
-  } catch (err) {
-    console.error("Error marking as read:", err);
-  }
-}
-
-async function markAllAsRead() {
-  if (!currentUser) return;
-  
-  try {
-    const notificationsRef = collection(db, "notifications");
-    const q = query(notificationsRef, where("forUser", "==", currentUser.uid), where("read", "==", false));
-    const snapshot = await getDocs(q);
-    
-    const batch = writeBatch(db);
-    snapshot.docs.forEach(docSnap => {
-      batch.update(doc(db, "notifications", docSnap.id), { read: true });
-    });
-    
-    await batch.commit();
-    await loadNotifications();
-  } catch (err) {
-    console.error("Error marking all as read:", err);
-  }
-}
-
 function setupTabs() {
   const tabs = document.querySelectorAll(".tab-btn");
-  
   function activateTab(tabId) {
-    tabs.forEach(tab => {
-      if (tab.dataset.tab === tabId) {
-        tab.classList.add("active");
-      } else {
-        tab.classList.remove("active");
-      }
-    });
-    
-    document.querySelectorAll(".tab-content").forEach(content => {
-      content.classList.remove("active");
-    });
+    tabs.forEach(tab => tab.classList.toggle("active", tab.dataset.tab === tabId));
+    document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
     const activeContent = document.getElementById(`${tabId}Tab`);
     if (activeContent) activeContent.classList.add("active");
   }
-  
-  tabs.forEach(tab => {
-    tab.addEventListener("click", (e) => {
-      e.preventDefault();
-      const tabId = tab.dataset.tab;
-      activateTab(tabId);
-    });
-  });
+  tabs.forEach(tab => tab.addEventListener("click", (e) => {
+    e.preventDefault();
+    activateTab(tab.dataset.tab);
+  }));
 }
 
 onAuthStateChanged(auth, async (user) => {
@@ -876,15 +872,10 @@ onAuthStateChanged(auth, async (user) => {
     window.location.href = "users-login.html?redirect=notifications.html";
     return;
   }
-  
   currentUser = user;
   await loadNotifications();
   setupTabs();
-  
-  const markAllBtn = document.getElementById("markAllReadBtn");
-  if (markAllBtn) {
-    markAllBtn.addEventListener("click", markAllAsRead);
-  }
+  document.getElementById("markAllReadBtn")?.addEventListener("click", markAllAsRead);
 });
 
 document.getElementById("menu-toggle")?.addEventListener("click", () => {
