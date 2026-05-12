@@ -152,7 +152,7 @@
   margin-left: 0; /* remove any extra spacing */
     min-height: 45vh;
   position: relative;
-  background: url('images/rose - Copy.jpg') top center / cover no-repeat;
+  background: url('images/rose-Copy.jpg') top center / cover no-repeat;
   background-attachment: scroll; /* ensures it moves normally */
   color: white;
   overflow: hidden;
