@@ -1,5 +1,4 @@
-/**
- * 🔥 Auto Sitemap Generator for Rence Blunt Poetry (SEO CLEAN VERSION)
+* 🔥 Auto Sitemap Generator for Rence Blunt Poetry (SEO CLEAN VERSION)
  */
 
 const fs = require('fs');
@@ -29,18 +28,6 @@ const excludedPages = [
 const serviceAccount = require(firebaseKeyPath);
 initializeApp({ credential: cert(serviceAccount) });
 const db = getFirestore();
-
-// ---- XML Escape Helper - Prevents "EntityRef: expecting ';'" error ----
-function escapeXml(unsafe) {
-  if (unsafe === undefined || unsafe === null) return '';
-  if (typeof unsafe !== 'string') unsafe = String(unsafe);
-  return unsafe
-    .replace(/&/g, '&amp;')   // Must be first!
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
-}
 
 // ---- Exclusion helper ----
 function isExcluded(file) {
@@ -90,6 +77,7 @@ function getStaticPages() {
     });
 }
 
+// ---- Poems (priority SEO content) ----
 // ---- Poems (priority SEO content) - FIXED to use title-based slugs ----
 async function getPoemPages() {
   const snapshot = await db.collection('recentPoems').get();
@@ -165,31 +153,23 @@ function getGeneralImages() {
   }));
 }
 
-// ---- Build XML safely with escaping ----
+// ---- Build XML safely ----
 function buildXML(urls) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
-${urls.map(u => {
-  // Escape all dynamic content to prevent XML errors
-  const loc = escapeXml(u.loc);
-  const lastmod = u.lastmod ? escapeXml(u.lastmod) : '';
-  const changefreq = escapeXml(u.changefreq);
-  const priority = u.priority ? escapeXml(u.priority) : '';
-  
-  return `
+${urls.map(u => `
   <url>
-    <loc>${loc}</loc>
-    ${lastmod ? `<lastmod>${lastmod}</lastmod>` : ''}
-    <changefreq>${changefreq}</changefreq>
-    ${priority ? `<priority>${priority}</priority>` : ''}
-    ${u.images.map(img => {
-      const escapedImg = escapeXml(img);
-      return `\n    <image:image><image:loc>${escapedImg}</image:loc></image:image>`;
-    }).join('')}
-  </url>`;
-}).join('')}
+    <loc>${u.loc}</loc>
+    ${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}
+    <changefreq>${u.changefreq}</changefreq>
+    ${u.priority ? `<priority>${u.priority}</priority>` : ''}
+    ${u.images.map(img =>
+      `<image:image><image:loc>${img}</image:loc></image:image>`
+    ).join('')}
+  </url>
+`).join('')}
 
 </urlset>`;
 }
@@ -211,12 +191,6 @@ async function generateSitemap() {
       ...images
     ];
 
-    console.log(`📊 Generated ${all.length} total URLs:`);
-    console.log(`   - Static pages: ${staticPages.length}`);
-    console.log(`   - Poem pages: ${poemPages.length}`);
-    console.log(`   - Category pages: ${categoryPages.length}`);
-    console.log(`   - Images: ${images.length}`);
-
     const xml = buildXML(all);
 
     fs.writeFileSync(
@@ -225,8 +199,7 @@ async function generateSitemap() {
       'utf8'
     );
 
-    console.log('✅ Sitemap generated successfully with XML escaping!');
-    console.log('📁 Location: ./sitemap.xml');
+    console.log('✅ Sitemap generated (SEO CLEAN + FIXED)');
   } catch (err) {
     console.error('❌ Sitemap error:', err);
   }
