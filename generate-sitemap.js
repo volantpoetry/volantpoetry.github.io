@@ -79,26 +79,39 @@ function getStaticPages() {
 }
 
 // ---- Poems (priority SEO content) ----
-// ---- Poems (priority SEO content) - FIXED to match actual URL structure ----
+// ---- Poems (priority SEO content) - FIXED to use title-based slugs ----
 async function getPoemPages() {
   const snapshot = await db.collection('recentPoems').get();
 
   return snapshot.docs.map(docSnap => {
     const data = docSnap.data();
     
-    // Get the slug from the poem data
-    const slug = data.slug || docSnap.id;
+    // CRITICAL: Generate the same slug your poem.html expects
+    // If your poems have a 'slug' field already, use that
+    let slug = data.slug;
     
-    // Determine which collection this poem belongs to
-    // Adjust this based on your actual data structure
-    const collection = data.collection || 'recentPoems';
+    // If no slug field exists, create one from the title
+    if (!slug && data.title) {
+      slug = data.title
+        .toLowerCase()
+        .replace(/[^\w\s]/g, '')      // Remove punctuation
+        .replace(/\s+/g, '-')         // Replace spaces with hyphens
+        .replace(/-+/g, '-')          // Remove multiple hyphens
+        .trim();
+    }
+    
+    // Fallback to ID only if absolutely necessary (should not happen)
+    if (!slug) slug = docSnap.id;
 
     const lastmod = data.timestamp
       ? data.timestamp.toDate().toISOString()
       : new Date().toISOString();
 
+    // Determine collection (adjust based on your data structure)
+    const collection = data.collection || 'recentPoems';
+
     return {
-      // ✅ CORRECT URL pattern matching your actual site
+      // ✅ CORRECT: Use title-based slug, not Firestore ID
       loc: `${domain}/poem.html?collection=${encodeURIComponent(collection)}&slug=${encodeURIComponent(slug)}`,
       lastmod,
       changefreq: 'weekly',
