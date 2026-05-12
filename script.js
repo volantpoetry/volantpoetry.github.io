@@ -2032,9 +2032,9 @@ async function saveWeeklyWinner(poet, weekLabel) {
       week: weekLabel,
       timestamp: new Date()
     });
-    console.log(`Saved winner: ${poet.username} for week ${weekLabel}`);
+    console.log(`}`);
   } catch (err) {
-    console.warn("Could not save weekly winner:", err);
+    console.warn("", err);
   }
 }
 

@@ -3523,11 +3523,6 @@ color: #555555;
   display: none !important;
 }
 
-/* Hide the read count */
-.recent-poem-card .view-count-inline,
-.recent-poem-card .author-line span[style*="font-size:0.85rem"] {
-  display: none !important;
-}
 
 /* Move trending badge to the read count position */
 .recent-poem-card .author-line > div:last-child {
@@ -3620,4 +3615,654 @@ color: #555555;
   transform: none !important;
   box-shadow: none !important;
   outline: none !important;
+}
+
+/* ============================================
+   RANKING POETS CONTAINER
+   ============================================ */
+#ranking-poets-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: transparent;
+}
+
+/* Header Styling */
+#ranking-poets-container .ranking-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+#ranking-poets-container h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: #4b2aad;
+  margin-bottom: 10px;
+}
+
+#ranking-poets-container .ranking-description {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* Countdown and Week Badge */
+#ranking-poets-container .countdown-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.countdown-badge, .week-badge {
+  background: #e8e0f0;
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 0.8rem;
+  color: #4b2aad;
+  font-weight: 500;
+}
+
+/* Poets Ranking List */
+.poets-ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Individual Poet Card */
+.ranking-poet-card {
+  background: linear-gradient(135deg, #ffffff, #faf8f5);
+  border-radius: 16px;
+  padding: 18px 22px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 1px solid #eee;
+}
+
+.ranking-poet-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(75, 42, 173, 0.12);
+  border-color: #e0d6b0;
+}
+
+/* Poet Card Header (flex row) */
+.poet-card-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+/* Rank Number */
+.rank-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #4b2aad;
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Medal Badge */
+.poet-rank-badge {
+  font-size: 1.8rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Avatar Image */
+.poet-avatar {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0d6b0;
+  background: #f0ede8;
+}
+
+/* Poet Info Area */
+.poet-info {
+  flex: 1;
+}
+
+/* Poet Name Line */
+.poet-name-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.poet-username {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4b2aad;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.poet-username:hover {
+  color: #7b4cc2;
+  text-decoration: underline;
+}
+
+/* Community Helper Badge */
+.community-badge {
+  background: #4CAF50;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* Stats Grid - 4 columns on desktop */
+.poet-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-top: 8px;
+}
+
+.stat-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #999;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.stat-value.highlight {
+  color: #4b2aad;
+  font-size: 1.3rem;
+}
+
+.stat-sub {
+  font-size: 0.7rem;
+  color: #4CAF50;
+  margin-left: 5px;
+}
+
+/* Warning Badge for Selfish Poets */
+.warning-badge {
+  background: #ff9800;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.65rem;
+}
+
+/* Ranking Explanation Section */
+.ranking-explanation {
+  margin-top: 30px;
+  padding: 15px 20px;
+  background: #f5f3ee;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+
+.ranking-explanation details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #4b2aad;
+}
+
+.ranking-explanation details summary:hover {
+  color: #7b4cc2;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+  #ranking-poets-container {
+    padding: 15px;
+    margin: 20px auto;
+  }
+
+  #ranking-poets-container h3 {
+    font-size: 1.6rem;
+  }
+
+  .ranking-poet-card {
+    padding: 15px;
+  }
+
+  .poet-card-header {
+    gap: 12px;
+  }
+
+  .rank-number {
+    font-size: 1.4rem;
+    min-width: 40px;
+  }
+
+  .poet-rank-badge {
+    font-size: 1.4rem;
+    min-width: 45px;
+  }
+
+  .poet-avatar {
+    width: 50px;
+    height: 50px;
+  }
+
+  .poet-username {
+    font-size: 1rem;
+  }
+
+  /* Stats grid becomes 2x2 on tablet */
+  .poet-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-value {
+    font-size: 1rem;
+  }
+
+  .stat-value.highlight {
+    font-size: 1.1rem;
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  #ranking-poets-container {
+    padding: 10px;
+  }
+
+  #ranking-poets-container h3 {
+    font-size: 1.4rem;
+  }
+
+  .ranking-description {
+    font-size: 0.75rem;
+  }
+
+  .countdown-badge, .week-badge {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+  }
+
+  .ranking-poet-card {
+    padding: 12px;
+  }
+
+  .poet-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .rank-number {
+    font-size: 1.2rem;
+    min-width: auto;
+    align-self: flex-start;
+  }
+
+  .poet-rank-badge {
+    font-size: 1.2rem;
+    min-width: auto;
+    position: absolute;
+    right: 12px;
+    top: 12px;
+  }
+
+  .ranking-poet-card {
+    position: relative;
+  }
+
+  .poet-avatar {
+    width: 45px;
+    height: 45px;
+  }
+
+  .poet-name-line {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .poet-username {
+    font-size: 0.95rem;
+  }
+
+  .community-badge {
+    font-size: 0.6rem;
+    padding: 2px 8px;
+  }
+
+  /* Stats grid becomes 1 column on mobile */
+  .poet-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .stat-group {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0ede8;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+
+  .stat-value {
+    font-size: 0.9rem;
+  }
+
+  .stat-value.highlight {
+    font-size: 1rem;
+  }
+
+  .ranking-explanation {
+    padding: 12px;
+    font-size: 0.75rem;
+  }
+}
+
+/* Small phones (380px and below) */
+@media (max-width: 380px) {
+  .poet-stats-grid {
+    gap: 6px;
+  }
+
+  .stat-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+
+  .stat-label {
+    font-size: 0.65rem;
+  }
+
+  .stat-value {
+    font-size: 0.85rem;
+  }
+}
+
+/* ============================================
+   RANKING POETS - SMALL SCREENS ONLY (max-width: 768px)
+   ============================================ */
+
+@media (max-width: 768px) {
+  
+  /* Main Container - add side margins to prevent touching edges */
+  #ranking-poets-container {
+    padding: 10px 15px !important;
+    margin: 0 auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Poet Card - no touching edges */
+  .ranking-poet-card {
+    padding: 12px 15px !important;
+    margin-bottom: 12px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Card Header - horizontal layout with avatar + name side by side */
+  .poet-card-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    position: relative !important;
+    width: 100% !important;
+  }
+
+  /* Rank Number - smaller */
+  .rank-number {
+    font-size: 1rem !important;
+    min-width: 30px !important;
+    font-weight: bold !important;
+    color: #4b2aad !important;
+  }
+
+  /* Medal Badge - position top-right */
+  .poet-rank-badge {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    font-size: 1.2rem !important;
+    background: transparent !important;
+  }
+
+  /* Avatar - fixed size */
+  .poet-avatar {
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Poet Info - contains name and stats, takes remaining space */
+  .poet-info {
+    flex: 1 !important;
+    min-width: 0 !important; /* prevents overflow */
+  }
+
+  /* Name Line - name and badge on same line */
+  .poet-name-line {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .poet-username {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: #B8860B !important;
+    text-decoration: none !important;
+  }
+
+  /* Community Badge */
+  .community-badge {
+    font-size: 0.6rem !important;
+    padding: 2px 8px !important;
+    background: #4CAF50 !important;
+    color: white !important;
+    border-radius: 20px !important;
+  }
+
+  /* Stats Grid - 2 columns */
+  .poet-stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    margin-top: 8px !important;
+  }
+
+  .stat-group {
+    background: #f8f6f3 !important;
+    padding: 6px 10px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+
+  .stat-label {
+    font-size: 0.65rem !important;
+    font-weight: 600 !important;
+    color: #888 !important;
+    text-transform: uppercase !important;
+  }
+
+  .stat-value {
+    font-size: 0.85rem !important;
+    font-weight: 700 !important;
+    color: #333 !important;
+  }
+
+  .stat-value.highlight {
+    color: #4b2aad !important;
+    font-size: 0.9rem !important;
+  }
+
+  .stat-sub {
+    font-size: 0.6rem !important;
+  }
+
+  /* Warning Badge */
+  .warning-badge {
+    font-size: 0.55rem !important;
+    padding: 2px 6px !important;
+  }
+
+  /* Explanation Section */
+  .ranking-explanation {
+    margin-top: 15px !important;
+    padding: 10px 12px !important;
+    font-size: 0.7rem !important;
+    border-radius: 10px !important;
+  }
+}
+
+/* ============================================
+   EXTRA SMALL PHONES (max-width: 480px)
+   ============================================ */
+
+@media (max-width: 480px) {
+  
+  #ranking-poets-container {
+    padding: 10px 12px !important;
+  }
+
+  .ranking-poet-card {
+    padding: 10px 12px !important;
+  }
+
+  .poet-card-header {
+    gap: 10px !important;
+  }
+
+  .rank-number {
+    font-size: 0.9rem !important;
+    min-width: 25px !important;
+  }
+
+  .poet-rank-badge {
+    font-size: 1rem !important;
+    top: -2px !important;
+  }
+
+  .poet-avatar {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .poet-username {
+    font-size: 0.85rem !important;
+  }
+
+  .community-badge {
+    font-size: 0.55rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .poet-stats-grid {
+    gap: 6px !important;
+  }
+
+  .stat-group {
+    padding: 5px 8px !important;
+  }
+
+  .stat-label {
+    font-size: 0.6rem !important;
+  }
+
+  .stat-value {
+    font-size: 0.8rem !important;
+  }
+}
+
+/* ============================================
+   VERY SMALL (max-width: 360px)
+   ============================================ */
+
+@media (max-width: 360px) {
+  #ranking-poets-container {
+    padding: 8px 10px !important;
+  }
+
+  .ranking-poet-card {
+    padding: 8px 10px !important;
+  }
+
+  .poet-avatar {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .poet-username {
+    font-size: 0.8rem !important;
+  }
+
+  .stat-group {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 3px !important;
+  }
+
+  .stat-label {
+    font-size: 0.55rem !important;
+  }
+
+  .stat-value {
+    font-size: 0.75rem !important;
+  }
+}
+/* Small screens only - move rank number from left edge */
+@media (max-width: 768px) {
+  .rank-number {
+    margin-left: 12px !important;
+  }
+}
+
+/* Increase poet username on small screens */
+@media (max-width: 768px) {
+  .poet-username {
+    font-size: 1.5rem !important;
+  }
+}
+
+/* Make profile image a box/square on small screens only */
+@media (max-width: 768px) {
+  .poet-avatar {
+    border-radius: 8px !important;
+    width: 45px !important;
+    height: 45px !important;
+    object-fit: cover !important;
+  }
 }
