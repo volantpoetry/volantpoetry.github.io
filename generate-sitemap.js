@@ -1,4 +1,5 @@
-* 🔥 Auto Sitemap Generator for Rence Blunt Poetry (SEO CLEAN VERSION)
+/**
+ * 🔥 Auto Sitemap Generator for Rence Blunt Poetry (SEO CLEAN VERSION)
  */
 
 const fs = require('fs');
@@ -78,40 +79,18 @@ function getStaticPages() {
 }
 
 // ---- Poems (priority SEO content) ----
-// ---- Poems (priority SEO content) - FIXED to use title-based slugs ----
 async function getPoemPages() {
   const snapshot = await db.collection('recentPoems').get();
 
   return snapshot.docs.map(docSnap => {
     const data = docSnap.data();
-    
-    // CRITICAL: Generate the same slug your poem.html expects
-    // If your poems have a 'slug' field already, use that
-    let slug = data.slug;
-    
-    // If no slug field exists, create one from the title
-    if (!slug && data.title) {
-      slug = data.title
-        .toLowerCase()
-        .replace(/[^\w\s]/g, '')      // Remove punctuation
-        .replace(/\s+/g, '-')         // Replace spaces with hyphens
-        .replace(/-+/g, '-')          // Remove multiple hyphens
-        .trim();
-    }
-    
-    // Fallback to ID only if absolutely necessary (should not happen)
-    if (!slug) slug = docSnap.id;
 
     const lastmod = data.timestamp
       ? data.timestamp.toDate().toISOString()
       : new Date().toISOString();
 
-    // Determine collection (adjust based on your data structure)
-    const collection = data.collection || 'recentPoems';
-
     return {
-      // ✅ CORRECT: Use title-based slug, not Firestore ID
-      loc: `${domain}/poem.html?collection=${encodeURIComponent(collection)}&slug=${encodeURIComponent(slug)}`,
+      loc: `${domain}/poems/${docSnap.id}`,
       lastmod,
       changefreq: 'weekly',
       priority: '0.9',
