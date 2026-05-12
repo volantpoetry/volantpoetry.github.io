@@ -15,10 +15,39 @@ const domain = 'https://volantpoetry.github.io';
 const publicFolder = './';
 const firebaseKeyPath = './serviceAccountKey.json';
 
+// ❌ EXCLUDED PAGES (EDIT THIS LIST ANYTIME)
+const excludedPages = [
+  'admin',
+  'admin-',
+  'user',
+  'users-',
+  'dashboard',
+  'manage',
+  'testadmin',
+  'editor',
+  'edit-',
+  'comment',
+  'draft',
+  'login',
+  'signup',
+  'forgot',
+  'reset',
+  'verify',
+  'notifications',
+  'messages'
+];
+
 // ---- Initialize Firebase ----
 const serviceAccount = require(firebaseKeyPath);
 initializeApp({ credential: cert(serviceAccount) });
 const db = getFirestore();
+
+// ---- Helper: Check if page is excluded ----
+function isExcluded(fileName) {
+  return excludedPages.some(ex =>
+    fileName.toLowerCase().includes(ex.toLowerCase())
+  );
+}
 
 // ---- Helper: Get images inside a folder ----
 function getImagesForFolder(folder) {
@@ -31,30 +60,42 @@ function getImagesForFolder(folder) {
 // ---- Static pages ----
 function getStaticPages() {
   const files = glob.sync('*.html', { cwd: publicFolder });
-  return files.map(file => {
-    const filePath = path.join(publicFolder, file);
-    const stats = fs.statSync(filePath);
-    const lastmod = stats.mtime.toISOString();
 
-    const imageFolder = file === 'index.html' ? 'images/index' : `images/${file.replace('.html','')}`;
-    const images = getImagesForFolder(imageFolder);
+  return files
+    .filter(file => !isExcluded(file))
+    .map(file => {
+      const filePath = path.join(publicFolder, file);
+      const stats = fs.statSync(filePath);
+      const lastmod = stats.mtime.toISOString();
 
-    return {
-      loc: `${domain}/${file === 'index.html' ? '' : file}`,
-      lastmod,
-      changefreq: 'monthly',
-      images
-    };
-  });
+      const imageFolder =
+        file === 'index.html'
+          ? 'images/index'
+          : `images/${file.replace('.html', '')}`;
+
+      const images = getImagesForFolder(imageFolder);
+
+      return {
+        loc: `${domain}/${file === 'index.html' ? '' : file}`,
+        lastmod,
+        changefreq: 'monthly',
+        images
+      };
+    });
 }
 
 // ---- Poems ----
 async function getPoemPages() {
   const snapshot = await db.collection('recentPoems').get();
+
   return snapshot.docs.map(docSnap => {
     const data = docSnap.data();
-    const timestamp = data.timestamp ? data.timestamp.toDate().toISOString() : new Date().toISOString();
+    const timestamp = data.timestamp
+      ? data.timestamp.toDate().toISOString()
+      : new Date().toISOString();
+
     const images = getImagesForFolder(`images/poems/${docSnap.id}`);
+
     return {
       loc: `${domain}/poems/${docSnap.id}`,
       lastmod: timestamp,
@@ -68,12 +109,14 @@ async function getPoemPages() {
 async function getCategoryPages() {
   const snapshot = await db.collection('recentPoems').get();
   const categorySet = new Set();
+
   snapshot.forEach(docSnap => {
     const data = docSnap.data();
     if (Array.isArray(data.categories)) {
       data.categories.forEach(cat => categorySet.add(cat));
     }
   });
+
   return Array.from(categorySet).map(cat => ({
     loc: `${domain}/category.html?name=${encodeURIComponent(cat)}`,
     lastmod: new Date().toISOString(),
@@ -85,6 +128,7 @@ async function getCategoryPages() {
 // ---- General root images ----
 function getGeneralImages() {
   const imageFiles = glob.sync('images/*.*', { cwd: publicFolder });
+
   return imageFiles.map(img => ({
     loc: `${domain}/images/${img.replace(/\\/g, '/')}`,
     lastmod: new Date().toISOString(),
@@ -103,18 +147,32 @@ async function generateSitemap() {
     const categoryPages = await getCategoryPages();
     const generalImages = getGeneralImages();
 
-    const allUrls = [...staticPages, ...poemPages, ...categoryPages, ...generalImages];
+    const allUrls = [
+      ...staticPages,
+      ...poemPages,
+      ...categoryPages,
+      ...generalImages
+    ];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${allUrls.map(u => `
+${allUrls
+  .map(
+    u => `
   <url>
     <loc>${u.loc}</loc>
     ${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}
     <changefreq>${u.changefreq}</changefreq>
-    ${u.images.map(img => `<image:image><image:loc>${img}</image:loc></image:image>`).join('')}
-  </url>`).join('')}
+    ${u.images
+      .map(
+        img =>
+          `<image:image><image:loc>${img}</image:loc></image:image>`
+      )
+      .join('')}
+  </url>`
+  )
+  .join('')}
 </urlset>`;
 
     fs.writeFileSync(path.join(publicFolder, 'sitemap.xml'), xml);
