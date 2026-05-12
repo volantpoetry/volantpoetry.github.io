@@ -1,7 +1,5 @@
 /**
- * 🔥 Auto Sitemap Generator for Rence Blunt Poetry
- * Pulls from Firestore + local files + images
- * Outputs sitemap.xml to project root
+ * 🔥 Auto Sitemap Generator for Rence Blunt Poetry (SEO CLEAN VERSION)
  */
 
 const fs = require('fs');
@@ -15,46 +13,43 @@ const domain = 'https://volantpoetry.github.io';
 const publicFolder = './';
 const firebaseKeyPath = './serviceAccountKey.json';
 
-// ❌ EXCLUDED PAGES (EDIT THIS LIST ANYTIME)
+// 🚫 BLOCKED / NO-INDEX PAGES
 const excludedPages = [
-  'admin',
-  'admin-',
-  'user',
-  'users-',
-  'dashboard',
-  'manage',
-  'testadmin',
-  'editor',
-  'edit-',
-  'comment',
-  'draft',
-  'login',
-  'signup',
-  'forgot',
-  'reset',
-  'verify',
-  'notifications',
-  'messages'
+  'admin', 'dashboard', 'manage', 'editor',
+  'login', 'signup', 'reset', 'verify',
+  'comment', 'draft', 'test', 'user',
+  'assign-images.html',
+  'poemcount.html',
+  'poem.html',
+  'addcategories.html',
+  'Select-Poem-of-the-Week.html'
 ];
 
-// ---- Initialize Firebase ----
+// ---- Firebase ----
 const serviceAccount = require(firebaseKeyPath);
 initializeApp({ credential: cert(serviceAccount) });
 const db = getFirestore();
 
-// ---- Helper: Check if page is excluded ----
-function isExcluded(fileName) {
+// ---- Exclusion helper ----
+function isExcluded(file) {
   return excludedPages.some(ex =>
-    fileName.toLowerCase().includes(ex.toLowerCase())
+    file.toLowerCase().includes(ex.toLowerCase())
   );
 }
 
-// ---- Helper: Get images inside a folder ----
+// ---- Safe image path builder (FIXED DUPLICATION BUG) ----
 function getImagesForFolder(folder) {
   const folderPath = path.join(publicFolder, folder);
+
   if (!fs.existsSync(folderPath)) return [];
+
   const files = glob.sync('**/*.*', { cwd: folderPath });
-  return files.map(f => `${domain}/${folder}/${f.replace(/\\/g, '/')}`);
+
+  return files.map(f =>
+    `${domain}/${folder}/${f.replace(/\\/g, '/')}`
+      .replace(/\/+/g, '/')
+      .replace(':/', '://')
+  );
 }
 
 // ---- Static pages ----
@@ -66,6 +61,7 @@ function getStaticPages() {
     .map(file => {
       const filePath = path.join(publicFolder, file);
       const stats = fs.statSync(filePath);
+
       const lastmod = stats.mtime.toISOString();
 
       const imageFolder =
@@ -73,112 +69,118 @@ function getStaticPages() {
           ? 'images/index'
           : `images/${file.replace('.html', '')}`;
 
-      const images = getImagesForFolder(imageFolder);
-
       return {
         loc: `${domain}/${file === 'index.html' ? '' : file}`,
         lastmod,
         changefreq: 'monthly',
-        images
+        images: getImagesForFolder(imageFolder)
       };
     });
 }
 
-// ---- Poems ----
+// ---- Poems (priority SEO content) ----
 async function getPoemPages() {
   const snapshot = await db.collection('recentPoems').get();
 
   return snapshot.docs.map(docSnap => {
     const data = docSnap.data();
-    const timestamp = data.timestamp
+
+    const lastmod = data.timestamp
       ? data.timestamp.toDate().toISOString()
       : new Date().toISOString();
 
-    const images = getImagesForFolder(`images/poems/${docSnap.id}`);
-
     return {
       loc: `${domain}/poems/${docSnap.id}`,
-      lastmod: timestamp,
+      lastmod,
       changefreq: 'weekly',
-      images
+      priority: '0.9',
+      images: getImagesForFolder(`images/poems/${docSnap.id}`)
     };
   });
 }
 
-// ---- Categories ----
+// ---- Categories (clean URLs only) ----
 async function getCategoryPages() {
   const snapshot = await db.collection('recentPoems').get();
-  const categorySet = new Set();
+  const set = new Set();
 
   snapshot.forEach(docSnap => {
     const data = docSnap.data();
     if (Array.isArray(data.categories)) {
-      data.categories.forEach(cat => categorySet.add(cat));
+      data.categories.forEach(cat => set.add(cat));
     }
   });
 
-  return Array.from(categorySet).map(cat => ({
+  return [...set].map(cat => ({
     loc: `${domain}/category.html?name=${encodeURIComponent(cat)}`,
     lastmod: new Date().toISOString(),
     changefreq: 'weekly',
+    priority: '0.6',
     images: []
   }));
 }
 
-// ---- General root images ----
+// ---- Root images (FIXED PATH BUG) ----
 function getGeneralImages() {
-  const imageFiles = glob.sync('images/*.*', { cwd: publicFolder });
+  const files = glob.sync('images/*.*', { cwd: publicFolder });
 
-  return imageFiles.map(img => ({
-    loc: `${domain}/images/${img.replace(/\\/g, '/')}`,
+  return files.map(img => ({
+    loc: `${domain}/${img.replace(/\\/g, '/')}`,
     lastmod: new Date().toISOString(),
     changefreq: 'monthly',
     images: []
   }));
 }
 
-// ---- Generate sitemap ----
-async function generateSitemap() {
-  try {
-    console.log("🧠 Generating sitemap...");
-
-    const staticPages = getStaticPages();
-    const poemPages = await getPoemPages();
-    const categoryPages = await getCategoryPages();
-    const generalImages = getGeneralImages();
-
-    const allUrls = [
-      ...staticPages,
-      ...poemPages,
-      ...categoryPages,
-      ...generalImages
-    ];
-
-    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+// ---- Build XML safely ----
+function buildXML(urls) {
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${allUrls
-  .map(
-    u => `
+
+${urls.map(u => `
   <url>
     <loc>${u.loc}</loc>
     ${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}
     <changefreq>${u.changefreq}</changefreq>
-    ${u.images
-      .map(
-        img =>
-          `<image:image><image:loc>${img}</image:loc></image:image>`
-      )
-      .join('')}
-  </url>`
-  )
-  .join('')}
-</urlset>`;
+    ${u.priority ? `<priority>${u.priority}</priority>` : ''}
+    ${u.images.map(img =>
+      `<image:image><image:loc>${img}</image:loc></image:image>`
+    ).join('')}
+  </url>
+`).join('')}
 
-    fs.writeFileSync(path.join(publicFolder, 'sitemap.xml'), xml);
-    console.log('✅ sitemap.xml generated successfully!');
+</urlset>`;
+}
+
+// ---- MAIN ----
+async function generateSitemap() {
+  try {
+    console.log("🧠 Generating clean SEO sitemap...");
+
+    const staticPages = getStaticPages();
+    const poemPages = await getPoemPages();
+    const categoryPages = await getCategoryPages();
+    const images = getGeneralImages();
+
+    const all = [
+      ...staticPages,
+      ...poemPages,
+      ...categoryPages,
+      ...images
+    ];
+
+    const xml = buildXML(all);
+
+    fs.writeFileSync(
+      path.join(publicFolder, 'sitemap.xml'),
+      xml,
+      'utf8'
+    );
+
+    console.log('✅ Sitemap generated (SEO CLEAN + FIXED)');
   } catch (err) {
-    console.error('❌ Error generating sitemap:', err);
+    console.error('❌ Sitemap error:', err);
   }
 }
 
