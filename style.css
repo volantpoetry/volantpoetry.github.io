@@ -3489,3 +3489,135 @@ color: #555555;
   }
 }
 
+/* Hide publication date on ranking poems */
+.recent-poem-card .author-line .poem-date,
+.recent-poem-card .author-line span[style*="font-size:0.75rem"],
+.recent-poem-card .author-line > div:last-child span:last-child {
+  display: none !important;
+}
+
+/* Alternative: if the date is in a specific element */
+.recent-poem-card .poem-publish-date {
+  display: none !important;
+}
+
+/* Hide any element containing date text (be cautious with this one) */
+.recent-poem-card .author-line span[style*="color:#888"] {
+  display: none !important;
+}
+
+/* Hide the date range badge */
+#rank-poems .ranking-header span[style*="background: #e8e0f0"],
+#rank-poems .ranking-header > div span:first-child {
+  display: none !important;
+}
+
+/* Or more simply, target by the text content pattern */
+#rank-poems .ranking-header span:has(> .📅),
+#rank-poems .ranking-header span:contains("📅") {
+  display: none !important;
+}
+
+/* Most reliable - hide the specific element */
+.ranking-header span[style*="background: #e8e0f0"] {
+  display: none !important;
+}
+
+/* Hide the read count */
+.recent-poem-card .view-count-inline,
+.recent-poem-card .author-line span[style*="font-size:0.85rem"] {
+  display: none !important;
+}
+
+/* Move trending badge to the read count position */
+.recent-poem-card .author-line > div:last-child {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.recent-poem-card .recent-poem-title span[style*="background: #ff9800"] {
+  position: absolute;
+  right: 0;
+  top: -30px;
+}
+
+/* Remove hover effect and style Read More button */
+.read-more-btn {
+  background: none !important;
+  border: none !important;
+  color: #960606 !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  font-size: 0.92rem !important;
+  font-weight: 500 !important;
+  margin-bottom: 10px !important;
+  transition: none !important;
+  text-decoration: none !important;
+}
+
+/* Remove ALL hover effects */
+.read-more-btn:hover {
+  background: none !important;
+  color: #960606 !important;
+  transform: none !important;
+  text-decoration: none !important;
+  opacity: 1 !important;
+}
+
+/* Style using your CSS variables */
+.read-more-btn {
+  background: none !important;
+  border: none !important;
+  color: var(--primary, #960606) !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  margin-bottom: 10px !important;
+  transition: none !important;
+}
+
+.read-more-btn:hover {
+  background: none !important;
+  color: var(--primary, #960606) !important;
+  transform: none !important;
+  text-decoration: none !important;
+}
+
+/* Hide weekly score from poem title */
+.recent-poem-title small {
+  display: none !important;
+}
+
+/* Alternative if the score is in a span with specific style */
+.recent-poem-title small[style*="font-weight:400"] {
+  display: none !important;
+}
+
+/* Target any small tag inside the poem title */
+.recent-poem-title small {
+  display: none !important;
+}
+
+/* Force Read More button color - NO hover change */
+.read-more-btn,
+.read-more-btn:hover,
+.read-more-btn:focus,
+.read-more-btn:active,
+.read-more-btn:visited {
+  background: none !important;
+  border: none !important;
+  color: #960606 !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  font-size: 0.92rem !important;
+  font-weight: 500 !important;
+  margin-bottom: 10px !important;
+  text-decoration: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}

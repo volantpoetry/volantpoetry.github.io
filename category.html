@@ -135,17 +135,73 @@
   .recent-poems-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 0 5% 3rem;
+    padding: 0 5% 0.5rem;
   }
 
-  /* Poem Card - Same as Poem of the Week */
+  /* Poem Card */
   .recent-poem-card {
     background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
     padding: 1.5rem;
     border-radius: 14px;
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     transition: all 0.2s ease;
+  }
+
+  /* Comment wrapper - sits below poem card with clear gap */
+  .comment-section-wrapper {
+    max-width: 800px;
+    margin: 0 auto 2rem auto;
+    padding: 0 5%;
+  }
+
+  .comment-list-container {
+    background: white;
+    border-radius: 14px;
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: 1px solid #f0e6d8;
+    transition: all 0.2s;
+    margin-top: 0.75rem;
+  }
+
+  .comment {
+    background: #faf8f5;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    border: 1px solid #ede3d4;
+  }
+
+  .reply-toggle {
+    color: #5a3cb3;
+    cursor: pointer;
+    font-size: 0.7rem;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  .reply-section {
+    margin-left: 20px;
+    margin-top: 6px;
+  }
+
+  .reply-input textarea {
+    width: 95%;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 6px;
+    resize: none;
+  }
+
+  .send-reply-btn {
+    background: #5a3cb3;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    margin-top: 4px;
+    cursor: pointer;
   }
 
   .author-line {
@@ -302,61 +358,38 @@
     color: white;
   }
 
-  .like-count, .message-count {
+  .message-count {
     background: transparent;
-    padding: 4px 0;
+    padding: 4px 8px;
     font-size: 0.8rem;
     cursor: pointer;
     color: #2c3e50;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 20px;
+    transition: background 0.2s;
+  }
+  
+  .message-count:hover {
+    background: rgba(75, 42, 173, 0.1);
   }
 
-  .comment-list {
+  /* Simple comment list - no header */
+  .comment-list-simple {
     background: white;
     border-radius: 14px;
-    padding: 12px;
-    margin-top: 12px;
-    display: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     border: 1px solid #f0e6d8;
+    margin-top: 0.75rem;
   }
 
-  .comment {
-    background: #faf8f5;
-    padding: 8px 12px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    border: 1px solid #ede3d4;
-  }
-
-  .reply-toggle {
-    color: #5a3cb3;
-    cursor: pointer;
-    font-size: 0.7rem;
-    margin-top: 4px;
-    display: inline-block;
-  }
-
-  .reply-section {
-    margin-left: 20px;
-    margin-top: 6px;
-  }
-
-  .reply-input textarea {
-    width: 95%;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    padding: 6px;
-    resize: none;
-  }
-
-  .send-reply-btn {
-    background: #5a3cb3;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 4px 10px;
-    margin-top: 4px;
-    cursor: pointer;
+  .no-comments {
+    text-align: center;
+    padding: 1rem;
+    color: #888;
+    font-style: italic;
   }
 
   @media (max-width: 768px) {
@@ -371,54 +404,114 @@
       width: 100%;
     }
     .recent-poems-container {
-      padding: 0 3% 2rem;
+      padding: 0 3% 0.5rem;
+    }
+    .comment-section-wrapper {
+      padding: 0 3%;
     }
   }
-  /* ========== VOLANT POETRY LOGO ========== */
 
-.logo {
-  display: flex;
-  align-items: center;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #4b2aad;
-  text-decoration: none;
-  gap: 0.6rem;
-  cursor: default;
-}
-
-.logo-highlight {
-  color: #fff;
-  text-shadow: 
-    0 0 2px #4b2aad,
-    0 0 4px #4b2aad,
-    0 0 6px #4b2aad;
-}
-
-.nav-logo-img {
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
-  object-fit: contain;
-}
-
-/* Mobile adjustment */
-@media (max-width: 768px) {
   .logo {
-    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #4b2aad;
+    text-decoration: none;
+    gap: 0.6rem;
+    cursor: default;
   }
-  
+
+  .logo-highlight {
+    color: #fff;
+    text-shadow: 
+      0 0 2px #4b2aad,
+      0 0 4px #4b2aad,
+      0 0 6px #4b2aad;
+  }
+
   .nav-logo-img {
-    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    object-fit: contain;
   }
-}
 
-@media (max-width: 480px) {
-  .logo {
-    font-size: 1.2rem;
+  @media (max-width: 768px) {
+    .logo {
+      font-size: 1.4rem;
+    }
+    .nav-logo-img {
+      display: inline-block;
+    }
   }
-}
+
+  @media (max-width: 480px) {
+    .logo {
+      font-size: 1.2rem;
+    }
+  }
+
+  .comment-section {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    max-width: 320px;
+    width: auto;
+    flex: 0 1 auto;
+  }
+
+  .comment-input {
+    width: 180px;
+    max-width: 180px;
+    min-width: 140px;
+    resize: vertical;
+    min-height: 36px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+  }
+
+  .comment-btn {
+    background: #4b2aad;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 768px) {
+    .comment-section {
+      max-width: 320px;
+      width: auto;
+      flex: 0 1 auto;
+    }
+    .comment-input {
+      width: 160px;
+      max-width: 160px;
+      min-width: 120px;
+    }
+    .comment-btn {
+      padding: 6px 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .comment-section {
+      max-width: 280px;
+    }
+    .comment-input {
+      width: 140px;
+      max-width: 140px;
+      min-width: 100px;
+    }
+  }
 </style>
 </head>
 <body>
@@ -477,7 +570,6 @@
   const categoryName = urlParams.get("name") || "All";
   document.getElementById("category-title").textContent = `Category: ${categoryName}`;
 
-  // Read tracking
   const READ_TRACKING_KEY = 'category_read_tracking';
   const READ_TIMEOUT_MINUTES = 30;
   const READ_DELAY_SECONDS = 8;
@@ -537,7 +629,7 @@
           const match = viewSpan.textContent.match(/\d+/);
           if (match) {
             const newCount = parseInt(match[0]) + 1;
-            viewSpan.innerHTML = `📖 ${newCount} reads`;
+            viewSpan.innerHTML = ` ${newCount} reads`;
             viewSpan.classList.add('view-update');
             setTimeout(() => viewSpan.classList.remove('view-update'), 1000);
           }
@@ -558,7 +650,6 @@
     }
   }
 
-  // Notification sender
   async function sendNotification(forUserId, fromUserId, type, data = {}) {
     if (!forUserId || !fromUserId || forUserId === fromUserId) return;
     try {
@@ -572,7 +663,6 @@
     } catch(e) {}
   }
 
-  // Follow logic
   let followCache = new Map();
   async function isFollowing(poetId, uid) {
     if (!uid || !poetId || uid === poetId) return false;
@@ -642,6 +732,99 @@
     return { preview: allLines.slice(0, lines).join("\n"), full: text, truncated: true };
   }
 
+  // Build comments UI - simple direct display without header
+  async function renderCommentList(docId, containerElement, onCountUpdate) {
+    const commentsCol = collection(db, "recentPoems", docId, "comments");
+    const commentsSnapshot = await getDocs(query(commentsCol, orderBy("timestamp", "desc")));
+    const count = commentsSnapshot.size;
+    if (onCountUpdate) onCountUpdate(count);
+    
+    const wrapperDiv = document.createElement("div");
+    wrapperDiv.className = "comment-list-simple";
+    wrapperDiv.setAttribute("data-poem-comments", docId);
+    
+    if (commentsSnapshot.empty) {
+      wrapperDiv.innerHTML = '<div class="no-comments">💬 No comments yet. Be the first to comment!</div>';
+    } else {
+      for (const commentDoc of commentsSnapshot.docs) {
+        const c = commentDoc.data();
+        const commentId = commentDoc.id;
+        const commentDiv = document.createElement("div");
+        commentDiv.className = "comment";
+        commentDiv.dataset.commentId = commentId;
+        const usernameLink = c.userId 
+          ? `<a href="/user-profile.html?uid=${c.userId}" style="font-weight:600;color:#4b2aad;text-decoration:none;">${escapeHtml(c.username || "Anonymous")}</a>`
+          : `<strong>${escapeHtml(c.username || "Anonymous")}</strong>`;
+        commentDiv.innerHTML = `
+          <div>${usernameLink}: ${escapeHtml(c.text)}</div>
+          <div><small class="reply-toggle" style="cursor:pointer;"> Reply</small></div>
+          <div class="reply-section"></div>
+        `;
+        // Load replies
+        const repliesCol = collection(db, "recentPoems", docId, "comments", commentId, "replies");
+        const repliesSnap = await getDocs(query(repliesCol, orderBy("timestamp", "asc")));
+        const replySection = commentDiv.querySelector(".reply-section");
+        repliesSnap.forEach(replyDoc => {
+          const r = replyDoc.data();
+          const replyLink = r.userId 
+            ? `<a href="/user-profile.html?uid=${r.userId}" style="color:#B8860B;text-decoration:none;">${escapeHtml(r.username)}</a>`
+            : `<strong>${escapeHtml(r.username)}</strong>`;
+          const replyElem = document.createElement("div");
+          replyElem.style.background = "#f9f3ea";
+          replyElem.style.padding = "6px 10px";
+          replyElem.style.borderRadius = "12px";
+          replyElem.style.margin = "5px 0";
+          replyElem.innerHTML = `${replyLink}: ${escapeHtml(r.text)}`;
+          replySection.appendChild(replyElem);
+        });
+        wrapperDiv.appendChild(commentDiv);
+      }
+    }
+    
+    containerElement.appendChild(wrapperDiv);
+    
+    return { wrapperDiv, refresh: async () => {
+      const newSnap = await getDocs(query(collection(db, "recentPoems", docId, "comments"), orderBy("timestamp", "desc")));
+      const newCount = newSnap.size;
+      if (onCountUpdate) onCountUpdate(newCount);
+      wrapperDiv.innerHTML = "";
+      if (newSnap.empty) {
+        wrapperDiv.innerHTML = '<div class="no-comments">💬 No comments yet. Be the first to comment!</div>';
+      } else {
+        for (const commentDoc of newSnap.docs) {
+          const c = commentDoc.data();
+          const commentId = commentDoc.id;
+          const commentDiv = document.createElement("div");
+          commentDiv.className = "comment";
+          commentDiv.dataset.commentId = commentId;
+          const usernameLink = c.userId 
+            ? `<a href="/user-profile.html?uid=${c.userId}" style="font-weight:600;color:#4b2aad;">${escapeHtml(c.username || "Anonymous")}</a>`
+            : `<strong>${escapeHtml(c.username || "Anonymous")}</strong>`;
+          commentDiv.innerHTML = `
+            <div>${usernameLink}: ${escapeHtml(c.text)}</div>
+            <div><small class="reply-toggle" style="cursor:pointer;">↩️ Reply</small></div>
+            <div class="reply-section"></div>
+          `;
+          const repliesCol = collection(db, "recentPoems", docId, "comments", commentId, "replies");
+          const repliesSnap2 = await getDocs(query(repliesCol, orderBy("timestamp", "asc")));
+          const replySection = commentDiv.querySelector(".reply-section");
+          repliesSnap2.forEach(replyDoc => {
+            const r = replyDoc.data();
+            const replyLink = r.userId ? `<a href="/user-profile.html?uid=${r.userId}" style="color:#B8860B;">${escapeHtml(r.username)}</a>` : `<strong>${escapeHtml(r.username)}</strong>`;
+            const replyElem = document.createElement("div");
+            replyElem.style.background = "#f9f3ea";
+            replyElem.style.padding = "6px 10px";
+            replyElem.style.borderRadius = "12px";
+            replyElem.style.margin = "5px 0";
+            replyElem.innerHTML = `${replyLink}: ${escapeHtml(r.text)}`;
+            replySection.appendChild(replyElem);
+          });
+          wrapperDiv.appendChild(commentDiv);
+        }
+      }
+    } };
+  }
+
   async function renderPoemCard(poem, docId) {
     const container = document.getElementById("recent-poems-container");
     const card = document.createElement("div");
@@ -653,7 +836,6 @@
     const viewsCount = poem.views || 0;
     const categories = poem.categories || [];
     
-    // Author info
     const authorId = poem.userId || poem.authorId || "";
     let displayName = poem.author || poem.authorName || "Anonymous";
     let profileLink = "#";
@@ -664,10 +846,9 @@
       try {
         const userDoc = await getDoc(doc(db, "users", authorId));
         if (userDoc.exists()) {
-          const u = userDoc.data();
-          displayName = u.username || displayName;
+          displayName = userDoc.data().username || displayName;
           profileLink = `/user-profile.html?uid=${authorId}`;
-          profileImage = u.photoURL || u.cachedAvatarURL || profileImage;
+          profileImage = userDoc.data().photoURL || userDoc.data().cachedAvatarURL || profileImage;
         }
         if (currentUser && currentUser.uid !== authorId) {
           followingStatus = await isFollowing(authorId, currentUser.uid);
@@ -691,7 +872,7 @@
         <span class="view-badge"> ${viewsCount} reads</span>
       </div>
       <h3 class="recent-poem-title">${escapeHtml(poem.title)}</h3>
-      <div class="poem-content" id="content-${docId}">${escapeHtml(truncated.preview)}</div>
+      <div class="poem-content" id="content-${docId}">${escapeHtml(truncated.preview).replace(/\n/g, "<br>")}</div>
       ${truncated.truncated ? `<button class="read-more-btn" data-id="${docId}">Read More</button>` : ''}
       <div class="poem-category-line">
         ${categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${escapeHtml(cat)}</a>`).join(" ")}
@@ -702,14 +883,12 @@
           <button class="comment-btn">Post</button>
         </div>
         <button class="like-btn">❤️ <span class="like-count-val">${likesCount}</span></button>
-        <span class="message-count" data-id="${docId}">💬 0</span>
+        <span class="message-count" data-id="${docId}">💬 <span class="comment-badge-count">0</span></span>
       </div>
-      <div class="comment-list" id="comments-${docId}" style="display:none;"></div>
     `;
     
     container.appendChild(card);
     
-    // Read More toggle
     if (truncated.truncated) {
       const readBtn = card.querySelector(".read-more-btn");
       const contentDiv = card.querySelector(`.poem-content`);
@@ -726,13 +905,56 @@
       });
     }
     
-    // Load comment count
-    const commentsCol = collection(db, "recentPoems", docId, "comments");
-    const commentsSnapshot = await getDocs(commentsCol);
-    const msgSpan = card.querySelector(".message-count");
-    if (msgSpan) msgSpan.innerHTML = `💬 ${commentsSnapshot.size}`;
+    // Create wrapper for comments (below card)
+    const commentWrapperDiv = document.createElement("div");
+    commentWrapperDiv.className = "comment-section-wrapper";
+    container.insertBefore(commentWrapperDiv, card.nextSibling);
     
-    // Read tracking observer
+    let commentsListUI;
+    const commentBadgeSpan = card.querySelector(".comment-badge-count");
+    const updateBadge = (count) => { if(commentBadgeSpan) commentBadgeSpan.textContent = count; };
+    
+    commentsListUI = await renderCommentList(docId, commentWrapperDiv, updateBadge);
+    // Initially hide comments
+    commentsListUI.wrapperDiv.style.display = "none";
+    
+    // Toggle comments when clicking the message toggle
+    const messageToggle = card.querySelector(".message-count");
+    messageToggle.addEventListener("click", async () => {
+      if (commentsListUI.wrapperDiv.style.display === "none") {
+        commentsListUI.wrapperDiv.style.display = "block";
+      } else {
+        commentsListUI.wrapperDiv.style.display = "none";
+      }
+    });
+    
+    // Post comment
+    const postBtn = card.querySelector(".comment-btn");
+    const inputField = card.querySelector(".comment-input");
+    postBtn.addEventListener("click", async () => {
+      if (!currentUser) { alert("Sign in to comment."); return; }
+      const text = inputField.value.trim();
+      if (!text) return;
+      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+      const username = userDoc.exists() ? userDoc.data().username : "Anonymous";
+      await addDoc(collection(db, "recentPoems", docId, "comments"), {
+        userId: currentUser.uid, username, text, timestamp: serverTimestamp()
+      });
+      inputField.value = "";
+      await commentsListUI.refresh();
+      // Keep visible after posting
+      commentsListUI.wrapperDiv.style.display = "block";
+      const poemSnap = await getDoc(doc(db, "recentPoems", docId));
+      const poemData = poemSnap.data();
+      const poemAuthorId = poemData.userId || poemData.authorId;
+      if (poemAuthorId && poemAuthorId !== currentUser.uid) {
+        await sendNotification(poemAuthorId, currentUser.uid, 'comment', { 
+          poemId: docId, poemTitle: poemData.title, commentText: text 
+        });
+      }
+    });
+    
+    // View tracking
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting && entry.intersectionRatio >= VIEW_THRESHOLD) {
@@ -744,7 +966,6 @@
     }, { threshold: [0, VIEW_THRESHOLD], rootMargin: "0px" });
     observer.observe(card);
     
-    // Follow button
     const followBtn = card.querySelector(".follow-mini-btn");
     if (followBtn && authorId) {
       followBtn.addEventListener("click", (e) => {
@@ -753,7 +974,6 @@
       });
     }
     
-    // Like button
     const likeBtn = card.querySelector(".like-btn");
     const likeSpan = card.querySelector(".like-count-val");
     likeBtn.addEventListener("click", async () => {
@@ -776,8 +996,6 @@
         }
       }
     });
-    
-    // Initialize like button style
     if (currentUser && poem.likedBy && poem.likedBy.includes(currentUser.uid)) {
       likeBtn.classList.add("liked");
     }
@@ -786,7 +1004,6 @@
   async function loadCategoryPoems() {
     const container = document.getElementById("recent-poems-container");
     container.innerHTML = '<p style="text-align:center;">Loading poems...</p>';
-    
     try {
       let q;
       if (categoryName === "All") {
@@ -795,12 +1012,10 @@
         q = query(collection(db, "recentPoems"), where("categories", "array-contains", categoryName));
       }
       const snapshot = await getDocs(q);
-      
       if (snapshot.empty) {
         container.innerHTML = `<p style="text-align:center;">No poems found in "${categoryName}" category.</p>`;
         return;
       }
-      
       container.innerHTML = "";
       for (const docSnap of snapshot.docs) {
         await renderPoemCard(docSnap.data(), docSnap.id);
@@ -811,101 +1026,8 @@
     }
   }
 
-  // Global event delegation for comments and replies
+  // Global reply handling
   document.addEventListener("click", async (e) => {
-    const card = e.target.closest(".recent-poem-card");
-    if (!card) return;
-    const docId = card.dataset.id;
-    
-    // Post comment
-    if (e.target.classList.contains("comment-btn")) {
-      if (!currentUser) { alert("Sign in to comment."); return; }
-      const input = card.querySelector(".comment-input");
-      const text = input.value.trim();
-      if (!text) return;
-      
-      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-      const username = userDoc.exists() ? userDoc.data().username : "Anonymous";
-      
-      await addDoc(collection(db, "recentPoems", docId, "comments"), {
-        userId: currentUser.uid, username, text, timestamp: serverTimestamp()
-      });
-      
-      input.value = "";
-      const commentsSnapshot = await getDocs(collection(db, "recentPoems", docId, "comments"));
-      card.querySelector(".message-count").innerHTML = `💬 ${commentsSnapshot.size}`;
-      
-      // Get poem author
-      const poemSnap = await getDoc(doc(db, "recentPoems", docId));
-      const poemData = poemSnap.data();
-      const poemAuthorId = poemData.userId || poemData.authorId;
-      if (poemAuthorId && poemAuthorId !== currentUser.uid) {
-        await sendNotification(poemAuthorId, currentUser.uid, 'comment', { 
-          poemId: docId, poemTitle: poemData.title, commentText: text 
-        });
-      }
-    }
-    
-    // Toggle comments
-    if (e.target.classList.contains("message-count")) {
-      const commentList = card.querySelector(".comment-list");
-      if (commentList.style.display === "block") {
-        commentList.style.display = "none";
-        return;
-      }
-      
-      commentList.innerHTML = "<p style='padding:10px;'>Loading comments...</p>";
-      commentList.style.display = "block";
-      
-      const commentsCol = collection(db, "recentPoems", docId, "comments");
-      const commentsSnapshot = await getDocs(query(commentsCol, orderBy("timestamp", "desc")));
-      commentList.innerHTML = "";
-      
-      if (commentsSnapshot.empty) {
-        commentList.innerHTML = "<p style='padding:10px;'>No comments yet.</p>";
-        return;
-      }
-      
-      for (const commentDoc of commentsSnapshot.docs) {
-        const c = commentDoc.data();
-        const commentId = commentDoc.id;
-        const commentDiv = document.createElement("div");
-        commentDiv.className = "comment";
-        commentDiv.dataset.commentId = commentId;
-        
-        const usernameLink = c.userId 
-          ? `<a href="/user-profile.html?uid=${c.userId}" style="font-weight:600;color:#4b2aad;text-decoration:none;">${escapeHtml(c.username || "Anonymous")}</a>`
-          : `<strong>${escapeHtml(c.username || "Anonymous")}</strong>`;
-        
-        commentDiv.innerHTML = `
-          <div>${usernameLink}: ${escapeHtml(c.text)}</div>
-          <div><small class="reply-toggle" style="cursor:pointer;">Reply</small></div>
-          <div class="reply-section"></div>
-        `;
-        
-        // Load replies
-        const repliesCol = collection(db, "recentPoems", docId, "comments", commentId, "replies");
-        const repliesSnap = await getDocs(query(repliesCol, orderBy("timestamp", "asc")));
-        const replySection = commentDiv.querySelector(".reply-section");
-        repliesSnap.forEach(replyDoc => {
-          const r = replyDoc.data();
-          const replyLink = r.userId 
-            ? `<a href="/user-profile.html?uid=${r.userId}" style="color:#B8860B;text-decoration:none;">${escapeHtml(r.username)}</a>`
-            : `<strong>${escapeHtml(r.username)}</strong>`;
-          const replyElem = document.createElement("div");
-          replyElem.style.background = "#f9f3ea";
-          replyElem.style.padding = "6px 10px";
-          replyElem.style.borderRadius = "12px";
-          replyElem.style.margin = "5px 0";
-          replyElem.innerHTML = `${replyLink}: ${escapeHtml(r.text)}`;
-          replySection.appendChild(replyElem);
-        });
-        
-        commentList.appendChild(commentDiv);
-      }
-    }
-    
-    // Reply toggle and send
     if (e.target.classList.contains("reply-toggle")) {
       const commentDiv = e.target.closest(".comment");
       const replySection = commentDiv.querySelector(".reply-section");
@@ -923,22 +1045,22 @@
       const textarea = replyInputDiv.querySelector("textarea");
       const replyText = textarea.value.trim();
       if (!replyText) return;
-      
       const commentDiv = replyBtn.closest(".comment");
       const commentId = commentDiv.dataset.commentId;
-      if (!commentId) return;
+      const wrapperDiv = commentDiv.closest(".comment-list-simple");
+      const poemId = wrapperDiv.getAttribute("data-poem-comments");
+      if (!commentId || !poemId) return;
       
       const userDoc = await getDoc(doc(db, "users", currentUser.uid));
       const username = userDoc.exists() ? userDoc.data().username : "Anonymous";
-      
-      await addDoc(collection(db, "recentPoems", docId, "comments", commentId, "replies"), {
+      await addDoc(collection(db, "recentPoems", poemId, "comments", commentId, "replies"), {
         userId: currentUser.uid, username, text: replyText, timestamp: serverTimestamp()
       });
       
-      const commentSnap = await getDoc(doc(db, "recentPoems", docId, "comments", commentId));
+      const commentSnap = await getDoc(doc(db, "recentPoems", poemId, "comments", commentId));
       const commentOwner = commentSnap.exists() ? commentSnap.data().userId : null;
       
-      const repliesRef = collection(db, "recentPoems", docId, "comments", commentId, "replies");
+      const repliesRef = collection(db, "recentPoems", poemId, "comments", commentId, "replies");
       const repliesSnap = await getDocs(query(repliesRef, orderBy("timestamp", "asc")));
       const replySection = commentDiv.querySelector(".reply-section");
       const children = [...replySection.children];
@@ -960,18 +1082,19 @@
       replyInputDiv.remove();
       
       if (commentOwner && commentOwner !== currentUser.uid) {
-        await sendNotification(commentOwner, currentUser.uid, 'reply', {
-          poemId: docId, commentId, replyText
-        });
+        await sendNotification(commentOwner, currentUser.uid, 'reply', { poemId, commentId, replyText });
       }
+      // Update badge count for the poem
+      const allComments = await getDocs(collection(db, "recentPoems", poemId, "comments"));
+      const badgeSpan = document.querySelector(`.recent-poem-card[data-id="${poemId}"] .comment-badge-count`);
+      if (badgeSpan) badgeSpan.textContent = allComments.size;
     }
   });
 
   document.addEventListener("DOMContentLoaded", () => {
     loadCategoryPoems();
   });
-
-  // Mobile menu toggle
+  
   const toggleBtn = document.getElementById("menu-toggle");
   const navLinks = document.getElementById("nav-links");
   const closeBtn = document.getElementById("close-btn");

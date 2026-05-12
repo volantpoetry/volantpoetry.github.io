@@ -235,7 +235,44 @@
 }
 
 }
+/* Make logo image visible on all screen sizes */
+.nav-logo-img {
+  display: inline-block !important;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: contain;
+}
 
+/* Ensure it shows on desktop specifically */
+@media (min-width: 769px) {
+  .nav-logo-img {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+
+/* Also visible on mobile */
+@media (max-width: 768px) {
+  .nav-logo-img {
+    display: inline-block !important;
+  }
+}
+/* Push categories from left on small screens only */
+@media (max-width: 768px) {
+  .categories-container {
+    padding-left: 1.5rem;
+    margin-left: 0;
+  }
+}
+
+/* For very small screens, add a bit more padding */
+@media (max-width: 480px) {
+  .categories-container {
+    padding-left: 2rem;
+  }
+}
 </style>
 </head>
 

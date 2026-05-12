@@ -4,7 +4,7 @@ import {
 
 import { 
   getFirestore, collection, query, orderBy, limit, getDocs, doc, getDoc, where,
-  enableIndexedDbPersistence, startAfter, updateDoc, increment, addDoc, arrayUnion,
+  enableIndexedDbPersistence, startAfter, updateDoc, setDoc, increment, addDoc, arrayUnion,
   writeBatch, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -1444,14 +1444,20 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Ranking Poems
-// --- Load Ranking Poems (Top 20) using Recent Poems structure ---
+// --- Load Ranking Poems (Top 20) - Based on LAST 7 DAYS ACTIVITY with REAL-TIME UPDATES ---
 async function loadRankingPoemsRich() {
   const container = document.getElementById("rank-poems");
   if (!container) return console.warn("No #rank-poems container found.");
 
+  // Calculate date range for last 7 days
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const dateRangeText = `${sevenDaysAgo.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
   container.innerHTML = `
-    <h3>Ranking Poems</h3>
-    <p>Top 20 poems based on views, likes, and comments.</p>
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
+      <p>Top 20 poems based on views, likes, and comments.</p>
+    </div>
     <div id="ranking-list"></div>
   `;
   const listEl = container.querySelector("#ranking-list");
@@ -1466,19 +1472,49 @@ async function loadRankingPoemsRich() {
 
     const poems = await Promise.all(snapshot.docs.map(async docSnap => {
       const data = docSnap.data() || {};
-      const views = typeof data.views === "number" ? data.views : 0;
-      const likes = typeof data.likes === "number" ? data.likes : 0;
-      const commentsStored = typeof data.comments === "number" ? data.comments : 0;
-
-      let realComments = commentsStored;
+      
+      // Get ALL views (for display)
+      const totalViews = typeof data.views === "number" ? data.views : 0;
+      
+      // Count likes from last 7 days only
+      let recentLikes = 0;
+      const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
+      const likedByTimestamps = Array.isArray(data.likedByTimestamps) ? data.likedByTimestamps : [];
+      
+      for (let i = 0; i < likedBy.length; i++) {
+        const likeTime = likedByTimestamps[i]?.toDate();
+        if (likeTime && likeTime >= sevenDaysAgo) {
+          recentLikes++;
+        } else if (!likedByTimestamps.length) {
+          // If no timestamps stored, count all likes (fallback)
+          recentLikes = likedBy.length;
+          break;
+        }
+      }
+      
+      // Count comments from last 7 days only
+      let recentComments = 0;
+      let totalComments = 0;
       try {
         const commentSnap = await getDocs(collection(db, "recentPoems", docSnap.id, "comments"));
-        realComments = commentSnap.size;
+        totalComments = commentSnap.size;
+        for (const commentDoc of commentSnap.docs) {
+          const comment = commentDoc.data();
+          const commentTime = comment.timestamp?.toDate();
+          if (commentTime && commentTime >= sevenDaysAgo) {
+            recentComments++;
+          }
+        }
       } catch (err) {
-        console.warn("Unable to fetch comment count for ranking poem:", err);
+        console.warn("Unable to fetch comment count:", err);
       }
 
-      const score = views + likes * 3 + realComments * 5;
+      // SCORE based ONLY on recent activity (last 7 days)
+      // Views × 1 + Recent Likes × 3 + Recent Comments × 4
+      // Note: Using total views as fallback since view timestamps are hard to track
+      const recentViews = totalViews; // For now, use total views
+      const score = (recentViews * 1) + (recentLikes * 3) + (recentComments * 4);
+      
       const poetUid = data.authorId || data.userId || "";
       let displayName = data.author || "Anonymous";
       let profileLink = "#";
@@ -1507,21 +1543,30 @@ async function loadRankingPoemsRich() {
         authorName: displayName,
         authorProfile: profileLink,
         content: data.content || "",
-        likes,
-        likedBy: Array.isArray(data.likedBy) ? data.likedBy : [],
-        views,
+        totalLikes: data.likes || 0,
+        recentLikes: recentLikes,
+        likedBy: likedBy,
+        totalViews: totalViews,
         audioUrl: data.audioUrl || data.audio || "",
         categories: Array.isArray(data.categories)
           ? data.categories
           : (data.categories ? [data.categories] : []),
-        score,
-        commentsCount: realComments,
-        collaborators
+        score: score,
+        totalComments: totalComments,
+        recentComments: recentComments,
+        collaborators,
+        createdAt: data.timestamp?.toDate() || new Date()
       };
     }));
 
+    // Sort by score (based on recent activity)
     poems.sort((a, b) => b.score - a.score);
     const top = poems.slice(0, 20);
+
+    if (top.length === 0) {
+      listEl.innerHTML = "<p style='color:#666; text-align:center; padding:20px;'>No activity in the last 7 days. Be the first to engage! </p>";
+      return;
+    }
 
     function getInitials(name = "") {
       const parts = name.trim().split(" ");
@@ -1584,7 +1629,6 @@ async function loadRankingPoemsRich() {
       card.dataset.slug = poem.slug;
 
       const truncated = truncatePoem(poem.content, 8);
-      const commentDisplayCount = poem.commentsCount;
       let profileImage = "/images/default-avatar.png";
       let isFollowing = false;
 
@@ -1631,6 +1675,10 @@ async function loadRankingPoemsRich() {
         ? `<button class="follow-btn-on-card ${isFollowing ? 'following' : ''}" data-poet-id="${poem.authorId}" style="background: ${isFollowing ? '#f44336' : '#4CAF50'}; color: white; border: none; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: 12px; transition: all 0.2s;">${isFollowing ? 'Following' : 'Follow'}</button>`
         : "";
 
+      // Show recent activity badge
+      const hasRecentActivity = poem.recentLikes > 0 || poem.recentComments > 0;
+      const recentBadge = hasRecentActivity ? `<span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; margin-left: 8px;"></span>` : '';
+
       card.innerHTML = `
         <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;">
           <div style="display:flex; align-items:center; gap:10px;">
@@ -1642,14 +1690,17 @@ async function loadRankingPoemsRich() {
               </div>
             </div>
           </div>
-          <span class="view-count-inline" style="font-size:0.85rem; color:#333;">${poem.views} Reads</span>
+<div style="display: flex; gap: 10px; align-items: center;">
+  ${poem.recentLikes > 0 || poem.recentComments > 0 ? `<span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px;">🔥 Trending this week</span>` : ''}
+  <span style="font-size:0.75rem; color:#888;">📅 ${poem.createdAt.toLocaleDateString()}</span>
+</div>
         </div>
 
         ${collaboratorsHTML}
 
-        <h3 class="recent-poem-title" style="margin-top:4px; font-size:1.2rem;">${index + 1}. ${escapeHtml(poem.title)} <small style="font-weight:400; color:#777; font-size:0.85rem;">(score: ${poem.score})</small></h3>
+        <h3 class="recent-poem-title" style="margin-top:4px; font-size:1.2rem;">${index + 1}. ${escapeHtml(poem.title)} ${recentBadge} <small style="font-weight:400; color:#777; font-size:0.85rem;">(weekly score: ${poem.score})</small></h3>
         <p class="poem-content" style="white-space:pre-wrap; margin-top:10px;">${escapeHtml(truncated.preview)}</p>
-        ${truncated.truncated ? `<button class="read-more-btn" style="margin-top:10px; background:#5a3cb3; color:white; border:none; padding:8px 14px; border-radius:8px; cursor:pointer;">Read More</button>` : ""}
+        ${truncated.truncated ? `<button class="read-more-btn" style="margin-top:10px; background:#960606; color:white; border:none; padding:8px 14px; border-radius:8px; cursor:pointer;">Read More</button>` : ""}
         ${audioHTML}
         ${poem.categories?.length ? `<p class="poem-category-line" style="margin-top:12px;"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${escapeHtml(cat)}</a>`).join(", ")}</em></p>` : ""}
 
@@ -1659,8 +1710,11 @@ async function loadRankingPoemsRich() {
             <button class="comment-btn">Post</button>
           </div>
           <button class="like-btn">❤️</button>
-          <span class="like-count">${poem.likes}</span>
-          <span class="message-count">💬 ${commentDisplayCount}</span>
+          <span class="like-count">${poem.totalLikes}</span>
+          <span class="message-count">💬 ${poem.totalComments}</span>
+        </div>
+        <div class="recent-stats" style="font-size: 11px; color: #888; margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px;">
+          📊 This week: ${poem.recentLikes} likes · ${poem.recentComments} comments
         </div>
       `;
 
@@ -1693,10 +1747,6 @@ async function loadRankingPoemsRich() {
         });
       }
 
-      const commentsSnapshot = await getDocs(collection(db, "recentPoems", poem.id, "comments"));
-      const msgSpan = card.querySelector(".message-count");
-      if (msgSpan) msgSpan.textContent = `💬 ${commentsSnapshot.size}`;
-
       const textarea = card.querySelector(".comment-input");
       if (textarea) {
         textarea.addEventListener("input", () => {
@@ -1705,19 +1755,97 @@ async function loadRankingPoemsRich() {
         });
       }
 
-      // Fetch actual comment count
-      try {
-        const commentsSnapshot = await getDocs(collection(db, "recentPoems", poem.id, "comments"));
-        const msgSpan = card.querySelector(".message-count");
-        if (msgSpan) msgSpan.textContent = `💬 ${commentsSnapshot.size}`;
-      } catch (err) {
-        console.warn("Error fetching comment count for ranking poem:", err);
-      }
-
       const user = auth.currentUser;
       if (user && Array.isArray(poem.likedBy) && poem.likedBy.includes(user.uid)) {
         const btn = card.querySelector(".like-btn");
         if (btn) btn.classList.add("liked");
+      }
+
+      // Like button with REAL-TIME update
+      const likeBtn = card.querySelector(".like-btn");
+      const likeCountSpan = card.querySelector(".like-count");
+      
+      if (likeBtn) {
+        likeBtn.addEventListener("click", async () => {
+          if (!user) {
+            window.location.href = "login.html";
+            return;
+          }
+          
+          const poemRef = doc(db, "recentPoems", poem.id);
+          const likedBy = poem.likedBy || [];
+          const isLiked = likedBy.includes(user.uid);
+          
+          if (isLiked) {
+            await updateDoc(poemRef, {
+              likes: (poem.totalLikes || 0) - 1,
+              likedBy: likedBy.filter(id => id !== user.uid)
+            });
+            poem.totalLikes--;
+            poem.recentLikes = Math.max(0, poem.recentLikes - 1);
+            likeBtn.style.color = "";
+            likeBtn.classList.remove("liked");
+          } else {
+            await updateDoc(poemRef, {
+              likes: (poem.totalLikes || 0) + 1,
+              likedBy: [...likedBy, user.uid],
+              likedByTimestamps: [...(data.likedByTimestamps || []), new Date()]
+            });
+            poem.totalLikes++;
+            poem.recentLikes++;
+            likeBtn.style.color = "#e74c3c";
+            likeBtn.classList.add("liked");
+          }
+          likeCountSpan.textContent = poem.totalLikes;
+          
+          // Update score and display
+          poem.score = (poem.totalViews * 1) + (poem.recentLikes * 3) + (poem.recentComments * 4);
+          const scoreBadge = card.querySelector("h3 small");
+          if (scoreBadge) scoreBadge.textContent = `(weekly score: ${poem.score})`;
+          
+          const recentStats = card.querySelector(".recent-stats");
+          if (recentStats) {
+            recentStats.innerHTML = `📊 This week: ${poem.recentLikes} likes · ${poem.recentComments} comments`;
+          }
+        });
+      }
+
+      // Comment button with REAL-TIME update
+      const commentBtn = card.querySelector(".comment-btn");
+      if (commentBtn) {
+        commentBtn.addEventListener("click", async () => {
+          if (!user) {
+            window.location.href = "login.html";
+            return;
+          }
+          
+          const commentText = textarea?.value.trim();
+          if (!commentText) return;
+          
+          const commentsRef = collection(db, "recentPoems", poem.id, "comments");
+          await addDoc(commentsRef, {
+            text: commentText,
+            userId: user.uid,
+            username: user.displayName || "Anonymous",
+            timestamp: new Date()
+          });
+          
+          if (textarea) textarea.value = "";
+          poem.totalComments++;
+          poem.recentComments++;
+          const msgSpan = card.querySelector(".message-count");
+          if (msgSpan) msgSpan.textContent = `💬 ${poem.totalComments}`;
+          
+          // Update score and display
+          poem.score = (poem.totalViews * 1) + (poem.recentLikes * 3) + (poem.recentComments * 4);
+          const scoreBadge = card.querySelector("h3 small");
+          if (scoreBadge) scoreBadge.textContent = `(weekly score: ${poem.score})`;
+          
+          const recentStats = card.querySelector(".recent-stats");
+          if (recentStats) {
+            recentStats.innerHTML = `📊 This week: ${poem.recentLikes} likes · ${poem.recentComments} comments`;
+          }
+        });
       }
     }
 
@@ -1733,7 +1861,219 @@ async function loadRankingPoemsRich() {
 document.addEventListener("DOMContentLoaded", loadRankingPoemsRich);
 
 
+
+
+
 // --- Load Ranking Poets ---
+// ============ HELPER FUNCTIONS FOR RANKING ============
+
+// Get initials from username for avatar
+function getInitials(name) {
+  if (!name || name === "Anonymous") return "?";
+  const parts = name.trim().split(" ");
+  if (parts.length === 1) {
+    return parts[0].substring(0, 2).toUpperCase();
+  }
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+// Generate color from name for avatar background
+function colorFromName(name) {
+  if (!name) return "hsl(0, 60%, 45%)";
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue}, 65%, 50%)`;
+}
+
+// Upload avatar to Cloudinary
+async function uploadAvatarToCloudinary(initials, bgColor, userId) {
+  try {
+    const cloudName = "dzoq4pgjn";
+    if (!cloudName) return null;
+    
+    const canvas = document.createElement("canvas");
+    canvas.width = 180;
+    canvas.height = 180;
+    const ctx = canvas.getContext("2d");
+    
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 80px 'Playfair Display', serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(initials, canvas.width / 2, canvas.height / 2);
+    
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    const formData = new FormData();
+    formData.append("file", blob);
+    formData.append("upload_preset", "profile_pics");
+    
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: "POST",
+      body: formData
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      const imageUrl = data.secure_url;
+      
+      if (userId && typeof updateDoc === 'function') {
+        await updateDoc(doc(db, "users", userId), { 
+          cachedAvatarURL: imageUrl 
+        });
+      }
+      return imageUrl;
+    }
+  } catch (err) {
+    console.warn("Cloudinary upload failed:", err);
+  }
+  return null;
+}
+
+// Escape HTML to prevent XSS
+function safeEscapeHtml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+// Dynamic countdown that updates every second
+let countdownInterval = null;
+
+function startCountdown() {
+  const countdownElement = document.getElementById('countdown-timer');
+  if (!countdownElement) return;
+  
+  // Clear existing interval
+  if (countdownInterval) clearInterval(countdownInterval);
+  
+  function updateCountdown() {
+    const now = new Date();
+    const nextMonday = new Date(now);
+    const dayOfWeek = now.getDay();
+    
+    // Calculate days until next Monday (1 = Monday, 0 = Sunday)
+    let daysUntilMonday;
+    if (dayOfWeek === 0) {
+      daysUntilMonday = 1; // Sunday -> Monday tomorrow
+    } else if (dayOfWeek === 1) {
+      daysUntilMonday = 0; // Monday -> today
+    } else {
+      daysUntilMonday = 8 - dayOfWeek; // Tuesday-Saturday
+    }
+    
+    nextMonday.setDate(now.getDate() + daysUntilMonday);
+    nextMonday.setHours(0, 0, 0, 0);
+    
+    // If it's Monday and before midnight, show remaining hours
+    if (dayOfWeek === 1 && now.getHours() < 24) {
+      nextMonday.setDate(now.getDate() + 7); // Next Monday
+    }
+    
+    const diffMs = nextMonday - now;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const diffSeconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+    
+    let countdownText = '';
+    if (diffDays > 0) {
+      countdownText = `${diffDays}d ${diffHours}h ${diffMinutes}m`;
+    } else if (diffHours > 0) {
+      countdownText = `${diffHours}h ${diffMinutes}m ${diffSeconds}s`;
+    } else if (diffMinutes > 0) {
+      countdownText = `${diffMinutes}m ${diffSeconds}s`;
+    } else {
+      countdownText = `${diffSeconds}s`;
+    }
+    
+    if (dayOfWeek === 1 && now.getHours() === 0 && diffDays === 7) {
+      countdownText = "Resetting now...";
+    }
+    
+    countdownElement.textContent = countdownText;
+  }
+  
+  updateCountdown();
+  countdownInterval = setInterval(updateCountdown, 1000);
+}
+
+// Stop countdown when page unloads
+window.addEventListener('beforeunload', () => {
+  if (countdownInterval) clearInterval(countdownInterval);
+});
+
+// Save past winners to hall of fame (FIXED - added safety check)
+async function saveWeeklyWinner(poet, weekLabel) {
+  try {
+    // Check if setDoc is available
+    if (typeof setDoc !== 'function') {
+      console.warn("setDoc is not available, skipping winner save");
+      return;
+    }
+    
+    const winnerRef = doc(db, "weeklyWinners", weekLabel);
+    await setDoc(winnerRef, {
+      poetId: poet.userId,
+      username: poet.username,
+      score: poet.score,
+      poemsWritten: poet.poemsWritten,
+      commentsGiven: poet.commentsGiven,
+      likesGiven: poet.likesGiven,
+      week: weekLabel,
+      timestamp: new Date()
+    });
+    console.log(`Saved winner: ${poet.username} for week ${weekLabel}`);
+  } catch (err) {
+    console.warn("Could not save weekly winner:", err);
+  }
+}
+
+// Get previous week's range
+function getPreviousWeekRange() {
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  
+  let daysToLastMonday;
+  if (dayOfWeek === 0) {
+    daysToLastMonday = 6;
+  } else {
+    daysToLastMonday = dayOfWeek - 1;
+  }
+  
+  const lastMonday = new Date(now);
+  lastMonday.setDate(now.getDate() - daysToLastMonday);
+  lastMonday.setHours(0, 0, 0, 0);
+  
+  const lastSunday = new Date(lastMonday);
+  lastSunday.setDate(lastMonday.getDate() + 6);
+  lastSunday.setHours(23, 59, 59, 999);
+  
+  const formatDate = (date) => {
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+  
+  const weekLabel = `${formatDate(lastMonday)} - ${formatDate(lastSunday)}`;
+  
+  return {
+    weekStart: lastMonday,
+    weekEnd: lastSunday,
+    weekLabel: weekLabel
+  };
+}
+
+// ============ END HELPER FUNCTIONS ============
+
+// Main ranking function
 async function loadRankingPoets() {
   try {
     const container = document.getElementById("ranking-poets-container");
@@ -1742,177 +2082,280 @@ async function loadRankingPoets() {
       return;
     }
 
-    const poetsMap = {}; // { uniqueUsername: { username, poemsWritten, likesReceived, commentsReceived, likesGiven, commentsGiven, score } }
+    // Get the previous complete week
+    const { weekStart, weekEnd, weekLabel } = getPreviousWeekRange();
 
-    const now = new Date();
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const poetsMap = new Map();
 
-    const poemsSnapshot = await getDocs(collection(db, "recentPoems"));
-    const usersSnapshot = await getDocs(collection(db, "users"));
+    // YOUR WEIGHTS
+    const WEIGHTS = {
+      poemsWritten: 2,
+      likesReceived: 1.5,
+      commentsReceived: 1.5,
+      likesGiven: 3,
+      commentsGiven: 4
+    };
 
-    // Initialize poets from users collection
+    // Fetch data
+    const [poemsSnapshot, usersSnapshot] = await Promise.all([
+      getDocs(collection(db, "recentPoems")),
+      getDocs(collection(db, "users"))
+    ]);
+
+    // Initialize poets
+    if (usersSnapshot.empty) {
+      container.innerHTML = `
+        <div class="ranking-header">
+          <h3>🏆 Weekly Poet Rankings</h3>
+          <div class="countdown-container" style="margin-bottom:15px;">
+            <span style="background:#e8e0f0; padding:5px 12px; border-radius:20px; font-size:12px;">⏰ Resets in: <span id="countdown-timer">calculating...</span></span>
+          </div>
+          <p style="color:#666; text-align:center; padding:20px;">No poets yet. Be the first to join! ✨</p>
+        </div>
+      `;
+      startCountdown();
+      return;
+    }
+
     usersSnapshot.forEach(userDoc => {
       const data = userDoc.data();
-      const username = data.username || "Anonymous";
-      poetsMap[username] = {
+      poetsMap.set(userDoc.id, {
         userId: userDoc.id,
-        username,
+        username: data.username || "Anonymous",
+        photoURL: data.photoURL || data.cachedAvatarURL || null,
         poemsWritten: 0,
         likesReceived: 0,
         commentsReceived: 0,
         likesGiven: 0,
         commentsGiven: 0,
+        meaningfulCommentsGiven: 0,
         score: 0
-      };
+      });
     });
 
-    // Count activity in the past week
-    poemsSnapshot.forEach(docSnap => {
+    // Process poems from the target week only
+    for (const docSnap of poemsSnapshot.docs) {
       const data = docSnap.data();
-
-      // Normalize a unique key using userId or username
-      const username = data.username || data.submittedBy || data.author || "Anonymous";
-
-      if (!poetsMap[username]) {
-        poetsMap[username] = {
-          userId: data.userId || null,
-          username,
-          poemsWritten: 0,
-          likesReceived: 0,
-          commentsReceived: 0,
-          likesGiven: 0,
-          commentsGiven: 0,
-          score: 0
-        };
-      }
-
       const createdAt = data.timestamp ? data.timestamp.toDate() : new Date();
-      if (createdAt >= weekAgo) {
-        poetsMap[username].poemsWritten += 1;
-        poetsMap[username].likesReceived += data.likes || 0;
-        poetsMap[username].commentsReceived += data.comments?.length || 0;
+      const isInTargetWeek = createdAt >= weekStart && createdAt <= weekEnd;
+      
+      const authorId = data.authorId || data.userId || data.submittedBy;
+      
+      if (authorId && poetsMap.has(authorId) && isInTargetWeek) {
+        const poet = poetsMap.get(authorId);
+        poet.poemsWritten += 1;
+        
+        const wordCount = (data.content || "").split(/\s+/).length;
+        const hasAudio = !!data.audioUrl;
+        const hasStructure = (data.content || "").includes("\n");
+        
+        let qualityBonus = 1;
+        if (wordCount >= 50) qualityBonus += 0.5;
+        if (hasAudio) qualityBonus += 0.5;
+        if (hasStructure) qualityBonus += 0.5;
+        
+        poet.likesReceived += (data.likes || 0) * qualityBonus;
+        poet.commentsReceived += (data.comments?.length || 0) * qualityBonus;
       }
-
+      
       // Likes given
-      if (data.likedBy && Array.isArray(data.likedBy)) {
+      if (data.likedBy && Array.isArray(data.likedBy) && isInTargetWeek) {
         data.likedBy.forEach(uid => {
-          // Map UID to username if exists
-          const user = usersSnapshot.docs.find(u => u.id === uid);
-          const likerName = user ? user.data().username : "Anonymous";
-
-          if (!poetsMap[likerName]) {
-            poetsMap[likerName] = {
-              userId: uid,
-              username: likerName,
-              poemsWritten: 0,
-              likesReceived: 0,
-              commentsReceived: 0,
-              likesGiven: 0,
-              commentsGiven: 0,
-              score: 0
-            };
+          if (poetsMap.has(uid)) {
+            poetsMap.get(uid).likesGiven += 1;
           }
-          poetsMap[likerName].likesGiven += 1;
         });
       }
+    }
 
-      // Comments given
-      if (data.comments && Array.isArray(data.comments)) {
-        data.comments.forEach(comment => {
-          const commenterName = comment.user || comment.userId || "Anonymous";
-
-          if (!poetsMap[commenterName]) {
-            poetsMap[commenterName] = {
-              userId: comment.userId || null,
-              username: commenterName,
-              poemsWritten: 0,
-              likesReceived: 0,
-              commentsReceived: 0,
-              likesGiven: 0,
-              commentsGiven: 0,
-              score: 0
-            };
+    // Process comments from target week only
+    for (const docSnap of poemsSnapshot.docs) {
+      try {
+        const commentsSnapshot = await getDocs(collection(db, "recentPoems", docSnap.id, "comments"));
+        for (const commentDoc of commentsSnapshot.docs) {
+          const comment = commentDoc.data();
+          const commenterId = comment.userId || comment.user;
+          const createdAt = comment.timestamp?.toDate() || new Date();
+          const isInTargetWeek = createdAt >= weekStart && createdAt <= weekEnd;
+          
+          if (commenterId && poetsMap.has(commenterId) && isInTargetWeek) {
+            const poet = poetsMap.get(commenterId);
+            
+            const commentText = comment.text || comment.content || "";
+            const isMeaningful = commentText.length >= 20 && 
+                                !/^(nice|good|great|awesome|cool|lovely|beautiful|amazing|wow|like it|beautiful poem|nice work|thanks for sharing|love this)$/i.test(commentText.trim());
+            
+            let commentValue = 1;
+            if (!isMeaningful) commentValue = 0.25;
+            
+            poet.commentsGiven += commentValue;
+            if (isMeaningful) poet.meaningfulCommentsGiven += 1;
           }
-          poetsMap[commenterName].commentsGiven += 1;
-        });
+        }
+      } catch (err) {
+        continue;
       }
-    });
+    }
 
-    // Calculate score
-    Object.values(poetsMap).forEach(poet => {
-      poet.score = poet.poemsWritten * 5 +
-                   poet.likesReceived * 3 +
-                   poet.commentsReceived * 2 +
-                   poet.likesGiven +
-                   poet.commentsGiven;
-    });
+    // Calculate scores
+    for (const poet of poetsMap.values()) {
+      let rawScore = 
+        (poet.poemsWritten * WEIGHTS.poemsWritten) +
+        (poet.likesReceived * WEIGHTS.likesReceived) +
+        (poet.commentsReceived * WEIGHTS.commentsReceived) +
+        (poet.likesGiven * WEIGHTS.likesGiven) +
+        (poet.commentsGiven * WEIGHTS.commentsGiven);
+      
+      if (rawScore === 0 && (poet.poemsWritten > 0 || poet.likesGiven > 0 || poet.commentsGiven > 0)) {
+        rawScore = 1;
+      }
+      
+      poet.score = rawScore;
+      
+      if (poet.commentsGiven >= 3) poet.score += 10;
+      if (poet.likesGiven >= 10) poet.score += 5;
+      if (poet.poemsWritten >= 1 && (poet.commentsGiven >= 1 || poet.likesGiven >= 3)) {
+        poet.score += 15;
+      }
+    }
 
     // Sort and take top 20
-    const sortedPoets = Object.values(poetsMap)
+    const sortedPoets = Array.from(poetsMap.values())
       .filter(poet => poet.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 20);
 
-    // Render
-container.innerHTML = "";
-sortedPoets.forEach((poet, index) => {
-  const poetDiv = document.createElement("div");
-  poetDiv.className = "ranking-poet-card";
-
-  // Determine badge
-  let badge = "";
-  if (index === 0) badge = "🏆";
-  else if (index === 1) badge = "🥈";
-  else if (index === 2) badge = "🥉";
-
-  // Fetch profile image (reuse your Cloudinary logic)
-  let profileImage = "/images/default-avatar.png";
-  if (poet.userId) {
-    try {
-      const userDoc = usersSnapshot.docs.find(u => u.id === poet.userId);
-      if (userDoc) {
-        const userData = userDoc.data();
-        if (userData.photoURL) profileImage = userData.photoURL;
-        else if (userData.cachedAvatarURL) profileImage = userData.cachedAvatarURL;
-        else {
-          const initials = getInitials(poet.username);
-          const bgColor = colorFromName(poet.username);
-          uploadAvatarToCloudinary(initials, bgColor, poet.userId)
-            .then(url => {
-              if (url) poetDiv.querySelector("img").src = url;
-            });
-        }
-      }
-    } catch (err) {
-      console.warn("Failed to fetch poet profile image:", err);
+    // Save the winner to hall of fame (safe version)
+    if (sortedPoets.length > 0 && typeof setDoc === 'function') {
+      await saveWeeklyWinner(sortedPoets[0], weekLabel);
     }
-  }
 
-  poetDiv.innerHTML = `
-    <div class="poet-card-header">
-      <div class="poet-rank-badge">${badge}</div>
-      <img src="${profileImage}" alt="${poet.username}" class="poet-avatar">
-      <div class="poet-info">
-        <a href="user-profile.html?uid=${encodeURIComponent(poet.userId || "")}" class="poet-username">${poet.username}</a>
-        <p class="poet-activity">
-          ${poet.poemsWritten} poems · ${poet.likesReceived} likes · ${poet.commentsReceived} comments · ${poet.likesGiven} likes given · ${poet.commentsGiven} comments given
-        </p>
+    // Render
+    container.innerHTML = `
+      <div class="ranking-header">
+        <div style="margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <span style="background:#e8e0f0; padding:5px 12px; border-radius:20px; font-size:12px;">⏰ Resets in: <span id="countdown-timer">calculating...</span></span>
+          <span style="background:#4b2aad; color:white; padding:5px 12px; border-radius:20px; font-size:12px;">📅 ${weekLabel}</span>
+        </div>
+      
+        <p class="ranking-description">Based on: Writing (${WEIGHTS.poemsWritten} pts) · Support Given (likes ${WEIGHTS.likesGiven}, comments ${WEIGHTS.commentsGiven}) · Popularity (likes ${WEIGHTS.likesReceived}, comments ${WEIGHTS.commentsReceived})</p>
+        <small> Rankings reset every Monday | Showing previous week's champions</small>
       </div>
-    </div>
-  `;
-  container.appendChild(poetDiv);
-});
+      <div class="poets-ranking-list"></div>
+    `;
+    
+    // Start the dynamic countdown
+    startCountdown();
+    
+    const listEl = container.querySelector(".poets-ranking-list");
+    
+    if (sortedPoets.length === 0) {
+      listEl.innerHTML = `
+        <div style="text-align: center; padding: 40px; background: #f9f7f4; border-radius: 12px;">
+          <p style="font-size: 1.2rem; margin-bottom: 10px;">📊 No activity recorded for ${weekLabel}</p>
+          <p style="color: #666;">Be the first to write, like, or comment this week!</p>
+          <button onclick="window.location.href='write-poem.html'" style="margin-top: 15px; padding: 10px 20px; background: #5a3cb3; color: white; border: none; border-radius: 8px; cursor: pointer;">Write a Poem →</button>
+        </div>
+      `;
+      return;
+    }
 
+    for (let index = 0; index < sortedPoets.length; index++) {
+      const poet = sortedPoets[index];
+      const poetDiv = document.createElement("div");
+      poetDiv.className = "ranking-poet-card";
+      
+      let badge = "";
+      if (index === 0) badge = "🏆";
+      else if (index === 1) badge = "🥈";
+      else if (index === 2) badge = "🥉";
+      
+      let communityBadge = "";
+      if (poet.commentsGiven >= 5 || poet.likesGiven >= 20) {
+        communityBadge = '<span class="community-badge" style="background:#4CAF50; color:white; padding:2px 8px; border-radius:12px; font-size:11px; margin-left:10px;">🤝 Community Helper</span>';
+      }
+      
+      let profileImage = poet.photoURL || "/images/default-avatar.png";
+      if (!poet.photoURL) {
+        const initials = getInitials(poet.username);
+        const bgColor = colorFromName(poet.username);
+        uploadAvatarToCloudinary(initials, bgColor, poet.userId).then(url => {
+          if (url) {
+            const img = poetDiv.querySelector(".poet-avatar");
+            if (img) img.src = url;
+          }
+        });
+      }
+      
+      const safeUsername = safeEscapeHtml(poet.username);
+      
+      poetDiv.innerHTML = `
+        <div class="poet-card-header">
+          <div class="rank-number">#${index + 1}</div>
+          <div class="poet-rank-badge">${badge}</div>
+          <img src="${profileImage}" alt="${poet.username}" class="poet-avatar" onerror="this.src='/images/default-avatar.png'">
+          <div class="poet-info">
+            <div class="poet-name-line">
+              <a href="user-profile.html?uid=${encodeURIComponent(poet.userId)}" class="poet-username">${safeUsername}</a>
+              ${communityBadge}
+            </div>
+            <div class="poet-stats-grid">
+              <div class="stat-group">
+                <span class="stat-label">✍️ Poems</span>
+                <span class="stat-value">${poet.poemsWritten}</span>
+              </div>
+              <div class="stat-group">
+                <span class="stat-label">💝 Given</span>
+                <span class="stat-value">❤️ ${poet.likesGiven} · 💬 ${poet.commentsGiven.toFixed(1)}</span>
+              </div>
+              <div class="stat-group">
+                <span class="stat-label">⭐ Received</span>
+                <span class="stat-value">❤️ ${Math.round(poet.likesReceived)} · 💬 ${Math.round(poet.commentsReceived)}</span>
+              </div>
+              <div class="stat-group">
+                <span class="stat-label">🏆 Score</span>
+                <span class="stat-value highlight">${Math.round(poet.score)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      listEl.appendChild(poetDiv);
+    }
+    
   } catch (err) {
     console.error("Error loading ranking poets:", err);
+    const container = document.getElementById("ranking-poets-container");
+    if (container) {
+      container.innerHTML = `
+        <div class="ranking-header">
+          <h3> Poet Rankings</h3>
+          <p style="color:#666; text-align:center; padding:20px;">Unable to load rankings. Please refresh the page.</p>
+        </div>
+      `;
+    }
+  }
+}
+
+// Check and refresh on Monday
+function checkAndRefreshRankings() {
+  const today = new Date();
+  const isMonday = today.getDay() === 1;
+  const lastRefresh = localStorage.getItem('lastRankingRefresh');
+  const todayStr = today.toDateString();
+  
+  if (isMonday && lastRefresh !== todayStr) {
+    console.log("Monday refresh: Updating rankings...");
+    localStorage.setItem('lastRankingRefresh', todayStr);
+    loadRankingPoets();
   }
 }
 
 // Load when page is ready
-document.addEventListener("DOMContentLoaded", loadRankingPoets);
-
-
-// Load weekly highlights on all pages
 document.addEventListener("DOMContentLoaded", () => {
-  loadWeeklyHighlights();
+  loadRankingPoets();
+  checkAndRefreshRankings();
+  if (typeof loadWeeklyHighlights === 'function') {
+    loadWeeklyHighlights();
+  }
 });
