@@ -79,18 +79,27 @@ function getStaticPages() {
 }
 
 // ---- Poems (priority SEO content) ----
+// ---- Poems (priority SEO content) - FIXED to match actual URL structure ----
 async function getPoemPages() {
   const snapshot = await db.collection('recentPoems').get();
 
   return snapshot.docs.map(docSnap => {
     const data = docSnap.data();
+    
+    // Get the slug from the poem data
+    const slug = data.slug || docSnap.id;
+    
+    // Determine which collection this poem belongs to
+    // Adjust this based on your actual data structure
+    const collection = data.collection || 'recentPoems';
 
     const lastmod = data.timestamp
       ? data.timestamp.toDate().toISOString()
       : new Date().toISOString();
 
     return {
-      loc: `${domain}/poems/${docSnap.id}`,
+      // ✅ CORRECT URL pattern matching your actual site
+      loc: `${domain}/poem.html?collection=${encodeURIComponent(collection)}&slug=${encodeURIComponent(slug)}`,
       lastmod,
       changefreq: 'weekly',
       priority: '0.9',
