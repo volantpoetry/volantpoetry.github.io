@@ -2359,3 +2359,95 @@ document.addEventListener("DOMContentLoaded", () => {
     loadWeeklyHighlights();
   }
 });
+
+// ============================================
+// EXPOSE USER DATA TO GLOBAL SCOPE FOR LOGOUT SCRIPT
+// ============================================
+
+// Make auth and user data available globally
+window.firebaseAuth = auth;
+window.firebaseDb = db;
+
+// Function to get current user data
+function exposeUserData(user) {
+  if (user) {
+    // Fetch username from Firestore
+    getDoc(doc(db, "users", user.uid)).then(userDoc => {
+      let username = user.displayName || user.email?.split('@')[0] || "User";
+      if (userDoc.exists()) {
+        username = userDoc.data().username || username;
+      }
+      
+      // Store user data in window object for logout script
+      window.currentUser = {
+        uid: user.uid,
+        username: username,
+        email: user.email,
+        displayName: username
+      };
+      
+      // Also store in localStorage for persistence
+      localStorage.setItem('volant_user', JSON.stringify({
+        uid: user.uid,
+        username: username,
+        email: user.email
+      }));
+      localStorage.setItem('volant_logged_in', 'true');
+      
+      // Dispatch event that logout script can listen to
+      window.dispatchEvent(new CustomEvent('authStateChanged', { 
+        detail: { user: window.currentUser } 
+      }));
+      
+      console.log("User data exposed globally:", username);
+    }).catch(err => {
+      console.warn("Error fetching user data for global exposure:", err);
+      window.currentUser = {
+        uid: user.uid,
+        username: user.email?.split('@')[0] || "User",
+        email: user.email
+      };
+      localStorage.setItem('volant_user', JSON.stringify(window.currentUser));
+      localStorage.setItem('volant_logged_in', 'true');
+      window.dispatchEvent(new CustomEvent('authStateChanged', { 
+        detail: { user: window.currentUser } 
+      }));
+    });
+  } else {
+    // User is logged out
+    delete window.currentUser;
+    localStorage.removeItem('volant_user');
+    localStorage.removeItem('volant_logged_in');
+    window.dispatchEvent(new CustomEvent('authStateChanged', { 
+      detail: { user: null } 
+    }));
+  }
+}
+
+// Listen to auth state changes and expose user data
+onAuthStateChanged(auth, async (user) => {
+  exposeUserData(user);
+});
+
+// Also expose signOut function globally
+window.logoutUser = async function() {
+  try {
+    await signOut(auth);
+    delete window.currentUser;
+    localStorage.removeItem('volant_user');
+    localStorage.removeItem('volant_logged_in');
+    console.log("User logged out successfully");
+    return true;
+  } catch (err) {
+    console.error("Logout error:", err);
+    return false;
+  }
+};
+
+// Initial exposure in case auth state already resolved
+const currentAuthUser = auth.currentUser;
+if (currentAuthUser) {
+  exposeUserData(currentAuthUser);
+}
+
+console.log("Global auth exposed - logout script can now access user data");
