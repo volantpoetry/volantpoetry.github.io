@@ -512,6 +512,34 @@
       min-width: 100px;
     }
   }
+  /* Reduce "Category:" text size on small phones */
+@media (max-width: 480px) {
+  .category-header {
+    font-size: 1.5rem;
+    margin: 1.5rem 0 1rem;
+  }
+}
+
+/* For very small phones (iPhone SE, etc.) */
+@media (max-width: 380px) {
+  .category-header {
+    font-size: 1.2rem;
+    margin: 1rem 0 0.8rem;
+  }
+}
+/* Increase Poem Titles on small phones - slightly larger */
+@media (max-width: 480px) {
+  .recent-poem-title {
+    font-size: 1.2rem;
+  }
+}
+
+/* For very small phones (iPhone SE, etc.) */
+@media (max-width: 380px) {
+  .recent-poem-title {
+    font-size: 1.2rem;
+  }
+}
 </style>
 </head>
 <body>
