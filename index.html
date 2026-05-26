@@ -912,6 +912,225 @@
     display: inline-block;
   }
 }
+/* Complete mobile dropdown fix - no overlap */
+@media (max-width: 768px) {
+  /* Container */
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    width: 100% !important;
+  }
+  
+  /* All nav items */
+  .nav-links > a,
+  .dropdown {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Regular links - FORCED to the right */
+  .nav-links > a {
+    padding: 12px 0 12px 60px !important;  /* FORCED 60px */
+    border-bottom: 1px solid #eee;
+    display: block !important;
+  }
+  
+  /* Dropdown container - FORCED move */
+  .dropdown {
+    border-bottom: 1px solid #eee;
+    position: relative !important;
+  }
+  
+  /* The Community link (the clickable a tag inside dropdown) - FORCED move */
+  .dropdown > a {
+    display: block !important;
+    padding: 12px 0 12px 60px !important;  /* FORCED 60px - matches other links */
+    margin: 0 !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+  
+  /* Hidden checkbox */
+  .dropdown-checkbox {
+    display: none !important;
+  }
+  
+  /* Clickable label - FORCED to the right */
+  .dropdown-label {
+    display: block !important;
+    padding: 12px 0 12px 60px !important;  /* FORCED 60px */
+    cursor: pointer !important;
+    margin: 0 !important;
+  }
+  
+  /* Arrow indicator */
+  .dropdown-label::after {
+    content: ' ▼';
+    font-size: 10px;
+    transition: transform 0.3s;
+    display: inline-block;
+  }
+  
+  /* Rotate arrow when open */
+  .dropdown-checkbox:checked + .dropdown-label::after {
+    transform: rotate(180deg);
+  }
+  
+  /* Dropdown content - NO extra space above */
+  .dropdown-content {
+    display: none;
+    width: 100% !important;
+    background: #f9f9f9;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  
+  /* Show when checkbox is checked */
+  .dropdown-checkbox:checked ~ .dropdown-content {
+    display: block !important;
+  }
+  
+  /* Competitions link - FORCED move */
+  .dropdown-content a:first-child {
+    display: block !important;
+    padding: 10px 0 10px 85px !important;  /* FORCED 85px */
+    border-bottom: 1px solid #e0e0e0;
+    color: #4b2aad !important;
+    text-decoration: none !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 10px !important;
+  }
+  
+  /* Groups link - FORCED move */
+  .dropdown-content a:last-child {
+    display: block !important;
+    padding: 10px 0 10px 85px !important;  /* FORCED 85px */
+    border-bottom: none !important;
+    color: #4b2aad !important;
+    text-decoration: none !important;
+    margin: 0 !important;
+    padding-bottom: 10px !important;
+  }
+  
+  /* All dropdown links (backup selector) */
+  .dropdown-content a {
+    display: block !important;
+    padding: 10px 0 10px 85px !important;  /* FORCED 85px */
+    color: #4b2aad !important;
+    text-decoration: none !important;
+    margin: 0 !important;
+  }
+}
+@media (max-width: 768px) {
+  .nav-links {
+    padding-top: 60px;
+  }
+  .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+  }
+}
+
+/* Desktop logout popup (appears to the right of username) */
+.desktop-logout-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.logout-desktop-btn {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: #ff4b4b;
+  color: white;
+  border: none;
+  border-radius: 28px;
+  padding: 8px 18px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 5px 14px rgba(0,0,0,0.1);
+  z-index: 200;
+  font-size: 0.85rem;
+}
+.logout-desktop-btn:hover {
+  background: #d63e3e;
+}
+.hide-logout {
+  display: none !important;
+}
+
+/* Mobile logout button inside menu - hidden by default, shows in menu when signed in */
+.mobile-menu-logout {
+  display: none;
+  width: 100%;
+  text-align: left;
+  background: #ff4b4b;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+@media (max-width: 768px) {
+  .mobile-menu-logout {
+    display: block;
+  }
+}
+/* Hide on desktop by default */
+.mobile-menu-logout {
+  display: none !important;
+}
+
+/* Show and style on small screens only */
+@media (max-width: 768px) {
+  .mobile-menu-logout {
+    display: inline-block !important;
+    font-size: 0.85rem !important;
+    padding: 8px 16px 8px 16px !important;
+    width: auto !important;
+    background: #ff4b4b;
+    color: white;
+    border: none;
+    border-radius: 20px !important;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-left: 60px !important;
+    text-align: center !important;
+    box-sizing: border-box;
+  }
+  
+  /* Hover effect - only changes the button background, not width */
+  .mobile-menu-logout:hover {
+    background: #d63e3e !important;
+    transform: scale(0.98);
+    transition: all 0.2s ease;
+  }
+}
+
+/* Even smaller for very tiny screens */
+@media (max-width: 480px) {
+  .mobile-menu-logout {
+    font-size: 0.75rem !important;
+    padding: 6px 12px 6px 12px !important;
+    margin-left: 60px !important;
+    border-radius: 18px !important;
+  }
+}
+.username-display, .username-sm {
+  font-weight: bold !important;
+}
 </style>
 
 </head>
@@ -936,48 +1155,55 @@
       <a href="index.html">Home</a>
       <a href="poems.html">Poems</a>
       <a href="about.html">About</a>
-       <a href="contact.html">Contact Us</a> 
-        <a href="user-profile.html">My Profile</a>
-          <a href="all-categories.html" class="mobile-only">Categories</a> <!-- Mobile only -->
-    
-    <!-- MOBILE LOGOUT INSIDE MENU -->
-<button id="logout-btn-mobile" class="logout-btn-mobile" style="display: none;">Logout</button>
-
-        </div>
-<div class="nav-right">
-  <!-- Desktop username display -->
-<!-- Desktop & Mobile username -->
-<span id="username-display" class="username-display"></span>
-<span id="username-display-sm" class="username-sm"></span>
-
-<!-- Logout button (desktop + mobile) -->
-<button id="logout-btn" class="logout-btn">Logout</button>
-
-
-  <!-- Mobile username display (before search toggle) -->
-  <span id="username-display-sm" class="username-sm"></span>
-
-  <!-- Login / Logout -->
-  <a href="users-login.html" id="login-link">Login</a>
-  <button id="logoutBtn">Logout</button>
-
-  <!-- Search toggle -->
-<!-- Mobile Icons -->
-    <div class="mobile-icons">
-      <div class="search-toggle" id="search-toggle">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="20" fill="none"
-          stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
-          stroke-linejoin="round" viewBox="0 0 24 24">
-          <path
-            d="M10.5 3a7.5 7.5 0 015.9 12.09l3.7 3.7a1 1 0 01-1.42 1.42l-3.7-3.7A7.5 7.5 0 1110.5 3z" />
-        </svg>
-      </div>
-      <div class="menu-toggle" id="menu-toggle">☰</div>
+       <div class="dropdown">
+    <a href="javascript:void(0)">Community ▼</a>
+    <div class="dropdown-content">
+      <a href="javascript:void(0)">
+        Competitions <span style="color: #B8860B; font-size: 12px;">🔜</span>
+      </a>
+      <a href="javascript:void(0)">
+        Groups <span style="color: #B8860B; font-size: 12px;">🔜</span>
+      </a>
     </div>
   </div>
+       <a href="contact.html">Contact Us</a> 
+        <a href="user-profile.html">My Profile</a>
+          <a href="all-categories.html" class="mobile-only">Categories</a>
+      
+      <!-- Mobile logout button INSIDE the menu (below all links) -->
+      <button id="mobile-menu-logout-btn" class="mobile-menu-logout">Sign Out</button>
+    </div>
+
+<div class="nav-right">
+  <!-- Desktop username with logout toggle wrapper -->
+  <div class="desktop-logout-wrapper">
+    <span id="username-display" class="username-display"></span>
+    <button id="logout-desktop-btn" class="logout-desktop-btn hide-logout">Sign out</button>
+  </div>
+  
+  <!-- Mobile username only (no logout button next to it) -->
+  <span id="username-display-sm" class="username-sm"></span>
+
+  <!-- Login link - opens users-login.html -->
+  <a href="users-login.html" id="login-link">Login</a>
+  <button id="logoutBtn" style="display: none;">Logout</button>
+
+  <!-- Mobile Icons -->
+  <div class="mobile-icons">
+    <div class="search-toggle" id="search-toggle">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="20" fill="none"
+        stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+        stroke-linejoin="round" viewBox="0 0 24 24">
+        <path
+          d="M10.5 3a7.5 7.5 0 015.9 12.09l3.7 3.7a1 1 0 01-1.42 1.42l-3.7-3.7A7.5 7.5 0 1110.5 3z" />
+      </svg>
+    </div>
+    <div class="menu-toggle" id="menu-toggle">☰</div>
+  </div>
+</div>
 </nav>
 
-<!-- 🌸 MOBILE SEARCH DROPDOWN -->
+<!-- MOBILE SEARCH DROPDOWN -->
 <div class="mobile-search-dropdown" id="search-dropdown">
   <input
     type="text"
@@ -987,7 +1213,6 @@
   />
 </div>
 
-  </nav>
 </header>
 
 <!-- HERO -->
@@ -1070,7 +1295,6 @@ Just voices, words, and connection.</p>
     </div>
 
     <!-- RANKING POEMS -->
-   <!-- RANKING POEMS -->
 <div class="tab-content" id="rank-poems">
   <h3>Ranking Poems</h3>
   <p>These poems are ranked based on popularity: views, likes, and comments combined.</p>
@@ -1102,7 +1326,7 @@ Just voices, words, and connection.</p>
   <div id="poem-categories"></div>
 </div>
 
-<!-- 🌿 JOIN COMMUNITY SECTION -->
+<!-- JOIN COMMUNITY SECTION -->
 <section class="community-section">
   <div class="community-content">
     <h2>Join the Volant Poetry Community</h2>
@@ -1116,8 +1340,7 @@ Just voices, words, and connection.</p>
 
 </section>
 
-<!-- 🖼️ POETRY IN MOTION GALLERY -->
-<!-- 🖼️ DYNAMIC POETRY GALLERY -->
+<!-- POETRY IN MOTION GALLERY -->
 <section class="gallery-section">
   <h2>Poetry in Motion</h2>
   <div class="poetry-gallery" id="poetry-gallery">
@@ -1529,7 +1752,248 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+<script>
+// Dropdown functionality - COMPLETELY FIXED
+(function() {
+  // Wait for page to load
+  function initDropdown() {
+    const dropdown = document.querySelector('.dropdown');
+    if (!dropdown) {
+      console.log('Dropdown not found');
+      return;
+    }
+    
+    // Get the Community link (direct child a tag)
+    const dropdownLink = dropdown.children[0];
+    if (!dropdownLink || dropdownLink.tagName !== 'A') {
+      console.log('Dropdown link not found');
+      return;
+    }
+    
+    // Add click handler to the Community link
+    dropdownLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Toggle active class
+      dropdown.classList.toggle('active');
+    });
+    
+    // Close dropdown when clicking elsewhere
+    document.body.addEventListener('click', function(e) {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('active');
+      }
+    });
+    
+    // Handle Competitions click
+    const dropdownContent = dropdown.querySelector('.dropdown-content');
+    if (dropdownContent) {
+      const links = dropdownContent.querySelectorAll('a');
+      if (links[0]) {
+        links[0].addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          dropdown.classList.remove('active');
+          alert('🏆 Competitions coming soon! Stay tuned.');
+        });
+      }
+      if (links[1]) {
+        links[1].addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          dropdown.classList.remove('active');
+          alert('👥 Groups coming soon! Stay tuned.');
+        });
+      }
+    }
+  }
+  
+  // Run when page loads
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDropdown);
+  } else {
+    initDropdown();
+  }
+})();
+</script>
+<style>
+/* Dropdown styles - make sure these exist */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown > a {
+  cursor: pointer;
+  text-decoration: none;
+    color: #4b2aad  !important;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 180px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  z-index: 9999;
+  top: 100%;
+  left: 0;
+  margin-top: 5px;
+}
+
+.dropdown.active .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 12px 16px !important;
+  color: #4b2aad  !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-content a:last-child {
+  border-bottom: none;
+}
+
+.dropdown-content a:hover {
+  background-color: #f5f0ff !important;
+  color: #4b2aad !important;
+}
+
+/* Mobile fix */
+@media (max-width: 768px) {
+  .dropdown-content {
+    position: static;
+    box-shadow: none;
+    margin-left: 20px;
+    width: calc(100% - 40px);
+  }
+}
+</style>
+
+<!-- Logout Toggle Functionality -->
+<script>
+(function() {
+  // Simulated auth state (true = signed in)
+  let isLoggedIn = true;
+  const currentUsername = "RenceBlunt";
+
+  // DOM elements
+  const usernameDesktop = document.getElementById('username-display');
+  const usernameMobile = document.getElementById('username-display-sm');
+  const logoutDesktopBtn = document.getElementById('logout-desktop-btn');
+  const mobileMenuLogoutBtn = document.getElementById('mobile-menu-logout-btn');
+  const loginLink = document.getElementById('login-link');
+
+  // Function to update UI based on login state
+  function updateAuthUI() {
+    if (isLoggedIn) {
+      // Show usernames
+      if (usernameDesktop) {
+        usernameDesktop.textContent = currentUsername;
+        usernameDesktop.style.display = (window.innerWidth <= 768) ? 'none' : 'inline-block';
+      }
+      if (usernameMobile) {
+        usernameMobile.textContent = currentUsername;
+        usernameMobile.style.display = (window.innerWidth <= 768) ? 'inline-block' : 'none';
+      }
+      
+      // Hide desktop logout button initially (will be toggled by click)
+      if (logoutDesktopBtn) logoutDesktopBtn.classList.add('hide-logout');
+      
+      // Show mobile logout button INSIDE menu
+      if (mobileMenuLogoutBtn) mobileMenuLogoutBtn.style.display = 'block';
+      
+      // Hide login link
+      if (loginLink) loginLink.style.display = 'none';
+    } else {
+      // Hide usernames
+      if (usernameDesktop) usernameDesktop.style.display = 'none';
+      if (usernameMobile) usernameMobile.style.display = 'none';
+      
+      // Hide logout buttons
+      if (logoutDesktopBtn) logoutDesktopBtn.classList.add('hide-logout');
+      if (mobileMenuLogoutBtn) mobileMenuLogoutBtn.style.display = 'none';
+      
+      // Show login link
+      if (loginLink) loginLink.style.display = 'inline-block';
+    }
+  }
+
+  // Desktop: click username toggles logout button on its right
+  let desktopMenuOpen = false;
+  function closeDesktopLogout() {
+    if (logoutDesktopBtn) logoutDesktopBtn.classList.add('hide-logout');
+    desktopMenuOpen = false;
+  }
+  
+  if (usernameDesktop) {
+    usernameDesktop.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (!isLoggedIn) return;
+      if (window.innerWidth <= 768) return;
+      
+      if (desktopMenuOpen) {
+        closeDesktopLogout();
+      } else {
+        logoutDesktopBtn.classList.remove('hide-logout');
+        desktopMenuOpen = true;
+      }
+    });
+  }
+  
+  // Click outside to close desktop logout
+  document.addEventListener('click', function(e) {
+    const wrapper = document.querySelector('.desktop-logout-wrapper');
+    if (wrapper && !wrapper.contains(e.target) && desktopMenuOpen) {
+      closeDesktopLogout();
+    }
+  });
+  
+  // Desktop logout button action
+  if (logoutDesktopBtn) {
+    logoutDesktopBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      isLoggedIn = false;
+      updateAuthUI();
+      closeDesktopLogout();
+    });
+  }
+  
+  // Mobile menu logout button action
+  if (mobileMenuLogoutBtn) {
+    mobileMenuLogoutBtn.addEventListener('click', function() {
+      isLoggedIn = false;
+      updateAuthUI();
+      // Close mobile menu after logout
+      const navLinksMenu = document.getElementById('nav-links');
+      if (navLinksMenu) navLinksMenu.classList.remove('show');
+    });
+  }
+  
+  // Login link - just opens users-login.html (no simulation)
+  // The href already points to users-login.html, so no extra handler needed
+  
+  // Handle window resize
+  window.addEventListener('resize', function() {
+    if (isLoggedIn) {
+      if (usernameDesktop) usernameDesktop.style.display = (window.innerWidth <= 768) ? 'none' : 'inline-block';
+      if (usernameMobile) usernameMobile.style.display = (window.innerWidth <= 768) ? 'inline-block' : 'none';
+      if (mobileMenuLogoutBtn) mobileMenuLogoutBtn.style.display = (window.innerWidth <= 768) ? 'block' : 'none';
+    }
+    if (desktopMenuOpen) closeDesktopLogout();
+  });
+  
+  // Initial UI setup
+  updateAuthUI();
+})();
+</script>
 
 </body>
 </html>
-
