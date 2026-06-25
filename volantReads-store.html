@@ -2827,6 +2827,285 @@
         .nav-right .btn-cart-header {
             display: inline-flex !important;
         }
+/* ===== REMOVE CART TEXT, KEEP ONLY ICON WITH BADGE ON 480px AND BELOW ===== */
+@media (max-width: 480px) {
+    /* Keep logo and text as first version */
+    .logo {
+        font-size: 1.1rem !important;
+        gap: 0.4rem !important;
+        padding-left: 0 !important;
+        flex-shrink: 0 !important;
+        min-width: auto !important;
+    }
+    
+    .logo-text {
+        font-size: 1.1rem !important;
+        display: inline-block !important;
+        white-space: nowrap !important;
+        letter-spacing: 0.3px !important;
+    }
+    
+    .logo-highlight {
+        font-weight: 700 !important;
+        opacity: 1 !important;
+    }
+    
+    .nav-logo-img {
+        width: 20px !important;
+        height: 20px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    /* INCREASE Submit button */
+    .btn-submit {
+        font-size: 0.65rem !important;
+        padding: 0.2rem 0.55rem !important;
+        border-radius: 4px !important;
+        font-weight: 600 !important;
+    }
+    
+    .btn-submit i {
+        font-size: 0.55rem !important;
+        margin-right: 2px !important;
+    }
+    
+    /* CART BUTTON - Slightly smaller */
+    .btn-cart-header {
+        font-size: 0 !important;
+        padding: 0.15rem 0.35rem !important;  /* Reduced padding */
+        border-radius: 4px !important;
+        font-weight: 600 !important;
+        min-width: 26px !important;  /* Reduced from 32px */
+        min-height: 26px !important;  /* Reduced from 32px */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: relative !important;
+    }
+    
+    .btn-cart-header i {
+        font-size: 0.85rem !important;  /* Reduced from 1rem */
+        margin-right: 0 !important;
+        color: #fff !important;
+    }
+    
+    /* Hide ONLY the "Cart" text */
+    .btn-cart-header .cart-text {
+        display: none !important;
+    }
+    
+    .btn-cart-header {
+        font-size: 0 !important;
+        line-height: 1 !important;
+    }
+    
+    .btn-cart-header i {
+        font-size: 0.85rem !important;
+        line-height: 1 !important;
+    }
+    
+    /* Cart badge - Slightly smaller */
+    .cart-count {
+        font-size: 0.5rem !important;  /* Reduced from 0.6rem */
+        padding: 0px 4px !important;  /* Reduced padding */
+        min-width: 14px !important;  /* Reduced from 18px */
+        height: 14px !important;  /* Reduced from 18px */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        top: -5px !important;  /* Adjusted position */
+        right: -5px !important;  /* Adjusted position */
+        font-weight: 700 !important;
+        position: absolute !important;
+        background: #ff4444 !important;
+        color: #fff !important;
+        border-radius: 50% !important;
+        border: 1.5px solid var(--secondary, #b76e4b) !important;  /* Thinner border */
+        z-index: 5 !important;
+        font-size: 0.5rem !important;
+        text-indent: 0 !important;
+        line-height: 1 !important;
+    }
+    
+    /* Make sure the count shows even when empty (show 0) */
+    .cart-count:empty {
+        display: none !important;
+    }
+    
+    /* Keep Sign In button consistent */
+    .btn-signin {
+        font-size: 0.65rem !important;
+        padding: 0.2rem 0.55rem !important;
+        border-radius: 4px !important;
+        font-weight: 600 !important;
+    }
+    
+    .btn-signin i {
+        font-size: 0.55rem !important;
+        margin-right: 2px !important;
+    }
+    
+    .profile-avatar {
+        width: 18px !important;
+        height: 18px !important;
+        font-size: 0.55rem !important;
+    }
+    
+    nav {
+        padding: 0 0.4rem !important;
+        gap: 0.2rem !important;
+    }
+    
+    .search-container {
+        max-width: 50px !important;
+        flex-shrink: 1 !important;
+    }
+    
+    .search-container input {
+        font-size: 0.45rem !important;
+        padding: 0.1rem 0.2rem !important;
+        min-width: 35px !important;
+    }
+    
+    .nav-right {
+        gap: 0.2rem !important;
+        padding-right: 0 !important;
+    }
+    
+    .logo-text .logo-highlight {
+        display: inline !important;
+    }
+    
+    .logo {
+        overflow: visible !important;
+    }
+    
+    header {
+        height: 44px !important;
+    }
+}
+/* ===== INCREASE FOOTER TEXT SIZE ON 480px AND BELOW ===== */
+@media (max-width: 480px) {
+    /* Increase footer heading text */
+    .volant-footer-col h4.volant-footer-heading {
+        font-size: 1rem !important;
+        margin-bottom: 0.6rem !important;
+        padding-bottom: 0.4rem !important;
+    }
+    
+    /* Increase footer link text */
+    .volant-footer-links li a,
+    .volant-footer-payment-list li,
+    .volant-footer-contact-list li {
+        font-size: 0.85rem !important;
+    }
+    
+    /* Increase footer description text */
+    .volant-footer-desc {
+        font-size: 0.85rem !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* Increase footer brand name */
+    .volant-footer-brand .volant-footer-logo span {
+        font-size: 1.1rem !important;
+    }
+    
+    /* Increase footer bottom text */
+    #volant-footer-bottom p {
+        font-size: 0.80rem !important;
+    }
+    
+    /* Increase contact list items */
+    .volant-footer-contact-list li {
+        font-size: 0.85rem !important;
+    }
+    
+    /* Increase payment list items */
+    .volant-footer-payment-list li {
+        font-size: 0.85rem !important;
+    }
+}
+/* ===== INCREASE BOOK PRICE AND SUBTITLE SIZE ON 480px AND BELOW ===== */
+@media (max-width: 480px) {
+    /* Increase book price */
+    .book-card .book-price,
+    #new-books .book-card .book-price {
+        font-size: 0.8rem !important;  /* Increased from 0.6rem */
+        font-weight: 700 !important;
+    }
+    
+    /* Increase book subtitle */
+    .book-card .book-subtitle,
+    #new-books .book-card .book-subtitle {
+        font-size: 0.75rem !important;  /* Increased from 0.55rem */
+        font-style: italic !important;
+        margin-bottom: 0.1rem !important;
+    }
+}
+
+/* ===== MATCH NEW BOOKS SECTION WITH MAIN CONTENT ON 480px AND BELOW ===== */
+@media (max-width: 480px) {
+    /* Match new books title with main content - INCREASED SIZE */
+    #new-books .book-card .book-title {
+        font-size: 0.85rem !important;  /* Increased from 0.7rem */
+        -webkit-line-clamp: 2 !important;
+        line-clamp: 2 !important;
+        font-family: 'Playfair Display', serif !important;
+        font-weight: 600 !important;
+        color: var(--text-dark, #2d2a24) !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.05rem !important;
+        display: -webkit-box !important;
+        -webkit-box-orient: vertical !important;
+        box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+    
+    /* Match new books subtitle with main content - INCREASED SIZE */
+    #new-books .book-card .book-subtitle {
+        font-size: 0.7rem !important;  /* Increased from 0.55rem */
+        font-style: italic !important;
+        color: var(--text-light, #8a7b6a) !important;
+        margin-bottom: 0.05rem !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 1 !important;
+        line-clamp: 1 !important;
+        -webkit-box-orient: vertical !important;
+        box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+    
+    /* Match new books price with main content - INCREASED SIZE */
+    #new-books .book-card .book-price {
+        font-size: 0.75rem !important;  /* Increased from 0.6rem */
+        font-weight: 700 !important;
+        color: var(--primary, #4b2aad) !important;
+        margin-top: 0.05rem !important;
+    }
+    
+    /* Match new books author with main content - INCREASED SIZE */
+    #new-books .book-card .book-author {
+        font-size: 0.7rem !important;  /* Increased from 0.6rem */
+        color: var(--text-muted, #6f6252) !important;
+        margin-bottom: 0.05rem !important;
+    }
+    
+    /* Match new books author icon */
+    #new-books .book-card .book-author i {
+        font-size: 0.6rem !important;
+        color: var(--secondary, #b76e4b) !important;
+        margin-right: 2px !important;
+        display: none !important;  /* Keep hidden as per your existing CSS */
+    }
+    
+    /* Match new books body padding with main content */
+    #new-books .book-card .book-body {
+        padding: 0.4rem 0.1rem 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+}
     </style>
 </head>
 <body>

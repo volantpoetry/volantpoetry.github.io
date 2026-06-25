@@ -1184,6 +1184,163 @@
     @media (max-width: 480px) {
       .logo-text { font-size: 1.4rem; }
     }
+    /* ===== REMOVE CART TEXT, KEEP ONLY ICON WITH BADGE ON 480px AND BELOW ===== */
+@media (max-width: 480px) {
+    /* Keep logo and text as first version */
+    .logo {
+        font-size: 1.1rem !important;
+        gap: 0.4rem !important;
+        padding-left: 0 !important;
+        flex-shrink: 0 !important;
+        min-width: auto !important;
+    }
+    
+    .logo-text {
+        font-size: 1.1rem !important;
+        display: inline-block !important;
+        white-space: nowrap !important;
+        letter-spacing: 0.3px !important;
+    }
+    
+    .logo-highlight {
+        font-weight: 700 !important;
+        opacity: 1 !important;
+    }
+    
+    .nav-logo-img {
+        width: 20px !important;
+        height: 20px !important;
+        flex-shrink: 0 !important;
+    }
+    
+    /* INCREASE Submit button */
+    .btn-submit {
+        font-size: 0.65rem !important;
+        padding: 0.2rem 0.55rem !important;
+        border-radius: 4px !important;
+        font-weight: 600 !important;
+    }
+    
+    .btn-submit i {
+        font-size: 0.55rem !important;
+        margin-right: 2px !important;
+    }
+    
+    /* CART BUTTON - Slightly smaller */
+    .btn-cart-header {
+        font-size: 0 !important;
+        padding: 0.15rem 0.35rem !important;  /* Reduced padding */
+        border-radius: 4px !important;
+        font-weight: 600 !important;
+        min-width: 26px !important;  /* Reduced from 32px */
+        min-height: 26px !important;  /* Reduced from 32px */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: relative !important;
+    }
+    
+    .btn-cart-header i {
+        font-size: 0.85rem !important;  /* Reduced from 1rem */
+        margin-right: 0 !important;
+        color: #fff !important;
+    }
+    
+    /* Hide ONLY the "Cart" text */
+    .btn-cart-header .cart-text {
+        display: none !important;
+    }
+    
+    .btn-cart-header {
+        font-size: 0 !important;
+        line-height: 1 !important;
+    }
+    
+    .btn-cart-header i {
+        font-size: 0.85rem !important;
+        line-height: 1 !important;
+    }
+    
+    /* Cart badge - Slightly smaller */
+    .cart-count {
+        font-size: 0.5rem !important;  /* Reduced from 0.6rem */
+        padding: 0px 4px !important;  /* Reduced padding */
+        min-width: 14px !important;  /* Reduced from 18px */
+        height: 14px !important;  /* Reduced from 18px */
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        top: -5px !important;  /* Adjusted position */
+        right: -5px !important;  /* Adjusted position */
+        font-weight: 700 !important;
+        position: absolute !important;
+        background: #ff4444 !important;
+        color: #fff !important;
+        border-radius: 50% !important;
+        border: 1.5px solid var(--secondary, #b76e4b) !important;  /* Thinner border */
+        z-index: 5 !important;
+        font-size: 0.5rem !important;
+        text-indent: 0 !important;
+        line-height: 1 !important;
+    }
+    
+    /* Make sure the count shows even when empty (show 0) */
+    .cart-count:empty {
+        display: none !important;
+    }
+    
+    /* Keep Sign In button consistent */
+    .btn-signin {
+        font-size: 0.65rem !important;
+        padding: 0.2rem 0.55rem !important;
+        border-radius: 4px !important;
+        font-weight: 600 !important;
+    }
+    
+    .btn-signin i {
+        font-size: 0.55rem !important;
+        margin-right: 2px !important;
+    }
+    
+    .profile-avatar {
+        width: 18px !important;
+        height: 18px !important;
+        font-size: 0.55rem !important;
+    }
+    
+    nav {
+        padding: 0 0.4rem !important;
+        gap: 0.2rem !important;
+    }
+    
+    .search-container {
+        max-width: 50px !important;
+        flex-shrink: 1 !important;
+    }
+    
+    .search-container input {
+        font-size: 0.45rem !important;
+        padding: 0.1rem 0.2rem !important;
+        min-width: 35px !important;
+    }
+    
+    .nav-right {
+        gap: 0.2rem !important;
+        padding-right: 0 !important;
+    }
+    
+    .logo-text .logo-highlight {
+        display: inline !important;
+    }
+    
+    .logo {
+        overflow: visible !important;
+    }
+    
+    header {
+        height: 44px !important;
+    }
+}
   </style>
 </head>
 <body>
