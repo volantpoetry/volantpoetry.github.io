@@ -10,8 +10,8 @@
   <!-- Styles & Icons -->
   <link rel="stylesheet" href="style.css" />
 <!-- Favicons -->
-<link rel="icon" type="image/png" href="images/logo.png">
-<link rel="apple-touch-icon" href="images/logo.png">
+<link rel="icon" type="image/png" href="images/volant-favicon.png">
+<link rel="apple-touch-icon" href="images/volant-favicon.png">
 
   <!-- SEO -->
   <meta name="google-site-verification" content="soceiczGrFx4It0-P5sYiqRyMMycbq-GsCQ3yOh84hY" />
@@ -1089,6 +1089,36 @@
 .username-display, .username-sm {
   font-weight: bold !important;
 }
+.btn-bookstore {
+  padding: 0.4rem 1.2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.85rem;
+  background: #b76e4b;
+  color: #fff;
+  transition: 0.3s;
+  white-space: nowrap;
+  display: inline-block;
+}
+.btn-bookstore:hover {
+  background: #9f5e3f;
+  transform: translateY(-2px);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .btn-bookstore {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.7rem;
+  }
+}
+@media (max-width: 480px) {
+  .btn-bookstore {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
 </style>
 
 </head>
@@ -1124,7 +1154,8 @@
       </a>
     </div>
   </div>
-       <a href="contact.html">Contact Us</a> 
+       <a href="contact.html">Contact Us</a>
+         <a href="volantReads-store.html">📚 Bookstore</a>
         <a href="user-profile.html">My Profile</a>
           <a href="all-categories.html" class="mobile-only">Categories</a>
       

@@ -6,8 +6,8 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Terms & Conditions | Volant Poetry</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" href="images/logo.png" />
-<link rel="apple-touch-icon" href="images/logo.png" />
+<link rel="icon" type="image/png" href="images/volant-favicon.png">
+<link rel="apple-touch-icon" href="images/volant-favicon.png">
 <style>
   :root {
     --primary: #4b2aad;
@@ -38,7 +38,6 @@
     line-height: 1.6;
   }
 
-  /* Header */
   .page-header {
     background: var(--bg-card);
     border-bottom: 2px solid var(--border-gold);
@@ -70,14 +69,12 @@
     text-decoration: underline;
   }
 
-  /* Main Container */
   .terms-container {
     max-width: 920px;
     margin: 2rem auto;
     padding: 0 1.5rem;
   }
 
-  /* Content Card */
   .terms-card {
     background: var(--bg-card);
     border-radius: 0;
@@ -90,7 +87,6 @@
     padding: 2.5rem 3rem;
   }
 
-  /* Intro */
   .terms-intro {
     font-size: 1rem;
     color: var(--text-secondary);
@@ -104,7 +100,6 @@
     font-weight: 600;
   }
 
-  /* Sections */
   .terms-section {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
@@ -131,7 +126,6 @@
     margin-bottom: 0.75rem;
   }
 
-  /* Standard bullet points (circular dots) */
   .terms-section ul {
     margin: 0.75rem 0 0.5rem 0;
     list-style: none;
@@ -155,33 +149,6 @@
     top: 0;
   }
 
-  /* Numbered list style */
-  .numbered-list {
-    margin: 0.75rem 0 0.5rem 0;
-    list-style: none;
-    padding-left: 0;
-  }
-
-  .numbered-list li {
-    margin-bottom: 0.6rem;
-    padding-left: 1.8rem;
-    position: relative;
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    counter-increment: step-counter;
-  }
-
-  .numbered-list li::before {
-    content: counter(step-counter) ".";
-    color: var(--primary);
-    font-weight: 500;
-    font-size: 0.85rem;
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-
-  /* Highlight styles */
   .highlight {
     color: var(--primary);
     font-weight: 600;
@@ -197,7 +164,6 @@
     font-weight: 500;
   }
 
-  /* Closing note */
   .closing-note {
     background: #faf9fe;
     border-left: 3px solid var(--accent-gold);
@@ -212,7 +178,6 @@
     font-style: normal;
   }
 
-  /* Footer */
   .page-footer {
     background: var(--bg-card);
     border-top: 1px solid var(--border-light);
@@ -232,7 +197,6 @@
     text-decoration: none;
   }
 
-  /* Responsive */
   @media (max-width: 768px) {
     .page-header {
       padding: 1.8rem 1rem 1.2rem;
@@ -279,9 +243,9 @@
     }
   }
 
-  /* Print styles */
   @media print {
-    .page-header, .page-footer {
+    .page-header,
+    .page-footer {
       background: none;
       border: none;
     }
@@ -299,6 +263,9 @@
 
 <div class="page-header">
   <h1>Terms & Conditions</h1>
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> / <a href="about.html">About</a> / Terms & Conditions
+  </div>
 </div>
 
 <div class="terms-container">
@@ -351,7 +318,24 @@
       </div>
 
       <div class="terms-section">
-        <h2>5. Violations & Enforcement</h2>
+        <h2>5. Volant Reads — Publishing & Sales</h2>
+        <p><strong>Volant Reads</strong> is a literary marketplace that empowers independent authors by providing a platform to sell their works while retaining ownership and receiving the majority of sales revenue. The following terms apply to all authors and readers using the Volant Reads platform:</p>
+        <ul>
+          <li><span class="highlight">Authors who publish through Volant Reads receive 90% of net revenue</span> from sales of their works. Net revenue is calculated after payment processing fees, taxes, refunds, and chargebacks.</li>
+          <li><span class="highlight">Payouts are issued monthly</span> to authors based on sales recorded during each monthly period.</li>
+          <li><span class="accent-text">Authors retain full ownership and copyright</span> of their works. Volant Reads is granted permission to display and sell the works.</li>
+          <li><span class="warning">Users may not redistribute purchased ebooks</span> — digital books are for personal use only.</li>
+          <li>Volant Reads may remove content that violates its policies, including but not limited to plagiarized, harmful, or prohibited material.</li>
+          <li>By using Volant Reads, users agree to these terms and acknowledge that continued use constitutes acceptance of any updates.</li>
+        </ul>
+        <p style="margin-top: 0.75rem; font-size: 0.95rem; color: var(--text-muted);">
+          <i style="color: var(--accent-gold-dark);">📌</i> 
+          <em>For more details on author commissions, pricing, and payments, please visit the <a href="publish.html" style="color: var(--primary); text-decoration: underline;">Publish With Us</a> page.</em>
+        </p>
+      </div>
+
+      <div class="terms-section">
+        <h2>6. Violations & Enforcement</h2>
         <ul>
           <li>First time violations typically result in a warning and content removal.</li>
           <li>Repeated violations, duplicate accounts, or severe offenses including harassment and plagiarism will lead to <span class="warning">immediate account termination</span> without prior notice.</li>
@@ -361,17 +345,17 @@
       </div>
 
       <div class="terms-section">
-        <h2>6. Limitation of Liability</h2>
+        <h2>7. Limitation of Liability</h2>
         <p>Volant Poetry is provided "as is" without warranties of any kind. We are not liable for any damages arising from your use of the platform, including but not limited to data loss, service interruptions, or disputes between users.</p>
       </div>
 
       <div class="terms-section">
-        <h2>7. Changes to These Terms</h2>
+        <h2>8. Changes to These Terms</h2>
         <p>We may update these Terms periodically to reflect changes in our practices or legal requirements. Continued use of Volant Poetry after changes are posted constitutes acceptance of the revised Terms. Material changes will be announced via email or platform notification.</p>
       </div>
 
       <div class="closing-note">
-        <p>By participating in Volant Poetry, you help sustain a respectful, authentic, and inspiring space for poets and readers alike. Thank you for being part of our community.</p>
+        <p>By participating in Volant Poetry and Volant Reads, you help sustain a respectful, authentic, and inspiring space for poets, authors, and readers alike. Thank you for being part of our community.</p>
       </div>
     </div>
   </div>

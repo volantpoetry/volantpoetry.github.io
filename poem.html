@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Poem | Volant Poetry</title>
-<link rel="icon" type="image/png" href="images/logo.png">
+<!-- Favicons -->
+<link rel="icon" type="image/png" href="images/volant-favicon.png">
+<link rel="apple-touch-icon" href="images/volant-favicon.png">
 
 <style>
 body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135deg,#fdf6f0,#e2e9f0,#f7f0e5,#e8e0d8); background-size:400% 400%; animation:gradientShift 15s ease infinite; color:#4b3f2f; }
@@ -36,7 +38,19 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
 .comment-input { flex:1; border-radius:8px; border:1px solid #ccc; padding:6px 10px; }
 .comment-btn, .like-btn { border:none; border-radius:8px; padding:6px 12px; background:#4b3f2f; color:#fff; cursor:pointer; }
 .like-btn.liked { background:#e63946; }
-.comment-list { display:flex; flex-direction:column; gap:6px; margin-top:12px; }
+/* Comment list styles - external container that toggles */
+.comments-outer-wrapper {
+  max-width:700px;
+  margin:0 auto;
+  padding:0 20px 40px 20px;
+  display: none; /* hidden by default, toggled by 💬 click */
+}
+.comment-list-external {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-top:12px;
+}
 .comment { background:#f4ede7; border-radius:8px; padding:8px; }
 .home-link { position:absolute; top:20px; right:20px; font-weight:600; color:#e63946; text-decoration:none; font-size:1rem; transition:color 0.3s; z-index:1000; }
 .home-link:hover { color:#e63946; }
@@ -46,10 +60,15 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
   .home-link {
     top: 12px;
     right: 12px;
-    font-size: 0.85rem; /* smaller text */
+    font-size: 0.85rem;
+  }
+  .comments-outer-wrapper {
+    padding:0 16px 40px 16px;
   }
 }
-
+.message-count {
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -73,12 +92,17 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
         </div>
         <button class="like-btn">❤️</button>
         <span class="like-count">0</span>
-        <span class="message-count">💬</span>
+        <span class="message-count" id="messageCountTrigger">💬</span>
       </div>
-      <div class="comment-list"></div>
+      <!-- comment-list removed from here - moved outside poem card below -->
     </div>
   </div>
 </section>
+
+<!-- Comment list moved OUTSIDE the poem card, positioned below it - toggles via 💬 -->
+<div class="comments-outer-wrapper" id="commentsOuterWrapper">
+  <div class="comment-list-external" id="externalCommentList"></div>
+</div>
 
 <a href="index.html" class="home-link">Discover More at Volant Poetry</a>
 
@@ -97,16 +121,146 @@ const slug = params.get("slug");
 const collectionName = params.get("collection") || "recentPoems";
 
 let currentUser = null;
+let currentPoemId = null; // store current poem doc id for comment operations
+let commentsLoadedForPoem = false; // track if comments have been loaded at least once for current poem
+
 const titleEl = document.getElementById("poem-title");
 const contentEl = document.getElementById("poem-content");
 const authorImgEl = document.getElementById("author-img");
 const authorLinkEl = document.getElementById("author-link");
 const poemCard = document.querySelector(".poem-card");
 const interactiveSection = poemCard.querySelector(".interactive-section");
+const commentsOuterWrapper = document.getElementById("commentsOuterWrapper");
+const externalCommentList = document.getElementById("externalCommentList");
+const messageCountTrigger = document.getElementById("messageCountTrigger");
+
+// Helper function to redirect to login page with return URL
+function redirectToLogin() {
+  const currentUrl = encodeURIComponent(window.location.href);
+  window.location.href = `users-login.html?redirect=${currentUrl}`;
+}
+
+// Custom alert that redirects on OK
+function showLoginAlertAndRedirect(message) {
+  if (confirm(message + "\n\nClick OK to sign in.")) {
+    redirectToLogin();
+  }
+}
 
 onAuthStateChanged(auth, user => { currentUser = user; if(slug) loadPoem(slug); });
 
 function slugify(text){ return text.toLowerCase().replace(/\s+/g,"-"); }
+
+// Helper: render comments in the external container (below poem card)
+async function renderCommentsExternal(poemDocId, preserveVisibility = false) {
+  if (!poemDocId) return;
+  
+  try {
+    const commentsSnapshot = await getDocs(collection(db, "recentPoems", poemDocId, "comments"));
+    const commentCount = commentsSnapshot.size;
+    // Update the message count bubble in the poem card
+    const messageCountSpan = poemCard.querySelector(".message-count");
+    if (messageCountSpan) messageCountSpan.textContent = `💬 ${commentCount}`;
+    
+    if (commentsSnapshot.empty) {
+      externalCommentList.innerHTML = "<p style='color:#888; text-align:center; padding:20px;'>No comments yet. Be the first to share your thoughts ✨</p>";
+      return;
+    }
+    
+    const comments = commentsSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    comments.sort((a,b) => { const ta = a.timestamp?.toMillis?.() || 0; const tb = b.timestamp?.toMillis?.() || 0; return ta - tb; });
+    
+    externalCommentList.innerHTML = "";
+    
+    for (const c of comments) {
+      let displayName = c.username || "Anonymous";
+      let userLink = c.userId ? `/user-profile.html?uid=${c.userId}` : "#";
+      const div = document.createElement("div");
+      div.className = "comment";
+      div.dataset.commentId = c.id;
+      div.style.cssText = "background:#fff; padding:8px 12px; margin:6px 0; border-radius:6px;";
+      div.innerHTML = `<a href="${userLink}" style="font-weight:600;color:#a67c52;text-decoration:none;margin-right:6px;">${escapeHtml(displayName)}</a>: ${escapeHtml(c.text)}
+        <div class="comment-actions" style="margin-top:4px;"><small class="reply-toggle" style="color:#5a3cb3; cursor:pointer;">Reply</small></div>
+        <div class="reply-section" style="margin-left:20px;margin-top:6px;"></div>`;
+      externalCommentList.appendChild(div);
+      
+      // Load replies for this comment
+      const repliesCol = collection(db, "recentPoems", poemDocId, "comments", c.id, "replies");
+      const repliesSnap = await getDocs(repliesCol);
+      if (!repliesSnap.empty) {
+        const replySection = div.querySelector(".reply-section");
+        repliesSnap.forEach(r => {
+          const reply = r.data();
+          replySection.innerHTML += `<div style="background:#f7f7f7; padding:6px 10px; border-radius:6px; margin:4px 0;">
+            <a href="/user-profile.html?uid=${reply.userId}" style="font-weight:600; color:#5a3cb3; text-decoration:none;">${escapeHtml(reply.username)}</a>: ${escapeHtml(reply.text)}</div>`;
+        });
+      }
+    }
+    
+    // Attach reply toggle listeners after rendering
+    document.querySelectorAll('.reply-toggle').forEach(toggle => {
+      toggle.removeEventListener('click', handleReplyClick);
+      toggle.addEventListener('click', handleReplyClick);
+    });
+    
+    commentsLoadedForPoem = true;
+    
+  } catch(err) {
+    console.error(err);
+    externalCommentList.innerHTML = "<p style='color:red;'>Failed to load comments.</p>";
+  }
+}
+
+// Handle reply to a comment
+async function handleReplyClick(e) {
+  const target = e.currentTarget;
+  const commentDiv = target.closest(".comment");
+  if (!commentDiv) return;
+  const commentId = commentDiv.dataset.commentId;
+  if (!commentId || !currentPoemId) return;
+  if (!currentUser) {
+    showLoginAlertAndRedirect("Please sign in to reply!");
+    return;
+  }
+  
+  const replyText = prompt("Write your reply:");
+  if (!replyText || !replyText.trim()) return;
+  
+  try {
+    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+    const username = userDoc.exists() ? (userDoc.data().username || currentUser.email) : "Anonymous";
+    
+    await addDoc(collection(db, "recentPoems", currentPoemId, "comments", commentId, "replies"), {
+      userId: currentUser.uid,
+      username: username,
+      text: replyText.trim(),
+      timestamp: new Date()
+    });
+    
+    // Re-render comments to show new reply (preserve current visibility state)
+    const wasVisible = commentsOuterWrapper.style.display === "block";
+    await renderCommentsExternal(currentPoemId);
+    // Keep visibility as is after reply
+    if (wasVisible) {
+      commentsOuterWrapper.style.display = "block";
+    } else {
+      commentsOuterWrapper.style.display = "none";
+    }
+  } catch(err) {
+    console.error(err);
+    alert("Failed to post reply.");
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === "&") return "&amp;";
+    if (m === "<") return "&lt;";
+    if (m === ">") return "&gt;";
+    return m;
+  });
+}
 
 async function loadPoem(slug){
   const snapshot = await getDocs(collection(db, collectionName));
@@ -141,22 +295,61 @@ async function loadPoem(slug){
       if(collectionName==="recentPoems" && !data.isFeatured){
         interactiveSection.style.display="flex";
         poemCard.dataset.id = snap.id;
-
+        currentPoemId = snap.id; // store for later comment operations
+        
+        // Initially comments are hidden (default CSS display:none)
+        commentsOuterWrapper.style.display = "none";
+        commentsLoadedForPoem = false;
+        
         // Likes
         const likeBtn = poemCard.querySelector(".like-btn");
         const likeCount = poemCard.querySelector(".like-count");
         likeCount.textContent = data.likes||0;
         if(currentUser && data.likedBy?.includes(currentUser.uid)) likeBtn.classList.add("liked");
-
-        // Comment count
-        const commentList = poemCard.querySelector(".comment-list");
-        const commentsSnapshot = await getDocs(collection(db,"recentPoems",snap.id,"comments"));
-        poemCard.querySelector(".message-count").textContent = `💬 ${commentsSnapshot.size}`;
+        
+        // Preload comments data but keep hidden (so when toggled they appear instantly)
+        await renderCommentsExternal(snap.id);
+        // Ensure it stays hidden after preload
+        commentsOuterWrapper.style.display = "none";
+        
+      } else {
+        // For featured poems or other collections, hide interactive and comments wrapper
+        interactiveSection.style.display = "none";
+        commentsOuterWrapper.style.display = "none";
       }
       return;
     }
   }
   titleEl.textContent="Poem not found"; contentEl.textContent=""; authorImgEl.src="/images/default-avatar.png"; authorLinkEl.href="#"; authorLinkEl.textContent="";
+  interactiveSection.style.display = "none";
+  commentsOuterWrapper.style.display = "none";
+}
+
+// --- Toggle comment section visibility when 💬 is clicked (show/collapse below poem card) ---
+function toggleCommentSection() {
+  if (!currentPoemId) return;
+  
+  // If comments are currently hidden, show them
+  if (commentsOuterWrapper.style.display === "none" || commentsOuterWrapper.style.display === "") {
+    // Ensure comments are loaded before showing (just in case)
+    if (!commentsLoadedForPoem && currentPoemId) {
+      renderCommentsExternal(currentPoemId).then(() => {
+        commentsOuterWrapper.style.display = "block";
+        // Smooth scroll to comments after showing
+        setTimeout(() => {
+          commentsOuterWrapper.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
+      });
+    } else {
+      commentsOuterWrapper.style.display = "block";
+      setTimeout(() => {
+        commentsOuterWrapper.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
+    }
+  } else {
+    // Collapse/hide comments
+    commentsOuterWrapper.style.display = "none";
+  }
 }
 
 // --- Like / Comment Handler ---
@@ -164,8 +357,11 @@ document.addEventListener("click", async e=>{
   const user = auth.currentUser;
 
   // Like / Unlike
- if(e.target.classList.contains("like-btn")){
-    if(!user){ alert("Please sign in to like poems!"); return; }
+  if(e.target.classList.contains("like-btn")){
+    if(!user){ 
+      showLoginAlertAndRedirect("Please sign in to like poems!");
+      return; 
+    }
     const card = e.target.closest(".poem-card");
     const docId = card.dataset.id;
     const countSpan = card.querySelector(".like-count");
@@ -181,7 +377,7 @@ document.addEventListener("click", async e=>{
 
         if(likedBy.includes(user.uid)){
             // Unlike (remove their like)
-            const newLikes = Math.max(likes - 1, 0); // never below 0
+            const newLikes = Math.max(likes - 1, 0);
             await updateDoc(poemRef,{
                 likes: newLikes,
                 likedBy: likedBy.filter(uid => uid !== user.uid)
@@ -189,7 +385,7 @@ document.addEventListener("click", async e=>{
             likeBtn.classList.remove("liked");
             countSpan.textContent = newLikes;
         } else {
-            // Like (only if not already liked)
+            // Like
             const newLikes = likes + 1;
             await updateDoc(poemRef,{
                 likes: newLikes,
@@ -200,82 +396,70 @@ document.addEventListener("click", async e=>{
         }
 
     }catch(err){ console.error(err); }
-}
-
-  // Toggle comment list
-  if(e.target.classList.contains("message-count")){
-    const card = e.target.closest(".poem-card");
-    const docId = card.dataset.id;
-    const commentList = card.querySelector(".comment-list");
-    const isVisible = commentList.style.display==="flex";
-    commentList.style.display = isVisible?"none":"flex";
-    if(isVisible) return;
-
-    commentList.innerHTML="<p style='color:#888;'>Loading comments...</p>";
-    try{
-      const commentsSnapshot = await getDocs(collection(db,"recentPoems",docId,"comments"));
-      commentList.innerHTML="";
-      if(commentsSnapshot.empty){ commentList.innerHTML="<p style='color:#888;'>No comments yet.</p>"; return; }
-
-      const comments = commentsSnapshot.docs.map(d=>({ id:d.id, ...d.data() }));
-      comments.sort((a,b)=>{ const ta=a.timestamp?.toMillis?.()||0; const tb=b.timestamp?.toMillis?.()||0; return ta-tb; });
-
-      for(const c of comments){
-        let displayName = c.username||"Anonymous";
-        let userLink = c.userId?`/user-profile.html?uid=${c.userId}`:"#";
-        const div = document.createElement("div");
-        div.className="comment"; div.dataset.commentId=c.id;
-        div.style.cssText="background:#fff; padding:8px 12px; margin:6px 0; border-radius:6px;";
-        div.innerHTML = `<a href="${userLink}" style="font-weight:600;color:#a67c52;text-decoration:none;margin-right:6px;">${displayName}</a>: ${c.text}
-          <div class="comment-actions" style="margin-top:4px;"><small class="reply-toggle" style="color:#5a3cb3; cursor:pointer;">Reply</small></div>
-          <div class="reply-section" style="margin-left:20px;margin-top:6px;"></div>`;
-        commentList.appendChild(div);
-
-        // Load replies
-        const repliesCol = collection(db,"recentPoems",docId,"comments",c.id,"replies");
-        const repliesSnap = await getDocs(repliesCol);
-        if(!repliesSnap.empty){
-          const replySection = div.querySelector(".reply-section");
-          repliesSnap.forEach(r=>{
-            const reply = r.data();
-            replySection.innerHTML+=`<div style="background:#f7f7f7; padding:6px 10px; border-radius:6px; margin:4px 0;">
-              <a href="/user-profile.html?uid=${reply.userId}" style="font-weight:600; color:#5a3cb3; text-decoration:none;">${reply.username}</a>: ${reply.text}</div>`;
-          });
-        }
-      }
-
-    }catch(err){ console.error(err); commentList.innerHTML="<p style='color:red;'>Failed to load comments.</p>"; }
   }
 
-  // Post comment
+  // Toggle comment list visibility when 💬 (message-count) is clicked - now shows/collapses below
+  if(e.target.classList.contains("message-count") || e.target.id === "messageCountTrigger" || e.target.closest(".message-count")){
+    toggleCommentSection();
+    return;
+  }
+
+  // Post comment - updates external container and keeps comments visible if they were visible
   if(e.target.classList.contains("comment-btn")){
-    if(!user){ alert("Please sign in to comment!"); return; }
+    if(!user){ 
+      showLoginAlertAndRedirect("Please sign in to comment!");
+      return; 
+    }
     const card = e.target.closest(".poem-card");
     const docId = card.dataset.id;
     const input = card.querySelector(".comment-input");
-    const commentList = card.querySelector(".comment-list");
     const text = input.value.trim();
     if(!text) return;
+    
+    if(!currentPoemId && docId) currentPoemId = docId;
 
     try{
       const userDoc = await getDoc(doc(db,"users",user.uid));
-      const username = userDoc.exists()?userDoc.data().username||user.email:"Anonymous";
+      const username = userDoc.exists() ? (userDoc.data().username || user.email) : "Anonymous";
 
-      await addDoc(collection(db,"recentPoems",docId,"comments"),{ userId:user.uid, username, text, timestamp:new Date() });
+      await addDoc(collection(db,"recentPoems",docId,"comments"),{ 
+        userId: user.uid, 
+        username, 
+        text, 
+        timestamp: new Date() 
+      });
 
-      const div = document.createElement("div");
-      div.className="comment";
-      div.style.cssText="background:#f0f0f0; padding:8px 12px; margin:6px 0; border-radius:6px;";
-      div.innerHTML=`<a href="user-profile.html?uid=${encodeURIComponent(user.uid)}" class="comment-author-link">${username}</a>: ${text}`;
-      commentList.prepend(div);
-      input.value="";
-
-      const commentsSnapshot = await getDocs(collection(db,"recentPoems",docId,"comments"));
-      card.querySelector(".message-count").textContent=`💬 ${commentsSnapshot.size}`;
-    }catch(err){ console.error(err); }
+      // Clear input
+      input.value = "";
+      
+      // Remember if comments were visible before re-render
+      const wasVisible = (commentsOuterWrapper.style.display === "block");
+      
+      // Re-render comments in external container
+      await renderCommentsExternal(docId);
+      
+      // After posting, if comments were visible, keep them visible; if they were hidden, keep hidden.
+      // But also if they were hidden but user just posted, it's nice to show comments automatically.
+      if (wasVisible || true) {
+        // Automatically show comments after posting a new comment (better UX)
+        commentsOuterWrapper.style.display = "block";
+        // Scroll to comments to see the new post
+        commentsOuterWrapper.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        commentsOuterWrapper.style.display = "none";
+      }
+      
+    } catch(err){ console.error(err); alert("Failed to post comment."); }
   }
-
 });
+
+// Also attach click handler directly to message count element for reliability
+if (messageCountTrigger) {
+  messageCountTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleCommentSection();
+  });
+}
 </script>
 
 </body>

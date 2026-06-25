@@ -3,49 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About | Volant Poetry</title>
+  <title>About | Volant Poetry Community</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="about.css" />
-  <link rel="icon" type="image/png" href="images/logo.png" />
+  <link rel="icon" type="image/png" href="images/volant-favicon.png" />
 
-  <!-- SEO Meta Tags -->
-  <meta name="author" content="Rence Blunt">
-  <meta name="description" content="Official author page of Rence Blunt — poet and founder of Volant Poetry. Explore his journey, mission, and the story behind his works.">
-  <meta name="keywords" content="Rence Blunt, Volant Poetry, poet, poems, writer, modern poetry, poetry website, about poet, poetry mission, poem ranking, poet ranking">
+  <!-- SEO Meta Tags - Community Focus -->
+  <meta name="description" content="Volant Poetry is a community-driven platform for poets, writers, and readers to share, discover, and celebrate poetry and literary works.">
+  <meta name="keywords" content="Volant Poetry, community poetry, poets, writers, poetry platform, literary community, share poems, poetry community">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="About Rence Blunt | Volant Poetry">
-  <meta property="og:description" content="Rence Blunt — poet and founder of Volant Poetry. Explore his story, poetry, and mission.">
-  <meta property="og:image" content="https://volantpoetry.github.io/images/renceblunt.jpg">
-  <meta property="og:type" content="profile">
+  <meta property="og:title" content="About | Volant Poetry Community">
+  <meta property="og:description" content="Volant Poetry is a community-driven platform for poets, writers, and readers to share, discover, and celebrate poetry.">
+  <meta property="og:image" content="https://volantpoetry.github.io/images/volant-og.jpg">
+  <meta property="og:type" content="website">
   <meta property="og:url" content="https://volantpoetry.github.io/about.html">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="About Rence Blunt | Volant Poetry">
-  <meta name="twitter:description" content="Official author page of Rence Blunt — poet and founder of Volant Poetry.">
-  <meta name="twitter:image" content="https://volantpoetry.github.io/images/renceblunt.jpg">
+  <meta name="twitter:title" content="About | Volant Poetry Community">
+  <meta name="twitter:description" content="Volant Poetry is a community-driven platform for poets, writers, and readers to share, discover, and celebrate poetry.">
+  <meta name="twitter:image" content="https://volantpoetry.github.io/images/volant-og.jpg">
 
   <!-- Canonical -->
   <link rel="canonical" href="https://volantpoetry.github.io/about.html">
-  <link rel="author" href="https://volantpoetry.github.io/about.html">
 
-  <!-- Structured Data -->
+  <!-- Structured Data - Community Organization -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Rence Blunt",
-    "url": "https://volantpoetry.github.io/about.html",
-    "image": "https://volantpoetry.github.io/images/renceblunt.jpg",
-    "jobTitle": "Poet & Founder of Volant Poetry",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "Volant Poetry",
-      "url": "https://volantpoetry.github.io"
+    "@type": "Organization",
+    "name": "Volant Poetry",
+    "url": "https://volantpoetry.github.io",
+    "logo": "https://volantpoetry.github.io/images/volant-favicon.png",
+    "description": "Volant Poetry is a community-driven platform for poets, writers, and readers to share, discover, and celebrate poetry and literary works.",
+    "founder": {
+      "@type": "Person",
+      "name": "Rence Blunt"
     },
-    "description": "Rence Blunt is a poet and writer exploring emotion, reflection, and meaning through words. Founder of Volant Poetry."
+    "sameAs": [
+      "https://instagram.com/volantpoetry",
+      "https://twitter.com/volantpoetry"
+    ]
   }
   </script>
 
@@ -170,20 +170,229 @@
       font-size: 10px;
       margin-left: 8px;
     }
+
+    /* ===== VOLANT READS SECTION - ORIGINAL UI ===== */
+    .volant-reads-section {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    .volant-reads-section h2 {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: #4b2aad;
+      margin-bottom: 30px;
+    }
+
+    .volant-reads-section h2 i {
+      color: #b76e4b;
+      margin-right: 10px;
+    }
+
+    .volant-reads-box {
+      background: linear-gradient(135deg, #fdfcfb, #f7f5ff);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      border: 1px solid #ede7df;
+    }
+
+    .volant-reads-box .description {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #ede7df;
+    }
+
+    .volant-reads-box .description p {
+      color: #333;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin: 8px 0;
+    }
+
+    .volant-reads-box .description strong {
+      color: #4b2aad;
+    }
+
+    .volant-reads-box .description .highlight {
+      color: #b76e4b;
+      font-weight: 600;
+    }
+
+    .volant-reads-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      margin: 20px 0;
+    }
+
+    .volant-reads-col {
+      background: #faf8f5;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #ede7df;
+    }
+
+    .volant-reads-col h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: #4b2aad;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .volant-reads-col h3 i {
+      color: #b76e4b;
+    }
+
+    .volant-reads-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .volant-reads-col ul li {
+      padding: 5px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      color: #333;
+      border-bottom: 1px solid #f0ece6;
+    }
+
+    .volant-reads-col ul li:last-child {
+      border-bottom: none;
+    }
+
+    .volant-reads-col ul li i {
+      color: #b76e4b;
+      width: 20px;
+      font-size: 0.8rem;
+    }
+
+    .volant-reads-col .badge {
+      display: inline-block;
+      background: #4b2aad;
+      color: white;
+      padding: 1px 10px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .volant-reads-col .badge.orange {
+      background: #b76e4b;
+    }
+
+    .volant-reads-col .badge.green {
+      background: #2d7d46;
+    }
+
+    .volant-reads-col .badge.gold {
+      background: #f5a623;
+    }
+
+    .volant-reads-cta {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #ede7df;
+    }
+
+    .volant-reads-cta .btn {
+      display: inline-block;
+      background: #4b2aad;
+      color: white;
+      padding: 10px 35px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin: 0 8px;
+      box-shadow: 0 4px 15px rgba(75, 42, 173, 0.3);
+    }
+
+    .volant-reads-cta .btn:hover {
+      background: #3a1f8a;
+      transform: translateY(-3px);
+    }
+
+    .volant-reads-cta .btn.orange {
+      background: #b76e4b;
+      box-shadow: 0 4px 15px rgba(183, 110, 75, 0.3);
+    }
+
+    .volant-reads-cta .btn.orange:hover {
+      background: #9f5e3f;
+    }
+
+    .volant-reads-cta .btn i {
+      margin-right: 8px;
+    }
+
+    .volant-reads-footer-note {
+      margin-top: 25px;
+      padding: 15px 20px;
+      background: #f0ece6;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .volant-reads-footer-note p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    .volant-reads-footer-note i {
+      color: #4b2aad;
+      margin-right: 8px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .volant-reads-grid {
+        grid-template-columns: 1fr;
+      }
+      .volant-reads-cta .btn {
+        display: block;
+        margin: 10px auto;
+        max-width: 250px;
+      }
+      .volant-reads-box {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .volant-reads-col {
+        padding: 15px;
+      }
+      .volant-reads-col ul li {
+        font-size: 0.85rem;
+      }
+      .volant-reads-box .description p {
+        font-size: 0.95rem;
+      }
+    }
   </style>
 </head>
 <body>
 
-<!-- Navbar -->
 <header>
   <nav style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px;">
-    <!-- Logo + Text -->
     <div class="logo" style="display: flex; align-items: center;">
       <img src="images/logo.png" alt="Volant Poetry Logo" style="height: 40px; width: auto; margin-right: 5px;">
       <span class="logo-highlight">Volant</span> Poetry
     </div>
 
-    <!-- Nav Links -->
     <div class="nav-links" id="nav-links" style="display: flex; gap: 30px; margin-left: 40px;">
         <span class="close-btn" id="close-btn">✕</span>
         <a href="index.html">Home</a>
@@ -191,7 +400,6 @@
         <a href="contact.html">Contact</a>
     </div>
 
-    <!-- Menu Toggle (mobile) -->
     <div class="nav-right">
       <div class="menu-toggle" id="menu-toggle">☰</div>
     </div>
@@ -204,11 +412,12 @@
     <div class="about-text">
       <h2>Welcome to Volant Poetry</h2>
       <p>
-        Volant Poetry is a community-driven platform where poets, dreamers, and readers come together. 
-        Here, we explore emotions, stories, and reflections through words that move, inspire, and connect.
+        <strong>Volant Poetry</strong> is a <strong>community-driven platform</strong> where poets, writers, and readers come together. 
+        This is not a personal website — it is a <strong>shared space</strong> for anyone who loves poetry and creative expression.
       </p>
       <p>
-        This space is built for collaboration, sharing, and the joy of poetry. A place where your voice can be heard.
+        Here, we explore emotions, stories, and reflections through words that move, inspire, and connect. 
+        Every voice matters, and every poet is welcome.
       </p>
     </div>
   </div>
@@ -232,9 +441,78 @@
   </div>
 </section>
 
-<!-- ============ RANKING SYSTEM SECTION ============ -->
+<!-- ===== VOLANT READS SECTION ===== -->
+<section class="volant-reads-section">
+  <h2><i class="fas fa-book-open"></i> Volant Reads</h2>
+  
+  <div class="volant-reads-box">
+    <!-- Description -->
+    <div class="description">
+      <p>
+        <strong>Volant Reads</strong> is a literary marketplace that empowers independent authors by providing a platform to sell their works while retaining ownership and receiving the majority of sales revenue.
+      </p>
+      <p style="font-size: 0.95rem; color: #6b6b6b; margin-top: 5px;">
+        <i class="fas fa-arrow-right" style="color: #b76e4b;"></i> 
+        Authors keep full copyright. Earn <strong>90%</strong> of net revenue. Track sales in real time.
+      </p>
+    </div>
+
+    <!-- Two Columns -->
+    <div class="volant-reads-grid">
+      <!-- For Authors -->
+      <div class="volant-reads-col">
+        <h3><i class="fas fa-feather-alt"></i> For Authors</h3>
+        <ul>
+          <li><i class="fas fa-globe"></i> Open to everyone — no membership</li>
+          <li><i class="fas fa-file-alt"></i> Submit title, synopsis, author bio</li>
+          <li><i class="fas fa-file-pdf"></i> Upload PDF manuscript</li>
+          <li><i class="fas fa-image"></i> Add cover image</li>
+          <li><i class="fas fa-tag"></i> Set your own price <span class="badge">free or paid</span></li>
+          <li><i class="fas fa-percent"></i> Earn <strong>90%</strong> of net sales <span class="badge gold">90%</span></li>
+          <li><i class="fas fa-coins"></i> Paid via Momo, Bank, or others</li>
+          <li><i class="fas fa-file-alt"></i> Number of pages <span class="badge orange">required</span></li>
+          <li style="font-style: italic; color: #b76e4b; font-weight: 500;">
+            <i class="fas fa-share-alt" style="color: #b76e4b;"></i> 
+            <em>Share your store link or book page link to promote sales</em>
+          </li>
+        </ul>
+      </div>
+
+      <!-- For Readers -->
+      <div class="volant-reads-col">
+        <h3><i class="fas fa-book-open"></i> For Readers</h3>
+        <ul>
+          <li><i class="fas fa-search"></i> Browse by title, author, keywords</li>
+          <li><i class="fas fa-book"></i> View synopsis, genre, pages</li>
+          <li><i class="fas fa-user-edit"></i> Learn about the author</li>
+          <li><i class="fas fa-download"></i> Download free books <span class="badge green">free</span></li>
+          <li><i class="fas fa-shopping-cart"></i> Purchase paid books</li>
+          <li><i class="fas fa-file-alt"></i> See number of pages</li>
+          <li><i class="fas fa-star"></i> Discover new books daily</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer Note -->
+    <div class="volant-reads-footer-note">
+      <p>
+        <i class="fas fa-info-circle"></i> 
+        <strong>Net sales revenue</strong> is the amount received after payment processing fees, taxes, refunds, and similar transaction costs. 
+        Volant Reads retains <strong>10%</strong>.
+      </p>
+    </div>
+
+    <!-- CTA -->
+    <div class="volant-reads-cta">
+      <a href="volantReads-store.html" class="btn"><i class="fas fa-store"></i> Browse Bookstore</a>
+      <a href="volantReads-submit.html" class="btn orange"><i class="fas fa-upload"></i> Submit Your Book</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RANKING SYSTEM SECTION ===== -->
 <section class="ranking-info-section">
-  <h2> How Our Ranking System Works</h2>
+  <h2>🏆 How Our Ranking System Works</h2>
   <div class="ranking-grid">
     
     <!-- POEM RANKING CARD -->
@@ -329,7 +607,7 @@
   
   <!-- Additional Info -->
   <div style="margin-top: 30px; text-align: center; padding: 20px; background: #f5f3ee; border-radius: 12px;">
-    <h4 style="color: #4b2aad; margin-bottom: 10px;"> Why This System?</h4>
+    <h4 style="color: #4b2aad; margin-bottom: 10px;">💡 Why This System?</h4>
     <p style="max-width: 800px; margin: 0 auto;">
       Our ranking system is designed to reward <strong>genuine community engagement</strong>, not just popularity.
       Commenting thoughtfully on others' work is valued more than receiving likes.
@@ -345,7 +623,7 @@
 <!-- Platform Section -->
 <section class="platform-section">
   <div class="platform-container">
-    <h2>About This Platform</h2>
+    <h2>Community Guidelines</h2>
     <p>
       Volant Poetry is a creative home for poets and poetry lovers. 
       Share your work, explore new voices, and immerse yourself in a community where every word matters.
@@ -378,7 +656,7 @@
   </div>
 </section>
 
-<!-- Author Image at the End -->
+<!-- Author / Founder Section -->
 <section class="author-section">
   <div class="about-image" style="text-align: center; margin-top: 40px;">
     <img src="images/renceblunt.jpg" alt="Rence Blunt" style="max-width: 300px; width: 100%; border-radius: 8px;">
@@ -394,7 +672,6 @@
   &copy; 2026 Volant Poetry. All Rights Reserved.
 </footer>
 
-<!-- Scripts -->
 <script type="module" src="test.js"></script>
 <script>
   const menuToggle = document.getElementById("menu-toggle");

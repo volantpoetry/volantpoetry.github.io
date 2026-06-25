@@ -7,7 +7,9 @@
 <title>Submit Your Poem Draft | Volant Poetry</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="icon" type="png" href="images/logo.png" />
+<!-- Favicons -->
+<link rel="icon" type="image/png" href="images/volant-favicon.png">
+<link rel="apple-touch-icon" href="images/volant-favicon.png">
 
 <style>
 :root {
@@ -187,7 +189,7 @@ let currentUsername = "Anonymous";
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     alert("Please log in to save a draft!");
-    window.location.href = "users-login.html";
+    window.location.href = `users-login.html?redirect=${encodeURIComponent(window.location.href)}`;
     return;
   }
 
