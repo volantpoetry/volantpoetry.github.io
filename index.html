@@ -1119,6 +1119,89 @@
     padding: 0.2rem 0.5rem;
   }
 }
+
+/* === HERO RESPONSIVE SCALING === */
+.hero {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 2rem);
+  padding: clamp(1rem, 4vw, 3rem);
+}
+
+/* Logo Image - scales smoothly */
+.hero-left img.hero-logo {
+  width: clamp(80px, 15vw, 200px);
+  height: auto;
+  max-width: 200px;
+  transition: all 0.3s ease;
+}
+
+/* Hero Title Text - scales smoothly */
+.hero-right h1 {
+  font-size: clamp(2rem, 8vw, 5rem);
+  line-height: 1.1;
+}
+
+.hero-right h1 span {
+  font-size: clamp(1.8rem, 7vw, 4.5rem);
+}
+
+/* Hero Description Text */
+.hero-line-content p {
+  font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+  max-width: clamp(280px, 40vw, 550px);
+}
+
+/* CTA Button */
+.hero-line-content .cta-btn {
+  font-size: clamp(0.7rem, 1.2vw, 1rem);
+  padding: clamp(0.4rem, 1vw, 0.7rem) clamp(0.8rem, 2vw, 1.5rem);
+}
+
+/* === BREAKPOINT: Hide hero-left and hero-right on smaller screens === */
+@media (max-width: 1024px) {
+  .hero-left,
+  .hero-right {
+    display: none !important;
+  }
+  
+  .hero {
+    justify-content: center !important;
+    padding: 2rem 1rem !important;
+    min-height: auto !important;
+  }
+  
+  .hero-line-content {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    text-align: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+  }
+  
+  .hero-line-content p {
+    max-width: 90% !important;
+    text-align: center !important;
+  }
+}
+
+/* === Additional fine-tuning for very small screens === */
+@media (max-width: 480px) {
+  .hero {
+    padding: 1.5rem 0.8rem !important;
+  }
+  
+  .hero-line-content p {
+    font-size: 0.8rem !important;
+  }
+  
+  .hero-line-content .cta-btn {
+    font-size: 0.75rem !important;
+    padding: 0.4rem 1rem !important;
+  }
+}
 </style>
 
 </head>
