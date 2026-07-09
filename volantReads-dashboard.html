@@ -682,7 +682,6 @@
     /* ===== RESPONSIVE ===== */
     @media (max-width:1100px) {
       .dashboard { grid-template-columns:1fr; }
-      .sidebar { display:none; }
       .grid { grid-template-columns:1fr; }
       .content { padding:24px 20px; }
       nav { padding: 0 4rem !important; }
@@ -739,17 +738,322 @@
         box-shadow: 4px 0 30px rgba(0,0,0,0.15);
         transition: left 0.3s ease;
         padding: 1.5rem 1.2rem;
+        display: block !important;
+      }
+      .sidebar.mobile-open {
+        left: 0;
       }
       .sidebar-overlay.show { display: block; }
     }
     @media (max-width: 380px) {
       .page-grid { grid-template-columns:1fr 1fr; gap:12px; }
-      .page-card .book-title { font-size:0.7rem !important; }
-      .page-card .book-price { font-size:0.6rem !important; }
+      .page-card .book-title { font-size:0.9rem !important; }
+      .page-card .book-price { font-size:0.9rem !important; }
+      .topbar-left h1 {font-size: 21px;}
     }
     .stats .stat:nth-child(5) { display: none; }
 
-    
+    /* ===== ENHANCED BOOK CARD TYPOGRAPHY ===== */
+.page-card .book-title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.15rem; /* Increased from 0.95rem */
+  color: #2d2a24;
+  line-height: 1.3;
+  margin-bottom: 0.1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  box-orient: vertical;
+  overflow: hidden;
+}
+
+.page-card .book-subtitle {
+  font-size: 0.85rem; /* Increased from 0.7rem */
+  color: #8a7b6a;
+  font-style: italic;
+  margin-bottom: 0.1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  box-orient: vertical;
+  overflow: hidden;
+}
+
+.page-card .book-author {
+  font-size: 0.9rem; /* Increased from 0.8rem */
+  color: #6f6252;
+  margin-bottom: 0.1rem;
+  font-weight: 500;
+}
+
+.page-card .book-price {
+  font-weight: 700;
+  font-size: 1.05rem; /* Increased from 0.80rem */
+  color: #4b2aad;
+  margin-top: 0.1rem;
+}
+
+/* ===== RESPONSIVE ENHANCEMENTS ===== */
+@media (max-width: 700px) {
+  .page-card .book-title {
+    font-size: 1rem; /* Increased from 0.9rem */
+  }
+  .page-card .book-subtitle {
+    font-size: 0.75rem;
+  }
+  .page-card .book-author {
+    font-size: 0.8rem;
+  }
+  .page-card .book-price {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-card .book-title {
+    font-size: 0.95rem !important; /* Increased from 0.8rem */
+  }
+  .page-card .book-subtitle {
+    font-size: 0.7rem !important;
+  }
+  .page-card .book-author {
+    font-size: 0.75rem !important;
+  }
+  .page-card .book-price {
+    font-size: 0.9rem !important; /* Increased from 0.7rem */
+  }
+}
+
+@media (max-width: 380px) {
+  .page-card .book-title {
+    font-size: 0.9rem !important; /* Increased from 0.9rem */
+  }
+  .page-card .book-subtitle {
+    font-size: 0.65rem !important;
+  }
+  .page-card .book-author {
+    font-size: 0.7rem !important;
+  }
+  .page-card .book-price {
+    font-size: 0.85rem !important;
+  }
+}
+
+/* ===== MY BOOKS PAGE SPECIFIC ENHANCEMENTS ===== */
+#page-mybooks .page-card .book-title {
+  font-size: 1.2rem; /* Even larger on My Books page */
+}
+
+#page-mybooks .page-card .book-subtitle {
+  font-size: 0.9rem;
+}
+
+#page-mybooks .page-card .book-author {
+  font-size: 0.95rem;
+}
+
+#page-mybooks .page-card .book-price {
+  font-size: 1.1rem;
+}
+
+@media (max-width: 700px) {
+  #page-mybooks .page-card .book-title {
+    font-size: 1.05rem;
+  }
+  #page-mybooks .page-card .book-subtitle {
+    font-size: 0.8rem;
+  }
+  #page-mybooks .page-card .book-author {
+    font-size: 0.85rem;
+  }
+  #page-mybooks .page-card .book-price {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #page-mybooks .page-card .book-title {
+    font-size: 0.95rem !important;
+  }
+  #page-mybooks .page-card .book-subtitle {
+    font-size: 0.7rem !important;
+  }
+  #page-mybooks .page-card .book-author {
+    font-size: 0.8rem !important;
+  }
+  #page-mybooks .page-card .book-price {
+    font-size: 0.9rem !important;
+  }
+}
+@media (max-width: 480px) {
+  .topbar h1 {
+    font-size: 1.1rem !important; /* Further reduced */
+  }
+}
+
+@media (max-width: 380px) {
+  .topbar h1 {
+    font-size: 1rem !important; /* Even smaller for very small screens */
+  }
+}
+/* ===== MOBILE TEXT SIZE REDUCTION ===== */
+@media (max-width: 700px) {
+  /* Topbar */
+  .topbar h1 { font-size: 1.3rem !important; }
+  .topbar p { font-size: 0.8rem !important; }
+  
+  /* Stats */
+  .stat .value { font-size: 1.5rem !important; }
+  .stat h4 { font-size: 0.7rem !important; }
+  
+  /* Section titles */
+  .section-title h2 { font-size: 1.1rem !important; }
+  .section-title a { font-size: 0.8rem !important; }
+  
+  /* Page headers */
+  .page-header h2 { font-size: 1.4rem !important; }
+  .page-header p { font-size: 0.85rem !important; }
+  
+  /* Table rows */
+  .row { font-size: 0.85rem !important; }
+  .row .badge { font-size: 0.7rem !important; padding: 4px 12px !important; }
+  
+  /* Sales items */
+  .sale-item { font-size: 0.85rem !important; padding: 12px 14px !important; }
+  .sale-item i { font-size: 1rem !important; }
+  
+  /* Panel content */
+  .panel { padding: 20px 18px !important; }
+  .panel h3 { font-size: 1.1rem !important; }
+  
+  /* Messages */
+  .message-item .message-sender { font-size: 0.85rem !important; }
+  .message-item .message-subject { font-size: 0.85rem !important; }
+  .message-item .message-body { font-size: 0.8rem !important; }
+  .message-item .message-meta { font-size: 0.65rem !important; }
+  
+  /* Settings */
+  .settings-group label { font-size: 0.8rem !important; }
+  .settings-group input, 
+  .settings-group select, 
+  .settings-group textarea { font-size: 0.85rem !important; padding: 10px 12px !important; }
+  .settings-group .hint { font-size: 0.7rem !important; }
+  
+  /* Modal */
+  .modal h2 { font-size: 1.4rem !important; }
+  .modal .modal-sub { font-size: 0.85rem !important; }
+  .modal .form-group label { font-size: 0.8rem !important; }
+  .modal .form-group input,
+  .modal .form-group textarea,
+  .modal .form-group select { font-size: 0.85rem !important; padding: 8px 12px !important; }
+  .modal .form-group .file-hint { font-size: 0.65rem !important; }
+  .modal .form-actions .btn-save,
+  .modal .form-actions .btn-cancel,
+  .modal .form-actions .btn-delete { font-size: 0.85rem !important; padding: 10px 20px !important; }
+  
+  /* Sidebar */
+  .sidebar .nav a { font-size: 0.85rem !important; padding: 12px 14px !important; }
+  .sidebar .nav a i { font-size: 1rem !important; }
+  .card-side h3 { font-size: 1rem !important; }
+  .card-side p { font-size: 0.8rem !important; }
+  .card-side button { font-size: 0.85rem !important; height: 42px !important; }
+  
+  /* Action button */
+  .action-btn { font-size: 0.8rem !important; height: 42px !important; padding: 0 18px !important; }
+  
+  /* Badges */
+  .badge-status { font-size: 0.6rem !important; padding: 2px 8px !important; }
+  .sales-badge { font-size: 0.65rem !important; padding: 2px 10px !important; }
+  .revenue-badge { font-size: 0.65rem !important; padding: 2px 10px !important; }
+  
+  /* Update button */
+  .update-book-btn { font-size: 0.65rem !important; padding: 5px 12px !important; }
+  .update-book-btn i { font-size: 0.6rem !important; }
+  
+  /* Chart labels */
+  .chart-wrapper div[style*="display:flex"] span { font-size: 0.6rem !important; }
+}
+
+@media (max-width: 480px) {
+  /* Further reductions for very small screens */
+  .topbar h1 { font-size: 1.1rem !important; }
+  .topbar p { font-size: 0.7rem !important; }
+  
+  .stat .value { font-size: 1.3rem !important; }
+  .stat h4 { font-size: 0.65rem !important; }
+  
+  .section-title h2 { font-size: 1rem !important; }
+  .page-header h2 { font-size: 1.2rem !important; }
+  .page-header p { font-size: 0.75rem !important; }
+  
+  .row { font-size: 0.75rem !important; }
+  .sale-item { font-size: 0.75rem !important; }
+  
+  .panel h3 { font-size: 1rem !important; }
+  
+  .modal h2 { font-size: 1.2rem !important; }
+  .modal .modal-sub { font-size: 0.75rem !important; }
+  
+  .sidebar .nav a { font-size: 0.75rem !important; padding: 10px 12px !important; }
+  .sidebar .nav a i { font-size: 0.9rem !important; }
+  .card-side h3 { font-size: 0.9rem !important; }
+  .card-side p { font-size: 0.7rem !important; }
+  .card-side button { font-size: 0.75rem !important; height: 38px !important; }
+  
+  .action-btn { font-size: 0.7rem !important; height: 36px !important; padding: 0 14px !important; }
+  
+  .message-item .message-sender { font-size: 0.75rem !important; }
+  .message-item .message-subject { font-size: 0.75rem !important; }
+  .message-item .message-body { font-size: 0.7rem !important; }
+  
+  .settings-group label { font-size: 0.7rem !important; }
+  .settings-group input,
+  .settings-group select,
+  .settings-group textarea { font-size: 0.75rem !important; padding: 8px 10px !important; }
+  
+  .modal .form-group label { font-size: 0.7rem !important; }
+  .modal .form-group input,
+  .modal .form-group textarea,
+  .modal .form-group select { font-size: 0.75rem !important; padding: 6px 10px !important; }
+  .modal .form-actions .btn-save,
+  .modal .form-actions .btn-cancel,
+  .modal .form-actions .btn-delete { font-size: 0.75rem !important; padding: 8px 16px !important; }
+  
+  .badge-status { font-size: 0.55rem !important; padding: 1px 6px !important; }
+  .sales-badge { font-size: 0.6rem !important; }
+  .revenue-badge { font-size: 0.6rem !important; }
+  .update-book-btn { font-size: 0.6rem !important; padding: 4px 10px !important; }
+}
+
+@media (max-width: 380px) {
+  /* Extra small screens */
+  .topbar h1 { font-size: 1rem !important; }
+  .topbar p { font-size: 0.65rem !important; }
+  
+  .stat .value { font-size: 1.1rem !important; }
+  .stat { padding: 16px 14px !important; }
+  
+  .section-title h2 { font-size: 0.9rem !important; }
+  .page-header h2 { font-size: 1rem !important; }
+  .page-header p { font-size: 0.7rem !important; }
+  
+  .row { font-size: 0.7rem !important; padding: 10px 0 !important; }
+  .sale-item { font-size: 0.7rem !important; padding: 10px 12px !important; }
+  
+  .panel { padding: 16px 14px !important; }
+  
+  .modal h2 { font-size: 1rem !important; }
+  .modal .modal-sub { font-size: 0.7rem !important; }
+  .modal { padding: 14px 12px !important; }
+  
+  .sidebar .nav a { font-size: 0.7rem !important; padding: 8px 10px !important; }
+  .sidebar .nav a i { font-size: 0.8rem !important; }
+  
+  .action-btn { font-size: 0.65rem !important; height: 32px !important; padding: 0 12px !important; }
+}
   </style>
 </head>
 <body>
@@ -2052,7 +2356,7 @@
     }
   }
 
-  // ===== SIDEBAR TOGGLE =====
+  // ===== SIDEBAR TOGGLE - FIXED =====
   function toggleSidebar() {
     sidebar.classList.toggle('mobile-open');
     sidebarOverlay.classList.toggle('show');
@@ -2060,20 +2364,39 @@
   }
 
   // ===== EVENT LISTENERS =====
-  document.addEventListener('click', function(e) {
-    const toggle = e.target.closest('#menuToggle');
-    if (toggle) { e.preventDefault(); toggleSidebar(); }
+  // Menu toggle button
+  document.getElementById('menuToggle').addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleSidebar();
   });
 
-  sidebarOverlay.addEventListener('click', toggleSidebar);
+  // Sidebar overlay click to close
+  sidebarOverlay.addEventListener('click', function(e) {
+    if (e.target === this) {
+      toggleSidebar();
+    }
+  });
 
+  // Close sidebar on window resize to desktop
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 920) {
+      sidebar.classList.remove('mobile-open');
+      sidebarOverlay.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  });
+
+  // Navigation links
   document.querySelectorAll('.nav a').forEach(item => {
     item.addEventListener('click', function(e) {
       e.preventDefault();
       const page = this.dataset.page;
       if (page) {
         showPage(page);
-        if (window.innerWidth <= 920) toggleSidebar();
+        if (window.innerWidth <= 920) {
+          toggleSidebar();
+        }
       }
     });
   });
@@ -2110,7 +2433,7 @@
   document.getElementById('signOutBtn')?.addEventListener('click', async () => {
     try {
       await signOut(auth);
-      window.location.href = 'users-login.html';
+      window.location.href = 'volantReads-store.html';
     } catch (e) {
       showToast('Error signing out.', 'error');
     }
@@ -2141,13 +2464,43 @@
       await loadAuthorData(user);
       showPage('dashboard');
     } else {
-      window.location.href = 'users-login.html';
+      window.location.href = 'universal-login.html?platform=reads&redirect=volantReads-dashboard.html';
     }
   });
 
   console.log('📚 Volant Reads Dashboard - With Update Book Functionality');
   console.log('📝 Click "Update Book" under any book to edit all details');
   console.log('☁️ Cover and PDF upload to Cloudinary (same as submit form)');
+</script>
+<script>
+// Dynamic login/signup link setup for current page redirect
+(function() {
+  function setupDynamicAuthLinks() {
+    const currentPage = window.location.href;
+    const currentFile = window.location.pathname.split('/').pop();
+    let platform = 'poetry';
+    if (currentFile.startsWith('volantReads-')) platform = 'reads';
+    if (currentFile === 'parent-house.html') platform = 'foundry';
+    
+    const loginParams = new URLSearchParams();
+    loginParams.append('platform', platform);
+    loginParams.append('redirect', currentPage);
+    
+    document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
+      link.href = `universal-login.html?${loginParams.toString()}`;
+    });
+    
+    document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
+      link.href = `universal-signup.html?${loginParams.toString()}`;
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
+  } else {
+    setupDynamicAuthLinks();
+  }
+})();
 </script>
 </body>
 </html>

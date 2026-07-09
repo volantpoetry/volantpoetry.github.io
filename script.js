@@ -278,18 +278,31 @@ function truncatePoem(text, lines = 8) {
 let lastVisible = null;
 let reachedEnd = false;
 
+// Helper function to detect current platform
+function getCurrentPlatform() {
+  const currentFile = window.location.pathname.split('/').pop();
+  if (currentFile.startsWith('volantReads-')) {
+    return 'reads';
+  } else if (currentFile === 'parent-house.html') {
+    return 'foundry';
+  }
+  return 'poetry';
+}
+
 // Helper function to redirect to login with return URL
 function redirectToLogin() {
   const currentPage = window.location.href;
+  const platform = getCurrentPlatform();
   localStorage.setItem('redirectAfterLogin', currentPage);
-  window.location.href = `users-login.html?redirect=${encodeURIComponent(currentPage)}`;
+  window.location.href = `universal-login.html?platform=${platform}&redirect=${encodeURIComponent(currentPage)}`;
 }
 
 // Helper function to redirect to signup with return URL
 function redirectToSignup() {
   const currentPage = window.location.href;
+  const platform = getCurrentPlatform();
   localStorage.setItem('redirectAfterSignup', currentPage);
-  window.location.href = `users-signup.html?redirect=${encodeURIComponent(currentPage)}`;
+  window.location.href = `universal-signup.html?platform=${platform}&redirect=${encodeURIComponent(currentPage)}`;
 }
 
 // --- Structured Data Injection for SEO ---
@@ -1286,7 +1299,7 @@ onAuthStateChanged(auth, async (user) => {
     if (logoutBtnMobile) {
       logoutBtnMobile.onclick = async () => {
         await signOut(auth);
-        window.location.href = "users-login.html";
+        window.location.href = "index.html";
       };
     }
   } else {
@@ -2955,6 +2968,58 @@ window.logoutUser = async function() {
     return false;
   }
 };
+
+// ==================== DYNAMIC LOGIN/SIGNUP LINK SETUP ====================
+// This runs on EVERY page to make all login/signup links capture current page
+(function() {
+  function setupDynamicAuthLinks() {
+    const currentPage = window.location.href;
+    const platform = getCurrentPlatform();
+    const loginParams = new URLSearchParams();
+    loginParams.append('platform', platform);
+    loginParams.append('redirect', currentPage);
+    
+    const signupParams = new URLSearchParams();
+    signupParams.append('platform', platform);
+    signupParams.append('redirect', currentPage);
+    
+    // Update all universal-login links
+    document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
+      link.href = `universal-login.html?${loginParams.toString()}`;
+    });
+    
+    // Update all universal-signup links
+    document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
+      link.href = `universal-signup.html?${signupParams.toString()}`;
+    });
+    
+    // Also handle buttons if any
+    document.querySelectorAll('button[onclick*="universal-login"]').forEach(btn => {
+      btn.onclick = () => {
+        window.location.href = `universal-login.html?${loginParams.toString()}`;
+      };
+    });
+    
+    document.querySelectorAll('button[onclick*="universal-signup"]').forEach(btn => {
+      btn.onclick = () => {
+        window.location.href = `universal-signup.html?${signupParams.toString()}`;
+      };
+    });
+  }
+  
+  // Set up on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
+  } else {
+    setupDynamicAuthLinks();
+  }
+  
+  // Also set up when DOM is modified (for dynamically added elements)
+  const observer = new MutationObserver(() => {
+    setupDynamicAuthLinks();
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
 
 // Initial exposure in case auth state already resolved
 const currentAuthUser = auth.currentUser;

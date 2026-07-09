@@ -2061,7 +2061,7 @@ async function ensureUserHasCountFields(uid) {
 function redirectToLogin() {
   const currentPage = window.location.href;
   localStorage.setItem('redirectAfterLogin', currentPage);
-  window.location.href = `users-login.html?redirect=${encodeURIComponent(currentPage)}`;
+  window.location.href = `universal-login.html?platform=poetry&redirect=${encodeURIComponent(currentPage)}`;
 }
 
 async function sendNotification(forUserId, fromUserId, type, data) {
@@ -2962,7 +2962,7 @@ onAuthStateChanged(auth, async (user) => {
   }
   
   if (!user && !profileUid) { 
-    window.location.href = `users-login.html?redirect=${encodeURIComponent(window.location.href)}`; 
+    window.location.href = `universal-login.html?platform=poetry&redirect=${encodeURIComponent(window.location.href)}`; 
     return; 
   }
   
@@ -3106,13 +3106,43 @@ window.addEventListener("click", (e) => { if (e.target === modal) modal.style.di
 // Menu and logout
 document.getElementById("menu-toggle")?.addEventListener("click", () => document.getElementById("nav-links").classList.toggle("show"));
 document.getElementById("close-btn")?.addEventListener("click", () => document.getElementById("nav-links").classList.remove("show"));
-document.getElementById("logoutBtnNav")?.addEventListener("click", async () => { await signOut(auth); window.location.href = "users-login.html"; });
-document.getElementById("loginNavBtn")?.addEventListener("click", () => { window.location.href = `users-login.html?redirect=${encodeURIComponent(window.location.href)}`; });
+document.getElementById("logoutBtnNav")?.addEventListener("click", async () => { await signOut(auth); window.location.href = "index.html"; });
+document.getElementById("loginNavBtn")?.addEventListener("click", () => { window.location.href = `universal-login.html?platform=poetry&redirect=${encodeURIComponent(window.location.href)}`; });
 
 // Search filter
 const searchInput = document.getElementById("searchInput");
 let debounceTimeout;
 if (searchInput) { searchInput.addEventListener("input", () => { clearTimeout(debounceTimeout); debounceTimeout = setTimeout(() => { const filter = searchInput.value.trim().toLowerCase(); document.querySelectorAll(".recent-poem-card").forEach(card => { const title = card.querySelector(".poem-title")?.textContent.toLowerCase() || ""; const content = card.querySelector(".poem-content")?.textContent.toLowerCase() || ""; card.style.display = (title.includes(filter) || content.includes(filter)) ? "block" : "none"; }); }, 300); }); }
+</script>
+<script>
+// Dynamic login/signup link setup for current page redirect
+(function() {
+  function setupDynamicAuthLinks() {
+    const currentPage = window.location.href;
+    const currentFile = window.location.pathname.split('/').pop();
+    let platform = 'poetry';
+    if (currentFile.startsWith('volantReads-')) platform = 'reads';
+    if (currentFile === 'parent-house.html') platform = 'foundry';
+    
+    const loginParams = new URLSearchParams();
+    loginParams.append('platform', platform);
+    loginParams.append('redirect', currentPage);
+    
+    document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
+      link.href = `universal-login.html?${loginParams.toString()}`;
+    });
+    
+    document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
+      link.href = `universal-signup.html?${loginParams.toString()}`;
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
+  } else {
+    setupDynamicAuthLinks();
+  }
+})();
 </script>
 </body>
 </html>

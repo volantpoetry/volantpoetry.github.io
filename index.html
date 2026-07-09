@@ -21,8 +21,8 @@
   <!-- Open Graph -->
   <meta property="og:title" content="Volant Poetry" />
   <meta property="og:description" content="A platform for sharing emotions, inspiring creativity, and connecting people through the beauty of words." />
-  <meta property="og:image" content="https://volantpoetry.github.io/images/logo.png" />
-  <meta property="og:url" content="https://volantpoetry.github.io/" />
+  <meta property="og:image" content="https://volantpoetry.pages.dev/images/logo.png" />
+  <meta property="og:url" content="https://volantpoetry.pages.dev/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Volant Poetry" />
 
@@ -30,36 +30,34 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Volant Poetry" />
   <meta name="twitter:description" content="A platform for sharing emotions, inspiring creativity, and connecting people through the beauty of words." />
-  <meta name="twitter:image" content="https://volantpoetry.github.io/images/logo.png" />
+  <meta name="twitter:image" content="https://volantpoetry.pages.dev/images/logo.png" />
 
   <!-- Sitemap & Canonical -->
-  <link rel="canonical" href="https://volantpoetry.github.io/" />
-  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://volantpoetry.github.io/sitemap.xml" />
+  <link rel="canonical" href="https://volantpoetry.pages.dev/" />
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://volantpoetry.pages.dev/sitemap.xml" />
 
-  <link rel="author" href="https://volantpoetry.github.io/about.html">
+  <link rel="author" href="https://volantpoetry.pages.dev/about.html">
   <!-- Structured Data -->
-
-  <meta name="google-site-verification" content="5BZdnhCtO7i-pbEoi-MeDUiPeAzkczyIqykiG_cxBr8" />
 <!-- WebSite Schema -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Volant Poetry",
-  "url": "https://volantpoetry.github.io",
+  "url": "https://volantpoetry.pages.dev",
   "description": "A platform for sharing emotions, inspiring creativity, and connecting readers through the beauty of words.",
   "publisher": {
     "@type": "Organization",
     "name": "Volant Poetry",
-    "url": "https://volantpoetry.github.io"
+    "url": "https://volantpoetry.pages.dev"
   },
   "sameAs": [
     "https://github.com/renceblunt",
-    "https://volantpoetry.github.io"
+    "https://volantpoetry.pages.dev"
   ],
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://volantpoetry.github.io/search?query={search_term_string}",
+    "target": "https://volantpoetry.pages.dev/search?query={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }
@@ -71,17 +69,17 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Volant Poetry",
-  "url": "https://volantpoetry.github.io",
-  "logo": "https://volantpoetry.github.io/images/logo2.png",
+  "url": "https://volantpoetry.pages.dev",
+  "logo": "https://volantpoetry.pages.dev/images/logo2.png",
   "founder": {
     "@type": "Person",
     "name": "Rence Blunt",
-    "image": "https://volantpoetry.github.io/images/renceblunt.jpg"
+    "image": "https://volantpoetry.pages.dev/images/renceblunt.jpg"
   },
   "description": "A platform for sharing emotions, inspiring creativity, and connecting readers through the beauty of words.",
   "sameAs": [
     "https://github.com/renceblunt",
-    "https://volantpoetry.github.io"
+    "https://volantpoetry.pages.dev"
   ]
 }
 </script>
@@ -1204,6 +1202,47 @@
     padding: 0.4rem 1rem !important;
   }
 }
+
+
+
+
+
+
+
+/* --- Bring categories UP slightly on small screens when no Read More --- */
+@media (max-width: 768px) {
+  .recent-poem-card:not(:has(.read-more-btn)) .poem-category-line {
+    margin-top: 6px !important;
+    padding-top: 4px !important;
+    position: relative !important;
+    top: -2px !important;
+  }
+  
+  .recent-poem-card:not(:has(.read-more-btn)) {
+    padding-bottom: 15px !important;
+  }
+  
+  /* Reset any negative positioning on the category text */
+  .recent-poem-card:not(:has(.read-more-btn)) .poem-category-line em,
+  .recent-poem-card:not(:has(.read-more-btn)) .poem-category {
+    position: relative !important;
+    top: -1px !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* Fine-tune for very small screens */
+@media (max-width: 480px) {
+  .recent-poem-card:not(:has(.read-more-btn)) .poem-category-line {
+    margin-top: 4px !important;
+    padding-top: 2px !important;
+    top: -3px !important;
+  }
+  
+  .recent-poem-card:not(:has(.read-more-btn)) {
+    padding-bottom: 12px !important;
+  }
+}
 </style>
 
 </head>
@@ -1258,8 +1297,8 @@
   <!-- Mobile username only (no logout button next to it) -->
   <span id="username-display-sm" class="username-sm"></span>
 
-  <!-- Login link - opens users-login.html -->
-  <a href="users-login.html" id="login-link">Login</a>
+  <!-- Login link - opens universal login -->
+  <a href="universal-login.html?platform=poetry&redirect=index.html" id="login-link">Login</a>
   <button id="logoutBtn" style="display: none;">Logout</button>
 
   <!-- Mobile Icons -->
@@ -1406,7 +1445,7 @@ Just voices, words, and connection.</p>
     <h2>Join the Volant Poetry Community</h2>
     <p>Be part of a world where words take flight.  
     Share your poems, connect with fellow poets, and celebrate creativity every day.</p>
-    <a href="users-signup.html?redirect=index.html" class="join-btn">Join the Community</a>
+    <a href="universal-signup.html?platform=poetry&redirect=index.html" class="join-btn">Join the Community</a>
   </div>
   <div class="community-image">
     <img src="images/community-art.png" alt="Poetry Community">
@@ -1992,10 +2031,10 @@ document.addEventListener("DOMContentLoaded", () => {
       e.stopPropagation();
       if (window.logoutUser) {
         window.logoutUser().then(() => {
-          window.location.href = 'users-login.html';
+          window.location.href = 'index.html';
         });
       } else {
-        window.location.href = 'users-login.html';
+        window.location.href = 'index.html';
       }
     });
   }
@@ -2007,10 +2046,10 @@ document.addEventListener("DOMContentLoaded", () => {
         window.logoutUser().then(() => {
           const navLinksMenu = document.getElementById('nav-links');
           if (navLinksMenu) navLinksMenu.classList.remove('show');
-          window.location.href = 'users-login.html';
+          window.location.href = 'index.html';
         });
       } else {
-        window.location.href = 'users-login.html';
+        window.location.href = 'index.html';
       }
     });
   }

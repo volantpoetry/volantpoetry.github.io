@@ -814,9 +814,10 @@
         }
 
         #store-hero img {
-            width: 100%;
+            width: 94%;
             height: auto;
             display: block;
+            padding-left: 18px;
         }
 
         #store-hero .hero-btn-link {
@@ -927,9 +928,9 @@
         @media (max-width: 380px) {
             #store-hero-mobile .hero-btn-link {
                 bottom: clamp(3.5rem, 20vw, 5rem);
-                left: clamp(0.4rem, 2vw, 0.6rem);
+                left: clamp(1.3rem, 2vw, 0.6rem);
                 padding: clamp(0.25rem, 1vw, 0.4rem) clamp(0.4rem, 2vw, 0.8rem);
-                font-size: clamp(0.5rem, 1.5vw, 0.7rem);
+                font-size: clamp(0.75rem, 1.5vw, 0.7rem);
                 border-width: 1.5px;
             }
             #store-hero-mobile .hero-btn-link i {
@@ -1139,13 +1140,13 @@
                 font-size: 0.7rem !important;
             }
             #new-books .book-card .book-subtitle {
-                font-size: 0.55rem !important;
+                font-size: 0.6rem !important;
             }
             #new-books .book-card .book-author {
-                font-size: 0.6rem !important;
+                font-size: 0.7rem !important;
             }
             #new-books .book-card .book-price {
-                font-size: 0.6rem !important;
+                font-size: 0.7rem !important;
             }
         }
 
@@ -1157,16 +1158,16 @@
                 gap: 0.4rem !important;
             }
             #new-books .book-card .book-title {
-                font-size: 0.6rem !important;
+                font-size: 0.7rem !important;
             }
             #new-books .book-card .book-subtitle {
-                font-size: 0.5rem !important;
+                font-size: 0.6rem !important;
             }
             #new-books .book-card .book-author {
-                font-size: 0.5rem !important;
+                font-size: 0.6rem !important;
             }
             #new-books .book-card .book-price {
-                font-size: 0.55rem !important;
+                font-size: 0.6rem !important;
             }
         }
 
@@ -2243,7 +2244,7 @@
             }
             #volant-footer-bottom {
                 padding: 0.5rem 1.5rem;
-                font-size: 0.7rem;
+           
                 text-align: center;
             }
         }
@@ -2259,7 +2260,7 @@
                 grid-template-columns: 1fr 1fr;
             }
             .volant-footer-col h4.volant-footer-heading {
-                font-size: 0.8rem;
+             
                 margin-bottom: 0.3rem;
                 padding-bottom: 0.2rem;
             }
@@ -2269,11 +2270,7 @@
             .volant-footer-col ul li {
                 margin-bottom: 0.1rem;
             }
-            .volant-footer-links li a,
-            .volant-footer-payment-list li,
-            .volant-footer-contact-list li {
-                font-size: 0.7rem;
-            }
+        
             .volant-footer-payment-list li,
             .volant-footer-contact-list li {
                 padding: 0.05rem 0;
@@ -2282,7 +2279,7 @@
             .volant-footer-payment-list li i,
             .volant-footer-contact-list li i {
                 width: 14px;
-                font-size: 0.7rem;
+              
             }
             .volant-footer-brand .volant-footer-logo img {
                 width: 26px;
@@ -2292,7 +2289,7 @@
                 font-size: 1rem;
             }
             .volant-footer-desc {
-                font-size: 0.7rem;
+         
                 line-height: 1.3;
                 margin-bottom: 0.4rem;
             }
@@ -2303,7 +2300,7 @@
             }
             #volant-footer-bottom {
                 padding: 0.4rem 1rem;
-                font-size: 0.6rem;
+             font-size: 0.65rem!important;
                 line-height: 1.3;
             }
         }
@@ -2315,7 +2312,7 @@
                 grid-template-columns: 1fr 1fr;
             }
             .volant-footer-col h4.volant-footer-heading {
-                font-size: 0.7rem;
+             
                 margin-bottom: 0.2rem;
                 padding-bottom: 0.15rem;
             }
@@ -2326,18 +2323,14 @@
             .volant-footer-col ul li {
                 margin-bottom: 0.08rem;
             }
-            .volant-footer-links li a,
-            .volant-footer-payment-list li,
-            .volant-footer-contact-list li {
-                font-size: 0.65rem;
-            }
+          
             .volant-footer-payment-list li i,
             .volant-footer-contact-list li i {
                 width: 12px;
-                font-size: 0.6rem;
+               
             }
             .volant-footer-desc {
-                font-size: 0.65rem;
+               
                 line-height: 1.2;
                 margin-bottom: 0.3rem;
             }
@@ -2345,20 +2338,18 @@
                 width: 22px;
                 height: 22px;
             }
-            .volant-footer-brand .volant-footer-logo span {
-                font-size: 0.85rem;
-            }
+           
             .volant-footer-social a {
                 width: 22px;
                 height: 22px;
-                font-size: 0.55rem;
+              
             }
             .volant-footer-social {
                 gap: 0.3rem;
             }
             #volant-footer-bottom {
                 padding: 0.3rem 0.8rem;
-                font-size: 0.55rem;
+                font-size: 0.60rem;
             }
         }
 
@@ -3289,7 +3280,7 @@
         }
 
         .btn-cart-header i {
-            font-size: 1rem !important;
+            font-size: 1.2rem !important;
             color: var(--secondary, #b76e4b) !important;
             margin-right: 0 !important;
             transition: color 0.3s ease !important;
@@ -3408,6 +3399,129 @@
                 display: none !important;
             }
         }
+        /* ===== OVERRIDE: INCREASE BOOK TITLE, SUBTITLE & PRICE ===== */
+
+/* --- DESKTOP & LARGE SCREENS --- */
+.book-card .book-title,
+#new-books .book-card .book-title {
+    font-size: 1.15rem !important;      /* was 0.95rem */
+}
+
+.book-card .book-subtitle,
+#new-books .book-card .book-subtitle {
+    font-size: 0.85rem !important;      /* was 0.7rem */
+}
+
+.book-card .book-price,
+#new-books .book-card .book-price {
+    font-size: 1.0rem !important;       /* was 0.80rem */
+}
+
+/* --- TABLETS (max-width: 768px) --- */
+@media (max-width: 768px) {
+    .book-card .book-title,
+    #new-books .book-card .book-title {
+        font-size: 1.0rem !important;
+    }
+
+    .book-card .book-subtitle,
+    #new-books .book-card .book-subtitle {
+        font-size: 0.75rem !important;
+    }
+
+    .book-card .book-price,
+    #new-books .book-card .book-price {
+        font-size: 0.9rem !important;
+    }
+}
+
+/* --- MOBILE (max-width: 480px) --- */
+@media (max-width: 480px) {
+    .book-card .book-title,
+    #new-books .book-card .book-title {
+        font-size: 0.9rem !important;
+    }
+
+    .book-card .book-subtitle,
+    #new-books .book-card .book-subtitle {
+        font-size: 0.7rem !important;
+    }
+
+    .book-card .book-price,
+    #new-books .book-card .book-price {
+        font-size: 0.8rem !important;
+    }
+}
+
+/* --- SMALL PHONES (max-width: 380px) --- */
+@media (max-width: 380px) {
+    .book-card .book-title,
+    #new-books .book-card .book-title {
+        font-size: 0.8rem !important;
+    }
+
+    .book-card .book-subtitle,
+    #new-books .book-card .book-subtitle {
+        font-size: 0.6rem !important;
+    }
+
+    .book-card .book-price,
+    #new-books .book-card .book-price {
+        font-size: 0.7rem !important;
+    }
+}
+
+/* ===== HIDE SIGN OUT BUTTON ON SMALLER SCREENS ===== */
+
+/* Hide the sign-out button only on mobile and tablet */
+@media (max-width: 768px) {
+    .btn-signout {
+        display: none !important;
+    }
+}
+
+/* --- SIGN OUT BUTTON REMAINS VISIBLE ON DESKTOP --- */
+/* 
+   The sign-in button is handled separately by the JS 
+   and will appear when the user is signed out.
+*/
+
+/* ===== REORDER NAV BUTTONS: CART ON LEFT OF SUBMIT ===== */
+
+/* Reorder the navigation buttons using flexbox order */
+.nav-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.8rem !important;
+    flex-shrink: 0 !important;
+    padding-right: 0 !important;
+    margin-left: auto !important;
+}
+
+/* 
+   New order:
+   1. Cart button (order: 1)
+   2. Submit button (order: 2)
+   3. Wishlist button (order: 3)
+   4. Profile/Sign In (order: 4)
+*/
+
+.nav-right .btn-cart-header {
+    order: 1 !important;
+}
+
+.nav-right .btn-submit,
+.nav-right .btn-signin {
+    order: 2 !important;
+}
+
+.nav-right .btn-wishlist-header {
+    order: 3 !important;
+}
+
+.nav-right .profile-wrap {
+    order: 4 !important;
+}
     </style>
 </head>
 <body>
@@ -3929,7 +4043,7 @@
                 <div class="empty-wishlist">
                     <i class="fas fa-heart"></i>
                     <p>Please sign in to view your wishlist</p>
-                    <a href="users-login.html?redirect=volantReads-store.html" class="btn-login" style="display:inline-block;margin-top:1rem;background:var(--secondary);color:#fff;padding:0.5rem 1.5rem;border-radius:30px;text-decoration:none;">Sign In</a>
+                    <a href="universal-login.html?platform=reads&redirect=volantReads-store.html" class="btn-login" style="display:inline-block;margin-top:1rem;background:var(--secondary);color:#fff;padding:0.5rem 1.5rem;border-radius:30px;text-decoration:none;">Sign In</a>
                 </div>
             `;
             addAllWishlistToCartBtn.disabled = true;
@@ -4182,7 +4296,7 @@
                 <a href="volantReads-submit.html" class="btn-submit">
                     <i class="fas fa-plus"></i> Submit
                 </a>
-                <a href="users-login.html?redirect=volantReads-store.html" class="btn-wishlist-header" id="wishlistHeaderBtn">
+                <a href="universal-login.html?platform=reads&redirect=volantReads-store.html" class="btn-wishlist-header" id="wishlistHeaderBtn">
                     <i class="fas fa-heart"></i> <span class="wishlist-text">Wishlist</span>
                     <span class="wishlist-count" id="wishlistCountBadge">0</span>
                 </a>
@@ -4190,13 +4304,13 @@
                     <i class="fas fa-shopping-cart"></i> Cart
                     <span class="cart-count">${getCartCount()}</span>
                 </button>
-                <a href="users-login.html?redirect=volantReads-store.html" class="btn-signin">
+                <a href="universal-login.html?platform=reads&redirect=volantReads-store.html" class="btn-signin">
                     <i class="fas fa-sign-in-alt"></i> Sign In
                 </a>
             `;
             document.getElementById('cartOpenBtn')?.addEventListener('click', openCart);
             document.getElementById('wishlistHeaderBtn')?.addEventListener('click', () => {
-                window.location.href = 'users-login.html?redirect=volantReads-store.html';
+                window.location.href = 'universal-login.html?platform=reads&redirect=volantReads-store.html';
             });
         }
         updateCartBadge();
@@ -4464,5 +4578,35 @@
     console.log('🛒 Cart stores offline, persists across pages.');
 </script>
 
+<script>
+// Dynamic login/signup link setup for current page redirect
+(function() {
+  function setupDynamicAuthLinks() {
+    const currentPage = window.location.href;
+    const currentFile = window.location.pathname.split('/').pop();
+    let platform = 'poetry';
+    if (currentFile.startsWith('volantReads-')) platform = 'reads';
+    if (currentFile === 'parent-house.html') platform = 'foundry';
+    
+    const loginParams = new URLSearchParams();
+    loginParams.append('platform', platform);
+    loginParams.append('redirect', currentPage);
+    
+    document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
+      link.href = `universal-login.html?${loginParams.toString()}`;
+    });
+    
+    document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
+      link.href = `universal-signup.html?${loginParams.toString()}`;
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
+  } else {
+    setupDynamicAuthLinks();
+  }
+})();
+</script>
 </body>
 </html>

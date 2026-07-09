@@ -75,7 +75,7 @@
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         alert("You must be logged in to edit your profile.");
-        window.location.href = `users-login.html?redirect=${encodeURIComponent(window.location.href)}`;
+        window.location.href = `universal-login.html?platform=poetry&redirect=${encodeURIComponent(window.location.href)}`;
         return;
       }
 
@@ -143,5 +143,35 @@
     });
   </script>
 
+<script>
+// Dynamic login/signup link setup for current page redirect
+(function() {
+  function setupDynamicAuthLinks() {
+    const currentPage = window.location.href;
+    const currentFile = window.location.pathname.split('/').pop();
+    let platform = 'poetry';
+    if (currentFile.startsWith('volantReads-')) platform = 'reads';
+    if (currentFile === 'parent-house.html') platform = 'foundry';
+    
+    const loginParams = new URLSearchParams();
+    loginParams.append('platform', platform);
+    loginParams.append('redirect', currentPage);
+    
+    document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
+      link.href = `universal-login.html?${loginParams.toString()}`;
+    });
+    
+    document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
+      link.href = `universal-signup.html?${loginParams.toString()}`;
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
+  } else {
+    setupDynamicAuthLinks();
+  }
+})();
+</script>
 </body>
 </html>

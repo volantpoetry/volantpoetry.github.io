@@ -1848,7 +1848,56 @@
 .contact-author-section .section-title {
     display: none !important;
 }
+/* ===== HIDE SIGN OUT BUTTON ON SMALLER SCREENS ===== */
 
+/* Hide the sign-out button only on mobile and tablet */
+@media (max-width: 768px) {
+    .btn-signout {
+        display: none !important;
+    }
+}
+
+/* --- SIGN OUT BUTTON REMAINS VISIBLE ON DESKTOP --- */
+/* 
+   The sign-in button is handled separately by the JS 
+   and will appear when the user is signed out.
+*/
+/* ===== REORDER NAV BUTTONS: CART ON LEFT OF SUBMIT ===== */
+
+/* Reorder the navigation buttons using flexbox order */
+.nav-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.8rem !important;
+    flex-shrink: 0 !important;
+    padding-right: 0 !important;
+    margin-left: auto !important;
+}
+
+/* 
+   New order:
+   1. Cart button (order: 1)
+   2. Submit button (order: 2)
+   3. Wishlist button (order: 3)
+   4. Profile/Sign In (order: 4)
+*/
+
+.nav-right .btn-cart-header {
+    order: 1 !important;
+}
+
+.nav-right .btn-submit,
+.nav-right .btn-signin {
+    order: 2 !important;
+}
+
+.nav-right .btn-wishlist-header {
+    order: 3 !important;
+}
+
+.nav-right .profile-wrap {
+    order: 4 !important;
+}
   </style>
 </head>
 <body>
@@ -2003,7 +2052,7 @@
                 <div class="login-prompt" id="loginPrompt">
                   <i class="fas fa-lock"></i>
                   <p>Sign in to download this book.</p>
-                  <a href="users-login.html?redirect=volantReads-details.html" class="btn-login">Sign In</a>
+                  <a href="universal-login.html?platform=reads&redirect=volantReads-details.html" class="btn-login">Sign In</a>
                 </div>
                 <button class="btn-download" id="downloadBtn" style="display:none;">
                   <i class="fas fa-download"></i> Download
@@ -2215,7 +2264,7 @@
     }
 
     function getLoginRedirectLink() {
-      return `users-login.html?redirect=${encodeURIComponent(getCurrentRedirectTarget())}`;
+      return `universal-login.html?platform=reads&redirect=${encodeURIComponent(getCurrentRedirectTarget())}`;
     }
 
     function updateAuthRedirectLinks() {
@@ -3279,5 +3328,35 @@
     console.log('📊 Public sees rounded download counts.');
     console.log('🛒 Cart items:', getCartItems());
   </script>
+<script>
+// Dynamic login/signup link setup for current page redirect
+(function() {
+  function setupDynamicAuthLinks() {
+    const currentPage = window.location.href;
+    const currentFile = window.location.pathname.split('/').pop();
+    let platform = 'poetry';
+    if (currentFile.startsWith('volantReads-')) platform = 'reads';
+    if (currentFile === 'parent-house.html') platform = 'foundry';
+    
+    const loginParams = new URLSearchParams();
+    loginParams.append('platform', platform);
+    loginParams.append('redirect', currentPage);
+    
+    document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
+      link.href = `universal-login.html?${loginParams.toString()}`;
+    });
+    
+    document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
+      link.href = `universal-signup.html?${loginParams.toString()}`;
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
+  } else {
+    setupDynamicAuthLinks();
+  }
+})();
+</script>
 </body>
 </html>

@@ -37,6 +37,17 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence);
 
+// ==================== PLATFORM DETECTION ====================
+function getCurrentPlatform() {
+  const currentFile = window.location.pathname.split('/').pop();
+  if (currentFile.startsWith('volantReads-')) {
+    return 'reads';
+  } else if (currentFile === 'parent-house.html') {
+    return 'foundry';
+  }
+  return 'poetry';
+}
+
 const authUrlParams = new URLSearchParams(window.location.search);
 const preservedRedirect = authUrlParams.get('redirect');
 if (preservedRedirect) {
@@ -76,12 +87,17 @@ export function requireAuth() {
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const searchParams = window.location.search;
     const fullPath = currentPage + searchParams;
+    const platform = getCurrentPlatform();
     
     if (auth.currentUser) {
       forceCheckVerification(auth.currentUser).then(isVerified => {
         if (!isVerified) {
           localStorage.setItem("pendingVerificationEmail", auth.currentUser.email);
-          window.location.href = `verify-email.html?redirect=${encodeURIComponent(fullPath)}`;
+          const params = new URLSearchParams();
+          params.append('email', auth.currentUser.email);
+          params.append('platform', platform);
+          params.append('redirect', fullPath);
+          window.location.href = `verify-email.html?${params.toString()}`;
           resolve(false);
           return;
         }
@@ -95,13 +111,20 @@ export function requireAuth() {
       
       if (!user) {
         localStorage.setItem("redirectAfterLogin", fullPath);
-        window.location.href = `users-login.html?redirect=${encodeURIComponent(fullPath)}`;
+        const params = new URLSearchParams();
+        params.append('platform', platform);
+        params.append('redirect', encodeURIComponent(fullPath));
+        window.location.href = `universal-login.html?${params.toString()}`;
         resolve(false);
       } else {
         const isVerified = await forceCheckVerification(user);
         if (!isVerified) {
           localStorage.setItem("pendingVerificationEmail", user.email);
-          window.location.href = `verify-email.html?redirect=${encodeURIComponent(fullPath)}`;
+          const params = new URLSearchParams();
+          params.append('email', user.email);
+          params.append('platform', platform);
+          params.append('redirect', fullPath);
+          window.location.href = `verify-email.html?${params.toString()}`;
           resolve(false);
           return;
         }
@@ -113,7 +136,10 @@ export function requireAuth() {
       unsubscribe();
       if (!auth.currentUser) {
         localStorage.setItem("redirectAfterLogin", fullPath);
-        window.location.href = `users-login.html?redirect=${encodeURIComponent(fullPath)}`;
+        const params = new URLSearchParams();
+        params.append('platform', platform);
+        params.append('redirect', encodeURIComponent(fullPath));
+        window.location.href = `universal-login.html?${params.toString()}`;
         resolve(false);
       }
     }, 3000);
