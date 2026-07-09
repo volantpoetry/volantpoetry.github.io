@@ -47,6 +47,4 @@ Disallow: /user-edit-poems.html
 # - /user-profile.html
 # - /users-profile-page.html
 
-Sitemap: https://volantpoetry.github.io/sitemap.xml
-
-
+Sitemap: https://volantpoetry.pages.dev/sitemap.xml
