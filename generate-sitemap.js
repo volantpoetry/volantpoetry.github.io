@@ -9,7 +9,7 @@ const { initializeApp, cert } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 
 // ---- CONFIG ----
-const domain = 'https://volantpoetry.pages.dev';  // ✅ UPDATED
+const domain = 'https://volantpoetry.vercel.app';  // ✅ UPDATED to Vercel
 const publicFolder = './';
 const firebaseKeyPath = './serviceAccountKey.json';
 
