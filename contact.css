@@ -48,3 +48,29 @@
 html {
   scroll-behavior: smooth;
 }
+
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* space between image and text */
+}
+
+.nav-logo-img {
+  display: block;
+  height: 40px;  /* adjust as needed */
+  width: auto;
+  order: 1; /* ensures image is first (left) */
+}
+
+.logo-text {
+  order: 2; /* text stays right of image */
+  white-space: nowrap;
+}
+
+/* On desktop, the nav container should also use flex */
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* optional, for nav layout */
+}

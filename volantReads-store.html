@@ -11,6 +11,54 @@
     <link rel="icon" type="image/png" href="images/volant-reads-favicon.png" />
     <link rel="apple-touch-icon" href="images/volant-reads-favicon.png" />
 
+<!-- SEO Meta Tags - Volant Reads Bookstore -->
+<meta name="description" content="Volant Reads is a digital literary marketplace where readers can discover, purchase, and access books, poetry, and other written content from talented authors.">
+<meta name="keywords" content="Volant Reads, bookstore, literary marketplace, books, poetry, ebooks, Ghana authors, African literature, buy books online">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Volant Reads · Bookstore">
+<meta property="og:description" content="Discover and purchase books, poetry, and literary works at Volant Reads — the digital marketplace for readers and writers.">
+<meta property="og:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://volantpoetry.vercel.app/volantReads-store.html">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Volant Reads · Bookstore">
+<meta name="twitter:description" content="Discover and purchase books, poetry, and literary works at Volant Reads.">
+<meta name="twitter:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
+
+<!-- Canonical -->
+<link rel="canonical" href="https://volantpoetry.vercel.app/volantReads-store.html">
+
+<!-- Sitemap -->
+<link rel="sitemap" type="application/xml" title="Sitemap" href="https://volantpoetry.vercel.app/sitemap.xml">
+
+<!-- Structured Data - Bookstore -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BookStore",
+  "name": "Volant Reads",
+  "url": "https://volantpoetry.vercel.app/volantReads-store.html",
+  "logo": "https://volantpoetry.vercel.app/images/volant-reads-favicon.png",
+  "description": "A digital literary marketplace where readers can discover, purchase, and access books, poetry, and other written content.",
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "Volant Foundry",
+    "url": "https://volantpoetry.vercel.app"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "GH"
+  },
+  "sameAs": [
+    "https://instagram.com/volantpoetry",
+    "https://twitter.com/volantpoetry"
+  ]
+}
+</script>
+
     <style>
         /* Your existing CSS - unchanged */
         /* ===== NAV - MAINTAIN HEIGHT, PUSH TEXT INWARD ===== */
@@ -3457,17 +3505,25 @@
 @media (max-width: 380px) {
     .book-card .book-title,
     #new-books .book-card .book-title {
-        font-size: 0.8rem !important;
+        font-size: 1rem !important;
     }
 
     .book-card .book-subtitle,
     #new-books .book-card .book-subtitle {
-        font-size: 0.6rem !important;
+        font-size: 0.9rem !important;
     }
 
     .book-card .book-price,
     #new-books .book-card .book-price {
-        font-size: 0.7rem !important;
+        font-size: 0.9rem !important;
+    }
+}
+
+/* Increase author name font size on Volant Reads - 380px and below */
+@media (max-width: 380px) {
+    .book-card .book-author,
+    #new-books .book-card .book-author {
+        font-size: 0.87rem !important;
     }
 }
 
@@ -3652,10 +3708,10 @@
     <div id="volant-footer-container">
         <div class="volant-footer-col volant-footer-brand">
             <div class="volant-footer-logo">
-                <img src="images/logo.png" alt="Volant Poetry Logo" />
-                <span>Volant Poetry</span>
+                <img src="images/logo.png" alt="Volant Reads Logo" />
+                <span>Volant Reads</span>
             </div>
-            <p class="volant-footer-desc">A community for poets, writers, and readers to share, discover, and celebrate poetry and literary works.</p>
+            <p class="volant-footer-desc">A digital literary marketplace where readers can discover, purchase, and access books, poetry, and other written content from talented authors.</p>
             <div class="volant-footer-social">
                 <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                 <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
@@ -3704,9 +3760,34 @@
     </div>
 
     <div id="volant-footer-bottom">
-        <p>&copy; 2026 <strong>Volant Poetry</strong>. All rights reserved.</p>
+        <p style="display:flex; flex-wrap:wrap; justify-content:center; gap:6px 14px; margin-bottom:6px;">
+            <a href="volant-foundry.html" style="color:#b76e4b; text-decoration:none; font-size:0.8rem; font-weight:600;">🏛️ Volant Foundry</a>
+        </p>
+        <p style="margin:4px 0;">
+            <span style="background:rgba(183,110,75,0.12); padding:2px 14px; border-radius:20px; font-size:0.7rem; color:#b76e4b; font-weight:500;">Part of the Volant Foundry Platform</span>
+        </p>
+        <p style="margin-top:6px; font-size:0.75rem; color:#6a5f55;">&copy; 2026 <strong style="color:#c4b8aa;">Volant Reads</strong>. All Rights Reserved.</p>
     </div>
-</footer>    
+</footer>
+
+<style>
+    /* Mobile responsive for footer links */
+    @media (max-width: 480px) {
+        #volant-footer-bottom p:first-child a {
+            font-size: 0.7rem !important;
+            padding: 4px 12px;
+            background: rgba(183,110,75,0.1);
+            border-radius: 20px;
+        }
+    }
+
+    @media (max-width: 380px) {
+        #volant-footer-bottom p:first-child a {
+            font-size: 0.6rem !important;
+            padding: 3px 10px;
+        }
+    }
+</style>
     
 
 <script type="importmap">

@@ -348,29 +348,6 @@
       margin-right: 0.5rem;
     }
 
-    .page-footer {
-      background: var(--bg-card);
-      border-top: 1px solid var(--border-light);
-      padding: 1.5rem;
-      text-align: center;
-      margin-top: 2rem;
-    }
-
-    .page-footer p {
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      margin: 0;
-    }
-
-    .page-footer a {
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    .page-footer a:hover {
-      text-decoration: underline;
-    }
-
     @media (max-width: 768px) {
       .page-header {
         padding: 1.8rem 1rem 1.2rem;
@@ -807,9 +784,60 @@
 
   </div>
 
-  <footer class="page-footer">
-    <p>© 2026 Volant Poetry. All rights reserved. | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms & Conditions</a> | <a href="refund.html">Refund Policy</a></p>
+  <!-- ===== FOOTER ===== -->
+  <footer class="page-footer" style="background:#1a1714; color:#e8e0d8; padding:2rem 1.5rem; text-align:center; margin-top:2rem; border-top:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:920px; margin:0 auto;">
+      <!-- Footer Links Row - Preserved original links -->
+      <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px 20px; margin-bottom:10px;">
+        <a href="privacy.html" style="color:#c4b8aa; text-decoration:none; font-size:0.8rem;">Privacy Policy</a>
+        <a href="terms.html" style="color:#c4b8aa; text-decoration:none; font-size:0.8rem;">Terms &amp; Conditions</a>
+        <a href="refund.html" style="color:#c4b8aa; text-decoration:none; font-size:0.8rem;">Refund Policy</a>
+    <a href="volant-foundry.html" style="color:#b76e4b; text-decoration:none; font-size:0.8rem; font-weight:600;">🏛️ Volant Foundry</a>
+      </div>
+      
+      <!-- Platform Badge -->
+      <div style="margin:6px 0;">
+        <span style="background:rgba(183,110,75,0.12); padding:3px 16px; border-radius:20px; font-size:0.7rem; color:#b76e4b; font-weight:500; display:inline-block;">
+          Part of the Volant Foundry Platform
+        </span>
+      </div>
+      
+      <!-- Copyright -->
+      <div style="font-size:0.75rem; color:#6a5f55; margin-top:6px;">
+        &copy; 2026 <strong style="color:#c4b8aa;">Volant Reads</strong>. All Rights Reserved.
+      </div>
+    </div>
   </footer>
+
+  <!-- ===== MOBILE RESPONSIVE STYLES ===== -->
+  <style>
+    /* Mobile responsive for footer links */
+    @media (max-width: 480px) {
+      footer .footer-links-row {
+        gap: 4px 10px !important;
+      }
+      footer .footer-links-row a {
+        font-size: 0.65rem !important;
+        padding: 2px 8px;
+        background: rgba(255,255,255,0.04);
+        border-radius: 12px;
+      }
+      footer .footer-links-row a:last-child {
+        color: #b76e4b !important;
+        background: rgba(183,110,75,0.1);
+      }
+    }
+
+    @media (max-width: 380px) {
+      footer .footer-links-row a {
+        font-size: 0.55rem !important;
+        padding: 2px 6px;
+      }
+      footer .footer-links-row {
+        gap: 3px 6px !important;
+      }
+    }
+  </style>
 
   <script>
     function toggleFAQ(element) {

@@ -21,8 +21,8 @@
   <!-- Open Graph -->
   <meta property="og:title" content="Volant Poetry" />
   <meta property="og:description" content="A platform for sharing emotions, inspiring creativity, and connecting people through the beauty of words." />
-  <meta property="og:image" content="https://volantpoetry.pages.dev/images/logo.png" />
-  <meta property="og:url" content="https://volantpoetry.pages.dev/" />
+  <meta property="og:image" content="https://volantpoetry.vercel.app/images/logo.png" />
+  <meta property="og:url" content="https://volantpoetry.vercel.app/" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Volant Poetry" />
 
@@ -30,13 +30,13 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Volant Poetry" />
   <meta name="twitter:description" content="A platform for sharing emotions, inspiring creativity, and connecting people through the beauty of words." />
-  <meta name="twitter:image" content="https://volantpoetry.pages.dev/images/logo.png" />
+  <meta name="twitter:image" content="https://volantpoetry.vercel.app/images/logo.png" />
 
   <!-- Sitemap & Canonical -->
-  <link rel="canonical" href="https://volantpoetry.pages.dev/" />
-  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://volantpoetry.pages.dev/sitemap.xml" />
+  <link rel="canonical" href="https://volantpoetry.vercel.app/" />
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://volantpoetry.vercel.app/sitemap.xml" />
 
-  <link rel="author" href="https://volantpoetry.pages.dev/about.html">
+  <link rel="author" href="https://volantpoetry.vercel.app/about.html">
   <!-- Structured Data -->
 <!-- WebSite Schema -->
 <script type="application/ld+json">
@@ -44,20 +44,20 @@
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Volant Poetry",
-  "url": "https://volantpoetry.pages.dev",
+  "url": "https://volantpoetry.vercel.app",
   "description": "A platform for sharing emotions, inspiring creativity, and connecting readers through the beauty of words.",
   "publisher": {
     "@type": "Organization",
     "name": "Volant Poetry",
-    "url": "https://volantpoetry.pages.dev"
+    "url": "https://volantpoetry.vercel.app"
   },
   "sameAs": [
     "https://github.com/renceblunt",
-    "https://volantpoetry.pages.dev"
+    "https://volantpoetry.vercel.app"
   ],
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://volantpoetry.pages.dev/search?query={search_term_string}",
+    "target": "https://volantpoetry.vercel.app/search?query={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }
@@ -1243,6 +1243,10 @@
     padding-bottom: 12px !important;
   }
 }
+/* Hide Contact Us link in navigation header */
+.nav-links a[href="contact.html"] {
+  display: none !important;
+}
 </style>
 
 </head>
@@ -1463,16 +1467,81 @@ Just voices, words, and connection.</p>
 
 
 
-<footer style=" padding:30px 20px; text-align:center; border-top:1px solid #eee; font-size:0.95rem; color:#555;">
-  <div class="footer-links" style="margin-bottom:10px;">
-        <a href="terms.html" style="margin:0 10px; color:#2C3E50; text-decoration:none;">Terms</a> |
-        <a href="submission-guidelines.html" style="margin:0 10px; color:#2C3E50; text-decoration:none;">Submission Guidelines</a>|
-       <a href="contact.html" style="margin:0 10px; color:#2C3E50; text-decoration:none;">Contact</a> 
+<!-- ====== UPDATED FOOTER ====== -->
+<footer style="padding:30px 20px; text-align:center; border-top:1px solid #eee; background:#faf9fe;">
+  <div class="footer-links" style="margin-bottom:10px; display:flex; flex-wrap:wrap; justify-content:center; gap:8px 16px;">
+    <div class="footer-row">
+      <a href="terms.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Terms</a>
+      <a href="contact.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Contact</a>
+      <a href="volantReads-store.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">📚 Bookstore</a>
+    </div>
+    <div class="footer-row">
+      <a href="submission-guidelines.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Submission Guidelines</a>
+      <a href="volant-foundry.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem; font-weight:600;">🏛️ Volant Foundry</a>
+    </div>
   </div>
-  <div class="footer-copy">
+  
+  <div style="font-size:0.8rem; color:#888; margin-bottom:6px;">
+    <span style="background:linear-gradient(135deg,#2a1a4a,#4b2aad); color:white; padding:3px 14px; border-radius:20px; font-weight:500; display:inline-block; font-size:0.7rem;">
+      Part of the Volant Foundry Platform
+    </span>
+  </div>
+
+  <div class="footer-copy" style="font-size:0.85rem; color:#555; margin-top:6px;">
     &copy; 2026 Volant Poetry. All Rights Reserved.
   </div>
 </footer>
+
+<style>
+  /* Mobile responsive for smaller screens */
+  @media (max-width: 480px) {
+    .footer-links {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 4px 0 !important;
+    }
+    
+    .footer-row {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 6px 12px !important;
+      width: 100% !important;
+    }
+    
+    .footer-row a {
+      font-size: 0.85rem !important;
+      padding: 3px 0;
+      white-space: nowrap;
+    }
+    
+    footer {
+      padding: 20px 10px !important;
+    }
+  }
+
+  /* For very small screens 380px and below */
+  @media (max-width: 380px) {
+    .footer-row {
+      gap: 4px 8px !important;
+    }
+    
+    .footer-row a {
+      font-size: 0.8rem !important;
+      padding: 2px 0;
+    }
+    
+    .footer-links {
+      gap: 2px 0 !important;
+    }
+    
+    footer {
+      padding: 15px 6px !important;
+    }
+  }
+</style>
 
   <!-- Scripts -->
   <script type="module" src="script.js"></script>
