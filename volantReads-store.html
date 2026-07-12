@@ -34,6 +34,8 @@
 <!-- Sitemap -->
 <link rel="sitemap" type="application/xml" title="Sitemap" href="https://volantpoetry.vercel.app/sitemap.xml">
 
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
 <!-- Structured Data - Bookstore -->
 <script type="application/ld+json">
 {
@@ -3554,13 +3556,6 @@
     margin-left: auto !important;
 }
 
-/* 
-   New order:
-   1. Cart button (order: 1)
-   2. Submit button (order: 2)
-   3. Wishlist button (order: 3)
-   4. Profile/Sign In (order: 4)
-*/
 
 .nav-right .btn-cart-header {
     order: 1 !important;
@@ -3577,6 +3572,25 @@
 
 .nav-right .profile-wrap {
     order: 4 !important;
+}
+
+/* ===== ALREADY OWNED BADGE ===== */
+.cart-item .item-owned {
+    font-size: 0.65rem;
+    color: #155724;
+    background: #d4edda;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.cart-item .item-owned i {
+    font-size: 0.6rem;
+    color: #155724;
 }
     </style>
 </head>
@@ -3737,6 +3751,7 @@
                 <li><a href="volantReads-refund.html">Refund Policy</a></li>
                 <li><a href="terms.html">Terms &amp; Conditions</a></li>
                 <li><a href="privacy.html">Privacy Policy</a></li>
+                            <li><a href="contact.html">Contact Us</a></li>
             </ul>
         </div>
 
@@ -3801,893 +3816,1057 @@
 </script>
 
 <script type="module">
-    import { initializeApp } from "firebase/app";
-    import { 
-        getFirestore, collection, query, where, getDocs, 
-        doc, getDoc, orderBy, limit, updateDoc, writeBatch
-    } from "firebase/firestore";
-    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+   import { initializeApp } from "firebase/app";
+import { 
+    getFirestore, collection, query, where, getDocs, 
+    doc, getDoc, updateDoc, writeBatch, setDoc, serverTimestamp
+} from "firebase/firestore";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
-        authDomain: "silent-depth.firebaseapp.com",
-        projectId: "silent-depth",
-        storageBucket: "silent-depth.appspot.com",
-        messagingSenderId: "78008755450",
-        appId: "1:78008755450:web:3fd0f0f298a08820935543"
-    };
+const firebaseConfig = {
+    apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+    authDomain: "silent-depth.firebaseapp.com",
+    projectId: "silent-depth",
+    storageBucket: "silent-depth.appspot.com",
+    messagingSenderId: "78008755450",
+    appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-    // DOM Elements
-    const navRight = document.getElementById('navRight');
-    const bookGrid = document.getElementById('bookGrid');
-    const bookCount = document.getElementById('bookCount');
-    const searchInput = document.getElementById('searchInput');
-    const toast = document.getElementById('toast');
-    const newBookGrid = document.getElementById('newBookGrid');
-    const cartOverlay = document.getElementById('cartOverlay');
-    const cartBackdrop = document.getElementById('cartBackdrop');
-    const cartBody = document.getElementById('cartBody');
-    const cartTotalAmount = document.getElementById('cartTotalAmount');
-    const checkoutBtn = document.getElementById('checkoutBtn');
-    const cartCloseBtn = document.getElementById('cartCloseBtn');
+// ===== PAYSTACK CONFIGURATION =====
+const PAYSTACK_PUBLIC_KEY = 'pk_test_3c8ee7c771dff6be535267ed57067b52ac466381';
 
-    // Wishlist overlay DOM elements
-    const wishlistOverlay = document.getElementById('wishlistOverlay');
-    const wishlistBackdrop = document.getElementById('wishlistBackdrop');
-    const wishlistBody = document.getElementById('wishlistBody');
-    const wishlistCloseBtn = document.getElementById('wishlistCloseBtn');
-    const addAllWishlistToCartBtn = document.getElementById('addAllWishlistToCartBtn');
+// DOM Elements
+const navRight = document.getElementById('navRight');
+const bookGrid = document.getElementById('bookGrid');
+const bookCount = document.getElementById('bookCount');
+const searchInput = document.getElementById('searchInput');
+const toast = document.getElementById('toast');
+const newBookGrid = document.getElementById('newBookGrid');
+const cartOverlay = document.getElementById('cartOverlay');
+const cartBackdrop = document.getElementById('cartBackdrop');
+const cartBody = document.getElementById('cartBody');
+const cartTotalAmount = document.getElementById('cartTotalAmount');
+const checkoutBtn = document.getElementById('checkoutBtn');
+const cartCloseBtn = document.getElementById('cartCloseBtn');
+const cartPaymentProcessing = document.getElementById('cartPaymentProcessing');
 
-    // Payout modal elements
-    const payoutModal = document.getElementById('payoutModal');
-    const payoutAmount = document.getElementById('payoutAmount');
-    const payoutConfirmBtn = document.getElementById('payoutConfirmBtn');
-    const payoutCancelBtn = document.getElementById('payoutCancelBtn');
+const wishlistOverlay = document.getElementById('wishlistOverlay');
+const wishlistBackdrop = document.getElementById('wishlistBackdrop');
+const wishlistBody = document.getElementById('wishlistBody');
+const wishlistCloseBtn = document.getElementById('wishlistCloseBtn');
+const addAllWishlistToCartBtn = document.getElementById('addAllWishlistToCartBtn');
 
-    let allBooks = [];
-    let filteredBooks = [];
-    let toastTimeout = null;
-    let currentUser = null;
-    let wishlistCount = 0;
-    let wishlistItems = [];
+let allBooks = [];
+let filteredBooks = [];
+let toastTimeout = null;
+let currentUser = null;
+let wishlistCount = 0;
+let wishlistItems = [];
+let isProcessingPayment = false;
 
-    // ===== CART SYSTEM (offline) =====
-    const CART_KEY = 'volant_cart_items';
-    const CART_COUNT_KEY = 'volant_cart_count';
+// ===== CART SYSTEM =====
+const CART_KEY = 'volant_cart_items';
+const CART_COUNT_KEY = 'volant_cart_count';
 
-    function getCartItems() {
-        try {
-            return JSON.parse(localStorage.getItem(CART_KEY)) || [];
-        } catch { return []; }
-    }
+function getCartItems() {
+    try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch { return []; }
+}
 
-    function saveCartItems(items) {
-        localStorage.setItem(CART_KEY, JSON.stringify(items));
-        localStorage.setItem(CART_COUNT_KEY, String(items.length));
-        updateCartBadge();
-        try {
-            localStorage.setItem('volant_cart_updated', Date.now().toString());
-        } catch {}
-    }
+function saveCartItems(items) {
+    localStorage.setItem(CART_KEY, JSON.stringify(items));
+    localStorage.setItem(CART_COUNT_KEY, String(items.length));
+    updateCartBadge();
+    try { localStorage.setItem('volant_cart_updated', Date.now().toString()); } catch {}
+    cartCount = items.length;
+}
 
-    function getCartCount() {
-        try {
-            return parseInt(localStorage.getItem(CART_COUNT_KEY)) || 0;
-        } catch { return 0; }
-    }
+function getCartCount() {
+    try { return parseInt(localStorage.getItem(CART_COUNT_KEY)) || 0; } catch { return 0; }
+}
 
-    let cartCount = getCartCount();
+let cartCount = getCartCount();
 
-    function updateCartBadge() {
-        const badge = document.querySelector('.cart-count');
-        if (badge) badge.textContent = cartCount;
-    }
-
-    function updateWishlistBadge() {
-        const badge = document.getElementById('wishlistCountBadge');
-        if (badge) badge.textContent = wishlistCount;
-    }
-
-    // ===== RENDER CART =====
-    function renderCart() {
-        const items = getCartItems();
-        if (items.length === 0) {
-            cartBody.innerHTML = `
-                <div class="empty-cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <p>Your cart is empty</p>
-                    <span style="font-size:0.85rem;color:#b0a496;">Browse our collection and add some books!</span>
-                </div>
-            `;
-            cartTotalAmount.textContent = 'GHS 0.00';
-            checkoutBtn.disabled = true;
-            return;
+// ===== PAYMENT FUNCTIONS =====
+async function checkPurchaseStatus(userId, bookId) {
+    try {
+        const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
+        const purchaseSnap = await getDoc(purchaseRef);
+        if (purchaseSnap.exists()) {
+            return purchaseSnap.data().status === 'completed' && purchaseSnap.data().verified === true;
         }
+        return false;
+    } catch (err) {
+        return false;
+    }
+}
 
-        let html = '';
-        let total = 0;
-        items.forEach((item, index) => {
-            const price = item.price || 0;
-            total += price;
-            const currency = item.currency || 'GHS';
-            html += `
-                <div class="cart-item">
-                    <div class="item-cover">
-                        ${item.image ? `<img src="${item.image}" alt="${item.title}" />` : `<div class="no-cover"><i class="fas fa-book-open"></i></div>`}
-                    </div>
-                    <div class="item-info">
-                        <div class="item-title">${item.title || 'Untitled'}</div>
-                        <div class="item-author">${item.author || 'Anonymous'}</div>
-                        <div class="item-price">${currency} ${price.toFixed(2)}</div>
-                    </div>
-                    <div class="item-actions">
-                        <button class="btn-remove" data-index="${index}"><i class="fas fa-trash-alt"></i> Remove</button>
-                    </div>
-                </div>
-            `;
+async function recordPurchase(userId, bookId, transactionRef, paymentData = {}) {
+    try {
+        const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
+        await setDoc(purchaseRef, {
+            userId: userId,
+            bookId: bookId,
+            status: 'completed',
+            verified: true,
+            purchasedAt: serverTimestamp(),
+            transactionRef: transactionRef || 'paystack',
+            amount: paymentData.amount || 0,
+            currency: paymentData.currency || 'GHS',
+            customerEmail: paymentData.customerEmail || currentUser?.email || '',
+            paymentMethod: 'paystack'
         });
-
-        cartBody.innerHTML = html;
-        cartTotalAmount.textContent = `GHS ${total.toFixed(2)}`;
-        checkoutBtn.disabled = false;
-
-        document.querySelectorAll('.btn-remove').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const index = parseInt(this.dataset.index);
-                const items = getCartItems();
-                const item = items[index];
-                if (confirm(`Remove "${item.title || 'this book'}" from cart?`)) {
-                    items.splice(index, 1);
-                    saveCartItems(items);
-                    renderCart();
-                    updateCartBadge();
-                    showToast(`🗑️ Removed from cart.`, 'info');
-                }
-            });
-        });
+        return true;
+    } catch (err) {
+        return false;
     }
+}
 
-    // ===== TOGGLE CART =====
-    function openCart() {
-        cartOverlay.classList.add('open');
-        cartBackdrop.classList.add('show');
-        renderCart();
-        document.body.style.overflow = 'hidden';
+async function validatePayment(response, bookData) {
+    const { reference, amount, currency, customer, metadata } = response;
+    
+    let amountMatches = true;
+    if (amount !== null && amount !== undefined && bookData.pricing?.amount > 0) {
+        amountMatches = amount === bookData.pricing.amount * 100;
     }
-
-    function closeCart() {
-        cartOverlay.classList.remove('open');
-        cartBackdrop.classList.remove('show');
-        document.body.style.overflow = '';
+    
+    let currencyMatches = true;
+    if (currency && bookData.pricing?.currency) {
+        currencyMatches = currency === bookData.pricing.currency;
     }
-
-    cartCloseBtn.addEventListener('click', closeCart);
-    cartBackdrop.addEventListener('click', closeCart);
-
-    // ===== PAYOUT MODAL FUNCTIONS =====
-    function openPayoutModal(total) {
-        payoutAmount.textContent = `GHS ${total.toFixed(2)}`;
-        payoutModal.classList.add('active');
+    
+    let emailMatches = true;
+    if (customer && customer.email) {
+        emailMatches = customer.email === currentUser.email;
     }
-
-    function closePayoutModal() {
-        payoutModal.classList.remove('active');
-    }
-
-    // ===== CHECKOUT WITH PAYOUT MODAL =====
-    checkoutBtn.addEventListener('click', function() {
-        const items = getCartItems();
-        if (items.length === 0) return;
-        const total = items.reduce((sum, item) => sum + (item.price || 0), 0);
-        openPayoutModal(total);
-    });
-
-    // Confirm payment from modal
-    payoutConfirmBtn.addEventListener('click', function() {
-        const items = getCartItems();
-        const total = items.reduce((sum, item) => sum + (item.price || 0), 0);
-        showToast(`✅ Payment successful! Total: GHS ${total.toFixed(2)}`, 'success');
-        saveCartItems([]);
-        renderCart();
-        updateCartBadge();
-        closePayoutModal();
-        closeCart();
-    });
-
-    payoutCancelBtn.addEventListener('click', closePayoutModal);
-    payoutModal.addEventListener('click', function(e) {
-        if (e.target === payoutModal) closePayoutModal();
-    });
-
-    // ========== TOAST ==========
-    function showToast(message, type = 'info') {
-        toast.textContent = message;
-        toast.className = type;
-        toast.style.background = type === 'error' ? '#b76e4b' : '#4b2aad';
-        void toast.offsetWidth;
-        toast.style.transform = 'translateY(0)';
-        toast.style.opacity = '1';
-        if (toastTimeout) clearTimeout(toastTimeout);
-        toastTimeout = setTimeout(() => {
-            toast.style.transform = 'translateY(100px)';
-            toast.style.opacity = '0';
-        }, 4000);
-    }
-
-    // ========== HELPER FUNCTIONS FOR AVATAR ==========
-    function getInitials(name) {
-        if (!name || name === 'Anonymous') return '?';
-        const parts = name.trim().split(' ');
-        if (parts.length === 1) {
-            return parts[0].substring(0, 2).toUpperCase();
-        }
-        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    }
-
-    function colorFromName(name) {
-        if (!name) return 'hsl(0, 60%, 45%)';
-        let hash = 0;
-        for (let i = 0; i < name.length; i++) {
-            hash = name.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        const hue = Math.abs(hash) % 360;
-        return `hsl(${hue}, 65%, 50%)`;
-    }
-
-    async function generateAndUploadAvatar(initials, bgColor, userId) {
-        try {
-            const cloudName = 'dzoq4pgjn';
-            if (!cloudName) return null;
-            
-            const canvas = document.createElement('canvas');
-            canvas.width = 180;
-            canvas.height = 180;
-            const ctx = canvas.getContext('2d');
-            
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 80px "Playfair Display", serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(initials, canvas.width / 2, canvas.height / 2);
-            
-            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-            const formData = new FormData();
-            formData.append('file', blob);
-            formData.append('upload_preset', 'profile_pics');
-            
-            const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                const imageUrl = data.secure_url;
-                
-                await updateDoc(doc(db, 'users', userId), {
-                    cachedAvatarURL: imageUrl
-                });
-                
-                return imageUrl;
-            }
-        } catch (err) {
-            console.warn('Avatar generation failed:', err);
-        }
-        return null;
-    }
-
-    // ========== GET WISHLIST COUNT ==========
-    async function getWishlistCount(userId) {
-        try {
-            const q = query(
-                collection(db, "wishlists"),
-                where("userId", "==", userId)
-            );
-            const snapshot = await getDocs(q);
-            return snapshot.size;
-        } catch (err) {
-            console.warn('Error getting wishlist count:', err);
-            return 0;
-        }
-    }
-
-    async function getUserWishlist(userId) {
-        try {
-            const q = query(
-                collection(db, "wishlists"),
-                where("userId", "==", userId)
-            );
-            const snapshot = await getDocs(q);
-            const items = [];
-            snapshot.forEach(doc => {
-                items.push({ id: doc.id, ...doc.data() });
-            });
-            return items;
-        } catch (err) {
-            console.warn('Error getting wishlist:', err);
-            return [];
-        }
-    }
-
-    // ===== RENDER WISHLIST OVERLAY =====
-    async function renderWishlist() {
-        if (!currentUser) {
-            wishlistBody.innerHTML = `
-                <div class="empty-wishlist">
-                    <i class="fas fa-heart"></i>
-                    <p>Please sign in to view your wishlist</p>
-                    <a href="universal-login.html?platform=reads&redirect=volantReads-store.html" class="btn-login" style="display:inline-block;margin-top:1rem;background:var(--secondary);color:#fff;padding:0.5rem 1.5rem;border-radius:30px;text-decoration:none;">Sign In</a>
-                </div>
-            `;
-            addAllWishlistToCartBtn.disabled = true;
-            return;
-        }
-
-        const items = await getUserWishlist(currentUser.uid);
-        wishlistItems = items;
-        wishlistCount = items.length;
-        updateWishlistBadge();
-
-        if (items.length === 0) {
-            wishlistBody.innerHTML = `
-                <div class="empty-wishlist">
-                    <i class="fas fa-heart" style="color:#e74c3c;"></i>
-                    <p>Your wishlist is empty</p>
-                    <span>Browse books and click the ❤️ to save them here!</span>
-                </div>
-            `;
-            addAllWishlistToCartBtn.disabled = true;
-            return;
-        }
-
-        let html = '';
-        items.forEach((item) => {
-            const price = item.price || 0;
-            const currency = item.currency || 'GHS';
-            html += `
-                <div class="wishlist-item" data-wishlist-id="${item.id}" data-book-id="${item.bookId}">
-                    <div class="item-cover">
-                        ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" />` : `<div class="no-cover"><i class="fas fa-book-open"></i></div>`}
-                    </div>
-                    <div class="item-info">
-                        <div class="item-title">${item.title || 'Untitled'}</div>
-                        <div class="item-author">${item.author || 'Anonymous'}</div>
-                        <div class="item-price">${currency} ${price.toFixed(2)}</div>
-                    </div>
-                    <div class="item-actions">
-                        <button class="btn-move-cart" data-book-id="${item.bookId}" data-title="${item.title}" data-author="${item.author}" data-price="${item.price}" data-currency="${item.currency}" data-image="${item.imageUrl || ''}">
-                            <i class="fas fa-cart-plus"></i> Cart
-                        </button>
-                        <button class="btn-wishlist-remove" data-book-id="${item.bookId}" data-title="${item.title}">
-                            <i class="fas fa-trash-alt"></i> Remove
-                        </button>
-                    </div>
-                </div>
-            `;
-        });
-
-        wishlistBody.innerHTML = html;
-        addAllWishlistToCartBtn.disabled = false;
-
-        // Move to cart buttons
-        document.querySelectorAll('.btn-move-cart').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const bookId = this.dataset.bookId;
-                const title = this.dataset.title;
-                const author = this.dataset.author;
-                const price = parseFloat(this.dataset.price) || 0;
-                const currency = this.dataset.currency || 'GHS';
-                const image = this.dataset.image || '';
-
-                const cartItems = getCartItems();
-                const existing = cartItems.find(item => item.id === bookId);
-                if (existing) {
-                    showToast(`📚 "${title}" is already in your cart.`, 'info');
-                    return;
-                }
-
-                cartItems.push({
-                    id: bookId,
-                    title: title || 'Untitled',
-                    author: author || 'Anonymous',
-                    price: price,
-                    currency: currency,
-                    image: image
-                });
-
-                saveCartItems(cartItems);
-                cartCount = cartItems.length;
-                updateCartBadge();
-                showToast(`✅ "${title}" moved to cart!`, 'success');
-            });
-        });
-
-        // Remove from wishlist buttons
-        document.querySelectorAll('.btn-wishlist-remove').forEach(btn => {
-            btn.addEventListener('click', async function(e) {
-                e.stopPropagation();
-                const bookId = this.dataset.bookId;
-                const title = this.dataset.title;
-
-                if (!currentUser) {
-                    showToast('🔐 Please sign in.', 'error');
-                    return;
-                }
-
-                try {
-                    const q = query(
-                        collection(db, "wishlists"),
-                        where("userId", "==", currentUser.uid),
-                        where("bookId", "==", bookId)
-                    );
-                    const snapshot = await getDocs(q);
-                    const batch = writeBatch(db);
-                    snapshot.forEach(doc => {
-                        batch.delete(doc.ref);
-                    });
-                    await batch.commit();
-                    
-                    wishlistCount--;
-                    updateWishlistBadge();
-                    await renderWishlist();
-                    showToast(`💔 Removed "${title}" from wishlist.`, 'info');
-                } catch (err) {
-                    console.error('Error removing from wishlist:', err);
-                    showToast('❌ Error removing from wishlist.', 'error');
-                }
-            });
-        });
-    }
-
-    // ===== TOGGLE WISHLIST =====
-    function openWishlist() {
-        wishlistOverlay.classList.add('open');
-        wishlistBackdrop.classList.add('show');
-        renderWishlist();
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeWishlist() {
-        wishlistOverlay.classList.remove('open');
-        wishlistBackdrop.classList.remove('show');
-        document.body.style.overflow = '';
-    }
-
-    wishlistCloseBtn.addEventListener('click', closeWishlist);
-    wishlistBackdrop.addEventListener('click', closeWishlist);
-
-    // ===== ADD ALL WISHLIST TO CART =====
-    addAllWishlistToCartBtn.addEventListener('click', function() {
-        if (wishlistItems.length === 0) {
-            showToast('Your wishlist is empty.', 'info');
-            return;
-        }
-
-        const cartItems = getCartItems();
-        let addedCount = 0;
-
-        wishlistItems.forEach(item => {
-            const existing = cartItems.find(cartItem => cartItem.id === item.bookId);
-            if (!existing) {
-                cartItems.push({
-                    id: item.bookId,
-                    title: item.title || 'Untitled',
-                    author: item.author || 'Anonymous',
-                    price: item.price || 0,
-                    currency: item.currency || 'GHS',
-                    image: item.imageUrl || ''
-                });
-                addedCount++;
-            }
-        });
-
-        if (addedCount === 0) {
-            showToast('All wishlist items are already in your cart.', 'info');
-            return;
-        }
-
-        saveCartItems(cartItems);
-        cartCount = cartItems.length;
-        updateCartBadge();
-        showToast(`✅ ${addedCount} items added to cart!`, 'success');
-        closeWishlist();
-    });
-
-    // ========== RENDER HEADER WITH DYNAMIC AVATAR ==========
-    async function renderHeader(user) {
-        if (user) {
-            const displayName = user.displayName || user.email || 'User';
-            const initial = displayName.charAt(0).toUpperCase();
-            
-            // Get wishlist count
-            wishlistCount = await getWishlistCount(user.uid);
-            
-            // Try to get avatar from Firestore
-            let avatarHTML = `<span>${initial}</span>`;
-            try {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    // Check for photoURL in Firestore first
-                    if (userData.photoURL) {
-                        avatarHTML = `<img src="${userData.photoURL}" alt="Profile" />`;
-                    } else if (userData.cachedAvatarURL) {
-                        avatarHTML = `<img src="${userData.cachedAvatarURL}" alt="Profile" />`;
-                    } else if (userData.username) {
-                        // Generate avatar from username
-                        const initials = getInitials(userData.username);
-                        const bgColor = colorFromName(userData.username);
-                        const avatarUrl = await generateAndUploadAvatar(initials, bgColor, user.uid);
-                        if (avatarUrl) {
-                            avatarHTML = `<img src="${avatarUrl}" alt="Profile" />`;
-                        }
-                    }
-                }
-            } catch (err) {
-                console.warn('Error fetching avatar:', err);
-            }
-            
-            // If no avatar found yet, use Firebase Auth photoURL
-            if (avatarHTML === `<span>${initial}</span>` && user.photoURL) {
-                avatarHTML = `<img src="${user.photoURL}" alt="Profile" />`;
-            }
-
-            navRight.innerHTML = `
-                <a href="volantReads-submit.html" class="btn-submit">
-                    <i class="fas fa-plus"></i> Submit
-                </a>
-                <a href="#" class="btn-wishlist-header" id="wishlistHeaderBtn">
-                    <i class="fas fa-heart"></i> <span class="wishlist-text">Wishlist</span>
-                    <span class="wishlist-count" id="wishlistCountBadge">${wishlistCount}</span>
-                </a>
-                <button class="btn-cart-header" id="cartOpenBtn">
-                    <i class="fas fa-shopping-cart"></i> Cart
-                    <span class="cart-count">${getCartCount()}</span>
-                </button>
-                <a href="volantReads-dashboard.html" class="profile-wrap" style="text-decoration:none;">
-                    <div class="profile-avatar">
-                        ${avatarHTML}
-                    </div>
-                    <button class="btn-signout" id="signOutBtn" title="Sign out" style="pointer-events:auto;"><i class="fas fa-sign-out-alt"></i></button>
-                </a>
-            `;
-            
-            document.getElementById('signOutBtn')?.addEventListener('click', async () => {
-                try {
-                    await signOut(auth);
-                    showToast('👋 Signed out.', 'info');
-                } catch (e) {
-                    showToast('Error signing out.', 'error');
-                }
-            });
-            document.getElementById('cartOpenBtn')?.addEventListener('click', openCart);
-            document.getElementById('wishlistHeaderBtn')?.addEventListener('click', openWishlist);
-            
-        } else {
-            navRight.innerHTML = `
-                <a href="volantReads-submit.html" class="btn-submit">
-                    <i class="fas fa-plus"></i> Submit
-                </a>
-                <a href="universal-login.html?platform=reads&redirect=volantReads-store.html" class="btn-wishlist-header" id="wishlistHeaderBtn">
-                    <i class="fas fa-heart"></i> <span class="wishlist-text">Wishlist</span>
-                    <span class="wishlist-count" id="wishlistCountBadge">0</span>
-                </a>
-                <button class="btn-cart-header" id="cartOpenBtn">
-                    <i class="fas fa-shopping-cart"></i> Cart
-                    <span class="cart-count">${getCartCount()}</span>
-                </button>
-                <a href="universal-login.html?platform=reads&redirect=volantReads-store.html" class="btn-signin">
-                    <i class="fas fa-sign-in-alt"></i> Sign In
-                </a>
-            `;
-            document.getElementById('cartOpenBtn')?.addEventListener('click', openCart);
-            document.getElementById('wishlistHeaderBtn')?.addEventListener('click', () => {
-                window.location.href = 'universal-login.html?platform=reads&redirect=volantReads-store.html';
-            });
-        }
-        updateCartBadge();
-        updateWishlistBadge();
-    }
-
-    // ========== AUTH LISTENER ==========
-    onAuthStateChanged(auth, async (user) => {
-        currentUser = user;
-        await renderHeader(user);
-    });
-
-    // ========== CREATE BOOK CARD ==========
-    function createBookCard(book) {
-        const card = document.createElement('div');
-        card.className = 'book-card';
-        card.onclick = () => {
-            window.location.href = `volantReads-details.html?id=${book.id}`;
+    
+    const validReference = reference && 
+                           (reference.startsWith('paystack_') || 
+                            reference.startsWith('T') || 
+                            reference.startsWith('PSTK_')) && 
+                           reference.length > 10;
+    
+    const bookApproved = bookData.status === 'approved';
+    
+    const purchaseRef = doc(db, "purchases", `${currentUser.uid}_${bookData.id}`);
+    const purchaseSnap = await getDoc(purchaseRef);
+    const notAlreadyPurchased = !purchaseSnap.exists() || purchaseSnap.data().status !== 'completed';
+    
+    const hasValidPrice = bookData.pricing && bookData.pricing.amount > 0;
+    const hasBookId = metadata && metadata.book_id === bookData.id;
+    
+    let isValid = true;
+    
+    if (bookData.pricing?.amount === 0) {
+        const criticalChecks = { validReference, bookApproved, notAlreadyPurchased, hasValidPrice };
+        isValid = Object.values(criticalChecks).every(v => v === true);
+    } else {
+        const checksToValidate = {
+            currencyMatches,
+            emailMatches,
+            validReference,
+            bookApproved,
+            notAlreadyPurchased,
+            hasValidPrice
         };
+        if (amount !== null && amount !== undefined) {
+            checksToValidate.amountMatches = amountMatches;
+        }
+        isValid = Object.values(checksToValidate).every(v => v === true);
+    }
+    
+    return { isValid, alreadyPurchased: purchaseSnap.exists() && purchaseSnap.data().status === 'completed' };
+}
 
-        const coverWrapper = document.createElement('div');
-        coverWrapper.className = 'cover-wrapper';
-        if (book.imageUrl) {
-            const img = document.createElement('img');
-            img.src = book.imageUrl;
-            img.alt = book.title || 'Book cover';
-            img.loading = 'lazy';
-            img.onerror = function() {
-                this.style.display = 'none';
-                this.parentElement.innerHTML = `<div class="no-image"><i class="fas fa-book-open"></i></div>`;
-            };
-            coverWrapper.appendChild(img);
+function initiateCartPayment(amount, email, items) {
+    if (isProcessingPayment) return;
+    
+    if (typeof PaystackPop === 'undefined') {
+        showToast('⏳ Payment system is loading. Please wait a moment.', 'info');
+        return;
+    }
+    
+    if (!PAYSTACK_PUBLIC_KEY || PAYSTACK_PUBLIC_KEY.includes('xxxxxxxx')) {
+        showToast('⚠️ Paystack is not properly configured. Please contact support.', 'error');
+        return;
+    }
+
+    isProcessingPayment = true;
+    cartPaymentProcessing.classList.add('active');
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = 'Processing...';
+
+    const bookTitles = items.map(item => item.title).join(', ');
+
+    try {
+        const handler = PaystackPop.setup({
+            key: PAYSTACK_PUBLIC_KEY,
+            email: email,
+            amount: amount * 100,
+            currency: 'GHS',
+            metadata: {
+                custom_fields: [
+                    { display_name: "Items", variable_name: "items", value: bookTitles },
+                    { display_name: "Item Count", variable_name: "item_count", value: String(items.length) },
+                    { display_name: "Customer ID", variable_name: "customer_id", value: currentUser?.uid || 'guest' },
+                    { display_name: "Payment Type", variable_name: "payment_type", value: "cart_checkout" }
+                ]
+            },
+            callback: function(response) {
+                handleCartPaymentCallback(response, items);
+            },
+            onClose: function() {
+                isProcessingPayment = false;
+                cartPaymentProcessing.classList.remove('active');
+                checkoutBtn.disabled = false;
+                checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+                showToast('Payment cancelled. You can try again.', 'info');
+            }
+        });
+
+        handler.openIframe();
+    } catch (error) {
+        showToast('⚠️ Payment error. Please try again.', 'error');
+        isProcessingPayment = false;
+        cartPaymentProcessing.classList.remove('active');
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+    }
+}
+
+async function handleCartPaymentCallback(response, items) {
+    if (!currentUser) {
+        showToast('⚠️ User not found. Please try again.', 'error');
+        isProcessingPayment = false;
+        cartPaymentProcessing.classList.remove('active');
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+        return;
+    }
+
+    let allValid = true;
+    const invalidItems = [];
+    
+    for (const item of items) {
+        const bookRef = doc(db, "books", item.id);
+        const bookSnap = await getDoc(bookRef);
+        if (!bookSnap.exists()) {
+            allValid = false;
+            invalidItems.push(item.title || 'Unknown');
+            continue;
+        }
+        const bookData = bookSnap.data();
+        
+        const { isValid } = await validatePayment(response, { ...bookData, id: item.id });
+        if (!isValid) {
+            allValid = false;
+            invalidItems.push(bookData.title || 'Unknown');
+        }
+    }
+    
+    if (!allValid) {
+        showToast(`⚠️ Payment verification failed for: ${invalidItems.join(', ')}. Please contact support.`, 'error');
+        isProcessingPayment = false;
+        cartPaymentProcessing.classList.remove('active');
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+        return;
+    }
+
+    const transactionRef = response.reference || 'paystack_' + Date.now();
+    let allSuccess = true;
+    
+    for (const item of items) {
+        const success = await recordPurchase(
+            currentUser.uid, 
+            item.id, 
+            transactionRef,
+            {
+                amount: response.amount / items.length,
+                currency: response.currency,
+                customerEmail: response.customer?.email || currentUser.email
+            }
+        );
+        if (!success) allSuccess = false;
+    }
+    
+    if (allSuccess) {
+        showToast(`✅ Payment verified! ${items.length} book(s) added to your library. 🎉`, 'success');
+        saveCartItems([]);
+        cartCount = 0;
+        updateCartBadge();
+        await renderCart();
+        closeCart();
+    } else {
+        showToast('⚠️ Some purchases failed to save. Please contact support.', 'error');
+    }
+    isProcessingPayment = false;
+    cartPaymentProcessing.classList.remove('active');
+    checkoutBtn.disabled = false;
+    checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+}
+
+// ===== TOAST =====
+function showToast(message, type = 'info') {
+    toast.textContent = message;
+    toast.className = type;
+    toast.style.background = type === 'error' ? '#b76e4b' : '#4b2aad';
+    void toast.offsetWidth;
+    toast.style.transform = 'translateY(0)';
+    toast.style.opacity = '1';
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+        toast.style.transform = 'translateY(100px)';
+        toast.style.opacity = '0';
+    }, 4000);
+}
+
+// ===== UPDATE BADGES =====
+function updateCartBadge() {
+    const badge = document.querySelector('.cart-count');
+    if (badge) badge.textContent = cartCount;
+}
+
+function updateWishlistBadge() {
+    const badge = document.getElementById('wishlistCountBadge');
+    if (badge) badge.textContent = wishlistCount;
+}
+
+// ===== RENDER CART (UPDATED) =====
+async function renderCart() {
+    const items = getCartItems();
+    if (items.length === 0) {
+        cartBody.innerHTML = `
+            <div class="empty-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <p>Your cart is empty</p>
+                <span style="font-size:0.85rem;color:#b0a496;">Browse our collection and add some books!</span>
+            </div>
+        `;
+        cartTotalAmount.textContent = 'GHS 0.00';
+        checkoutBtn.disabled = true;
+        return;
+    }
+
+    let html = '';
+    let total = 0;
+    let hasUnpurchasedItems = false;
+    
+    for (let index = 0; index < items.length; index++) {
+        const item = items[index];
+        const price = item.price || 0;
+        total += price;
+        const currency = item.currency || 'GHS';
+        
+        let isOwned = false;
+        if (currentUser) {
+            isOwned = await checkPurchaseStatus(currentUser.uid, item.id);
+            if (!isOwned) hasUnpurchasedItems = true;
         } else {
-            coverWrapper.innerHTML = `<div class="no-image"><i class="fas fa-book-open"></i></div>`;
+            hasUnpurchasedItems = true;
         }
-
-        if (book.preorder === true || book.preorder === 'true') {
-            const badge = document.createElement('span');
-            badge.className = 'badge-preorder';
-            badge.textContent = 'Pre-order';
-            coverWrapper.appendChild(badge);
-        }
-        card.appendChild(coverWrapper);
-
-        const body = document.createElement('div');
-        body.className = 'book-body';
-
-        const title = document.createElement('div');
-        title.className = 'book-title';
-        title.textContent = book.title || 'Untitled';
-        body.appendChild(title);
-
-        if (book.subtitle && book.subtitle.trim() !== '') {
-            const subtitle = document.createElement('div');
-            subtitle.className = 'book-subtitle';
-            subtitle.textContent = book.subtitle;
-            body.appendChild(subtitle);
-        }
-
-        const author = document.createElement('div');
-        author.className = 'book-author';
-        author.innerHTML = `<i class="fas fa-user-edit"></i> ${book.authorName || 'Anonymous'}`;
-        body.appendChild(author);
-
-        const price = document.createElement('div');
-        price.className = 'book-price';
-        const currency = book.pricing?.currency || 'GHS';
-        const amount = book.pricing?.amount || 0;
-        price.textContent = `${currency} ${amount.toFixed(2)}`;
-        body.appendChild(price);
-
-        card.appendChild(body);
-        return card;
+        
+        html += `
+            <div class="cart-item">
+                <div class="item-cover">
+                    ${item.image ? `<img src="${item.image}" alt="${item.title}" />` : `<div class="no-cover"><i class="fas fa-book-open"></i></div>`}
+                </div>
+                <div class="item-info">
+                    <div class="item-title">${item.title || 'Untitled'}</div>
+                    <div class="item-author">${item.author || 'Anonymous'}</div>
+                    <div class="item-price">${currency} ${price.toFixed(2)}</div>
+                    ${isOwned ? `<div class="item-owned"><i class="fas fa-check-circle"></i> Already Owned</div>` : ''}
+                </div>
+                <div class="item-actions">
+                    <button class="btn-remove" data-index="${index}"><i class="fas fa-trash-alt"></i> Remove</button>
+                </div>
+            </div>
+        `;
     }
 
-    // ========== LOAD BOOKS ==========
-    async function loadBooks() {
-        try {
-            const q = query(
-                collection(db, "books"),
-                where("status", "==", "approved")
-            );
-            const snapshot = await getDocs(q);
-            
-            allBooks = [];
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                let approvedAt = null;
-                if (data.approvedAt) {
-                    approvedAt = data.approvedAt?.toDate?.() || new Date(data.approvedAt);
-                } else if (data.createdAt) {
-                    approvedAt = data.createdAt?.toDate?.() || new Date(data.createdAt);
-                } else {
-                    approvedAt = new Date(0);
-                }
-                
-                allBooks.push({ 
-                    id: doc.id, 
-                    ...data,
-                    createdAtDate: data.createdAt?.toDate?.() || new Date(data.createdAt) || new Date(),
-                    approvedAtDate: approvedAt
-                });
-            });
+    cartBody.innerHTML = html;
+    cartTotalAmount.textContent = `GHS ${total.toFixed(2)}`;
+    checkoutBtn.disabled = !hasUnpurchasedItems || items.length === 0 || isProcessingPayment;
 
-            allBooks.sort((a, b) => b.createdAtDate - a.createdAtDate);
-            applyFilters();
-            loadNewBooks();
-            
-        } catch (err) {
-            console.error("Error loading books:", err);
-            bookGrid.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <h3>Error Loading Books</h3>
-                    <p>Unable to load books. Please refresh the page.</p>
-                </div>
-            `;
-            bookCount.textContent = '0 books available';
-            newBookGrid.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <h3>Error Loading New Books</h3>
-                    <p>Unable to load new books. Please refresh the page.</p>
-                </div>
-            `;
+    document.querySelectorAll('.btn-remove').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const index = parseInt(this.dataset.index);
+            const items = getCartItems();
+            const item = items[index];
+            if (confirm(`Remove "${item.title || 'this book'}" from cart?`)) {
+                items.splice(index, 1);
+                saveCartItems(items);
+                renderCart();
+                updateCartBadge();
+                showToast(`🗑️ Removed from cart.`, 'info');
+            }
+        });
+    });
+}
+
+// ===== TOGGLE CART =====
+function openCart() {
+    cartOverlay.classList.add('open');
+    cartBackdrop.classList.add('show');
+    renderCart();
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCart() {
+    cartOverlay.classList.remove('open');
+    cartBackdrop.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+cartCloseBtn.addEventListener('click', closeCart);
+cartBackdrop.addEventListener('click', closeCart);
+
+// ===== CHECKOUT BUTTON =====
+checkoutBtn.addEventListener('click', async function() {
+    if (!currentUser) {
+        showToast('🔐 Please sign in to checkout.', 'error');
+        window.location.href = 'universal-login.html?platform=reads&redirect=volantReads-store.html';
+        return;
+    }
+
+    const items = getCartItems();
+    if (items.length === 0) {
+        showToast('Your cart is empty.', 'info');
+        return;
+    }
+
+    const unpurchasedItems = [];
+    for (const item of items) {
+        const purchased = await checkPurchaseStatus(currentUser.uid, item.id);
+        if (!purchased) {
+            unpurchasedItems.push(item);
         }
     }
 
-    // ========== LOAD NEW BOOKS ==========
-    async function loadNewBooks() {
-        try {
-            const approvedBooks = allBooks
-                .filter(book => book.status === 'approved')
-                .sort((a, b) => {
-                    const dateA = a.approvedAtDate || a.createdAtDate || new Date(0);
-                    const dateB = b.approvedAtDate || b.createdAtDate || new Date(0);
-                    return dateB - dateA;
-                });
-            
-            const newBooks = approvedBooks.slice(0, 12);
-            
-            if (newBooks.length === 0) {
-                newBookGrid.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1 / -1;">
-                        <i class="fas fa-book-open"></i>
-                        <h3>No New Books</h3>
-                        <p>Kindly check your internet connection</p>
-                    </div>
-                `;
+    if (unpurchasedItems.length === 0) {
+        showToast('✅ All books in your cart are already purchased!', 'success');
+        closeCart();
+        return;
+    }
+
+    const total = unpurchasedItems.reduce((sum, item) => sum + (item.price || 0), 0);
+    if (total <= 0) {
+        let allSuccess = true;
+        for (const item of unpurchasedItems) {
+            const success = await recordPurchase(currentUser.uid, item.id, 'free_book');
+            if (!success) allSuccess = false;
+        }
+        if (allSuccess) {
+            showToast(`✅ ${unpurchasedItems.length} free book(s) added to your library!`, 'success');
+            const newCart = items.filter(item => !unpurchasedItems.some(pi => pi.id === item.id));
+            saveCartItems(newCart);
+            await renderCart();
+            updateCartBadge();
+        }
+        return;
+    }
+
+    const email = currentUser.email || currentUser.displayName || 'customer@example.com';
+    initiateCartPayment(total, email, unpurchasedItems);
+});
+
+// ========== AVATAR FUNCTIONS ==========
+function getInitials(name) {
+    if (!name || name === 'Anonymous') return '?';
+    const parts = name.trim().split(' ');
+    if (parts.length === 1) {
+        return parts[0].substring(0, 2).toUpperCase();
+    }
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function colorFromName(name) {
+    if (!name) return 'hsl(0, 60%, 45%)';
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const hue = Math.abs(hash) % 360;
+    return `hsl(${hue}, 65%, 50%)`;
+}
+
+async function generateAndUploadAvatar(initials, bgColor, userId) {
+    try {
+        const cloudName = 'dzoq4pgjn';
+        if (!cloudName) return null;
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = 180;
+        canvas.height = 180;
+        const ctx = canvas.getContext('2d');
+        
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 80px "Playfair Display", serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(initials, canvas.width / 2, canvas.height / 2);
+        
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const formData = new FormData();
+        formData.append('file', blob);
+        formData.append('upload_preset', 'profile_pics');
+        
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            const imageUrl = data.secure_url;
+            await updateDoc(doc(db, 'users', userId), { cachedAvatarURL: imageUrl });
+            return imageUrl;
+        }
+    } catch (err) {}
+    return null;
+}
+
+// ========== WISHLIST FUNCTIONS ==========
+async function getWishlistCount(userId) {
+    try {
+        const q = query(collection(db, "wishlists"), where("userId", "==", userId));
+        const snapshot = await getDocs(q);
+        return snapshot.size;
+    } catch { return 0; }
+}
+
+async function getUserWishlist(userId) {
+    try {
+        const q = query(collection(db, "wishlists"), where("userId", "==", userId));
+        const snapshot = await getDocs(q);
+        const items = [];
+        snapshot.forEach(doc => {
+            items.push({ id: doc.id, ...doc.data() });
+        });
+        return items;
+    } catch { return []; }
+}
+
+// ===== RENDER WISHLIST OVERLAY =====
+async function renderWishlist() {
+    if (!currentUser) {
+        wishlistBody.innerHTML = `
+            <div class="empty-wishlist">
+                <i class="fas fa-heart"></i>
+                <p>Please sign in to view your wishlist</p>
+                <a href="universal-login.html?platform=reads&redirect=volantReads-store.html" class="btn-login" style="display:inline-block;margin-top:1rem;background:var(--secondary);color:#fff;padding:0.5rem 1.5rem;border-radius:30px;text-decoration:none;">Sign In</a>
+            </div>
+        `;
+        addAllWishlistToCartBtn.disabled = true;
+        return;
+    }
+
+    const items = await getUserWishlist(currentUser.uid);
+    wishlistItems = items;
+    wishlistCount = items.length;
+    updateWishlistBadge();
+
+    if (items.length === 0) {
+        wishlistBody.innerHTML = `
+            <div class="empty-wishlist">
+                <i class="fas fa-heart" style="color:#e74c3c;"></i>
+                <p>Your wishlist is empty</p>
+                <span>Browse books and click the ❤️ to save them here!</span>
+            </div>
+        `;
+        addAllWishlistToCartBtn.disabled = true;
+        return;
+    }
+
+    let html = '';
+    items.forEach((item) => {
+        const price = item.price || 0;
+        const currency = item.currency || 'GHS';
+        html += `
+            <div class="wishlist-item" data-wishlist-id="${item.id}" data-book-id="${item.bookId}">
+                <div class="item-cover">
+                    ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.title}" />` : `<div class="no-cover"><i class="fas fa-book-open"></i></div>`}
+                </div>
+                <div class="item-info">
+                    <div class="item-title">${item.title || 'Untitled'}</div>
+                    <div class="item-author">${item.author || 'Anonymous'}</div>
+                    <div class="item-price">${currency} ${price.toFixed(2)}</div>
+                </div>
+                <div class="item-actions">
+                    <button class="btn-move-cart" data-book-id="${item.bookId}" data-title="${item.title}" data-author="${item.author}" data-price="${item.price}" data-currency="${item.currency}" data-image="${item.imageUrl || ''}">
+                        <i class="fas fa-cart-plus"></i> Cart
+                    </button>
+                    <button class="btn-wishlist-remove" data-book-id="${item.bookId}" data-title="${item.title}">
+                        <i class="fas fa-trash-alt"></i> Remove
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
+    wishlistBody.innerHTML = html;
+    addAllWishlistToCartBtn.disabled = false;
+
+    document.querySelectorAll('.btn-move-cart').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const bookId = this.dataset.bookId;
+            const title = this.dataset.title;
+            const author = this.dataset.author;
+            const price = parseFloat(this.dataset.price) || 0;
+            const currency = this.dataset.currency || 'GHS';
+            const image = this.dataset.image || '';
+
+            const cartItems = getCartItems();
+            const existing = cartItems.find(item => item.id === bookId);
+            if (existing) {
+                showToast(`📚 "${title}" is already in your cart.`, 'info');
                 return;
             }
 
-            newBookGrid.innerHTML = '';
-            newBooks.forEach(book => {
-                const card = createBookCard(book);
-                newBookGrid.appendChild(card);
+            cartItems.push({
+                id: bookId,
+                title: title || 'Untitled',
+                author: author || 'Anonymous',
+                price: price,
+                currency: currency,
+                image: image
             });
-        } catch (err) {
-            console.error("Error loading new books:", err);
-            newBookGrid.innerHTML = `
-                <div class="empty-state" style="grid-column: 1 / -1;">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <h3>Error Loading New Books</h3>
-                    <p>Unable to load new books. Please refresh the page.</p>
-                </div>
-            `;
-        }
+
+            saveCartItems(cartItems);
+            cartCount = cartItems.length;
+            updateCartBadge();
+            showToast(`✅ "${title}" moved to cart!`, 'success');
+        });
+    });
+
+    document.querySelectorAll('.btn-wishlist-remove').forEach(btn => {
+        btn.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            const bookId = this.dataset.bookId;
+            const title = this.dataset.title;
+
+            if (!currentUser) {
+                showToast('🔐 Please sign in.', 'error');
+                return;
+            }
+
+            try {
+                const q = query(
+                    collection(db, "wishlists"),
+                    where("userId", "==", currentUser.uid),
+                    where("bookId", "==", bookId)
+                );
+                const snapshot = await getDocs(q);
+                const batch = writeBatch(db);
+                snapshot.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+                
+                wishlistCount--;
+                updateWishlistBadge();
+                await renderWishlist();
+                showToast(`💔 Removed "${title}" from wishlist.`, 'info');
+            } catch (err) {
+                showToast('❌ Error removing from wishlist.', 'error');
+            }
+        });
+    });
+}
+
+function openWishlist() {
+    wishlistOverlay.classList.add('open');
+    wishlistBackdrop.classList.add('show');
+    renderWishlist();
+    document.body.style.overflow = 'hidden';
+}
+
+function closeWishlist() {
+    wishlistOverlay.classList.remove('open');
+    wishlistBackdrop.classList.remove('show');
+    document.body.style.overflow = '';
+}
+
+wishlistCloseBtn.addEventListener('click', closeWishlist);
+wishlistBackdrop.addEventListener('click', closeWishlist);
+
+addAllWishlistToCartBtn.addEventListener('click', function() {
+    if (wishlistItems.length === 0) {
+        showToast('Your wishlist is empty.', 'info');
+        return;
     }
 
-    // ========== APPLY FILTERS ==========
-    function applyFilters() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
+    const cartItems = getCartItems();
+    let addedCount = 0;
 
-        filteredBooks = allBooks.filter(book => {
-            if (searchTerm) {
-                const titleMatch = (book.title || '').toLowerCase().includes(searchTerm);
-                const authorMatch = (book.authorName || '').toLowerCase().includes(searchTerm);
-                const keywordMatch = (book.keywords || []).some(kw => 
-                    kw.toLowerCase().includes(searchTerm)
-                );
-                if (!titleMatch && !authorMatch && !keywordMatch) return false;
+    wishlistItems.forEach(item => {
+        const existing = cartItems.find(cartItem => cartItem.id === item.bookId);
+        if (!existing) {
+            cartItems.push({
+                id: item.bookId,
+                title: item.title || 'Untitled',
+                author: item.author || 'Anonymous',
+                price: item.price || 0,
+                currency: item.currency || 'GHS',
+                image: item.imageUrl || ''
+            });
+            addedCount++;
+        }
+    });
+
+    if (addedCount === 0) {
+        showToast('All wishlist items are already in your cart.', 'info');
+        return;
+    }
+
+    saveCartItems(cartItems);
+    cartCount = cartItems.length;
+    updateCartBadge();
+    showToast(`✅ ${addedCount} items added to cart!`, 'success');
+    closeWishlist();
+});
+
+// ========== RENDER HEADER ==========
+async function renderHeader(user) {
+    if (user) {
+        const displayName = user.displayName || user.email || 'User';
+        const initial = displayName.charAt(0).toUpperCase();
+        
+        wishlistCount = await getWishlistCount(user.uid);
+        
+        let avatarHTML = `<span>${initial}</span>`;
+        try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                if (userData.photoURL) {
+                    avatarHTML = `<img src="${userData.photoURL}" alt="Profile" />`;
+                } else if (userData.cachedAvatarURL) {
+                    avatarHTML = `<img src="${userData.cachedAvatarURL}" alt="Profile" />`;
+                } else if (userData.username) {
+                    const initials = getInitials(userData.username);
+                    const bgColor = colorFromName(userData.username);
+                    const avatarUrl = await generateAndUploadAvatar(initials, bgColor, user.uid);
+                    if (avatarUrl) {
+                        avatarHTML = `<img src="${avatarUrl}" alt="Profile" />`;
+                    }
+                }
             }
-            return true;
+        } catch (err) {}
+        
+        if (avatarHTML === `<span>${initial}</span>` && user.photoURL) {
+            avatarHTML = `<img src="${user.photoURL}" alt="Profile" />`;
+        }
+
+        navRight.innerHTML = `
+            <a href="volantReads-submit.html" class="btn-submit">
+                <i class="fas fa-plus"></i> Submit
+            </a>
+            <a href="#" class="btn-wishlist-header" id="wishlistHeaderBtn">
+                <i class="fas fa-heart"></i> <span class="wishlist-text">Wishlist</span>
+                <span class="wishlist-count" id="wishlistCountBadge">${wishlistCount}</span>
+            </a>
+            <button class="btn-cart-header" id="cartOpenBtn">
+                <i class="fas fa-shopping-cart"></i> Cart
+                <span class="cart-count">${getCartCount()}</span>
+            </button>
+            <a href="volantReads-dashboard.html" class="profile-wrap" style="text-decoration:none;">
+                <div class="profile-avatar">
+                    ${avatarHTML}
+                </div>
+                <button class="btn-signout" id="signOutBtn" title="Sign out" style="pointer-events:auto;"><i class="fas fa-sign-out-alt"></i></button>
+            </a>
+        `;
+        
+        document.getElementById('signOutBtn')?.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                showToast('👋 Signed out.', 'info');
+            } catch (e) {
+                showToast('Error signing out.', 'error');
+            }
+        });
+        document.getElementById('cartOpenBtn')?.addEventListener('click', openCart);
+        document.getElementById('wishlistHeaderBtn')?.addEventListener('click', openWishlist);
+        
+    } else {
+        navRight.innerHTML = `
+            <a href="volantReads-submit.html" class="btn-submit">
+                <i class="fas fa-plus"></i> Submit
+            </a>
+            <a href="universal-login.html?platform=reads&redirect=volantReads-store.html" class="btn-wishlist-header" id="wishlistHeaderBtn">
+                <i class="fas fa-heart"></i> <span class="wishlist-text">Wishlist</span>
+                <span class="wishlist-count" id="wishlistCountBadge">0</span>
+            </a>
+            <button class="btn-cart-header" id="cartOpenBtn">
+                <i class="fas fa-shopping-cart"></i> Cart
+                <span class="cart-count">${getCartCount()}</span>
+            </button>
+            <a href="universal-login.html?platform=reads&redirect=volantReads-store.html" class="btn-signin">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </a>
+        `;
+        document.getElementById('cartOpenBtn')?.addEventListener('click', openCart);
+        document.getElementById('wishlistHeaderBtn')?.addEventListener('click', () => {
+            window.location.href = 'universal-login.html?platform=reads&redirect=volantReads-store.html';
+        });
+    }
+    updateCartBadge();
+    updateWishlistBadge();
+}
+
+// ========== AUTH LISTENER ==========
+onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    await renderHeader(user);
+    if (cartOverlay.classList.contains('open')) {
+        await renderCart();
+    }
+});
+
+// ========== BOOK CARD ==========
+function createBookCard(book) {
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    card.onclick = () => {
+        window.location.href = `volantReads-details.html?id=${book.id}`;
+    };
+
+    const coverWrapper = document.createElement('div');
+    coverWrapper.className = 'cover-wrapper';
+    if (book.imageUrl) {
+        const img = document.createElement('img');
+        img.src = book.imageUrl;
+        img.alt = book.title || 'Book cover';
+        img.loading = 'lazy';
+        img.onerror = function() {
+            this.style.display = 'none';
+            this.parentElement.innerHTML = `<div class="no-image"><i class="fas fa-book-open"></i></div>`;
+        };
+        coverWrapper.appendChild(img);
+    } else {
+        coverWrapper.innerHTML = `<div class="no-image"><i class="fas fa-book-open"></i></div>`;
+    }
+
+    if (book.preorder === true || book.preorder === 'true') {
+        const badge = document.createElement('span');
+        badge.className = 'badge-preorder';
+        badge.textContent = 'Pre-order';
+        coverWrapper.appendChild(badge);
+    }
+    card.appendChild(coverWrapper);
+
+    const body = document.createElement('div');
+    body.className = 'book-body';
+
+    const title = document.createElement('div');
+    title.className = 'book-title';
+    title.textContent = book.title || 'Untitled';
+    body.appendChild(title);
+
+    if (book.subtitle && book.subtitle.trim() !== '') {
+        const subtitle = document.createElement('div');
+        subtitle.className = 'book-subtitle';
+        subtitle.textContent = book.subtitle;
+        body.appendChild(subtitle);
+    }
+
+    const author = document.createElement('div');
+    author.className = 'book-author';
+    author.innerHTML = `<i class="fas fa-user-edit"></i> ${book.authorName || 'Anonymous'}`;
+    body.appendChild(author);
+
+    const price = document.createElement('div');
+    price.className = 'book-price';
+    const currency = book.pricing?.currency || 'GHS';
+    const amount = book.pricing?.amount || 0;
+    price.textContent = `${currency} ${amount.toFixed(2)}`;
+    body.appendChild(price);
+
+    card.appendChild(body);
+    return card;
+}
+
+// ========== LOAD BOOKS ==========
+async function loadBooks() {
+    try {
+        const q = query(collection(db, "books"), where("status", "==", "approved"));
+        const snapshot = await getDocs(q);
+        
+        allBooks = [];
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            let approvedAt = null;
+            if (data.approvedAt) {
+                approvedAt = data.approvedAt?.toDate?.() || new Date(data.approvedAt);
+            } else if (data.createdAt) {
+                approvedAt = data.createdAt?.toDate?.() || new Date(data.createdAt);
+            } else {
+                approvedAt = new Date(0);
+            }
+            
+            allBooks.push({ 
+                id: doc.id, 
+                ...data,
+                createdAtDate: data.createdAt?.toDate?.() || new Date(data.createdAt) || new Date(),
+                approvedAtDate: approvedAt
+            });
         });
 
-        renderBooks();
+        allBooks.sort((a, b) => b.createdAtDate - a.createdAtDate);
+        applyFilters();
+        loadNewBooks();
+        
+    } catch (err) {
+        bookGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>Error Loading Books</h3>
+                <p>Unable to load books. Please refresh the page.</p>
+            </div>
+        `;
+        bookCount.textContent = '0 books available';
+        newBookGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>Error Loading New Books</h3>
+                <p>Unable to load new books. Please refresh the page.</p>
+            </div>
+        `;
     }
+}
 
-    // ========== RENDER BOOKS ==========
-    function renderBooks() {
-        bookCount.textContent = `${filteredBooks.length} book${filteredBooks.length !== 1 ? 's' : ''} available`;
-
-        if (filteredBooks.length === 0) {
-            bookGrid.innerHTML = `
-                <div class="empty-state">
+// ========== LOAD NEW BOOKS ==========
+async function loadNewBooks() {
+    try {
+        const approvedBooks = allBooks
+            .filter(book => book.status === 'approved')
+            .sort((a, b) => {
+                const dateA = a.approvedAtDate || a.createdAtDate || new Date(0);
+                const dateB = b.approvedAtDate || b.createdAtDate || new Date(0);
+                return dateB - dateA;
+            });
+        
+        const newBooks = approvedBooks.slice(0, 12);
+        
+        if (newBooks.length === 0) {
+            newBookGrid.innerHTML = `
+                <div class="empty-state" style="grid-column: 1 / -1;">
                     <i class="fas fa-book-open"></i>
-                    <h3>No Books Found</h3>
-                    <p>${allBooks.length === 0 ? 'Kindly check your internet connection.' : 'Check back later!'}</p>
+                    <h3>No New Books</h3>
+                    <p>Kindly check your internet connection</p>
                 </div>
             `;
             return;
         }
 
-        bookGrid.innerHTML = '';
-        filteredBooks.forEach(book => {
+        newBookGrid.innerHTML = '';
+        newBooks.forEach(book => {
             const card = createBookCard(book);
-            bookGrid.appendChild(card);
+            newBookGrid.appendChild(card);
         });
+    } catch (err) {
+        newBookGrid.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>Error Loading New Books</h3>
+                <p>Unable to load new books. Please refresh the page.</p>
+            </div>
+        `;
+    }
+}
+
+// ========== SEARCH ==========
+function applyFilters() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    filteredBooks = allBooks.filter(book => {
+        if (searchTerm) {
+            const titleMatch = (book.title || '').toLowerCase().includes(searchTerm);
+            const authorMatch = (book.authorName || '').toLowerCase().includes(searchTerm);
+            const keywordMatch = (book.keywords || []).some(kw => 
+                kw.toLowerCase().includes(searchTerm)
+            );
+            if (!titleMatch && !authorMatch && !keywordMatch) return false;
+        }
+        return true;
+    });
+    renderBooks();
+}
+
+function renderBooks() {
+    bookCount.textContent = `${filteredBooks.length} book${filteredBooks.length !== 1 ? 's' : ''} available`;
+
+    if (filteredBooks.length === 0) {
+        bookGrid.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-book-open"></i>
+                <h3>No Books Found</h3>
+                <p>${allBooks.length === 0 ? 'Kindly check your internet connection.' : 'Check back later!'}</p>
+            </div>
+        `;
+        return;
     }
 
-    // ===== SYNC MOBILE AND DESKTOP SEARCH =====
-    const desktopSearch = document.getElementById('searchInput');
-    const mobileSearch = document.getElementById('mobileSearchInput');
+    bookGrid.innerHTML = '';
+    filteredBooks.forEach(book => {
+        const card = createBookCard(book);
+        bookGrid.appendChild(card);
+    });
+}
 
+// ===== SYNC SEARCH =====
+const desktopSearch = document.getElementById('searchInput');
+const mobileSearch = document.getElementById('mobileSearchInput');
+
+if (mobileSearch) {
+    mobileSearch.addEventListener('input', function() {
+        desktopSearch.value = this.value;
+        const event = new Event('input', { bubbles: true });
+        desktopSearch.dispatchEvent(event);
+    });
+}
+
+desktopSearch.addEventListener('input', function() {
     if (mobileSearch) {
-        mobileSearch.addEventListener('input', function() {
-            desktopSearch.value = this.value;
-            const event = new Event('input', { bubbles: true });
-            desktopSearch.dispatchEvent(event);
-        });
+        mobileSearch.value = this.value;
     }
+});
 
-    desktopSearch.addEventListener('input', function() {
-        if (mobileSearch) {
-            mobileSearch.value = this.value;
+searchInput.addEventListener('input', applyFilters);
+
+// ========== INIT ==========
+updateCartBadge();
+loadBooks();
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && cartOverlay.classList.contains('open')) {
+        closeCart();
+    }
+    if (e.key === 'Escape' && wishlistOverlay.classList.contains('open')) {
+        closeWishlist();
+    }
+});
+
+window.addEventListener('storage', (e) => {
+    if (e.key === 'volant_cart_updated') {
+        const newCount = getCartCount();
+        if (newCount !== cartCount) {
+            cartCount = newCount;
+            updateCartBadge();
         }
-    });
-
-    // ========== SEARCH EVENT ==========
-    searchInput.addEventListener('input', applyFilters);
-
-    // ========== INITIAL LOAD ==========
-    updateCartBadge();
-    loadBooks();
-
-    // Close cart/wishlist with Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && cartOverlay.classList.contains('open')) {
-            closeCart();
+        if (cartOverlay.classList.contains('open')) {
+            renderCart();
         }
-        if (e.key === 'Escape' && wishlistOverlay.classList.contains('open')) {
-            closeWishlist();
-        }
-    });
-
-    // Listen for cart updates from other tabs
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'volant_cart_updated') {
-            const newCount = getCartCount();
-            if (newCount !== cartCount) {
-                cartCount = newCount;
-                updateCartBadge();
-            }
-            if (cartOverlay.classList.contains('open')) {
-                renderCart();
-            }
-        }
-    });
-
-    console.log('📚 Volant Reads Store loaded with Wishlist overlay!');
-    console.log('❤️ Wishlist count shown in header.');
-    console.log('👤 Click avatar to go to dashboard.');
-    console.log('🔒 Only approved books are shown.');
-    console.log('🔍 Search works in real-time.');
-    console.log('🛒 Cart stores offline, persists across pages.');
-</script>
-
-<script>
-// Dynamic login/signup link setup for current page redirect
-(function() {
-  function setupDynamicAuthLinks() {
-    const currentPage = window.location.href;
-    const currentFile = window.location.pathname.split('/').pop();
-    let platform = 'poetry';
-    if (currentFile.startsWith('volantReads-')) platform = 'reads';
-    if (currentFile === 'parent-house.html') platform = 'foundry';
-    
-    const loginParams = new URLSearchParams();
-    loginParams.append('platform', platform);
-    loginParams.append('redirect', currentPage);
-    
-    document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
-      link.href = `universal-login.html?${loginParams.toString()}`;
-    });
-    
-    document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
-      link.href = `universal-signup.html?${loginParams.toString()}`;
-    });
-  }
-  
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
-  } else {
-    setupDynamicAuthLinks();
-  }
-})();
+    }
+});
 </script>
 </body>
 </html>
