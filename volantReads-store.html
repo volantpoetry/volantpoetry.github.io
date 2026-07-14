@@ -2553,10 +2553,9 @@
         .cart-overlay .cart-footer .cart-total span:last-child {
             color: #4b2aad;
         }
-        /* ===== FIXED CHECKOUT BUTTON - RESPONSIVE ===== */
         .cart-overlay .cart-footer .btn-checkout {
             width: 100%;
-            padding: 0.8rem 1rem;
+            padding: 0.8rem;
             background: #4b2aad;
             color: #fff;
             border: none;
@@ -2565,11 +2564,6 @@
             font-size: 1rem;
             cursor: pointer;
             transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            white-space: nowrap;
         }
         .cart-overlay .cart-footer .btn-checkout:hover {
             background: #3a1f8a;
@@ -2582,30 +2576,6 @@
             transform: none;
             box-shadow: none;
         }
-
-        /* Mobile specific checkout button fix */
-        @media (max-width: 480px) {
-            .cart-overlay .cart-footer .btn-checkout {
-                font-size: 0.85rem !important;
-                padding: 0.7rem 0.8rem !important;
-                white-space: normal !important;
-                word-break: break-word !important;
-                line-height: 1.3 !important;
-                min-height: 48px !important;
-                gap: 6px !important;
-                border-radius: 6px !important;
-            }
-        }
-
-        @media (max-width: 380px) {
-            .cart-overlay .cart-footer .btn-checkout {
-                font-size: 0.75rem !important;
-                padding: 0.6rem 0.6rem !important;
-                min-height: 44px !important;
-                gap: 4px !important;
-            }
-        }
-
         .cart-backdrop {
             position: fixed;
             top: 0;
@@ -3661,101 +3631,45 @@
         right: 0 !important;
     }
 }
-
-/* ===== CART FOOTER - MOBILE OPTIMIZED ===== */
-.cart-overlay .cart-footer {
-    padding: 1.2rem 1.5rem;
-    border-top: 1px solid #ede7df;
-    background: #faf7f2;
-    flex-shrink: 0;
-}
-
-.cart-overlay .cart-footer .cart-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #2d2a24;
-    margin-bottom: 0.8rem;
-}
-
-.cart-overlay .cart-footer .cart-total span:last-child {
-    color: #4b2aad;
-    font-size: 1.2rem;
-}
-
-/* Make total BIGGER on mobile */
+/* ===== CART FOOTER - MOVE UP ON MOBILE ===== */
 @media (max-width: 480px) {
+    .cart-overlay .cart-footer {
+        position: relative;
+        top: -25px !important;
+        padding: 0.6rem 1rem !important;
+        border-top: 1px solid #ede7df;
+        background: #faf7f2;
+        flex-shrink: 0;
+        margin-bottom: -15px !important;
+    }
+    
     .cart-overlay .cart-footer .cart-total {
-        font-size: 1.3rem !important;
-        margin-bottom: 0.6rem !important;
+        font-size: 0.95rem !important;
+        margin-bottom: 0.3rem !important;
     }
+    
     .cart-overlay .cart-footer .cart-total span:last-child {
-        font-size: 1.5rem !important;
+        font-size: 1.1rem !important;
     }
-}
-
-/* CHECKOUT BUTTON - full width, big and tappable */
-.cart-overlay .cart-footer .btn-checkout {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    background: #4b2aad;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-@media (max-width: 480px) {
+    
     .cart-overlay .cart-footer .btn-checkout {
-        font-size: 1rem !important;
-        padding: 0.9rem 1rem !important;
-        min-height: 54px !important;
-        border-radius: 10px !important;
-        gap: 8px !important;
-    }
-    .checkout-text {
-        display: none !important;
-    }
-    .checkout-text-short {
-        display: inline !important;
-        font-size: 1rem !important;
+        font-size: 0.85rem !important;
+        padding: 0.6rem 0.8rem !important;
+        min-height: 44px !important;
+        border-radius: 6px !important;
     }
 }
 
 @media (max-width: 380px) {
+    .cart-overlay .cart-footer {
+        top: -20px !important;
+        padding: 0.5rem 0.8rem !important;
+    }
+    
     .cart-overlay .cart-footer .btn-checkout {
-        font-size: 0.9rem !important;
-        padding: 0.8rem 0.8rem !important;
-        min-height: 48px !important;
-    }
-    .cart-overlay .cart-footer .cart-total {
-        font-size: 1.1rem !important;
-    }
-    .cart-overlay .cart-footer .cart-total span:last-child {
-        font-size: 1.3rem !important;
-    }
-}
-
-/* Show/hide checkout text based on screen size */
-.checkout-text-short {
-    display: none;
-}
-
-@media (max-width: 480px) {
-    .checkout-text {
-        display: none !important;
-    }
-    .checkout-text-short {
-        display: inline !important;
+        font-size: 0.75rem !important;
+        padding: 0.5rem 0.6rem !important;
+        min-height: 40px !important;
     }
 }
     </style>
@@ -3794,17 +3708,13 @@
     <div class="cart-body" id="cartBody">
         <!-- rendered by JS -->
     </div>
-<div class="cart-footer">
-    <div class="cart-total">
-        <span>Total</span>
-        <span id="cartTotalAmount">GHS 0.00</span>
+    <div class="cart-footer">
+        <div class="cart-total">
+            <span>Total</span>
+            <span id="cartTotalAmount">GHS 0.00</span>
+        </div>
+        <button class="btn-checkout" id="checkoutBtn" disabled>Proceed to Checkout</button>
     </div>
-    <button class="btn-checkout" id="checkoutBtn" disabled>
-        <i class="fas fa-credit-card"></i> 
-        <span class="checkout-text">Proceed to Checkout</span>
-        <span class="checkout-text-short">Pay Now</span>
-    </button>
-</div>
 </div>
 
 <!-- ===== WISHLIST BACKDROP ===== -->
@@ -4009,6 +3919,7 @@ const cartBody = document.getElementById('cartBody');
 const cartTotalAmount = document.getElementById('cartTotalAmount');
 const checkoutBtn = document.getElementById('checkoutBtn');
 const cartCloseBtn = document.getElementById('cartCloseBtn');
+const cartPaymentProcessing = document.getElementById('cartPaymentProcessing');
 
 const wishlistOverlay = document.getElementById('wishlistOverlay');
 const wishlistBackdrop = document.getElementById('wishlistBackdrop');
@@ -4151,8 +4062,9 @@ function initiateCartPayment(amount, email, items) {
     }
 
     isProcessingPayment = true;
+    cartPaymentProcessing.classList.add('active');
     checkoutBtn.disabled = true;
-    checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    checkoutBtn.textContent = 'Processing...';
 
     const bookTitles = items.map(item => item.title).join(', ');
 
@@ -4175,8 +4087,9 @@ function initiateCartPayment(amount, email, items) {
             },
             onClose: function() {
                 isProcessingPayment = false;
+                cartPaymentProcessing.classList.remove('active');
                 checkoutBtn.disabled = false;
-                checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Pay Now';
+                checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
                 showToast('Payment cancelled. You can try again.', 'info');
             }
         });
@@ -4185,8 +4098,9 @@ function initiateCartPayment(amount, email, items) {
     } catch (error) {
         showToast('⚠️ Payment error. Please try again.', 'error');
         isProcessingPayment = false;
+        cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Pay Now';
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
     }
 }
 
@@ -4194,8 +4108,9 @@ async function handleCartPaymentCallback(response, items) {
     if (!currentUser) {
         showToast('⚠️ User not found. Please try again.', 'error');
         isProcessingPayment = false;
+        cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Pay Now';
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
         return;
     }
 
@@ -4222,8 +4137,9 @@ async function handleCartPaymentCallback(response, items) {
     if (!allValid) {
         showToast(`⚠️ Payment verification failed for: ${invalidItems.join(', ')}. Please contact support.`, 'error');
         isProcessingPayment = false;
+        cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Pay Now';
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
         return;
     }
 
@@ -4255,8 +4171,9 @@ async function handleCartPaymentCallback(response, items) {
         showToast('⚠️ Some purchases failed to save. Please contact support.', 'error');
     }
     isProcessingPayment = false;
+    cartPaymentProcessing.classList.remove('active');
     checkoutBtn.disabled = false;
-    checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Pay Now';
+    checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
 }
 
 // ===== TOAST =====
