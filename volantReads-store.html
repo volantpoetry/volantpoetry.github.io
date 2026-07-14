@@ -3710,7 +3710,28 @@
         height: 53px !important;
     }
 }
-
+.cart-payment-processing {
+    display: none;
+    text-align: center;
+    padding: 0.5rem;
+}
+.cart-payment-processing.active {
+    display: block;
+}
+.cart-payment-processing .spinner-small {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--border-light, #ede7df);
+    border-top: 3px solid var(--primary, #4b2aad);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+.cart-payment-processing p {
+    margin-top: 0.3rem;
+    color: var(--text-muted, #6f6252);
+    font-size: 0.85rem;
+}
     </style>
 </head>
 <body>
@@ -3747,13 +3768,18 @@
     <div class="cart-body" id="cartBody">
         <!-- rendered by JS -->
     </div>
-    <div class="cart-footer">
-        <div class="cart-total">
-            <span>Total</span>
-            <span id="cartTotalAmount">GHS 0.00</span>
-        </div>
-        <button class="btn-checkout" id="checkoutBtn" disabled>Proceed to Checkout</button>
+<div class="cart-footer">
+    <div class="cart-total">
+        <span>Total</span>
+        <span id="cartTotalAmount">GHS 0.00</span>
     </div>
+    <!-- ADD THIS LINE -->
+    <div class="cart-payment-processing" id="cartPaymentProcessing">
+        <div class="spinner-small"></div>
+        <p>Processing your payment...</p>
+    </div>
+    <button class="btn-checkout" id="checkoutBtn" disabled>Proceed to Checkout</button>
+</div>
 </div>
 
 <!-- ===== WISHLIST BACKDROP ===== -->
@@ -3913,6 +3939,7 @@
         }
     }
 </script>
+
 
 <script type="module">
 import { initializeApp } from "firebase/app";
@@ -4799,6 +4826,15 @@ function createBookCard(book) {
     return card;
 }
 
+// ===== SHUFFLE ARRAY FUNCTION (Fisher-Yates) =====
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 // ========== LOAD BOOKS ==========
 async function loadBooks() {
     try {
@@ -4825,7 +4861,9 @@ async function loadBooks() {
             });
         });
 
-        allBooks.sort((a, b) => b.createdAtDate - a.createdAtDate);
+        // ===== SHUFFLE ALL BOOKS FOR RANDOM DISPLAY =====
+        shuffleArray(allBooks);
+        
         applyFilters();
         loadNewBooks();
         
@@ -4851,6 +4889,7 @@ async function loadBooks() {
 // ========== LOAD NEW BOOKS ==========
 async function loadNewBooks() {
     try {
+        // Get approved books and sort by date (newest first)
         const approvedBooks = allBooks
             .filter(book => book.status === 'approved')
             .sort((a, b) => {
@@ -4859,6 +4898,7 @@ async function loadNewBooks() {
                 return dateB - dateA;
             });
         
+        // Take the 12 newest books
         const newBooks = approvedBooks.slice(0, 12);
         
         if (newBooks.length === 0) {
