@@ -3661,6 +3661,103 @@
         right: 0 !important;
     }
 }
+
+/* ===== CART FOOTER - MOBILE OPTIMIZED ===== */
+.cart-overlay .cart-footer {
+    padding: 1.2rem 1.5rem;
+    border-top: 1px solid #ede7df;
+    background: #faf7f2;
+    flex-shrink: 0;
+}
+
+.cart-overlay .cart-footer .cart-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2d2a24;
+    margin-bottom: 0.8rem;
+}
+
+.cart-overlay .cart-footer .cart-total span:last-child {
+    color: #4b2aad;
+    font-size: 1.2rem;
+}
+
+/* Make total BIGGER on mobile */
+@media (max-width: 480px) {
+    .cart-overlay .cart-footer .cart-total {
+        font-size: 1.3rem !important;
+        margin-bottom: 0.6rem !important;
+    }
+    .cart-overlay .cart-footer .cart-total span:last-child {
+        font-size: 1.5rem !important;
+    }
+}
+
+/* CHECKOUT BUTTON - full width, big and tappable */
+.cart-overlay .cart-footer .btn-checkout {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: #4b2aad;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+@media (max-width: 480px) {
+    .cart-overlay .cart-footer .btn-checkout {
+        font-size: 1rem !important;
+        padding: 0.9rem 1rem !important;
+        min-height: 54px !important;
+        border-radius: 10px !important;
+        gap: 8px !important;
+    }
+    .checkout-text {
+        display: none !important;
+    }
+    .checkout-text-short {
+        display: inline !important;
+        font-size: 1rem !important;
+    }
+}
+
+@media (max-width: 380px) {
+    .cart-overlay .cart-footer .btn-checkout {
+        font-size: 0.9rem !important;
+        padding: 0.8rem 0.8rem !important;
+        min-height: 48px !important;
+    }
+    .cart-overlay .cart-footer .cart-total {
+        font-size: 1.1rem !important;
+    }
+    .cart-overlay .cart-footer .cart-total span:last-child {
+        font-size: 1.3rem !important;
+    }
+}
+
+/* Show/hide checkout text based on screen size */
+.checkout-text-short {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .checkout-text {
+        display: none !important;
+    }
+    .checkout-text-short {
+        display: inline !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -3697,17 +3794,17 @@
     <div class="cart-body" id="cartBody">
         <!-- rendered by JS -->
     </div>
-    <div class="cart-footer">
-        <div class="cart-total">
-            <span>Total</span>
-            <span id="cartTotalAmount">GHS 0.00</span>
-        </div>
-        <button class="btn-checkout" id="checkoutBtn" disabled>
-            <i class="fas fa-credit-card"></i> 
-            <span class="checkout-text">Proceed to Checkout</span>
-            <span class="checkout-text-short">Pay Now</span>
-        </button>
+<div class="cart-footer">
+    <div class="cart-total">
+        <span>Total</span>
+        <span id="cartTotalAmount">GHS 0.00</span>
     </div>
+    <button class="btn-checkout" id="checkoutBtn" disabled>
+        <i class="fas fa-credit-card"></i> 
+        <span class="checkout-text">Proceed to Checkout</span>
+        <span class="checkout-text-short">Pay Now</span>
+    </button>
+</div>
 </div>
 
 <!-- ===== WISHLIST BACKDROP ===== -->
