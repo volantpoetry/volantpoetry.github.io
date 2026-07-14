@@ -2553,9 +2553,10 @@
         .cart-overlay .cart-footer .cart-total span:last-child {
             color: #4b2aad;
         }
+        /* ===== FIXED CHECKOUT BUTTON - RESPONSIVE ===== */
         .cart-overlay .cart-footer .btn-checkout {
             width: 100%;
-            padding: 0.8rem;
+            padding: 0.8rem 1rem;
             background: #4b2aad;
             color: #fff;
             border: none;
@@ -2564,6 +2565,11 @@
             font-size: 1rem;
             cursor: pointer;
             transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            white-space: nowrap;
         }
         .cart-overlay .cart-footer .btn-checkout:hover {
             background: #3a1f8a;
@@ -2576,6 +2582,30 @@
             transform: none;
             box-shadow: none;
         }
+
+        /* Mobile specific checkout button fix */
+        @media (max-width: 480px) {
+            .cart-overlay .cart-footer .btn-checkout {
+                font-size: 0.85rem !important;
+                padding: 0.7rem 0.8rem !important;
+                white-space: normal !important;
+                word-break: break-word !important;
+                line-height: 1.3 !important;
+                min-height: 48px !important;
+                gap: 6px !important;
+                border-radius: 6px !important;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .cart-overlay .cart-footer .btn-checkout {
+                font-size: 0.75rem !important;
+                padding: 0.6rem 0.6rem !important;
+                min-height: 44px !important;
+                gap: 4px !important;
+            }
+        }
+
         .cart-backdrop {
             position: fixed;
             top: 0;
@@ -3672,7 +3702,11 @@
             <span>Total</span>
             <span id="cartTotalAmount">GHS 0.00</span>
         </div>
-        <button class="btn-checkout" id="checkoutBtn" disabled>Proceed to Checkout</button>
+        <button class="btn-checkout" id="checkoutBtn" disabled>
+            <i class="fas fa-credit-card"></i> 
+            <span class="checkout-text">Proceed to Checkout</span>
+            <span class="checkout-text-short">Pay Now</span>
+        </button>
     </div>
 </div>
 
@@ -3878,7 +3912,6 @@ const cartBody = document.getElementById('cartBody');
 const cartTotalAmount = document.getElementById('cartTotalAmount');
 const checkoutBtn = document.getElementById('checkoutBtn');
 const cartCloseBtn = document.getElementById('cartCloseBtn');
-const cartPaymentProcessing = document.getElementById('cartPaymentProcessing');
 
 const wishlistOverlay = document.getElementById('wishlistOverlay');
 const wishlistBackdrop = document.getElementById('wishlistBackdrop');
@@ -4021,9 +4054,8 @@ function initiateCartPayment(amount, email, items) {
     }
 
     isProcessingPayment = true;
-    cartPaymentProcessing.classList.add('active');
     checkoutBtn.disabled = true;
-    checkoutBtn.textContent = 'Processing...';
+    checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
     const bookTitles = items.map(item => item.title).join(', ');
 
@@ -4046,9 +4078,8 @@ function initiateCartPayment(amount, email, items) {
             },
             onClose: function() {
                 isProcessingPayment = false;
-                cartPaymentProcessing.classList.remove('active');
                 checkoutBtn.disabled = false;
-                checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+                checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Pay Now';
                 showToast('Payment cancelled. You can try again.', 'info');
             }
         });
@@ -4057,9 +4088,8 @@ function initiateCartPayment(amount, email, items) {
     } catch (error) {
         showToast('⚠️ Payment error. Please try again.', 'error');
         isProcessingPayment = false;
-        cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Pay Now';
     }
 }
 
@@ -4067,9 +4097,8 @@ async function handleCartPaymentCallback(response, items) {
     if (!currentUser) {
         showToast('⚠️ User not found. Please try again.', 'error');
         isProcessingPayment = false;
-        cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Pay Now';
         return;
     }
 
@@ -4096,9 +4125,8 @@ async function handleCartPaymentCallback(response, items) {
     if (!allValid) {
         showToast(`⚠️ Payment verification failed for: ${invalidItems.join(', ')}. Please contact support.`, 'error');
         isProcessingPayment = false;
-        cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Pay Now';
         return;
     }
 
@@ -4130,9 +4158,8 @@ async function handleCartPaymentCallback(response, items) {
         showToast('⚠️ Some purchases failed to save. Please contact support.', 'error');
     }
     isProcessingPayment = false;
-    cartPaymentProcessing.classList.remove('active');
     checkoutBtn.disabled = false;
-    checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+    checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Pay Now';
 }
 
 // ===== TOAST =====
