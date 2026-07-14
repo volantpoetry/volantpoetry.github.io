@@ -380,6 +380,10 @@
       background: #2d7d46;
       color: white;
     }
+    .book-details .book-info .badges .badge.limit-reached {
+      background: #e74c3c;
+      color: white;
+    }
 
     .popularity-badge {
       display: inline-flex;
@@ -463,6 +467,75 @@
     .book-details .book-sidebar .sidebar-section .sidebar-item .value {
       font-weight: 500;
       color: var(--text-dark);
+    }
+    /* Highlighted download limit item */
+    .book-details .book-sidebar .sidebar-section .sidebar-item.download-limit {
+      background: #e8f0fe;
+      border-radius: 8px;
+      padding: 0.5rem 0.8rem;
+      margin: 0.2rem 0;
+      border-left: 4px solid var(--primary);
+      border-bottom: none;
+    }
+    .book-details .book-sidebar .sidebar-section .sidebar-item.download-limit .label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .book-details .book-sidebar .sidebar-section .sidebar-item.download-limit .value {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .book-details .book-sidebar .sidebar-section .sidebar-item.download-limit.unlimited {
+      background: #dff7e5;
+      border-left-color: #2d7d46;
+    }
+    .book-details .book-sidebar .sidebar-section .sidebar-item.download-limit.unlimited .label {
+      color: #15723d;
+    }
+    .book-details .book-sidebar .sidebar-section .sidebar-item.download-limit.unlimited .value {
+      color: #15723d;
+    }
+    .book-details .book-sidebar .sidebar-section .sidebar-item.download-limit.limit-reached {
+      background: #f8d7da;
+      border-left-color: #721c24;
+    }
+    .book-details .book-sidebar .sidebar-section .sidebar-item.download-limit.limit-reached .label {
+      color: #721c24;
+    }
+    .book-details .book-sidebar .sidebar-section .sidebar-item.download-limit.limit-reached .value {
+      color: #721c24;
+    }
+
+    /* Download reminder */
+    .download-reminder {
+      background: #f0f4ff;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid #d0ddf5;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+    }
+    .download-reminder i {
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+    .download-reminder .limit-value {
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .download-reminder.reached {
+      background: #f8d7da;
+      border-color: #f5c6cb;
+    }
+    .download-reminder.reached i {
+      color: #721c24;
+    }
+    .download-reminder.reached .limit-value {
+      color: #721c24;
     }
 
     .book-actions {
@@ -736,6 +809,17 @@
       border: 1px solid #c3e6cb;
     }
     .purchase-status.owned i {
+      font-size: 1.2rem;
+    }
+    .purchase-status.limit-reached {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .purchase-status.limit-reached i {
       font-size: 1.2rem;
     }
 
@@ -1164,6 +1248,9 @@
     }
     .cart-item .item-info .item-owned i {
       margin-right: 4px;
+    }
+    .cart-item .item-info .item-owned.limit-reached {
+      color: #721c24;
     }
     .cart-item .item-actions {
       display: flex;
@@ -1707,6 +1794,214 @@
     .nav-right .btn-signin { order: 2 !important; }
     .nav-right .btn-wishlist-header { order: 3 !important; }
     .nav-right .profile-wrap { order: 4 !important; }
+  
+  /* ===== FIX CART OVERLAY MOBILE SCROLLING (DETAILS PAGE) ===== */
+.cart-overlay {
+    max-height: 100vh !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.cart-overlay .cart-body {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+.cart-overlay .cart-footer {
+    flex-shrink: 0 !important;
+    background: #faf7f2 !important;
+    border-top: 1px solid #ede7df !important;
+}
+
+.cart-overlay .cart-header {
+    flex-shrink: 0 !important;
+}
+
+/* ===== FIX BOOK ACTIONS ON MOBILE - ONLY LAYOUT, NO FONT SIZES ===== */
+.book-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.6rem !important;
+    width: 100% !important;
+}
+
+.book-actions > * {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+#paymentStatusContainer {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+}
+
+#paymentStatusContainer .btn-pay,
+#paymentStatusContainer .btn-download,
+#paymentStatusContainer .login-prompt {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.btn-pay {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+.btn-download {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+/* Mobile specific cart fixes - LAYOUT ONLY */
+@media (max-width: 480px) {
+    .cart-overlay {
+        width: 100% !important;
+        max-width: 100vw !important;
+        right: -100vw !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+    }
+    .cart-overlay.open {
+        right: 0 !important;
+    }
+}
+
+/* Fix the actions container on mobile - LAYOUT ONLY */
+@media (max-width: 768px) {
+    .book-details .book-sidebar .sidebar-section .book-actions {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.5rem !important;
+    }
+    .book-details .book-sidebar .sidebar-section .book-actions .btn-cart,
+    .book-details .book-sidebar .sidebar-section .book-actions .btn-wishlist {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+    #paymentStatusContainer .btn-pay,
+    #paymentStatusContainer .btn-download {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+    .login-prompt {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        text-align: center !important;
+    }
+    .login-prompt .btn-login {
+        align-self: center !important;
+    }
+}
+
+/* Download limit badge styles */
+.download-limit-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.3rem 1rem;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: #e8f0fe;
+    color: #1a4a7a;
+    border: 1px solid #b8c8e0;
+}
+.download-limit-badge i {
+    font-size: 0.9rem;
+    color: #1a4a7a;
+}
+.download-limit-badge.unlimited {
+    background: #dff7e5;
+    color: #15723d;
+    border-color: #a8d5b5;
+}
+.download-limit-badge.unlimited i {
+    color: #15723d;
+}
+.download-limit-badge.reached {
+    background: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+}
+.download-limit-badge.reached i {
+    color: #721c24;
+}
+
+/* Download reminder */
+.download-reminder {
+    background: #f0f4ff;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid #d0ddf5;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+.download-reminder i {
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+.download-reminder .limit-value {
+    font-weight: 700;
+    color: var(--primary);
+}
+.download-reminder.reached {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+}
+.download-reminder.reached i {
+    color: #721c24;
+}
+.download-reminder.reached .limit-value {
+    color: #721c24;
+}
+
+/* Re-purchase button when limit reached */
+.btn-repurchase {
+    background: #0a6b4d;
+    color: white;
+    border: none;
+    padding: 0.9rem 2.5rem;
+    border-radius: 40px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    flex: 1;
+    justify-content: center;
+    min-width: 200px;
+}
+.btn-repurchase:hover {
+    background: #08573e;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(10, 107, 77, 0.3);
+}
+.btn-repurchase:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+/* Hide the download limit badge on book details page */
+.download-limit-badge {
+    display: none !important;
+}
   </style>
 </head>
 <body>
@@ -1831,6 +2126,11 @@
               <div class="sidebar-item"><span class="label">Language</span><span class="value" id="sidebarLanguage">English</span></div>
               <div class="sidebar-item"><span class="label">Publishing Date</span><span class="value" id="sidebarPublished">2024</span></div>
               <div class="sidebar-item"><span class="label">Pages</span><span class="value" id="sidebarPages">N/A</span></div>
+              <!-- DOWNLOAD LIMIT - HIGHLIGHTED -->
+              <div class="sidebar-item download-limit" id="sidebarDownloadLimit">
+                <span class="label"><i class="fas fa-download"></i> Download Limit</span>
+                <span class="value" id="sidebarDownloadLimitValue">5 downloads</span>
+              </div>
             </div>
             <div class="sidebar-section">
               <div class="sidebar-title"><i class="fas fa-shopping-cart"></i> Actions</div>
@@ -1849,13 +2149,24 @@
                     <a href="universal-login.html?platform=reads&redirect=volantReads-details.html" class="btn-login">Sign In</a>
                   </div>
 
+                  <!-- Download Reminder -->
+                  <div class="download-reminder" id="downloadReminder" style="display:none;">
+                    <i class="fas fa-download"></i>
+                    <span>You will get <strong class="limit-value" id="downloadLimitDisplay">5</strong> downloads after purchase.</span>
+                  </div>
+
                   <div class="purchase-status owned" id="purchaseStatus" style="display:none;">
                     <i class="fas fa-check-circle"></i>
-                    <span>✅ You own this book! Download anytime.</span>
+                    <span id="purchaseStatusText">✅ You own this book! Download anytime.</span>
                   </div>
 
                   <button class="btn-pay" id="payBtn" style="display:none;">
                     <i class="fas fa-credit-card"></i> <span id="payBtnText">Pay with Paystack</span>
+                  </button>
+
+                  <!-- Re-purchase button (shown when limit reached) -->
+                  <button class="btn-repurchase" id="repurchaseBtn" style="display:none;">
+                    <i class="fas fa-sync-alt"></i> <span>Buy Again (Pay with Paystack)</span>
                   </button>
 
                   <button class="btn-download owned" id="downloadBtn" style="display:none;">
@@ -1931,8 +2242,7 @@
       }
     }
   </script>
-
-  <script type="module">
+<script type="module">
     import { initializeApp } from "firebase/app";
     import { 
       getFirestore, 
@@ -1952,6 +2262,14 @@
     } from "firebase/firestore";
     import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
+
+// Disable all console logs in production
+console.log = function() {};
+console.error = function() {};
+console.warn = function() {};
+console.info = function() {};
+console.debug = function() {};
+
     const firebaseConfig = {
       apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
       authDomain: "silent-depth.firebaseapp.com",
@@ -1968,50 +2286,7 @@
     // ===== PAYSTACK CONFIGURATION =====
     const PAYSTACK_PUBLIC_KEY = 'pk_test_3c8ee7c771dff6be535267ed57067b52ac466381';
 
-
-    // Wait for Paystack to load if not available
-    if (typeof PaystackPop === 'undefined') {
-
-      // Show a user-friendly message
-      const payBtn = document.getElementById('payBtn');
-      if (payBtn) {
-        payBtn.textContent = '⏳ Loading payment system...';
-        payBtn.disabled = true;
-      }
-      
-      // Wait for Paystack to load
-      const checkPaystack = setInterval(() => {
-        if (typeof PaystackPop !== 'undefined') {
-          clearInterval(checkPaystack);
-        
-          // Enable payment button
-          if (payBtn) {
-            payBtn.textContent = 'Pay with Paystack';
-            payBtn.disabled = false;
-          }
-          
-          // Dispatch event that Paystack is ready
-          window.dispatchEvent(new Event('paystack-ready'));
-        }
-      }, 500);
-      
-      // Timeout after 10 seconds
-      setTimeout(() => {
-        clearInterval(checkPaystack);
-        if (typeof PaystackPop === 'undefined') {
-         if (payBtn) {
-            payBtn.textContent = '⚠️ Payment unavailable - Refresh page';
-            payBtn.disabled = true;
-          }
-          showToast('⚠️ Payment system unavailable. Please refresh the page.', 'error');
-        }
-      }, 10000);
-    } else {
-      
-      window.dispatchEvent(new Event('paystack-ready'));
-    }
-
-    // DOM refs (all your existing refs)
+    // ===== DOM REFS =====
     const navRight = document.getElementById('navRight');
     const loadingState = document.getElementById('loadingState');
     const notFound = document.getElementById('notFound');
@@ -2036,14 +2311,20 @@
     const sidebarLanguage = document.getElementById('sidebarLanguage');
     const sidebarPublished = document.getElementById('sidebarPublished');
     const sidebarPages = document.getElementById('sidebarPages');
+    const sidebarDownloadLimit = document.getElementById('sidebarDownloadLimit');
+    const sidebarDownloadLimitValue = document.getElementById('sidebarDownloadLimitValue');
+    const downloadReminder = document.getElementById('downloadReminder');
+    const downloadLimitDisplay = document.getElementById('downloadLimitDisplay');
+    const purchaseStatus = document.getElementById('purchaseStatus');
+    const purchaseStatusText = document.getElementById('purchaseStatusText');
     
     const payBtn = document.getElementById('payBtn');
     const payBtnText = document.getElementById('payBtnText');
+    const repurchaseBtn = document.getElementById('repurchaseBtn');
     const paymentProcessing = document.getElementById('paymentProcessing');
     const paymentSuccess = document.getElementById('paymentSuccess');
     const paymentError = document.getElementById('paymentError');
     const paymentErrorMessage = document.getElementById('paymentErrorMessage');
-    const purchaseStatus = document.getElementById('purchaseStatus');
     
     const contactModal = document.getElementById('contactModal');
     const contactModalClose = document.getElementById('contactModalClose');
@@ -2080,8 +2361,9 @@
     let isProcessingPayment = false;
     let hasPaidForBook = false;
     let isCartCheckout = false;
+    let userDownloadCount = 0;
+    let downloadLimit = 5;
 
-    
     // ---- Offline cart (localStorage) ----
     const CART_KEY = 'volant_cart_items';
     const CART_COUNT_KEY = 'volant_cart_count';
@@ -2137,6 +2419,84 @@
         if (newCount !== cartCount) { cartCount = newCount; updateCartBadge(); }
       }
     });
+
+    // ===== HELPER: GET FORMATTED DOWNLOAD LIMIT DISPLAY =====
+    function getDownloadLimitDisplay(limit) {
+      if (limit === 'unlimited' || limit === 'Unlimited') {
+        return { text: 'Unlimited', isUnlimited: true };
+      }
+      const num = parseInt(limit);
+      if (isNaN(num) || num < 1) return { text: '5', isUnlimited: false };
+      return { text: String(num), isUnlimited: false };
+    }
+
+    // ===== GET USER'S DOWNLOAD COUNT FROM PURCHASE RECORD =====
+    async function getUserDownloadCount(userId, bookId) {
+      try {
+        const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
+        const purchaseSnap = await getDoc(purchaseRef);
+        if (purchaseSnap.exists()) {
+          return purchaseSnap.data().downloadCount || 0;
+        }
+        return 0;
+      } catch (err) {
+        console.error('Error getting user download count:', err);
+        return 0;
+      }
+    }
+
+    // ===== RECORD USER DOWNLOAD IN PURCHASE RECORD =====
+    async function recordUserDownload(userId, bookId) {
+      try {
+        const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
+        const purchaseSnap = await getDoc(purchaseRef);
+        
+        if (purchaseSnap.exists()) {
+          await updateDoc(purchaseRef, {
+            downloadCount: increment(1),
+            lastDownloadedAt: serverTimestamp()
+          });
+        } else {
+          await setDoc(purchaseRef, {
+            userId: userId,
+            bookId: bookId,
+            status: 'completed',
+            verified: true,
+            purchasedAt: serverTimestamp(),
+            downloadCount: 1,
+            lastDownloadedAt: serverTimestamp(),
+            transactionRef: 'free_book',
+            amount: 0,
+            currency: currentBook?.pricing?.currency || 'GHS',
+            customerEmail: currentUser?.email || '',
+            paymentMethod: 'free'
+          }, { merge: true });
+        }
+        return true;
+      } catch (err) {
+        console.error('Error recording user download:', err);
+        return false;
+      }
+    }
+
+    // ===== CHECK IF USER CAN DOWNLOAD =====
+    async function canUserDownload(userId, bookId, limit) {
+      if (limit === 'unlimited' || limit === 'Unlimited') return true;
+      const maxLimit = parseInt(limit);
+      if (isNaN(maxLimit) || maxLimit < 1) return true;
+      const count = await getUserDownloadCount(userId, bookId);
+      return count < maxLimit;
+    }
+
+    // ===== GET REMAINING DOWNLOADS =====
+    async function getRemainingDownloads(userId, bookId, limit) {
+      if (limit === 'unlimited' || limit === 'Unlimited') return 'Unlimited';
+      const maxLimit = parseInt(limit);
+      if (isNaN(maxLimit) || maxLimit < 1) return 'Unlimited';
+      const count = await getUserDownloadCount(userId, bookId);
+      const remaining = maxLimit - count;
+      return remaining > 0 ? remaining : 0;
+    }
 
     // ========== AVATAR FUNCTIONS ==========
     function getInitials(name) {
@@ -2525,10 +2885,10 @@
     onAuthStateChanged(auth, async (user) => {
       currentUser = user;
       await renderHeader(user);
-      updatePaymentUIState();
       if (currentBook) {
         await updateWishlistButton();
         updateContactButton();
+        await updateUIForBook();
       }
     });
 
@@ -2542,6 +2902,107 @@
         authorContactLink.style.color = 'var(--text-light)';
         authorContactLink.style.textDecoration = 'none';
       }
+    }
+
+    // ===== UPDATE UI FOR CURRENT BOOK =====
+    async function updateUIForBook() {
+      if (!currentBook) return;
+      
+      // Use downloadLimit field, fallback to downloads for backward compatibility
+      const limit = currentBook.downloadLimit || currentBook.downloads || 5;
+      downloadLimit = limit;
+      const limitDisplay = getDownloadLimitDisplay(limit);
+      
+      // Update sidebar
+      sidebarDownloadLimitValue.textContent = limitDisplay.isUnlimited ? '♾️ Unlimited downloads' : `${limitDisplay.text} downloads`;
+      sidebarDownloadLimit.className = 'sidebar-item download-limit';
+      if (limitDisplay.isUnlimited) {
+        sidebarDownloadLimit.classList.add('unlimited');
+      }
+      
+      // Update download reminder
+      downloadReminder.className = 'download-reminder';
+      if (limitDisplay.isUnlimited) {
+        downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>Unlimited downloads available! ♾️</span>`;
+        downloadReminder.classList.add('unlimited');
+      } else {
+        downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>You will get <strong class="limit-value">${limitDisplay.text}</strong> downloads after purchase.</span>`;
+      }
+      downloadReminder.style.display = 'flex';
+      
+      // Check if user has purchased and download status
+      if (currentUser) {
+        const amount = currentBook.pricing?.amount || 0;
+        let purchased = false;
+        if (amount <= 0) {
+          purchased = true;
+        } else {
+          purchased = await checkPurchaseStatus(currentUser.uid, currentBook.id);
+        }
+        
+        if (purchased) {
+          const remaining = await getRemainingDownloads(currentUser.uid, currentBook.id, limit);
+          const canDownload = await canUserDownload(currentUser.uid, currentBook.id, limit);
+          
+          if (remaining === 'Unlimited') {
+            purchaseStatusText.textContent = '✅ You own this book! Unlimited downloads.';
+            purchaseStatus.className = 'purchase-status owned';
+            sidebarDownloadLimit.classList.remove('limit-reached');
+            downloadReminder.className = 'download-reminder unlimited';
+            downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>Unlimited downloads available! ♾️</span>`;
+            downloadReminder.style.display = 'flex';
+            // Hide re-purchase button, show download
+            repurchaseBtn.style.display = 'none';
+            downloadBtn.style.display = 'inline-flex';
+            payBtn.style.display = 'none';
+          } else if (canDownload) {
+            purchaseStatusText.textContent = `✅ You own this book! ${remaining} downloads remaining.`;
+            purchaseStatus.className = 'purchase-status owned';
+            sidebarDownloadLimit.classList.remove('limit-reached');
+            downloadReminder.className = 'download-reminder';
+            downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>You have <strong class="limit-value">${remaining}</strong> downloads remaining.</span>`;
+            downloadReminder.style.display = 'flex';
+            // Hide re-purchase button, show download
+            repurchaseBtn.style.display = 'none';
+            downloadBtn.style.display = 'inline-flex';
+            payBtn.style.display = 'none';
+          } else {
+            // LIMIT REACHED - Show re-purchase button AND contact author alert
+            purchaseStatusText.textContent = '⚠️ You\'ve reached the download limit. You can buy again or contact the author.';
+            purchaseStatus.className = 'purchase-status limit-reached';
+            sidebarDownloadLimit.classList.add('limit-reached');
+            downloadReminder.className = 'download-reminder reached';
+            downloadReminder.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <span>You've reached the download limit. <strong class="limit-value">${limitDisplay.text}</strong> downloads used. <a href="#" style="color:#6a34ff;text-decoration:underline;font-weight:600;" onclick="document.getElementById('contactAuthorCard').click(); return false;">Contact Author</a> for more or Buy Again.</span>`;
+            downloadReminder.style.display = 'flex';
+            
+            // SHOW RE-PURCHASE BUTTON (Pay with Paystack)
+            repurchaseBtn.style.display = 'inline-flex';
+            downloadBtn.style.display = 'none';
+            payBtn.style.display = 'none';
+          }
+        } else {
+          // Not purchased - show purchase reminder
+          downloadReminder.className = 'download-reminder';
+          downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>You will get <strong class="limit-value">${limitDisplay.text}</strong> downloads after purchase.</span>`;
+          downloadReminder.style.display = 'flex';
+          purchaseStatus.style.display = 'none';
+          // Show pay button
+          payBtn.style.display = 'inline-flex';
+          repurchaseBtn.style.display = 'none';
+          downloadBtn.style.display = 'none';
+        }
+      } else {
+        // Not signed in
+        downloadReminder.className = 'download-reminder';
+        downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>Sign in to purchase and get <strong class="limit-value">${limitDisplay.text}</strong> downloads.</span>`;
+        downloadReminder.style.display = 'flex';
+        purchaseStatus.style.display = 'none';
+        payBtn.style.display = 'none';
+        repurchaseBtn.style.display = 'none';
+        downloadBtn.style.display = 'none';
+      }
+      
+      updatePaymentUIState();
     }
 
     // ===== RENDER CART =====
@@ -2570,9 +3031,32 @@
         const currency = item.currency || 'GHS';
         
         let isOwned = false;
+        let limitReached = false;
         if (currentUser) {
           const purchased = await checkPurchaseStatus(currentUser.uid, item.id);
           isOwned = purchased;
+          if (purchased) {
+            // Get book data to check download limit
+            const bookRef = doc(db, "books", item.id);
+            const bookSnap = await getDoc(bookRef);
+            if (bookSnap.exists()) {
+              const bookData = bookSnap.data();
+              const limit = bookData.downloadLimit || bookData.downloads || 5;
+              const canDownload = await canUserDownload(currentUser.uid, item.id, limit);
+              limitReached = !canDownload;
+            }
+          }
+        }
+        
+        // If limit reached, show "Limit Reached - Buy Again" instead of "Already Owned"
+        let ownedText = '';
+        let ownedClass = '';
+        if (isOwned && limitReached) {
+          ownedText = '⚠️ Limit Reached - Buy Again';
+          ownedClass = 'item-owned limit-reached';
+        } else if (isOwned) {
+          ownedText = '✅ Already Owned';
+          ownedClass = 'item-owned';
         }
         
         html += `
@@ -2584,7 +3068,7 @@
               <div class="item-title">${item.title || 'Untitled'}</div>
               <div class="item-author">${item.author || 'Anonymous'}</div>
               <div class="item-price">${currency} ${price.toFixed(2)}</div>
-              ${isOwned ? `<div class="item-owned"><i class="fas fa-check-circle"></i> Already Owned</div>` : ''}
+              ${ownedText ? `<div class="${ownedClass}"><i class="fas fa-check-circle"></i> ${ownedText}</div>` : ''}
             </div>
             <div class="item-actions">
               <button class="btn-remove" data-index="${index}"><i class="fas fa-trash-alt"></i> Remove</button>
@@ -2596,8 +3080,9 @@
       cartBody.innerHTML = html;
       cartTotalAmount.textContent = `GHS ${total.toFixed(2)}`;
       
-      const hasUnpurchasedItems = await checkCartHasUnpurchasedItems(items);
-      checkoutBtn.disabled = !hasUnpurchasedItems || items.length === 0 || isProcessingPayment;
+      // Check for purchasable items (not purchased OR limit reached)
+      const hasPurchasableItems = await checkCartHasPurchasableItems(items);
+      checkoutBtn.disabled = !hasPurchasableItems || items.length === 0 || isProcessingPayment;
 
       document.querySelectorAll('.btn-remove').forEach(btn => {
         btn.addEventListener('click', function(e) {
@@ -2616,11 +3101,26 @@
       });
     }
 
-    async function checkCartHasUnpurchasedItems(items) {
+    // ===== CHECK IF CART HAS PURCHASABLE ITEMS =====
+    async function checkCartHasPurchasableItems(items) {
       if (!currentUser) return items.length > 0;
       for (const item of items) {
         const purchased = await checkPurchaseStatus(currentUser.uid, item.id);
         if (!purchased) return true;
+        
+        // If purchased, check if limit is reached (then they can buy again)
+        if (purchased) {
+          const bookRef = doc(db, "books", item.id);
+          const bookSnap = await getDoc(bookRef);
+          if (bookSnap.exists()) {
+            const bookData = bookSnap.data();
+            const limit = bookData.downloadLimit || bookData.downloads || 5;
+            const canDownload = await canUserDownload(currentUser.uid, item.id, limit);
+            if (!canDownload) {
+              return true; // Limit reached, can buy again
+            }
+          }
+        }
       }
       return false;
     }
@@ -2686,91 +3186,136 @@
       }
     }
 
-   // =====  VALIDATION =====
+// ===== FIXED: STRICT VALIDATION WITH PROPER CURRENCY CONVERSION =====
 async function validatePayment(response, bookData) {
-  // The response might have the data nested differently
-  const paymentData = response.data || response;
+  console.log('Validating payment response:', response);
+  console.log('Book data:', bookData);
   
-  // Get amount from multiple possible locations
-  let amount = response.amount || 
-               response.transaction?.amount || 
-               response.data?.amount || 
-               null;
-  
-  // If amount is null, try to find it in other locations
+  // Get amount from response - Paystack returns amount in kobo (smallest currency unit)
+  let amount = response.amount || response.transaction?.amount || response.data?.amount || null;
   if (amount === null || amount === undefined) {
-    // Try to get from trans object if it exists
     if (response.trans && typeof response.trans === 'object') {
       amount = response.trans.amount;
     }
   }
   
-  const currency = response.currency || 
-                    response.data?.currency || 
-                    'GHS';
+  // Get currency from response
+  const currency = response.currency || response.data?.currency || 'GHS';
+  const reference = response.reference || response.data?.reference || response.trans || 'unknown';
+  const customer = response.customer || response.data?.customer || null;
   
-  const reference = response.reference || 
-                     response.data?.reference || 
-                     response.trans || 
-                     'unknown';
+  // Check metadata from different possible locations
+  let metadata = response.metadata || response.data?.metadata || {};
+  if (metadata.custom_fields && Array.isArray(metadata.custom_fields)) {
+    const bookIdField = metadata.custom_fields.find(f => f.variable_name === 'book_id');
+    if (bookIdField) {
+      metadata.book_id = bookIdField.value;
+    }
+  }
   
-  const customer = response.customer || 
-                    response.data?.customer || 
-                    null;
+  // ===== CURRENCY CONVERSION WITH EXCHANGE RATES =====
+  const bookCurrency = bookData.pricing.currency || 'USD';
+  const bookAmount = bookData.pricing.amount;
   
-  const metadata = response.metadata || 
-                    response.data?.metadata || 
-                    {};
+  // Exchange rates (approximate - you should use a real API in production)
+  const exchangeRates = {
+    'USD': { 'GHS': 13.0 },
+    'GHS': { 'USD': 0.077 }
+  };
   
-  // Check 1: Amount matches book price (in kobo) - skip if amount is not available
-  let amountMatches = true;
-  const expectedAmount = bookData.pricing.amount * 100;
+  let expectedAmountInPaymentCurrency = bookAmount;
+  let expectedCurrency = bookCurrency;
   
-  if (amount !== null && amount !== undefined && bookData.pricing.amount > 0) {
-    amountMatches = amount === expectedAmount;
+  // If currencies don't match, convert the book price to the payment currency
+  if (bookCurrency !== currency && amount !== null && amount !== undefined) {
+    if (exchangeRates[bookCurrency] && exchangeRates[bookCurrency][currency]) {
+      const rate = exchangeRates[bookCurrency][currency];
+      expectedAmountInPaymentCurrency = bookAmount * rate;
+      expectedCurrency = currency;
+      console.log(`Currency conversion: ${bookAmount} ${bookCurrency} → ${expectedAmountInPaymentCurrency} ${currency} (rate: ${rate})`);
+    } else {
+      // If we don't have a conversion rate, use the book price directly
+      expectedAmountInPaymentCurrency = bookAmount;
+      expectedCurrency = bookCurrency;
+      console.log(`No conversion rate found, using book price directly: ${bookAmount} ${bookCurrency}`);
+    }
+  }
+  
+  // Convert to kobo (smallest currency unit)
+  const expectedAmountInKobo = Math.round(expectedAmountInPaymentCurrency * 100);
+  
+  // 1. Amount must match (allow small tolerance for rounding)
+  let amountMatches = false;
+  if (amount !== null && amount !== undefined) {
+    // Allow 2% tolerance for currency conversion rounding
+    const tolerance = Math.abs(expectedAmountInKobo * 0.02);
+    amountMatches = Math.abs(amount - expectedAmountInKobo) <= tolerance;
+    console.log(`Amount check: ${amount} vs ${expectedAmountInKobo} (tolerance: ${tolerance}) = ${amountMatches}`);
   } else if (bookData.pricing.amount === 0) {
-    // Free book - skip amount check
-    amountMatches = true;
-  } else {
-    // Paid book but no amount in response - log warning but don't fail
     amountMatches = true;
   }
   
-  // Check 2: Currency matches (skip if we don't have currency)
-  let currencyMatches = true;
+  // 2. Currency check - allow GHS/USD conversion
+  let currencyMatches = false;
   if (currency && bookData.pricing.currency) {
-    currencyMatches = currency === bookData.pricing.currency;
+    if (currency === bookData.pricing.currency) {
+      currencyMatches = true;
+    } else if ((currency === 'GHS' && bookData.pricing.currency === 'USD') || 
+               (currency === 'USD' && bookData.pricing.currency === 'GHS')) {
+      // Allow GHS/USD conversion
+      currencyMatches = true;
+      console.log(`Currency conversion allowed: ${bookData.pricing.currency} → ${currency}`);
+    }
   }
+  console.log(`Currency check: ${currency} vs ${bookData.pricing.currency} = ${currencyMatches}`);
   
-  // Check 3: Customer email matches logged-in user (if customer exists)
+  // 3. Customer email must match logged-in user (if customer exists)
   let emailMatches = true;
-  if (customer && customer.email) {
+  if (customer && customer.email && currentUser) {
     emailMatches = customer.email === currentUser.email;
+    console.log(`Email check: ${customer.email} vs ${currentUser.email} = ${emailMatches}`);
   }
   
-  // Check 4: Reference format is valid
-  const validReference = reference && 
-                         (reference.startsWith('paystack_') || 
-                          reference.startsWith('T') || 
-                          reference.startsWith('PSTK_')) && 
-                         reference.length > 10;
+  // 4. Reference must be valid
+  const validReference = reference && (typeof reference === 'string') && reference.length > 5;
+  console.log(`Reference check: ${reference} = ${validReference}`);
   
-  // Check 5: Book is approved
+  // 5. Book must be approved
   const bookApproved = bookData.status === 'approved';
+  console.log(`Book approved: ${bookApproved}`);
   
-  // Check 6: User hasn't already purchased this book
-  const purchaseRef = doc(db, "purchases", `${currentUser.uid}_${bookData.id}`);
-  const purchaseSnap = await getDoc(purchaseRef);
-  const notAlreadyPurchased = !purchaseSnap.exists() || purchaseSnap.data().status !== 'completed';
+  // 6. Check if already purchased - allow re-purchase
+  let notAlreadyPurchased = true;
+  if (currentUser && bookData.pricing.amount > 0) {
+    try {
+      const purchaseRef = doc(db, "purchases", `${currentUser.uid}_${bookData.id}`);
+      const purchaseSnap = await getDoc(purchaseRef);
+      if (purchaseSnap.exists()) {
+        const purchaseData = purchaseSnap.data();
+        const downloadCount = purchaseData.downloadCount || 0;
+        const limit = bookData.downloadLimit || bookData.downloads || 5;
+        // If limit is 0 or "unlimited", treat as unlimited
+        if (limit === 'unlimited' || limit === 'Unlimited' || parseInt(limit) === 0) {
+          notAlreadyPurchased = false;
+        } else {
+          const maxLimit = parseInt(limit);
+          notAlreadyPurchased = downloadCount >= maxLimit;
+        }
+        console.log(`Purchase check: downloadCount=${downloadCount}, limit=${limit}, canRePurchase=${notAlreadyPurchased}`);
+      }
+    } catch (err) {
+      console.warn('Error checking purchase status:', err);
+    }
+  }
   
-  // Check 7: Book has pricing
-  const hasValidPrice = bookData.pricing && bookData.pricing.amount > 0;
+  // 7. Book must have valid price
+  const hasValidPrice = bookData.pricing && bookData.pricing.amount !== undefined;
+  console.log(`Has valid price: ${hasValidPrice}`);
   
-  // Check 8: Metadata contains book ID - MAKE THIS OPTIONAL
-  // In test mode with bank transfer, metadata might not be returned
-  const hasBookId = metadata && metadata.book_id === bookData.id;
+  // 8. Book ID in metadata (optional)
+  const hasBookId = metadata && (metadata.book_id === bookData.id || metadata.bookId === bookData.id);
+  console.log(`Has book ID in metadata: ${hasBookId}`);
   
-  // Log validation results for debugging
   const validationResults = {
     amountMatches,
     currencyMatches,
@@ -2781,68 +3326,105 @@ async function validatePayment(response, bookData) {
     hasValidPrice,
     hasBookId: hasBookId || true,
     customerExists: !!customer,
-    reference: reference,
+    reference,
     amountFromResponse: amount,
-    expectedAmount: expectedAmount,
-    hasAmount: amount !== null && amount !== undefined
+    expectedAmountInKobo,
+    expectedCurrency,
+    bookCurrency,
+    responseCurrency: currency,
+    conversionRate: exchangeRates[bookCurrency]?.[currency] || null
   };
   
-  // All checks must pass - but if amount is 0 (free book), skip amount check
+  console.log('Validation results:', validationResults);
+  
+  // Determine if valid
   let isValid = true;
   
-  // If book is free (amount 0), skip amount and currency checks
   if (bookData.pricing.amount === 0) {
-    // For free books, we only check the other validations
     const criticalChecks = {
       validReference,
       bookApproved,
-      notAlreadyPurchased,
       hasValidPrice
     };
     isValid = Object.values(criticalChecks).every(v => v === true);
   } else {
-    // For paid books, all checks must pass
-    // If amount is not available, we skip amount check but still validate others
-    const checksToValidate = {
-      currencyMatches,
-      emailMatches,
-      validReference,
-      bookApproved,
-      notAlreadyPurchased,
-      hasValidPrice
-      // ✅ REMOVED hasBookId - not required for validation
-    };
+    const results = [];
     
-    // Only add amount check if we have it
+    // Amount must match (if we have it)
     if (amount !== null && amount !== undefined) {
-      checksToValidate.amountMatches = amountMatches;
+      results.push(amountMatches);
     }
     
-    isValid = Object.values(checksToValidate).every(v => v === true);
+    // Currency must match or be convertible
+    if (currency) {
+      results.push(currencyMatches);
+    }
+    
+    // Email must match (if we have customer data)
+    if (customer && customer.email) {
+      results.push(emailMatches);
+    }
+    
+    // These must always pass
+    results.push(validReference);
+    results.push(bookApproved);
+    results.push(hasValidPrice);
+    
+    // Check purchase status for paid books
+    if (bookData.pricing.amount > 0) {
+      results.push(notAlreadyPurchased);
+    }
+    
+    isValid = results.every(v => v === true);
   }
+  
+  console.log('Validation result:', isValid);
   
   return { isValid, validationResults };
 }
-      
-    
 
     async function recordPurchase(userId, bookId, transactionRef, paymentData = {}) {
       try {
         const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
-        await setDoc(purchaseRef, {
-          userId: userId,
-          bookId: bookId,
-          status: 'completed',
-          verified: true,
-          purchasedAt: serverTimestamp(),
-          transactionRef: transactionRef || 'paystack',
-          amount: paymentData.amount || 0,
-          currency: paymentData.currency || 'GHS',
-          customerEmail: paymentData.customerEmail || currentUser?.email || '',
-          paymentMethod: 'paystack'
-        });
+        
+        // Check if purchase already exists
+        const purchaseSnap = await getDoc(purchaseRef);
+        if (purchaseSnap.exists()) {
+          // For re-purchase, reset download count
+          await updateDoc(purchaseRef, {
+            status: 'completed',
+            verified: true,
+            purchasedAt: serverTimestamp(),
+            transactionRef: transactionRef || 'paystack',
+            amount: paymentData.amount || 0,
+            currency: paymentData.currency || 'GHS',
+            customerEmail: paymentData.customerEmail || currentUser?.email || '',
+            paymentMethod: 'paystack',
+            downloadCount: 0, // Reset for new purchase
+            lastDownloadedAt: null,
+            purchaseCount: increment(1)
+          });
+        } else {
+          // First time purchase
+          await setDoc(purchaseRef, {
+            userId: userId,
+            bookId: bookId,
+            status: 'completed',
+            verified: true,
+            purchasedAt: serverTimestamp(),
+            transactionRef: transactionRef || 'paystack',
+            amount: paymentData.amount || 0,
+            currency: paymentData.currency || 'GHS',
+            customerEmail: paymentData.customerEmail || currentUser?.email || '',
+            paymentMethod: 'paystack',
+            downloadCount: 0,
+            lastDownloadedAt: null,
+            purchaseCount: 1
+          });
+        }
         return true;
       } catch (err) {
+        console.error('Error recording purchase:', err);
         return false;
       }
     }
@@ -2854,7 +3436,6 @@ async function validatePayment(response, bookData) {
       return 'customer@example.com';
     }
 
-    // ===== ✅ CHECK PAYSTACK BEFORE PAYMENT =====
     function checkPaystackReady() {
       if (typeof PaystackPop === 'undefined') {
         showToast('⏳ Payment system is loading. Please wait a moment.', 'info');
@@ -2864,15 +3445,9 @@ async function validatePayment(response, bookData) {
     }
 
     // ===== SINGLE BOOK PAYMENT WITH VALIDATION =====
-    function initiateSingleBookPayment(amount, email, bookTitle, bookId) {
+    function initiateSingleBookPayment(amount, email, bookTitle, bookId, isRepurchase = false) {
       if (isProcessingPayment) return;
-      
-      // ✅ Check Paystack is ready
-      if (!checkPaystackReady()) {
-        return;
-      }
-      
-      // Check if key is missing or looks like a placeholder
+      if (!checkPaystackReady()) return;
       if (!PAYSTACK_PUBLIC_KEY || PAYSTACK_PUBLIC_KEY.includes('xxxxxxxx')) {
         showToast('⚠️ Paystack is not properly configured. Please contact support.', 'error');
         return;
@@ -2881,6 +3456,7 @@ async function validatePayment(response, bookData) {
       isProcessingPayment = true;
       paymentProcessing.classList.add('active');
       payBtn.style.display = 'none';
+      repurchaseBtn.style.display = 'none';
       loginPrompt.style.display = 'none';
       paymentSuccess.classList.remove('active');
       paymentError.classList.remove('active');
@@ -2897,12 +3473,10 @@ async function validatePayment(response, bookData) {
               { display_name: "Book Title", variable_name: "book_title", value: bookTitle },
               { display_name: "Book ID", variable_name: "book_id", value: bookId },
               { display_name: "Customer ID", variable_name: "customer_id", value: currentUser?.uid || 'guest' },
-              { display_name: "Payment Type", variable_name: "payment_type", value: "single_book" }
+              { display_name: "Payment Type", variable_name: "payment_type", value: isRepurchase ? "repurchase" : "single_book" }
             ]
           },
-          // ✅ REMOVED 'async' - Paystack doesn't support it
           callback: function(response) {
-            // ✅ Call the async handler
             handleSingleBookPaymentCallback(response);
           },
           onClose: function() {
@@ -2912,9 +3486,9 @@ async function validatePayment(response, bookData) {
             showToast('Payment cancelled. You can try again.', 'info');
           }
         });
-
         handler.openIframe();
       } catch (error) {
+        console.error('Payment error:', error);
         showToast('⚠️ Payment error. Please try again.', 'error');
         isProcessingPayment = false;
         paymentProcessing.classList.remove('active');
@@ -2922,7 +3496,6 @@ async function validatePayment(response, bookData) {
       }
     }
 
-    // ===== SINGLE BOOK PAYMENT CALLBACK HANDLER =====
     async function handleSingleBookPaymentCallback(response) {
       if (!currentUser || !currentBook) {
         showToast('⚠️ User or book not found. Please try again.', 'error');
@@ -2932,10 +3505,10 @@ async function validatePayment(response, bookData) {
         return;
       }
 
-      // 🔒 RUN METHOD 4 VALIDATION
       const { isValid, validationResults } = await validatePayment(response, currentBook);
       
       if (!isValid) {
+        console.error('Validation failed:', validationResults);
         showToast('⚠️ Payment verification failed. Please contact support.', 'error');
         isProcessingPayment = false;
         paymentProcessing.classList.remove('active');
@@ -2943,7 +3516,6 @@ async function validatePayment(response, bookData) {
         return;
       }
 
-      // ✅ All validations passed - record purchase
       const transactionRef = response.reference || 'paystack_' + Date.now();
       const success = await recordPurchase(
         currentUser.uid, 
@@ -2961,7 +3533,9 @@ async function validatePayment(response, bookData) {
         isProcessingPayment = false;
         paymentProcessing.classList.remove('active');
         updatePaymentUI('success');
-        showToast(`✅ Payment verified! "${currentBook.title}" is now yours forever. 🎉`, 'success');
+        showToast(`✅ Payment verified! "${currentBook.title}" can now be downloaded. 🎉`, 'success');
+        await trackDailyDownload(currentBook.id);
+        await updateUIForBook();
         setTimeout(() => { downloadBook(); }, 1000);
       } else {
         showToast('⚠️ Payment verified but failed to save. Please contact support.', 'error');
@@ -2971,16 +3545,28 @@ async function validatePayment(response, bookData) {
       }
     }
 
-    // ===== CART PAYMENT WITH VALIDATION =====
+    // ===== DAILY DOWNLOAD TRACKING =====
+    async function trackDailyDownload(bookId) {
+        if (!bookId) return;
+        try {
+            const today = new Date().toISOString().split('T')[0];
+            const docId = `${bookId}_${today}`;
+            const dailyRef = doc(db, "dailyDownloads", docId);
+            await setDoc(dailyRef, {
+                bookId: bookId,
+                date: today,
+                downloads: increment(1),
+                lastUpdated: serverTimestamp()
+            }, { merge: true });
+        } catch (err) {
+            console.error('Error tracking daily download:', err);
+        }
+    }
+
+    // ===== CART PAYMENT =====
     function initiateCartPayment(amount, email, items) {
       if (isProcessingPayment) return;
-      
-      // ✅ Check Paystack is ready
-      if (!checkPaystackReady()) {
-        return;
-      }
-      
-      // Check if key is missing or looks like a placeholder
+      if (!checkPaystackReady()) return;
       if (!PAYSTACK_PUBLIC_KEY || PAYSTACK_PUBLIC_KEY.includes('xxxxxxxx')) {
         showToast('⚠️ Paystack is not properly configured. Please contact support.', 'error');
         return;
@@ -3008,9 +3594,7 @@ async function validatePayment(response, bookData) {
               { display_name: "Payment Type", variable_name: "payment_type", value: "cart_checkout" }
             ]
           },
-          // ✅ REMOVED 'async' - Paystack doesn't support it
           callback: function(response) {
-            // ✅ Call the async handler
             handleCartPaymentCallback(response, items);
           },
           onClose: function() {
@@ -3022,7 +3606,6 @@ async function validatePayment(response, bookData) {
             showToast('Payment cancelled. You can try again.', 'info');
           }
         });
-
         handler.openIframe();
       } catch (error) {
         showToast('⚠️ Payment error. Please try again.', 'error');
@@ -3034,7 +3617,6 @@ async function validatePayment(response, bookData) {
       }
     }
 
-    // ===== CART PAYMENT CALLBACK HANDLER =====
     async function handleCartPaymentCallback(response, items) {
       if (!currentUser) {
         showToast('⚠️ User not found. Please try again.', 'error');
@@ -3046,12 +3628,9 @@ async function validatePayment(response, bookData) {
         return;
       }
 
-      // 🔒 Validate each item in the cart
       let allValid = true;
       const invalidItems = [];
-      
       for (const item of items) {
-        // Get book data from Firestore
         const bookRef = doc(db, "books", item.id);
         const bookSnap = await getDoc(bookRef);
         if (!bookSnap.exists()) {
@@ -3060,8 +3639,6 @@ async function validatePayment(response, bookData) {
           continue;
         }
         const bookData = bookSnap.data();
-        
-        // Validate using Method 4
         const { isValid } = await validatePayment(response, { ...bookData, id: item.id });
         if (!isValid) {
           allValid = false;
@@ -3079,10 +3656,8 @@ async function validatePayment(response, bookData) {
         return;
       }
 
-      // ✅ All validations passed - record all purchases
       const transactionRef = response.reference || 'paystack_' + Date.now();
       let allSuccess = true;
-      
       for (const item of items) {
         const success = await recordPurchase(
           currentUser.uid, 
@@ -3095,6 +3670,9 @@ async function validatePayment(response, bookData) {
           }
         );
         if (!success) allSuccess = false;
+        if (success) {
+          await trackDailyDownload(item.id);
+        }
       }
       
       if (allSuccess) {
@@ -3119,8 +3697,8 @@ async function validatePayment(response, bookData) {
       paymentProcessing.classList.remove('active');
       paymentSuccess.classList.remove('active');
       paymentError.classList.remove('active');
-      purchaseStatus.style.display = 'none';
       payBtn.style.display = 'none';
+      repurchaseBtn.style.display = 'none';
       downloadBtn.style.display = 'none';
       loginPrompt.style.display = 'none';
       
@@ -3165,7 +3743,24 @@ async function validatePayment(response, bookData) {
       if (amount <= 0) { hasPaidForBook = true; updatePaymentUI('owned'); return; }
       const purchased = await checkPurchaseStatus(currentUser.uid, currentBook.id);
       hasPaidForBook = purchased;
-      if (purchased) { updatePaymentUI('owned'); } else { updatePaymentUI('not_owned'); }
+      
+      // Check if limit is reached
+      if (purchased) {
+        const canDownload = await canUserDownload(currentUser.uid, currentBook.id, downloadLimit);
+        if (canDownload) {
+          updatePaymentUI('owned');
+        } else {
+          // Limit reached - show re-purchase option
+          purchaseStatusText.textContent = '⚠️ You\'ve reached the download limit. Buy again or contact the author.';
+          purchaseStatus.className = 'purchase-status limit-reached';
+          purchaseStatus.style.display = 'flex';
+          repurchaseBtn.style.display = 'inline-flex';
+          downloadBtn.style.display = 'none';
+          payBtn.style.display = 'none';
+        }
+      } else {
+        updatePaymentUI('not_owned');
+      }
     }
 
     // ===== DOWNLOAD BOOK =====
@@ -3175,10 +3770,24 @@ async function validatePayment(response, bookData) {
 
       const amount = currentBook.pricing?.amount || 0;
       let hasPurchased = false;
-      if (amount <= 0) { hasPurchased = true; } else {
+      if (amount <= 0) { 
+        hasPurchased = true; 
+      } else {
         hasPurchased = await checkPurchaseStatus(currentUser.uid, currentBook.id);
       }
-      if (!hasPurchased) { showToast('❌ Please purchase this book first.', 'error'); updatePaymentUIState(); return; }
+      if (!hasPurchased) { 
+        showToast('❌ Please purchase this book first.', 'error'); 
+        updatePaymentUIState(); 
+        return; 
+      }
+
+      // Check if user can download (limit not reached)
+      const canDownload = await canUserDownload(currentUser.uid, currentBook.id, downloadLimit);
+      if (!canDownload) {
+        const limitDisplay = getDownloadLimitDisplay(downloadLimit);
+        showToast(`❌ You've reached the download limit (${limitDisplay.text}). You can buy again or contact the author.`, 'error');
+        return;
+      }
 
       const originalText = downloadBtnText.textContent;
       downloadBtn.disabled = true;
@@ -3188,6 +3797,9 @@ async function validatePayment(response, bookData) {
         const bookRef = doc(db, "books", currentBook.id);
         await updateDoc(bookRef, { downloads: increment(1) });
         currentBook.downloads = (currentBook.downloads || 0) + 1;
+
+        await recordUserDownload(currentUser.uid, currentBook.id);
+        await trackDailyDownload(currentBook.id);
 
         const response = await fetch(currentBook.pdfUrl);
         if (!response.ok) throw new Error(`Download failed with status ${response.status}`);
@@ -3205,8 +3817,14 @@ async function validatePayment(response, bookData) {
         anchor.click();
         document.body.removeChild(anchor);
         URL.revokeObjectURL(downloadUrl);
-        showToast(`📄 Downloaded "${currentBook.title}"!`, 'success');
+        
+        // Update UI after download
+        await updateUIForBook();
+        const remaining = await getRemainingDownloads(currentUser.uid, currentBook.id, downloadLimit);
+        const remainingText = remaining === 'Unlimited' ? 'Unlimited' : `${remaining} remaining`;
+        showToast(`📄 Downloaded "${currentBook.title}"! (${remainingText})`, 'success');
       } catch (err) {
+        console.error('Download error:', err);
         showToast('⚠ Unable to download PDF. Please try again.', 'error');
       } finally {
         downloadBtn.disabled = false;
@@ -3232,6 +3850,21 @@ async function validatePayment(response, bookData) {
       initiateSingleBookPayment(amount, email, bookTitle, currentBook.id);
     });
 
+    // ===== RE-PURCHASE BUTTON =====
+    repurchaseBtn.addEventListener('click', function() {
+      if (!currentUser) { showToast('🔐 Please sign in to purchase.', 'error'); window.location.href = getLoginRedirectLink(); return; }
+      if (!currentBook) { showToast('❌ Book not loaded.', 'error'); return; }
+      const amount = currentBook.pricing?.amount || 0;
+      if (amount <= 0) {
+        showToast('📖 This book is free. Download it directly.', 'info');
+        downloadBook();
+        return;
+      }
+      const email = getUserEmail();
+      const bookTitle = currentBook.title || 'Untitled';
+      initiateSingleBookPayment(amount, email, bookTitle, currentBook.id, true);
+    });
+
     // ===== CHECKOUT BUTTON =====
     checkoutBtn.addEventListener('click', async function() {
       if (!currentUser) {
@@ -3243,30 +3876,46 @@ async function validatePayment(response, bookData) {
       const items = getCartItems();
       if (items.length === 0) { showToast('Your cart is empty.', 'info'); return; }
 
-      const unpurchasedItems = [];
+      // Get items that can be purchased (not purchased OR limit reached)
+      const purchasableItems = [];
       for (const item of items) {
         const purchased = await checkPurchaseStatus(currentUser.uid, item.id);
         if (!purchased) {
-          unpurchasedItems.push(item);
+          purchasableItems.push(item);
+        } else {
+          // Check if limit is reached (can buy again)
+          const bookRef = doc(db, "books", item.id);
+          const bookSnap = await getDoc(bookRef);
+          if (bookSnap.exists()) {
+            const bookData = bookSnap.data();
+            const limit = bookData.downloadLimit || bookData.downloads || 5;
+            const canDownload = await canUserDownload(currentUser.uid, item.id, limit);
+            if (!canDownload) {
+              purchasableItems.push(item); // Allow re-purchase
+            }
+          }
         }
       }
 
-      if (unpurchasedItems.length === 0) {
-        showToast('✅ All books in your cart are already purchased!', 'success');
+      if (purchasableItems.length === 0) {
+        showToast('✅ All books in your cart are already purchased and have downloads remaining!', 'success');
         closeCart();
         return;
       }
 
-      const total = unpurchasedItems.reduce((sum, item) => sum + (item.price || 0), 0);
+      const total = purchasableItems.reduce((sum, item) => sum + (item.price || 0), 0);
       if (total <= 0) {
         let allSuccess = true;
-        for (const item of unpurchasedItems) {
+        for (const item of purchasableItems) {
           const success = await recordPurchase(currentUser.uid, item.id, 'free_book');
           if (!success) allSuccess = false;
+          if (success) {
+            await trackDailyDownload(item.id);
+          }
         }
         if (allSuccess) {
-          showToast(`✅ ${unpurchasedItems.length} free book(s) added to your library!`, 'success');
-          const newCart = items.filter(item => !unpurchasedItems.some(pi => pi.id === item.id));
+          showToast(`✅ ${purchasableItems.length} free book(s) added to your library!`, 'success');
+          const newCart = items.filter(item => !purchasableItems.some(pi => pi.id === item.id));
           saveCartItems(newCart);
           await renderCart();
           updateCartBadge();
@@ -3275,7 +3924,7 @@ async function validatePayment(response, bookData) {
       }
 
       const email = getUserEmail();
-      initiateCartPayment(total, email, unpurchasedItems);
+      initiateCartPayment(total, email, purchasableItems);
     });
 
     // ===== DOWNLOAD BUTTON =====
@@ -3297,7 +3946,7 @@ async function validatePayment(response, bookData) {
         currentBook = book;
         renderBook(book);
         renderMoreByAuthor(book);
-        await updatePaymentUIState();
+        await updateUIForBook();
         await updateWishlistButton();
         updateContactButton();
       } catch (err) {
@@ -3362,9 +4011,9 @@ async function validatePayment(response, bookData) {
       const amount = book.pricing?.amount || 0;
       bookPrice.innerHTML = `${currency} ${amount.toFixed(2)}`;
 
-      const downloads = book.downloads || 0;
-      const popularity = getPopularityBadge(downloads);
-      const displayText = getPublicDownloadDisplay(downloads);
+      const totalDownloads = book.downloads || 0;
+      const popularity = getPopularityBadge(totalDownloads);
+      const displayText = getPublicDownloadDisplay(totalDownloads);
       bookBadges.innerHTML = '';
       if (book.preorder === true || book.preorder === 'true') {
         const badge = document.createElement('span');
@@ -3382,6 +4031,14 @@ async function validatePayment(response, bookData) {
       popularityBadge.className = `popularity-badge ${popularity.className}`;
       popularityBadge.innerHTML = `<i class="fas ${popularity.icon}"></i> ${popularity.label} · ${displayText}`;
       bookBadges.appendChild(popularityBadge);
+
+      // Add download limit badge
+      const limit = book.downloadLimit || book.downloads || 5;
+      const limitDisplay = getDownloadLimitDisplay(limit);
+      const limitBadge = document.createElement('span');
+      limitBadge.className = `download-limit-badge ${limitDisplay.isUnlimited ? 'unlimited' : ''}`;
+
+      bookBadges.appendChild(limitBadge);
 
       bookSynopsis.textContent = book.synopsis || 'No synopsis available.';
       sidebarGenre.textContent = book.genre || 'Not specified';
