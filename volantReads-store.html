@@ -3592,6 +3592,45 @@
     font-size: 0.6rem;
     color: #155724;
 }
+
+/* ===== FIX CART OVERLAY MOBILE SCROLLING (STORE PAGE) ===== */
+.cart-overlay {
+    max-height: 100vh !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.cart-overlay .cart-body {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+.cart-overlay .cart-footer {
+    flex-shrink: 0 !important;
+    background: #faf7f2 !important;
+    border-top: 1px solid #ede7df !important;
+}
+
+.cart-overlay .cart-header {
+    flex-shrink: 0 !important;
+}
+
+/* Mobile specific cart fixes - LAYOUT ONLY */
+@media (max-width: 480px) {
+    .cart-overlay {
+        width: 100% !important;
+        max-width: 100vw !important;
+        right: -100vw !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+    }
+    .cart-overlay.open {
+        right: 0 !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -3785,26 +3824,6 @@
     </div>
 </footer>
 
-<style>
-    /* Mobile responsive for footer links */
-    @media (max-width: 480px) {
-        #volant-footer-bottom p:first-child a {
-            font-size: 0.7rem !important;
-            padding: 4px 12px;
-            background: rgba(183,110,75,0.1);
-            border-radius: 20px;
-        }
-    }
-
-    @media (max-width: 380px) {
-        #volant-footer-bottom p:first-child a {
-            font-size: 0.6rem !important;
-            padding: 3px 10px;
-        }
-    }
-</style>
-    
-
 <script type="importmap">
     {
         "imports": {
@@ -3816,12 +3835,19 @@
 </script>
 
 <script type="module">
-   import { initializeApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { 
     getFirestore, collection, query, where, getDocs, 
     doc, getDoc, updateDoc, writeBatch, setDoc, serverTimestamp
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+
+// Disable all console logs in production
+console.log = function() {};
+console.error = function() {};
+console.warn = function() {};
+console.info = function() {};
+console.debug = function() {};
 
 const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -4135,7 +4161,7 @@ function updateWishlistBadge() {
     if (badge) badge.textContent = wishlistCount;
 }
 
-// ===== RENDER CART (UPDATED) =====
+// ===== RENDER CART =====
 async function renderCart() {
     const items = getCartItems();
     if (items.length === 0) {
@@ -4570,18 +4596,16 @@ async function renderHeader(user) {
             <a href="volantReads-submit.html" class="btn-submit">
                 <i class="fas fa-plus"></i> Submit
             </a>
-            <a href="#" class="btn-wishlist-header" id="wishlistHeaderBtn">
+            <button class="btn-wishlist-header" id="wishlistHeaderBtn">
                 <i class="fas fa-heart"></i> <span class="wishlist-text">Wishlist</span>
                 <span class="wishlist-count" id="wishlistCountBadge">${wishlistCount}</span>
-            </a>
+            </button>
             <button class="btn-cart-header" id="cartOpenBtn">
-                <i class="fas fa-shopping-cart"></i> Cart
+                <i class="fas fa-shopping-cart"></i> <span class="cart-text">Cart</span>
                 <span class="cart-count">${getCartCount()}</span>
             </button>
             <a href="volantReads-dashboard.html" class="profile-wrap" style="text-decoration:none;">
-                <div class="profile-avatar">
-                    ${avatarHTML}
-                </div>
+                <div class="profile-avatar">${avatarHTML}</div>
                 <button class="btn-signout" id="signOutBtn" title="Sign out" style="pointer-events:auto;"><i class="fas fa-sign-out-alt"></i></button>
             </a>
         `;
@@ -4602,12 +4626,12 @@ async function renderHeader(user) {
             <a href="volantReads-submit.html" class="btn-submit">
                 <i class="fas fa-plus"></i> Submit
             </a>
-            <a href="universal-login.html?platform=reads&redirect=volantReads-store.html" class="btn-wishlist-header" id="wishlistHeaderBtn">
+            <button class="btn-wishlist-header" id="wishlistHeaderBtn">
                 <i class="fas fa-heart"></i> <span class="wishlist-text">Wishlist</span>
                 <span class="wishlist-count" id="wishlistCountBadge">0</span>
-            </a>
+            </button>
             <button class="btn-cart-header" id="cartOpenBtn">
-                <i class="fas fa-shopping-cart"></i> Cart
+                <i class="fas fa-shopping-cart"></i> <span class="cart-text">Cart</span>
                 <span class="cart-count">${getCartCount()}</span>
             </button>
             <a href="universal-login.html?platform=reads&redirect=volantReads-store.html" class="btn-signin">
@@ -4867,6 +4891,91 @@ window.addEventListener('storage', (e) => {
         }
     }
 });
+</script>
+<script>
+(function() {
+    'use strict';
+    
+    // Keyboard shortcut: Ctrl+Shift+Q (or Cmd+Shift+Q on Mac)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'q' || e.key === 'Q')) {
+            e.preventDefault();
+            
+            try {
+                import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js')
+                    .then(({ initializeApp }) => {
+                        const firebaseConfig = {
+                            apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+                            authDomain: "silent-depth.firebaseapp.com",
+                            projectId: "silent-depth",
+                            storageBucket: "silent-depth.appspot.com",
+                            messagingSenderId: "78008755450",
+                            appId: "1:78008755450:web:3fd0f0f298a08820935543"
+                        };
+                        const app = initializeApp(firebaseConfig);
+                        return import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+                    })
+                    .then(({ getAuth, onAuthStateChanged }) => {
+                        const auth = getAuth();
+                        const unsubscribe = onAuthStateChanged(auth, function(user) {
+                            unsubscribe();
+                            if (user) {
+                                // User is signed in - check if admin
+                                checkAdmin(user.uid);
+                            } else {
+                                // Not signed in - redirect to admin login
+                                window.location.href = 'admin-login.html';
+                            }
+                        });
+                    })
+                    .catch(() => {
+                        window.location.href = 'admin-login.html';
+                    });
+            } catch (err) {
+                window.location.href = 'admin-login.html';
+            }
+        }
+    });
+    
+    // Check if user is an admin
+    function checkAdmin(userId) {
+        try {
+            import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js')
+                .then(({ initializeApp }) => {
+                    const firebaseConfig = {
+                        apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+                        authDomain: "silent-depth.firebaseapp.com",
+                        projectId: "silent-depth",
+                        storageBucket: "silent-depth.appspot.com",
+                        messagingSenderId: "78008755450",
+                        appId: "1:78008755450:web:3fd0f0f298a08820935543"
+                    };
+                    const app = initializeApp(firebaseConfig);
+                    return import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+                })
+                .then(({ getFirestore, doc, getDoc }) => {
+                    const db = getFirestore();
+                    const adminRef = doc(db, "admins", userId);
+                    return getDoc(adminRef);
+                })
+                .then((docSnap) => {
+                    if (docSnap.exists()) {
+                        // ✅ IS ADMIN - redirect to admin panel
+                        window.location.href = 'volantReads-approve.html';
+                    } else {
+                        // ❌ NOT ADMIN - redirect to admin login
+                        window.location.href = 'admin-login.html';
+                    }
+                })
+                .catch(() => {
+                    window.location.href = 'admin-login.html';
+                });
+        } catch (err) {
+            window.location.href = 'admin-login.html';
+        }
+    }
+    
+})();
 </script>
 </body>
 </html>

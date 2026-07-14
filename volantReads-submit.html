@@ -10,7 +10,7 @@
     <style>
         /* ---------- CSS VARIABLES ---------- */
         :root {
-           --primary: #b76e4b;
+            --primary: #b76e4b;
             --primary-dark: #9f5e3f;
             --bg-light: #faf7f2;
             --bg-white: #ffffff;
@@ -49,51 +49,48 @@
             margin: 0 auto;
         }
 
-      /* ---------- PURPLE VOLANT READS LOGO (STANDALONE) ---------- */
-.logo {
-    display: flex;
-    align-items: center;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #6a0dad;  /* Purple for "Reads" */
-    text-decoration: none;
-    gap: 0.6rem;
-    cursor: default;
-}
+        /* ---------- PURPLE VOLANT READS LOGO (STANDALONE) ---------- */
+        .logo {
+            display: flex;
+            align-items: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #6a0dad;
+            text-decoration: none;
+            gap: 0.6rem;
+            cursor: default;
+        }
 
-.nav-logo-img {
-    height: 40px;
-    width: auto;
-    object-fit: contain;
-}
+        .nav-logo-img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
 
-.logo-highlight {
-    color: #ffffff;  /* White for "Volant" */
-    text-shadow:
-        0 0 2px #6a0dad,   /* Purple glow */
-        0 0 4px #6a0dad,
-        0 0 6px #6a0dad;
-}
+        .logo-highlight {
+            color: #ffffff;
+            text-shadow: 0 0 2px #6a0dad, 0 0 4px #6a0dad, 0 0 6px #6a0dad;
+        }
 
-/* Responsive sizing */
-@media (max-width: 768px) {
-    .logo {
-        font-size: 1.4rem;
-    }
-    .nav-logo-img {
-        height: 34px;
-    }
-}
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 1.4rem;
+            }
+            .nav-logo-img {
+                height: 34px;
+            }
+        }
 
-@media (max-width: 480px) {
-    .logo {
-        font-size: 1.4rem;
-    }
-    .nav-logo-img {
-        height: 30px;
-    }
-}
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.4rem;
+            }
+            .nav-logo-img {
+                height: 30px;
+            }
+        }
+
         /* ---------- AUTH OVERLAY ---------- */
         .auth-overlay {
             display: none;
@@ -272,6 +269,82 @@
             color: #8a7b6a;
             padding-left: 4px;
             line-height: 1.3;
+        }
+
+        /* ---------- DOWNLOADS SECTION ---------- */
+        .downloads-group {
+            background: #f8f5f0;
+            border-radius: 16px;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border-light);
+        }
+
+        .downloads-group .downloads-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        .downloads-group .downloads-title i {
+            color: var(--primary);
+        }
+
+        .downloads-group .downloads-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .downloads-group .downloads-row .form-group {
+            flex: 1 1 120px;
+        }
+
+        .downloads-group .downloads-row .form-group select,
+        .downloads-group .downloads-row .form-group input {
+            padding: 0.5rem 0.8rem;
+        }
+
+        .downloads-group .downloads-hint {
+            font-size: 0.65rem;
+            color: #8a7b6a;
+            padding-left: 4px;
+            margin-top: 4px;
+        }
+
+        .downloads-group .downloads-hint .min-downloads {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .custom-download-input {
+            display: none;
+        }
+
+        .custom-download-input.visible {
+            display: block;
+            margin-top: 0.4rem;
+        }
+
+        .custom-download-input input {
+            width: 100%;
+            max-width: 150px;
+            padding: 0.5rem 0.8rem;
+            border: 1px solid var(--border-input);
+            border-radius: 16px;
+            font-size: 0.88rem;
+            background: #fcf9f6;
+            transition: 0.2s;
+        }
+
+        .custom-download-input input:focus {
+            outline: 2px solid var(--primary);
+            border-color: transparent;
+            background: #ffffff;
         }
 
         /* ---------- PRICING ---------- */
@@ -791,28 +864,79 @@
             border-color: var(--primary);
         }
 
+        /* ---------- PERSISTENT SUCCESS FEEDBACK ---------- */
         #formFeedback {
             margin-top: 1rem;
-            padding: 0.6rem 1rem;
+            padding: 1.2rem 1.5rem;
             border-radius: 24px;
             font-weight: 500;
             display: none;
+            font-size: 0.9rem;
+            line-height: 1.8;
             white-space: pre-line;
-            font-size: 0.85rem;
+            border: 2px solid transparent;
+            position: relative;
         }
 
         #formFeedback.success {
             display: block;
             background: #e6f0e6;
             color: #1d6b2c;
-            border-left: 4px solid #2d7d46;
+            border-color: #2d7d46;
+            white-space: pre-line;
         }
 
         #formFeedback.error {
             display: block;
             background: #fce8e8;
             color: #a12b2b;
-            border-left: 4px solid var(--primary);
+            border-color: var(--primary);
+        }
+
+        #formFeedback .feedback-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(45, 125, 70, 0.2);
+        }
+
+        #formFeedback .feedback-actions .btn-dismiss {
+            background: #2d7d46;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        #formFeedback .feedback-actions .btn-dismiss:hover {
+            background: #1d6b2c;
+            transform: scale(1.02);
+        }
+
+        #formFeedback .feedback-actions .btn-dashboard {
+            background: #4b2aad;
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.2s;
+        }
+
+        #formFeedback .feedback-actions .btn-dashboard:hover {
+            background: #3a1f8a;
+            transform: scale(1.02);
         }
 
         .upload-progress {
@@ -899,37 +1023,37 @@
             body {
                 padding: 0.5rem 0.4rem;
             }
-            
+
             .container {
                 padding: 1rem 0.8rem;
                 border-radius: 20px;
             }
-            
+
             .form-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 2px;
             }
-            
+
             .subhead {
                 font-size: 0.8rem;
                 margin-bottom: 1rem;
                 padding-left: 8px;
             }
-            
+
             .form-grid {
                 gap: 0.8rem;
             }
-            
+
             .form-row {
                 flex-direction: column;
                 gap: 0.8rem;
             }
-            
+
             .form-row .form-group {
                 flex: 1 1 100%;
             }
-            
+
             .form-group input,
             .form-group textarea,
             .form-group select {
@@ -937,20 +1061,20 @@
                 font-size: 0.85rem;
                 border-radius: 14px;
             }
-            
+
             .form-group label {
                 font-size: 0.78rem;
             }
-            
+
             .form-group textarea {
                 min-height: 60px;
             }
-            
+
             .form-actions {
                 flex-direction: column;
                 gap: 0.6rem;
             }
-            
+
             .btn-primary,
             .btn-secondary {
                 width: 100%;
@@ -958,7 +1082,7 @@
                 padding: 0.7rem 1.5rem;
                 font-size: 0.9rem;
             }
-            
+
             .file-upload-wrapper {
                 flex-direction: column;
                 align-items: stretch;
@@ -966,34 +1090,34 @@
                 border-radius: 16px;
                 gap: 4px;
             }
-            
+
             .file-upload-wrapper input[type="file"] {
                 min-width: 100%;
                 font-size: 0.78rem;
             }
-            
+
             .file-hint {
                 white-space: normal;
                 text-align: center;
                 font-size: 0.55rem;
             }
-            
+
             .keyword-input-wrapper {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 4px;
             }
-            
+
             .keyword-input-wrapper input {
                 min-width: 100%;
             }
-            
+
             .keyword-input-wrapper .add-keyword-btn {
                 justify-content: center;
                 padding: 0.5rem 1rem;
                 font-size: 0.8rem;
             }
-            
+
             .auth-overlay .btn-auth {
                 display: block;
                 margin: 0.3rem auto;
@@ -1002,133 +1126,169 @@
                 padding: 0.6rem 1.5rem;
                 font-size: 0.9rem;
             }
-            
+
             .auth-overlay {
                 padding: 1.5rem 1rem;
             }
-            
+
             .auth-overlay h2 {
                 font-size: 1.3rem;
             }
-            
+
             .auth-overlay i {
                 font-size: 2.5rem;
             }
-            
+
             .country-select-wrapper .country-dropdown {
                 max-height: 150px;
             }
-            
+
             .country-select-wrapper .country-dropdown .country-option {
                 padding: 0.4rem 0.8rem;
                 font-size: 0.8rem;
             }
-            
+
             .pricing-group {
                 padding: 0.6rem 0.8rem;
                 border-radius: 14px;
             }
-            
+
             .pricing-group .pricing-row {
                 flex-direction: column;
                 gap: 0.5rem;
             }
-            
+
             .pricing-group .pricing-row .form-group {
                 width: 100%;
                 flex: 1 1 100%;
             }
-            
+
             .pricing-group .pricing-title {
                 font-size: 0.85rem;
                 margin-bottom: 0.4rem;
             }
-            
+
             .price-input-wrapper input {
                 padding: 0.5rem 0.7rem;
                 padding-left: 2rem !important;
             }
-            
+
             .currency-select {
                 padding: 0.5rem 0.7rem !important;
             }
-            
+
             .currency-converter {
                 padding: 0.4rem 0.6rem;
                 margin-top: 0.4rem;
             }
-            
+
             .currency-converter .converter-item {
                 padding: 0.15rem 0.5rem;
                 font-size: 0.65rem;
             }
-            
+
             .keyword-tag {
                 padding: 0.15rem 0.5rem 0.15rem 0.8rem;
                 font-size: 0.7rem;
             }
-            
+
             .keyword-tags {
                 gap: 4px;
                 min-height: 26px;
             }
-            
+
             .keyword-counter {
                 font-size: 0.6rem;
             }
-            
+
             .checkbox-group {
                 gap: 8px;
             }
-            
+
             .checkbox-group input[type="checkbox"] {
                 width: 16px;
                 height: 16px;
             }
-            
+
             .checkbox-group label {
                 font-size: 0.8rem;
             }
-            
+
             .user-badge {
                 font-size: 0.75rem;
                 padding: 0.15rem 0.7rem;
                 margin-bottom: 0.6rem;
             }
-            
+
             .file-feedback {
                 font-size: 0.65rem;
             }
-            
+
             .divider {
                 margin: 0.3rem 0 0.4rem 0;
             }
-            
+
             #formFeedback {
                 font-size: 0.8rem;
-                padding: 0.5rem 0.8rem;
+                padding: 0.8rem 1rem;
                 border-radius: 16px;
             }
-            
+
+            #formFeedback .feedback-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            #formFeedback .feedback-actions .btn-dismiss,
+            #formFeedback .feedback-actions .btn-dashboard {
+                width: 100%;
+                justify-content: center;
+                text-align: center;
+            }
+
             .upload-progress {
                 padding: 0.6rem;
                 margin: 0.6rem 0;
             }
-            
+
             .upload-progress .progress-status {
                 font-size: 0.8rem;
             }
-            
+
             .pending-notice {
                 padding: 0.6rem 0.8rem;
             }
-            
+
             .pending-notice .pending-content .pending-text {
                 font-size: 0.8rem;
             }
-            
+
             .pending-notice .pending-content .pending-sub {
                 font-size: 0.7rem;
+            }
+
+            .downloads-group {
+                padding: 0.6rem 0.8rem;
+                border-radius: 14px;
+            }
+
+            .downloads-group .downloads-row {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .downloads-group .downloads-row .form-group {
+                width: 100%;
+                flex: 1 1 100%;
+            }
+
+            .downloads-group .downloads-title {
+                font-size: 0.85rem;
+                margin-bottom: 0.4rem;
+            }
+
+            .custom-download-input input {
+                max-width: 100%;
             }
         }
 
@@ -1137,33 +1297,33 @@
                 padding: 0.8rem 0.6rem;
                 border-radius: 16px;
             }
-            
+
             .logo-text {
                 font-size: 1.2rem;
             }
-            
+
             .nav-logo-img {
                 height: 26px;
             }
-            
+
             .subhead {
                 font-size: 0.75rem;
                 margin-bottom: 0.8rem;
                 padding-left: 6px;
             }
-            
+
             .subhead .tagline {
                 font-size: 0.6rem;
             }
-            
+
             .form-grid {
                 gap: 0.6rem;
             }
-            
+
             .form-row {
                 gap: 0.6rem;
             }
-            
+
             .form-group input,
             .form-group textarea,
             .form-group select {
@@ -1171,80 +1331,91 @@
                 font-size: 0.82rem;
                 border-radius: 12px;
             }
-            
+
             .form-group label {
                 font-size: 0.72rem;
             }
-            
+
             .form-group label .optional-badge {
                 display: none;
             }
-            
+
             .form-group textarea {
                 min-height: 50px;
             }
-            
+
             .btn-primary,
             .btn-secondary {
                 font-size: 0.85rem;
                 padding: 0.6rem 1.2rem;
             }
-            
+
             .file-upload-wrapper input[type="file"] {
                 font-size: 0.75rem;
             }
-            
+
             .file-upload-wrapper input[type="file"]::file-selector-button {
                 padding: 4px 12px;
                 font-size: 0.65rem;
             }
-            
+
             .file-hint {
                 font-size: 0.5rem;
             }
-            
+
             .pricing-group {
                 padding: 0.5rem 0.6rem;
             }
-            
+
             .pricing-group .pricing-title {
                 font-size: 0.8rem;
             }
-            
+
             .keyword-input-wrapper .add-keyword-btn {
                 padding: 0.4rem 0.8rem;
                 font-size: 0.75rem;
             }
-            
+
             .keyword-tag {
                 font-size: 0.65rem;
                 padding: 0.1rem 0.4rem 0.1rem 0.7rem;
             }
-            
+
             .auth-overlay {
                 padding: 1rem 0.8rem;
             }
-            
+
             .auth-overlay h2 {
                 font-size: 1.1rem;
             }
-            
+
             .auth-overlay p {
                 font-size: 0.85rem;
             }
-            
+
             .auth-overlay i {
                 font-size: 2rem;
             }
-            
+
             .auth-overlay .btn-auth {
                 font-size: 0.85rem;
                 padding: 0.5rem 1.2rem;
             }
-            
+
             .currency-converter .converter-item {
                 font-size: 0.6rem;
                 padding: 0.1rem 0.4rem;
+            }
+
+            #formFeedback {
+                font-size: 0.75rem;
+                padding: 0.6rem 0.8rem;
+            }
+
+            #formFeedback .feedback-actions .btn-dismiss,
+            #formFeedback .feedback-actions .btn-dashboard {
+                font-size: 0.75rem;
+                padding: 0.5rem 1.2rem;
             }
         }
     </style>
@@ -1418,6 +1589,33 @@
                     <span class="hint">Total number of pages in the book.</span>
                 </div>
 
+                <!-- ===== DOWNLOADS SECTION ===== -->
+                <div class="downloads-group">
+                    <div class="downloads-title">
+                        <i class="fas fa-download"></i> Number of Downloads <span style="color:#b76e4b;">*</span>
+                    </div>
+                    <div class="downloads-row">
+                        <div class="form-group">
+                            <label for="downloadsSelect"><i class="fas fa-list"></i> Select option</label>
+                            <select id="downloadsSelect">
+                                <option value="5">5 downloads (Default)</option>
+                                <option value="3">3 downloads</option>
+                                <option value="10">10 downloads</option>
+                                <option value="unlimited">Unlimited</option>
+                                <option value="custom">Custom (enter below)</option>
+                            </select>
+                        </div>
+                        <div class="form-group custom-download-input" id="customDownloadContainer">
+                            <label for="customDownloads"><i class="fas fa-pencil-alt"></i> Custom number</label>
+                            <input type="number" id="customDownloads" placeholder="Enter number" min="3" />
+                        </div>
+                    </div>
+                    <div class="downloads-hint">
+                        <i class="fas fa-info-circle"></i> 
+                        <span class="min-downloads">Minimum is 3 downloads</span> — you can set any number or choose Unlimited.
+                    </div>
+                </div>
+
                 <!-- ===== PRICING SECTION ===== -->
                 <div class="pricing-group">
                     <div class="pricing-title">
@@ -1559,7 +1757,6 @@
         </div>
     </div>
 
-    <!-- [The rest of your script remains exactly the same as before] -->
     <script type="importmap">
         {
             "imports": {
@@ -1571,7 +1768,6 @@
     </script>
 
     <script type="module">
-        // [Keep your complete JavaScript exactly as it was]
         import { initializeApp } from "firebase/app";
         import {
             getFirestore, collection, addDoc, serverTimestamp, doc, getDoc
@@ -1687,6 +1883,11 @@
         const authorEmail = document.getElementById('authorEmail');
         const pageCountInput = document.getElementById('pageCount');
 
+        // Downloads DOM refs
+        const downloadsSelect = document.getElementById('downloadsSelect');
+        const customDownloadContainer = document.getElementById('customDownloadContainer');
+        const customDownloadsInput = document.getElementById('customDownloads');
+
         let keywords = [];
         let currentUser = null;
         let currentUsername = '';
@@ -1795,6 +1996,38 @@
                 'KES': 7.6, 'ZAR': 1.09, 'INR': 4.8, 'JPY': 8.9, 'CNY': 0.42, 'BRL': 0.29 }
         };
 
+        // --- Downloads logic ---
+        function toggleCustomDownloadInput() {
+            const selected = downloadsSelect.value;
+            if (selected === 'custom') {
+                customDownloadContainer.classList.add('visible');
+                customDownloadsInput.setAttribute('required', 'required');
+                customDownloadsInput.min = 3;
+            } else {
+                customDownloadContainer.classList.remove('visible');
+                customDownloadsInput.removeAttribute('required');
+                customDownloadsInput.value = '';
+            }
+        }
+
+        downloadsSelect.addEventListener('change', toggleCustomDownloadInput);
+
+        function getDownloadsValue() {
+            const selected = downloadsSelect.value;
+            if (selected === 'custom') {
+                const val = parseInt(customDownloadsInput.value);
+                if (isNaN(val) || val < 3) {
+                    return null; // Will be caught in validation
+                }
+                return val;
+            } else if (selected === 'unlimited') {
+                return 'unlimited';
+            } else {
+                return parseInt(selected);
+            }
+        }
+
+        // --- Currency functions ---
         async function fetchExchangeRates(baseCurrency) {
             if (baseCurrency === 'Other' || !baseCurrency) return {};
             const now = Date.now();
@@ -1916,6 +2149,7 @@
         currencySelect.addEventListener('change', updateCurrencySymbol);
         priceAmount.addEventListener('input', debouncedConverter);
 
+        // --- Country dropdown ---
         function renderCountryDropdown(filter = '') {
             const term = filter.toLowerCase().trim();
             const filtered = countries.filter(c => c.name.toLowerCase().includes(term));
@@ -1959,6 +2193,7 @@
             }
         });
 
+        // --- Keywords ---
         function updateKeywordUI() {
             keywordTags.innerHTML = '';
             keywords.forEach((kw, i) => {
@@ -2001,6 +2236,7 @@
         keywordInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault();
                 addKeyword(); } });
 
+        // --- Genre / Language ---
         genreSelect.addEventListener('change', function() {
             if (this.value === 'Other') { genreOtherContainer.classList.add('visible');
                 genreOtherInput.setAttribute('required', 'required'); } else { genreOtherContainer.classList.remove(
@@ -2016,6 +2252,7 @@
                 languageOtherInput.value = ''; }
         });
 
+        // --- File validation ---
         function validateFile(input, feedbackEl, maxSize, label) {
             const file = input.files[0];
             if (!file) { feedbackEl.textContent = '';
@@ -2034,14 +2271,128 @@
         coverInput.addEventListener('change', function() { validateFile(this, imageFeedback, MAX_IMAGE_SIZE,
             'Cover image'); });
 
+        // --- Feedback ---
         function showFeedback(message, type = 'success') {
             feedback.textContent = message;
             feedback.className = type;
             feedback.style.display = 'block';
-            setTimeout(() => { feedback.style.display = 'none';
-                feedback.className = ''; }, 7000);
+            // Auto-hide after 7 seconds for error messages, but success messages stay
+            if (type === 'error') {
+                setTimeout(() => { feedback.style.display = 'none';
+                    feedback.className = ''; }, 7000);
+            }
         }
 
+        // --- Show persistent success message ---
+        function showPersistentSuccess(message, bookData) {
+            feedback.innerHTML = `
+                <div style="white-space:pre-line; text-align:left; padding:0.2rem 0; font-size:0.9rem; line-height:1.8;">
+                    ${message}
+                </div>
+                <div class="feedback-actions">
+                    <button class="btn-dismiss" onclick="window.dismissSubmissionSuccess()">
+                        <i class="fas fa-check"></i> Got it, Submit Another
+                    </button>
+                    <a href="volantReads-dashboard.html" class="btn-dashboard">
+                        <i class="fas fa-tachometer-alt"></i> View Dashboard
+                    </a>
+                </div>
+            `;
+            feedback.className = 'success';
+            feedback.style.display = 'block';
+            
+            // Disable form fields
+            form.querySelectorAll('input, textarea, select, button').forEach(el => {
+                el.disabled = true;
+            });
+            // Re-enable the dismiss button and dashboard link
+            const dismissBtn = feedback.querySelector('.btn-dismiss');
+            if (dismissBtn) dismissBtn.disabled = false;
+        }
+
+        // Make dismiss function globally accessible
+        window.dismissSubmissionSuccess = function() {
+            // Reset the form
+            form.reset();
+            
+            // Reset keywords
+            keywords = [];
+            updateKeywordUI();
+            
+            // Clear file feedback
+            pdfFeedback.textContent = '';
+            pdfFeedback.className = 'file-feedback';
+            imageFeedback.textContent = '';
+            imageFeedback.className = 'file-feedback';
+            
+            // Clear country
+            countryInput.value = '';
+            countryHidden.value = '';
+            selectedCountry = '';
+            countryDropdown.classList.remove('show');
+            
+            // Reset currency symbol
+            updateCurrencySymbol();
+            
+            // Reset downloads
+            downloadsSelect.value = '5';
+            toggleCustomDownloadInput();
+            
+            // Hide pending notice
+            pendingNotice.classList.remove('show');
+            
+            // Clear feedback
+            feedback.style.display = 'none';
+            feedback.className = '';
+            feedback.innerHTML = '';
+            
+            // Re-enable form
+            form.querySelectorAll('input, textarea, select, button').forEach(el => {
+                el.disabled = false;
+            });
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Show toast
+            showToast('✨ Ready to submit another book!', 'success');
+        };
+
+        // Toast function
+        function showToast(message, type = 'info') {
+            let toast = document.getElementById('submissionToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'submissionToast';
+                toast.style.cssText = `
+                    position: fixed;
+                    bottom: 30px;
+                    right: 30px;
+                    padding: 16px 28px;
+                    border-radius: 16px;
+                    background: #1d1833;
+                    color: white;
+                    font-weight: 500;
+                    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+                    transform: translateY(100px);
+                    opacity: 0;
+                    transition: all 0.4s ease;
+                    z-index: 2000;
+                    max-width: 400px;
+                `;
+                document.body.appendChild(toast);
+            }
+            toast.textContent = message;
+            toast.style.background = type === 'success' ? '#15723d' : type === 'error' ? '#b33' : '#6a34ff';
+            toast.style.transform = 'translateY(0)';
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.transform = 'translateY(100px)';
+                toast.style.opacity = '0';
+            }, 4000);
+        }
+
+        // --- Cloudinary upload ---
         async function uploadToCloudinary(file, resourceType = 'auto', onProgress) {
             return new Promise((resolve, reject) => {
                 const formData = new FormData();
@@ -2090,6 +2441,7 @@
                 progressText.textContent = '0%'; } else { uploadProgress.classList.remove('show'); }
         }
 
+        // --- Auth ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -2113,6 +2465,7 @@
             }
         });
 
+        // --- Form submit ---
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             if (!currentUser) { showFeedback('❌ You must be signed in to submit a book.', 'error'); return; }
@@ -2172,6 +2525,14 @@
                     'error');
                 keywordInput.focus(); return; }
 
+            // --- Validate downloads ---
+            const downloadsValue = getDownloadsValue();
+            if (downloadsValue === null) {
+                showFeedback('❌ Please enter a valid number of downloads (minimum 3).', 'error');
+                customDownloadsInput.focus();
+                return;
+            }
+
             const pdfFile = pdfInput.files[0];
             const coverFile = coverInput.files[0];
             if (!pdfFile) { showFeedback('❌ Please upload a PDF file.', 'error');
@@ -2220,6 +2581,8 @@
                     phoneNumber,
                     email,
                     pageCount,
+                    downloads: 0,
+                    downloadLimit: downloadsValue,
                     keywords,
                     preorder: preorder || false,
                     otherDetails: otherDetails || null,
@@ -2239,9 +2602,12 @@
 
                 const priceDisplay = `${currencySymbols[currency] || '¤'}${parseFloat(price).toFixed(2)}`;
                 const keywordList = keywords.join(', ');
-                showFeedback(`
-        ✅ Book successfully submitted to Volant Reads!
+                const downloadsDisplay = downloadsValue === 'unlimited' ? 'Unlimited' : downloadsValue;
+                
+                const successMessage = `
+        ✅ BOOK SUCCESSFULLY SUBMITTED TO VOLANT READS!
 
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         📖 Title: ${title}${subtitle ? ` (${subtitle})` : ''}
         ✍️ Author: ${authorName}
         📝 Pages: ${pageCount}
@@ -2252,26 +2618,22 @@
         📱 Phone: ${phoneNumber}
         📧 Email: ${email}
         💰 Price: ${priceDisplay} ${currencyNames[currency] || currency}
+        📥 Download Limit: ${downloadsDisplay} downloads per buyer
         🔑 Keywords (${keywords.length}): ${keywordList}
         ${preorder ? '⏳ Pre-order: Yes' : '📦 Pre-order: No'}
         ${isbn ? `🔢 ISBN: ${isbn}` : ''}
+        ${otherDetails ? `📝 Additional: ${otherDetails}` : ''}
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-        ⏳ Your book is now pending review by an admin.
+        ⏳ Your book is now PENDING REVIEW by an admin.
         You will be notified when it's approved!
-        `, 'success');
 
-                setTimeout(() => {
-                    form.reset();
-                    keywords = [];
-                    updateKeywordUI();
-                    pdfFeedback.textContent = '';
-                    imageFeedback.textContent = '';
-                    countryInput.value = '';
-                    countryHidden.value = '';
-                    selectedCountry = '';
-                    updateCurrencySymbol();
-                    pendingNotice.classList.remove('show');
-                }, 3000);
+        💡 Click "Got it, Submit Another" to submit another book, 
+        or "View Dashboard" to see all your books.
+        `;
+
+                // Show persistent success message
+                showPersistentSuccess(successMessage, bookData);
 
             } catch (err) {
                 console.error(err);
@@ -2284,7 +2646,12 @@
             }
         });
 
+        // --- Reset ---
         form.addEventListener('reset', function() {
+            // Only reset if there's no active success message
+            if (feedback.classList.contains('success') && feedback.style.display === 'block') {
+                return; // Don't reset if success message is showing
+            }
             feedback.style.display = 'none';
             feedback.className = '';
             pdfFeedback.textContent = '';
@@ -2307,14 +2674,18 @@
             selectedCountry = '';
             countryDropdown.classList.remove('show');
             updateCurrencySymbol();
+            downloadsSelect.value = '5';
+            toggleCustomDownloadInput();
         });
 
+        // --- Init ---
         const dateInput = document.getElementById('publishDate');
         if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
 
         updateKeywordUI();
         updateCurrencySymbol();
-        console.log('📝 Volant Reads submission form ready. Page count is now compulsory.');
+        toggleCustomDownloadInput();
+        console.log('📝 Volant Reads submission form ready.');
     </script>
 </body>
 </html>

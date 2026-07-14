@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Volant Reads · Admin Approval</title>
+    <title>Volant Reads · Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <!-- Favicons -->
-    <link rel="icon" type="image/png" href="images/reads-favicon.png" />
+    <link rel="icon" type="image/png" href="images/volant-reads-favicon.png" />
     <link rel="apple-touch-icon" href="images/volant-reads-favicon.png" />
     <style>
         * {
@@ -21,7 +21,7 @@
             min-height: 100vh;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
         .header {
@@ -156,6 +156,7 @@
             display: block;
         }
 
+        /* ===== BOOK CARD ===== */
         .book-card {
             background: #fff;
             border-radius: 20px;
@@ -479,9 +480,291 @@
             transform: none !important;
             background: #ccc !important;
         }
+
+        /* ===== MANAGEMENT TABLE ===== */
+        .manage-table-wrap {
+            overflow-x: auto;
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid #ede7df;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .manage-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .manage-table th {
+            text-align: left;
+            padding: 0.8rem 0.6rem;
+            background: #f8f5f0;
+            border-bottom: 2px solid #ede7df;
+            font-weight: 600;
+            color: #2d2a24;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        .manage-table td {
+            padding: 0.6rem 0.6rem;
+            border-bottom: 1px solid #f0ece6;
+            vertical-align: middle;
+        }
+        .manage-table tr:hover td {
+            background: #faf8f5;
+        }
+        .manage-table .book-title-cell {
+            font-weight: 600;
+            color: #2d2a24;
+            min-width: 140px;
+        }
+        .manage-table .book-author-cell {
+            color: #6f6252;
+            min-width: 100px;
+        }
+        .manage-table input[type="number"],
+        .manage-table input[type="text"] {
+            width: 70px;
+            padding: 0.3rem 0.4rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            transition: 0.2s;
+            background: #fcf9f6;
+        }
+        .manage-table input[type="number"]:focus,
+        .manage-table input[type="text"]:focus {
+            border-color: #4b2aad;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(75,42,173,0.1);
+            background: #fff;
+        }
+        .manage-table select {
+            padding: 0.3rem 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            background: #fcf9f6;
+            cursor: pointer;
+        }
+        .manage-table select:focus {
+            border-color: #4b2aad;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(75,42,173,0.1);
+        }
+        .manage-table .btn-save {
+            background: #2d7d46;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .manage-table .btn-save:hover {
+            background: #1d6b2c;
+            transform: scale(1.05);
+        }
+        .manage-table .btn-save:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .manage-table .btn-reset {
+            background: #b76e4b;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .manage-table .btn-reset:hover {
+            background: #9f5e3f;
+            transform: scale(1.05);
+        }
+        .manage-table .btn-reset:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .manage-table .btn-delete-manage {
+            background: #c62828;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .manage-table .btn-delete-manage:hover {
+            background: #b71c1c;
+            transform: scale(1.05);
+        }
+        .manage-table .status-badge-small {
+            display: inline-block;
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .manage-table .status-badge-small.pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .manage-table .status-badge-small.approved {
+            background: #e6f7e6;
+            color: #2e7d32;
+        }
+        .manage-table .status-badge-small.rejected {
+            background: #fde8e8;
+            color: #c62828;
+        }
+        .manage-table .status-badge-small.draft {
+            background: #f0f0f0;
+            color: #666;
+        }
+        .manage-table .saved-indicator {
+            color: #2d7d46;
+            font-size: 0.65rem;
+            font-weight: 600;
+            display: none;
+        }
+        .manage-table .saved-indicator.show {
+            display: inline;
+        }
+        .manage-table .book-cover-small {
+            width: 40px;
+            height: 55px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: #f0ece6;
+        }
+
+        /* ===== MESSAGE CARD ===== */
+        .message-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ede7df;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .message-card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .message-card .msg-info {
+            flex: 1;
+            min-width: 200px;
+        }
+        .message-card .msg-info .msg-title {
+            font-weight: 600;
+            color: #2d2a24;
+            font-size: 1rem;
+        }
+        .message-card .msg-info .msg-meta {
+            font-size: 0.8rem;
+            color: #8a7b6a;
+            margin-top: 2px;
+        }
+        .message-card .msg-info .msg-meta i {
+            color: #b76e4b;
+            width: 16px;
+        }
+        .message-card .msg-content {
+            flex: 2;
+            min-width: 200px;
+            font-size: 0.85rem;
+            color: #4d4238;
+            background: #fcf9f6;
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            border-left: 3px solid #4b2aad;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+        .message-card .msg-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .message-card .msg-actions button {
+            padding: 0.3rem 1rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .message-card .msg-actions .btn-reset-msg {
+            background: #b76e4b;
+            color: white;
+        }
+        .message-card .msg-actions .btn-reset-msg:hover {
+            background: #9f5e3f;
+            transform: scale(1.05);
+        }
+        .message-card .msg-actions .btn-delete-msg {
+            background: #c62828;
+            color: white;
+        }
+        .message-card .msg-actions .btn-delete-msg:hover {
+            background: #b71c1c;
+            transform: scale(1.05);
+        }
+        .message-card .msg-actions .btn-copy-msg {
+            background: #4b2aad;
+            color: white;
+        }
+        .message-card .msg-actions .btn-copy-msg:hover {
+            background: #3a1f8a;
+            transform: scale(1.05);
+        }
+        .message-card .msg-status {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.7rem;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+        .message-card .msg-status.sent {
+            background: #e6f7e6;
+            color: #2e7d32;
+        }
+        .message-card .msg-status.draft {
+            background: #f0f0f0;
+            color: #666;
+        }
+        .message-card .msg-status.unread {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .message-card .msg-status.read {
+            background: #e8e0f0;
+            color: #4b2aad;
+        }
+
         .empty-state {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 3rem 2rem;
             background: #fff;
             border-radius: 20px;
             border: 1px solid #ede7df;
@@ -497,6 +780,7 @@
         .empty-state p {
             color: #8a7b6a;
         }
+
         .access-denied {
             text-align: center;
             padding: 4rem 2rem;
@@ -534,6 +818,7 @@
             background: #9f5e3f;
             transform: scale(1.02);
         }
+
         .loading-state {
             text-align: center;
             padding: 4rem 2rem;
@@ -555,6 +840,7 @@
             margin-top: 1rem;
             color: #8a7b6a;
         }
+
         .sign-out-btn {
             background: transparent;
             border: 1px solid #ddd;
@@ -570,6 +856,7 @@
             border-color: #b76e4b;
             color: #b76e4b;
         }
+
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -597,6 +884,7 @@
         .toast.info {
             background: #4b2aad;
         }
+
         .image-modal {
             display: none;
             position: fixed;
@@ -644,6 +932,7 @@
             padding: 0.4rem 1.5rem;
             border-radius: 30px;
         }
+
         .copy-success-toast {
             position: fixed;
             bottom: 5rem;
@@ -664,7 +953,7 @@
             opacity: 1;
         }
 
-        /* PDF Viewer Modal */
+        /* PDF Modal */
         .pdf-modal {
             display: none;
             position: fixed;
@@ -796,6 +1085,7 @@
             font-size: 0.95rem;
             color: #6f6252;
         }
+
         .timeout-error {
             text-align: center;
             padding: 4rem 2rem;
@@ -833,80 +1123,98 @@
             transform: scale(1.02);
         }
 
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .summary-card {
+            background: #fff;
+            padding: 1.2rem 1.5rem;
+            border-radius: 16px;
+            border: 1px solid #ede7df;
+            text-align: center;
+        }
+        .summary-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d2a24;
+        }
+        .summary-card .label {
+            font-size: 0.75rem;
+            color: #8a7b6a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        .summary-card .number.green {
+            color: #2d7d46;
+        }
+        .summary-card .number.orange {
+            color: #b76e4b;
+        }
+        .summary-card .number.purple {
+            color: #4b2aad;
+        }
+        .summary-card .number.red {
+            color: #c62828;
+        }
+
+        .copy-toast {
+            position: fixed;
+            bottom: 6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d7d46;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 3000;
+            opacity: 0;
+            transition: 0.3s;
+        }
+        .copy-toast.show {
+            opacity: 1;
+        }
+
         @media (max-width: 768px) {
-            body {
-                padding: 1rem;
-            }
-            .book-card {
-                flex-direction: column;
-            }
-            .book-card .cover {
-                width: 100%;
-                height: 200px;
-            }
-            .book-card .actions {
-                width: 100%;
-                justify-content: stretch;
-            }
-            .book-card .actions button,
-            .book-card .actions a {
-                flex: 1;
-                justify-content: center;
-                font-size: 0.8rem;
-                padding: 8px 12px;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .header .stats {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            .header .stats span {
-                font-size: 0.75rem;
-                padding: 0.3rem 0.8rem;
-            }
-            .toast {
-                bottom: 1rem;
-                right: 1rem;
-                left: 1rem;
-                text-align: center;
-                font-size: 0.85rem;
-                padding: 0.8rem 1rem;
-            }
-            .image-modal img {
-                max-width: 95%;
-                max-height: 85%;
-            }
-            .book-card .info .contact-info {
-                flex-direction: column;
-                gap: 0.3rem;
-            }
-            .book-card .info .book-details {
-                grid-template-columns: 1fr 1fr;
-            }
-            .pdf-modal .pdf-header {
-                flex-wrap: wrap;
-                gap: 0.5rem;
-                padding: 0.5rem 1rem;
-            }
-            .pdf-modal .pdf-header .pdf-title {
-                font-size: 0.85rem;
-            }
-            .pdf-modal .pdf-header .close-pdf {
-                font-size: 1.5rem;
-            }
-            .pdf-modal .pdf-container .pdf-fallback .pdf-view-options {
-                flex-direction: column;
-                width: 100%;
-            }
-            .pdf-modal .pdf-container .pdf-fallback .pdf-view-options button {
-                justify-content: center;
-            }
-            .tabs .tab-btn {
-                padding: 0.4rem 1rem;
-                font-size: 0.8rem;
+            body { padding: 1rem; }
+            .book-card { flex-direction: column; }
+            .book-card .cover { width: 100%; height: 200px; }
+            .book-card .actions { width: 100%; justify-content: stretch; }
+            .book-card .actions button, .book-card .actions a { flex: 1; justify-content: center; font-size: 0.8rem; padding: 8px 12px; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .header .stats { width: 100%; justify-content: flex-start; }
+            .header .stats span { font-size: 0.75rem; padding: 0.3rem 0.8rem; }
+            .toast { bottom: 1rem; right: 1rem; left: 1rem; text-align: center; font-size: 0.85rem; padding: 0.8rem 1rem; }
+            .image-modal img { max-width: 95%; max-height: 85%; }
+            .book-card .info .contact-info { flex-direction: column; gap: 0.3rem; }
+            .book-card .info .book-details { grid-template-columns: 1fr 1fr; }
+            .pdf-modal .pdf-header { flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 1rem; }
+            .pdf-modal .pdf-header .pdf-title { font-size: 0.85rem; }
+            .pdf-modal .pdf-header .close-pdf { font-size: 1.5rem; }
+            .pdf-modal .pdf-container .pdf-fallback .pdf-view-options { flex-direction: column; width: 100%; }
+            .pdf-modal .pdf-container .pdf-fallback .pdf-view-options button { justify-content: center; }
+            .tabs .tab-btn { padding: 0.4rem 1rem; font-size: 0.8rem; }
+            .manage-table-wrap { padding: 0.5rem; }
+            .manage-table th, .manage-table td { padding: 0.4rem 0.3rem; font-size: 0.75rem; }
+            .manage-table input[type="number"] { width: 50px; }
+            .summary-grid { grid-template-columns: 1fr 1fr; }
+            .message-card { flex-direction: column; align-items: stretch; }
+            .message-card .msg-content { max-height: 60px; }
+        }
+        @media (max-width: 480px) {
+            .summary-grid { grid-template-columns: 1fr; }
+            .manage-table { font-size: 0.7rem; }
+            .manage-table input[type="number"] { width: 40px; padding: 0.2rem; }
+            .manage-table .btn-save, .manage-table .btn-reset, .manage-table .btn-delete-manage {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.5rem;
             }
         }
     </style>
@@ -944,6 +1252,14 @@
                 <i class="fas fa-book"></i> All Books
                 <span class="badge" id="allBooksBadge">0</span>
             </button>
+            <button class="tab-btn" data-tab="manage">
+                <i class="fas fa-sliders-h"></i> Book Management
+                <span class="badge" id="manageBadge">0</span>
+            </button>
+            <button class="tab-btn" data-tab="messages">
+                <i class="fas fa-envelope"></i> Messages
+                <span class="badge" id="messagesBadge">0</span>
+            </button>
         </div>
 
         <!-- Pending Tab -->
@@ -954,6 +1270,89 @@
         <!-- All Books Tab -->
         <div class="tab-content" id="tab-allBooks">
             <div id="allBooksContainer"></div>
+        </div>
+
+        <!-- Book Management Tab -->
+        <div class="tab-content" id="tab-manage">
+            <div class="summary-grid" id="manageSummary">
+                <div class="summary-card">
+                    <div class="number purple" id="manageTotalBooks">0</div>
+                    <div class="label">Total Books</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number green" id="manageTotalSales">0</div>
+                    <div class="label">Total Sales</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number orange" id="manageTotalDownloads">0</div>
+                    <div class="label">Total Downloads</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number" id="manageTotalRevenue" style="color:#b76e4b;">GHS 0</div>
+                    <div class="label">Total Revenue</div>
+                </div>
+            </div>
+            <div class="manage-table-wrap">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                    <h3 style="font-weight:600; color:#2d2a24;">
+                        <i class="fas fa-sliders-h" style="color:#b76e4b;"></i> Manage Books
+                    </h3>
+                    <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                        <button id="resetAllBtn" class="btn-reset" style="padding:0.4rem 1.2rem; background:#c62828; color:white; border:none; border-radius:30px; cursor:pointer; font-weight:600; font-size:0.8rem;">
+                            <i class="fas fa-exclamation-triangle"></i> Reset All
+                        </button>
+                        <span style="font-size:0.7rem; color:#8a7b6a; align-self:center;">
+                            <i class="fas fa-info-circle"></i> Click "Save" after editing
+                        </span>
+                    </div>
+                </div>
+                <div id="manageBooksContainer">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading books...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages Tab -->
+        <div class="tab-content" id="tab-messages">
+            <div class="summary-grid" id="messagesSummary">
+                <div class="summary-card">
+                    <div class="number purple" id="msgTotal">0</div>
+                    <div class="label">Total Messages</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number orange" id="msgUnread">0</div>
+                    <div class="label">Unread</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number green" id="msgRead">0</div>
+                    <div class="label">Read</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number" id="msgSent" style="color:#2d7d46;">0</div>
+                    <div class="label">Sent/Replied</div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                <h3 style="font-weight:600; color:#2d2a24;">
+                    <i class="fas fa-envelope" style="color:#b76e4b;"></i> All Messages
+                </h3>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                    <button id="resetAllMessagesBtn" class="btn-reset" style="padding:0.4rem 1.2rem; background:#c62828; color:white; border:none; border-radius:30px; cursor:pointer; font-weight:600; font-size:0.8rem;">
+                        <i class="fas fa-exclamation-triangle"></i> Reset All Messages
+                    </button>
+                </div>
+            </div>
+
+            <div id="messagesContainer">
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Loading messages...</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1024,6 +1423,7 @@
 
 <!-- Copy Success Toast -->
 <div id="copySuccessToast" class="copy-success-toast">✅ Message copied to clipboard!</div>
+<div id="copyToast" class="copy-toast">✅ Copied to clipboard!</div>
 
 <!-- Toast Notification -->
 <div id="toast" class="toast"></div>
@@ -1045,7 +1445,7 @@
     import { initializeApp } from "firebase/app";
     import { 
         getFirestore, collection, query, where, getDocs, 
-        doc, updateDoc, deleteDoc, orderBy, getDoc
+        doc, updateDoc, deleteDoc, orderBy, getDoc, writeBatch
     } from "firebase/firestore";
     import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
@@ -1054,6 +1454,13 @@
     if (pdfjsLib) {
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
+
+    // Disable all console logs in production
+    console.log = function() {};
+    console.error = function() {};
+    console.warn = function() {};
+    console.info = function() {};
+    console.debug = function() {};
 
     const firebaseConfig = {
         apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -1071,11 +1478,15 @@
     const adminContent = document.getElementById('adminContent');
     const pendingContainer = document.getElementById('pendingBooks');
     const allBooksContainer = document.getElementById('allBooksContainer');
+    const manageBooksContainer = document.getElementById('manageBooksContainer');
+    const messagesContainer = document.getElementById('messagesContainer');
     const pendingCountEl = document.getElementById('pendingCount');
     const approvedCountEl = document.getElementById('approvedCount');
     const totalCountEl = document.getElementById('totalCount');
     const pendingBadge = document.getElementById('pendingBadge');
     const allBooksBadge = document.getElementById('allBooksBadge');
+    const manageBadge = document.getElementById('manageBadge');
+    const messagesBadge = document.getElementById('messagesBadge');
     const loadingState = document.getElementById('loadingState');
     const accessDenied = document.getElementById('accessDenied');
     const signInRequired = document.getElementById('signInRequired');
@@ -1087,10 +1498,23 @@
     const modalImage = document.getElementById('modalImage');
     const modalCaption = document.getElementById('modalCaption');
     const copySuccessToast = document.getElementById('copySuccessToast');
+    const copyToast = document.getElementById('copyToast');
     const pdfModal = document.getElementById('pdfModal');
     const pdfContainer = document.getElementById('pdfContainer');
     const pdfTitle = document.getElementById('pdfTitle');
     const pdfDownloadBtn = document.getElementById('pdfDownloadBtn');
+
+    // Management summary elements
+    const manageTotalBooks = document.getElementById('manageTotalBooks');
+    const manageTotalSales = document.getElementById('manageTotalSales');
+    const manageTotalDownloads = document.getElementById('manageTotalDownloads');
+    const manageTotalRevenue = document.getElementById('manageTotalRevenue');
+
+    // Messages summary elements
+    const msgTotal = document.getElementById('msgTotal');
+    const msgUnread = document.getElementById('msgUnread');
+    const msgRead = document.getElementById('msgRead');
+    const msgSent = document.getElementById('msgSent');
 
     let currentPdfUrl = '';
     let currentPdfTitle = '';
@@ -1098,6 +1522,7 @@
     let copyToastTimeout = null;
     let authTimeout = null;
     let allBooks = [];
+    let allMessages = [];
 
     // ========== TOAST FUNCTIONS ==========
     function showToast(message, type = 'info') {
@@ -1118,6 +1543,14 @@
         copyToastTimeout = setTimeout(() => {
             copySuccessToast.classList.remove('show');
         }, 2500);
+    }
+
+    function showCopyToast2() {
+        copyToast.classList.add('show');
+        if (copyToastTimeout) clearTimeout(copyToastTimeout);
+        copyToastTimeout = setTimeout(() => {
+            copyToast.classList.remove('show');
+        }, 2000);
     }
 
     // ========== IMAGE MODAL ==========
@@ -1248,11 +1681,11 @@
         try {
             await deleteDoc(doc(db, "books", bookId));
             showToast(`🗑️ "${bookTitle || 'Book'}" deleted successfully.`, 'success');
-            // Refresh both tabs
             await loadPendingBooks();
             await loadAllBooks();
+            await loadManagementTable();
+            await loadMessages();
         } catch (err) {
-            console.error("Error deleting book:", err);
             showToast('❌ Failed to delete book: ' + err.message, 'error');
         }
     };
@@ -1484,7 +1917,6 @@ Volant Reads Team
             }
             return { isAdmin: false, data: null };
         } catch (error) {
-            console.error("Error checking admin status:", error);
             return { isAdmin: false, data: null, error: error.message };
         }
     }
@@ -1493,18 +1925,19 @@ Volant Reads Team
     async function loadStats() {
         try {
             const allSnapshot = await getDocs(collection(db, "books"));
-            const allBooks = allSnapshot.docs;
+            const allDocs = allSnapshot.docs;
             
-            const pending = allBooks.filter(doc => doc.data().status === 'pending');
-            const approved = allBooks.filter(doc => doc.data().status === 'approved');
+            const pending = allDocs.filter(d => d.data().status === 'pending');
+            const approved = allDocs.filter(d => d.data().status === 'approved');
             
             pendingCountEl.textContent = `${pending.length} Pending`;
             approvedCountEl.textContent = `${approved.length} Approved`;
-            totalCountEl.textContent = `${allBooks.length} Total`;
+            totalCountEl.textContent = `${allDocs.length} Total`;
             pendingBadge.textContent = pending.length;
-            allBooksBadge.textContent = allBooks.length;
+            allBooksBadge.textContent = allDocs.length;
+            manageBadge.textContent = allDocs.length;
         } catch (err) {
-            console.warn("Error loading stats:", err);
+            // Silent fail
         }
     }
 
@@ -1680,7 +2113,6 @@ Volant Reads Team
                 });
             } catch (err) {
                 if (err.message.includes('index')) {
-                    console.warn('Index not found, using fallback sorting');
                     const fallbackQ = query(
                         collection(db, "books"),
                         where("status", "==", "pending")
@@ -1719,7 +2151,6 @@ Volant Reads Team
             
             pendingContainer.innerHTML = html;
         } catch (err) {
-            console.error("Error loading pending books:", err);
             pendingContainer.innerHTML = `<p style="color:red; padding:1rem;">Error loading pending books: ${err.message}</p>`;
         }
     }
@@ -1758,10 +2189,480 @@ Volant Reads Team
             allBooksContainer.innerHTML = html;
             await loadStats();
         } catch (err) {
-            console.error("Error loading all books:", err);
             allBooksContainer.innerHTML = `<p style="color:red; padding:1rem;">Error loading books: ${err.message}</p>`;
         }
     }
+
+    // ========== LOAD MANAGEMENT TABLE ==========
+    async function loadManagementTable() {
+        try {
+            const snapshot = await getDocs(collection(db, "books"));
+            allBooks = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                allBooks.push({ 
+                    id: doc.id, 
+                    ...data,
+                    downloads: data.downloads || 0,
+                    downloadLimit: data.downloadLimit || data.downloads || 5,
+                    views: data.views || 0,
+                    sales: data.sales || 0,
+                    rating: data.rating || 0
+                });
+            });
+            
+            let totalSales = 0;
+            let totalDownloads = 0;
+            let totalRevenue = 0;
+            allBooks.forEach(b => {
+                totalSales += b.sales || 0;
+                totalDownloads += b.downloads || 0;
+                totalRevenue += ((b.sales || 0) * (b.pricing?.amount || 0));
+            });
+            
+            manageTotalBooks.textContent = allBooks.length;
+            manageTotalSales.textContent = totalSales;
+            manageTotalDownloads.textContent = totalDownloads;
+            manageTotalRevenue.textContent = `GHS ${totalRevenue.toFixed(2)}`;
+            
+            if (allBooks.length === 0) {
+                manageBooksContainer.innerHTML = `<div class="empty-state"><i class="fas fa-sliders-h"></i><h3>No Books to Manage</h3><p>Upload some books first.</p></div>`;
+                return;
+            }
+
+            let html = `
+                <table class="manage-table">
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Author</th>
+                            <th>Price</th>
+                            <th>Sales</th>
+                            <th>Downloads</th>
+                            <th>Download Limit</th>
+                            <th>Views</th>
+                            <th>Rating</th>
+                            <th>Status</th>
+                            <th style="text-align:center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            allBooks.forEach((book) => {
+                const safeTitle = (book.title || 'Untitled').replace(/[&<>"]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    if (m === '"') return '&quot;';
+                    return m;
+                });
+                const priceDisplay = book.pricing?.amount || 0;
+                const currency = book.pricing?.currency || 'GHS';
+                
+                html += `
+                    <tr data-id="${book.id}">
+                        <td class="book-title-cell">
+                            ${book.imageUrl ? `<img src="${book.imageUrl}" class="book-cover-small" alt="${safeTitle}" />` : ''}
+                            ${safeTitle}
+                        </td>
+                        <td class="book-author-cell">${book.authorName || 'Anonymous'}</td>
+                        <td>${currency} ${priceDisplay.toFixed(2)}</td>
+                        <td>
+                            <input type="number" class="input-sales" value="${book.sales || 0}" min="0" step="1" />
+                        </td>
+                        <td>
+                            <input type="number" class="input-downloads" value="${book.downloads || 0}" min="0" step="1" />
+                        </td>
+                        <td>
+                            <input type="text" class="input-limit" value="${book.downloadLimit || 5}" placeholder="unlimited" />
+                        </td>
+                        <td>
+                            <input type="number" class="input-views" value="${book.views || 0}" min="0" step="1" />
+                        </td>
+                        <td>
+                            <input type="number" class="input-rating" value="${book.rating || 0}" min="0" max="5" step="0.1" />
+                        </td>
+                        <td>
+                            <select class="input-status">
+                                <option value="pending" ${book.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="approved" ${book.status === 'approved' ? 'selected' : ''}>Approved</option>
+                                <option value="rejected" ${book.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                                <option value="draft" ${book.status === 'draft' || !book.status ? 'selected' : ''}>Draft</option>
+                            </select>
+                        </td>
+                        <td style="text-align:center;">
+                            <button class="btn-save" data-id="${book.id}">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                            <span class="saved-indicator" id="saved-${book.id}">✅ Saved</span>
+                            <br>
+                            <button class="btn-reset" data-id="${book.id}" style="margin-top:0.2rem; background:#b76e4b; color:white; border:none; padding:0.2rem 0.6rem; border-radius:20px; cursor:pointer; font-size:0.65rem; font-weight:600;">
+                                <i class="fas fa-undo"></i> Reset
+                            </button>
+                            <br>
+                            <button class="btn-delete-manage" data-id="${book.id}" style="margin-top:0.2rem; background:#c62828; color:white; border:none; padding:0.2rem 0.6rem; border-radius:20px; cursor:pointer; font-size:0.65rem; font-weight:600;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            manageBooksContainer.innerHTML = html;
+
+            // Event listeners for management
+            document.querySelectorAll('.btn-save').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const row = this.closest('tr');
+                    const bookId = row.dataset.id;
+                    const sales = parseInt(row.querySelector('.input-sales').value) || 0;
+                    const downloads = parseInt(row.querySelector('.input-downloads').value) || 0;
+                    const downloadLimit = row.querySelector('.input-limit').value.trim() || 5;
+                    const views = parseInt(row.querySelector('.input-views').value) || 0;
+                    const rating = parseFloat(row.querySelector('.input-rating').value) || 0;
+                    const status = row.querySelector('.input-status').value;
+
+                    if (rating < 0 || rating > 5) {
+                        showToast('⚠️ Rating must be between 0 and 5.', 'error');
+                        return;
+                    }
+
+                    const saveBtn = this;
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    try {
+                        await updateDoc(doc(db, "books", bookId), {
+                            sales: sales,
+                            downloads: downloads,
+                            downloadLimit: downloadLimit,
+                            views: views,
+                            rating: rating,
+                            status: status,
+                            updatedAt: new Date()
+                        });
+
+                        const book = allBooks.find(b => b.id === bookId);
+                        if (book) {
+                            book.sales = sales;
+                            book.downloads = downloads;
+                            book.downloadLimit = downloadLimit;
+                            book.views = views;
+                            book.rating = rating;
+                            book.status = status;
+                        }
+
+                        const indicator = document.getElementById(`saved-${bookId}`);
+                        if (indicator) {
+                            indicator.classList.add('show');
+                            setTimeout(() => indicator.classList.remove('show'), 3000);
+                        }
+
+                        await updateSummary();
+                        showToast(`✅ Book updated successfully!`, 'success');
+                    } catch (err) {
+                        showToast('❌ Error updating book: ' + err.message, 'error');
+                    } finally {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = '<i class="fas fa-save"></i> Save';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-reset').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const row = this.closest('tr');
+                    const bookId = row.dataset.id;
+                    const book = allBooks.find(b => b.id === bookId);
+                    if (!book) return;
+                    
+                    if (!confirm(`Reset "${book.title || 'Book'}" data to default values?`)) return;
+                    
+                    row.querySelector('.input-sales').value = 0;
+                    row.querySelector('.input-downloads').value = 0;
+                    row.querySelector('.input-limit').value = 5;
+                    row.querySelector('.input-views').value = 0;
+                    row.querySelector('.input-rating').value = 0;
+                    row.querySelector('.input-status').value = 'draft';
+                    
+                    showToast(`🔄 "${book.title || 'Book'}" reset to default values. Click Save to apply.`, 'info');
+                });
+            });
+
+            document.querySelectorAll('.btn-delete-manage').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const bookId = this.dataset.id;
+                    const book = allBooks.find(b => b.id === bookId);
+                    if (!book) return;
+                    
+                    if (!confirm(`⚠️ Delete "${book.title || 'Book'}" permanently?`)) return;
+                    
+                    try {
+                        await deleteDoc(doc(db, "books", bookId));
+                        allBooks = allBooks.filter(b => b.id !== bookId);
+                        await loadManagementTable();
+                        await loadStats();
+                        showToast(`🗑️ "${book.title || 'Book'}" deleted.`, 'info');
+                    } catch (err) {
+                        showToast('❌ Error deleting: ' + err.message, 'error');
+                    }
+                });
+            });
+
+            document.getElementById('resetAllBtn').addEventListener('click', function() {
+                if (!confirm('⚠️ Reset ALL books data? This cannot be undone!')) return;
+                if (!confirm('⚠️ ARE YOU SURE? This affects ALL books!')) return;
+                
+                const batch = writeBatch(db);
+                allBooks.forEach(book => {
+                    const ref = doc(db, "books", book.id);
+                    batch.update(ref, {
+                        sales: 0,
+                        downloads: 0,
+                        views: 0,
+                        rating: 0,
+                        status: 'draft',
+                        updatedAt: new Date()
+                    });
+                });
+                
+                batch.commit().then(() => {
+                    allBooks.forEach(book => {
+                        book.sales = 0;
+                        book.downloads = 0;
+                        book.views = 0;
+                        book.rating = 0;
+                        book.status = 'draft';
+                    });
+                    loadManagementTable();
+                    loadStats();
+                    showToast('🔄 All books have been reset!', 'success');
+                }).catch(err => {
+                    showToast('❌ Error resetting: ' + err.message, 'error');
+                });
+            });
+
+        } catch (err) {
+            manageBooksContainer.innerHTML = `<p style="color:red; padding:1rem;">Error loading management: ${err.message}</p>`;
+        }
+    }
+
+    // ===== UPDATE SUMMARY =====
+    async function updateSummary() {
+        let totalSales = 0;
+        let totalDownloads = 0;
+        let totalRevenue = 0;
+        allBooks.forEach(b => {
+            totalSales += b.sales || 0;
+            totalDownloads += b.downloads || 0;
+            totalRevenue += ((b.sales || 0) * (b.pricing?.amount || 0));
+        });
+        manageTotalBooks.textContent = allBooks.length;
+        manageTotalSales.textContent = totalSales;
+        manageTotalDownloads.textContent = totalDownloads;
+        manageTotalRevenue.textContent = `GHS ${totalRevenue.toFixed(2)}`;
+    }
+
+    // ========== LOAD MESSAGES ==========
+    async function loadMessages() {
+        try {
+            const snapshot = await getDocs(collection(db, "messages"));
+            allMessages = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                allMessages.push({
+                    id: doc.id,
+                    ...data,
+                    createdAt: data.createdAt?.toDate?.() || new Date(data.createdAt) || new Date(),
+                    status: data.status || 'unread'
+                });
+            });
+            
+            allMessages.sort((a, b) => b.createdAt - a.createdAt);
+            
+            const unread = allMessages.filter(m => m.status === 'unread' || m.read === false);
+            const read = allMessages.filter(m => m.status === 'read' || m.read === true);
+            const sent = allMessages.filter(m => m.status === 'sent' || m.status === 'replied');
+            
+            msgTotal.textContent = allMessages.length;
+            msgUnread.textContent = unread.length;
+            msgRead.textContent = read.length;
+            msgSent.textContent = sent.length;
+            messagesBadge.textContent = unread.length;
+
+            if (allMessages.length === 0) {
+                messagesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-envelope"></i>
+                        <h3>No Messages</h3>
+                        <p>No messages have been sent to authors yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            allMessages.forEach(msg => {
+                const statusClass = msg.status === 'unread' || msg.read === false ? 'unread' : 
+                                   msg.status === 'read' || msg.read === true ? 'read' : 
+                                   msg.status === 'sent' ? 'sent' : 'draft';
+                const statusLabel = msg.status === 'unread' || msg.read === false ? 'Unread' : 
+                                   msg.status === 'read' || msg.read === true ? 'Read' : 
+                                   msg.status === 'sent' ? 'Sent' : 'Draft';
+                
+                const sender = msg.senderName || msg.fromUserName || msg.fromUserId || 'Unknown';
+                const recipient = msg.toUserEmail || msg.toUserId || 'Unknown';
+                const subject = msg.subject || 'No subject';
+                const message = msg.message || msg.content || '';
+                const bookTitle = msg.bookTitle || 'No book';
+                const date = msg.createdAt ? msg.createdAt.toLocaleString() : 'Unknown';
+                
+                html += `
+                    <div class="message-card" data-id="${msg.id}">
+                        <div class="msg-info">
+                            <div class="msg-title">${subject}</div>
+                            <div class="msg-meta">
+                                <i class="fas fa-user"></i> From: ${sender}
+                                <br>
+                                <i class="fas fa-book"></i> Book: ${bookTitle}
+                                <br>
+                                <i class="fas fa-envelope"></i> To: ${recipient}
+                                <br>
+                                <i class="fas fa-clock"></i> ${date}
+                            </div>
+                        </div>
+                        <div class="msg-content">${message}</div>
+                        <div style="display:flex; flex-direction:column; gap:0.3rem; align-items:flex-end;">
+                            <span class="msg-status ${statusClass}">${statusLabel}</span>
+                            <div class="msg-actions">
+                                <button class="btn-copy-msg" onclick="window.copyMessage('${msg.id}')">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <button class="btn-reset-msg" onclick="window.resetMessage('${msg.id}')">
+                                    <i class="fas fa-undo"></i> Reset
+                                </button>
+                                <button class="btn-delete-msg" onclick="window.deleteMessage('${msg.id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            messagesContainer.innerHTML = html;
+            
+        } catch (err) {
+            messagesContainer.innerHTML = `<p style="color:red; padding:1rem;">Error loading messages: ${err.message}</p>`;
+        }
+    }
+
+    // ========== MESSAGE ACTIONS ==========
+    window.copyMessage = function(messageId) {
+        const msg = allMessages.find(m => m.id === messageId);
+        if (!msg) {
+            showToast('❌ Message not found.', 'error');
+            return;
+        }
+        
+        const content = `
+Subject: ${msg.subject || 'No subject'}
+From: ${msg.senderName || msg.fromUserName || 'Unknown'}
+Book: ${msg.bookTitle || 'No book'}
+Date: ${msg.createdAt ? msg.createdAt.toLocaleString() : 'Unknown'}
+
+${msg.message || msg.content || ''}
+        `.trim();
+        
+        navigator.clipboard.writeText(content).then(() => {
+            showCopyToast2();
+            showToast('✅ Message copied to clipboard!', 'success');
+        }).catch(() => {
+            const textArea = document.createElement('textarea');
+            textArea.value = content;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showCopyToast2();
+            showToast('✅ Message copied to clipboard!', 'success');
+        });
+    };
+
+    window.resetMessage = async function(messageId) {
+        const msg = allMessages.find(m => m.id === messageId);
+        if (!msg) {
+            showToast('❌ Message not found.', 'error');
+            return;
+        }
+        
+        if (!confirm(`Reset message "${msg.subject || 'Untitled'}" to unread status?`)) return;
+        
+        try {
+            await updateDoc(doc(db, "messages", messageId), {
+                status: 'unread',
+                read: false
+            });
+            
+            const msgObj = allMessages.find(m => m.id === messageId);
+            if (msgObj) {
+                msgObj.status = 'unread';
+                msgObj.read = false;
+            }
+            
+            await loadMessages();
+            showToast('🔄 Message reset to unread.', 'info');
+        } catch (err) {
+            showToast('❌ Error resetting message: ' + err.message, 'error');
+        }
+    };
+
+    window.deleteMessage = async function(messageId) {
+        const msg = allMessages.find(m => m.id === messageId);
+        if (!msg) {
+            showToast('❌ Message not found.', 'error');
+            return;
+        }
+        
+        if (!confirm(`Delete message "${msg.subject || 'Untitled'}" permanently?`)) return;
+        
+        try {
+            await deleteDoc(doc(db, "messages", messageId));
+            allMessages = allMessages.filter(m => m.id !== messageId);
+            await loadMessages();
+            showToast('🗑️ Message deleted.', 'info');
+        } catch (err) {
+            showToast('❌ Error deleting message: ' + err.message, 'error');
+        }
+    };
+
+    // ===== RESET ALL MESSAGES =====
+    document.getElementById('resetAllMessagesBtn')?.addEventListener('click', function() {
+        if (!confirm('⚠️ Reset ALL messages to "unread" status? This cannot be undone!')) return;
+        if (!confirm('⚠️ ARE YOU SURE? This affects ALL messages!')) return;
+        
+        const batch = writeBatch(db);
+        allMessages.forEach(msg => {
+            const ref = doc(db, "messages", msg.id);
+            batch.update(ref, {
+                status: 'unread',
+                read: false
+            });
+        });
+        
+        batch.commit().then(() => {
+            allMessages.forEach(msg => {
+                msg.status = 'unread';
+                msg.read = false;
+            });
+            loadMessages();
+            showToast('🔄 All messages reset to unread!', 'success');
+        }).catch(err => {
+            showToast('❌ Error resetting messages: ' + err.message, 'error');
+        });
+    });
 
     // ========== APPROVE BOOK ==========
     window.approveBook = async function(bookId) {
@@ -1775,8 +2676,9 @@ Volant Reads Team
             showToast('✅ Book approved successfully!', 'success');
             await loadPendingBooks();
             await loadAllBooks();
+            await loadManagementTable();
+            await loadMessages();
         } catch (err) {
-            console.error("Error approving book:", err);
             showToast('❌ Failed to approve book: ' + err.message, 'error');
         }
     };
@@ -1789,8 +2691,9 @@ Volant Reads Team
             showToast('🗑️ Book rejected and deleted.', 'info');
             await loadPendingBooks();
             await loadAllBooks();
+            await loadManagementTable();
+            await loadMessages();
         } catch (err) {
-            console.error("Error rejecting book:", err);
             showToast('❌ Failed to reject book: ' + err.message, 'error');
         }
     };
@@ -1801,7 +2704,7 @@ Volant Reads Team
             await signOut(auth);
             window.location.href = 'admin-login.html';
         } catch (err) {
-            console.error("Sign out error:", err);
+            // Silent fail
         }
     };
 
@@ -1835,6 +2738,13 @@ Volant Reads Team
             const tabName = this.dataset.tab;
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            if (tabName === 'manage') {
+                loadManagementTable();
+            }
+            if (tabName === 'messages') {
+                loadMessages();
+            }
         });
     });
 
@@ -1866,11 +2776,12 @@ Volant Reads Team
                 adminRole.textContent = adminStatus.data?.role || 'admin';
                 await loadPendingBooks();
                 await loadAllBooks();
+                await loadManagementTable();
+                await loadMessages();
             } else {
                 accessDenied.style.display = 'block';
             }
         } catch (error) {
-            console.error("Admin check error:", error);
             accessDenied.style.display = 'block';
             const p = accessDenied.querySelector('p');
             if (p) p.textContent = 'Error checking admin permissions: ' + error.message;
@@ -1884,9 +2795,9 @@ Volant Reads Team
     }, 5000);
 
     console.log('🛡️ Volant Reads Admin Dashboard loaded.');
-    console.log('📚 Tabs: Pending & All Books with delete option.');
-    console.log('📄 PDF View/Download with fallback options.');
-    console.log('🖼️ View Image button with improved styling.');
+    console.log('📚 Tabs: Pending | All Books | Book Management | Messages');
+    console.log('📊 Book Management: Edit sales, downloads, limit, views, rating, status');
+    console.log('💬 Messages: View, copy, reset, delete messages sent to authors');
 </script>
 
 </body>
