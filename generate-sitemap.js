@@ -33,7 +33,9 @@ const excludedPages = [
   'poemcount.html',
   'poem.html',
   'addcategories.html',
-  'Select-Poem-of-the-Week.html'
+  'Select-Poem-of-the-Week.html',
+  'existingVerify.html',
+  'check-verification.html'
 ];
 
 // 🚫 EXCLUDED FOLDERS (entire folders)
@@ -43,14 +45,27 @@ const excludedFolders = [
 ];
 
 // ---- Firebase ----
-const serviceAccount = require(firebaseKeyPath);
-initializeApp({ credential: cert(serviceAccount) });
-const db = getFirestore();
+let db = null;
+let firebaseInitialized = false;
+
+try {
+  if (fs.existsSync(firebaseKeyPath)) {
+    const serviceAccount = require(firebaseKeyPath);
+    initializeApp({ credential: cert(serviceAccount) });
+    db = getFirestore();
+    firebaseInitialized = true;
+    console.log('✅ Firebase initialized');
+  } else {
+    console.warn('⚠️ serviceAccountKey.json not found, skipping Firebase');
+  }
+} catch (err) {
+  console.warn('⚠️ Firebase init failed:', err.message);
+}
 
 // ---- Exclusion helper ----
 function isExcluded(file) {
   // Check if file is in excluded folders
-  const fileParts = file.split('/');
+  const fileParts = file.split(/[\/\\]/);
   for (const folder of excludedFolders) {
     if (fileParts.includes(folder)) {
       return true;
@@ -63,25 +78,31 @@ function isExcluded(file) {
   );
 }
 
-// ---- Helper to check if a folder should be scanned ----
-function shouldScanFolder(folderPath) {
+// ---- Helper to scan multiple folders ----
+function scanFolderForHTML(folder) {
   // Skip excluded folders
   for (const excluded of excludedFolders) {
-    if (folderPath.includes(excluded) || folderPath === excluded) {
-      return false;
+    if (folder.includes(excluded) || folder === excluded) {
+      return [];
     }
   }
-  return true;
+  
+  const pattern = `${folder}/*.html`;
+  return glob.sync(pattern, { cwd: publicFolder });
 }
 
 // ---- Safe image path builder ----
 function getImagesForFolder(folder) {
+  // Skip if folder is excluded
+  for (const excluded of excludedFolders) {
+    if (folder.includes(excluded) || folder === excluded) {
+      return [];
+    }
+  }
+  
   const folderPath = path.join(publicFolder, folder);
 
   if (!fs.existsSync(folderPath)) return [];
-  
-  // Skip if folder is excluded
-  if (!shouldScanFolder(folder)) return [];
 
   const files = glob.sync('**/*.*', { cwd: folderPath });
 
@@ -92,19 +113,18 @@ function getImagesForFolder(folder) {
   );
 }
 
-// ---- Static pages (scans root, store, shared, etc.) ----
+// ---- Static pages (root + subfolders) ----
 function getStaticPages() {
   // Scan root for HTML files
   const rootFiles = glob.sync('*.html', { cwd: publicFolder });
   
-  // Scan subfolders for HTML files (but skip excluded folders)
-  const subFolderFiles = [];
-  const folders = ['store', 'shared', 'volant_foundry'];
+  // Scan subfolders for HTML files (store, shared, volant_foundry)
+  const subFolders = ['store', 'shared', 'volant_foundry'];
+  let subFolderFiles = [];
   
-  for (const folder of folders) {
-    if (!shouldScanFolder(folder)) continue;
-    const files = glob.sync(`${folder}/*.html`, { cwd: publicFolder });
-    subFolderFiles.push(...files);
+  for (const folder of subFolders) {
+    const files = scanFolderForHTML(folder);
+    subFolderFiles = subFolderFiles.concat(files);
   }
 
   const allFiles = [...rootFiles, ...subFolderFiles];
@@ -113,19 +133,28 @@ function getStaticPages() {
     .filter(file => !isExcluded(file))
     .map(file => {
       const filePath = path.join(publicFolder, file);
-      const stats = fs.existsSync(filePath) ? fs.statSync(filePath) : null;
+      const stats = fs.statSync(filePath);
 
-      const lastmod = stats ? stats.mtime.toISOString() : new Date().toISOString();
-      
-      // Determine image folder
-      const fileName = path.basename(file, '.html');
+      const lastmod = stats.mtime.toISOString();
+
+      // Determine image folder based on file location
       const fileDir = path.dirname(file);
-      const imageFolder = fileDir === '.' ? `images/${fileName}` : `images/${fileDir}/${fileName}`;
+      const fileName = path.basename(file, '.html');
+      
+      let imageFolder;
+      if (file === 'index.html' || file === 'store/index.html') {
+        imageFolder = 'images/index';
+      } else if (fileDir === '.') {
+        imageFolder = `images/${fileName}`;
+      } else {
+        imageFolder = `images/${fileDir}/${fileName}`;
+      }
 
       return {
         loc: `${domain}/${file}`,
         lastmod,
         changefreq: 'monthly',
+        priority: file === 'index.html' || file === 'store/index.html' ? '1.0' : '0.8',
         images: getImagesForFolder(imageFolder)
       };
     });
@@ -133,6 +162,8 @@ function getStaticPages() {
 
 // ---- Poems (priority SEO content) ----
 async function getPoemPages() {
+  if (!firebaseInitialized || !db) return [];
+  
   try {
     const snapshot = await db.collection('recentPoems').get();
 
@@ -157,8 +188,10 @@ async function getPoemPages() {
   }
 }
 
-// ---- Categories ----
+// ---- Categories (clean URLs only) ----
 async function getCategoryPages() {
+  if (!firebaseInitialized || !db) return [];
+  
   try {
     const snapshot = await db.collection('recentPoems').get();
     const set = new Set();
@@ -183,22 +216,11 @@ async function getCategoryPages() {
   }
 }
 
-// ---- Root images ----
+// ---- General images ----
 function getGeneralImages() {
-  // Only include images from allowed folders
-  const allowedImageFolders = ['images', 'store/images', 'shared/images', 'volant_foundry/images'];
-  let allImages = [];
-  
-  for (const folder of allowedImageFolders) {
-    if (!shouldScanFolder(folder)) continue;
-    const folderPath = path.join(publicFolder, folder);
-    if (fs.existsSync(folderPath)) {
-      const files = glob.sync('**/*.{png,jpg,jpeg,gif,svg,webp}', { cwd: folderPath });
-      allImages.push(...files.map(f => `${folder}/${f}`));
-    }
-  }
+  const files = glob.sync('images/*.*', { cwd: publicFolder });
 
-  return allImages.map(img => ({
+  return files.map(img => ({
     loc: `${domain}/${img.replace(/\\/g, '/')}`,
     lastmod: new Date().toISOString(),
     changefreq: 'monthly',
@@ -270,7 +292,6 @@ async function generateSitemap() {
     );
 
     console.log('✅ Sitemap generated successfully!');
-    console.log(`📁 Saved to: ${path.join(publicFolder, 'sitemap.xml')}`);
   } catch (err) {
     console.error('❌ Sitemap error:', err);
   }
