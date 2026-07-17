@@ -281,7 +281,7 @@ let reachedEnd = false;
 // Helper function to detect current platform
 function getCurrentPlatform() {
   const currentFile = window.location.pathname.split('/').pop();
-  if (currentFile.startsWith('volantReads-')) {
+  if (currentFile.startsWith('store/')) {
     return 'reads';
   } else if (currentFile === 'parent-house.html') {
     return 'foundry';
@@ -2293,7 +2293,7 @@ async function loadRankingPoemsRich() {
       if (likeBtn) {
         likeBtn.addEventListener("click", async () => {
           if (!user) {
-            window.location.href = "login.html";
+            window.location.href = "universal-login.html";
             return;
           }
           
@@ -2340,7 +2340,7 @@ async function loadRankingPoemsRich() {
       if (commentBtn) {
         commentBtn.addEventListener("click", async () => {
           if (!user) {
-            window.location.href = "login.html";
+            window.location.href = "universal-login.html";
             return;
           }
           

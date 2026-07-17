@@ -2983,7 +2983,7 @@ onAuthStateChanged(auth, async (user) => {
   await ensureUserHasCountFields(targetProfileUid);
   
   const userDoc = await getDoc(doc(db, "users", targetProfileUid));
-  if (!userDoc.exists()) { alert("User not found."); window.location.href = "index.html"; return; }
+  if (!userDoc.exists()) { alert("User not found."); window.location.href = getReturnUrl(); return; }
   
   const data = userDoc.data();
   profileUsername = data.username || data.email.split("@")[0];
@@ -3106,7 +3106,7 @@ window.addEventListener("click", (e) => { if (e.target === modal) modal.style.di
 // Menu and logout
 document.getElementById("menu-toggle")?.addEventListener("click", () => document.getElementById("nav-links").classList.toggle("show"));
 document.getElementById("close-btn")?.addEventListener("click", () => document.getElementById("nav-links").classList.remove("show"));
-document.getElementById("logoutBtnNav")?.addEventListener("click", async () => { await signOut(auth); window.location.href = "index.html"; });
+document.getElementById("logoutBtnNav")?.addEventListener("click", async () => { await signOut(auth); window.location.href = getReturnUrl(); });
 document.getElementById("loginNavBtn")?.addEventListener("click", () => { window.location.href = `universal-login.html?platform=poetry&redirect=${encodeURIComponent(window.location.href)}`; });
 
 // Search filter
@@ -3121,7 +3121,7 @@ if (searchInput) { searchInput.addEventListener("input", () => { clearTimeout(de
     const currentPage = window.location.href;
     const currentFile = window.location.pathname.split('/').pop();
     let platform = 'poetry';
-    if (currentFile.startsWith('volantReads-')) platform = 'reads';
+    if (currentFile.startsWith('store/')) platform = 'reads';
     if (currentFile === 'parent-house.html') platform = 'foundry';
     
     const loginParams = new URLSearchParams();
@@ -3144,5 +3144,6 @@ if (searchInput) { searchInput.addEventListener("input", () => { clearTimeout(de
   }
 })();
 </script>
+<script src="return-url-handler.js"></script>
 </body>
 </html>

@@ -9,8 +9,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <!-- Favicons -->
-<link rel="icon" type="image/png" href="images/volant-foundry-favicon.png">
-<link rel="apple-touch-icon" href="images/volant-foundry-favicon.png">
+<link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png">
+<link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png">
 
   <style>
     /* ----- reset & base ----- */
@@ -326,6 +326,90 @@
   <p class="subtitle">Join us and start creating</p>
 
   <form id="signup-form" class="auth-form">
+                <input type="hidden" name="returnUrl" id="returnUrl" value="">
+                <script>
+                    // Store return URL from query parameter
+                    (function() {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const returnUrl = urlParams.get('returnUrl') || 
+                                        sessionStorage.getItem('returnUrl') || 
+                                        document.referrer || 
+                                        window.location.pathname;
+                        
+                        // Don't redirect to login or signup pages
+                        const excludePages = ['login', 'signup', 'verify', 'reset'];
+                        let finalReturnUrl = returnUrl;
+                        if (excludePages.some(page => finalReturnUrl.includes(page))) {
+                            finalReturnUrl = '/index.html';
+                        }
+                        
+                        // Store in session storage
+                        sessionStorage.setItem('returnUrl', finalReturnUrl);
+                        
+                        // Set hidden input
+                        const input = document.getElementById('returnUrl');
+                        if (input) {
+                            input.value = finalReturnUrl;
+                        }
+                    })();
+                </script>
+                
+                <input type="hidden" name="returnUrl" id="returnUrl" value="">
+                <script>
+                    // Store return URL from query parameter
+                    (function() {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const returnUrl = urlParams.get('returnUrl') || 
+                                        sessionStorage.getItem('returnUrl') || 
+                                        document.referrer || 
+                                        window.location.pathname;
+                        
+                        // Don't redirect to login or signup pages
+                        const excludePages = ['login', 'signup', 'verify', 'reset'];
+                        let finalReturnUrl = returnUrl;
+                        if (excludePages.some(page => finalReturnUrl.includes(page))) {
+                            finalReturnUrl = '/index.html';
+                        }
+                        
+                        // Store in session storage
+                        sessionStorage.setItem('returnUrl', finalReturnUrl);
+                        
+                        // Set hidden input
+                        const input = document.getElementById('returnUrl');
+                        if (input) {
+                            input.value = finalReturnUrl;
+                        }
+                    })();
+                </script>
+                
+                <input type="hidden" name="returnUrl" id="returnUrl" value="">
+                <script>
+                    // Store return URL from query parameter
+                    (function() {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const returnUrl = urlParams.get('returnUrl') || 
+                                        sessionStorage.getItem('returnUrl') || 
+                                        document.referrer || 
+                                        window.location.pathname;
+                        
+                        // Don't redirect to login or signup pages
+                        const excludePages = ['login', 'signup', 'verify', 'reset'];
+                        let finalReturnUrl = returnUrl;
+                        if (excludePages.some(page => finalReturnUrl.includes(page))) {
+                            finalReturnUrl = '/index.html';
+                        }
+                        
+                        // Store in session storage
+                        sessionStorage.setItem('returnUrl', finalReturnUrl);
+                        
+                        // Set hidden input
+                        const input = document.getElementById('returnUrl');
+                        if (input) {
+                            input.value = finalReturnUrl;
+                        }
+                    })();
+                </script>
+                
     <label for="signup-username">Username</label>
     <input type="text" id="signup-username" placeholder="Choose a unique name (max 11)" 
            required maxlength="11" autocomplete="username">
@@ -403,9 +487,9 @@
   const redirectUrl = urlParams.get('redirect');
 
   const platformConfig = {
-    poetry: { name: 'Volant Poetry', badge: 'poetry', homeUrl: 'index.html', color: '#4b2aad' },
-    reads: { name: 'Volant Reads', badge: 'reads', homeUrl: 'volantReads-store.html', color: '#d4a574' },
-    foundry: { name: 'Volant Foundry', badge: 'foundry', homeUrl: 'parent-house.html', color: '#2c3e50' }
+    poetry: { name: 'Volant Poetry', badge: 'poetry', homeUrl: '../index.html', color: '#4b2aad' },
+    reads: { name: 'Volant Reads', badge: 'reads', homeUrl: '../store/index.html', color: '#d4a574' },
+    foundry: { name: 'Volant Foundry', badge: 'foundry', homeUrl: '../volant_foundry/volant_foundry/index.html', color: '#2c3e50' }
   };
   const currentPlatform = platformConfig[platform] || platformConfig.poetry;
 
@@ -469,7 +553,7 @@
     togglePassword.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="far fa-eye"></i>';
   });
 
-  // ----- navigation (unchanged) -----
+  // ----- navigation (UPDATED: point to files within shared folder) -----
   goToLogin.addEventListener('click', (e) => {
     e.preventDefault();
     const params = new URLSearchParams();

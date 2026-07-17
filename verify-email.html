@@ -6,8 +6,8 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Verify Email | Volant</title>
 <!-- Favicons -->
-<link rel="icon" type="image/png" href="images/volant-favicon.png">
-<link rel="apple-touch-icon" href="images/volant-favicon.png">
+<link rel="icon" type="image/png" href="../images/volant-favicon.png">
+<link rel="apple-touch-icon" href="../images/volant-favicon.png">
   <style>
     * {
       margin: 0;
@@ -275,7 +275,7 @@
     <div id="hintContainer"></div>
 
     <div class="btn-group">
-      <a href="users-login.html" class="btn btn-primary">Go to Login</a>
+      <a href="users-login.html?returnUrl=encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)" class="btn btn-primary">Go to Login</a>
       <button class="btn btn-secondary" id="resendBtn">Resend Email</button>
     </div>
 
@@ -355,7 +355,7 @@
       reads: {
         name: 'Volant Reads',
         badge: 'reads',
-        homeUrl: 'volantReads-store.html'
+        homeUrl: 'store/index.html'
       },
       foundry: {
         name: 'Volant Foundry',
@@ -376,7 +376,7 @@
     let currentEmail = urlEmail || localStorage.getItem('pendingVerificationEmail') || 'your email';
     displayEmail.textContent = currentEmail;
 
-    const loginLink = document.querySelector('.links a[href="users-login.html"]');
+    const loginLink = document.querySelector('.links a[href="users-login.html?returnUrl=encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)"]');
     if (loginLink) {
       const loginParams = new URLSearchParams();
       loginParams.append('platform', platform);
@@ -629,5 +629,112 @@
       sessionStorage.removeItem('verificationJustSent');
     }
   </script>
+
+            <script>
+            // Return URL Handler - Redirect to previous page after login
+            (function() {
+                // Function to get return URL
+                function getReturnUrl() {
+                    // Check URL parameters first
+                    const urlParams = new URLSearchParams(window.location.search);
+                    let returnUrl = urlParams.get('returnUrl');
+                    
+                    // Check session storage
+                    if (!returnUrl) {
+                        returnUrl = sessionStorage.getItem('returnUrl');
+                    }
+                    
+                    // Check referrer
+                    if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
+                        returnUrl = document.referrer || window.location.pathname;
+                    }
+                    
+                    // Exclude auth pages
+                    const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+                    if (excludePages.some(page => returnUrl.includes(page))) {
+                        returnUrl = '/index.html';
+                    }
+                    
+                    // Clean up URL
+                    if (returnUrl) {
+                        // Remove any existing returnUrl parameters to avoid loops
+                        returnUrl = returnUrl.split('?')[0];
+                        // Make sure it starts with /
+                        if (!returnUrl.startsWith('/') && !returnUrl.startsWith('http')) {
+                            returnUrl = '/' + returnUrl;
+                        }
+                    }
+                    
+                    return returnUrl || '/index.html';
+                }
+                
+                // Function to redirect after successful login
+                window.redirectAfterLogin = function() {
+                    const returnUrl = getReturnUrl();
+                    sessionStorage.removeItem('returnUrl'); // Clean up
+                    window.location.href = returnUrl;
+                };
+                
+                // Save return URL when page loads (for login page)
+                if (window.location.pathname.includes('login') || 
+                    window.location.pathname.includes('signup')) {
+                    const returnUrl = getReturnUrl();
+                    sessionStorage.setItem('returnUrl', returnUrl);
+                    
+                    // Update any login form action to include returnUrl
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const forms = document.querySelectorAll('form');
+                        forms.forEach(form => {
+                            if (form.action && form.action.includes('login')) {
+                                const hiddenInput = document.createElement('input');
+                                hiddenInput.type = 'hidden';
+                                hiddenInput.name = 'returnUrl';
+                                hiddenInput.value = returnUrl;
+                                form.appendChild(hiddenInput);
+                            }
+                        });
+                    });
+                }
+                
+                // Intercept successful login responses
+                const originalFetch = window.fetch;
+                window.fetch = function(...args) {
+                    return originalFetch.apply(this, args).then(response => {
+                        // Check if this is a login response
+                        const url = args[0];
+                        if (typeof url === 'string' && url.includes('login')) {
+                            const clonedResponse = response.clone();
+                            clonedResponse.json().then(data => {
+                                if (data.success || data.token || data.user) {
+                                    // Login successful - redirect
+                                    setTimeout(() => {
+                                        const returnUrl = getReturnUrl();
+                                        sessionStorage.removeItem('returnUrl');
+                                        window.location.href = returnUrl;
+                                    }, 500);
+                                }
+                            }).catch(() => {});
+                        }
+                        return response;
+                    });
+                };
+                
+                // Store current page before navigating to login
+                document.addEventListener('click', function(e) {
+                    const link = e.target.closest('a');
+                    if (link) {
+                        const href = link.getAttribute('href');
+                        if (href && (href.includes('login') || href.includes('signup'))) {
+                            // Store current page before leaving
+                            const currentPath = window.location.pathname;
+                            if (!currentPath.includes('login') && !currentPath.includes('signup')) {
+                                sessionStorage.setItem('returnUrl', currentPath);
+                            }
+                        }
+                    }
+                });
+            })();
+            </script>
+            
 </body>
 </html>

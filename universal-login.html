@@ -9,8 +9,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <!-- Favicons -->
-<link rel="icon" type="image/png" href="images/volant-foundry-favicon.png">
-<link rel="apple-touch-icon" href="images/volant-foundry-favicon.png">
+<link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png">
+<link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png">
 
  <style>
     /* ----- reset & base ----- */
@@ -290,6 +290,36 @@
   <p class="subtitle">Sign in to your account</p>
 
   <form id="login-form" class="auth-form">
+                <input type="hidden" name="returnUrl" id="returnUrl" value="">
+                <script>
+                    // Store return URL from query parameter
+                    (function() {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const returnUrl = urlParams.get('returnUrl') || 
+                                        sessionStorage.getItem('returnUrl') || 
+                                        document.referrer || 
+                                        window.location.pathname;
+                        
+                        // Don't redirect to login or signup pages
+                        const excludePages = ['login', 'signup', 'verify', 'reset'];
+                        let finalReturnUrl = returnUrl;
+                        if (excludePages.some(page => finalReturnUrl.includes(page))) {
+                            finalReturnUrl = '/index.html';
+                        }
+                        
+                        // Store in session storage
+                        sessionStorage.setItem('returnUrl', finalReturnUrl);
+                        
+                        // Set hidden input
+                        const input = document.getElementById('returnUrl');
+                        if (input) {
+                            input.value = finalReturnUrl;
+                        }
+                    })();
+                </script>
+                
+    <input type="hidden" name="returnUrl" id="returnUrl" value="">
+    
     <label for="login-email">Email or username</label>
     <input type="text" id="login-email" placeholder="you@example.com or username" autocomplete="email">
 
@@ -320,7 +350,7 @@
 </div>
 
 <script type="module">
-  // ----- Firebase imports (keep untouched) -----
+  // ----- Firebase imports -----
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getAuth,
@@ -338,7 +368,7 @@
     getDocs
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Firebase Config (unchanged)
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
     authDomain: "silent-depth.firebaseapp.com",
@@ -352,15 +382,15 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // ----- PLATFORM DETECTION (unchanged logic) -----
+  // ----- PLATFORM DETECTION -----
   const urlParams = new URLSearchParams(window.location.search);
   const platform = urlParams.get('platform') || 'poetry';
   const redirectUrl = urlParams.get('redirect');
 
   const platformConfig = {
-    poetry: { name: 'Volant Poetry', badge: 'poetry', homeUrl: 'index.html', color: '#4b2aad' },
-    reads: { name: 'Volant Reads', badge: 'reads', homeUrl: 'volantReads-store.html', color: '#d4a574' },
-    foundry: { name: 'Volant Foundry', badge: 'foundry', homeUrl: 'parent-house.html', color: '#2c3e50' }
+    poetry: { name: 'Volant Poetry', badge: 'poetry', homeUrl: '../index.html', color: '#4b2aad' },
+    reads: { name: 'Volant Reads', badge: 'reads', homeUrl: '../store/index.html', color: '#d4a574' },
+    foundry: { name: 'Volant Foundry', badge: 'foundry', homeUrl: '../volant_foundry/volant_foundry/index.html', color: '#2c3e50' }
   };
   const currentPlatform = platformConfig[platform] || platformConfig.poetry;
 
@@ -368,16 +398,7 @@
   document.getElementById('platformBadge').textContent = currentPlatform.name;
   document.getElementById('platformBadge').classList.add(currentPlatform.badge);
 
-  // back & breadcrumb are hidden via CSS, but we keep the JS for potential future use
-  const backLink = document.getElementById('backLink');
-  const breadcrumbHome = document.getElementById('breadcrumbHome');
-  // Note: backLink and breadcrumb are hidden via CSS, but we can still set hrefs if needed
-  if (redirectUrl) {
-    backLink.href = redirectUrl;
-    breadcrumbHome.href = redirectUrl;
-  }
-
-  // ----- DOM refs -----
+  // DOM refs
   const loginForm = document.getElementById('login-form');
   const loginButton = document.getElementById('login-button');
   const statusEl = document.getElementById('login-status');
@@ -389,7 +410,7 @@
   const buttonText = document.getElementById('buttonText');
   const loginEmail = document.getElementById('login-email');
 
-  // ----- password toggle (polished) -----
+  // ----- password toggle -----
   togglePassword.addEventListener("click", () => {
     const isPassword = passwordInput.type === "password";
     passwordInput.type = isPassword ? "text" : "password";
@@ -397,7 +418,7 @@
     togglePassword.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="far fa-eye"></i>';
   });
 
-  // ----- navigation (unchanged) -----
+  // ----- navigation -----
   goToSignup.addEventListener('click', (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
@@ -419,7 +440,7 @@
     statusEl.className = `status show ${type}`;
   }
 
-  // ----- LOGIN (original logic intact) -----
+  // ----- LOGIN (FIXED with return URL support) -----
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const loginInput = loginEmail.value.trim();
@@ -470,18 +491,68 @@
 
       showStatus("✅ Login successful! Redirecting…", 'success');
 
-      let finalRedirect = currentPlatform.homeUrl;
-      if (redirectUrl) {
-        const decodedRedirect = decodeURIComponent(redirectUrl);
-        if (!decodedRedirect.includes('universal-login') &&
-            !decodedRedirect.includes('universal-signup') &&
-            !decodedRedirect.includes('users-login') &&
-            !decodedRedirect.includes('users-signup') &&
-            !decodedRedirect.includes('users-reset') &&
-            !decodedRedirect.includes('verify-email')) {
-          finalRedirect = decodedRedirect;
+      // ========================================
+      // FIX: Use return URL instead of hardcoded redirect
+      // ========================================
+      
+      // Get return URL from multiple sources
+      let returnUrl = null;
+      
+      // 1. Check URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      returnUrl = urlParams.get('returnUrl');
+      
+      // 2. Check session storage
+      if (!returnUrl) {
+        returnUrl = sessionStorage.getItem('returnUrl');
+      }
+      
+      // 3. Check localStorage (as fallback)
+      if (!returnUrl) {
+        returnUrl = localStorage.getItem('returnUrl');
+      }
+      
+      // Clean up and validate
+      if (returnUrl) {
+        // Decode if encoded
+        try {
+          returnUrl = decodeURIComponent(returnUrl);
+        } catch (e) {
+          // Already decoded or not encoded
+        }
+        
+        // Don't redirect to auth pages
+        const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+        if (excludePages.some(page => returnUrl.includes(page))) {
+          returnUrl = null;
         }
       }
+      
+      // If no valid return URL, use platform home or redirect parameter
+      let finalRedirect = returnUrl || currentPlatform.homeUrl;
+      
+      // If redirectUrl parameter exists and no returnUrl, use it
+      if (!returnUrl && redirectUrl) {
+        try {
+          const decodedRedirect = decodeURIComponent(redirectUrl);
+          if (!decodedRedirect.includes('universal-login') &&
+              !decodedRedirect.includes('universal-signup') &&
+              !decodedRedirect.includes('users-login') &&
+              !decodedRedirect.includes('users-signup') &&
+              !decodedRedirect.includes('users-reset') &&
+              !decodedRedirect.includes('verify-email')) {
+            finalRedirect = decodedRedirect;
+          }
+        } catch (e) {
+          // Use default if decoding fails
+        }
+      }
+      
+      // Clean up storage
+      sessionStorage.removeItem('returnUrl');
+      localStorage.removeItem('returnUrl');
+      
+      console.log('🔄 Redirecting to:', finalRedirect);
 
       setTimeout(() => {
         window.location.href = finalRedirect;
@@ -500,12 +571,122 @@
     }
   });
 
-  // ----- auth state (unchanged) -----
+  // ----- auth state -----
   onAuthStateChanged(auth, (user) => {
     if (user && user.emailVerified) {
-      window.location.href = currentPlatform.homeUrl;
+      // Only redirect if we're not already redirecting
+      if (!window._redirecting) {
+        window._redirecting = true;
+        // Get return URL before redirect
+        let returnUrl = sessionStorage.getItem('returnUrl') || 
+                       new URLSearchParams(window.location.search).get('returnUrl') ||
+                       currentPlatform.homeUrl;
+        
+        // Clean up
+        sessionStorage.removeItem('returnUrl');
+        window.location.href = returnUrl;
+      }
     }
   });
+
+  // ========================================
+  // Helper: Store current page when clicking login links
+  // ========================================
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (link) {
+      const href = link.getAttribute('href');
+      if (href && (href.includes('login') || href.includes('signup'))) {
+        const currentPath = window.location.pathname;
+        if (!currentPath.includes('login') && !currentPath.includes('signup')) {
+          sessionStorage.setItem('returnUrl', currentPath);
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+// Return URL Handler - Redirect to previous page after login
+(function() {
+    // Function to get return URL
+    function getReturnUrl() {
+        // Check URL parameters first
+        const urlParams = new URLSearchParams(window.location.search);
+        let returnUrl = urlParams.get('returnUrl');
+        
+        // Check session storage
+        if (!returnUrl) {
+            returnUrl = sessionStorage.getItem('returnUrl');
+        }
+        
+        // Check referrer
+        if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
+            returnUrl = document.referrer || window.location.pathname;
+        }
+        
+        // Exclude auth pages
+        const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+        if (excludePages.some(page => returnUrl.includes(page))) {
+            returnUrl = '/index.html';
+        }
+        
+        // Clean up URL
+        if (returnUrl) {
+            // Remove any existing returnUrl parameters to avoid loops
+            returnUrl = returnUrl.split('?')[0];
+            // Make sure it starts with /
+            if (!returnUrl.startsWith('/') && !returnUrl.startsWith('http')) {
+                returnUrl = '/' + returnUrl;
+            }
+        }
+        
+        return returnUrl || '/index.html';
+    }
+    
+    // Function to redirect after successful login
+    window.redirectAfterLogin = function() {
+        const returnUrl = getReturnUrl();
+        sessionStorage.removeItem('returnUrl'); // Clean up
+        window.location.href = returnUrl;
+    };
+    
+    // Save return URL when page loads (for login page)
+    if (window.location.pathname.includes('login') || 
+        window.location.pathname.includes('signup')) {
+        const returnUrl = getReturnUrl();
+        sessionStorage.setItem('returnUrl', returnUrl);
+        
+        // Update any login form action to include returnUrl
+        document.addEventListener('DOMContentLoaded', function() {
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                if (form.action && form.action.includes('login')) {
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'returnUrl';
+                    hiddenInput.value = returnUrl;
+                    form.appendChild(hiddenInput);
+                }
+            });
+        });
+    }
+    
+    // Store current page before navigating to login
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (link) {
+            const href = link.getAttribute('href');
+            if (href && (href.includes('login') || href.includes('signup'))) {
+                // Store current page before leaving
+                const currentPath = window.location.pathname;
+                if (!currentPath.includes('login') && !currentPath.includes('signup')) {
+                    sessionStorage.setItem('returnUrl', currentPath);
+                }
+            }
+        }
+    });
+})();
 </script>
 </body>
 </html>

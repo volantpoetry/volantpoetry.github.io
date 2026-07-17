@@ -8,6 +8,49 @@
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="images/volant-favicon.png">
 <link rel="apple-touch-icon" href="images/volant-favicon.png">
+  
+  <!-- SEO Meta Tags - Poems Page -->
+<meta name="description" content="Explore a collection of poems from talented poets. Read, share, and discover inspiring poetry at Volant Poetry." />
+<meta name="keywords" content="poems, poetry collection, Volant Poetry, poets, poetry community, read poems, share poems" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Poems Collection | Volant Poetry" />
+<meta property="og:description" content="Discover a diverse collection of poems from poets around the world. Read, share, and be inspired." />
+<meta property="og:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg" />
+<meta property="og:url" content="https://volantpoetry.vercel.app/poems.html" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Volant Poetry" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Poems Collection | Volant Poetry" />
+<meta name="twitter:description" content="Discover a diverse collection of poems from poets around the world." />
+<meta name="twitter:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg" />
+
+<!-- Canonical -->
+<link rel="canonical" href="https://volantpoetry.vercel.app/poems.html" />
+<link rel="sitemap" type="application/xml" title="Sitemap" href="https://volantpoetry.vercel.app/sitemap.xml" />
+
+<!-- Structured Data - Collection Page -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Poems Collection | Volant Poetry",
+  "description": "A diverse collection of poems from talented poets around the world.",
+  "url": "https://volantpoetry.vercel.app/poems.html",
+  "isPartOf": {
+    "@type": "WebSite",
+    "name": "Volant Poetry",
+    "url": "https://volantpoetry.vercel.app"
+  },
+  "about": {
+    "@type": "Thing",
+    "name": "Poetry Collection"
+  }
+}
+</script>
+  
   <style>
     /* Your existing styles remain the same */
     .recent-poem-card {
@@ -569,8 +612,8 @@ nav {
     <div class="nav-links" id="nav-links">
       <span class="close-btn" id="close-btn">✕</span>
       <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact Us</a>
+      <a href="shared/about.html">About</a>
+      <a href="shared/contact.html">Contact Us</a>
       <a href="user-profile.html">My Profile</a>
       <a href="all-categories.html" class="mobile-only">Categories</a>
     </div>
@@ -2059,7 +2102,7 @@ async function performSearch(searchTerm) {
     const currentPage = window.location.href;
     const currentFile = window.location.pathname.split('/').pop();
     let platform = 'poetry';
-    if (currentFile.startsWith('volantReads-')) platform = 'reads';
+    if (currentFile.startsWith('store/')) platform = 'reads';
     if (currentFile === 'parent-house.html') platform = 'foundry';
     
     const loginParams = new URLSearchParams();
@@ -2082,5 +2125,6 @@ async function performSearch(searchTerm) {
   }
 })();
 </script>
+<script src="return-url-handler.js"></script>
 </body>
 </html>

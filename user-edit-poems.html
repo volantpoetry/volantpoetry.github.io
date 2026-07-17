@@ -502,8 +502,8 @@ header {
     <div class="nav-links" id="nav-links">
       <span class="close-btn" id="close-btn">✕</span>
       <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact Us</a>
+      <a href="shared/about.html">About</a>
+      <a href="shared/contact.html">Contact Us</a>
     </div>
     
     <div class="nav-right">
@@ -1031,7 +1031,7 @@ logoutBtnNav?.addEventListener('click', async () => {
     const currentPage = window.location.href;
     const currentFile = window.location.pathname.split('/').pop();
     let platform = 'poetry';
-    if (currentFile.startsWith('volantReads-')) platform = 'reads';
+    if (currentFile.startsWith('store/')) platform = 'reads';
     if (currentFile === 'parent-house.html') platform = 'foundry';
     
     const loginParams = new URLSearchParams();
@@ -1054,5 +1054,6 @@ logoutBtnNav?.addEventListener('click', async () => {
   }
 })();
 </script>
+<script src="return-url-handler.js"></script>
 </body>
 </html>

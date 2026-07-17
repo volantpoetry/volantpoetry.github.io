@@ -263,7 +263,7 @@ form.addEventListener("submit", async (e) => {
     const currentPage = window.location.href;
     const currentFile = window.location.pathname.split('/').pop();
     let platform = 'poetry';
-    if (currentFile.startsWith('volantReads-')) platform = 'reads';
+    if (currentFile.startsWith('store/')) platform = 'reads';
     if (currentFile === 'parent-house.html') platform = 'foundry';
     
     const loginParams = new URLSearchParams();
@@ -286,5 +286,6 @@ form.addEventListener("submit", async (e) => {
   }
 })();
 </script>
+<script src="return-url-handler.js"></script>
 </body>
 </html>
