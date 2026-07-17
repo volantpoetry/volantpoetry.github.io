@@ -69,17 +69,17 @@
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Volant Poetry",
-  "url": "https://volantpoetry.pages.dev",
-  "logo": "https://volantpoetry.pages.dev/images/logo2.png",
+  "url": "https://volantpoetry.vercel.app",
+  "logo": "https://volantpoetry.vercel.app/images/logo.png",
   "founder": {
     "@type": "Person",
     "name": "Rence Blunt",
-    "image": "https://volantpoetry.pages.dev/images/renceblunt.jpg"
+    "image": "https://volantpoetry.vercel.app/images/renceblunt.jpg"
   },
   "description": "A platform for sharing emotions, inspiring creativity, and connecting readers through the beauty of words.",
   "sameAs": [
     "https://github.com/renceblunt",
-    "https://volantpoetry.pages.dev"
+    "https://volantpoetry.vercel.app"
   ]
 }
 </script>
@@ -1244,7 +1244,7 @@
   }
 }
 /* Hide Contact Us link in navigation header */
-.nav-links a[href="contact.html"] {
+.nav-links a[href="shared/contact.html"] {
   display: none !important;
 }
 </style>
@@ -1270,7 +1270,7 @@
       <span class="close-btn" id="close-btn">✕</span>
       <a href="index.html">Home</a>
       <a href="poems.html">Poems</a>
-      <a href="about.html">About</a>
+      <a href="shared/about.html">About</a>
        <div class="dropdown">
     <a href="javascript:void(0)">Community ▼</a>
     <div class="dropdown-content">
@@ -1282,8 +1282,8 @@
       </a>
     </div>
   </div>
-       <a href="contact.html">Contact Us</a>
-         <a href="volantReads-store.html">📚 Bookstore</a>
+       <a href="shared/contact.html">Contact Us</a>
+         <a href="store/index.html">📚 Bookstore</a>
         <a href="user-profile.html">My Profile</a>
           <a href="all-categories.html" class="mobile-only">Categories</a>
       
@@ -1302,7 +1302,7 @@
   <span id="username-display-sm" class="username-sm"></span>
 
   <!-- Login link - opens universal login -->
-  <a href="universal-login.html?platform=poetry&redirect=index.html" id="login-link">Login</a>
+  <a href="shared/universal-login.html?platform=poetry&redirect=index.html&returnUrl=encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)" id="login-link">Login</a>
   <button id="logoutBtn" style="display: none;">Logout</button>
 
   <!-- Mobile Icons -->
@@ -1449,7 +1449,7 @@ Just voices, words, and connection.</p>
     <h2>Join the Volant Poetry Community</h2>
     <p>Be part of a world where words take flight.  
     Share your poems, connect with fellow poets, and celebrate creativity every day.</p>
-    <a href="universal-signup.html?platform=poetry&redirect=index.html" class="join-btn">Join the Community</a>
+    <a href="shared/universal-signup.html?platform=poetry&redirect=index.html&returnUrl=encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)" class="join-btn">Join the Community</a>
   </div>
   <div class="community-image">
     <img src="images/community-art.png" alt="Poetry Community">
@@ -1471,13 +1471,13 @@ Just voices, words, and connection.</p>
 <footer style="padding:30px 20px; text-align:center; border-top:1px solid #eee; background:#faf9fe;">
   <div class="footer-links" style="margin-bottom:10px; display:flex; flex-wrap:wrap; justify-content:center; gap:8px 16px;">
     <div class="footer-row">
-      <a href="terms.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Terms</a>
-      <a href="contact.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Contact</a>
-      <a href="volantReads-store.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">📚 Bookstore</a>
+      <a href="shared/terms.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Terms</a>
+      <a href="shared/contact.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Contact</a>
+      <a href="store/index.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">📚 Bookstore</a>
     </div>
     <div class="footer-row">
       <a href="submission-guidelines.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Submission Guidelines</a>
-      <a href="volant-foundry.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem; font-weight:600;">🏛️ Volant Foundry</a>
+      <a href="volant_foundry/index.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem; font-weight:600;">🏛️ Volant Foundry</a>
     </div>
   </div>
   
@@ -2100,10 +2100,10 @@ document.addEventListener("DOMContentLoaded", () => {
       e.stopPropagation();
       if (window.logoutUser) {
         window.logoutUser().then(() => {
-          window.location.href = 'index.html';
+          window.location.href = getReturnUrl();
         });
       } else {
-        window.location.href = 'index.html';
+        window.location.href = getReturnUrl();
       }
     });
   }
@@ -2115,10 +2115,10 @@ document.addEventListener("DOMContentLoaded", () => {
         window.logoutUser().then(() => {
           const navLinksMenu = document.getElementById('nav-links');
           if (navLinksMenu) navLinksMenu.classList.remove('show');
-          window.location.href = 'index.html';
+          window.location.href = getReturnUrl();
         });
       } else {
-        window.location.href = 'index.html';
+        window.location.href = getReturnUrl();
       }
     });
   }
@@ -2141,5 +2141,113 @@ document.addEventListener("DOMContentLoaded", () => {
   updateAuthUI();
 })();
 </script>
+<script src="return-url-handler.js"></script>
+
+            <script>
+            // Return URL Handler - Redirect to previous page after login
+            (function() {
+                // Function to get return URL
+                function getReturnUrl() {
+                    // Check URL parameters first
+                    const urlParams = new URLSearchParams(window.location.search);
+                    let returnUrl = urlParams.get('returnUrl');
+                    
+                    // Check session storage
+                    if (!returnUrl) {
+                        returnUrl = sessionStorage.getItem('returnUrl');
+                    }
+                    
+                    // Check referrer
+                    if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
+                        returnUrl = document.referrer || window.location.pathname;
+                    }
+                    
+                    // Exclude auth pages
+                    const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+                    if (excludePages.some(page => returnUrl.includes(page))) {
+                        returnUrl = '/index.html';
+                    }
+                    
+                    // Clean up URL
+                    if (returnUrl) {
+                        // Remove any existing returnUrl parameters to avoid loops
+                        returnUrl = returnUrl.split('?')[0];
+                        // Make sure it starts with /
+                        if (!returnUrl.startsWith('/') && !returnUrl.startsWith('http')) {
+                            returnUrl = '/' + returnUrl;
+                        }
+                    }
+                    
+                    return returnUrl || '/index.html';
+                }
+                
+                // Function to redirect after successful login
+                window.redirectAfterLogin = function() {
+                    const returnUrl = getReturnUrl();
+                    sessionStorage.removeItem('returnUrl'); // Clean up
+                    window.location.href = returnUrl;
+                };
+                
+                // Save return URL when page loads (for login page)
+                if (window.location.pathname.includes('login') || 
+                    window.location.pathname.includes('signup')) {
+                    const returnUrl = getReturnUrl();
+                    sessionStorage.setItem('returnUrl', returnUrl);
+                    
+                    // Update any login form action to include returnUrl
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const forms = document.querySelectorAll('form');
+                        forms.forEach(form => {
+                            if (form.action && form.action.includes('login')) {
+                                const hiddenInput = document.createElement('input');
+                                hiddenInput.type = 'hidden';
+                                hiddenInput.name = 'returnUrl';
+                                hiddenInput.value = returnUrl;
+                                form.appendChild(hiddenInput);
+                            }
+                        });
+                    });
+                }
+                
+                // Intercept successful login responses
+                const originalFetch = window.fetch;
+                window.fetch = function(...args) {
+                    return originalFetch.apply(this, args).then(response => {
+                        // Check if this is a login response
+                        const url = args[0];
+                        if (typeof url === 'string' && url.includes('login')) {
+                            const clonedResponse = response.clone();
+                            clonedResponse.json().then(data => {
+                                if (data.success || data.token || data.user) {
+                                    // Login successful - redirect
+                                    setTimeout(() => {
+                                        const returnUrl = getReturnUrl();
+                                        sessionStorage.removeItem('returnUrl');
+                                        window.location.href = returnUrl;
+                                    }, 500);
+                                }
+                            }).catch(() => {});
+                        }
+                        return response;
+                    });
+                };
+                
+                // Store current page before navigating to login
+                document.addEventListener('click', function(e) {
+                    const link = e.target.closest('a');
+                    if (link) {
+                        const href = link.getAttribute('href');
+                        if (href && (href.includes('login') || href.includes('signup'))) {
+                            // Store current page before leaving
+                            const currentPath = window.location.pathname;
+                            if (!currentPath.includes('login') && !currentPath.includes('signup')) {
+                                sessionStorage.setItem('returnUrl', currentPath);
+                            }
+                        }
+                    }
+                });
+            })();
+            </script>
+            
 </body>
 </html>

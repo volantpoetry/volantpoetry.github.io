@@ -428,8 +428,8 @@
     <div class="nav-links" id="nav-links">
       <a href="index.html">Home</a>
       <a href="poems.html">Poems</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact</a>
+      <a href="shared/about.html">About</a>
+      <a href="shared/contact.html">Contact</a>
       <a href="user-profile.html">My Profile</a>
     </div>
     <div class="menu-toggle" id="menu-toggle">☰</div>
@@ -889,7 +889,7 @@ document.getElementById("menu-toggle")?.addEventListener("click", () => {
     const currentPage = window.location.href;
     const currentFile = window.location.pathname.split('/').pop();
     let platform = 'poetry';
-    if (currentFile.startsWith('volantReads-')) platform = 'reads';
+    if (currentFile.startsWith('store/')) platform = 'reads';
     if (currentFile === 'parent-house.html') platform = 'foundry';
     
     const loginParams = new URLSearchParams();
@@ -912,5 +912,6 @@ document.getElementById("menu-toggle")?.addEventListener("click", () => {
   }
 })();
 </script>
+<script src="return-url-handler.js"></script>
 </body>
 </html>

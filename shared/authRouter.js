@@ -1,25 +1,3 @@
-
-                    // Helper function to handle return URL redirects
-                    function handleReturnUrl(req, res) {
-                        const returnUrl = req.body.returnUrl || req.query.returnUrl || '/index.html';
-                        // Validate return URL to prevent open redirects
-                        const validPaths = ['/index.html', '/user-profile.html', '/poems.html', '/gallery-achievements.html'];
-                        let finalUrl = returnUrl;
-                        if (!finalUrl.startsWith('/')) {
-                            finalUrl = '/' + finalUrl;
-                        }
-                        // Check if it's a valid path (you can expand this list)
-                        if (!validPaths.some(path => finalUrl.includes(path))) {
-                            finalUrl = '/index.html';
-                        }
-                        return finalUrl;
-                    }
-                    
-                    // Export the function
-                    if (typeof module !== 'undefined' && module.exports) {
-                        module.exports.handleReturnUrl = handleReturnUrl;
-                    }
-                    
 /**
  * Auth Router Helper
  * Simplifies generating authentication URLs across all Volant platforms

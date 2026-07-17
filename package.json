@@ -1,17 +1,16 @@
 {
-  "dependencies": {
-    "firebase": "^12.1.0",
-    "firebase-admin": "^13.5.0",
-    "glob": "^11.0.3"
-  },
-  "name": "rence-blunt-silent-depth",
+  "name": "volant-foundry",
   "version": "1.0.0",
-  "main": "admin-auth.js",
+  "description": "Volant Foundry with Paystack Integration",
+  "main": "index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "dependencies": {
+    "paystack": "^1.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^34.2.5"
+  }
 }
