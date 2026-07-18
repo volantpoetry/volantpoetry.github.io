@@ -1018,7 +1018,59 @@
             margin: 0;
         }
 
-        /* ---------- RESPONSIVE PHONE OPTIMIZATION ---------- */
+        /* ---------- PRE-ORDER STYLES ---------- */
+        .preorder-fields {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.8rem 1rem;
+            background: #f0f4ff;
+            border-radius: 12px;
+            border: 1px solid #d0ddf5;
+        }
+
+        .preorder-fields.show {
+            display: block;
+        }
+
+        .preorder-fields label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .preorder-fields input[type="date"] {
+            width: 100%;
+            padding: 0.5rem 0.8rem;
+            border: 1px solid var(--border-input);
+            border-radius: 12px;
+            font-size: 0.88rem;
+            background: #fcf9f6;
+        }
+
+        .preorder-fields input[type="date"]:focus {
+            outline: 2px solid var(--primary);
+            border-color: transparent;
+        }
+
+        .preorder-fields .preorder-price-input {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .preorder-fields .preorder-price-input .form-group {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .preorder-fields .hint {
+            font-size: 0.65rem;
+            color: #8a7b6a;
+            padding-left: 4px;
+            line-height: 1.3;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 0.5rem 0.4rem;
@@ -1290,6 +1342,18 @@
             .custom-download-input input {
                 max-width: 100%;
             }
+
+            .preorder-fields {
+                padding: 0.6rem 0.8rem;
+            }
+
+            .preorder-fields .preorder-price-input {
+                flex-direction: column;
+            }
+
+            .preorder-fields .preorder-price-input .form-group {
+                width: 100%;
+            }
         }
 
         @media (max-width: 450px) {
@@ -1418,12 +1482,32 @@
                 padding: 0.5rem 1.2rem;
             }
         }
-    
 
-                    .platform-badge.reads { 
-                        background: linear-gradient(135deg, #d4a574, #c9944d); 
-                    }
-                    </style>
+        .platform-badge.reads { 
+            background: linear-gradient(135deg, #d4a574, #c9944d); 
+        }
+
+        /* Only hide on submit page */
+body .checkbox-group:has(#preorderCheckbox) {
+    display: none !important;
+}
+
+body #preorderFields {
+    display: none !important;
+}
+
+/* ===== HIDE PRE-ORDER HINT TEXT ===== */
+
+/* Hide the specific hint text */
+.form-group .hint:last-child {
+    display: none !important;
+}
+
+/* Or if you know the exact text contains "pre-order" */
+.form-group .hint[style*="color"] {
+    display: none !important;
+}
+    </style>
 </head>
 <body>
     <div class="container">
@@ -1692,13 +1776,49 @@
                     <span class="hint">Add at least 3 and up to 5 keywords to help readers find your book.</span>
                 </div>
 
-                <!-- PRE-ORDER -->
+
+                <!-- ===== PRE-ORDER COMING SOON MESSAGE ===== -->
+<div style="background: #fef3e2; border: 1px solid #f5cba7; border-radius: 12px; padding: 0.8rem 1.2rem; margin-bottom: 1rem;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-clock" style="color: #b76e4b; font-size: 1.1rem;"></i>
+        <div>
+            <p style="margin: 0; font-weight: 600; color: #7a4a2a; font-size: 0.9rem;">
+                📅 Pre-orders Coming Soon
+            </p>
+            <p style="margin: 0; font-size: 0.8rem; color: #8a6a4a;">
+                We're working on allowing pre-orders for books. Stay tuned!
+            </p>
+        </div>
+    </div>
+</div>
+                <!-- ===== PRE-ORDER SECTION ===== -->
                 <div class="form-group">
                     <div class="checkbox-group">
-                        <input type="checkbox" id="preorder" />
-                        <label for="preorder"><i class="fas fa-clock"></i> Mark as pre-order</label>
+                        <input type="checkbox" id="preorderCheckbox" />
+                        <label for="preorderCheckbox"><i class="fas fa-clock"></i> Mark as pre-order</label>
                     </div>
                     <span class="hint">Check if the book is available for pre-order.</span>
+                </div>
+
+                <!-- Pre-order Fields -->
+                <div id="preorderFields" class="preorder-fields">
+                    <div class="form-group">
+                        <label for="preorderReleaseDate"><i class="fas fa-calendar-day"></i> Release Date <span style="color:#b76e4b;">*</span></label>
+                        <input type="date" id="preorderReleaseDate" />
+                        <span class="hint">The date when the book will be available for download.</span>
+                    </div>
+                    <div class="preorder-price-input">
+                        <div class="form-group">
+                            <label for="preorderPrice"><i class="fas fa-tag"></i> Pre-order Price</label>
+                            <input type="number" id="preorderPrice" placeholder="0.00" step="0.01" min="0" />
+                            <span class="hint">Leave empty to use the regular price.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="originalPrice"><i class="fas fa-tag"></i> Original Price (for display)</label>
+                            <input type="number" id="originalPrice" placeholder="0.00" step="0.01" min="0" />
+                            <span class="hint">Show original price crossed out next to pre-order price.</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- PDF UPLOAD -->
@@ -1887,6 +2007,11 @@
         const pendingNotice = document.getElementById('pendingNotice');
         const authorEmail = document.getElementById('authorEmail');
         const pageCountInput = document.getElementById('pageCount');
+        const preorderCheckbox = document.getElementById('preorderCheckbox');
+        const preorderFields = document.getElementById('preorderFields');
+        const preorderReleaseDate = document.getElementById('preorderReleaseDate');
+        const preorderPrice = document.getElementById('preorderPrice');
+        const originalPrice = document.getElementById('originalPrice');
 
         // Downloads DOM refs
         const downloadsSelect = document.getElementById('downloadsSelect');
@@ -2022,7 +2147,7 @@
             if (selected === 'custom') {
                 const val = parseInt(customDownloadsInput.value);
                 if (isNaN(val) || val < 3) {
-                    return null; // Will be caught in validation
+                    return null;
                 }
                 return val;
             } else if (selected === 'unlimited') {
@@ -2031,6 +2156,22 @@
                 return parseInt(selected);
             }
         }
+
+        // --- Pre-order functions ---
+        function togglePreorderFields() {
+            if (preorderCheckbox.checked) {
+                preorderFields.classList.add('show');
+                preorderReleaseDate.setAttribute('required', 'required');
+            } else {
+                preorderFields.classList.remove('show');
+                preorderReleaseDate.removeAttribute('required');
+                preorderReleaseDate.value = '';
+                preorderPrice.value = '';
+                originalPrice.value = '';
+            }
+        }
+
+        preorderCheckbox.addEventListener('change', togglePreorderFields);
 
         // --- Currency functions ---
         async function fetchExchangeRates(baseCurrency) {
@@ -2281,7 +2422,6 @@
             feedback.textContent = message;
             feedback.className = type;
             feedback.style.display = 'block';
-            // Auto-hide after 7 seconds for error messages, but success messages stay
             if (type === 'error') {
                 setTimeout(() => { feedback.style.display = 'none';
                     feedback.className = ''; }, 7000);
@@ -2298,7 +2438,7 @@
                     <button class="btn-dismiss" onclick="window.dismissSubmissionSuccess()">
                         <i class="fas fa-check"></i> Got it, Submit Another
                     </button>
-                    <a href="dashboard.html" class="btn-dashboard">
+                    <a href="dashboard" class="btn-dashboard">
                         <i class="fas fa-tachometer-alt"></i> View Dashboard
                     </a>
                 </div>
@@ -2306,64 +2446,41 @@
             feedback.className = 'success';
             feedback.style.display = 'block';
             
-            // Disable form fields
             form.querySelectorAll('input, textarea, select, button').forEach(el => {
                 el.disabled = true;
             });
-            // Re-enable the dismiss button and dashboard link
             const dismissBtn = feedback.querySelector('.btn-dismiss');
             if (dismissBtn) dismissBtn.disabled = false;
         }
 
-        // Make dismiss function globally accessible
         window.dismissSubmissionSuccess = function() {
-            // Reset the form
             form.reset();
-            
-            // Reset keywords
             keywords = [];
             updateKeywordUI();
-            
-            // Clear file feedback
             pdfFeedback.textContent = '';
             pdfFeedback.className = 'file-feedback';
             imageFeedback.textContent = '';
             imageFeedback.className = 'file-feedback';
-            
-            // Clear country
             countryInput.value = '';
             countryHidden.value = '';
             selectedCountry = '';
             countryDropdown.classList.remove('show');
-            
-            // Reset currency symbol
             updateCurrencySymbol();
-            
-            // Reset downloads
             downloadsSelect.value = '5';
             toggleCustomDownloadInput();
-            
-            // Hide pending notice
             pendingNotice.classList.remove('show');
-            
-            // Clear feedback
+            preorderFields.classList.remove('show');
+            preorderCheckbox.checked = false;
             feedback.style.display = 'none';
             feedback.className = '';
             feedback.innerHTML = '';
-            
-            // Re-enable form
             form.querySelectorAll('input, textarea, select, button').forEach(el => {
                 el.disabled = false;
             });
-            
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            // Show toast
             showToast('✨ Ready to submit another book!', 'success');
         };
 
-        // Toast function
         function showToast(message, type = 'info') {
             let toast = document.getElementById('submissionToast');
             if (!toast) {
@@ -2538,6 +2655,23 @@
                 return;
             }
 
+            // --- Validate pre-order ---
+            let preorderData = null;
+            if (preorderCheckbox.checked) {
+                const releaseDate = preorderReleaseDate.value;
+                if (!releaseDate) {
+                    showFeedback('❌ Please select a release date for pre-order.', 'error');
+                    preorderReleaseDate.focus();
+                    return;
+                }
+                preorderData = {
+                    preorder: true,
+                    preorderReleaseDate: releaseDate,
+                    preorderPrice: parseFloat(preorderPrice.value) || parseFloat(price) || 0,
+                    originalPrice: parseFloat(originalPrice.value) || parseFloat(price) || 0
+                };
+            }
+
             const pdfFile = pdfInput.files[0];
             const coverFile = coverInput.files[0];
             if (!pdfFile) { showFeedback('❌ Please upload a PDF file.', 'error');
@@ -2567,7 +2701,6 @@
                 progressText.textContent = '100%';
 
                 const isbn = document.getElementById('isbn').value.trim();
-                const preorder = document.getElementById('preorder').checked;
                 const otherDetails = document.getElementById('otherDetails').value.trim();
                 const finalGenre = genre === 'Other' ? genreOtherInput.value.trim() : genre;
                 const finalLanguage = language === 'Other' ? languageOtherInput.value.trim() : language;
@@ -2589,7 +2722,7 @@
                     downloads: 0,
                     downloadLimit: downloadsValue,
                     keywords,
-                    preorder: preorder || false,
+                    ...preorderData,
                     otherDetails: otherDetails || null,
                     imageUrl,
                     pdfUrl,
@@ -2608,6 +2741,9 @@
                 const priceDisplay = `${currencySymbols[currency] || '¤'}${parseFloat(price).toFixed(2)}`;
                 const keywordList = keywords.join(', ');
                 const downloadsDisplay = downloadsValue === 'unlimited' ? 'Unlimited' : downloadsValue;
+                const preorderDisplay = preorderData ? 
+                    `⏳ Pre-order: Yes\n   Release Date: ${preorderData.preorderReleaseDate}\n   Pre-order Price: ${currencySymbols[currency] || '¤'}${preorderData.preorderPrice.toFixed(2)}\n   Original Price: ${currencySymbols[currency] || '¤'}${preorderData.originalPrice.toFixed(2)}` : 
+                    '📦 Pre-order: No';
                 
                 const successMessage = `
         ✅ BOOK SUCCESSFULLY SUBMITTED TO VOLANT READS!
@@ -2625,7 +2761,7 @@
         💰 Price: ${priceDisplay} ${currencyNames[currency] || currency}
         📥 Download Limit: ${downloadsDisplay} downloads per buyer
         🔑 Keywords (${keywords.length}): ${keywordList}
-        ${preorder ? '⏳ Pre-order: Yes' : '📦 Pre-order: No'}
+        ${preorderDisplay}
         ${isbn ? `🔢 ISBN: ${isbn}` : ''}
         ${otherDetails ? `📝 Additional: ${otherDetails}` : ''}
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -2637,7 +2773,6 @@
         or "View Dashboard" to see all your books.
         `;
 
-                // Show persistent success message
                 showPersistentSuccess(successMessage, bookData);
 
             } catch (err) {
@@ -2653,9 +2788,8 @@
 
         // --- Reset ---
         form.addEventListener('reset', function() {
-            // Only reset if there's no active success message
             if (feedback.classList.contains('success') && feedback.style.display === 'block') {
-                return; // Don't reset if success message is showing
+                return;
             }
             feedback.style.display = 'none';
             feedback.className = '';
@@ -2681,6 +2815,11 @@
             updateCurrencySymbol();
             downloadsSelect.value = '5';
             toggleCustomDownloadInput();
+            preorderFields.classList.remove('show');
+            preorderCheckbox.checked = false;
+            preorderReleaseDate.value = '';
+            preorderPrice.value = '';
+            originalPrice.value = '';
         });
 
         // --- Init ---
@@ -2690,8 +2829,9 @@
         updateKeywordUI();
         updateCurrencySymbol();
         toggleCustomDownloadInput();
+        togglePreorderFields();
         console.log('📝 Volant Reads submission form ready.');
     </script>
-<script src="../shared/return-url-handler.js"></script>
+    <script src="../shared/return-url-handler.js"></script>
 </body>
 </html>

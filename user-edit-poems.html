@@ -501,9 +501,9 @@ header {
 
     <div class="nav-links" id="nav-links">
       <span class="close-btn" id="close-btn">✕</span>
-      <a href="index.html">Home</a>
-      <a href="shared/about.html">About</a>
-      <a href="shared/contact.html">Contact Us</a>
+      <a href="index">Home</a>
+      <a href="shared/about">About</a>
+      <a href="shared/contact">Contact Us</a>
     </div>
     
     <div class="nav-right">
@@ -518,7 +518,7 @@ header {
 <div class="container">
   <div class="page-header">
     <h1>✎ Edit My Poems</h1>
-    <a href="user-profile.html" class="back-link">← Back to Profile</a>
+    <a href="user-profile" class="back-link">← Back to Profile</a>
   </div>
 
   <!-- Search and Filter Bar -->
@@ -684,7 +684,7 @@ function renderPoems() {
   if (filteredPoems.length === 0) {
     poemsGrid.innerHTML = `<div class="no-poems">
       <p>${userPoems.length === 0 ? 'You haven\'t submitted any poems yet.' : 'No poems match your search.'}</p>
-      <a href="submitpoems.html" class="btn btn-primary">Submit Your First Poem</a>
+      <a href="submitpoems" class="btn btn-primary">Submit Your First Poem</a>
     </div>`;
     return;
   }
@@ -1017,7 +1017,7 @@ const logoutBtnNav = document.getElementById('logoutBtnNav');
 logoutBtnNav?.addEventListener('click', async () => {
   try {
     await signOut(auth);
-    window.location.href = 'index.html';
+    window.location.href = 'index';
   } catch (err) {
     console.error('Logout failed:', err);
     showToast('Logout failed', 'error');

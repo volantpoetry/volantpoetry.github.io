@@ -2167,7 +2167,7 @@ function goToLogin() {
   <!-- HEADER -->
   <header>
     <nav>
-      <a href="index.html" class="logo" style="text-decoration:none;">
+      <a href="index" class="logo" style="text-decoration:none;">
         <img src="../images/logokk.png" alt="Volant Reads Logo" class="nav-logo-img">
         <span class="logo-text"><span class="logo-highlight">Volant</span> Reads</span>
       </a>
@@ -2260,7 +2260,7 @@ function goToLogin() {
       <i class="fas fa-book-open"></i>
       <h2>Book Not Found</h2>
       <p>The book you're looking for doesn't exist or has been removed. Or check your internet connection and refresh the page.</p>
-      <a href="index.html" class="btn-back" style="display:inline-flex;"><i class="fas fa-arrow-left"></i> Back to Store</a>
+      <a href="index" class="btn-back" style="display:inline-flex;"><i class="fas fa-arrow-left"></i> Back to Store</a>
     </div>
 
     <div id="bookDetails" class="book-details">
@@ -2382,7 +2382,7 @@ function goToLogin() {
         </div>
 
         <div style="margin-top: 1.5rem;">
-          <a href="index.html" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Store</a>
+          <a href="index" class="btn-back"><i class="fas fa-arrow-left"></i> Back to Store</a>
         </div>
       </div>
     </div>
@@ -2996,7 +2996,7 @@ function goToLogin() {
         if (avatarHTML === `<span>${initial}</span>` && user.photoURL) avatarHTML = `<img src="${user.photoURL}" alt="Profile" />`;
 
         navRight.innerHTML = `
-          <a href="dashboard.html" class="profile-wrap" style="text-decoration:none;">
+          <a href="dashboard" class="profile-wrap" style="text-decoration:none;">
             <div class="profile-avatar">${avatarHTML}</div>
             <button class="btn-signout" id="signOutBtn" title="Sign out" style="pointer-events:auto;"><i class="fas fa-sign-out-alt"></i></button>
           </a>

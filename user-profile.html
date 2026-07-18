@@ -1698,9 +1698,9 @@ nav {
     </div>
     <div class="nav-links" id="nav-links">
       <span class="close-btn" id="close-btn">✕</span>
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact Us</a>
+      <a href="index">Home</a>
+      <a href="about">About</a>
+      <a href="contact">Contact Us</a>
     </div>
     <div class="nav-right">
       <!-- LOGIN BUTTON - shows when no user is signed in -->
@@ -1808,13 +1808,13 @@ nav {
   <div class="interaction-panel">
     <h3>Volant Quick</h3>
     <ul>
-      <li><a href="notifications.html" id="notificationsLink">🔔 Notifications <span class="nav-badge" id="notificationsBadge"></span></a></li>
-      <li><a href="messages.html" id="messagesLink">✉ Messages <span class="nav-badge" id="messagesBadge"></span></a></li>
-      <li><a href="submitpoems.html">📝 Submit Poems</a></li>
-      <li><a href="user-edit-poems.html">Edit Your Poems</a></li>
-      <li><a href="submit-draft.html">Save as Draft</a></li>
-      <li><a href="drafts-manager.html">Manage Draft Poems</a></li>
-      <li><a href="gallery-achievements.html">🏆 Achievement Gallery</a></li>
+      <li><a href="notifications" id="notificationsLink">🔔 Notifications <span class="nav-badge" id="notificationsBadge"></span></a></li>
+      <li><a href="messages" id="messagesLink">✉ Messages <span class="nav-badge" id="messagesBadge"></span></a></li>
+      <li><a href="submitpoems">📝 Submit Poems</a></li>
+      <li><a href="user-edit-poems">Edit Your Poems</a></li>
+      <li><a href="submit-draft">Save as Draft</a></li>
+      <li><a href="drafts-manager">Manage Draft Poems</a></li>
+      <li><a href="gallery-achievements">🏆 Achievement Gallery</a></li>
     </ul>
   </div>
 
@@ -2427,7 +2427,7 @@ async function updateVerificationBadge(userId, isOwnProfile = false) {
         unverifiedBadge.style.display = "inline-flex";
         unverifiedBadge.innerHTML = "⚠️ Unverified";
         unverifiedBadge.onclick = () => {
-          window.location.href = "verify-email.html";
+          window.location.href = "verify-email";
         };
         verifiedBadge.style.display = "none";
       }
@@ -3066,7 +3066,7 @@ if (data.realName && data.realName.trim() !== "") {
     if (logoutBtnNav) logoutBtnNav.style.display = "none";
   } else { 
     if (logoutBtnNav && user) logoutBtnNav.style.display = "inline-block";
-    if (editBtn) editBtn.onclick = () => window.location.href = "edit-profile.html"; 
+    if (editBtn) editBtn.onclick = () => window.location.href = "edit-profile"; 
     if (changePicBtn) changePicBtn.onclick = () => uploadPic.click(); 
     if (uploadPic) {
       uploadPic.onchange = async (e) => { const file = e.target.files[0]; if(!file) return; const fd = new FormData(); fd.append("file", file); fd.append("upload_preset","profile_pics"); const res = await fetch(`https://api.cloudinary.com/v1_1/dzoq4pgjn/image/upload`, { method: "POST", body: fd }); const imgUrl = (await res.json()).secure_url; if(imgUrl) { profilePic.src = imgUrl; profilePic.style.display = "block"; avatarDiv.style.display = "none"; await updateDoc(doc(db, "users", user.uid), { photoURL: imgUrl }); } };

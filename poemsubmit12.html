@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="robots" content="noindex, nofollow">
+<title>Volant Poetry | Live Verse Studio & Submission</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="png" href="images/logo.png" />
+
+<style>
+:root {
+  --primary: #4b2aad;
+  --primary-light: #7c3aed;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --radius: 14px;
+  --glass-bg: rgba(255, 255, 255, 0.92);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #a18cd1 100%);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.logo { 
+  position: fixed; 
+  top: 15px; 
+  left: 20px; 
+  font-family: 'Playfair Display', serif; 
+  font-size: 1.8rem; 
+  font-weight: 700; 
+  color: #fff; 
+  z-index: 2000; 
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.floating { 
+  position: absolute; 
+  font-size: 2rem; 
+  color: rgba(255,255,255,0.5); 
+  animation: float 12s linear infinite alternate; 
+  user-select: none; 
+  pointer-events: none;
+}
+@keyframes float { 
+  0% { transform: translateY(0) rotate(0deg); } 
+  50% { transform: translateY(-20px) rotate(10deg); } 
+  100% { transform: translateY(0) rotate(20deg); } 
+}
+
+.main-wrapper {
+  max-width: 1400px;
+  margin: 100px auto 50px auto;
+  padding: 0 20px;
+}
+
+.guidelines-banner {
+  max-width: 900px;
+  margin: 0 auto 25px auto;
+  padding: 15px 20px;
+  background: rgba(255,255,255,0.88);
+  border-radius: 60px;
+  text-align: center;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.guidelines-banner a {
+  color: var(--primary);
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.studio-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+}
+
+.controls-panel {
+  flex: 1;
+  min-width: 280px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.6);
+  height: fit-content;
+}
+
+.canvas-panel {
+  flex: 1.5;
+  min-width: 380px;
+  background: rgba(255,255,255,0.3);
+  backdrop-filter: blur(4px);
+  border-radius: 28px;
+  padding: 20px;
+  box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+}
+
+.live-card {
+  background: #fffef7;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: inset 0 1px 4px #0001, 0 12px 24px rgba(0,0,0,0.08);
+  transition: all 0.2s ease;
+}
+
+.live-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #e2d4f0;
+  outline: none;
+  color: #2d1b4e;
+  background: transparent;
+  line-height: 1.2;
+  word-break: break-word;
+}
+.live-title:empty:before {
+  content: "Untitled Poem";
+  color: #bbb0cc;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.live-poem {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  outline: none;
+  min-height: 320px;
+  background: transparent;
+  color: #1f1a2e;
+}
+.live-poem:empty:before {
+  content: "✍️ Write your poem here... each line break matters. Click and start writing.";
+  color: #bbb0cc;
+  font-style: italic;
+}
+
+.live-poem b, .live-poem strong { font-weight: 700; }
+.live-poem i, .live-poem em { font-style: italic; }
+
+.section-title {
+  font-weight: 700;
+  margin: 18px 0 10px 0;
+  color: #3a2a5e;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+.section-title:first-of-type {
+  margin-top: 0;
+}
+
+.tool-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 12px;
+}
+.tool-btn {
+  background: #ede7ff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 40px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #2d1b4e;
+}
+.tool-btn.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(75,42,173,0.4);
+}
+.tool-btn:hover {
+  background: #d9ceff;
+  transform: scale(0.97);
+}
+
+.indent-slider, .rotation-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f4edff;
+  padding: 8px 16px;
+  border-radius: 40px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.indent-slider span, .rotation-control span {
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+input[type="range"] {
+  width: 140px;
+  padding: 0;
+}
+
+.category-field {
+  margin-top: 12px;
+  background: #f9f3ff;
+  padding: 12px;
+  border-radius: 20px;
+}
+.category-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 0.85rem;
+}
+.category-field input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 40px;
+  border: 1px solid #ddd0e8;
+  background: white;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+.collab-hint {
+  font-size: 0.7rem;
+  color: #5c4a6e;
+  margin-top: 5px;
+}
+
+.submit-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 40px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.submit-btn:hover {
+  background: #37187f;
+  transform: translateY(-2px);
+}
+
+.success-message {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+hr {
+  margin: 16px 0;
+  border-color: #e4d5fc;
+}
+
+@media (max-width: 800px) {
+  .studio-layout {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .main-wrapper {
+    margin: 80px auto 30px auto;
+    padding: 0 12px;
+  }
+  .logo {
+    font-size: 1.4rem;
+    top: 10px;
+    left: 15px;
+  }
+  .live-title {
+    font-size: 1.5rem;
+  }
+  
+  .canvas-panel {
+    padding: 0 !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    margin: 0 -12px !important;
+    width: calc(100% + 24px) !important;
+    max-width: none !important;
+  }
+  
+  .live-card {
+    padding: 16px !important;
+    border-radius: 0 !important;
+  }
+  
+  .controls-panel {
+    padding: 18px;
+  }
+}
+
+@media (max-width: 550px) {
+  .controls-panel {
+    padding: 15px;
+  }
+  .live-card {
+    padding: 14px !important;
+  }
+  .indent-slider, .rotation-control {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .indent-slider button, .rotation-control button {
+    margin-top: 5px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="logo">Volant Poetry</div>
+
+<div class="floating" style="top: 10%; left: 5%;">✒️</div>
+<div class="floating" style="top: 20%; left: 85%;">📜</div>
+<div class="floating" style="top: 70%; left: 15%;">⭐</div>
+<div class="floating" style="top: 50%; left: 90%;">🖋️</div>
+<div class="floating" style="top: 85%; left: 75%;">🌙</div>
+<div class="floating" style="top: 30%; left: 45%;">✨</div>
+
+<div class="main-wrapper">
+  <div class="guidelines-banner">
+    📜 Please read our 
+    <a href="submission-guidelines">Submission Guidelines</a>
+  </div>
+
+  <div class="studio-layout" id="studioLayout">
+    <div class="controls-panel" id="controlsPanel">
+      <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 8px;">Text Emphasis</div>
+      <div class="tool-grid">
+        <button type="button" class="tool-btn" id="boldBtn"><b>Bold</b></button>
+        <button type="button" class="tool-btn" id="italicBtn"><i>Italic</i></button>
+        <button type="button" class="tool-btn" id="boldItalicBtn"><b><i>Bold+Italic</i></b></button>
+        <button type="button" class="tool-btn" id="resetFormatBtn">⟳ Reset style</button>
+      </div>
+
+      <div class="section-title">Alignment</div>
+      <div class="tool-grid">
+        <button type="button" class="tool-btn align-btn" data-align="left">⬅️ Left</button>
+        <button type="button" class="tool-btn align-btn" data-align="center">🀆 Center</button>
+        <button type="button" class="tool-btn align-btn" data-align="right">➡️ Right</button>
+        <button type="button" class="tool-btn align-btn" data-align="justify">⚖️ Justify</button>
+      </div>
+
+      <div class="indent-slider">
+        <span>📏 Indent (px per line):</span>
+        <input type="range" id="indentSlider" min="0" max="60" value="0" step="2">
+        <span id="indentValue">0px</span>
+        <button type="button" id="resetIndent" class="tool-btn" style="background:#e2d4f0; padding:5px 12px;">⟳ reset</button>
+      </div>
+
+      <div class="rotation-control" id="rotationControl">
+        <span>🔄 Rotate text (deg):</span>
+        <input type="range" id="rotateSlider" min="-8" max="8" value="0" step="1">
+        <span id="rotateValue">0°</span>
+      </div>
+
+      <div id="mobileCanvasAnchor"></div>
+
+      <hr id="categoryHr">
+      
+      <div class="category-field">
+        <label>Categories (comma-separated)</label>
+        <input type="text" id="categoriesInput" value="" placeholder="Love, Life, Nature...">
+      </div>
+      <div class="category-field">
+        <label>Author / Pen name</label>
+        <input type="text" id="authorName" placeholder="Your luminous name">
+      </div>
+      <div class="category-field">
+        <label>Collaborators (usernames, comma)</label>
+        <input type="text" id="collaboratorsField" placeholder="poetA, lunarscribe" list="collaboratorSuggestions">
+        <datalist id="collaboratorSuggestions"></datalist>
+        <div class="collab-hint">collaborators will be notified (must be registered users)</div>
+      </div>
+
+      <button type="button" id="submitPoemBtn" class="submit-btn">SUBMIT POEM</button>
+      <div id="submitStatus" class="success-message"></div>
+    </div>
+
+    <div class="canvas-panel" id="canvasPanel">
+      <div class="live-card">
+        <div class="live-title" id="liveTitle" contenteditable="true"></div>
+        <div class="live-poem" id="livePoem" contenteditable="true"></div>
+      </div>
+      <div style="font-size: 0.7rem; text-align: center; margin-top: 12px; opacity: 0.75; padding: 0 10px;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  doc,
+  getDoc,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+  authDomain: "silent-depth.firebaseapp.com",
+  projectId: "silent-depth",
+  storageBucket: "silent-depth.appspot.com",
+  messagingSenderId: "78008755450",
+  appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const liveTitle = document.getElementById("liveTitle");
+const livePoem = document.getElementById("livePoem");
+const categoriesInput = document.getElementById("categoriesInput");
+const authorNameInput = document.getElementById("authorName");
+const collaboratorsField = document.getElementById("collaboratorsField");
+const submitStatus = document.getElementById("submitStatus");
+const collaboratorSuggestions = document.getElementById("collaboratorSuggestions");
+
+let currentAlign = "left";
+let currentIndent = 0;
+let currentRotate = 0;
+
+function getSelectedRange() {
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return null;
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) return null;
+  const container = range.commonAncestorContainer;
+  const isInPoem = livePoem.contains(container);
+  const isInTitle = liveTitle.contains(container);
+  if (!isInPoem && !isInTitle) return null;
+  return { range, isInPoem, isInTitle };
+}
+
+function applyAlignment(align) {
+  const selected = getSelectedRange();
+  if (selected) {
+    const { range } = selected;
+    const selectedContent = range.extractContents();
+    const span = document.createElement("span");
+    span.style.textAlign = align;
+    span.style.display = "block";
+    span.appendChild(selectedContent);
+    range.insertNode(span);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    submitStatus.innerText = `✓ Alignment applied to selected text.`;
+  } else {
+    currentAlign = align;
+    livePoem.style.textAlign = currentAlign;
+    liveTitle.style.textAlign = currentAlign;
+    submitStatus.innerText = `✓ Alignment applied to entire poem.`;
+  }
+  setTimeout(() => { if(submitStatus.innerText?.startsWith("✓")) submitStatus.innerText = ""; }, 1200);
+}
+
+function applyIndent(indentPx) {
+  const selected = getSelectedRange();
+  if (selected) {
+    const { range } = selected;
+    const selectedContent = range.extractContents();
+    const span = document.createElement("span");
+    span.style.marginLeft = `${indentPx}px`;
+    span.style.display = "inline-block";
+    span.appendChild(selectedContent);
+    range.insertNode(span);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    submitStatus.innerText = `✓ Indent applied to selected text.`;
+  } else {
+    currentIndent = indentPx;
+    const lineDivs = livePoem.querySelectorAll('div');
+    lineDivs.forEach(div => div.style.marginLeft = `${currentIndent}px`);
+    liveTitle.style.marginLeft = `${Math.floor(currentIndent / 2)}px`;
+    submitStatus.innerText = `✓ Indent ${indentPx}px applied to entire poem.`;
+  }
+  setTimeout(() => { if(submitStatus.innerText?.startsWith("✓")) submitStatus.innerText = ""; }, 1200);
+}
+
+function applyRotation(rotDeg) {
+  const selected = getSelectedRange();
+  if (selected) {
+    const { range } = selected;
+    const selectedContent = range.extractContents();
+    const span = document.createElement("span");
+    span.style.transform = `rotate(${rotDeg}deg)`;
+    span.style.display = "inline-block";
+    span.appendChild(selectedContent);
+    range.insertNode(span);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    submitStatus.innerText = `✓ Rotation applied to selected text.`;
+  } else {
+    currentRotate = rotDeg;
+    const lineDivs = livePoem.querySelectorAll('div');
+    lineDivs.forEach(div => div.style.transform = `rotate(${currentRotate}deg)`);
+    liveTitle.style.transform = `rotate(${currentRotate * 0.3}deg)`;
+    submitStatus.innerText = `✓ Rotation ${rotDeg}° applied to entire poem.`;
+  }
+  setTimeout(() => { if(submitStatus.innerText?.startsWith("✓")) submitStatus.innerText = ""; }, 1200);
+}
+
+function applyFormatToSelection(commandType) {
+  const selection = window.getSelection();
+  if (!selection.rangeCount) return;
+  const range = selection.getRangeAt(0);
+  if (range.collapsed) {
+    submitStatus.innerText = "Select some text first!";
+    setTimeout(() => { if(submitStatus.innerText === "Select some text first!") submitStatus.innerText = ""; }, 1200);
+    return;
+  }
+  const container = range.commonAncestorContainer;
+  const isInPoem = livePoem.contains(container);
+  const isInTitle = liveTitle.contains(container);
+  if (!isInPoem && !isInTitle) {
+    submitStatus.innerText = "Select text inside the title or poem area.";
+    setTimeout(() => submitStatus.innerText = "", 1200);
+    return;
+  }
+  
+  if (commandType === 'bold') {
+    document.execCommand('bold', false, null);
+  } else if (commandType === 'italic') {
+    document.execCommand('italic', false, null);
+  } else if (commandType === 'bolditalic') {
+    document.execCommand('bold', false, null);
+    document.execCommand('italic', false, null);
+  }
+  
+  if (isInPoem) livePoem.focus();
+  else liveTitle.focus();
+  submitStatus.innerText = "✓ Style applied to selected text!";
+  setTimeout(() => { if(submitStatus.innerText === "✓ Style applied to selected text!") submitStatus.innerText = ""; }, 800);
+}
+
+function resetAllFormatting() {
+  // Get all text nodes and remove formatting spans
+  const cleanNode = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) return;
+    if (node.tagName === 'B' || node.tagName === 'STRONG' || node.tagName === 'I' || node.tagName === 'EM' || (node.tagName === 'SPAN' && node.hasAttribute('style'))) {
+      const parent = node.parentNode;
+      while (node.firstChild) {
+        parent.insertBefore(node.firstChild, node);
+      }
+      parent.removeChild(node);
+      return;
+    }
+    node.childNodes.forEach(child => cleanNode(child));
+  };
+  
+  cleanNode(livePoem);
+  cleanNode(liveTitle);
+  
+  currentAlign = "left";
+  currentIndent = 0;
+  currentRotate = 0;
+  livePoem.style.textAlign = "left";
+  liveTitle.style.textAlign = "left";
+  livePoem.querySelectorAll('div').forEach(div => {
+    div.style.marginLeft = "0px";
+    div.style.transform = "rotate(0deg)";
+  });
+  liveTitle.style.transform = "rotate(0deg)";
+  liveTitle.style.marginLeft = "0px";
+  document.getElementById("indentSlider").value = 0;
+  document.getElementById("indentValue").innerText = "0px";
+  document.getElementById("rotateSlider").value = 0;
+  document.getElementById("rotateValue").innerText = "0°";
+  document.querySelectorAll(".align-btn").forEach(btn => btn.classList.remove("active"));
+  document.querySelector(".align-btn[data-align='left']").classList.add("active");
+  submitStatus.innerText = "All formatting reset.";
+  setTimeout(() => submitStatus.innerText = "", 1000);
+}
+
+// FIXED: Preserve line breaks and formatting when submitting
+function getPoemHTML() {
+  const children = livePoem.childNodes;
+  let html = '';
+  
+  for (const node of children) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      // Preserve line breaks in text nodes
+      const text = node.textContent;
+      const lines = text.split(/\r?\n/);
+      for (let i = 0; i < lines.length; i++) {
+        if (lines[i].trim() !== '' || lines[i] === '') {
+          html += `<div class="poetry-line">${escapeHtml(lines[i]) || ' '}</div>`;
+        }
+        // Don't add extra div for empty lines between breaks
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      if (node.tagName === 'DIV' && node.classList.contains('poetry-line')) {
+        // Keep existing poetry lines as-is
+        html += node.outerHTML;
+      } else if (node.tagName === 'BR') {
+        html += `<div class="poetry-line"> </div>`;
+      } else {
+        // Handle formatted elements (b, i, span) within lines
+        const tempDiv = document.createElement('div');
+        tempDiv.className = 'poetry-line';
+        tempDiv.appendChild(node.cloneNode(true));
+        html += tempDiv.outerHTML;
+      }
+    }
+  }
+  
+  // If nothing was generated, use innerHTML as fallback
+  if (!html.trim()) {
+    html = livePoem.innerHTML;
+    if (!html.includes('poetry-line')) {
+      const lines = livePoem.innerText.split(/\r?\n/);
+      html = lines.map(l => `<div class="poetry-line">${escapeHtml(l) || ' '}</div>`).join('');
+    }
+  }
+  
+  return html;
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, function(m) {
+    if (m === '&') return '&amp;';
+    if (m === '<') return '&lt;';
+    if (m === '>') return '&gt;';
+    return m;
+  });
+}
+
+function ensureLineWrappers() {
+  // Check if content already has .poetry-line divs
+  const existingLines = livePoem.querySelectorAll('.poetry-line');
+  if (existingLines.length > 0) {
+    // Already wrapped, just ensure styles
+    applyGlobalStyles();
+    return;
+  }
+  
+  const text = livePoem.innerText;
+  if (!text.trim()) return;
+  
+  const lines = text.split(/\r?\n/);
+  const filteredLines = lines.filter(l => l !== undefined);
+  if (filteredLines.length > 0) {
+    const wrapped = filteredLines.map(l => `<div class="poetry-line">${escapeHtml(l) || ' '}</div>`).join('');
+    livePoem.innerHTML = wrapped;
+  }
+  applyGlobalStyles();
+}
+
+function applyGlobalStyles() {
+  livePoem.style.textAlign = currentAlign;
+  liveTitle.style.textAlign = currentAlign;
+  const lineDivs = livePoem.querySelectorAll('.poetry-line');
+  lineDivs.forEach(div => {
+    div.style.marginLeft = `${currentIndent}px`;
+    div.style.transform = `rotate(${currentRotate}deg)`;
+    div.style.display = 'block';
+  });
+  liveTitle.style.transform = `rotate(${currentRotate * 0.3}deg)`;
+  liveTitle.style.marginLeft = `${Math.floor(currentIndent / 2)}px`;
+}
+
+livePoem.addEventListener('input', () => {
+  setTimeout(() => ensureLineWrappers(), 10);
+});
+liveTitle.addEventListener('input', () => applyGlobalStyles());
+
+function bindControls() {
+  document.querySelectorAll(".align-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const align = btn.dataset.align;
+      applyAlignment(align);
+      document.querySelectorAll(".align-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    });
+  });
+  
+  const indentSlider = document.getElementById("indentSlider");
+  const indentValSpan = document.getElementById("indentValue");
+  indentSlider.addEventListener("input", (e) => {
+    const val = parseInt(e.target.value);
+    indentValSpan.innerText = val + "px";
+    applyIndent(val);
+  });
+  
+  document.getElementById("resetIndent").addEventListener("click", () => {
+    indentSlider.value = 0;
+    indentValSpan.innerText = "0px";
+    applyIndent(0);
+  });
+  
+  const rotateSlider = document.getElementById("rotateSlider");
+  const rotateSpan = document.getElementById("rotateValue");
+  rotateSlider.addEventListener("input", (e) => {
+    const val = parseInt(e.target.value);
+    rotateSpan.innerText = val + "°";
+    applyRotation(val);
+  });
+  
+  document.getElementById("boldBtn").addEventListener("click", () => applyFormatToSelection('bold'));
+  document.getElementById("italicBtn").addEventListener("click", () => applyFormatToSelection('italic'));
+  document.getElementById("boldItalicBtn").addEventListener("click", () => applyFormatToSelection('bolditalic'));
+  document.getElementById("resetFormatBtn").addEventListener("click", resetAllFormatting);
+}
+
+let currentUserId = null;
+let currentUsername = "Anonymous Poet";
+let knownUsers = [];
+
+async function loadUsernames() {
+  const snapshot = await getDocs(collection(db, "users"));
+  knownUsers = [];
+  collaboratorSuggestions.innerHTML = "";
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    if (data.username) {
+      knownUsers.push({ uid: docSnap.id, username: data.username });
+      const option = document.createElement("option");
+      option.value = data.username;
+      collaboratorSuggestions.appendChild(option);
+    }
+  });
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = `universal-login.html?platform=poetry&redirect=${encodeURIComponent(window.location.href)}`;
+    return;
+  }
+  currentUserId = user.uid;
+  const userDoc = await getDoc(doc(db, "users", user.uid));
+  currentUsername = userDoc.exists() && userDoc.data().username ? userDoc.data().username : user.email.split("@")[0];
+  authorNameInput.value = currentUsername;
+  await loadUsernames();
+});
+
+collaboratorsField.addEventListener("input", () => {
+  const raw = collaboratorsField.value;
+  const parts = raw.split(",");
+  const lastPart = parts[parts.length - 1].trim().toLowerCase();
+  const alreadySelected = parts.slice(0, -1).map(p => p.trim().toLowerCase());
+  
+  collaboratorSuggestions.innerHTML = "";
+  knownUsers.forEach(user => {
+    if (user.username.toLowerCase().startsWith(lastPart) && !alreadySelected.includes(user.username.toLowerCase())) {
+      const option = document.createElement("option");
+      option.value = parts.slice(0, -1).join(", ") + (parts.length > 1 ? ", " : "") + user.username;
+      collaboratorSuggestions.appendChild(option);
+    }
+  });
+});
+
+async function validateCollaborators(raw) {
+  if (!raw.trim()) return [];
+  const names = [...new Set(raw.split(",").map(n => n.trim()).filter(Boolean))];
+  const result = [];
+  for (let name of names) {
+    const matched = knownUsers.find(u => u.username.toLowerCase() === name.toLowerCase());
+    if (!matched) throw new Error(`Collaborator "${name}" not found.`);
+    if (matched.uid === currentUserId) throw new Error(`You cannot add yourself.`);
+    result.push({ uid: matched.uid, username: matched.username });
+  }
+  return result;
+}
+
+document.getElementById("submitPoemBtn").addEventListener("click", async () => {
+  const title = liveTitle.innerText.trim() || "Untitled Poem";
+  // Use the new getPoemHTML function to preserve all lines and formatting
+  const poemHTML = getPoemHTML();
+  const poemPlain = livePoem.innerText.trim();
+  const categoriesRaw = categoriesInput.value.trim();
+  const author = authorNameInput.value.trim() || currentUsername;
+  const collaboratorsRaw = collaboratorsField.value.trim();
+  
+  if (!poemPlain) {
+    submitStatus.style.color = "red";
+    submitStatus.innerText = "❌ Please write your poem content.";
+    return;
+  }
+  if (!categoriesRaw) {
+    submitStatus.style.color = "red";
+    submitStatus.innerText = "❌ Please add at least one category.";
+    return;
+  }
+  const categories = categoriesRaw.split(",").map(c => c.trim()).filter(Boolean);
+  let collaborators = [];
+  try {
+    collaborators = await validateCollaborators(collaboratorsRaw);
+  } catch (err) {
+    submitStatus.style.color = "red";
+    submitStatus.innerText = err.message;
+    return;
+  }
+  
+  const arrangement = {
+    alignment: currentAlign,
+    indentPx: currentIndent,
+    rotationDeg: currentRotate,
+    richTitleHtml: liveTitle.innerHTML,
+    richContentHtml: poemHTML
+  };
+  
+  try {
+    const poemRef = await addDoc(collection(db, "recentPoems"), {
+      title,
+      content: poemPlain,
+      richContentHtml: poemHTML,
+      richTitleHtml: liveTitle.innerHTML,
+      author,
+      authorId: currentUserId,
+      categories,
+      collaborators,
+      arrangement,
+      timestamp: serverTimestamp(),
+      submittedBy: currentUsername
+    });
+    
+    for (let collab of collaborators) {
+      await addDoc(collection(db, "notifications"), {
+        userId: collab.uid,
+        type: "collaboration",
+        poemId: poemRef.id,
+        message: `${currentUsername} added you as collaborator on "${title}" with live styling.`,
+        createdAt: serverTimestamp(),
+        read: false
+      });
+    }
+    
+    submitStatus.style.color = "green";
+    submitStatus.innerText = "✨ Poem submitted successfully with all lines! ✨";
+    setTimeout(() => submitStatus.innerText = "", 3000);
+  } catch (err) {
+    submitStatus.style.color = "red";
+    submitStatus.innerText = "Submission error: " + err.message;
+  }
+});
+
+function init() {
+  bindControls();
+  ensureLineWrappers();
+  applyGlobalStyles();
+  document.querySelector(".align-btn[data-align='left']").classList.add("active");
+}
+init();
+</script>
+<script>
+// Dynamic login/signup link setup for current page redirect
+(function() {
+  function setupDynamicAuthLinks() {
+    const currentPage = window.location.href;
+    const currentFile = window.location.pathname.split('/').pop();
+    let platform = 'poetry';
+    if (currentFile.startsWith('store/')) platform = 'reads';
+    if (currentFile === 'parent-house.html') platform = 'foundry';
+    
+    const loginParams = new URLSearchParams();
+    loginParams.append('platform', platform);
+    loginParams.append('redirect', currentPage);
+    
+    document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
+      link.href = `universal-login.html?${loginParams.toString()}`;
+    });
+    
+    document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
+      link.href = `universal-signup.html?${loginParams.toString()}`;
+    });
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
+  } else {
+    setupDynamicAuthLinks();
+  }
+})();
+</script>
+<script src="return-url-handler.js"></script>
+</body>
+</html>
