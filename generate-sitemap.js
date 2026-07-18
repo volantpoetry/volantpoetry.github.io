@@ -1,7 +1,7 @@
 /**
- * 🔥 Auto Sitemap Generator for Volant Foundry (STATIC VERSION)
+ * 🔥 Auto Sitemap Generator for Volant Foundry
  * GENERATES CLEAN URLs (no .html extension)
- * Runs WITHOUT Firebase - only static pages
+ * Runs on GitHub Actions
  */
 
 const fs = require('fs');
@@ -17,30 +17,17 @@ const excludedPages = [
   'admin', 'dashboard', 'manage', 'editor',
   'login', 'signup', 'reset', 'verify',
   'comment', 'draft', 'test', 'user',
-  'approvals',
-  'universal-login',
-  'universal-signup',
-  'assign-images.html',
-  'poemcount.html',
-  'poem.html',
-  'addcategories.html',
-  'Select-Poem-of-the-Week.html',
-  'existingVerify.html',
-  'check-verification.html',
-  'list-files.py',
-  'update-folder-resources.py'
+  'approvals', 'universal-login', 'universal-signup',
+  'assign-images.html', 'poemcount.html', 'poem.html',
+  'addcategories.html', 'Select-Poem-of-the-Week.html',
+  'existingVerify.html', 'check-verification.html',
+  'list-files.py', 'update-folder-resources.py'
 ];
 
 // 🚫 EXCLUDED FOLDERS
 const excludedFolders = [
-  'admin',
-  'api',
-  'node_modules',
-  '.git',
-  '.vscode',
-  '.continue',
-  'backup',
-  'backups_clean_urls'
+  'admin', 'api', 'node_modules', '.git', '.vscode',
+  '.continue', 'backup', 'backups_clean_urls'
 ];
 
 // ---- Exclusion helper ----
@@ -122,10 +109,6 @@ function getStaticPages() {
         changefreq = 'monthly';
       }
 
-      // Get file directory for images
-      const fileDir = path.dirname(file);
-      const fileName = path.basename(file, '.html');
-      
       return {
         loc: url,
         lastmod,
@@ -139,8 +122,7 @@ function getStaticPages() {
 // ---- Build XML ----
 function buildXML(urls) {
   return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 ${urls.map(u => `
   <url>
@@ -148,9 +130,6 @@ ${urls.map(u => `
     ${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}
     <changefreq>${u.changefreq}</changefreq>
     ${u.priority ? `<priority>${u.priority}</priority>` : ''}
-    ${u.images && u.images.length > 0 ? u.images.map(img =>
-      `<image:image><image:loc>${img}</image:loc></image:image>`
-    ).join('') : ''}
   </url>
 `).join('')}
 
@@ -160,9 +139,9 @@ ${urls.map(u => `
 // ---- MAIN ----
 function generateSitemap() {
   try {
-    console.log("🧠 Generating clean SEO sitemap (STATIC VERSION)...");
+    console.log("🧠 Generating clean SEO sitemap...");
     console.log(`📁 Domain: ${domain}`);
-    console.log("🚫 Excluding: admin, api, approvals, universal auth files");
+    console.log("🚫 Excluded: admin, api, approvals, universal auth files");
 
     const staticPages = getStaticPages();
 
@@ -185,8 +164,8 @@ function generateSitemap() {
     console.log('\n📋 Sample URLs:');
     console.log(`   - ${domain}/`);
     console.log(`   - ${domain}/store`);
-    console.log(`   - ${domain}/store/details?id=xxx`);
     console.log(`   - ${domain}/shared/about`);
+    console.log(`   - ${domain}/shared/contact`);
 
   } catch (err) {
     console.error('❌ Sitemap error:', err);
