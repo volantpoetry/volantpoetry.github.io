@@ -1,6 +1,6 @@
 /**
  * 🔥 Auto Sitemap Generator for Volant Foundry
- * GENERATES CLEAN URLs (no .html extension)
+ * GENERATES URLs WITH .html EXTENSION (no clean URLs)
  * Runs on GitHub Actions
  */
 
@@ -43,16 +43,24 @@ function isExcluded(file) {
   );
 }
 
-// ---- Get clean URL (no .html) ----
-function getCleanUrl(filePath) {
-  let cleanPath = filePath.replace(/\.html$/, '');
-  if (cleanPath.endsWith('/index')) {
-    cleanPath = cleanPath.replace(/\/index$/, '');
-  }
-  if (cleanPath === 'index') {
-    cleanPath = '';
-  }
+// ---- Get URL with .html extension ----
+function getUrlWithHtml(filePath) {
+  let cleanPath = filePath;
+  
+  // Remove leading ./ if present
   cleanPath = cleanPath.replace(/^\.\//, '');
+  
+  // For index.html, just return the folder path or empty for root
+  if (cleanPath === 'index.html') {
+    return '';
+  }
+  
+  // For subfolder index.html (e.g., store/index.html -> store/)
+  if (cleanPath.endsWith('/index.html')) {
+    return cleanPath.replace(/\/index\.html$/, '/');
+  }
+  
+  // Keep the .html extension for all other files
   return cleanPath;
 }
 
@@ -67,7 +75,7 @@ function scanFolderForHTML(folder) {
   return glob.sync(pattern, { cwd: publicFolder });
 }
 
-// ---- Static pages (clean URLs) ----
+// ---- Static pages (with .html URLs) ----
 function getStaticPages() {
   const rootFiles = glob.sync('*.html', { cwd: publicFolder });
   const subFolders = ['store', 'shared', 'volant_foundry'];
@@ -86,27 +94,47 @@ function getStaticPages() {
       const filePath = path.join(publicFolder, file);
       const stats = fs.statSync(filePath);
       const lastmod = stats.mtime.toISOString();
-      const cleanFile = getCleanUrl(file);
+      const urlPath = getUrlWithHtml(file);
       
+      // Build URL with .html extension
       let url;
-      if (cleanFile === '') {
-        url = domain;
+      if (urlPath === '') {
+        url = domain;  // Root domain for index.html
       } else {
-        url = `${domain}/${cleanFile}`;
+        url = `${domain}/${urlPath}`;
       }
 
+      // Priority and changefreq based on page importance
       let priority = '0.8';
       let changefreq = 'monthly';
       
-      if (cleanFile === '' || cleanFile === 'store' || cleanFile === 'store/index') {
+      // Homepage - highest priority
+      if (file === 'index.html' || urlPath === '' || urlPath === 'store/' || urlPath === 'store/index.html') {
         priority = '1.0';
         changefreq = 'daily';
-      } else if (cleanFile === 'poems' || cleanFile.includes('store/details')) {
+      } 
+      // Important content pages
+      else if (file === 'poems.html' || 
+               file === 'submission-guidelines.html' ||
+               file === 'submitpoems.html' ||
+               file.includes('store/details.html')) {
         priority = '0.9';
         changefreq = 'weekly';
-      } else if (cleanFile.startsWith('shared/')) {
+      } 
+      // Shared pages (about, contact, privacy, terms)
+      else if (file.startsWith('shared/')) {
         priority = '0.6';
         changefreq = 'monthly';
+      } 
+      // Store pages
+      else if (file.startsWith('store/')) {
+        priority = '0.7';
+        changefreq = 'weekly';
+      } 
+      // Volant Foundry pages
+      else if (file.startsWith('volant_foundry/')) {
+        priority = '0.8';
+        changefreq = 'weekly';
       }
 
       return {
@@ -122,7 +150,8 @@ function getStaticPages() {
 // ---- Build XML ----
 function buildXML(urls) {
   return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
 ${urls.map(u => `
   <url>
@@ -136,12 +165,47 @@ ${urls.map(u => `
 </urlset>`;
 }
 
+// ---- Generate robots.txt ----
+function generateRobotsTxt() {
+  const robots = `# Robots.txt for Volant Foundry
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: ${domain}/sitemap.xml
+
+# Block admin and private pages
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /manage/
+Disallow: /editor/
+Disallow: /login/
+Disallow: /signup/
+Disallow: /reset/
+Disallow: /verify/
+Disallow: /approvals/
+Disallow: /universal-login/
+Disallow: /universal-signup/
+Disallow: /check-verification/
+Disallow: /existingVerify/
+Disallow: /users-reset/
+Disallow: /user-edit-poems/
+Disallow: /notifications/
+Disallow: /messages/
+`;
+
+  fs.writeFileSync(path.join(publicFolder, 'robots.txt'), robots, 'utf8');
+  console.log('✅ robots.txt generated');
+}
+
 // ---- MAIN ----
 function generateSitemap() {
   try {
-    console.log("🧠 Generating clean SEO sitemap...");
+    console.log("🧠 Generating SEO sitemap with .html extensions...");
     console.log(`📁 Domain: ${domain}`);
     console.log("🚫 Excluded: admin, api, approvals, universal auth files");
+    console.log("🔗 Using URLs with .html extension");
 
     const staticPages = getStaticPages();
 
@@ -160,12 +224,26 @@ function generateSitemap() {
     const xml = buildXML(unique);
     fs.writeFileSync(path.join(publicFolder, 'sitemap.xml'), xml, 'utf8');
 
-    console.log('✅ Sitemap generated successfully with clean URLs!');
+    console.log('✅ Sitemap generated successfully with .html extensions!');
     console.log('\n📋 Sample URLs:');
     console.log(`   - ${domain}/`);
-    console.log(`   - ${domain}/store`);
-    console.log(`   - ${domain}/shared/about`);
-    console.log(`   - ${domain}/shared/contact`);
+    console.log(`   - ${domain}/store/index.html`);
+    console.log(`   - ${domain}/shared/about.html`);
+    console.log(`   - ${domain}/shared/contact.html`);
+    console.log(`   - ${domain}/volant_foundry/index.html`);
+    console.log(`   - ${domain}/submission-guidelines.html`);
+    console.log(`   - ${domain}/submitpoems.html`);
+
+    // Generate robots.txt
+    generateRobotsTxt();
+
+    console.log('\n📊 Sitemap Statistics:');
+    console.log(`   Total URLs: ${unique.length}`);
+    console.log(`   Priority 1.0: ${unique.filter(u => u.priority === '1.0').length}`);
+    console.log(`   Priority 0.9: ${unique.filter(u => u.priority === '0.9').length}`);
+    console.log(`   Priority 0.8: ${unique.filter(u => u.priority === '0.8').length}`);
+    console.log(`   Priority 0.7: ${unique.filter(u => u.priority === '0.7').length}`);
+    console.log(`   Priority 0.6: ${unique.filter(u => u.priority === '0.6').length}`);
 
   } catch (err) {
     console.error('❌ Sitemap error:', err);
