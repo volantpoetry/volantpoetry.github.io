@@ -1,124 +1,88 @@
 /**
- * 🔥 Auto Sitemap Generator for Volant Foundry (SEO CLEAN VERSION)
- * EXCLUDES: admin folder, approvals.html, universal auth files, api folder
+ * 🔥 Auto Sitemap Generator for Volant Foundry (STATIC VERSION)
+ * GENERATES CLEAN URLs (no .html extension)
+ * Runs WITHOUT Firebase - only static pages
  */
 
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
-const { initializeApp, cert } = require('firebase-admin/app');
-const { getFirestore } = require('firebase-admin/firestore');
 
 // ---- CONFIG ----
-const domain = 'https://volantpoetry.vercel.app';  // ✅ UPDATED to Vercel
+const domain = 'https://volantpoetry.vercel.app';
 const publicFolder = './';
-const firebaseKeyPath = './serviceAccountKey.json';
 
 // 🚫 BLOCKED / NO-INDEX PAGES
 const excludedPages = [
-  // Admin pages
   'admin', 'dashboard', 'manage', 'editor',
   'login', 'signup', 'reset', 'verify',
   'comment', 'draft', 'test', 'user',
-  
-  // Store pages to exclude
-  'approvals',  // ❌ Exclude approvals.html in store folder
-  
-  // Universal auth pages (root and shared)
-  'universal-login',  // ❌ Exclude universal-login.html
-  'universal-signup', // ❌ Exclude universal-signup.html
-  
-  // Other exclusions
+  'approvals',
+  'universal-login',
+  'universal-signup',
   'assign-images.html',
   'poemcount.html',
   'poem.html',
   'addcategories.html',
   'Select-Poem-of-the-Week.html',
   'existingVerify.html',
-  'check-verification.html'
+  'check-verification.html',
+  'list-files.py',
+  'update-folder-resources.py'
 ];
 
-// 🚫 EXCLUDED FOLDERS (entire folders)
+// 🚫 EXCLUDED FOLDERS
 const excludedFolders = [
-  'admin',     // ❌ Entire admin folder
-  'api'        // ❌ Entire api folder (serverless functions)
+  'admin',
+  'api',
+  'node_modules',
+  '.git',
+  '.vscode',
+  '.continue',
+  'backup',
+  'backups_clean_urls'
 ];
-
-// ---- Firebase ----
-let db = null;
-let firebaseInitialized = false;
-
-try {
-  if (fs.existsSync(firebaseKeyPath)) {
-    const serviceAccount = require(firebaseKeyPath);
-    initializeApp({ credential: cert(serviceAccount) });
-    db = getFirestore();
-    firebaseInitialized = true;
-    console.log('✅ Firebase initialized');
-  } else {
-    console.warn('⚠️ serviceAccountKey.json not found, skipping Firebase');
-  }
-} catch (err) {
-  console.warn('⚠️ Firebase init failed:', err.message);
-}
 
 // ---- Exclusion helper ----
 function isExcluded(file) {
-  // Check if file is in excluded folders
   const fileParts = file.split(/[\/\\]/);
   for (const folder of excludedFolders) {
     if (fileParts.includes(folder)) {
       return true;
     }
   }
-  
-  // Check if file matches excluded pages
   return excludedPages.some(ex =>
     file.toLowerCase().includes(ex.toLowerCase())
   );
 }
 
-// ---- Helper to scan multiple folders ----
+// ---- Get clean URL (no .html) ----
+function getCleanUrl(filePath) {
+  let cleanPath = filePath.replace(/\.html$/, '');
+  if (cleanPath.endsWith('/index')) {
+    cleanPath = cleanPath.replace(/\/index$/, '');
+  }
+  if (cleanPath === 'index') {
+    cleanPath = '';
+  }
+  cleanPath = cleanPath.replace(/^\.\//, '');
+  return cleanPath;
+}
+
+// ---- Scan folders ----
 function scanFolderForHTML(folder) {
-  // Skip excluded folders
   for (const excluded of excludedFolders) {
     if (folder.includes(excluded) || folder === excluded) {
       return [];
     }
   }
-  
   const pattern = `${folder}/*.html`;
   return glob.sync(pattern, { cwd: publicFolder });
 }
 
-// ---- Safe image path builder ----
-function getImagesForFolder(folder) {
-  // Skip if folder is excluded
-  for (const excluded of excludedFolders) {
-    if (folder.includes(excluded) || folder === excluded) {
-      return [];
-    }
-  }
-  
-  const folderPath = path.join(publicFolder, folder);
-
-  if (!fs.existsSync(folderPath)) return [];
-
-  const files = glob.sync('**/*.*', { cwd: folderPath });
-
-  return files.map(f =>
-    `${domain}/${folder}/${f.replace(/\\/g, '/')}`
-      .replace(/\/+/g, '/')
-      .replace(':/', '://')
-  );
-}
-
-// ---- Static pages (root + subfolders) ----
+// ---- Static pages (clean URLs) ----
 function getStaticPages() {
-  // Scan root for HTML files
   const rootFiles = glob.sync('*.html', { cwd: publicFolder });
-  
-  // Scan subfolders for HTML files (store, shared, volant_foundry)
   const subFolders = ['store', 'shared', 'volant_foundry'];
   let subFolderFiles = [];
   
@@ -134,101 +98,45 @@ function getStaticPages() {
     .map(file => {
       const filePath = path.join(publicFolder, file);
       const stats = fs.statSync(filePath);
-
       const lastmod = stats.mtime.toISOString();
+      const cleanFile = getCleanUrl(file);
+      
+      let url;
+      if (cleanFile === '') {
+        url = domain;
+      } else {
+        url = `${domain}/${cleanFile}`;
+      }
 
-      // Determine image folder based on file location
+      let priority = '0.8';
+      let changefreq = 'monthly';
+      
+      if (cleanFile === '' || cleanFile === 'store' || cleanFile === 'store/index') {
+        priority = '1.0';
+        changefreq = 'daily';
+      } else if (cleanFile === 'poems' || cleanFile.includes('store/details')) {
+        priority = '0.9';
+        changefreq = 'weekly';
+      } else if (cleanFile.startsWith('shared/')) {
+        priority = '0.6';
+        changefreq = 'monthly';
+      }
+
+      // Get file directory for images
       const fileDir = path.dirname(file);
       const fileName = path.basename(file, '.html');
       
-      let imageFolder;
-      if (file === 'index.html' || file === 'store/index.html') {
-        imageFolder = 'images/index';
-      } else if (fileDir === '.') {
-        imageFolder = `images/${fileName}`;
-      } else {
-        imageFolder = `images/${fileDir}/${fileName}`;
-      }
-
       return {
-        loc: `${domain}/${file}`,
+        loc: url,
         lastmod,
-        changefreq: 'monthly',
-        priority: file === 'index.html' || file === 'store/index.html' ? '1.0' : '0.8',
-        images: getImagesForFolder(imageFolder)
+        changefreq,
+        priority,
+        images: []
       };
     });
 }
 
-// ---- Poems (priority SEO content) ----
-async function getPoemPages() {
-  if (!firebaseInitialized || !db) return [];
-  
-  try {
-    const snapshot = await db.collection('recentPoems').get();
-
-    return snapshot.docs.map(docSnap => {
-      const data = docSnap.data();
-
-      const lastmod = data.timestamp
-        ? data.timestamp.toDate().toISOString()
-        : new Date().toISOString();
-
-      return {
-        loc: `${domain}/poems/${docSnap.id}`,
-        lastmod,
-        changefreq: 'weekly',
-        priority: '0.9',
-        images: getImagesForFolder(`images/poems/${docSnap.id}`)
-      };
-    });
-  } catch (err) {
-    console.warn('⚠️ Could not fetch poems:', err.message);
-    return [];
-  }
-}
-
-// ---- Categories (clean URLs only) ----
-async function getCategoryPages() {
-  if (!firebaseInitialized || !db) return [];
-  
-  try {
-    const snapshot = await db.collection('recentPoems').get();
-    const set = new Set();
-
-    snapshot.forEach(docSnap => {
-      const data = docSnap.data();
-      if (Array.isArray(data.categories)) {
-        data.categories.forEach(cat => set.add(cat));
-      }
-    });
-
-    return [...set].map(cat => ({
-      loc: `${domain}/category.html?name=${encodeURIComponent(cat)}`,
-      lastmod: new Date().toISOString(),
-      changefreq: 'weekly',
-      priority: '0.6',
-      images: []
-    }));
-  } catch (err) {
-    console.warn('⚠️ Could not fetch categories:', err.message);
-    return [];
-  }
-}
-
-// ---- General images ----
-function getGeneralImages() {
-  const files = glob.sync('images/*.*', { cwd: publicFolder });
-
-  return files.map(img => ({
-    loc: `${domain}/${img.replace(/\\/g, '/')}`,
-    lastmod: new Date().toISOString(),
-    changefreq: 'monthly',
-    images: []
-  }));
-}
-
-// ---- Build XML safely ----
+// ---- Build XML ----
 function buildXML(urls) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -250,27 +158,18 @@ ${urls.map(u => `
 }
 
 // ---- MAIN ----
-async function generateSitemap() {
+function generateSitemap() {
   try {
-    console.log("🧠 Generating clean SEO sitemap...");
-    console.log("🚫 Excluding: admin folder, api folder, approvals.html, universal auth files");
+    console.log("🧠 Generating clean SEO sitemap (STATIC VERSION)...");
+    console.log(`📁 Domain: ${domain}`);
+    console.log("🚫 Excluding: admin, api, approvals, universal auth files");
 
     const staticPages = getStaticPages();
-    const poemPages = await getPoemPages();
-    const categoryPages = await getCategoryPages();
-    const images = getGeneralImages();
 
-    const all = [
-      ...staticPages,
-      ...poemPages,
-      ...categoryPages,
-      ...images
-    ];
-
-    // Remove duplicates based on loc
+    // Remove duplicates
     const unique = [];
     const seen = new Set();
-    for (const item of all) {
+    for (const item of staticPages) {
       if (!seen.has(item.loc)) {
         seen.add(item.loc);
         unique.push(item);
@@ -278,22 +177,20 @@ async function generateSitemap() {
     }
 
     console.log(`📄 Found ${unique.length} unique URLs`);
-    console.log(`   - ${staticPages.length} static pages`);
-    console.log(`   - ${poemPages.length} poem pages`);
-    console.log(`   - ${categoryPages.length} category pages`);
-    console.log(`   - ${images.length} images`);
 
     const xml = buildXML(unique);
+    fs.writeFileSync(path.join(publicFolder, 'sitemap.xml'), xml, 'utf8');
 
-    fs.writeFileSync(
-      path.join(publicFolder, 'sitemap.xml'),
-      xml,
-      'utf8'
-    );
+    console.log('✅ Sitemap generated successfully with clean URLs!');
+    console.log('\n📋 Sample URLs:');
+    console.log(`   - ${domain}/`);
+    console.log(`   - ${domain}/store`);
+    console.log(`   - ${domain}/store/details?id=xxx`);
+    console.log(`   - ${domain}/shared/about`);
 
-    console.log('✅ Sitemap generated successfully!');
   } catch (err) {
     console.error('❌ Sitemap error:', err);
+    process.exit(1);
   }
 }
 
