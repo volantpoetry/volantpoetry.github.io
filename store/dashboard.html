@@ -1520,6 +1520,12 @@
   } from "firebase/firestore";
   import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
+  // Disable all console logs in production
+  console.log = function() {};
+  console.error = function() {};
+  console.warn = function() {};
+  console.info = function() {};
+  console.debug = function() {};
 
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -1754,98 +1760,128 @@
       console.warn('Error loading payout settings:', err);
     }
   }
-
-  async function savePayoutSettings() {
+// ===== SAVE PAYOUT SETTINGS (UPDATED) =====
+async function savePayoutSettings() {
     if (!currentUser) {
-      showToast('❌ Please sign in first.', 'error');
-      return;
+        showToast('❌ Please sign in first.', 'error');
+        return;
     }
     
     const type = payoutType.value;
     let payoutData = { type: type };
     
     if (type === 'bank') {
-      const bankName = document.getElementById('bankName').value.trim();
-      const accountNumber = document.getElementById('accountNumber').value.trim();
-      const accountHolderName = document.getElementById('accountHolderName').value.trim();
-      
-      if (!bankName || !accountNumber || !accountHolderName) {
-        showToast('❌ Please fill in all bank details.', 'error');
-        return;
-      }
-      
-      payoutData.bankName = bankName;
-      payoutData.accountNumber = accountNumber;
-      payoutData.accountHolderName = accountHolderName;
+        const bankName = document.getElementById('bankName').value.trim();
+        const accountNumber = document.getElementById('accountNumber').value.trim();
+        const accountHolderName = document.getElementById('accountHolderName').value.trim();
+        
+        if (!bankName || !accountNumber || !accountHolderName) {
+            showToast('❌ Please fill in all bank details.', 'error');
+            return;
+        }
+        
+        payoutData.bankName = bankName;
+        payoutData.accountNumber = accountNumber;
+        payoutData.accountHolderName = accountHolderName;
+        // Add bank code - you need to map bank names to codes
+        // For now, use a default or implement a bank selection dropdown
+        payoutData.bankCode = '058'; // GCB Bank default
     } else {
-      const network = document.getElementById('momoNetwork').value;
-      const phoneNumber = document.getElementById('momoNumber').value.trim();
-      const accountHolderName = document.getElementById('momoHolderName').value.trim();
-      
-      if (!phoneNumber || !accountHolderName) {
-        showToast('❌ Please fill in all MoMo details.', 'error');
-        return;
-      }
-      
-      payoutData.network = network;
-      payoutData.phoneNumber = phoneNumber;
-      payoutData.accountHolderName = accountHolderName;
+        const network = document.getElementById('momoNetwork').value;
+        const phoneNumber = document.getElementById('momoNumber').value.trim();
+        const accountHolderName = document.getElementById('momoHolderName').value.trim();
+        
+        if (!phoneNumber || !accountHolderName) {
+            showToast('❌ Please fill in all MoMo details.', 'error');
+            return;
+        }
+        
+        payoutData.network = network;
+        payoutData.phoneNumber = phoneNumber;
+        payoutData.accountHolderName = accountHolderName;
     }
     
+    // Disable button and show loading state
     savePayoutBtn.disabled = true;
     savePayoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Activating...';
     payoutStatus.textContent = '⏳ Creating payout account...';
     payoutStatus.className = 'loading';
     
     try {
-      // Create subaccount via serverless function
-      const response = await fetch('/api/create-subaccount', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: currentUser.uid,
-          email: currentUser.email,
-          payoutData: payoutData,
-          username: userDisplayName || currentUser.displayName || 'Volant Author'
-        })
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        // Save to Firestore
-        await updateDoc(doc(db, "users", currentUser.uid), {
-          payoutDetails: {
-            ...payoutData,
-            createdAt: new Date().toISOString()
-          },
-          subaccountCode: result.subaccountCode,
-          hasPayoutAccount: true,
-          commissionRate: 10,
-          feeBearer: 'account'
+        // Log what we're sending for debugging
+        console.log('📤 Sending payout data:', {
+            userId: currentUser.uid,
+            email: currentUser.email,
+            payoutData: payoutData,
+            username: userDisplayName || currentUser.displayName || 'Volant Author'
         });
-        
-        payoutStatus.textContent = '✅ Payout account activated successfully! You\'ll receive 90% of each sale automatically.';
-        payoutStatus.className = 'success';
-        showToast('✅ Payout account activated!', 'success');
-        
-        // Reload earnings
-        loadEarnings(currentUser.uid);
-      } else {
-        payoutStatus.textContent = '❌ ' + (result.message || 'Failed to activate payout account. Please try again.');
-        payoutStatus.className = 'error';
-        showToast('❌ Failed to activate payout account.', 'error');
-      }
+
+        // Create subaccount via serverless function
+        const response = await fetch('/api/create-subaccount', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: currentUser.uid,
+                email: currentUser.email,
+                payoutData: payoutData,
+                username: userDisplayName || currentUser.displayName || 'Volant Author'
+            })
+        });
+
+        // Parse response
+        let result;
+        try {
+            result = await response.json();
+        } catch (e) {
+            // If response is not JSON, get text
+            const text = await response.text();
+            console.error('Non-JSON response:', text);
+            throw new Error('Server returned invalid response: ' + text.substring(0, 100));
+        }
+
+        console.log('📥 Response from server:', result);
+
+        if (!response.ok) {
+            throw new Error(result.message || `Server error: ${response.status}`);
+        }
+
+        if (result.success) {
+            // Save to Firestore
+            await updateDoc(doc(db, "users", currentUser.uid), {
+                payoutDetails: {
+                    ...payoutData,
+                    createdAt: new Date().toISOString()
+                },
+                subaccountCode: result.subaccountCode,
+                hasPayoutAccount: true,
+                commissionRate: 10,
+                feeBearer: 'account'
+            });
+            
+            payoutStatus.innerHTML = '✅ Payout account activated successfully! You\'ll receive 90% of each sale automatically.';
+            payoutStatus.className = 'success';
+            showToast('✅ Payout account activated!', 'success');
+            
+            // Reload earnings
+            loadEarnings(currentUser.uid);
+        } else {
+            payoutStatus.innerHTML = '❌ ' + (result.message || 'Failed to activate payout account. Please try again.');
+            payoutStatus.className = 'error';
+            showToast('❌ ' + (result.message || 'Failed to activate payout account.'), 'error');
+        }
     } catch (err) {
-      console.error('Error creating subaccount:', err);
-      payoutStatus.textContent = '❌ Error: ' + (err.message || 'Please try again later.');
-      payoutStatus.className = 'error';
-      showToast('❌ Error activating payout account.', 'error');
+        console.error('❌ Error creating subaccount:', err);
+        payoutStatus.innerHTML = '❌ Error: ' + (err.message || 'Please try again later.');
+        payoutStatus.className = 'error';
+        showToast('❌ Error activating payout account: ' + err.message, 'error');
     } finally {
-      savePayoutBtn.disabled = false;
-      savePayoutBtn.innerHTML = '<i class="fas fa-check-circle"></i> Activate Payout Account';
+        savePayoutBtn.disabled = false;
+        savePayoutBtn.innerHTML = '<i class="fas fa-check-circle"></i> Activate Payout Account';
     }
-  }
+}
 
   // ===== EARNINGS FUNCTIONS =====
   async function loadEarnings(userId) {
