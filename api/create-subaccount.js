@@ -1,10 +1,9 @@
 // ============================================================
-// FILE: api/create-subaccount.js
+// FILE: api/create-subaccount.js (FIXED FOR MOMO)
 // ============================================================
 // Vercel Serverless Function - Create Paystack Subaccount
 // ============================================================
 
-// Allow CORS for all origins
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -36,7 +35,6 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // Parse request body
         const body = req.body;
         console.log('📥 Received request:', JSON.stringify(body, null, 2));
 
@@ -64,6 +62,13 @@ module.exports = async (req, res) => {
             });
         }
 
+        if (!payoutData.type) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Missing payout type (bank or momo)' 
+            });
+        }
+
         // Get Paystack Secret Key from environment
         const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
         
@@ -71,16 +76,18 @@ module.exports = async (req, res) => {
             console.error('❌ PAYSTACK_SECRET_KEY not set in environment');
             return res.status(500).json({ 
                 success: false, 
-                message: 'Paystack secret key not configured. Please add PAYSTACK_SECRET_KEY to environment variables.' 
+                message: 'Paystack secret key not configured.' 
             });
         }
 
         console.log('✅ Paystack secret key found');
 
         const businessName = username || 'Volant Author';
-        const commissionRate = 10; // 10% platform commission
+        const commissionRate = 10;
 
-        // Build payload for Paystack subaccount creation
+        // ============================================================
+        // ===== BUILD PAYLOAD BASED ON PAYOUT TYPE =====
+        // ============================================================
         let payload = {
             business_name: businessName,
             percentage_charge: commissionRate,
@@ -94,30 +101,81 @@ module.exports = async (req, res) => {
             }
         };
 
-        // Add bank or MoMo details
+        // ===== BANK ACCOUNT =====
         if (payoutData.type === 'bank') {
-            // For bank, we need bank_code and account_number
-            // For Ghana, you need to use the correct bank code
-            // This is a simplified version - you should implement proper bank selection
-            const bankCode = payoutData.bankCode || '058'; // '058' is GCB Bank in Ghana
-            payload.bank_code = bankCode;
+            // Validate bank fields
+            if (!payoutData.accountNumber) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Account number is required for bank payout'
+                });
+            }
+            if (!payoutData.bankCode) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Bank code is required for bank payout'
+                });
+            }
+            if (!payoutData.accountHolderName) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Account holder name is required for bank payout'
+                });
+            }
+
+            payload.bank_code = payoutData.bankCode;
             payload.account_number = payoutData.accountNumber;
             payload.account_name = payoutData.accountHolderName;
-        } else if (payoutData.type === 'momo') {
-            // For MoMo, Paystack requires phone number
-            let phone = payoutData.phoneNumber;
-            // Ensure phone number is in international format
-            if (phone) {
-                phone = phone.replace(/\s/g, '');
-                if (phone.startsWith('0')) {
-                    phone = '233' + phone.substring(1);
-                }
-                if (!phone.startsWith('233')) {
-                    phone = '233' + phone;
-                }
-                payload.phone = phone;
+            
+            console.log('🏦 Creating bank subaccount for:', businessName);
+        }
+
+        // ===== MOBILE MONEY =====
+        else if (payoutData.type === 'momo') {
+            // Validate MoMo fields
+            if (!payoutData.phoneNumber) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Phone number is required for Mobile Money payout'
+                });
             }
+            if (!payoutData.accountHolderName) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Account holder name is required for Mobile Money payout'
+                });
+            }
+
+            // Format phone number for Paystack (international format)
+            let phone = payoutData.phoneNumber.replace(/\s/g, '');
+            
+            // Remove any leading + if present
+            if (phone.startsWith('+')) {
+                phone = phone.substring(1);
+            }
+            
+            // Convert to international format
+            if (phone.startsWith('0')) {
+                phone = '233' + phone.substring(1);
+            }
+            if (!phone.startsWith('233')) {
+                phone = '233' + phone;
+            }
+
+            // Paystack expects the phone number without the country code prefix in some cases
+            // But for MoMo subaccounts, they use the phone field
+            payload.phone = phone;
             payload.account_name = payoutData.accountHolderName;
+            payload.metadata.network = payoutData.network || 'mtn';
+            
+            console.log('📱 Creating MoMo subaccount for:', businessName);
+            console.log('📱 Phone:', phone);
+            console.log('📱 Network:', payoutData.network);
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid payout type. Must be "bank" or "momo"'
+            });
         }
 
         console.log('📤 Sending to Paystack:', JSON.stringify(payload, null, 2));
@@ -136,9 +194,21 @@ module.exports = async (req, res) => {
         console.log('📥 Paystack response:', JSON.stringify(data, null, 2));
 
         if (!data.status) {
+            // Provide more specific error messages
+            let errorMessage = data.message || 'Failed to create subaccount';
+            
+            // Common Paystack errors
+            if (data.message && data.message.includes('phone')) {
+                errorMessage = 'Invalid phone number format. Please use a valid Ghanaian number.';
+            } else if (data.message && data.message.includes('account')) {
+                errorMessage = 'Invalid account details. Please check your information.';
+            } else if (data.message && data.message.includes('bank')) {
+                errorMessage = 'Invalid bank details. Please check your bank information.';
+            }
+            
             return res.status(400).json({
                 success: false,
-                message: data.message || 'Failed to create subaccount',
+                message: errorMessage,
                 paystackError: data
             });
         }

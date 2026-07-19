@@ -1242,24 +1242,26 @@
           </div>
 
           <!-- MoMo Fields -->
-          <div id="momoFields" style="display:none;">
-            <div class="settings-group">
-              <label>Mobile Money Network</label>
-              <select id="momoNetwork">
-                <option value="mtn">MTN MoMo</option>
-                <option value="vodafone">Vodafone Cash</option>
-                <option value="tigo">AirtelTigo Money</option>
-              </select>
-            </div>
-            <div class="settings-group">
-              <label>Phone Number</label>
-              <input type="tel" id="momoNumber" placeholder="024XXXXXXX" />
-            </div>
-            <div class="settings-group">
-              <label>Account Holder Name</label>
-              <input type="text" id="momoHolderName" placeholder="Full name on MoMo account" />
-            </div>
-          </div>
+       <div id="momoFields" style="display:none;">
+    <div class="settings-group">
+        <label>Mobile Money Network</label>
+        <select id="momoNetwork">
+            <option value="mtn">MTN MoMo</option>
+            <option value="vodafone">Vodafone Cash</option>
+            <option value="tigo">AirtelTigo Money</option>
+        </select>
+    </div>
+    <div class="settings-group">
+        <label>Phone Number</label>
+        <input type="tel" id="momoNumber" placeholder="024XXXXXXX" maxlength="10" />
+        <div class="hint">Enter without spaces, e.g., 024XXXXXXX</div>
+    </div>
+    <div class="settings-group">
+        <label>Account Holder Name</label>
+        <input type="text" id="momoHolderName" placeholder="Full name on MoMo account" />
+        <div class="hint">Must match the name on the MoMo account</div>
+    </div>
+</div>
 
           <button class="action-btn" id="savePayoutBtn" style="width:100%;justify-content:center;margin-top:10px;">
             <i class="fas fa-check-circle"></i> Activate Payout Account
@@ -1760,7 +1762,7 @@
       console.warn('Error loading payout settings:', err);
     }
   }
-// ===== SAVE PAYOUT SETTINGS (UPDATED) =====
+// ===== SAVE PAYOUT SETTINGS (FIXED FOR MOMO) =====
 async function savePayoutSettings() {
     if (!currentUser) {
         showToast('❌ Please sign in first.', 'error');
@@ -1768,7 +1770,9 @@ async function savePayoutSettings() {
     }
     
     const type = payoutType.value;
-    let payoutData = { type: type };
+    let payoutData = { 
+        type: type 
+    };
     
     if (type === 'bank') {
         const bankName = document.getElementById('bankName').value.trim();
@@ -1783,10 +1787,10 @@ async function savePayoutSettings() {
         payoutData.bankName = bankName;
         payoutData.accountNumber = accountNumber;
         payoutData.accountHolderName = accountHolderName;
-        // Add bank code - you need to map bank names to codes
-        // For now, use a default or implement a bank selection dropdown
+        // Map bank name to code - you'll need to implement this properly
         payoutData.bankCode = '058'; // GCB Bank default
     } else {
+        // ===== MOBILE MONEY =====
         const network = document.getElementById('momoNetwork').value;
         const phoneNumber = document.getElementById('momoNumber').value.trim();
         const accountHolderName = document.getElementById('momoHolderName').value.trim();
@@ -1796,9 +1800,23 @@ async function savePayoutSettings() {
             return;
         }
         
+        // Validate phone number format
+        const phoneRegex = /^(0[0-9]{9}|[0-9]{10})$/;
+        const cleanPhone = phoneNumber.replace(/\s/g, '');
+        if (!phoneRegex.test(cleanPhone) && !cleanPhone.startsWith('233')) {
+            showToast('❌ Please enter a valid phone number (e.g., 024XXXXXXX)', 'error');
+            return;
+        }
+        
         payoutData.network = network;
-        payoutData.phoneNumber = phoneNumber;
+        payoutData.phoneNumber = cleanPhone;
         payoutData.accountHolderName = accountHolderName;
+        
+        console.log('📱 Sending MoMo data:', {
+            network: network,
+            phoneNumber: cleanPhone,
+            accountHolderName: accountHolderName
+        });
     }
     
     // Disable button and show loading state
@@ -1808,7 +1826,6 @@ async function savePayoutSettings() {
     payoutStatus.className = 'loading';
     
     try {
-        // Log what we're sending for debugging
         console.log('📤 Sending payout data:', {
             userId: currentUser.uid,
             email: currentUser.email,
@@ -1816,7 +1833,6 @@ async function savePayoutSettings() {
             username: userDisplayName || currentUser.displayName || 'Volant Author'
         });
 
-        // Create subaccount via serverless function
         const response = await fetch('/api/create-subaccount', {
             method: 'POST',
             headers: { 
@@ -1831,15 +1847,13 @@ async function savePayoutSettings() {
             })
         });
 
-        // Parse response
         let result;
         try {
             result = await response.json();
         } catch (e) {
-            // If response is not JSON, get text
             const text = await response.text();
             console.error('Non-JSON response:', text);
-            throw new Error('Server returned invalid response: ' + text.substring(0, 100));
+            throw new Error('Server returned invalid response');
         }
 
         console.log('📥 Response from server:', result);
@@ -1868,7 +1882,7 @@ async function savePayoutSettings() {
             // Reload earnings
             loadEarnings(currentUser.uid);
         } else {
-            payoutStatus.innerHTML = '❌ ' + (result.message || 'Failed to activate payout account. Please try again.');
+            payoutStatus.innerHTML = '❌ ' + (result.message || 'Failed to activate payout account.');
             payoutStatus.className = 'error';
             showToast('❌ ' + (result.message || 'Failed to activate payout account.'), 'error');
         }
@@ -1876,7 +1890,7 @@ async function savePayoutSettings() {
         console.error('❌ Error creating subaccount:', err);
         payoutStatus.innerHTML = '❌ Error: ' + (err.message || 'Please try again later.');
         payoutStatus.className = 'error';
-        showToast('❌ Error activating payout account: ' + err.message, 'error');
+        showToast('❌ Error: ' + err.message, 'error');
     } finally {
         savePayoutBtn.disabled = false;
         savePayoutBtn.innerHTML = '<i class="fas fa-check-circle"></i> Activate Payout Account';
