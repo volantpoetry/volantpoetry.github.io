@@ -1,11 +1,9 @@
 // ============================================================
-// FILE: api/create-subaccount.js
+// FILE: api/create-subaccount.js - FINAL FIXED VERSION
 // ============================================================
 // Vercel Serverless Function - Create Paystack Subaccount
-// FULLY FIXED - 405 Method Not Allowed
 // ============================================================
 
-// IMPORTANT: This must be the ONLY export
 module.exports = async (req, res) => {
     // ===== SET CORS HEADERS =====
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -42,9 +40,8 @@ module.exports = async (req, res) => {
 
         const { userId, email, payoutData, username } = body;
 
-        // ===== VALIDATE =====
+        // ===== VALIDATE REQUIRED FIELDS =====
         if (!userId) {
-            console.log('❌ Missing userId');
             return res.status(400).json({ 
                 success: false, 
                 message: 'Missing userId' 
@@ -52,7 +49,6 @@ module.exports = async (req, res) => {
         }
 
         if (!email) {
-            console.log('❌ Missing email');
             return res.status(400).json({ 
                 success: false, 
                 message: 'Missing email' 
@@ -60,7 +56,6 @@ module.exports = async (req, res) => {
         }
 
         if (!payoutData) {
-            console.log('❌ Missing payoutData');
             return res.status(400).json({ 
                 success: false, 
                 message: 'Missing payoutData' 
@@ -68,10 +63,9 @@ module.exports = async (req, res) => {
         }
 
         if (!payoutData.type) {
-            console.log('❌ Missing payout type');
             return res.status(400).json({ 
                 success: false, 
-                message: 'Missing payout type' 
+                message: 'Missing payout type (bank or momo)' 
             });
         }
 
@@ -91,26 +85,13 @@ module.exports = async (req, res) => {
         const businessName = username || 'Volant Author';
         const commissionRate = 10;
 
-        // ===== BUILD PAYLOAD =====
-        let payload = {
-            business_name: businessName,
-            percentage_charge: commissionRate,
-            bearer: 'account',
-            settlement_schedule: 'auto',
-            primary_contact_email: email,
-            metadata: {
-                userId: userId,
-                platform: 'volant-reads',
-                payoutType: payoutData.type
-            }
-        };
-
         // ============================================================
         // ===== BANK ACCOUNT =====
         // ============================================================
         if (payoutData.type === 'bank') {
             console.log('🏦 Processing BANK payout');
             
+            // Only check bank fields for bank
             if (!payoutData.accountNumber) {
                 return res.status(400).json({
                     success: false,
@@ -130,17 +111,60 @@ module.exports = async (req, res) => {
                 });
             }
 
-            payload.bank_code = payoutData.bankCode;
-            payload.account_number = payoutData.accountNumber;
-            payload.account_name = payoutData.accountHolderName;
+            // Build bank payload
+            let bankPayload = {
+                business_name: businessName,
+                percentage_charge: commissionRate,
+                bearer: 'account',
+                settlement_schedule: 'auto',
+                primary_contact_email: email,
+                bank_code: payoutData.bankCode,
+                account_number: payoutData.accountNumber,
+                account_name: payoutData.accountHolderName,
+                metadata: {
+                    userId: userId,
+                    platform: 'volant-reads',
+                    payoutType: payoutData.type
+                }
+            };
+            
+            console.log('📤 Sending bank payload:', JSON.stringify(bankPayload, null, 2));
+            
+            const response = await fetch('https://api.paystack.co/subaccount', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bankPayload)
+            });
+
+            const data = await response.json();
+            console.log('📥 Paystack response:', JSON.stringify(data, null, 2));
+
+            if (!data.status) {
+                return res.status(400).json({
+                    success: false,
+                    message: data.message || 'Failed to create bank subaccount',
+                    details: data
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                subaccountCode: data.data.subaccount_code,
+                subaccountId: data.data.id,
+                message: 'Bank subaccount created successfully'
+            });
         }
 
         // ============================================================
-        // ===== MOBILE MONEY =====
+        // ===== MOBILE MONEY - NO ACCOUNT NUMBER CHECK! =====
         // ============================================================
         else if (payoutData.type === 'momo') {
             console.log('📱 Processing MOMO payout');
             
+            // ✅ ONLY check MoMo fields - NO accountNumber!
             if (!payoutData.phoneNumber) {
                 return res.status(400).json({
                     success: false,
@@ -154,7 +178,7 @@ module.exports = async (req, res) => {
                 });
             }
 
-            // Format phone number
+            // Format phone number for Paystack
             let phone = payoutData.phoneNumber.replace(/\s/g, '');
             
             // Remove leading +
@@ -162,7 +186,7 @@ module.exports = async (req, res) => {
                 phone = phone.substring(1);
             }
             
-            // Remove leading 0
+            // Remove leading 0 (Ghana format)
             if (phone.startsWith('0')) {
                 phone = phone.substring(1);
             }
@@ -172,14 +196,65 @@ module.exports = async (req, res) => {
                 phone = phone.substring(3);
             }
 
-            // ===== KEY: Paystack MoMo requires phone WITHOUT country code =====
-            payload.phone = phone;
-            payload.account_name = payoutData.accountHolderName;
-            payload.metadata.network = payoutData.network || 'mtn';
+            // ===== KEY: MoMo uses 'phone' NOT 'account_number' =====
+            let momoPayload = {
+                business_name: businessName,
+                percentage_charge: commissionRate,
+                bearer: 'account',
+                settlement_schedule: 'auto',
+                primary_contact_email: email,
+                phone: phone,  // ✅ NO account_number!
+                account_name: payoutData.accountHolderName,
+                metadata: {
+                    userId: userId,
+                    platform: 'volant-reads',
+                    payoutType: payoutData.type,
+                    network: payoutData.network || 'mtn'
+                }
+            };
             
-            console.log('📱 Formatted phone:', phone);
+            console.log('📱 Sending MoMo payload:', JSON.stringify(momoPayload, null, 2));
+            console.log('📱 Phone (formatted):', phone);
             console.log('📱 Account name:', payoutData.accountHolderName);
             console.log('📱 Network:', payoutData.network);
+            
+            const response = await fetch('https://api.paystack.co/subaccount', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(momoPayload)
+            });
+
+            const data = await response.json();
+            console.log('📥 Paystack response:', JSON.stringify(data, null, 2));
+
+            if (!data.status) {
+                let errorMessage = data.message || 'Failed to create MoMo subaccount';
+                
+                // Specific error messages
+                if (data.message && data.message.toLowerCase().includes('phone')) {
+                    errorMessage = 'Invalid phone number format. Please use a valid Ghanaian number (e.g., 024XXXXXXX).';
+                } else if (data.message && data.message.toLowerCase().includes('account_name')) {
+                    errorMessage = 'Account holder name is required. Please enter the name on your MoMo account.';
+                } else if (data.message && data.message.toLowerCase().includes('duplicate')) {
+                    errorMessage = 'This payout account has already been registered.';
+                }
+                
+                return res.status(400).json({
+                    success: false,
+                    message: errorMessage,
+                    details: data
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                subaccountCode: data.data.subaccount_code,
+                subaccountId: data.data.id,
+                message: 'MoMo subaccount created successfully'
+            });
         } else {
             return res.status(400).json({
                 success: false,
@@ -187,65 +262,8 @@ module.exports = async (req, res) => {
             });
         }
 
-        // ============================================================
-        // ===== SEND TO PAYSTACK =====
-        // ============================================================
-        console.log('📤 Sending to Paystack:', JSON.stringify(payload, null, 2));
-
-        const response = await fetch('https://api.paystack.co/subaccount', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${PAYSTACK_SECRET_KEY}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-
-        const data = await response.json();
-        console.log('📥 Paystack response:', JSON.stringify(data, null, 2));
-
-        // ============================================================
-        // ===== HANDLE RESPONSE =====
-        // ============================================================
-        if (!data.status) {
-            let errorMessage = data.message || 'Failed to create subaccount';
-            
-            // Specific error messages
-            if (data.message && data.message.toLowerCase().includes('phone')) {
-                errorMessage = 'Invalid phone number format. Please use a valid Ghanaian number (e.g., 024XXXXXXX).';
-            } else if (data.message && data.message.toLowerCase().includes('account_name')) {
-                errorMessage = 'Account holder name is required. Please enter the name on your MoMo account.';
-            } else if (data.message && data.message.toLowerCase().includes('duplicate')) {
-                errorMessage = 'This payout account has already been registered.';
-            } else if (data.message && data.message.toLowerCase().includes('bearer')) {
-                errorMessage = 'Invalid fee bearer setting. Please contact support.';
-            } else if (data.message && data.message.toLowerCase().includes('permission')) {
-                errorMessage = 'Paystack authorization error. Please check your API key permissions.';
-            }
-            
-            console.log('❌ Paystack error:', errorMessage);
-            
-            return res.status(400).json({
-                success: false,
-                message: errorMessage,
-                details: data
-            });
-        }
-
-        // ============================================================
-        // ===== SUCCESS =====
-        // ============================================================
-        console.log('✅ Subaccount created successfully!');
-        
-        return res.status(200).json({
-            success: true,
-            subaccountCode: data.data.subaccount_code,
-            subaccountId: data.data.id,
-            message: 'Subaccount created successfully'
-        });
-
     } catch (error) {
-        console.error('❌ Error:', error.message);
+        console.error('❌ Server error:', error.message);
         console.error('❌ Stack:', error.stack);
         return res.status(500).json({
             success: false,
