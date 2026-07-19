@@ -995,20 +995,6 @@
     .platform-badge.reads { 
         background: linear-gradient(135deg, #d4a574, #c9944d); 
     }
-
-    /* ===== HIDE OLD PAYMENT METHOD SECTION ===== */
-#page-settings .panel hr,
-#page-settings .panel > h3:has(+ .settings-group #settingsPayment),
-#page-settings .panel .settings-group:has(#settingsPayment),
-#page-settings .panel .settings-group:has(#settingsAccount) {
-    display: none !important;
-}
-
-/* Alternative: Hide the entire section using a wrapper class */
-/* If you can add a class to the parent div, use this instead: */
-.hide-payment-section {
-    display: none !important;
-}
   </style>
 </head>
 <body>
@@ -1173,13 +1159,16 @@
       </div>
     </div>
 
-    <!-- SETTINGS PAGE -->
+    <!-- ============================================================ -->
+    <!-- ===== SETTINGS PAGE - FULLY UPDATED ===== -->
+    <!-- ============================================================ -->
     <div class="page-section" id="page-settings">
       <div class="page-header">
         <h2>⚙️ Settings</h2>
         <p>Manage your account and payment preferences.</p>
       </div>
       <div class="panel">
+        <!-- ===== PROFILE SETTINGS ===== -->
         <h3 style="margin-bottom:20px;">Profile Settings</h3>
         <div class="settings-group">
           <label>Display Name</label>
@@ -1187,32 +1176,19 @@
         </div>
         <div class="settings-group">
           <label>Email Address</label>
-          <input type="email" id="settingsEmail" />
+          <input type="email" id="settingsEmail" readonly style="background:#f5f5f5;" />
         </div>
         <div class="settings-group">
           <label>Bio</label>
           <input type="text" id="settingsBio" placeholder="Tell us about yourself..." />
         </div>
-        <hr style="margin:24px 0;border-color:#eee;" />
-        <h3 style="margin-bottom:20px;">Payment Method</h3>
-        <div class="settings-group">
-          <label>Payment Method</label>
-          <select id="settingsPayment">
-            <option value="bank">Bank Transfer</option>
-            <option value="mobile" selected>Mobile Money</option>
-            <option value="paypal">PayPal</option>
-          </select>
-        </div>
-        <div class="settings-group">
-          <label>Account Details</label>
-          <input type="text" id="settingsAccount" placeholder="Enter your account details" />
-          <div class="hint">Your mobile money number or bank account.</div>
-        </div>
+
+        <!-- ===== SAVE PROFILE BUTTON ===== -->
         <button class="action-btn" id="saveSettingsBtn" style="width:100%;justify-content:center;margin-top:10px;">
-          <i class="fas fa-save"></i> Save Settings
+          <i class="fas fa-save"></i> Save Profile Settings
         </button>
 
-        <!-- ===== PAYOUT SETTINGS - NEW ===== -->
+        <!-- ===== PAYOUT SETTINGS ===== -->
         <div class="payout-settings-section">
           <h3>💳 Payout Settings</h3>
           <p class="payout-sub">Enter your payment details to receive earnings from book sales. You'll get <strong>90%</strong> of each sale (10% platform commission).</p>
@@ -1242,34 +1218,34 @@
           </div>
 
           <!-- MoMo Fields -->
-       <div id="momoFields" style="display:none;">
-    <div class="settings-group">
-        <label>Mobile Money Network</label>
-        <select id="momoNetwork">
-            <option value="mtn">MTN MoMo</option>
-            <option value="vodafone">Vodafone Cash</option>
-            <option value="tigo">AirtelTigo Money</option>
-        </select>
-    </div>
-    <div class="settings-group">
-        <label>Phone Number</label>
-        <input type="tel" id="momoNumber" placeholder="024XXXXXXX" maxlength="10" />
-        <div class="hint">Enter without spaces, e.g., 024XXXXXXX</div>
-    </div>
-    <div class="settings-group">
-        <label>Account Holder Name</label>
-        <input type="text" id="momoHolderName" placeholder="Full name on MoMo account" />
-        <div class="hint">Must match the name on the MoMo account</div>
-    </div>
-</div>
+          <div id="momoFields" style="display:none;">
+            <div class="settings-group">
+              <label>Mobile Money Network</label>
+              <select id="momoNetwork">
+                <option value="mtn">MTN MoMo</option>
+                <option value="vodafone">Vodafone Cash</option>
+                <option value="tigo">AirtelTigo Money</option>
+              </select>
+            </div>
+            <div class="settings-group">
+              <label>Phone Number</label>
+              <input type="tel" id="momoNumber" placeholder="024XXXXXXX" maxlength="10" />
+              <div class="hint">Enter without spaces, e.g., 024XXXXXXX</div>
+            </div>
+            <div class="settings-group">
+              <label>Account Holder Name</label>
+              <input type="text" id="momoHolderName" placeholder="Full name on MoMo account" />
+              <div class="hint">Must match the name on the MoMo account</div>
+            </div>
+          </div>
 
-          <button class="action-btn" id="savePayoutBtn" style="width:100%;justify-content:center;margin-top:10px;">
+          <button class="action-btn" id="savePayoutBtn" style="width:100%;justify-content:center;margin-top:10px;background:#2d7d46;">
             <i class="fas fa-check-circle"></i> Activate Payout Account
           </button>
           <div id="payoutStatus"></div>
         </div>
 
-        <!-- ===== EARNINGS OVERVIEW - NEW ===== -->
+        <!-- ===== EARNINGS OVERVIEW ===== -->
         <div style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
             <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin:0;">💰 Your Earnings</h3>
@@ -1564,7 +1540,6 @@
   const settingsName = document.getElementById('settingsName');
   const settingsEmail = document.getElementById('settingsEmail');
   const settingsBio = document.getElementById('settingsBio');
-  const settingsAccount = document.getElementById('settingsAccount');
   const wishlistNavBadge = document.getElementById('wishlistNavBadge');
   const messageNavBadge = document.getElementById('messageNavBadge');
   const myBooksGrid = document.getElementById('myBooksGrid');
@@ -1762,8 +1737,9 @@
       console.warn('Error loading payout settings:', err);
     }
   }
-// ===== SAVE PAYOUT SETTINGS (FIXED - PROPER VALIDATION) =====
-async function savePayoutSettings() {
+
+  // ===== SAVE PAYOUT SETTINGS =====
+  async function savePayoutSettings() {
     if (!currentUser) {
         showToast('❌ Please sign in first.', 'error');
         return;
@@ -1778,7 +1754,6 @@ async function savePayoutSettings() {
         const accountNumber = document.getElementById('accountNumber').value.trim();
         const accountHolderName = document.getElementById('accountHolderName').value.trim();
         
-        // ✅ ONLY check bank fields when type is 'bank'
         if (!bankName || !accountNumber || !accountHolderName) {
             showToast('❌ Please fill in all bank details.', 'error');
             return;
@@ -1795,7 +1770,6 @@ async function savePayoutSettings() {
         const phoneNumber = document.getElementById('momoNumber').value.trim();
         const accountHolderName = document.getElementById('momoHolderName').value.trim();
         
-        // ✅ ONLY check MoMo fields when type is 'momo'
         if (!phoneNumber || !accountHolderName) {
             showToast('❌ Please fill in all MoMo details.', 'error');
             return;
@@ -1890,17 +1864,15 @@ async function savePayoutSettings() {
         savePayoutBtn.disabled = false;
         savePayoutBtn.innerHTML = '<i class="fas fa-check-circle"></i> Activate Payout Account';
     }
-}
+  }
 
   // ===== EARNINGS FUNCTIONS =====
   async function loadEarnings(userId) {
     try {
-      // Get user's commission rate
       const userDoc = await getDoc(doc(db, "users", userId));
       const userData = userDoc.data();
       const commissionRate = userData?.commissionRate || 10;
       
-      // Query purchases where authorId = userId
       const q = query(
         collection(db, "purchases"),
         where("authorId", "==", userId)
@@ -1937,13 +1909,11 @@ async function savePayoutSettings() {
         });
       });
       
-      // Update stats
       document.getElementById('totalSales').textContent = totalSales;
       document.getElementById('totalEarnings').textContent = `GHS ${totalEarnings.toFixed(2)}`;
       document.getElementById('totalCommission').textContent = `GHS ${totalCommission.toFixed(2)}`;
       document.getElementById('pendingPayout').textContent = `GHS ${pendingPayout.toFixed(2)}`;
       
-      // Show transaction history
       const historyDiv = document.getElementById('transactionHistory');
       if (transactions.length === 0) {
         historyDiv.innerHTML = `<p style="color: #888; padding: 10px 0;">No transactions yet.</p>`;
@@ -2855,8 +2825,6 @@ async function savePayoutSettings() {
           const data = userDoc.data();
           if (data.username) userDisplayName = data.username;
           if (data.bio) settingsBio.value = data.bio;
-          if (data.paymentMethod) document.getElementById('settingsPayment').value = data.paymentMethod;
-          if (data.accountDetails) settingsAccount.value = data.accountDetails;
         }
       } catch (_) {}
 
@@ -2990,18 +2958,34 @@ async function savePayoutSettings() {
     window.location.href = 'dashboard.html';
   });
 
+  // ===== SAVE PROFILE SETTINGS (UPDATED) =====
   document.getElementById('saveSettingsBtn')?.addEventListener('click', async () => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      showToast('❌ Please sign in first.', 'error');
+      return;
+    }
+    
+    const displayName = settingsName.value.trim();
+    const bio = settingsBio.value.trim();
+    
+    if (!displayName) {
+      showToast('❌ Display name is required.', 'error');
+      return;
+    }
+    
     try {
       await updateDoc(doc(db, "users", currentUser.uid), {
-        username: settingsName.value,
-        bio: settingsBio.value,
-        paymentMethod: document.getElementById('settingsPayment').value,
-        accountDetails: settingsAccount.value
+        username: displayName,
+        bio: bio,
+        updatedAt: new Date().toISOString()
       });
-      userDisplayName = settingsName.value;
+      
+      userDisplayName = displayName;
       greeting.textContent = `Welcome back, ${userDisplayName} 👋`;
-      showToast('✅ Settings saved successfully!', 'success');
+      showToast('✅ Profile settings saved successfully!', 'success');
+      
+      await updateUserUI(currentUser);
+      
     } catch (err) {
       showToast('❌ Error saving settings: ' + err.message, 'error');
     }
