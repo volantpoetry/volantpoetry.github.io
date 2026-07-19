@@ -1738,8 +1738,8 @@
     }
   }
 
-  // ===== SAVE PAYOUT SETTINGS =====
-  async function savePayoutSettings() {
+// ===== SAVE PAYOUT SETTINGS - FIXED =====
+async function savePayoutSettings() {
     if (!currentUser) {
         showToast('❌ Please sign in first.', 'error');
         return;
@@ -1754,6 +1754,7 @@
         const accountNumber = document.getElementById('accountNumber').value.trim();
         const accountHolderName = document.getElementById('accountHolderName').value.trim();
         
+        // ✅ ONLY check bank fields when type is 'bank'
         if (!bankName || !accountNumber || !accountHolderName) {
             showToast('❌ Please fill in all bank details.', 'error');
             return;
@@ -1762,7 +1763,7 @@
         payoutData.bankName = bankName;
         payoutData.accountNumber = accountNumber;
         payoutData.accountHolderName = accountHolderName;
-        payoutData.bankCode = '058'; // GCB Bank default
+        payoutData.bankCode = '058';
     
     // ===== MOBILE MONEY =====
     } else if (type === 'momo') {
@@ -1770,6 +1771,7 @@
         const phoneNumber = document.getElementById('momoNumber').value.trim();
         const accountHolderName = document.getElementById('momoHolderName').value.trim();
         
+        // ✅ ONLY check MoMo fields - NO accountNumber check!
         if (!phoneNumber || !accountHolderName) {
             showToast('❌ Please fill in all MoMo details.', 'error');
             return;
@@ -1777,7 +1779,7 @@
         
         // Validate phone number
         const cleanPhone = phoneNumber.replace(/\s/g, '');
-        if (!/^(0[0-9]{9}|[0-9]{10})$/.test(cleanPhone) && !cleanPhone.startsWith('233')) {
+        if (!/^(0[0-9]{9}|[0-9]{10})$/.test(cleanPhone)) {
             showToast('❌ Please enter a valid phone number (e.g., 024XXXXXXX)', 'error');
             return;
         }
@@ -1790,14 +1792,14 @@
         return;
     }
     
-    // Disable button and show loading state
+    // ===== SEND TO SERVER =====
     savePayoutBtn.disabled = true;
     savePayoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Activating...';
     payoutStatus.textContent = '⏳ Creating payout account...';
     payoutStatus.className = 'loading';
     
     try {
-        console.log('📤 Sending payout data:', {
+        console.log('📤 Sending MoMo data:', {
             userId: currentUser.uid,
             email: currentUser.email,
             payoutData: payoutData,
@@ -1827,7 +1829,7 @@
             throw new Error('Server returned invalid response');
         }
 
-        console.log('📥 Response from server:', result);
+        console.log('📥 Response:', result);
 
         if (!response.ok) {
             throw new Error(result.message || `Server error: ${response.status}`);
@@ -1856,7 +1858,7 @@
             showToast('❌ ' + (result.message || 'Failed to activate payout account.'), 'error');
         }
     } catch (err) {
-        console.error('❌ Error creating subaccount:', err);
+        console.error('❌ Error:', err);
         payoutStatus.innerHTML = '❌ Error: ' + (err.message || 'Please try again later.');
         payoutStatus.className = 'error';
         showToast('❌ Error: ' + err.message, 'error');
@@ -1864,8 +1866,7 @@
         savePayoutBtn.disabled = false;
         savePayoutBtn.innerHTML = '<i class="fas fa-check-circle"></i> Activate Payout Account';
     }
-  }
-
+}
   // ===== EARNINGS FUNCTIONS =====
   async function loadEarnings(userId) {
     try {
