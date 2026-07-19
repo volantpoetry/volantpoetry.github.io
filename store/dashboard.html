@@ -1762,7 +1762,7 @@
       console.warn('Error loading payout settings:', err);
     }
   }
-// ===== SAVE PAYOUT SETTINGS (FIXED FOR MOMO) =====
+// ===== SAVE PAYOUT SETTINGS (FIXED - PROPER VALIDATION) =====
 async function savePayoutSettings() {
     if (!currentUser) {
         showToast('❌ Please sign in first.', 'error');
@@ -1770,15 +1770,15 @@ async function savePayoutSettings() {
     }
     
     const type = payoutType.value;
-    let payoutData = { 
-        type: type 
-    };
+    let payoutData = { type: type };
     
+    // ===== BANK ACCOUNT =====
     if (type === 'bank') {
         const bankName = document.getElementById('bankName').value.trim();
         const accountNumber = document.getElementById('accountNumber').value.trim();
         const accountHolderName = document.getElementById('accountHolderName').value.trim();
         
+        // ✅ ONLY check bank fields when type is 'bank'
         if (!bankName || !accountNumber || !accountHolderName) {
             showToast('❌ Please fill in all bank details.', 'error');
             return;
@@ -1787,23 +1787,23 @@ async function savePayoutSettings() {
         payoutData.bankName = bankName;
         payoutData.accountNumber = accountNumber;
         payoutData.accountHolderName = accountHolderName;
-        // Map bank name to code - you'll need to implement this properly
         payoutData.bankCode = '058'; // GCB Bank default
-    } else {
-        // ===== MOBILE MONEY =====
+    
+    // ===== MOBILE MONEY =====
+    } else if (type === 'momo') {
         const network = document.getElementById('momoNetwork').value;
         const phoneNumber = document.getElementById('momoNumber').value.trim();
         const accountHolderName = document.getElementById('momoHolderName').value.trim();
         
+        // ✅ ONLY check MoMo fields when type is 'momo'
         if (!phoneNumber || !accountHolderName) {
             showToast('❌ Please fill in all MoMo details.', 'error');
             return;
         }
         
-        // Validate phone number format
-        const phoneRegex = /^(0[0-9]{9}|[0-9]{10})$/;
+        // Validate phone number
         const cleanPhone = phoneNumber.replace(/\s/g, '');
-        if (!phoneRegex.test(cleanPhone) && !cleanPhone.startsWith('233')) {
+        if (!/^(0[0-9]{9}|[0-9]{10})$/.test(cleanPhone) && !cleanPhone.startsWith('233')) {
             showToast('❌ Please enter a valid phone number (e.g., 024XXXXXXX)', 'error');
             return;
         }
@@ -1811,12 +1811,9 @@ async function savePayoutSettings() {
         payoutData.network = network;
         payoutData.phoneNumber = cleanPhone;
         payoutData.accountHolderName = accountHolderName;
-        
-        console.log('📱 Sending MoMo data:', {
-            network: network,
-            phoneNumber: cleanPhone,
-            accountHolderName: accountHolderName
-        });
+    } else {
+        showToast('❌ Invalid payout type selected.', 'error');
+        return;
     }
     
     // Disable button and show loading state
@@ -1863,7 +1860,6 @@ async function savePayoutSettings() {
         }
 
         if (result.success) {
-            // Save to Firestore
             await updateDoc(doc(db, "users", currentUser.uid), {
                 payoutDetails: {
                     ...payoutData,
@@ -1879,7 +1875,6 @@ async function savePayoutSettings() {
             payoutStatus.className = 'success';
             showToast('✅ Payout account activated!', 'success');
             
-            // Reload earnings
             loadEarnings(currentUser.uid);
         } else {
             payoutStatus.innerHTML = '❌ ' + (result.message || 'Failed to activate payout account.');
