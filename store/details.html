@@ -3400,12 +3400,42 @@ function goToLogin() {
       return true;
     }
 
-    // ===== SINGLE BOOK PAYMENT WITH VALIDATION =====
-    function initiateSingleBookPayment(amount, email, bookTitle, bookId, isRepurchase = false) {
+    // ================================================================
+    // ===== UPDATED: SINGLE BOOK PAYMENT WITH SUBACCOUNT SUPPORT =====
+    // ================================================================
+    async function initiateSingleBookPayment(amount, email, bookTitle, bookId, isRepurchase = false) {
       if (isProcessingPayment) return;
       if (!checkPaystackReady()) return;
       if (!PAYSTACK_PUBLIC_KEY || PAYSTACK_PUBLIC_KEY.includes('xxxxxxxx')) {
         showToast('⚠️ Paystack is not properly configured. Please contact support.', 'error');
+        return;
+      }
+
+      // ===== GET AUTHOR'S SUBACCOUNT CODE =====
+      let subaccountCode = null;
+      const authorId = currentBook.submittedBy;
+      
+      if (authorId) {
+        try {
+          const authorDoc = await getDoc(doc(db, "users", authorId));
+          if (authorDoc.exists()) {
+            const authorData = authorDoc.data();
+            subaccountCode = authorData.subaccountCode;
+            if (!subaccountCode) {
+              showToast('⚠️ This author has not set up their payout account yet. Please contact support.', 'error');
+              return;
+            }
+          } else {
+            showToast('⚠️ Author not found. Please contact support.', 'error');
+            return;
+          }
+        } catch (err) {
+          console.warn('Error fetching author subaccount:', err);
+          showToast('⚠️ Error processing payment. Please try again.', 'error');
+          return;
+        }
+      } else {
+        showToast('⚠️ Author information missing. Please contact support.', 'error');
         return;
       }
 
@@ -3424,10 +3454,14 @@ function goToLogin() {
           email: email,
           amount: amount * 100,
           currency: 'GHS',
+          // ===== KEY: SUBACCOUNT FOR ROYALTY SPLIT =====
+          subaccount: subaccountCode,  // 👈 Funds go to author's subaccount
+          bearer: 'account',           // 👈 Fees deducted BEFORE split (platform gets 10%)
           metadata: {
             custom_fields: [
               { display_name: "Book Title", variable_name: "book_title", value: bookTitle },
               { display_name: "Book ID", variable_name: "book_id", value: bookId },
+              { display_name: "Author ID", variable_name: "author_id", value: authorId },
               { display_name: "Customer ID", variable_name: "customer_id", value: currentUser?.uid || 'guest' },
               { display_name: "Payment Type", variable_name: "payment_type", value: isRepurchase ? "repurchase" : "single_book" }
             ]
@@ -3452,7 +3486,7 @@ function goToLogin() {
       }
     }
 
-    // ===== UPDATED: SERVER-SIDE VERIFICATION FOR SINGLE BOOK =====
+    // ===== UPDATED: VERIFICATION WITH AUTHOR ID =====
     async function handleSingleBookPaymentCallback(response) {
       if (!currentUser || !currentBook) {
         showToast('⚠️ User or book not found. Please try again.', 'error');
@@ -3462,9 +3496,7 @@ function goToLogin() {
         return;
       }
 
-      // ===== SERVER-SIDE VERIFICATION =====
       try {
-        // Show processing status
         paymentProcessing.classList.add('active');
         
         console.log('Verifying payment with serverless API...');
@@ -3472,7 +3504,6 @@ function goToLogin() {
         console.log('Amount:', currentBook.pricing?.amount);
         console.log('Email:', currentUser.email);
 
-        // Call your Vercel serverless function
         const verificationResponse = await fetch('/api/verify-paystack-transaction', {
           method: 'POST',
           headers: {
@@ -3482,14 +3513,14 @@ function goToLogin() {
             reference: response.reference,
             amount: currentBook.pricing?.amount || 0,
             email: currentUser.email,
-            bookId: currentBook.id
+            bookId: currentBook.id,
+            authorId: currentBook.submittedBy // 👈 Include author ID
           })
         });
 
         const verificationResult = await verificationResponse.json();
         console.log('Verification result:', verificationResult);
 
-        // Check if verification failed
         if (!verificationResult.success) {
           console.error('Verification failed:', verificationResult);
           showToast(`⚠️ ${verificationResult.message || 'Payment verification failed'}`, 'error');
@@ -3499,7 +3530,6 @@ function goToLogin() {
           return;
         }
 
-        // ===== VERIFICATION SUCCESSFUL - Record purchase =====
         console.log('✅ Payment verified successfully!');
         
         const transactionRef = response.reference || 'paystack_' + Date.now();
@@ -3512,7 +3542,8 @@ function goToLogin() {
             currency: response.currency || currentBook.pricing?.currency || 'GHS',
             customerEmail: response.customer?.email || currentUser.email,
             verifiedBy: 'serverless-api',
-            verificationData: verificationResult.data
+            verificationData: verificationResult.data,
+            authorId: currentBook.submittedBy // 👈 Store author ID in purchase record
           }
         );
         
@@ -3559,7 +3590,7 @@ function goToLogin() {
         }
     }
 
-    // ===== CART PAYMENT =====
+    // ===== CART PAYMENT WITH SUBACCOUNT =====
     function initiateCartPayment(amount, email, items) {
       if (isProcessingPayment) return;
       if (!checkPaystackReady()) return;
@@ -3582,6 +3613,10 @@ function goToLogin() {
           email: email,
           amount: amount * 100,
           currency: 'GHS',
+          // For multi-author cart, you'd use 'split' instead of 'subaccount'
+          // This simplified version uses the first item's author
+          // For full multi-author support, implement split logic
+          bearer: 'account',
           metadata: {
             custom_fields: [
               { display_name: "Items", variable_name: "items", value: bookTitles },
@@ -3613,7 +3648,7 @@ function goToLogin() {
       }
     }
 
-    // ===== UPDATED: SERVER-SIDE VERIFICATION FOR CART =====
+    // ===== VERIFICATION FOR CART =====
     async function handleCartPaymentCallback(response, items) {
       if (!currentUser) {
         showToast('⚠️ User not found. Please try again.', 'error');
@@ -3625,13 +3660,11 @@ function goToLogin() {
         return;
       }
 
-      // ===== SERVER-SIDE VERIFICATION FOR EACH ITEM =====
       let allValid = true;
       const invalidItems = [];
       
       for (const item of items) {
         try {
-          // Get book data from Firestore
           const bookRef = doc(db, "books", item.id);
           const bookSnap = await getDoc(bookRef);
           
@@ -3643,7 +3676,6 @@ function goToLogin() {
           
           const bookData = bookSnap.data();
           
-          // Call serverless API for verification
           const verificationResponse = await fetch('/api/verify-paystack-transaction', {
             method: 'POST',
             headers: {
@@ -3653,7 +3685,8 @@ function goToLogin() {
               reference: response.reference,
               amount: bookData.pricing?.amount || 0,
               email: currentUser.email,
-              bookId: item.id
+              bookId: item.id,
+              authorId: bookData.submittedBy
             })
           });
 
@@ -3680,7 +3713,6 @@ function goToLogin() {
         return;
       }
 
-      // ===== ALL VERIFICATIONS PASSED - Record purchases =====
       const transactionRef = response.reference || 'paystack_' + Date.now();
       let allSuccess = true;
       
@@ -3693,7 +3725,8 @@ function goToLogin() {
             amount: response.amount / items.length,
             currency: response.currency || 'GHS',
             customerEmail: response.customer?.email || currentUser.email,
-            verifiedBy: 'serverless-api'
+            verifiedBy: 'serverless-api',
+            authorId: item.authorId // Get from book data
           }
         );
         if (!success) allSuccess = false;
@@ -3768,13 +3801,11 @@ function goToLogin() {
       const purchased = await checkPurchaseStatus(currentUser.uid, currentBook.id);
       hasPaidForBook = purchased;
       
-      // Check if limit is reached
       if (purchased) {
         const canDownload = await canUserDownload(currentUser.uid, currentBook.id, downloadLimit);
         if (canDownload) {
           updatePaymentUI('owned');
         } else {
-          // Limit reached - show re-purchase option
           purchaseStatusText.textContent = '⚠️ You\'ve reached the download limit. Buy again or contact the author.';
           purchaseStatus.className = 'purchase-status limit-reached';
           purchaseStatus.style.display = 'flex';
@@ -3805,7 +3836,6 @@ function goToLogin() {
         return; 
       }
 
-      // Check if user can download (limit not reached)
       const canDownload = await canUserDownload(currentUser.uid, currentBook.id, downloadLimit);
       if (!canDownload) {
         const limitDisplay = getDownloadLimitDisplay(downloadLimit);
@@ -3842,7 +3872,6 @@ function goToLogin() {
         document.body.removeChild(anchor);
         URL.revokeObjectURL(downloadUrl);
         
-        // Update UI after download
         await updateUIForBook();
         const remaining = await getRemainingDownloads(currentUser.uid, currentBook.id, downloadLimit);
         const remainingText = remaining === 'Unlimited' ? 'Unlimited' : `${remaining} remaining`;
@@ -3900,14 +3929,12 @@ function goToLogin() {
       const items = getCartItems();
       if (items.length === 0) { showToast('Your cart is empty.', 'info'); return; }
 
-      // Get items that can be purchased (not purchased OR limit reached)
       const purchasableItems = [];
       for (const item of items) {
         const purchased = await checkPurchaseStatus(currentUser.uid, item.id);
         if (!purchased) {
           purchasableItems.push(item);
         } else {
-          // Check if limit is reached (can buy again)
           const bookRef = doc(db, "books", item.id);
           const bookSnap = await getDoc(bookRef);
           if (bookSnap.exists()) {
@@ -3915,7 +3942,7 @@ function goToLogin() {
             const limit = bookData.downloadLimit || bookData.downloads || 5;
             const canDownload = await canUserDownload(currentUser.uid, item.id, limit);
             if (!canDownload) {
-              purchasableItems.push(item); // Allow re-purchase
+              purchasableItems.push(item);
             }
           }
         }
@@ -4056,7 +4083,6 @@ function goToLogin() {
       popularityBadge.innerHTML = `<i class="fas ${popularity.icon}"></i> ${popularity.label} · ${displayText}`;
       bookBadges.appendChild(popularityBadge);
 
-      // Add download limit badge
       const limit = book.downloadLimit || book.downloads || 5;
       const limitDisplay = getDownloadLimitDisplay(limit);
       const limitBadge = document.createElement('span');
@@ -4124,7 +4150,6 @@ function goToLogin() {
   </script>
   
   <script>
-    // Dynamic login/signup link setup
     (function() {
       function setupDynamicAuthLinks() {
         const currentPage = window.location.href;

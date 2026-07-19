@@ -5058,7 +5058,7 @@ window.addEventListener('storage', (e) => {
                 .then((docSnap) => {
                     if (docSnap.exists()) {
                         // ✅ IS ADMIN - redirect to admin panel
-                        window.location.href = "../admin/approve.html";
+                        window.location.href = "approvals.html";
                     } else {
                         // ❌ NOT ADMIN - redirect to admin login
                         window.location.href = '../admin/admin-login.html';

@@ -5,20 +5,15 @@
 <script>
 // Better auth check - wait for Firebase to initialize
 (function() {
-    // Check if we're already on the login page to avoid loops
     if (window.location.pathname.includes('universal-login') || 
         window.location.pathname.includes('verify-email')) {
         return;
     }
     
-    // Check if there's a Firebase session
-    // Look for the Firebase auth token in localStorage
     const firebaseAuth = localStorage.getItem('firebase:authUser');
     const hasAuth = firebaseAuth !== null && firebaseAuth !== 'null' && firebaseAuth !== 'undefined';
     
-    // If no auth, redirect to login with return URL
     if (!hasAuth) {
-        // But don't redirect if we've already been redirected (prevent loops)
         if (!sessionStorage.getItem('auth_redirect_attempted')) {
             sessionStorage.setItem('auth_redirect_attempted', 'true');
             const currentPage = window.location.pathname + window.location.search;
@@ -26,14 +21,10 @@
                                   encodeURIComponent(currentPage);
         }
     } else {
-        // Clear the redirect attempt flag if we have auth
         sessionStorage.removeItem('auth_redirect_attempted');
     }
 })();
 </script>
-
-
-
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -403,6 +394,57 @@
       margin-top:4px;
     }
 
+    /* ===== PAYOUT SETTINGS STYLES ===== */
+    .payout-settings-section {
+      margin-top: 30px;
+      border-top: 2px solid #eee;
+      padding-top: 20px;
+    }
+    .payout-settings-section h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+    .payout-settings-section .payout-sub {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+    #payoutType {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      background: white;
+    }
+    #payoutType:focus {
+      outline: none;
+      border-color: #6a34ff;
+      box-shadow: 0 0 0 3px rgba(106,52,255,0.1);
+    }
+    #payoutStatus {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      padding: 10px 14px;
+      border-radius: 10px;
+    }
+    #payoutStatus.success { 
+      color: #15723d; 
+      background: #dff7e5;
+      border: 1px solid #a8d5b5;
+    }
+    #payoutStatus.error { 
+      color: #b33; 
+      background: #fde8e8;
+      border: 1px solid #f5c6cb;
+    }
+    #payoutStatus.loading { 
+      color: #6a34ff; 
+      background: #f0eaff;
+      border: 1px solid #d9d0f0;
+    }
+
     .modal-overlay {
       display:none;
       position:fixed;
@@ -583,7 +625,6 @@
     }
     .modal .form-actions .btn-delete:hover { background:#fdd; border-color:#b33; }
 
-    /* Downloads section in modal */
     .modal .downloads-group {
       background:#f8f5f0;
       border-radius:16px;
@@ -939,25 +980,36 @@
     .logo {display:none;}
 
     /* Hide only the Sales Overview panel (the first panel in the right column) */
-#page-dashboard .grid > div:last-child .panel:first-child {
+    #page-dashboard .grid > div:last-child .panel:first-child {
+        display: none !important;
+    }
+    /* Hide the Total Views card */
+    #page-analytics .page-card:first-child {
+        display: none !important;
+    }
+    /* Hide the Total Views stat card on dashboard */
+    #statsContainer .stat:last-child {
+        display: none !important;
+    }
+
+    .platform-badge.reads { 
+        background: linear-gradient(135deg, #d4a574, #c9944d); 
+    }
+
+    /* ===== HIDE OLD PAYMENT METHOD SECTION ===== */
+#page-settings .panel hr,
+#page-settings .panel > h3:has(+ .settings-group #settingsPayment),
+#page-settings .panel .settings-group:has(#settingsPayment),
+#page-settings .panel .settings-group:has(#settingsAccount) {
     display: none !important;
 }
 
-/* Hide the Total Views card */
-#page-analytics .page-card:first-child {
+/* Alternative: Hide the entire section using a wrapper class */
+/* If you can add a class to the parent div, use this instead: */
+.hide-payment-section {
     display: none !important;
 }
-
-/* Hide the Total Views stat card on dashboard */
-#statsContainer .stat:last-child {
-    display: none !important;
-}
-  
-
-                    .platform-badge.reads { 
-                        background: linear-gradient(135deg, #d4a574, #c9944d); 
-                    }
-                    </style>
+  </style>
 </head>
 <body>
 
@@ -1159,6 +1211,94 @@
         <button class="action-btn" id="saveSettingsBtn" style="width:100%;justify-content:center;margin-top:10px;">
           <i class="fas fa-save"></i> Save Settings
         </button>
+
+        <!-- ===== PAYOUT SETTINGS - NEW ===== -->
+        <div class="payout-settings-section">
+          <h3>💳 Payout Settings</h3>
+          <p class="payout-sub">Enter your payment details to receive earnings from book sales. You'll get <strong>90%</strong> of each sale (10% platform commission).</p>
+          
+          <div class="settings-group">
+            <label>Payout Type</label>
+            <select id="payoutType">
+              <option value="bank">Bank Account</option>
+              <option value="momo">Mobile Money</option>
+            </select>
+          </div>
+
+          <!-- Bank Fields -->
+          <div id="bankFields">
+            <div class="settings-group">
+              <label>Bank Name</label>
+              <input type="text" id="bankName" placeholder="e.g. GCB Bank" />
+            </div>
+            <div class="settings-group">
+              <label>Account Number</label>
+              <input type="text" id="accountNumber" placeholder="0123456789" />
+            </div>
+            <div class="settings-group">
+              <label>Account Holder Name</label>
+              <input type="text" id="accountHolderName" placeholder="Full name on account" />
+            </div>
+          </div>
+
+          <!-- MoMo Fields -->
+          <div id="momoFields" style="display:none;">
+            <div class="settings-group">
+              <label>Mobile Money Network</label>
+              <select id="momoNetwork">
+                <option value="mtn">MTN MoMo</option>
+                <option value="vodafone">Vodafone Cash</option>
+                <option value="tigo">AirtelTigo Money</option>
+              </select>
+            </div>
+            <div class="settings-group">
+              <label>Phone Number</label>
+              <input type="tel" id="momoNumber" placeholder="024XXXXXXX" />
+            </div>
+            <div class="settings-group">
+              <label>Account Holder Name</label>
+              <input type="text" id="momoHolderName" placeholder="Full name on MoMo account" />
+            </div>
+          </div>
+
+          <button class="action-btn" id="savePayoutBtn" style="width:100%;justify-content:center;margin-top:10px;">
+            <i class="fas fa-check-circle"></i> Activate Payout Account
+          </button>
+          <div id="payoutStatus"></div>
+        </div>
+
+        <!-- ===== EARNINGS OVERVIEW - NEW ===== -->
+        <div style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin:0;">💰 Your Earnings</h3>
+            <span style="color:#888; font-size:0.85rem;">All time</span>
+          </div>
+          <div class="stats" id="earningsStats">
+            <div class="stat">
+              <h4>Total Sales</h4>
+              <div class="value" id="totalSales">0</div>
+            </div>
+            <div class="stat">
+              <h4>Total Earnings</h4>
+              <div class="value" id="totalEarnings">GHS 0.00</div>
+            </div>
+            <div class="stat">
+              <h4>Pending Payout</h4>
+              <div class="value" id="pendingPayout">GHS 0.00</div>
+            </div>
+            <div class="stat">
+              <h4>Platform Commission (10%)</h4>
+              <div class="value" id="totalCommission">GHS 0.00</div>
+            </div>
+          </div>
+          
+          <div style="margin-top: 20px;">
+            <h4 style="margin-bottom:12px;">Recent Transactions</h4>
+            <div id="transactionHistory">
+              <p style="color: #888; padding: 10px 0;">No transactions yet.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1380,12 +1520,12 @@
   } from "firebase/firestore";
   import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
-// Disable all console logs in production
-console.log = function() {};
-console.error = function() {};
-console.warn = function() {};
-console.info = function() {};
-console.debug = function() {};
+  // Disable all console logs in production
+  console.log = function() {};
+  console.error = function() {};
+  console.warn = function() {};
+  console.info = function() {};
+  console.debug = function() {};
 
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -1461,6 +1601,13 @@ console.debug = function() {};
   const updateDownloadsSelect = document.getElementById('updateDownloadsSelect');
   const updateCustomDownloadsInput = document.getElementById('updateCustomDownloads');
   const updateCustomDownloadContainer = document.getElementById('updateCustomDownloadContainer');
+
+  // ===== PAYOUT DOM REFS =====
+  const payoutType = document.getElementById('payoutType');
+  const bankFields = document.getElementById('bankFields');
+  const momoFields = document.getElementById('momoFields');
+  const savePayoutBtn = document.getElementById('savePayoutBtn');
+  const payoutStatus = document.getElementById('payoutStatus');
 
   let currentUser = null;
   let authorBooks = [];
@@ -1561,16 +1708,219 @@ console.debug = function() {};
       toggleUpdateCustomDownloadInput();
       return;
     }
-    // Check if it matches one of the preset options
     const presets = ['3', '5', '10'];
     if (presets.includes(String(numValue))) {
       updateDownloadsSelect.value = String(numValue);
       toggleUpdateCustomDownloadInput();
     } else {
-      // It's a custom number
       updateDownloadsSelect.value = 'custom';
       toggleUpdateCustomDownloadInput();
       updateCustomDownloadsInput.value = numValue;
+    }
+  }
+
+  // ===== PAYOUT SETTINGS FUNCTIONS =====
+  function togglePayoutFields() {
+    if (payoutType.value === 'bank') {
+      bankFields.style.display = 'block';
+      momoFields.style.display = 'none';
+    } else {
+      bankFields.style.display = 'none';
+      momoFields.style.display = 'block';
+    }
+  }
+
+  async function loadPayoutSettings(userId) {
+    try {
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        if (data.payoutDetails) {
+          const details = data.payoutDetails;
+          payoutType.value = details.type || 'bank';
+          togglePayoutFields();
+          
+          if (details.type === 'bank') {
+            document.getElementById('bankName').value = details.bankName || '';
+            document.getElementById('accountNumber').value = details.accountNumber || '';
+            document.getElementById('accountHolderName').value = details.accountHolderName || '';
+          } else {
+            document.getElementById('momoNetwork').value = details.network || 'mtn';
+            document.getElementById('momoNumber').value = details.phoneNumber || '';
+            document.getElementById('momoHolderName').value = details.accountHolderName || '';
+          }
+          
+          if (data.subaccountCode) {
+            payoutStatus.textContent = '✅ Payout account activated! Subaccount: ' + data.subaccountCode;
+            payoutStatus.className = 'success';
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('Error loading payout settings:', err);
+    }
+  }
+
+  async function savePayoutSettings() {
+    if (!currentUser) {
+      showToast('❌ Please sign in first.', 'error');
+      return;
+    }
+    
+    const type = payoutType.value;
+    let payoutData = { type: type };
+    
+    if (type === 'bank') {
+      const bankName = document.getElementById('bankName').value.trim();
+      const accountNumber = document.getElementById('accountNumber').value.trim();
+      const accountHolderName = document.getElementById('accountHolderName').value.trim();
+      
+      if (!bankName || !accountNumber || !accountHolderName) {
+        showToast('❌ Please fill in all bank details.', 'error');
+        return;
+      }
+      
+      payoutData.bankName = bankName;
+      payoutData.accountNumber = accountNumber;
+      payoutData.accountHolderName = accountHolderName;
+    } else {
+      const network = document.getElementById('momoNetwork').value;
+      const phoneNumber = document.getElementById('momoNumber').value.trim();
+      const accountHolderName = document.getElementById('momoHolderName').value.trim();
+      
+      if (!phoneNumber || !accountHolderName) {
+        showToast('❌ Please fill in all MoMo details.', 'error');
+        return;
+      }
+      
+      payoutData.network = network;
+      payoutData.phoneNumber = phoneNumber;
+      payoutData.accountHolderName = accountHolderName;
+    }
+    
+    savePayoutBtn.disabled = true;
+    savePayoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Activating...';
+    payoutStatus.textContent = '⏳ Creating payout account...';
+    payoutStatus.className = 'loading';
+    
+    try {
+      // Create subaccount via serverless function
+      const response = await fetch('/api/create-subaccount', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentUser.uid,
+          email: currentUser.email,
+          payoutData: payoutData,
+          username: userDisplayName || currentUser.displayName || 'Volant Author'
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // Save to Firestore
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          payoutDetails: {
+            ...payoutData,
+            createdAt: new Date().toISOString()
+          },
+          subaccountCode: result.subaccountCode,
+          hasPayoutAccount: true,
+          commissionRate: 10,
+          feeBearer: 'account'
+        });
+        
+        payoutStatus.textContent = '✅ Payout account activated successfully! You\'ll receive 90% of each sale automatically.';
+        payoutStatus.className = 'success';
+        showToast('✅ Payout account activated!', 'success');
+        
+        // Reload earnings
+        loadEarnings(currentUser.uid);
+      } else {
+        payoutStatus.textContent = '❌ ' + (result.message || 'Failed to activate payout account. Please try again.');
+        payoutStatus.className = 'error';
+        showToast('❌ Failed to activate payout account.', 'error');
+      }
+    } catch (err) {
+      console.error('Error creating subaccount:', err);
+      payoutStatus.textContent = '❌ Error: ' + (err.message || 'Please try again later.');
+      payoutStatus.className = 'error';
+      showToast('❌ Error activating payout account.', 'error');
+    } finally {
+      savePayoutBtn.disabled = false;
+      savePayoutBtn.innerHTML = '<i class="fas fa-check-circle"></i> Activate Payout Account';
+    }
+  }
+
+  // ===== EARNINGS FUNCTIONS =====
+  async function loadEarnings(userId) {
+    try {
+      // Get user's commission rate
+      const userDoc = await getDoc(doc(db, "users", userId));
+      const userData = userDoc.data();
+      const commissionRate = userData?.commissionRate || 10;
+      
+      // Query purchases where authorId = userId
+      const q = query(
+        collection(db, "purchases"),
+        where("authorId", "==", userId)
+      );
+      const snapshot = await getDocs(q);
+      
+      let totalSales = 0;
+      let totalEarnings = 0;
+      let totalCommission = 0;
+      let pendingPayout = 0;
+      const transactions = [];
+      
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const amount = data.amount || 0;
+        const fee = data.fee || 0;
+        const netAmount = amount - fee;
+        const commission = netAmount * (commissionRate / 100);
+        const earnings = netAmount - commission;
+        
+        totalSales++;
+        totalEarnings += earnings;
+        totalCommission += commission;
+        pendingPayout += earnings;
+        
+        transactions.push({
+          bookTitle: data.bookTitle || 'Unknown Book',
+          amount: amount,
+          fee: fee,
+          commission: commission,
+          earnings: earnings,
+          date: data.purchasedAt?.toDate?.() || new Date(data.purchasedAt) || new Date(),
+          status: data.status || 'completed'
+        });
+      });
+      
+      // Update stats
+      document.getElementById('totalSales').textContent = totalSales;
+      document.getElementById('totalEarnings').textContent = `GHS ${totalEarnings.toFixed(2)}`;
+      document.getElementById('totalCommission').textContent = `GHS ${totalCommission.toFixed(2)}`;
+      document.getElementById('pendingPayout').textContent = `GHS ${pendingPayout.toFixed(2)}`;
+      
+      // Show transaction history
+      const historyDiv = document.getElementById('transactionHistory');
+      if (transactions.length === 0) {
+        historyDiv.innerHTML = `<p style="color: #888; padding: 10px 0;">No transactions yet.</p>`;
+      } else {
+        historyDiv.innerHTML = transactions.sort((a, b) => b.date - a.date).slice(0, 10).map(t => `
+          <div class="row">
+            <span>
+              <strong>${t.bookTitle}</strong>
+              <span style="font-size:0.75rem;color:#888;margin-left:8px;">${t.date.toLocaleDateString()}</span>
+            </span>
+            <span style="color:#15723d;">+GHS ${t.earnings.toFixed(2)}</span>
+          </div>
+        `).join('');
+      }
+    } catch (err) {
+      console.warn('Error loading earnings:', err);
     }
   }
 
@@ -1712,120 +2062,115 @@ console.debug = function() {};
     document.body.removeChild(tempInput);
   }
 
-// ===== CREATE BOOK CARD =====
-function createBookCard(book, showStatus = false, showSales = false) {
-  const card = document.createElement('div');
-  card.className = 'page-card';
+  // ===== CREATE BOOK CARD =====
+  function createBookCard(book, showStatus = false, showSales = false) {
+    const card = document.createElement('div');
+    card.className = 'page-card';
 
-  const coverWrapper = document.createElement('div');
-  coverWrapper.className = 'cover-wrapper';
-  coverWrapper.onclick = () => {
-    window.location.href = `details.html?id=${book.id}`;
-  };
-  
-  if (book.imageUrl) {
-    const img = document.createElement('img');
-    img.src = book.imageUrl;
-    img.alt = book.title || 'Book cover';
-    img.loading = 'lazy';
-    img.onerror = function() {
-      this.style.display = 'none';
-      this.parentElement.innerHTML = `<div class="no-image"><i class="fas fa-book-open"></i></div>`;
+    const coverWrapper = document.createElement('div');
+    coverWrapper.className = 'cover-wrapper';
+    coverWrapper.onclick = () => {
+      window.location.href = `details.html?id=${book.id}`;
     };
-    coverWrapper.appendChild(img);
-  } else {
-    coverWrapper.innerHTML = `<div class="no-image"><i class="fas fa-book-open"></i></div>`;
+    
+    if (book.imageUrl) {
+      const img = document.createElement('img');
+      img.src = book.imageUrl;
+      img.alt = book.title || 'Book cover';
+      img.loading = 'lazy';
+      img.onerror = function() {
+        this.style.display = 'none';
+        this.parentElement.innerHTML = `<div class="no-image"><i class="fas fa-book-open"></i></div>`;
+      };
+      coverWrapper.appendChild(img);
+    } else {
+      coverWrapper.innerHTML = `<div class="no-image"><i class="fas fa-book-open"></i></div>`;
+    }
+    card.appendChild(coverWrapper);
+
+    const body = document.createElement('div');
+    body.className = 'book-body';
+
+    const title = document.createElement('div');
+    title.className = 'book-title';
+    title.textContent = book.title || 'Untitled';
+    body.appendChild(title);
+
+    if (book.subtitle && book.subtitle.trim() !== '') {
+      const subtitle = document.createElement('div');
+      subtitle.className = 'book-subtitle';
+      subtitle.textContent = book.subtitle;
+      body.appendChild(subtitle);
+    }
+
+    const author = document.createElement('div');
+    author.className = 'book-author';
+    author.textContent = book.authorName || 'Anonymous';
+    body.appendChild(author);
+
+    const price = document.createElement('div');
+    price.className = 'book-price';
+    const currency = book.currency || 'GHS';
+    const amount = book.price || 0;
+    price.textContent = `${currency} ${amount.toFixed(2)}`;
+    body.appendChild(price);
+
+    if (book.downloadLimit !== undefined) {
+      const limitDisplay = book.downloadLimit === 'unlimited' ? '♾️ Unlimited' : `${book.downloadLimit}`;
+      const salesBadge = document.createElement('span');
+      salesBadge.className = 'sales-badge';
+      salesBadge.innerHTML = `<i class="fas fa-download"></i> Limit: ${limitDisplay}`;
+      body.appendChild(salesBadge);
+    }
+
+    if (showStatus && book.status) {
+      const statusBadge = document.createElement('span');
+      const statusLabels = {
+        'pending': '⏳ Pending Review',
+        'approved': '✅ Published',
+        'rejected': '❌ Not Accepted',
+        'draft': '📄 Draft'
+      };
+      const statusText = statusLabels[book.status] || book.status.charAt(0).toUpperCase() + book.status.slice(1);
+      statusBadge.className = `badge-status ${book.status}`;
+      statusBadge.textContent = statusText;
+      body.appendChild(statusBadge);
+    }
+
+    if (showSales && book.downloads > 0) {
+      const salesInfo = document.createElement('span');
+      salesInfo.className = 'revenue-badge';
+      salesInfo.innerHTML = `<i class="fas fa-shopping-cart"></i> ${book.downloads} sales · ${formatCurrency((book.downloads || 0) * (book.price || 0))}`;
+      body.appendChild(salesInfo);
+    }
+
+    const btnGroup = document.createElement('div');
+    btnGroup.className = 'btn-group';
+
+    const updateBtn = document.createElement('button');
+    updateBtn.className = 'update-book-btn';
+    updateBtn.innerHTML = '<i class="fas fa-edit"></i> Update';
+    updateBtn.title = 'Edit this book';
+    updateBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      openUpdateModal(book.id);
+    });
+    btnGroup.appendChild(updateBtn);
+
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'share-book-btn';
+    shareBtn.innerHTML = '<i class="fas fa-link"></i> Share';
+    shareBtn.title = 'Copy book link to share';
+    shareBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      shareBook(book.id, book.title || 'Untitled');
+    });
+    btnGroup.appendChild(shareBtn);
+
+    body.appendChild(btnGroup);
+    card.appendChild(body);
+    return card;
   }
-  card.appendChild(coverWrapper);
-
-  const body = document.createElement('div');
-  body.className = 'book-body';
-
-  const title = document.createElement('div');
-  title.className = 'book-title';
-  title.textContent = book.title || 'Untitled';
-  body.appendChild(title);
-
-  if (book.subtitle && book.subtitle.trim() !== '') {
-    const subtitle = document.createElement('div');
-    subtitle.className = 'book-subtitle';
-    subtitle.textContent = book.subtitle;
-    body.appendChild(subtitle);
-  }
-
-  const author = document.createElement('div');
-  author.className = 'book-author';
-  author.textContent = book.authorName || 'Anonymous';
-  body.appendChild(author);
-
-  const price = document.createElement('div');
-  price.className = 'book-price';
-  const currency = book.currency || 'GHS';
-  const amount = book.price || 0;
-  price.textContent = `${currency} ${amount.toFixed(2)}`;
-  body.appendChild(price);
-
-  // Show download limit if available
-  if (book.downloadLimit !== undefined) {
-    const limitDisplay = book.downloadLimit === 'unlimited' ? '♾️ Unlimited' : `${book.downloadLimit}`;
-    const salesBadge = document.createElement('span');
-    salesBadge.className = 'sales-badge';
-    salesBadge.innerHTML = `<i class="fas fa-download"></i> Limit: ${limitDisplay}`;
-    body.appendChild(salesBadge);
-  }
-
-  // ===== SHOW STATUS BADGE - FIXED FOR ALL STATUSES =====
-  if (showStatus && book.status) {
-    const statusBadge = document.createElement('span');
-    // Map status to display text
-    const statusLabels = {
-      'pending': '⏳ Pending Review',
-      'approved': '✅ Published',
-      'rejected': '❌ Not Accepted',
-      'draft': '📄 Draft'
-    };
-    const statusText = statusLabels[book.status] || book.status.charAt(0).toUpperCase() + book.status.slice(1);
-    statusBadge.className = `badge-status ${book.status}`;
-    statusBadge.textContent = statusText;
-    body.appendChild(statusBadge);
-  }
-
-  // Show sales info if requested
-  if (showSales && book.downloads > 0) {
-    const salesInfo = document.createElement('span');
-    salesInfo.className = 'revenue-badge';
-    salesInfo.innerHTML = `<i class="fas fa-shopping-cart"></i> ${book.downloads} sales · ${formatCurrency((book.downloads || 0) * (book.price || 0))}`;
-    body.appendChild(salesInfo);
-  }
-
-  // Button group for actions
-  const btnGroup = document.createElement('div');
-  btnGroup.className = 'btn-group';
-
-  const updateBtn = document.createElement('button');
-  updateBtn.className = 'update-book-btn';
-  updateBtn.innerHTML = '<i class="fas fa-edit"></i> Update';
-  updateBtn.title = 'Edit this book';
-  updateBtn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    openUpdateModal(book.id);
-  });
-  btnGroup.appendChild(updateBtn);
-
-  const shareBtn = document.createElement('button');
-  shareBtn.className = 'share-book-btn';
-  shareBtn.innerHTML = '<i class="fas fa-link"></i> Share';
-  shareBtn.title = 'Copy book link to share';
-  shareBtn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    shareBook(book.id, book.title || 'Untitled');
-  });
-  btnGroup.appendChild(shareBtn);
-
-  body.appendChild(btnGroup);
-  card.appendChild(body);
-  return card;
-}
 
   // ===== OPEN UPDATE MODAL =====
   function openUpdateModal(bookId) {
@@ -1861,7 +2206,6 @@ function createBookCard(book, showStatus = false, showSales = false) {
       updatePrice.value = data.pricing?.amount || '';
       updateKeywords.value = (data.keywords || []).join(', ');
       
-      // Set download limit value - use downloadLimit field, fallback to downloads
       const downloadLimit = data.downloadLimit || data.downloads || 5;
       setUpdateDownloadsValue(downloadLimit);
       
@@ -1919,7 +2263,6 @@ function createBookCard(book, showStatus = false, showSales = false) {
     if (!email || !email.includes('@')) { showToast('❌ Valid email is required', 'error'); return; }
     if (isNaN(price) || price < 0) { showToast('❌ Valid price is required', 'error'); return; }
 
-    // Validate download limit
     const downloadLimitValue = getUpdateDownloadsValue();
     if (downloadLimitValue === null) {
       showToast('❌ Please enter a valid number of downloads (minimum 3).', 'error');
@@ -1976,8 +2319,7 @@ function createBookCard(book, showStatus = false, showSales = false) {
         email,
         pricing: { currency, amount: price },
         keywords,
-        // NEW: Separate fields - downloadLimit is the author-set limit, downloads is the total count
-        downloadLimit: downloadLimitValue,  // ← Author-set limit per buyer
+        downloadLimit: downloadLimitValue,
         updatedAt: serverTimestamp()
       };
 
@@ -2157,7 +2499,6 @@ function createBookCard(book, showStatus = false, showSales = false) {
   function renderStats(books) {
     const published = books.filter(b => b.status === 'approved');
     const totalBooks = books.length;
-    // Use downloads for total sales count (total downloads ever)
     const totalSales = published.reduce((sum, b) => sum + (b.downloads || 0), 0);
     const totalRevenue = published.reduce((sum, b) => sum + ((b.downloads || 0) * (b.price || 0)), 0);
     const avgPrice = published.length > 0 ? (published.reduce((sum, b) => sum + (b.price || 0), 0) / published.length).toFixed(0) : 0;
@@ -2173,36 +2514,35 @@ function createBookCard(book, showStatus = false, showSales = false) {
   }
 
   function renderMyBooks(books) {
-  if (books.length === 0) {
-    myBooksTable.innerHTML = `<p style="padding:20px 0; color:#888;">You haven't added any books yet.</p>`;
-    return;
-  }
-  myBooksTable.innerHTML = books.slice(0, 5).map(b => {
-    const limitDisplay = b.downloadLimit === 'unlimited' ? '♾️ Unlimited' : (b.downloadLimit || 5);
-    const revenue = (b.downloads || 0) * (b.price || 0);
-    // Status labels and classes
-    const statusLabels = {
-      'pending': '⏳ Pending',
-      'approved': '✅ Published',
-      'rejected': '❌ Rejected',
-      'draft': '📄 Draft'
-    };
-    const statusLabel = statusLabels[b.status] || b.status || 'Draft';
-    const statusClass = b.status || 'draft';
-    return `
-      <div class="row" style="cursor:pointer;" data-id="${b.id}">
-        <span>${b.title || 'Untitled'} <span style="font-size:0.7rem;color:#888;margin-left:8px;">📥 Limit: ${limitDisplay} · ${formatCurrency(revenue)}</span></span>
-        <span class="badge ${statusClass}">${statusLabel}</span>
-      </div>
-    `;
-  }).join('');
-  myBooksTable.querySelectorAll('.row').forEach(el => {
-    el.addEventListener('click', () => {
-      const id = el.dataset.id;
-      window.location.href = `details.html?id=${id}`;
+    if (books.length === 0) {
+      myBooksTable.innerHTML = `<p style="padding:20px 0; color:#888;">You haven't added any books yet.</p>`;
+      return;
+    }
+    myBooksTable.innerHTML = books.slice(0, 5).map(b => {
+      const limitDisplay = b.downloadLimit === 'unlimited' ? '♾️ Unlimited' : (b.downloadLimit || 5);
+      const revenue = (b.downloads || 0) * (b.price || 0);
+      const statusLabels = {
+        'pending': '⏳ Pending',
+        'approved': '✅ Published',
+        'rejected': '❌ Rejected',
+        'draft': '📄 Draft'
+      };
+      const statusLabel = statusLabels[b.status] || b.status || 'Draft';
+      const statusClass = b.status || 'draft';
+      return `
+        <div class="row" style="cursor:pointer;" data-id="${b.id}">
+          <span>${b.title || 'Untitled'} <span style="font-size:0.7rem;color:#888;margin-left:8px;">📥 Limit: ${limitDisplay} · ${formatCurrency(revenue)}</span></span>
+          <span class="badge ${statusClass}">${statusLabel}</span>
+        </div>
+      `;
+    }).join('');
+    myBooksTable.querySelectorAll('.row').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = el.dataset.id;
+        window.location.href = `details.html?id=${id}`;
+      });
     });
-  });
-}
+  }
 
   function renderRecentSales(books) {
     const sold = books.filter(b => b.downloads > 0).sort((a,b) => b.downloads - a.downloads);
@@ -2465,98 +2805,99 @@ function createBookCard(book, showStatus = false, showSales = false) {
     return null;
   }
 
- // ===== LOAD DATA =====
-async function loadAuthorData(user) {
-  try {
-    let allBooksData = [];
-    
-    // Get user profile data
+  // ===== LOAD DATA =====
+  async function loadAuthorData(user) {
     try {
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        if (data.username) userDisplayName = data.username;
-        if (data.bio) settingsBio.value = data.bio;
-        if (data.paymentMethod) document.getElementById('settingsPayment').value = data.paymentMethod;
-        if (data.accountDetails) settingsAccount.value = data.accountDetails;
-      }
-    } catch (_) {}
-
-    // ===== FIX: Query by submittedBy (user UID) =====
-    console.log('🔍 Looking for books with submittedBy:', user.uid);
-    
-    try {
-      const q = query(collection(db, "books"), where("submittedBy", "==", user.uid));
-      const snapshot = await getDocs(q);
-      console.log('📊 Books found with submittedBy:', snapshot.size);
-      snapshot.forEach(doc => {
-        allBooksData.push({ id: doc.id, ...doc.data() });
-      });
-    } catch (e) {
-      console.log('⚠️ submittedBy query failed:', e.message);
-    }
-
-    // ===== FALLBACK: Also try submittedByUsername =====
-    if (allBooksData.length === 0) {
-      console.log('🔄 Trying submittedByUsername...');
+      let allBooksData = [];
+      
       try {
-        const q = query(collection(db, "books"), where("submittedByUsername", "==", userDisplayName || user.email?.split('@')[0]));
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          if (data.username) userDisplayName = data.username;
+          if (data.bio) settingsBio.value = data.bio;
+          if (data.paymentMethod) document.getElementById('settingsPayment').value = data.paymentMethod;
+          if (data.accountDetails) settingsAccount.value = data.accountDetails;
+        }
+      } catch (_) {}
+
+      console.log('🔍 Looking for books with submittedBy:', user.uid);
+      
+      try {
+        const q = query(collection(db, "books"), where("submittedBy", "==", user.uid));
         const snapshot = await getDocs(q);
-        console.log('📊 Books found with submittedByUsername:', snapshot.size);
+        console.log('📊 Books found with submittedBy:', snapshot.size);
         snapshot.forEach(doc => {
-          if (!allBooksData.some(b => b.id === doc.id)) {
-            allBooksData.push({ id: doc.id, ...doc.data() });
-          }
+          allBooksData.push({ id: doc.id, ...doc.data() });
         });
       } catch (e) {
-        console.log('⚠️ submittedByUsername query failed:', e.message);
+        console.log('⚠️ submittedBy query failed:', e.message);
       }
-    }
 
-    // ===== Process results =====
-    console.log('📚 Total books found:', allBooksData.length);
-    
-    authorBooks = [];
-    allBooksData.forEach(data => {
-      console.log('📖 Processing book:', data.title, 'Status:', data.status);
-      authorBooks.push({
-        id: data.id,
-        title: data.title || 'Untitled',
-        subtitle: data.subtitle || '',
-        authorName: data.authorName || 'Anonymous',
-        imageUrl: data.imageUrl || '',
-        pdfUrl: data.pdfUrl || '',
-        price: data.pricing?.amount || 0,
-        currency: data.pricing?.currency || 'GHS',
-        status: data.status || 'draft',
-        downloads: data.downloads || 0,
-        downloadLimit: data.downloadLimit || data.downloads || 5,
-        views: data.views || 0,
-        rating: data.rating || 0,
-        approvedAt: data.approvedAt || data.createdAt || null,
+      if (allBooksData.length === 0) {
+        console.log('🔄 Trying submittedByUsername...');
+        try {
+          const q = query(collection(db, "books"), where("submittedByUsername", "==", userDisplayName || user.email?.split('@')[0]));
+          const snapshot = await getDocs(q);
+          console.log('📊 Books found with submittedByUsername:', snapshot.size);
+          snapshot.forEach(doc => {
+            if (!allBooksData.some(b => b.id === doc.id)) {
+              allBooksData.push({ id: doc.id, ...doc.data() });
+            }
+          });
+        } catch (e) {
+          console.log('⚠️ submittedByUsername query failed:', e.message);
+        }
+      }
+
+      console.log('📚 Total books found:', allBooksData.length);
+      
+      authorBooks = [];
+      allBooksData.forEach(data => {
+        console.log('📖 Processing book:', data.title, 'Status:', data.status);
+        authorBooks.push({
+          id: data.id,
+          title: data.title || 'Untitled',
+          subtitle: data.subtitle || '',
+          authorName: data.authorName || 'Anonymous',
+          imageUrl: data.imageUrl || '',
+          pdfUrl: data.pdfUrl || '',
+          price: data.pricing?.amount || 0,
+          currency: data.pricing?.currency || 'GHS',
+          status: data.status || 'draft',
+          downloads: data.downloads || 0,
+          downloadLimit: data.downloadLimit || data.downloads || 5,
+          views: data.views || 0,
+          rating: data.rating || 0,
+          approvedAt: data.approvedAt || data.createdAt || null,
+        });
       });
-    });
 
-    authorBooks.sort((a, b) => {
-      const da = a.approvedAt?.toDate?.() || new Date(a.approvedAt) || new Date(0);
-      const db2 = b.approvedAt?.toDate?.() || new Date(b.approvedAt) || new Date(0);
-      return db2 - da;
-    });
+      authorBooks.sort((a, b) => {
+        const da = a.approvedAt?.toDate?.() || new Date(a.approvedAt) || new Date(0);
+        const db2 = b.approvedAt?.toDate?.() || new Date(b.approvedAt) || new Date(0);
+        return db2 - da;
+      });
 
-    console.log('✅ Final author books count:', authorBooks.length);
-    if (authorBooks.length > 0) {
-      console.log('📊 Book statuses:', authorBooks.map(b => `${b.title}: ${b.status}`).join(', '));
+      console.log('✅ Final author books count:', authorBooks.length);
+      if (authorBooks.length > 0) {
+        console.log('📊 Book statuses:', authorBooks.map(b => `${b.title}: ${b.status}`).join(', '));
+      }
+
+      // ===== LOAD PAYOUT SETTINGS AND EARNINGS =====
+      await loadPayoutSettings(user.uid);
+      await loadEarnings(user.uid);
+      
+      await loadWishlist(user.uid);
+      await loadMessages(user.uid);
+      await renderAll();
+      
+    } catch (err) {
+      console.error("❌ Error loading data:", err);
+      showToast('Error loading your books: ' + err.message, 'error');
     }
-
-    await loadWishlist(user.uid);
-    await loadMessages(user.uid);
-    await renderAll();
-    
-  } catch (err) {
-    console.error("❌ Error loading data:", err);
-    showToast('Error loading your books: ' + err.message, 'error');
   }
-}
+
   // ===== SIDEBAR TOGGLE =====
   function toggleSidebar() {
     sidebar.classList.toggle('mobile-open');
@@ -2627,6 +2968,10 @@ async function loadAuthorData(user) {
     }
   });
 
+  // ===== PAYOUT EVENT LISTENERS =====
+  payoutType.addEventListener('change', togglePayoutFields);
+  savePayoutBtn.addEventListener('click', savePayoutSettings);
+
   document.getElementById('signOutBtn')?.addEventListener('click', async () => {
     try {
       await signOut(auth);
@@ -2653,33 +2998,27 @@ async function loadAuthorData(user) {
 
   deleteBookBtn?.addEventListener('click', deleteBook);
 
-  // Downloads toggle event
   updateDownloadsSelect?.addEventListener('change', toggleUpdateCustomDownloadInput);
 
   // ===== AUTH =====
-  // Simple auth state handler - no redirect loops
-onAuthStateChanged(auth, async (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
-        // User is signed in
-        currentUser = user;
-        await updateUserUI(user);
-        await loadAuthorData(user);
-        showPage('dashboard');
-        // Clear any redirect flags
-        sessionStorage.removeItem('auth_redirect_attempted');
+      currentUser = user;
+      await updateUserUI(user);
+      await loadAuthorData(user);
+      showPage('dashboard');
+      sessionStorage.removeItem('auth_redirect_attempted');
     } else {
-        // User is signed out - redirect to login only if not already there
-        if (!window.location.pathname.includes('universal-login') && 
-            !window.location.pathname.includes('verify-email')) {
-            const currentPage = window.location.pathname + window.location.search;
-            window.location.href = '../shared/universal-login.html?platform=reads&redirect=' + 
-                                  encodeURIComponent(currentPage);
-        }
+      if (!window.location.pathname.includes('universal-login') && 
+          !window.location.pathname.includes('verify-email')) {
+        const currentPage = window.location.pathname + window.location.search;
+        window.location.href = '../shared/universal-login.html?platform=reads&redirect=' + 
+                              encodeURIComponent(currentPage);
+      }
     }
-});
+  });
 </script>
 <script>
-// Dynamic login/signup link setup for current page redirect
 (function() {
   function setupDynamicAuthLinks() {
     const currentPage = window.location.href;
