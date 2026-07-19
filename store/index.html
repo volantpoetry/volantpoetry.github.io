@@ -62,7 +62,6 @@
 </script>
 
     <style>
-        /* Your existing CSS - unchanged */
         /* ===== NAV - MAINTAIN HEIGHT, PUSH TEXT INWARD ===== */
         header {
             background: var(--bg-white, #ffffff);
@@ -4028,7 +4027,7 @@ function getCartCount() {
 
 let cartCount = getCartCount();
 
-// ===== PAYMENT FUNCTIONS =====
+// ===== PAYMENT FUNCTIONS - UPDATED WITH SUBACCOUNT SUPPORT =====
 async function checkPurchaseStatus(userId, bookId) {
     try {
         const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
@@ -4045,25 +4044,55 @@ async function checkPurchaseStatus(userId, bookId) {
 async function recordPurchase(userId, bookId, transactionRef, paymentData = {}) {
     try {
         const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
-        await setDoc(purchaseRef, {
-            userId: userId,
-            bookId: bookId,
-            status: 'completed',
-            verified: true,
-            purchasedAt: serverTimestamp(),
-            transactionRef: transactionRef || 'paystack',
-            amount: paymentData.amount || 0,
-            currency: paymentData.currency || 'GHS',
-            customerEmail: paymentData.customerEmail || currentUser?.email || '',
-            paymentMethod: 'paystack'
-        });
+        
+        // Check if purchase already exists
+        const purchaseSnap = await getDoc(purchaseRef);
+        if (purchaseSnap.exists()) {
+            await updateDoc(purchaseRef, {
+                status: 'completed',
+                verified: true,
+                purchasedAt: serverTimestamp(),
+                transactionRef: transactionRef || 'paystack',
+                amount: paymentData.amount || 0,
+                currency: paymentData.currency || 'GHS',
+                customerEmail: paymentData.customerEmail || currentUser?.email || '',
+                paymentMethod: 'paystack',
+                downloadCount: 0,
+                lastDownloadedAt: null,
+                purchaseCount: increment(1),
+                authorId: paymentData.authorId || null,
+                bookTitle: paymentData.bookTitle || null
+            });
+        } else {
+            await setDoc(purchaseRef, {
+                userId: userId,
+                bookId: bookId,
+                status: 'completed',
+                verified: true,
+                purchasedAt: serverTimestamp(),
+                transactionRef: transactionRef || 'paystack',
+                amount: paymentData.amount || 0,
+                currency: paymentData.currency || 'GHS',
+                customerEmail: paymentData.customerEmail || currentUser?.email || '',
+                paymentMethod: 'paystack',
+                downloadCount: 0,
+                lastDownloadedAt: null,
+                purchaseCount: 1,
+                authorId: paymentData.authorId || null,
+                bookTitle: paymentData.bookTitle || null
+            });
+        }
         return true;
     } catch (err) {
+        console.error('Error recording purchase:', err);
         return false;
     }
 }
 
-function initiateCartPayment(amount, email, items) {
+// ================================================================
+// ===== UPDATED: CART PAYMENT WITH PROPER SUBACCOUNT SUPPORT =====
+// ================================================================
+async function initiateCartPayment(amount, email, items) {
     if (isProcessingPayment) return;
     
     if (typeof PaystackPop === 'undefined') {
@@ -4076,19 +4105,133 @@ function initiateCartPayment(amount, email, items) {
         return;
     }
 
+    // ===== GET AUTHOR SUBACCOUNTS FOR EACH ITEM =====
+    const authorGroups = {};
+    let hasAllSubaccounts = true;
+    let missingAuthors = [];
+
     isProcessingPayment = true;
     cartPaymentProcessing.classList.add('active');
     checkoutBtn.disabled = true;
-    checkoutBtn.textContent = 'Processing...';
+    checkoutBtn.textContent = 'Verifying authors...';
+
+    for (const item of items) {
+        try {
+            // Get book data to find author
+            const bookRef = doc(db, "books", item.id);
+            const bookSnap = await getDoc(bookRef);
+            
+            if (!bookSnap.exists()) {
+                showToast(`⚠️ Book "${item.title}" not found.`, 'error');
+                isProcessingPayment = false;
+                isCartCheckout = false;
+                cartPaymentProcessing.classList.remove('active');
+                checkoutBtn.disabled = false;
+                checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+                return;
+            }
+            
+            const bookData = bookSnap.data();
+            const authorId = bookData.submittedBy;
+            
+            if (!authorId) {
+                missingAuthors.push(item.title);
+                hasAllSubaccounts = false;
+                continue;
+            }
+            
+            // Get author's subaccount
+            const authorDoc = await getDoc(doc(db, "users", authorId));
+            if (!authorDoc.exists()) {
+                missingAuthors.push(item.title);
+                hasAllSubaccounts = false;
+                continue;
+            }
+            
+            const authorData = authorDoc.data();
+            const subaccountCode = authorData.subaccountCode;
+            
+            if (!subaccountCode) {
+                missingAuthors.push(item.title);
+                hasAllSubaccounts = false;
+                continue;
+            }
+            
+            if (!authorGroups[authorId]) {
+                authorGroups[authorId] = {
+                    subaccount: subaccountCode,
+                    total: 0,
+                    items: [],
+                    authorName: bookData.authorName || 'Unknown Author'
+                };
+            }
+            authorGroups[authorId].total += (item.price || 0);
+            authorGroups[authorId].items.push(item.title);
+            
+        } catch (error) {
+            console.error('Error fetching author subaccount:', error);
+            showToast('⚠️ Error processing payment. Please try again.', 'error');
+            isProcessingPayment = false;
+            isCartCheckout = false;
+            cartPaymentProcessing.classList.remove('active');
+            checkoutBtn.disabled = false;
+            checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+            return;
+        }
+    }
+
+    // Check if any authors are missing subaccounts
+    if (!hasAllSubaccounts && missingAuthors.length > 0) {
+        showToast(`⚠️ Some authors haven't set up payout accounts: ${missingAuthors.join(', ')}. Please contact support.`, 'error');
+        isProcessingPayment = false;
+        isCartCheckout = false;
+        cartPaymentProcessing.classList.remove('active');
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+        return;
+    }
+
+    // ===== CREATE SPLIT CONFIGURATION =====
+    let splitConfig = null;
+    const totalAmount = items.reduce((sum, item) => sum + (item.price || 0), 0);
+    
+    if (Object.keys(authorGroups).length > 1) {
+        // Multiple authors - use Paystack Split
+        const shares = [];
+        for (const [authorId, data] of Object.entries(authorGroups)) {
+            const sharePercentage = (data.total / totalAmount) * 100;
+            shares.push({
+                subaccount: data.subaccount,
+                share: Math.round(sharePercentage * 100) / 100
+            });
+        }
+        
+        splitConfig = {
+            type: 'percentage',
+            bearer: 'account',  // 👈 Fees deducted BEFORE split (platform gets 10%)
+            subaccounts: shares
+        };
+        console.log('📊 Multi-author split:', shares);
+    } else {
+        // Single author - use subaccount directly
+        const authorId = Object.keys(authorGroups)[0];
+        splitConfig = {
+            subaccount: authorGroups[authorId].subaccount,
+            bearer: 'account'  // 👈 Fees deducted BEFORE split (platform gets 10%)
+        };
+        console.log('📊 Single author subaccount:', authorGroups[authorId].subaccount);
+    }
 
     const bookTitles = items.map(item => item.title).join(', ');
 
     try {
-        const handler = PaystackPop.setup({
+        // Build the payment config
+        const paymentConfig = {
             key: PAYSTACK_PUBLIC_KEY,
             email: email,
-            amount: amount * 100,
+            amount: totalAmount * 100,
             currency: 'GHS',
+            bearer: 'account',
             metadata: {
                 custom_fields: [
                     { display_name: "Items", variable_name: "items", value: bookTitles },
@@ -4102,121 +4245,195 @@ function initiateCartPayment(amount, email, items) {
             },
             onClose: function() {
                 isProcessingPayment = false;
+                isCartCheckout = false;
                 cartPaymentProcessing.classList.remove('active');
                 checkoutBtn.disabled = false;
                 checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
                 showToast('Payment cancelled. You can try again.', 'info');
             }
-        });
+        };
 
+        // Apply split configuration
+        if (splitConfig.type === 'percentage' && splitConfig.subaccounts) {
+            // Multiple authors - use split
+            paymentConfig.split = {
+                type: 'percentage',
+                bearer: 'account',
+                subaccounts: splitConfig.subaccounts
+            };
+            console.log('✅ Using split for multiple authors');
+        } else if (splitConfig.subaccount) {
+            // Single author - use subaccount
+            paymentConfig.subaccount = splitConfig.subaccount;
+            console.log('✅ Using subaccount for single author');
+        }
+
+        const handler = PaystackPop.setup(paymentConfig);
         handler.openIframe();
+        
     } catch (error) {
+        console.error('Payment error:', error);
         showToast('⚠️ Payment error. Please try again.', 'error');
         isProcessingPayment = false;
+        isCartCheckout = false;
         cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
     }
 }
 
-// ===== UPDATED: SERVER-SIDE VERIFICATION FOR CART =====
+// ================================================================
+// ===== UPDATED: CART PAYMENT CALLBACK WITH AUTHOR IDs =====
+// ================================================================
 async function handleCartPaymentCallback(response, items) {
-  if (!currentUser) {
-    showToast('⚠️ User not found. Please try again.', 'error');
-    isProcessingPayment = false;
-    cartPaymentProcessing.classList.remove('active');
-    checkoutBtn.disabled = false;
-    checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
-    return;
-  }
-
-  // ===== SERVER-SIDE VERIFICATION FOR EACH ITEM =====
-  let allValid = true;
-  const invalidItems = [];
-  
-  for (const item of items) {
-    try {
-      // Get book data from Firestore
-      const bookRef = doc(db, "books", item.id);
-      const bookSnap = await getDoc(bookRef);
-      
-      if (!bookSnap.exists()) {
-        allValid = false;
-        invalidItems.push(item.title || 'Unknown');
-        continue;
-      }
-      
-      const bookData = bookSnap.data();
-      
-      // Call serverless API for verification
-      const verificationResponse = await fetch('/api/verify-paystack-transaction', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          reference: response.reference,
-          amount: bookData.pricing?.amount || 0,
-          email: currentUser.email,
-          bookId: item.id
-        })
-      });
-
-      const verificationResult = await verificationResponse.json();
-      
-      if (!verificationResult.success) {
-        allValid = false;
-        invalidItems.push(bookData.title || 'Unknown');
-      }
-    } catch (error) {
-      console.error('Verification error for item:', item.id, error);
-      allValid = false;
-      invalidItems.push(item.title || 'Unknown');
+    if (!currentUser) {
+        showToast('⚠️ User not found. Please try again.', 'error');
+        isProcessingPayment = false;
+        isCartCheckout = false;
+        cartPaymentProcessing.classList.remove('active');
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+        return;
     }
-  }
-  
-  if (!allValid) {
-    showToast(`⚠️ Payment verification failed for: ${invalidItems.join(', ')}. Please contact support.`, 'error');
+
+    // ===== VERIFY EACH ITEM WITH AUTHOR ID =====
+    let allValid = true;
+    const invalidItems = [];
+    const authorIds = {};
+    
+    // First, get all author IDs for each item
+    for (const item of items) {
+        try {
+            const bookRef = doc(db, "books", item.id);
+            const bookSnap = await getDoc(bookRef);
+            
+            if (!bookSnap.exists()) {
+                allValid = false;
+                invalidItems.push(item.title || 'Unknown');
+                continue;
+            }
+            
+            const bookData = bookSnap.data();
+            authorIds[item.id] = bookData.submittedBy;
+            
+        } catch (error) {
+            console.error('Error getting book data:', error);
+            allValid = false;
+            invalidItems.push(item.title || 'Unknown');
+        }
+    }
+    
+    if (!allValid) {
+        showToast(`⚠️ Some books not found: ${invalidItems.join(', ')}`, 'error');
+        isProcessingPayment = false;
+        isCartCheckout = false;
+        cartPaymentProcessing.classList.remove('active');
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+        return;
+    }
+
+    // Now verify each item with its author ID
+    for (const item of items) {
+        try {
+            const bookRef = doc(db, "books", item.id);
+            const bookSnap = await getDoc(bookRef);
+            
+            if (!bookSnap.exists()) {
+                allValid = false;
+                invalidItems.push(item.title || 'Unknown');
+                continue;
+            }
+            
+            const bookData = bookSnap.data();
+            
+            const verificationResponse = await fetch('/api/verify-paystack-transaction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    reference: response.reference,
+                    amount: bookData.pricing?.amount || 0,
+                    email: currentUser.email,
+                    bookId: item.id,
+                    authorId: bookData.submittedBy  // 👈 Include author ID
+                })
+            });
+
+            const verificationResult = await verificationResponse.json();
+            
+            if (!verificationResult.success) {
+                allValid = false;
+                invalidItems.push(bookData.title || 'Unknown');
+            }
+        } catch (error) {
+            console.error('Verification error for item:', item.id, error);
+            allValid = false;
+            invalidItems.push(item.title || 'Unknown');
+        }
+    }
+    
+    if (!allValid) {
+        showToast(`⚠️ Payment verification failed for: ${invalidItems.join(', ')}. Please contact support.`, 'error');
+        isProcessingPayment = false;
+        isCartCheckout = false;
+        cartPaymentProcessing.classList.remove('active');
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
+        return;
+    }
+
+    // ===== ALL VERIFICATIONS PASSED - Record purchases =====
+    const transactionRef = response.reference || 'paystack_' + Date.now();
+    let allSuccess = true;
+    const successfulItems = [];
+    
+    for (const item of items) {
+        try {
+            const authorId = authorIds[item.id] || null;
+            
+            const success = await recordPurchase(
+                currentUser.uid, 
+                item.id, 
+                transactionRef,
+                {
+                    amount: item.price || 0,
+                    currency: item.currency || 'GHS',
+                    customerEmail: response.customer?.email || currentUser.email,
+                    verifiedBy: 'serverless-api',
+                    authorId: authorId,  // 👈 Store author ID for earnings
+                    bookTitle: item.title
+                }
+            );
+            if (success) {
+                successfulItems.push(item.title);
+            } else {
+                allSuccess = false;
+            }
+        } catch (error) {
+            console.error('Error recording purchase for item:', item.id, error);
+            allSuccess = false;
+        }
+    }
+    
+    if (allSuccess) {
+        showToast(`✅ Payment verified! ${successfulItems.length} book(s) added to your library. 🎉`, 'success');
+        // Clear cart
+        saveCartItems([]);
+        cartCount = 0;
+        updateCartBadge();
+        await renderCart();
+        closeCart();
+    } else {
+        showToast('⚠️ Some purchases failed to save. Please contact support.', 'error');
+    }
+    
     isProcessingPayment = false;
+    isCartCheckout = false;
     cartPaymentProcessing.classList.remove('active');
     checkoutBtn.disabled = false;
     checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
-    return;
-  }
-
-  // ===== ALL VERIFICATIONS PASSED - Record purchases =====
-  const transactionRef = response.reference || 'paystack_' + Date.now();
-  let allSuccess = true;
-  
-  for (const item of items) {
-    const success = await recordPurchase(
-      currentUser.uid, 
-      item.id, 
-      transactionRef,
-      {
-        amount: response.amount / items.length,
-        currency: response.currency || 'GHS',
-        customerEmail: response.customer?.email || currentUser.email,
-        verifiedBy: 'serverless-api'
-      }
-    );
-    if (!success) allSuccess = false;
-  }
-  
-  if (allSuccess) {
-    showToast(`✅ Payment verified! ${items.length} book(s) added to your library. 🎉`, 'success');
-    saveCartItems([]);
-    cartCount = 0;
-    updateCartBadge();
-    await renderCart();
-    closeCart();
-  } else {
-    showToast('⚠️ Some purchases failed to save. Please contact support.', 'error');
-  }
-  isProcessingPayment = false;
-  cartPaymentProcessing.classList.remove('active');
-  checkoutBtn.disabled = false;
-  checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
 }
 
 // ===== TOAST =====
@@ -4335,7 +4552,7 @@ function closeCart() {
 cartCloseBtn.addEventListener('click', closeCart);
 cartBackdrop.addEventListener('click', closeCart);
 
-// ===== CHECKOUT BUTTON =====
+// ===== CHECKOUT BUTTON - UPDATED =====
 checkoutBtn.addEventListener('click', async function() {
     if (!currentUser) {
         showToast('🔐 Please sign in to checkout.', 'error');
@@ -4349,30 +4566,42 @@ checkoutBtn.addEventListener('click', async function() {
         return;
     }
 
-    const unpurchasedItems = [];
+    const purchasableItems = [];
     for (const item of items) {
         const purchased = await checkPurchaseStatus(currentUser.uid, item.id);
         if (!purchased) {
-            unpurchasedItems.push(item);
+            purchasableItems.push(item);
+        } else {
+            // Check if limit is reached (can buy again)
+            const bookRef = doc(db, "books", item.id);
+            const bookSnap = await getDoc(bookRef);
+            if (bookSnap.exists()) {
+                const bookData = bookSnap.data();
+                const limit = bookData.downloadLimit || bookData.downloads || 5;
+                const canDownload = await canUserDownload(currentUser.uid, item.id, limit);
+                if (!canDownload) {
+                    purchasableItems.push(item);
+                }
+            }
         }
     }
 
-    if (unpurchasedItems.length === 0) {
-        showToast('✅ All books in your cart are already purchased!', 'success');
+    if (purchasableItems.length === 0) {
+        showToast('✅ All books in your cart are already purchased and have downloads remaining!', 'success');
         closeCart();
         return;
     }
 
-    const total = unpurchasedItems.reduce((sum, item) => sum + (item.price || 0), 0);
+    const total = purchasableItems.reduce((sum, item) => sum + (item.price || 0), 0);
     if (total <= 0) {
         let allSuccess = true;
-        for (const item of unpurchasedItems) {
+        for (const item of purchasableItems) {
             const success = await recordPurchase(currentUser.uid, item.id, 'free_book');
             if (!success) allSuccess = false;
         }
         if (allSuccess) {
-            showToast(`✅ ${unpurchasedItems.length} free book(s) added to your library!`, 'success');
-            const newCart = items.filter(item => !unpurchasedItems.some(pi => pi.id === item.id));
+            showToast(`✅ ${purchasableItems.length} free book(s) added to your library!`, 'success');
+            const newCart = items.filter(item => !purchasableItems.some(pi => pi.id === item.id));
             saveCartItems(newCart);
             await renderCart();
             updateCartBadge();
@@ -4381,7 +4610,7 @@ checkoutBtn.addEventListener('click', async function() {
     }
 
     const email = currentUser.email || currentUser.displayName || 'customer@example.com';
-    initiateCartPayment(total, email, unpurchasedItems);
+    await initiateCartPayment(total, email, purchasableItems);
 });
 
 // ========== AVATAR FUNCTIONS ==========
