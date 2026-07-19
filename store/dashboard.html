@@ -1205,7 +1205,24 @@
           <div id="bankFields">
             <div class="settings-group">
               <label>Bank Name</label>
-              <input type="text" id="bankName" placeholder="e.g. GCB Bank" />
+              <select id="bankName">
+                <option value="">Select your bank</option>
+                <option value="gcb">GCB Bank</option>
+                <option value="ecobank">Ecobank Ghana</option>
+                <option value="standard chartered">Standard Chartered</option>
+                <option value="absa">ABSA Bank</option>
+                <option value="republic">Republic Bank</option>
+                <option value="fidelity">Fidelity Bank</option>
+                <option value="first atlantic">First Atlantic Bank</option>
+                <option value="access">Access Bank</option>
+                <option value="zenith">Zenith Bank</option>
+                <option value="uba">UBA Ghana</option>
+                <option value="gtbank">GTBank</option>
+                <option value="stanbic">Stanbic Bank</option>
+                <option value="prudential">Prudential Bank</option>
+                <option value="fbn">FBN Bank</option>
+                <option value="bank of africa">Bank of Africa</option>
+              </select>
             </div>
             <div class="settings-group">
               <label>Account Number</label>
@@ -1738,11 +1755,34 @@
     }
   }
 
-// ===== SAVE PAYOUT SETTINGS - FIXED =====
-async function savePayoutSettings() {
+  // ===== HELPER: Get Paystack Bank Code from Bank Name =====
+  function getBankCode(bankName) {
+    const bankCodes = {
+      'gcb': '058',
+      'ecobank': '050',
+      'standard chartered': '052',
+      'absa': '070',
+      'republic': '061',
+      'fidelity': '059',
+      'first atlantic': '054',
+      'access': '064',
+      'zenith': '057',
+      'uba': '075',
+      'gtbank': '056',
+      'stanbic': '076',
+      'prudential': '060',
+      'fbn': '071',
+      'bank of africa': '066'
+    };
+    const normalized = bankName.toLowerCase().trim();
+    return bankCodes[normalized] || null;
+  }
+
+  // ===== SAVE PAYOUT SETTINGS - FINAL FIXED =====
+  async function savePayoutSettings() {
     if (!currentUser) {
-        showToast('❌ Please sign in first.', 'error');
-        return;
+      showToast('❌ Please sign in first.', 'error');
+      return;
     }
     
     const type = payoutType.value;
@@ -1750,46 +1790,50 @@ async function savePayoutSettings() {
     
     // ===== BANK ACCOUNT =====
     if (type === 'bank') {
-        const bankName = document.getElementById('bankName').value.trim();
-        const accountNumber = document.getElementById('accountNumber').value.trim();
-        const accountHolderName = document.getElementById('accountHolderName').value.trim();
-        
-        // ✅ ONLY check bank fields when type is 'bank'
-        if (!bankName || !accountNumber || !accountHolderName) {
-            showToast('❌ Please fill in all bank details.', 'error');
-            return;
-        }
-        
-        payoutData.bankName = bankName;
-        payoutData.accountNumber = accountNumber;
-        payoutData.accountHolderName = accountHolderName;
-        payoutData.bankCode = '058';
+      const bankName = document.getElementById('bankName').value;
+      const accountNumber = document.getElementById('accountNumber').value.trim();
+      const accountHolderName = document.getElementById('accountHolderName').value.trim();
+      
+      if (!bankName || !accountNumber || !accountHolderName) {
+        showToast('❌ Please fill in all bank details.', 'error');
+        return;
+      }
+      
+      const bankCode = getBankCode(bankName);
+      if (!bankCode) {
+        showToast('❌ Please select a valid bank.', 'error');
+        return;
+      }
+      
+      payoutData.bankName = bankName;
+      payoutData.accountNumber = accountNumber;
+      payoutData.accountHolderName = accountHolderName;
+      payoutData.bankCode = bankCode;
     
     // ===== MOBILE MONEY =====
     } else if (type === 'momo') {
-        const network = document.getElementById('momoNetwork').value;
-        const phoneNumber = document.getElementById('momoNumber').value.trim();
-        const accountHolderName = document.getElementById('momoHolderName').value.trim();
-        
-        // ✅ ONLY check MoMo fields - NO accountNumber check!
-        if (!phoneNumber || !accountHolderName) {
-            showToast('❌ Please fill in all MoMo details.', 'error');
-            return;
-        }
-        
-        // Validate phone number
-        const cleanPhone = phoneNumber.replace(/\s/g, '');
-        if (!/^(0[0-9]{9}|[0-9]{10})$/.test(cleanPhone)) {
-            showToast('❌ Please enter a valid phone number (e.g., 024XXXXXXX)', 'error');
-            return;
-        }
-        
-        payoutData.network = network;
-        payoutData.phoneNumber = cleanPhone;
-        payoutData.accountHolderName = accountHolderName;
-    } else {
-        showToast('❌ Invalid payout type selected.', 'error');
+      const network = document.getElementById('momoNetwork').value;
+      const phoneNumber = document.getElementById('momoNumber').value.trim();
+      const accountHolderName = document.getElementById('momoHolderName').value.trim();
+      
+      if (!phoneNumber || !accountHolderName) {
+        showToast('❌ Please fill in all MoMo details.', 'error');
         return;
+      }
+      
+      // Validate phone number - keep the 0 prefix!
+      const cleanPhone = phoneNumber.replace(/\s/g, '');
+      if (!/^(0[0-9]{9}|[0-9]{10})$/.test(cleanPhone) && !cleanPhone.startsWith('233')) {
+        showToast('❌ Please enter a valid phone number (e.g., 024XXXXXXX)', 'error');
+        return;
+      }
+      
+      payoutData.network = network;
+      payoutData.phoneNumber = cleanPhone;
+      payoutData.accountHolderName = accountHolderName;
+    } else {
+      showToast('❌ Invalid payout type selected.', 'error');
+      return;
     }
     
     // ===== SEND TO SERVER =====
@@ -1799,74 +1843,75 @@ async function savePayoutSettings() {
     payoutStatus.className = 'loading';
     
     try {
-        console.log('📤 Sending MoMo data:', {
-            userId: currentUser.uid,
-            email: currentUser.email,
-            payoutData: payoutData,
-            username: userDisplayName || currentUser.displayName || 'Volant Author'
+      console.log('📤 Sending payout data:', {
+        userId: currentUser.uid,
+        email: currentUser.email,
+        payoutData: payoutData,
+        username: userDisplayName || currentUser.displayName || 'Volant Author'
+      });
+
+      const response = await fetch('/api/create-subaccount', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: currentUser.uid,
+          email: currentUser.email,
+          payoutData: payoutData,
+          username: userDisplayName || currentUser.displayName || 'Volant Author'
+        })
+      });
+
+      let result;
+      try {
+        result = await response.json();
+      } catch (e) {
+        const text = await response.text();
+        console.error('Non-JSON response:', text);
+        throw new Error('Server returned invalid response');
+      }
+
+      console.log('📥 Response:', result);
+
+      if (!response.ok) {
+        throw new Error(result.message || `Server error: ${response.status}`);
+      }
+
+      if (result.success) {
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          payoutDetails: {
+            ...payoutData,
+            createdAt: new Date().toISOString()
+          },
+          subaccountCode: result.subaccountCode,
+          hasPayoutAccount: true,
+          commissionRate: 10,
+          feeBearer: 'account'
         });
-
-        const response = await fetch('/api/create-subaccount', {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                userId: currentUser.uid,
-                email: currentUser.email,
-                payoutData: payoutData,
-                username: userDisplayName || currentUser.displayName || 'Volant Author'
-            })
-        });
-
-        let result;
-        try {
-            result = await response.json();
-        } catch (e) {
-            const text = await response.text();
-            console.error('Non-JSON response:', text);
-            throw new Error('Server returned invalid response');
-        }
-
-        console.log('📥 Response:', result);
-
-        if (!response.ok) {
-            throw new Error(result.message || `Server error: ${response.status}`);
-        }
-
-        if (result.success) {
-            await updateDoc(doc(db, "users", currentUser.uid), {
-                payoutDetails: {
-                    ...payoutData,
-                    createdAt: new Date().toISOString()
-                },
-                subaccountCode: result.subaccountCode,
-                hasPayoutAccount: true,
-                commissionRate: 10,
-                feeBearer: 'account'
-            });
-            
-            payoutStatus.innerHTML = '✅ Payout account activated successfully! You\'ll receive 90% of each sale automatically.';
-            payoutStatus.className = 'success';
-            showToast('✅ Payout account activated!', 'success');
-            
-            loadEarnings(currentUser.uid);
-        } else {
-            payoutStatus.innerHTML = '❌ ' + (result.message || 'Failed to activate payout account.');
-            payoutStatus.className = 'error';
-            showToast('❌ ' + (result.message || 'Failed to activate payout account.'), 'error');
-        }
-    } catch (err) {
-        console.error('❌ Error:', err);
-        payoutStatus.innerHTML = '❌ Error: ' + (err.message || 'Please try again later.');
+        
+        payoutStatus.innerHTML = '✅ Payout account activated successfully! You\'ll receive 90% of each sale automatically.';
+        payoutStatus.className = 'success';
+        showToast('✅ Payout account activated!', 'success');
+        
+        loadEarnings(currentUser.uid);
+      } else {
+        payoutStatus.innerHTML = '❌ ' + (result.message || 'Failed to activate payout account.');
         payoutStatus.className = 'error';
-        showToast('❌ Error: ' + err.message, 'error');
+        showToast('❌ ' + (result.message || 'Failed to activate payout account.'), 'error');
+      }
+    } catch (err) {
+      console.error('❌ Error:', err);
+      payoutStatus.innerHTML = '❌ Error: ' + (err.message || 'Please try again later.');
+      payoutStatus.className = 'error';
+      showToast('❌ Error: ' + err.message, 'error');
     } finally {
-        savePayoutBtn.disabled = false;
-        savePayoutBtn.innerHTML = '<i class="fas fa-check-circle"></i> Activate Payout Account';
+      savePayoutBtn.disabled = false;
+      savePayoutBtn.innerHTML = '<i class="fas fa-check-circle"></i> Activate Payout Account';
     }
-}
+  }
+
   // ===== EARNINGS FUNCTIONS =====
   async function loadEarnings(userId) {
     try {
