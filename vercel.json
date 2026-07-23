@@ -17,20 +17,20 @@
       "destination": "/volant_foundry/index.html"
     },
     {
+      "source": "/home",
+      "destination": "/volant_foundry/index.html"
+    },
+    {
+      "source": "/index2",
+      "destination": "/volant_foundry/index2.html"
+    },
+    {
       "source": "/about",
       "destination": "/shared/about.html"
     },
     {
-      "source": "/check-verification",
-      "destination": "/shared/check-verification.html"
-    },
-    {
       "source": "/contact",
       "destination": "/shared/contact.html"
-    },
-    {
-      "source": "/existing-verify",
-      "destination": "/shared/existingVerify.html"
     },
     {
       "source": "/privacy",
@@ -57,56 +57,12 @@
       "destination": "/shared/verify-email.html"
     },
     {
-      "source": "/approvals",
-      "destination": "/store/approvals.html"
-    },
-    {
-      "source": "/dashboard",
-      "destination": "/store/dashboard.html"
-    },
-    {
-      "source": "/details",
-      "destination": "/store/details.html"
-    },
-    {
-      "source": "/details/:id",
-      "destination": "/store/details.html?id=:id"
-    },
-    {
-      "source": "/faq",
-      "destination": "/store/faq.html"
-    },
-    {
-      "source": "/pwu",
-      "destination": "/store/pwu.html"
-    },
-    {
-      "source": "/refund",
-      "destination": "/store/refund.html"
-    },
-    {
-      "source": "/submit",
-      "destination": "/store/submit.html"
-    },
-    {
-      "source": "/index2",
-      "destination": "/volant_foundry/index2.html"
-    },
-    {
       "source": "/store",
       "destination": "/store/index.html"
     },
     {
-      "source": "/shared/:path*",
-      "destination": "/shared/:path*.html"
-    },
-    {
-      "source": "/store/:path*",
-      "destination": "/store/:path*.html"
-    },
-    {
-      "source": "/volant_foundry/:path*",
-      "destination": "/volant_foundry/:path*.html"
+      "source": "/shop",
+      "destination": "/store/index.html"
     }
   ]
 }
