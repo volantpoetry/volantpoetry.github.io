@@ -9,22 +9,12 @@
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
-    },
-    {
-      "source": "/",
-      "destination": "/volant_foundry/index.html"
-    },
-    {
-      "source": "/:path*",
-      "destination": "/store/:path*.html"
-    },
-    {
-      "source": "/:path*",
-      "destination": "/shared/:path*.html"
-    },
-    {
-      "source": "/:path*",
-      "destination": "/volant_foundry/:path*.html"
     }
-  ]
+  ],
+  "env": {
+    "PAYSTACK_PUBLIC_KEY": "@paystack_public_key",
+    "PAYSTACK_SECRET_KEY": "@paystack_secret_key",
+    "PAYSTACK_COMMISSION": "10",
+    "PAYSTACK_FEE_BEARER": "account"
+  }
 }
