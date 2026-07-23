@@ -12,8 +12,8 @@
     }
   ],
   "env": {
-    "PAYSTACK_PUBLIC_KEY": "@paystack_public_key",
-    "PAYSTACK_SECRET_KEY": "@paystack_secret_key",
+    "PAYSTACK_PUBLIC_KEY": "@PAYSTACK_PUBLIC_KEY",
+    "PAYSTACK_SECRET_KEY": "@PAYSTACK_SECRET_KEY",
     "PAYSTACK_COMMISSION": "10",
     "PAYSTACK_FEE_BEARER": "account"
   }
