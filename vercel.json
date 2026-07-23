@@ -29,8 +29,16 @@
       "destination": "/shared/about.html"
     },
     {
+      "source": "/check-verification",
+      "destination": "/shared/check-verification.html"
+    },
+    {
       "source": "/contact",
       "destination": "/shared/contact.html"
+    },
+    {
+      "source": "/existing-verify",
+      "destination": "/shared/existingVerify.html"
     },
     {
       "source": "/privacy",
@@ -65,20 +73,20 @@
       "destination": "/store/index.html"
     },
     {
-      "source": "/details",
-      "destination": "/store/details.html"
-    },
-    {
-      "source": "/details/:id",
-      "destination": "/store/details.html?id=:id"
-    },
-    {
       "source": "/approvals",
       "destination": "/store/approvals.html"
     },
     {
       "source": "/dashboard",
       "destination": "/store/dashboard.html"
+    },
+    {
+      "source": "/details",
+      "destination": "/store/details.html"
+    },
+    {
+      "source": "/details/:id",
+      "destination": "/store/details.html?id=:id"
     },
     {
       "source": "/faq",
@@ -95,6 +103,10 @@
     {
       "source": "/submit",
       "destination": "/store/submit.html"
+    },
+    {
+      "source": "/store-login",
+      "destination": "/store/universal-login.html"
     }
   ]
 }
