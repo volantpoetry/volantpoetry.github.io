@@ -63,6 +63,38 @@
     {
       "source": "/shop",
       "destination": "/store/index.html"
+    },
+    {
+      "source": "/details",
+      "destination": "/store/details.html"
+    },
+    {
+      "source": "/details/:id",
+      "destination": "/store/details.html?id=:id"
+    },
+    {
+      "source": "/approvals",
+      "destination": "/store/approvals.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/store/dashboard.html"
+    },
+    {
+      "source": "/faq",
+      "destination": "/store/faq.html"
+    },
+    {
+      "source": "/pwu",
+      "destination": "/store/pwu.html"
+    },
+    {
+      "source": "/refund",
+      "destination": "/store/refund.html"
+    },
+    {
+      "source": "/submit",
+      "destination": "/store/submit.html"
     }
   ]
 }
