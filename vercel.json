@@ -11,16 +11,20 @@
       "destination": "/api/$1"
     },
     {
-      "source": "/(.*)",
-      "destination": "/store/$1.html"
+      "source": "/",
+      "destination": "/volant_foundry/index.html"
     },
     {
-      "source": "/(.*)",
-      "destination": "/shared/$1.html"
+      "source": "/:path*",
+      "destination": "/store/:path*.html"
     },
     {
-      "source": "/(.*)",
-      "destination": "/volant_foundry/$1.html"
+      "source": "/:path*",
+      "destination": "/shared/:path*.html"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/volant_foundry/:path*.html"
     }
   ]
 }
