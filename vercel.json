@@ -1,4 +1,6 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
   "functions": {
     "api/*.js": {
       "memory": 1024,
@@ -10,11 +12,5 @@
       "source": "/api/(.*)",
       "destination": "/api/$1"
     }
-  ],
-  "env": {
-    "PAYSTACK_PUBLIC_KEY": "@PAYSTACK_PUBLIC_KEY",
-    "PAYSTACK_SECRET_KEY": "@PAYSTACK_SECRET_KEY",
-    "PAYSTACK_COMMISSION": "10",
-    "PAYSTACK_FEE_BEARER": "account"
-  }
+  ]
 }
