@@ -1,2108 +1,2253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-       <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volant Foundry</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Favicons -->
-    <link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png">
-    <link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        main {
-            padding-top: 70px;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        }
-
-        /* ===== HEADER ===== */
-        header {
-            display: flex;
-            padding: 15px 74px;
-            justify-content: space-between;
-            background-color: #ffffff;
-            text-align: center;
-            align-items: center;
-            position: fixed;
-            right: 0;
-            left: 0;
-            z-index: 100;
-            height: 70px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .logo-image {
-            display: flex;
-            height: 40px;
-            gap: 0px;
-            text-align: center;
-            max-height: 40px;
-            margin-left: 55px;
-            align-items: center;
-            text-decoration: none;
-        }
-
-        .img {
-            height: 40px;
-            width: 40px;
-            object-fit: contain;
-        }
-
-        .logo-text {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 1.4rem;
-            color: #4b2aad;
-            letter-spacing: 0.5px;
-            margin-left: 6px;
-        }
-
-        .logo-highlight {
-            font-weight: 700;
-            color: #ffffff;
-            text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad;
-            opacity: 1;
-        }
-
-        .nav-links a {
-            font-family: 'Inter', sans-serif;
-            text-decoration: none;
-            color: #2d2a24;
-            margin-left: -72px;
-            letter-spacing: 0px;
-            margin-right: 100px;
-            font-size: 15px;
-            transition: 0.2s;
-        }
-        .nav-links a:hover {
-            color: #4b2aad;
-        }
-
-        /* Hamburger Menu Button */
-        #menu-btn {
-            display: none;
-            background: transparent;
-            border: none;
-            color: #2d2a24;
-            font-size: 30px;
-            cursor: pointer;
-            padding: 0 10px;
-        }
-
-        .hero {
-            padding: 150px;
-            background-color: black;
-            margin-top: 1px;
-            align-items: center;
-            text-align: center;
-            padding-top: 100px;
-            padding-bottom: 80px;
-        }
-
-        h2 {
-            font-family: 'Playfair Display', Georgia, serif;
-            color: #fff;
-            font-size: 45px;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        .hero p {
-            font-family: 'Inter', sans-serif;
-            color: #fff;
-            font-weight: 300;
-            max-width: 600px;
-            margin: auto;
-            margin-bottom: 58px;
-        }
-
-        .hero-btn a {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            text-decoration: none;
-            margin-inline: 4px;
-            padding: 11px;
-            border-radius: 15px;
-            font-size: 17px;
-        }
-        .secondary:hover {
-            color: #c49a2c;
-            transform: translateY(-2px);
-        }
-        .primary:hover {
-            color: #fff;
-            transform: translateY(-2px);
-        }
-
-        .primary {
-            background-color: #bfb38e;
-            color: #111111;
-        }
-        .secondary {
-            background-color: none;
-            color: #fff;
-            border: 1px solid #beb5b5;
-        }
-
-        .eco-cards {
-            display: flex;
-            padding: 70px;
-            gap: 18px;
-            padding-top: 0px;
-            padding-bottom: 0px;
-            margin-bottom: 20px;
-        }
-
-        .eco-card {
-            border: 1px solid rgb(245, 242, 242);
-            padding: 39px;
-            border-radius: 18px;
-            padding-top: 16px;
-            max-width: 250px;
-            margin-left: 55px;
-            background: #fff;
-        }
-
-        .eco-card h4 {
-            font-family: 'DM Serif Display', Georgia, serif;
-            font-size: 19px;
-            margin-bottom: 15px;
-            margin-top: 12px;
-        }
-
-        .eco-card p {
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            font-weight: 250;
-            margin-bottom: 15px;
-        }
-
-        .eco-card a {
-            font-family: 'Space Grotesk', sans-serif;
-            text-decoration: none;
-            color: #8b1e1e;
-            font-weight: 500;
-        }
-
-        h3 {
-            font-family: "Cormorant Garamond", serif !important;
-            font-size: 28px;
-            text-align: left;
-            margin-top: 10px;
-            margin-bottom: 32px;
-            padding: 0px 70px;
-            line-height: 1.3;
-        }
-
-        .our-eco {
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            margin-top: 45px;
-            padding: 0px 70px;
-            font-weight: 250;
-            color: #beb5b5;
-            margin-left: 55px;
-        }
-
-        .eco-intro {
-            display: flex;
-            justify-content: space-between;
-            margin-left: 55px;
-        }
-
-        .ex {
-            font-family: 'Inter', sans-serif;
-            text-align: right;
-            padding: 0px 75px;
-            font-weight: 250;
-            font-size: 15px;
-            margin-top: 10px;
-            margin-bottom: 32px;
-            line-height: 1.3;
-            margin-right: 100px;
-        }
-
-        .what-main {
-            background-color: #0B0F14;
-            color: #fff;
-            padding-top: 2px;
-            padding-bottom: 40px;
-            margin-bottom: 25px;
-        }
-
-        .what-cards {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr 1fr;
-            margin-left: 55px;
-        }
-
-        .what-card {
-            border-right: 1px solid #beb5b5;
-            border-right-style: dotted;
-        }
-
-        .what-card1 h6 {
-            text-align: left;
-            font-size: 23px;
-            margin-top: 15px;
-            font-weight: 300;
-            padding: 0px 20px;
-            margin-bottom: 9px;
-        }
-
-        .what-card1 p {
-            padding: 0px 20px;
-            font-size: 17px;
-            color: #beb5b5;
-            max-width: 200px;
-        }
-
-        .what-eco {
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            margin-top: 40px;
-            padding: 0px 70px;
-            color: #beb5b5;
-            margin-left: 55px;
-        }
-
-        .what-p {
-            font-family: "Cormorant Garamond", serif;
-            font-size: 25px !important;
-            text-align: left !important;
-            margin-top: 20px !important;
-            padding: 0px 70px !important;
-            color: #fff !important;
-            max-width: 444px !important;
-            line-height: 1.3;
-            font-weight: bold;
-        }
-        .what-card h6 {
-            font-family: 'Instrument Serif', Georgia, serif;
-            text-align: left;
-            font-size: 23px;
-            margin-top: 15px;
-            font-weight: 300;
-            padding: 0px 20px;
-            margin-bottom: 9px;
-        }
-
-        .what-card p {
-            font-family: 'Inter', sans-serif;
-            padding: 0px 20px;
-            font-size: 17px;
-            color: #beb5b5;
-            max-width: 200px;
-        }
-
-        .what-eco-fea {
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            margin-top: 25px;
-            padding: 0px 70px;
-            color: #beb5b5;
-            font-weight: 200 !important;
-            margin-left: 55px !important;
-        }
-
-        .what-p-fea {
-            font-family: "Cormorant Garamond", serif !important;
-            font-size: 28px !important;
-            text-align: left !important;
-            margin-top: 20px !important;
-            padding: 0px 70px !important;
-            color: #0B0F14;
-            max-width: 444px !important;
-            line-height: 1.3;
-            font-weight: bold;
-            margin-left: 55px;
-        }
-
-        .what-p-fea1 {
-            font-size: 15px !important;
-            text-align: left !important;
-            margin-top: 15px !important;
-            padding: 0px 70px !important;
-            color: #0B0F14;
-            max-width: 444px !important;
-            line-height: 1.5;
-        }
-
-        /* ===== FOOTER ===== */
-        .footer {
-            display: grid;
-            grid-template-columns: 0.6fr 0.3fr 0.3fr 0.4fr 1fr;
-            justify-content: space-between;
-            background-color: #1a1714;
-            color: #e8e0d8;
-            padding: 44px;
-            padding-bottom: 12px;
-        }
-
-        .footer-card {
-            display: grid;
-            margin-left: 55px;
-        }
-
-        .footer-logo {
-            display: flex;
-            margin-left: 55px;
-            align-items: center;
-        }
-        .footer-logo .logo-text {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #ffffff;
-            margin-left: 8px;
-        }
-        .footer-logo .logo-highlight {
-            font-weight: 700;
-            color: #ffffff;
-            text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad;
-            opacity: 1;
-        }
-        .footer h4 {
-            font-family: 'DM Serif Display', Georgia, serif;
-            margin-bottom: 8px;
-            color: #eae7e7;
-        }
-        .footer-img {
-            height: 40px;
-            width: 40px;
-            object-fit: contain;
-        }
-
-        .footer-bottom {
-            background-color: #1a1714;
-            color: #beb5b5;
-            border-top: 0.5px solid #beb5b5;
-            text-align: center;
-            align-items: center;
-            padding: 5px 0px;
-            font-size: 13px;
-        }
-
-        .footer-card a {
-            font-family: 'Inter', sans-serif;
-            color: #beb5b5;
-            text-decoration: none;
-            line-height: 1.5;
-        }
-
-        .location {
-            margin-bottom: 80px;
-            color: #beb5b5;
-        }
-
-        .PenCheaper {
-            margin-bottom: 70px;
-        }
-
-        .footer-logo-p {
-            margin-top: 20px;
-            margin-left: 55px;
-            font-size: 14px;
-        }
-
-        /* Logo */
-        .logo-text {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-        }
-
-        /* Hero heading */
-        h2 {
-            font-family: "Cormorant Garamond", serif;
-            font-weight: 600;
-        }
-
-        /* Section headings */
-        h3 {
-            font-family: "Cormorant Garamond", serif;
-            font-weight: 600;
-        }
-
-        /* Card titles */
-        .eco-card h4,
-        .what-card h6,
-        .what-card1 h6,
-        .footer h4 {
-            font-family: "Inter", sans-serif;
-            font-weight: 600;
-        }
-
-        /* Body text */
-        body,
-        p,
-        a,
-        input,
-        button,
-        .nav-links a,
-        .hero p,
-        .eco-card p,
-        .what-card p,
-        .what-card1 p,
-        .footer-card a,
-        .footer-logo-p {
-            font-family: "Inter", sans-serif;
-        }
-
-        .innit-img {
-            align-items: center;
-            padding: 19px;
-            text-align: left;
-            margin-top: -18px !important;
-        }
-
-        .innit-img-eco-card {
-            align-items: center;
-            padding: 19px 0px;
-            text-align: left;
-            margin-top: -18px !important;
-        }
-
-        .build-image {
-            height: 50px;
-            margin-bottom: -24px;
-            border-radius: 4px;
-        }
-
-        .latest-main {
-            display: grid;
-            grid-template-columns: 1.2fr 1.1fr 1.5fr;
-        }
-
-        .latest {
-            padding: 64px 0px;
-            padding-top: 5px;
-            margin-bottom: 2px;
-        }
-
-        .book-cover {
-            width: 90px;
-            height: 120px;
-            border-radius: 4px;
-            object-fit: cover;
-            cursor: pointer;
-        }
-
-        .books {
-            display: flex;
-            margin-top: 25px;
-        }
-
-        .title-des-eco {
-            display: grid;
-        }
-
-        .book-title {
-            color: #111111;
-            font-size: 23px;
-            margin-left: 19px;
-            padding-top: 0px !important;
-            margin-bottom: -30px;
-            font-weight: bold;
-            font-family: "Cormorant Garamond", serif;
-        }
-
-        .des-eco {
-            display: grid;
-            margin-left: 19px;
-            line-height: 1.4;
-            margin-top: -10px;
-            font-weight: 400;
-        }
-
-        .book-des {
-            font-size: 17px;
-            font-family: "Cormorant Garamond", serif;
-            margin-bottom: 4px;
-            margin-top: 4px;
-        }
-
-        .book-eco {
-            font-size: 17px;
-            margin-top: 0px;
-            font-family: "Cormorant Garamond", serif;
-        }
-
-        /* ===== MORE BOOKS - same style as latest books ===== */
-        .more-books-section {
-            padding: 20px 70px 10px 70px;
-        }
-        .more-books-section .more-label {
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            color: #beb5b5;
-            font-weight: 200;
-            margin-bottom: 20px;
-        }
-        .more-books-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 8px;
-        }
-        .more-book-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            padding: 8px 12px;
-            border-radius: 10px;
-            transition: 0.2s;
-            cursor: pointer;
-        }
-        .more-book-item:hover {
-            background: #f5f3f0;
-        }
-        .more-book-item img {
-            width: 90px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 4px;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        .more-book-item .more-info {
-            display: grid;
-            padding-top: 4px;
-        }
-        .more-book-item .more-info h4 {
-            font-size: 23px;
-            font-family: "Cormorant Garamond", serif;
-            font-weight: bold;
-            color: #111;
-            margin-bottom: -6px;
-        }
-        .more-book-item .more-info .more-des {
-            font-size: 17px;
-            font-family: "Cormorant Garamond", serif;
-            color: #111;
-            margin-bottom: 2px;
-        }
-        .more-book-item .more-info .more-meta {
-            font-size: 17px;
-            font-family: "Cormorant Garamond", serif;
-            color: #777;
-        }
-
-        /* ===== JOIN THE HORIZON (right column on large screens) ===== */
-        .join-horizon-right {
-            padding: 64px 0px;
-            padding-top: 5px;
-            margin-bottom: 2px;
-        }
-        .join-horizon-right .join-horizon {
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            color: #beb5b5;
-            font-weight: 200 !important;
-            margin-bottom: 10px;
-        }
-        .join-horizon-right .join-horizon-p1 {
-            font-family: "Cormorant Garamond", serif !important;
-            font-size: 28px !important;
-            text-align: left !important;
-            color: #0B0F14;
-            line-height: 1.3;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .join-horizon-right .join-horizon-p2 {
-            font-size: 15px !important;
-            text-align: left !important;
-            color: #0B0F14;
-            line-height: 1.5;
-            margin-bottom: 18px;
-        }
-        .join-horizon-right .join {
-            display: grid;
-            max-width: 350px !important;
-        }
-        .join-horizon-right .join-field-css {
-            font-size: 20px;
-            padding: 9px;
-            border-radius: 7px;
-            max-width: 100%;
-            max-height: 45px;
-            border: 1px solid #ddd;
-        }
-        .join-horizon-right .join-btn {
-            font-family: 'Inter', sans-serif !important;
-            text-decoration: none;
-            margin: auto;
-            margin-top: 8px;
-            align-items: center;
-            color: #fff;
-            background-color: #0B0F14;
-            text-align: center;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 17px;
-            max-width: 200px;
-            border: none;
-            cursor: pointer;
-        }
-        .join-horizon-right .join-btn:hover {
-            background-color: #bfb38e;
-            color: #0B0F14;
-        }
-
-        /* ===== VOLANT CODES – big images, 4 per row, clean white bg ===== */
-        .codes-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-            padding: 0 70px 30px 70px;
-        }
-        .code-item {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 12px;
-            transition: 0.2s;
-            border: 1px solid #f0ede8;
-            text-align: left;
-            cursor: pointer;
-        }
-        .code-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-        }
-        .code-item img {
-            width: 100%;
-            aspect-ratio: 16/10;
-            object-fit: cover;
-            border-radius: 8px;
-            background: #f8f6f2;
-            display: block;
-            cursor: pointer;
-        }
-        .code-item h4 {
-            font-size: 17px;
-            margin: 12px 0 2px;
-            color: #1a1714;
-            font-weight: 600;
-            font-family: "Inter", sans-serif;
-        }
-        .code-item .code-meta {
-            font-size: 14px;
-            color: #777;
-            font-family: "Cormorant Garamond", serif;
-            margin-bottom: 2px;
-        }
-        .code-item .tag {
-            display: inline-block;
-            background: #eae7e0;
-            border-radius: 30px;
-            padding: 2px 14px;
-            font-size: 12px;
-            color: #2d2a24;
-            margin-top: 4px;
-            font-family: "Inter", sans-serif;
-        }
-
-        /* ===== LIGHTBOX MODAL ===== */
-        .lightbox {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.92);
-            overflow: auto;
-            animation: fadeIn 0.3s;
-        }
-        .lightbox.active {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .lightbox-content {
-            max-width: 90%;
-            max-height: 90%;
-            object-fit: contain;
-            border-radius: 6px;
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
-        }
-        .lightbox-close {
-            position: fixed;
-            top: 25px;
-            right: 35px;
-            color: #fff;
-            font-size: 40px;
-            font-weight: 300;
-            cursor: pointer;
-            transition: 0.2s;
-            z-index: 1001;
-            font-family: 'Inter', sans-serif;
-        }
-        .lightbox-close:hover {
-            color: #bfb38e;
-            transform: scale(1.1);
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        /* ===== JOIN section - standalone (hidden on large, shown on small) ===== */
-        .join-section-mobile {
-            display: none;
-            background: #faf9f7;
-            padding: 20px 70px 50px 70px;
-        }
-        .join-section-mobile .join-container {
-            max-width: 500px;
-        }
-        .join-section-mobile .join-horizon {
-            font-family: 'Inter', sans-serif;
-            font-size: 15px;
-            color: #beb5b5;
-            font-weight: 200 !important;
-            margin-bottom: 10px;
-            padding: 0 !important;
-        }
-        .join-section-mobile .join-horizon-p1 {
-            font-family: "Cormorant Garamond", serif !important;
-            font-size: 28px !important;
-            text-align: left !important;
-            color: #0B0F14;
-            line-height: 1.3;
-            font-weight: bold;
-            margin-bottom: 10px;
-            padding: 0 !important;
-        }
-        .join-section-mobile .join-horizon-p2 {
-            font-size: 15px !important;
-            text-align: left !important;
-            color: #0B0F14;
-            line-height: 1.5;
-            margin-bottom: 18px;
-            padding: 0 !important;
-        }
-        .join-section-mobile .join {
-            padding: 0 !important;
-            max-width: 100% !important;
-        }
-        .join-section-mobile .join-field-css {
-            font-size: 20px;
-            padding: 9px;
-            border-radius: 7px;
-            max-width: 100%;
-            max-height: 45px;
-            border: 1px solid #ddd;
-        }
-        .join-section-mobile .join-btn {
-            font-family: 'Inter', sans-serif !important;
-            text-decoration: none;
-            margin: auto;
-            margin-top: 8px;
-            align-items: center;
-            color: #fff;
-            background-color: #0B0F14;
-            text-align: center;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 17px;
-            max-width: 200px;
-            border: none;
-            cursor: pointer;
-        }
-        .join-section-mobile .join-btn:hover {
-            background-color: #bfb38e;
-            color: #0B0F14;
-        }
-
-        /* ===== RESPONSIVE MEDIA QUERIES ===== */
-        @media (max-width: 1024px) {
-            header {
-                padding: 15px 30px;
-            }
-            .nav-links a {
-                margin-right: 30px;
-                margin-left: 0;
-            }
-            .codes-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 18px;
-                padding: 0 30px 30px 30px;
-            }
-            .more-books-section {
-                padding: 20px 30px 10px 30px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            header {
-                padding: 15px 20px;
-                flex-wrap: wrap;
-                height: auto;
-                min-height: 70px;
-            }
-            .logo-image {
-                margin-left: 0;
-            }
-            #menu-btn {
-                display: block;
-            }
-            .nav-links {
-                display: none;
-                width: 100%;
-                flex-direction: column;
-                background: #ffffff;
-                padding: 15px 0;
-                margin-top: 10px;
-                border-top: 1px solid #ede7df;
-            }
-            .nav-links.open {
-                display: flex;
-            }
-            .nav-links a {
-                margin: 0;
-                padding: 8px 0;
-                text-align: center;
-                width: 100%;
-                color: #2d2a24;
-            }
-            .hero {
-                padding: 60px 30px !important;
-                padding-top: 40px !important;
-                padding-bottom: 40px !important;
-                margin-top: 5px !important;
-            }
-            .eco-cards {
-                padding: 20px;
-                flex-wrap: wrap;
-                justify-content: center;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
-            }
-            .eco-card {
-                margin-left: 0;
-                max-width: 100%;
-                flex: 1 1 auto;
-            }
-            .what-cards {
-                grid-template-columns: 1fr 1fr;
-                margin-left: 20px;
-                margin-right: 20px;
-            }
-            .what-card {
-                border-right: none !important;
-                border-bottom: none !important;
-                padding-bottom: 15px;
-            }
-            .what-card1 {
-                border-bottom: none !important;
-                padding-bottom: 15px;
-            }
-            .what-card:last-child {
-                border-bottom: none !important;
-                padding-bottom: 0;
-            }
-            .what-card1:last-child {
-                border-bottom: none !important;
-                padding-bottom: 0;
-            }
-            .footer {
-                grid-template-columns: 1fr 1fr;
-                gap: 30px;
-                padding: 30px;
-            }
-            .footer-card {
-                margin-left: 0;
-            }
-            .footer-logo {
-                margin-left: 0;
-            }
-            .footer-logo-p {
-                margin-left: 0;
-            }
-            .latest-main {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .latest {
-                padding: 30px 20px;
-            }
-            .more-books-section {
-                padding: 10px 20px 20px 20px;
-            }
-            .more-books-grid {
-                grid-template-columns: 1fr;
-            }
-            .more-book-item img {
-                width: 65px;
-                height: 90px;
-            }
-            .more-book-item .more-info h4 {
-                font-size: 17px;
-            }
-            .more-book-item .more-info .more-des {
-                font-size: 14px;
-            }
-            .more-book-item .more-info .more-meta {
-                font-size: 13px;
-            }
-            .join-horizon-right {
-                display: none !important;
-            }
-            .join-section-mobile {
-                display: block !important;
-                padding: 20px 20px 40px 20px;
-            }
-            .eco-intro {
-                flex-direction: column;
-                margin-left: 20px;
-                margin-right: 20px;
-            }
-            .ex {
-                text-align: left;
-                padding: 0;
-                margin-right: 0;
-            }
-            h3,
-            .our-eco,
-            .what-eco,
-            .what-eco-fea {
-                padding: 0 20px;
-                margin-left: 0;
-            }
-            .what-p,
-            .what-p-fea,
-            .what-p-fea1 {
-                padding: 0 20px !important;
-                margin-left: 0 !important;
-            }
-            .what-eco-fea {
-                margin-top: 5px !important;
-                margin-bottom: 3px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .what-p-fea {
-                margin-top: 3px !important;
-                margin-bottom: 0px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .latest {
-                padding-top: 5px !important;
-                padding-bottom: 5px !important;
-            }
-            .latest-main {
-                padding-top: 10px !important;
-                padding-bottom: 5px !important;
-            }
-            .our-eco {
-                margin-top: 20px !important;
-                margin-bottom: 10px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .eco-intro {
-                margin-top: 0px !important;
-                margin-bottom: 0px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            h3 {
-                margin-top: 5px !important;
-                margin-bottom: 10px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .ex {
-                margin-top: 0px !important;
-                margin-bottom: 15px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-                display: none;
-            }
-            .eco-cards {
-                padding-top: 0px !important;
-                padding-bottom: 10px !important;
-                margin-top: 0px !important;
-                margin-bottom: 0px !important;
-            }
-            main {
-                padding-top: 65px !important;
-            }
-            .codes-grid {
-                grid-template-columns: repeat(2, 1fr);
-                padding: 0 20px 20px 20px;
-                gap: 16px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            header {
-                padding: 10px 15px;
-                min-height: 60px;
-            }
-            .logo-image {
-                margin-left: 0;
-                height: 35px;
-            }
-            .img {
-                height: 30px;
-                width: 30px;
-            }
-            .logo-text {
-                font-size: 1.0rem;
-            }
-            .nav-links a {
-                font-size: 14px;
-            }
-            main {
-                padding-top: 60px !important;
-            }
-            .hero {
-                padding: 40px 15px !important;
-                padding-top: 25px !important;
-                padding-bottom: 30px !important;
-                margin-top: 5px !important;
-            }
-            h2 {
-                font-size: 28px;
-            }
-            .hero p {
-                font-size: 14px;
-                max-width: 100%;
-                margin-bottom: 30px;
-            }
-            .hero-btn a {
-                font-size: 14px;
-                padding: 9px 16px;
-                display: inline-block;
-                margin: 4px;
-            }
-            .eco-cards {
-                padding: 12px;
-                gap: 12px;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-            }
-            .eco-card {
-                padding: 18px 14px;
-                max-width: 100%;
-                margin-left: 0;
-                flex: 1 1 auto;
-                border-radius: 12px;
-            }
-            .eco-card h4 {
-                font-size: 15px;
-                margin-top: 8px;
-                margin-bottom: 8px;
-            }
-            .eco-card p {
-                font-size: 13px;
-                margin-bottom: 8px;
-            }
-            .eco-card a {
-                font-size: 13px;
-            }
-            .build-image {
-                height: 35px;
-                margin-bottom: -18px;
-            }
-            h3 {
-                font-size: 22px;
-                padding: 0 15px;
-            }
-            .our-eco {
-                font-size: 13px;
-                padding: 0 15px;
-                margin-top: 15px !important;
-                margin-bottom: 8px !important;
-                margin-left: 0;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .eco-intro {
-                margin-left: 15px;
-                margin-right: 15px;
-                margin-top: 0px !important;
-                margin-bottom: 0px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .ex {
-                font-size: 13px;
-                padding: 0;
-                margin-right: 0;
-                margin-top: 0px !important;
-                margin-bottom: 10px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .what-cards {
-                grid-template-columns: 1fr 1fr;
-                margin-left: 15px;
-                margin-right: 15px;
-            }
-            .what-card {
-                border-right: none !important;
-                border-bottom: none !important;
-                padding-bottom: 12px;
-            }
-            .what-card1 {
-                border-bottom: none !important;
-                padding-bottom: 0;
-            }
-            .what-eco {
-                font-size: 13px;
-                padding: 0 15px;
-                margin-left: 0;
-                margin-top: 25px;
-            }
-            .what-p {
-                font-size: 20px !important;
-                padding: 0 15px !important;
-                max-width: 100% !important;
-            }
-            .what-card h6,
-            .what-card1 h6 {
-                font-size: 18px;
-                padding: 0 12px;
-            }
-            .what-card p,
-            .what-card1 p {
-                font-size: 14px;
-                padding: 0 12px;
-                max-width: 100%;
-            }
-            .what-eco-fea {
-                font-size: 13px;
-                padding: 0 15px;
-                margin-left: 0 !important;
-                margin-top: 3px !important;
-                margin-bottom: 2px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .what-p-fea {
-                font-size: 22px !important;
-                padding: 0 15px !important;
-                margin-left: 0 !important;
-                margin-top: 2px !important;
-                margin-bottom: 0px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-                max-width: 100% !important;
-            }
-            .what-p-fea1 {
-                font-size: 14px !important;
-                padding: 0 15px !important;
-                max-width: 100% !important;
-            }
-            .latest-main {
-                grid-template-columns: 1fr;
-                gap: 10px;
-                padding-top: 5px !important;
-                padding-bottom: 3px !important;
-            }
-            .latest {
-                padding: 15px 12px !important;
-                padding-top: 3px !important;
-                padding-bottom: 3px !important;
-            }
-            .more-books-section {
-                padding: 5px 12px 15px 12px;
-            }
-            .more-books-grid {
-                grid-template-columns: 1fr;
-                gap: 4px;
-            }
-            .more-book-item {
-                padding: 6px 8px;
-                gap: 12px;
-            }
-            .more-book-item img {
-                width: 55px;
-                height: 75px;
-            }
-            .more-book-item .more-info h4 {
-                font-size: 15px;
-                margin-bottom: -4px;
-            }
-            .more-book-item .more-info .more-des {
-                font-size: 14px;
-            }
-            .more-book-item .more-info .more-meta {
-                font-size: 13px;
-            }
-            .books {
-                flex-direction: row;
-                align-items: flex-start;
-                margin-bottom: 16px;
-            }
-            .book-cover {
-                width: 65px;
-                height: 90px;
-                flex-shrink: 0;
-            }
-            .book-title {
-                font-size: 17px;
-                margin-left: 12px;
-                margin-bottom: 4px;
-                padding-top: 0 !important;
-            }
-            .des-eco {
-                margin-left: 12px;
-                margin-top: 0px;
-                line-height: 1.5;
-            }
-            .book-des {
-                font-size: 14px;
-                margin-top: 2px;
-                margin-bottom: 2px;
-            }
-            .book-eco {
-                font-size: 13px;
-                margin-top: 2px;
-            }
-            .footer {
-                grid-template-columns: 1fr 1fr;
-                gap: 20px;
-                padding: 25px 20px;
-            }
-            .footer-card {
-                margin-left: 0;
-            }
-            .footer-logo {
-                margin-left: 0;
-            }
-            .footer-logo .logo-text {
-                font-size: 1.0rem;
-            }
-            .footer-logo-p {
-                margin-left: 0;
-                font-size: 12px;
-                margin-top: 10px;
-            }
-            .footer h4 {
-                font-size: 14px;
-            }
-            .footer-card a {
-                font-size: 13px;
-                line-height: 1.8;
-            }
-            .location {
-                margin-bottom: 20px;
-            }
-            .PenCheaper {
-                margin-bottom: 20px;
-            }
-            .footer-img {
-                height: 30px;
-                width: 30px;
-            }
-            .footer-bottom {
-                font-size: 11px;
-                padding: 8px 15px;
-            }
-            .join-section-mobile {
-                padding: 15px 15px 30px 15px !important;
-            }
-            .join-section-mobile .join-horizon-p1 {
-                font-size: 22px !important;
-            }
-            .join-section-mobile .join-field-css {
-                font-size: 18px;
-                padding: 8px;
-                max-height: 40px;
-            }
-            .join-section-mobile .join-btn {
-                font-size: 14px;
-                padding: 8px 20px;
-                max-width: 150px;
-            }
-            .codes-grid {
-                grid-template-columns: repeat(2, 1fr);
-                padding: 0 12px 15px 12px;
-                gap: 12px;
-            }
-            .code-item img {
-                aspect-ratio: 16/10;
-            }
-            .code-item h4 {
-                font-size: 15px;
-            }
-            .code-item .code-meta {
-                font-size: 13px;
-            }
-        }
-
-        @media (max-width: 380px) {
-            header {
-                padding: 8px 10px;
-                min-height: 55px;
-            }
-            .logo-image {
-                height: 30px;
-            }
-            .img {
-                height: 28px;
-                width: 28px;
-            }
-            .logo-text {
-                font-size: 0.9rem;
-            }
-            #menu-btn {
-                font-size: 24px;
-            }
-            main {
-                padding-top: 55px !important;
-            }
-            .hero {
-                padding: 30px 10px !important;
-                padding-top: 20px !important;
-                padding-bottom: 25px !important;
-                margin-top: 5px !important;
-            }
-            h2 {
-                font-size: 22px;
-            }
-            .hero p {
-                font-size: 13px;
-                margin-bottom: 20px;
-            }
-            .hero-btn a {
-                font-size: 12px;
-                padding: 7px 14px;
-                border-radius: 10px;
-            }
-            .eco-cards {
-                padding: 10px;
-                gap: 10px;
-                grid-template-columns: 1fr 1fr;
-            }
-            .eco-card {
-                padding: 14px 10px;
-                border-radius: 10px;
-            }
-            .eco-card h4 {
-                font-size: 13px;
-                margin-top: 6px;
-                margin-bottom: 6px;
-            }
-            .eco-card p {
-                font-size: 12px;
-                margin-bottom: 6px;
-            }
-            .eco-card a {
-                font-size: 12px;
-            }
-            .build-image {
-                height: 30px;
-                margin-bottom: -14px;
-            }
-            .our-eco {
-                font-size: 12px;
-                padding: 0 12px;
-                margin-top: 12px !important;
-                margin-bottom: 5px !important;
-                margin-left: 0;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            h3 {
-                font-size: 20px;
-                padding: 0 12px;
-                margin-top: 2px !important;
-                margin-bottom: 5px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .ex {
-                font-size: 14px;
-                padding: 0;
-                margin-right: 0;
-                margin-top: 0px !important;
-                margin-bottom: 8px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .what-eco {
-                font-size: 12px;
-                padding: 0 12px;
-                margin-left: 0;
-                margin-top: 20px;
-            }
-            .what-p {
-                font-size: 18px !important;
-                padding: 0 12px !important;
-            }
-            .what-cards {
-                grid-template-columns: 1fr 1fr;
-                margin-left: 10px;
-                margin-right: 10px;
-            }
-            .what-card {
-                border-right: none !important;
-                border-bottom: none !important;
-                padding-bottom: 10px;
-            }
-            .what-card1 {
-                border-bottom: none !important;
-                padding-bottom: 0;
-            }
-            .what-card h6,
-            .what-card1 h6 {
-                font-size: 16px;
-                padding: 0 10px;
-            }
-            .what-card p,
-            .what-card1 p {
-                font-size: 13px;
-                padding: 0 10px;
-            }
-            .what-eco-fea {
-                font-size: 12px;
-                padding: 0 12px;
-                margin-left: 0 !important;
-                margin-top: 2px !important;
-                margin-bottom: 2px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .what-p-fea {
-                font-size: 20px !important;
-                padding: 0 12px !important;
-                margin-left: 0 !important;
-                margin-top: 2px !important;
-                margin-bottom: 0px !important;
-                padding-top: 0px !important;
-                padding-bottom: 0px !important;
-            }
-            .latest-main {
-                padding-top: 3px !important;
-                padding-bottom: 2px !important;
-            }
-            .latest {
-                padding: 12px 10px !important;
-                padding-top: 2px !important;
-                padding-bottom: 2px !important;
-            }
-            .more-books-section {
-                padding: 3px 10px 12px 10px;
-            }
-            .more-books-grid {
-                grid-template-columns: 1fr;
-                gap: 2px;
-            }
-            .more-book-item {
-                padding: 4px 6px;
-                gap: 10px;
-            }
-            .more-book-item img {
-                width: 45px;
-                height: 62px;
-            }
-            .more-book-item .more-info h4 {
-                font-size: 13px;
-                margin-bottom: -2px;
-            }
-            .more-book-item .more-info .more-des {
-                font-size: 12px;
-            }
-            .more-book-item .more-info .more-meta {
-                font-size: 12px;
-            }
-            .books {
-                flex-direction: row;
-                align-items: flex-start;
-                margin-bottom: 14px;
-            }
-            .book-cover {
-                width: 55px;
-                height: 75px;
-                flex-shrink: 0;
-            }
-            .book-title {
-                font-size: 15px;
-                margin-left: 10px;
-                margin-bottom: 2px;
-                padding-top: 0 !important;
-            }
-            .des-eco {
-                margin-left: 10px;
-                margin-top: 0px;
-                line-height: 1.4;
-            }
-            .book-des {
-                font-size: 14px;
-                margin-top: 2px;
-                margin-bottom: 2px;
-            }
-            .book-eco {
-                font-size: 14px;
-                margin-top: 2px;
-            }
-            .footer {
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
-                padding: 15px 10px;
-            }
-            .footer h4 {
-                font-size: 12px;
-            }
-            .footer-card a {
-                font-size: 12px;
-                line-height: 1.6;
-            }
-            .footer-img {
-                height: 24px;
-                width: 24px;
-            }
-            .footer-logo .logo-text {
-                font-size: 0.9rem;
-            }
-            .footer-logo-p {
-                font-size: 12px;
-                margin-top: 8px;
-            }
-            .footer-bottom {
-                font-size: 11px;
-                padding: 5px 10px;
-            }
-            .location {
-                margin-bottom: 15px;
-            }
-            .PenCheaper {
-                margin-bottom: 15px;
-            }
-            .location {
-                font-size: 12px;
-            }
-            .codes-grid {
-                grid-template-columns: repeat(2, 1fr);
-                padding: 0 10px 12px 10px;
-                gap: 8px;
-            }
-            .code-item {
-                padding: 8px;
-            }
-            .code-item h4 {
-                font-size: 13px;
-            }
-            .code-item .code-meta {
-                font-size: 12px;
-            }
-            .join-section-mobile {
-                padding: 10px 10px 25px 10px !important;
-            }
-            .join-section-mobile .join-horizon-p1 {
-                font-size: 20px !important;
-            }
-            .join-section-mobile .join-field-css {
-                font-size: 16px;
-                padding: 6px 10px;
-                max-height: 35px;
-            }
-            .join-section-mobile .join-btn {
-                font-size: 13px;
-                padding: 6px 14px;
-                max-width: 130px;
-            }
-        }
-
-        /* Completely hide all border markings in What We Do on 768px and below */
-        @media (max-width: 768px) {
-            .what-card {
-                border-right: none !important;
-                border-bottom: none !important;
-                padding-bottom: 15px;
-            }
-            .what-card1 {
-                border-bottom: none !important;
-                padding-bottom: 15px;
-            }
-            .what-card:last-child {
-                border-bottom: none !important;
-                padding-bottom: 0;
-            }
-            .what-card1:last-child {
-                border-bottom: none !important;
-                padding-bottom: 0;
-            }
-        }
-
-        .more-books-section {display: none;}
-        .codes-grid {display: none;}
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volant Poetry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles & Icons -->
+  <link rel="stylesheet" href="style.css" />
+<!-- Favicons -->
+<link rel="icon" type="image/png" href="images/volant-favicon.png">
+<link rel="apple-touch-icon" href="images/volant-favicon.png">
+
+  <!-- SEO -->
+  <meta name="google-site-verification" content="soceiczGrFx4It0-P5sYiqRyMMycbq-GsCQ3yOh84hY" />
+  <meta name="description" content="A platform for sharing emotions, inspiring creativity, and conveying messages through the beauty of words." />
+  <meta name="keywords" content="Volant Poetry, Rence Blunt, poems, quotes, reflections, emotions, creative writing, poetry website, inspirational poetry, Ghana poet, African poetry, literary art" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Volant Poetry" />
+  <meta property="og:description" content="A platform for sharing emotions, inspiring creativity, and connecting people through the beauty of words." />
+  <meta property="og:image" content="https://volantpoetry.vercel.app/images/logo.png" />
+  <meta property="og:url" content="https://volantpoetry.vercel.app/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Volant Poetry" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Volant Poetry" />
+  <meta name="twitter:description" content="A platform for sharing emotions, inspiring creativity, and connecting people through the beauty of words." />
+  <meta name="twitter:image" content="https://volantpoetry.vercel.app/images/logo.png" />
+
+  <!-- Sitemap & Canonical -->
+  <link rel="canonical" href="https://volantpoetry.vercel.app/" />
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://volantpoetry.vercel.app/sitemap.xml" />
+
+  <link rel="author" href="https://volantpoetry.vercel.app/about.html">
+  <!-- Structured Data -->
+<!-- WebSite Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Volant Poetry",
+  "url": "https://volantpoetry.vercel.app",
+  "description": "A platform for sharing emotions, inspiring creativity, and connecting readers through the beauty of words.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Volant Poetry",
+    "url": "https://volantpoetry.vercel.app"
+  },
+  "sameAs": [
+    "https://github.com/renceblunt",
+    "https://volantpoetry.vercel.app"
+  ],
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://volantpoetry.vercel.app/search?query={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- Organization Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Volant Poetry",
+  "url": "https://volantpoetry.vercel.app",
+  "logo": "https://volantpoetry.vercel.app/images/logo.png",
+  "founder": {
+    "@type": "Person",
+    "name": "Rence Blunt",
+    "image": "https://volantpoetry.vercel.app/images/renceblunt.jpg"
+  },
+  "description": "A platform for sharing emotions, inspiring creativity, and connecting readers through the beauty of words.",
+  "sameAs": [
+    "https://github.com/renceblunt",
+    "https://volantpoetry.vercel.app"
+  ]
+}
+</script>
+  <style>
+
+/* Individual Poem Card */
+.recent-poem-card {
+  background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
+  color: #4b3f2f;
+  padding: 20px 25px 20px 50px !important;
+}
+
+/* Read More / Show Less */
+.read-more-btn {
+  background: none;
+  border: none;
+  color: #960606;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.92rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.read-more-btn:hover { color: #ff0000; }
+
+/* Poem Categories */
+.poem-category-line em,
+.poem-category {
+  font-size: 0.7rem;
+  font-style: italic;
+  color:  #B8860B;}
+
+.category-link {
+  color: #B8860B;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.category-link:hover {
+  color: #8B4513;
+  text-decoration: underline;
+}
+
+#links-container ul {
+  list-style: none;        
+  padding: 0;
+  max-width: 750px;        
+  margin-left: 80px;
+}
+
+
+#links-container li {
+  margin-bottom: 12px;
+  padding: 10px 15px;
+  background: #f7f5ff;    
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#links-container li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+#links-container a {
+  color: #4b2aad;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+#links-container a:hover {
+  text-decoration: underline;
+}
+
+#links-container div {
+  font-size: 0.85rem;
+  color: #555;
+  margin-left: 10px;
+  font-style: italic;
+}
+/* LINKS TAB PARAGRAPH */
+#links p {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 12px;
+  text-align: left;
+  font-weight: 500;
+  line-height: 1.5;
+  font-family: 'Inter', sans-serif;
+   margin-left: 85px;
+}
+
+/* SMALL SCREEN STYLING FOR LINKS TAB */
+@media (max-width: 768px) {
+  #links-container ul {
+    max-width: 95%;
+    margin-left: 10px;
+    padding: 0;
+  }
+
+  #links-container li {
+    padding: 8px 12px;
+    flex-direction: column;
+    align-items: flex-start; 
+  }
+
+  #links-container a {
+    font-size: 0.95rem;
+  }
+
+  #links-container div {
+    font-size: 0.8rem;
+    margin-left: 0;
+    margin-top: 4px;
+  }
+
+  #links p {
+    margin-left: 25px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Featured Poems Styling */
+.featured-poem-card {
+  background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
+  color: #4b3f2f;
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 15px;
+  white-space: pre-wrap;
+    padding: 15px 20px 15px 50px;
+}
+
+.featured-poem-card .title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #4b2aad;
+  margin-bottom: 6px;
+}
+
+.featured-poem-card .author {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: #B8860B;
+  margin-bottom: 10px;
+}
+
+.featured-poem-card .content {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #4b3f2f;
+  line-height: 1.6;
+}
+
+/* Featured Poems Container */
+#featured-poems-container {
+  max-width: 85%;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+/* --- Small Screen Adjustments --- */
+@media (max-width: 768px) {
+  #featured-poems-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 5px;
+    margin: 0 !important;
+  }
+
+  .featured-poem-card {
+    width: 100% !important;
+    padding: 15px 10px 15px 15px;
+    box-sizing: border-box;
+  }
+
+  .featured-poem-card .title {
+    font-size: 1.5rem;
+  }
+
+  .featured-poem-card .author {
+    font-size: 0.95rem;
+  }
+
+  .featured-poem-card .content {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+}
+
+
+/* Username styles */
+.username-display, .username-sm {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  background: linear-gradient(90deg, #5a3cb3, #a67c52);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.3px;
+  font-style: normal;
+  transition: all 0.3s ease;
+}
+
+.username-display:hover, .username-sm:hover {
+  background: linear-gradient(90deg, #6a45d1, #c49b63);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* Hide logout by default */
+.logout-btn {
+  display: none;
+  margin-top: 5px;
+  padding: 6px 12px;
+  background: #ff4b4b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Desktop vs Mobile visibility */
+.username-display { display: inline-block; }
+.username-sm { display: none; }
+
+#logoutBtn { display: none; }
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .username-display { display: none; }
+  .username-sm { display: inline-block; margin-right: 8px; }
+}
+
+
+/* --- Mobile Username & Logout Inline --- */
+@media (max-width: 768px) {
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #username-display-sm {
+    display: inline-block;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #4b2aad;
+    cursor: pointer;
+    margin-right: 0;
+  }
+
+  #logout-btn {
+    display: none;
+    font-size: 0.5rem;
+    font-weight: 500;
+    padding: 6px 12px;
+    background: #ff4b4b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    width: 6px;
+    
+  }
+
+  #logout-btn:hover {
+    background: #e03b3b;
+      width: 40px;
+  padding: 6px 8px;
+  }
+}
+
+/* --- MOBILE SEARCH ICON --- */
+.search-toggle {
+  display: none;
+  cursor: pointer;
+  color: #3a2d60;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem;
+  border-radius: 50%;
+  transition: background 0.25s ease;
+}
+
+.search-toggle:hover {
+  background: rgba(123, 76, 194, 0.08);
+}
+
+/* --- MOBILE SEARCH DROPDOWN (smaller version) --- */
+.mobile-search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -10px);
+  width: 90%;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  padding: 0.5rem 0.8rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+/* When toggled ON */
+.mobile-search-dropdown.show {
+  opacity: 1;
+  transform: translate(-50%, 5px);
+  pointer-events: auto;
+}
+
+#mobile-search-input {
+  width: 90%;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+
+#mobile-search-input:focus {
+  outline: none;
+  border-color: #7b4cc2;
+  box-shadow: 0 0 6px rgba(123, 76, 194, 0.3);
+}
+
+/* --- RESPONSIVE BEHAVIOR --- */
+@media (max-width: 768px) {
+  .desktop-search {
+    display: none;
+  }
+  .search-toggle {
+    display: flex;
+  }
+}
+
+/* --- MOBILE ICONS WRAPPER --- */
+.mobile-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Hide last poetry gallery item on small screens */
+@media (max-width: 768px) {
+  #poetry-gallery .gallery-item:last-child {
+    display: none;
+  }
+}
+
+  /* --- Community Section --- */
+    .community-section { display: flex; align-items: center; justify-content: space-between; padding: 3rem 5%; background: #fdf6f0; flex-wrap: wrap; gap: 2rem; }
+    .community-content { max-width: 500px; }
+    .community-content h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: #4b2aad; }
+    .community-content p { font-size: 1rem; line-height: 1.5; margin: 1rem 0; }
+    .community-image img { max-width: 400px; height: auto; border-radius: 12px; }
+
+.author {
+  display: block;
+
+ color: #B8860B;
+  font-style: italic;
+  font-size: 54rem;
+  margin-top: -6px;
+  margin-bottom: 1rem;
+}
+
+/* Reduce logo text size on small screens */
+@media (max-width: 768px) {
+  .logo-text {
+    font-size: 1.1rem;
+  }
+}
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 0.80rem;
+  }
+}
+
+/* Adjust login button/link size for small screens */
+@media (max-width: 768px) {
+  #login-link {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  #login-link {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+}
+
+
+
+
+/* Hide mobile logout on desktop */
+.logout-btn-mobile {
+  display: none;
+  margin-top: 1rem;
+  padding: 8px 16px;
+  background: #ff4b4b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-weight: 600;
+}
+
+/* Show mobile logout in menu on small screens */
+@media (max-width: 768px) {
+  .logout-btn-mobile {
+    display: block;
+  }
+
+  #nav-links.show {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #nav-links a,
+  .logout-btn-mobile {
+    width: 100%;
+    padding: 12px 16px;
+    box-sizing: border-box;
+  }
+}
+
+
+/* Disable click on mobile username */
+@media (max-width: 768px) {
+  #username-display-sm {
+    pointer-events: none;
+    cursor: default;
+  }
+}
+
+/* Disable click on mobile username for screens ≤ 480px */
+@media (max-width: 480px) {
+  #username-display-sm {
+    pointer-events: none;
+    cursor: default;
+  }
+}
+
+/* Hide mobile logout by default (desktop) */
+#logout-btn-mobile {
+  display: none;
+}
+
+/* Only show in menu toggle on small screens ≤480px */
+@media (max-width: 480px) {
+  #logout-btn-mobile {
+    display: block;
+  }
+}
+
+#logout-btn-mobile {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 10px;
+  position: relative;
+  top: 69px;
+  left: 15px;
+}
+@media (max-width: 480px) {
+  #ranking-list .recent-poem-card {
+    margin-bottom: 22px !important;
+  }
+}
+
+
+#links {
+  padding: 20px;
+}
+
+.links-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-radius: 12px;
+}
+
+.links-header h2 {
+  color: #4b2aad;
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  font-family: 'Playfair Display', serif;
+}
+
+.links-header p {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.copy-all-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.copy-all-btn {
+  background: #4b2aad;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(75, 42, 173, 0.2);
+}
+
+.copy-all-btn:hover {
+  background: #5f3dc9;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(75, 42, 173, 0.3);
+}
+
+.copy-all-btn:active {
+  transform: translateY(0);
+}
+
+.copy-feedback {
+  color: #28a745;
+  font-size: 0.9rem;
+  animation: fadeInOut 2s ease;
+}
+
+#links-container ul {
+  list-style: none;
+  padding: 0;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+#links-container li {
+  margin-bottom: 12px;
+  padding: 15px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  border: 1px solid #eee;
+  position: relative;
+}
+
+#links-container li:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(75, 42, 173, 0.15);
+  border-color: #4b2aad;
+}
+
+.link-content {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+.link-content a {
+  color: #4b2aad;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+
+.link-content a:hover {
+  color: #6f4ae4;
+  text-decoration: underline;
+}
+
+.poet-name {
+  color: #B8860B;
+  font-style: italic;
+  font-size: 0.95rem;
+  margin-left: 15px;
+  white-space: nowrap;
+}
+
+.copy-individual-btn {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  opacity: 0.7;
+  margin-left: 10px;
+}
+
+.copy-individual-btn:hover {
+  color: #4b2aad;
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.copy-success {
+  position: absolute;
+  right: 50px;
+  background: #28a745;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.load-more-container {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.load-more-btn {
+  background: #4b2aad;
+  color: white;
+  border: none;
+  padding: 12px 35px;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #4b2aad;
+}
+
+.load-more-btn:hover {
+  background: white;
+  color: #4b2aad;
+  border: 1px solid #4b2aad;
+}
+
+.loading-links {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-10px); }
+  20% { opacity: 1; transform: translateY(0); }
+  80% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .links-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  #links-container li {
+    padding: 12px 15px;
+    flex-wrap: wrap;
+  }
+  
+  .link-content {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .poet-name {
+    margin-left: 0;
+    width: 100%;
+    text-align: left;
+  }
+  
+  .copy-individual-btn {
+    margin-left: 0;
+    width: 100%;
+    text-align: center;
+    background: #f0f0f0;
+    margin-top: 8px;
+    border-radius: 20px;
+  }
+  
+  .copy-success {
+    position: static;
+    width: 100%;
+    text-align: center;
+    margin-top: 8px;
+  }
+  
+  .copy-all-container {
+    flex-direction: column;
+  }
+  
+  .copy-all-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Small screens adjustments */
+@media (max-width: 768px) {
+  .read-more-btn,
+  .poem-category-line em,
+  .poem-category {
+    margin-left: -8px !important;
+  }
+  
+  .poem-category-line em,
+  .poem-category {
+    position: relative !important;
+    top: -3px !important;
+    display: inline-block;
+  }
+  
+  .read-more-btn {
+    font-size: 0.85rem !important;
+  }
+  
+  .poem-actions,
+  .comment-section,
+  .poem-reactions {
+    margin-left: -8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .read-more-btn,
+  .poem-category-line em,
+  .poem-category {
+    margin-left: -10px !important;
+  }
+  
+  .poem-category-line em,
+  .poem-category {
+    position: relative !important;
+    top: -23px !important;
+  }
+  
+  .read-more-btn {
+    font-size: 0.8rem !important;
+  }
+  
+  .poem-actions,
+  .comment-section,
+  .poem-reactions {
+    margin-left: -10px !important;
+  }
+}
+
+/* Force audio section to match poem-content alignment */
+.poem-audio-section {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* On all screen sizes, keep exactly the same */
+@media (max-width: 768px) {
+  .poem-audio-section {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: fit-content !important;
+    max-width: 45% !important;
+    min-width: 240px !important;
+  }
+}
+
+/* Hide the logo text on desktop (screens wider than 768px) */
+@media (min-width: 769px) {
+  .logo-text {
+    display: none !important;
+  }
+  
+  .nav-logo-img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Keep the text visible on mobile */
+@media (max-width: 768px) {
+  .logo-text {
+    display: inline-block;
+  }
+}
+/* Complete mobile dropdown fix - no overlap */
+@media (max-width: 768px) {
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    width: 100% !important;
+  }
+  
+  .nav-links > a,
+  .dropdown {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .nav-links > a {
+    padding: 12px 0 12px 60px !important;
+    border-bottom: 1px solid #eee;
+    display: block !important;
+  }
+  
+  .dropdown {
+    border-bottom: 1px solid #eee;
+    position: relative !important;
+  }
+  
+  .dropdown > a {
+    display: block !important;
+    padding: 12px 0 12px 60px !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+  
+  .dropdown-checkbox {
+    display: none !important;
+  }
+  
+  .dropdown-label {
+    display: block !important;
+    padding: 12px 0 12px 60px !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+  }
+  
+  .dropdown-label::after {
+    content: ' ▼';
+    font-size: 10px;
+    transition: transform 0.3s;
+    display: inline-block;
+  }
+  
+  .dropdown-checkbox:checked + .dropdown-label::after {
+    transform: rotate(180deg);
+  }
+  
+  .dropdown-content {
+    display: none;
+    width: 100% !important;
+    background: #f9f9f9;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  
+  .dropdown-checkbox:checked ~ .dropdown-content {
+    display: block !important;
+  }
+  
+  .dropdown-content a:first-child {
+    display: block !important;
+    padding: 10px 0 10px 85px !important;
+    border-bottom: 1px solid #e0e0e0;
+    color: #4b2aad !important;
+    text-decoration: none !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 10px !important;
+  }
+  
+  .dropdown-content a:last-child {
+    display: block !important;
+    padding: 10px 0 10px 85px !important;
+    border-bottom: none !important;
+    color: #4b2aad !important;
+    text-decoration: none !important;
+    margin: 0 !important;
+    padding-bottom: 10px !important;
+  }
+  
+  .dropdown-content a {
+    display: block !important;
+    padding: 10px 0 10px 85px !important;
+    color: #4b2aad !important;
+    text-decoration: none !important;
+    margin: 0 !important;
+  }
+}
+@media (max-width: 768px) {
+  .nav-links {
+    padding-top: 60px;
+  }
+  .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+  }
+}
+
+/* Desktop logout popup (appears to the right of username) */
+.desktop-logout-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.logout-desktop-btn {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: #ff4b4b;
+  color: white;
+  border: none;
+  border-radius: 28px;
+  padding: 8px 18px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 5px 14px rgba(0,0,0,0.1);
+  z-index: 200;
+  font-size: 0.85rem;
+}
+.logout-desktop-btn:hover {
+  background: #d63e3e;
+}
+.hide-logout {
+  display: none !important;
+}
+
+/* Mobile logout button - HIDDEN BY DEFAULT, shown via class when logged in */
+.mobile-menu-logout {
+  display: none !important;
+  font-size: 0.85rem !important;
+  padding: 8px 16px 8px 16px !important;
+  width: auto !important;
+  background: #ff4b4b;
+  color: white;
+  border: none;
+  border-radius: 20px !important;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  margin-left: 60px !important;
+  text-align: center !important;
+  box-sizing: border-box;
+}
+
+/* Show on small screens when logged in */
+@media (max-width: 768px) {
+  .mobile-menu-logout.show-mobile-logout {
+    display: inline-block !important;
+  }
+}
+
+.mobile-menu-logout:hover {
+  background: #d63e3e !important;
+  transform: scale(0.98);
+  transition: all 0.2s ease;
+}
+
+/* Even smaller for very tiny screens */
+@media (max-width: 480px) {
+  .mobile-menu-logout {
+    font-size: 0.75rem !important;
+    padding: 6px 12px 6px 12px !important;
+    margin-left: 60px !important;
+    border-radius: 18px !important;
+  }
+}
+.username-display, .username-sm {
+  font-weight: bold !important;
+}
+.btn-bookstore {
+  padding: 0.4rem 1.2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.85rem;
+  background: #b76e4b;
+  color: #fff;
+  transition: 0.3s;
+  white-space: nowrap;
+  display: inline-block;
+}
+.btn-bookstore:hover {
+  background: #9f5e3f;
+  transform: translateY(-2px);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .btn-bookstore {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.7rem;
+  }
+}
+@media (max-width: 480px) {
+  .btn-bookstore {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+/* === HERO RESPONSIVE SCALING === */
+.hero {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 2vw, 2rem);
+  padding: clamp(1rem, 4vw, 3rem);
+}
+
+/* Logo Image - scales smoothly */
+.hero-left img.hero-logo {
+  width: clamp(80px, 15vw, 200px);
+  height: auto;
+  max-width: 200px;
+  transition: all 0.3s ease;
+}
+
+/* Hero Title Text - scales smoothly */
+.hero-right h1 {
+  font-size: clamp(2rem, 8vw, 5rem);
+  line-height: 1.1;
+}
+
+.hero-right h1 span {
+  font-size: clamp(1.8rem, 7vw, 4.5rem);
+}
+
+/* Hero Description Text */
+.hero-line-content p {
+  font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+  max-width: clamp(280px, 40vw, 550px);
+}
+
+/* CTA Button */
+.hero-line-content .cta-btn {
+  font-size: clamp(0.7rem, 1.2vw, 1rem);
+  padding: clamp(0.4rem, 1vw, 0.7rem) clamp(0.8rem, 2vw, 1.5rem);
+}
+
+/* === BREAKPOINT: Hide hero-left and hero-right on smaller screens === */
+@media (max-width: 1024px) {
+  .hero-left,
+  .hero-right {
+    display: none !important;
+  }
+  
+  .hero {
+    justify-content: center !important;
+    padding: 2rem 1rem !important;
+    min-height: auto !important;
+  }
+  
+  .hero-line-content {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    text-align: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+  }
+  
+  .hero-line-content p {
+    max-width: 90% !important;
+    text-align: center !important;
+  }
+}
+
+/* === Additional fine-tuning for very small screens === */
+@media (max-width: 480px) {
+  .hero {
+    padding: 1.5rem 0.8rem !important;
+  }
+  
+  .hero-line-content p {
+    font-size: 0.8rem !important;
+  }
+  
+  .hero-line-content .cta-btn {
+    font-size: 0.75rem !important;
+    padding: 0.4rem 1rem !important;
+  }
+}
+
+
+
+
+
+
+
+/* --- Bring categories UP slightly on small screens when no Read More --- */
+@media (max-width: 768px) {
+  .recent-poem-card:not(:has(.read-more-btn)) .poem-category-line {
+    margin-top: 6px !important;
+    padding-top: 4px !important;
+    position: relative !important;
+    top: -2px !important;
+  }
+  
+  .recent-poem-card:not(:has(.read-more-btn)) {
+    padding-bottom: 15px !important;
+  }
+  
+  /* Reset any negative positioning on the category text */
+  .recent-poem-card:not(:has(.read-more-btn)) .poem-category-line em,
+  .recent-poem-card:not(:has(.read-more-btn)) .poem-category {
+    position: relative !important;
+    top: -1px !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* Fine-tune for very small screens */
+@media (max-width: 480px) {
+  .recent-poem-card:not(:has(.read-more-btn)) .poem-category-line {
+    margin-top: 4px !important;
+    padding-top: 2px !important;
+    top: -3px !important;
+  }
+  
+  .recent-poem-card:not(:has(.read-more-btn)) {
+    padding-bottom: 12px !important;
+  }
+}
+/* Hide Contact Us link in navigation header */
+.nav-links a[href="shared/contact.html"] {
+  display: none !important;
+}
+</style>
+
 </head>
-
 <body>
-    <header>
-        <a href="#" class="logo-image" style="text-decoration:none;">
-            <img src="../images/logo.png" alt="Volant Foundry Logo" class="img">
-            <span class="logo-text">
-                <span class="logo-highlight">Volant</span> Foundry
-            </span>
-        </a>
-        <button id="menu-btn">☰</button>
 
-        <nav class="nav-links" id="navLinks">
-            <a href="#" data-target="home">Home</a>
-            <a href="#" data-target="ecosystem">Our Platforms</a>
-            <a href="../shared/about.html">About</a>
-            <a href="../shared/contact.html">Contact</a>
-        </nav>
-    </header>
-
-    <main>
-        <section class="hero" id="home">
-            <h2>Simply Volant, forever in the horizon</h2>
-            <P>Volant Foundry is a creative technology platform building digital spaces for writers, readers, and creators.</P>
-            <div class="hero-btn">
-                <a href="#" class="primary" data-target="ecosystem">Explore Our Platforms</a>
-                <a href="../shared/contact.html" class="secondary">Contact Us</a>
-            </div>
-        </section>
-
-        <section id="ecosystem">
-            <p class="our-eco">OUR PLATFROMS</p>
-            <div class="eco-intro">
-                <div>
-                    <h3>Different wings. <br> One vision.</h3>
-                </div>
-
-                <div>
-                    <p class="ex">Explore the pillars of Volant Foundry. <br>Each project serves a purpose. <br>Together, we build legacy.</p>
-                </div>
-            </div>
-
-            <div class="eco-cards">
-                <div class="eco-card" id="card-poetry">
-                    <div class="innit-img-eco-card">
-                        <img src="../images/poetry.png" alt="Volant Poetry image" class="build-image">
-                    </div>
-                    <h4>Volant Poetry</h4>
-                    <p>Write, publish poems, connect with writers and grow your audience.</p>
-                    <a href="../index.html">Enter Community →</a>
-                </div>
-
-                <div class="eco-card" id="card-reads">
-                    <div class="innit-img-eco-card">
-                        <img src="../images/volant-reads.png" alt="Volant Reads image" class="build-image">
-                    </div>
-                    <h4>Volant Reads</h4>
-                    <p>Buy ebooks, build your library, sell books, track sales and receive payouts.</p>
-                    <a href="../store/index.html">Buy and Sell Ebooks →</a>
-                </div>
-
-                <div class="eco-card" id="card-codes">
-                    <div class="innit-img-eco-card">
-                        <img src="../images/volant-codes.png" alt="Volant Codes image" class="build-image">
-                    </div>
-                    <h4>Volant Codes</h4>
-                    <p>Future home for vibe coding, AI tools, software and digital innovation.</p>
-                    <a href="#">Coming Soon →</a>
-                    </p>
-                </div>
-
-                <div class="eco-card" id="card-pencheaper">
-                    <div class="innit-img-eco-card">
-                        <img src="../images/volant-lyrics.png" alt="Volant Lyrics image" class="build-image">
-                    </div>
-                    <h4>Volant Lyrics</h4>
-                    <p>A place to buy and sell original lyrics with full copyright.</p>
-                    <a href="#">Coming Soon →</a>
-                </div>
-            </div>
-        </section>
-
-        <section class="what-main" id="services">
-            <p class="what-eco">WHAT WE DO</p>
-            <div class="what-cards">
-                <div class="what-card">
-                    <p class="what-p">The intersection of creativity,technology, and impact.</p>
-                </div>
-                <div class="what-card">
-                    <div class="innit-img">
-                        <img src="../images/poetry.png" alt="Volant Poetry image" class="build-image">
-                    </div>
-                    <h6>Create</h6>
-                    <p>We craft original contents that inspires and connect.</p>
-                </div>
-                <div class="what-card">
-                    <div class="innit-img">
-                        <img src="../images/volant-codes.png" alt="Volant Codes image" class="build-image">
-                    </div>
-                    <h6>Build</h6>
-                    <p>We develop digital solutions that solve real problems.</p>
-                </div>
-                <div class="what-card1">
-                    <div class="innit-img">
-                        <img src="../images/volant-lyrics.png" alt="Volant Lyrics image" class="build-image">
-                    </div>
-                    <h6>Empower</h6>
-                    <p>We share knowledge and wisdom to empower others.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== LATEST FROM VOLANT ===== -->
-        <section id="about">
-            <div class="latest-main">
-                <!-- Column 1: LATEST heading -->
-                <div class="latest">
-                    <h2 class="what-eco-fea">LATEST FROM VOLANT</h2>
-                    <p class="what-p-fea">Fresh drops from our platforms.</p>
-                </div>
-
-                <!-- Column 2: Book listings -->
-                <div class="latest">
-                    <div class="books">
-                        <img src="../images/Black and Blue Fiction Book Cover (2).png" alt="Scentless Roses Cover" class="book-cover" onclick="openLightbox(this.src)">
-                        <div class="title-des-eco">
-                            <h2 class="book-title">Scentless Roses</h2>
-                            <div class="des-eco">
-                                <p class="book-des">A collection of poems by Rence Blunt</p>
-                                <p class="book-eco">Volant Reads . June 16, 2026</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="books">
-                        <img src="../images/Black and Blue Fiction Book Cover (8).jpg" alt="The Fall Of Twilight Cover" class="book-cover" onclick="openLightbox(this.src)">
-                        <div class="title-des-eco">
-                            <h2 class="book-title">The Fall Of Twilight</h2>
-                            <div class="des-eco">
-                                <p class="book-des">A collection of poems by Rence Blunt</p>
-                                <p class="book-eco">Volant Reads . Forthcoming</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Column 3: JOIN THE HORIZON (right side on large screens) -->
-                <div class="join-horizon-right" id="contact">
-                    <h2 class="join-horizon">JOIN THE HORIZON</h2>
-                    <P class="join-horizon-p1">Be part of something <br>meaningful</P>
-                    <p class="join-horizon-p2">Join our community and get updates, opportunities, and early access to newly published books, poems, and everything we build.</p>
-                    <div class="join">
-                        <input type="email" name="join-field" id="join-field" placeholder="Enter your email" class="join-field-css">
-                        <button class="join-btn" id="joinBtn">Join Now</button>
-                    </div>
-                </div>
-
-                <!-- ===== MORE BOOKS (full width, same style as latest books) ===== -->
-                <div style="grid-column: 1 / -1; padding: 10px 0 0 0;">
-                    <div class="more-books-section">
-                        <p class="more-label">MORE FROM VOLANT READS</p>
-                        <div class="more-books-grid">
-                            <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                                <img src="images/Black and Blue Fiction Book Cover (3).jpg" alt="Echoes of Silence" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2290%22 height=%22120%22%3E%3Crect width=%2290%22 height=%22120%22 fill=%22%23eee%22/%3E%3C/svg%3E'">
-                                <div class="more-info">
-                                    <h4>Echoes of Silence</h4>
-                                    <p class="more-des">A collection of poems by Maya Darko</p>
-                                    <p class="more-meta">Volant Reads . June 2026</p>
-                                </div>
-                            </div>
-                            <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                                <img src="images/Black and Blue Fiction Book Cover (4).jpg" alt="The Last Verse" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2290%22 height=%22120%22%3E%3Crect width=%2290%22 height=%22120%22 fill=%22%23eee%22/%3E%3C/svg%3E'">
-                                <div class="more-info">
-                                    <h4>The Last Verse</h4>
-                                    <p class="more-des">A collection of poems by Kofi Mensah</p>
-                                    <p class="more-meta">Volant Reads . May 2026</p>
-                                </div>
-                            </div>
-                            <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                                <img src="images/Black and Blue Fiction Book Cover (5).jpg" alt="Whispers in the Dark" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2290%22 height=%22120%22%3E%3Crect width=%2290%22 height=%22120%22 fill=%22%23eee%22/%3E%3C/svg%3E'">
-                                <div class="more-info">
-                                    <h4>Whispers in the Dark</h4>
-                                    <p class="more-des">A collection of poems by Akua Serwaa</p>
-                                    <p class="more-meta">Volant Reads . April 2026</p>
-                                </div>
-                            </div>
-                            <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                                <img src="images/Black and Blue Fiction Book Cover (6).jpg" alt="Beneath the Surface" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2290%22 height=%22120%22%3E%3Crect width=%2290%22 height=%22120%22 fill=%22%23eee%22/%3E%3C/svg%3E'">
-                                <div class="more-info">
-                                    <h4>Beneath the Surface</h4>
-                                    <p class="more-des">A collection of poems by Yaw Asante</p>
-                                    <p class="more-meta">Volant Reads . March 2026</p>
-                                </div>
-                            </div>
-                            <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                                <img src="images/Black and Blue Fiction Book Cover (7).jpg" alt="Fading Light" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2290%22 height=%22120%22%3E%3Crect width=%2290%22 height=%22120%22 fill=%22%23eee%22/%3E%3C/svg%3E'">
-                                <div class="more-info">
-                                    <h4>Fading Light</h4>
-                                    <p class="more-des">A collection of poems by Abena Osei</p>
-                                    <p class="more-meta">Volant Reads . February 2026</p>
-                                </div>
-                            </div>
-                            <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                                <img src="../images/Black and Blue Fiction Book Cover (2).png" alt="Silent Whispers" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2290%22 height=%22120%22%3E%3Crect width=%2290%22 height=%22120%22 fill=%22%23eee%22/%3E%3C/svg%3E'">
-                                <div class="more-info">
-                                    <h4>Silent Whispers</h4>
-                                    <p class="more-des">A collection of poems by Kwame Adjei</p>
-                                    <p class="more-meta">Volant Reads . January 2026</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ===== VOLANT CODES PROJECTS – big images, 4 per row ===== -->
-                <div style="grid-column: 1 / -1; padding: 10px 0 10px 0;">
-                    <div class="codes-grid">
-                        <div class="code-item" onclick="openLightbox(this.querySelector('img').src)">
-                            <img src="../images/kindady.png" alt="Pastery Website" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22%3E%3Crect width=%22200%22 height=%22120%22 fill=%22%23f0ede8%22/%3E%3Ctext x=%2250%22 y=%2260%22 font-family=%22Inter%22 font-size=%2214%22 fill=%22%23999%22%3EPastery%3C/text%3E%3C/svg%3E'">
-                            <h4>Pastery</h4>
-                            <p class="code-meta">Volant Codes . June 2026</p>
-                            <span class="tag">HTML · CSS · JS</span>
-                        </div>
-                        <div class="code-item" onclick="openLightbox(this.querySelector('img').src)">
-                            <img src="images/store-project.jpg" alt="Store Project" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22%3E%3Crect width=%22200%22 height=%22120%22 fill=%22%23f0ede8%22/%3E%3Ctext x=%2250%22 y=%2260%22 font-family=%22Inter%22 font-size=%2214%22 fill=%22%23999%22%3EStore%3C/text%3E%3C/svg%3E'">
-                            <h4>Volant Store</h4>
-                            <p class="code-meta">Volant Codes . May 2026</p>
-                            <span class="tag">React · Firebase</span>
-                        </div>
-                        <div class="code-item" onclick="openLightbox(this.querySelector('img').src)">
-                            <img src="images/volant-poetry-project.jpg" alt="Volant Poetry Project" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22%3E%3Crect width=%22200%22 height=%22120%22 fill=%22%23f0ede8%22/%3E%3Ctext x=%2250%22 y=%2260%22 font-family=%22Inter%22 font-size=%2214%22 fill=%22%23999%22%3EPoetry%3C/text%3E%3C/svg%3E'">
-                            <h4>Volant Poetry</h4>
-                            <p class="code-meta">Volant Codes . April 2026</p>
-                            <span class="tag">Vue · Node</span>
-                        </div>
-                        <div class="code-item" onclick="openLightbox(this.querySelector('img').src)">
-                            <img src="images/ai-storyteller.jpg" alt="AI Storyteller" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22%3E%3Crect width=%22200%22 height=%22120%22 fill=%22%23f0ede8%22/%3E%3Ctext x=%2250%22 y=%2260%22 font-family=%22Inter%22 font-size=%2214%22 fill=%22%23999%22%3EAI%3C/text%3E%3C/svg%3E'">
-                            <h4>AI Storyteller</h4>
-                            <p class="code-meta">Volant Codes . March 2026</p>
-                            <span class="tag">Python · GPT</span>
-                        </div>
-                        <div class="code-item" onclick="openLightbox(this.querySelector('img').src)">
-                            <img src="images/lyric-vault.jpg" alt="Lyric Vault" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22%3E%3Crect width=%22200%22 height=%22120%22 fill=%22%23f0ede8%22/%3E%3Ctext x=%2250%22 y=%2260%22 font-family=%22Inter%22 font-size=%2214%22 fill=%22%23999%22%3ELyrics%3C/text%3E%3C/svg%3E'">
-                            <h4>Lyric Vault</h4>
-                            <p class="code-meta">Volant Codes . February 2026</p>
-                            <span class="tag">Vue · Stripe</span>
-                        </div>
-                        <div class="code-item" onclick="openLightbox(this.querySelector('img').src)">
-                            <img src="images/foundry-cms.jpg" alt="Foundry CMS" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22%3E%3Crect width=%22200%22 height=%22120%22 fill=%22%23f0ede8%22/%3E%3Ctext x=%2250%22 y=%2260%22 font-family=%22Inter%22 font-size=%2214%22 fill=%22%23999%22%3ECMS%3C/text%3E%3C/svg%3E'">
-                            <h4>Foundry CMS</h4>
-                            <p class="code-meta">Volant Codes . January 2026</p>
-                            <span class="tag">PHP · MySQL</span>
-                        </div>
-                        <div class="code-item" onclick="openLightbox(this.querySelector('img').src)">
-                            <img src="images/eco-reader.jpg" alt="Eco Reader" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22%3E%3Crect width=%22200%22 height=%22120%22 fill=%22%23f0ede8%22/%3E%3Ctext x=%2250%22 y=%2260%22 font-family=%22Inter%22 font-size=%2214%22 fill=%22%23999%22%3EReader%3C/text%3E%3C/svg%3E'">
-                            <h4>Eco Reader</h4>
-                            <p class="code-meta">Volant Codes . December 2025</p>
-                            <span class="tag">HTML · CSS · JS</span>
-                        </div>
-                        <div class="code-item" onclick="openLightbox(this.querySelector('img').src)">
-                            <img src="images/dashboard-project.jpg" alt="Dashboard" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22120%22%3E%3Crect width=%22200%22 height=%22120%22 fill=%22%23f0ede8%22/%3E%3Ctext x=%2250%22 y=%2260%22 font-family=%22Inter%22 font-size=%2214%22 fill=%22%23999%22%3EDashboard%3C/text%3E%3C/svg%3E'">
-                            <h4>Volant Dashboard</h4>
-                            <p class="code-meta">Volant Codes . November 2025</p>
-                            <span class="tag">D3 · Node</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== JOIN THE HORIZON – mobile only ===== -->
-        <section class="join-section-mobile" id="contact-mobile">
-            <div class="join-container">
-                <h2 class="join-horizon">JOIN THE HORIZON</h2>
-                <P class="join-horizon-p1">Be part of something <br>meaningful</P>
-                <p class="join-horizon-p2">Join our community and get updates, opportunities, and early access to newly published books, poems, and everything we build.</p>
-                <div class="join">
-                    <input type="email" name="join-field-mobile" id="join-field-mobile" placeholder="Enter your email" class="join-field-css">
-                    <button class="join-btn" id="joinBtnMobile">Join Now</button>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- ===== LIGHTBOX ===== -->
-    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-        <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
-        <img class="lightbox-content" id="lightbox-img" src="">
+<header>
+  <nav>
+    <div class="logo">
+      <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img">
+      <span class="logo-text">
+        <span class="logo-highlight">Volant</span> Poetry
+      </span>
     </div>
 
-    <footer>
-        <div class="footer">
-            <div>
-                <div class="footer-logo">
-                    <img src="../images/logo.png" alt="Volant Foundry Logo" class="footer-img">
-                    <span class="logo-text">
-                        <span class="logo-highlight">Volant</span> Foundry
-                    </span>
-                </div>
-                <p class="footer-logo-p">Simply Volant, forever in the horizon</p>
-            </div>
-            <div class="footer-card">
-                <h4>QUICK LINKS</h4>
-                <a href="../index.html" data-target="home">Home</a>
-                <a href="ecosystem.html" data-target="ecosystem">Platforms</a>
-                <a href="#about" data-target="about">Latest</a>
-                <a href="#contact" data-target="contact">Contact</a>
-                <a href="../shared/privacy.html">Privacy</a>
-                <a href="../shared/terms.html">Terms</a>
-            </div>
 
-            <div class="footer-card">
-                <h4>EXPLORE</h4>
-                <a href="../index.html">Volant Poetry</a>
-                <a href="../store/index.html" data-target="card-reads">Volant Reads</a>
-                <a href="volantCodes.html" data-target="card-codes">Volant Codes</a>
-                <a href="volantLyrics.html" data-target="card-pencheaper" class="PenCheaper">Volant Lyrics</a>
-            </div>
+ <div class="search-container">
+  <input id="global-search-input" type="text" placeholder="Search poems, authors..." />
+</div>
 
-            <div class="footer-card">
-                <h4>CONTACT</h4>
-                <a href="mailto: reach.volant@gmail.com" class="gmail">reach.volant@gmail.com</a>
-                <a href="tel: +233245691423" class="number">+233 24 569 1423</a>
-                <p class="location">Kumasi, Ghana</p>
-            </div>
+    <div class="nav-links" id="nav-links">
+      <span class="close-btn" id="close-btn">✕</span>
+      <a href="index.html">Home</a>
+      <a href="poems.html">Poems</a>
+      <a href="shared/about.html">About</a>
+       <div class="dropdown">
+    <a href="javascript:void(0)">Community ▼</a>
+    <div class="dropdown-content">
+      <a href="javascript:void(0)">
+        Competitions <span style="color: #B8860B; font-size: 12px;">🔜</span>
+      </a>
+      <a href="javascript:void(0)">
+        Groups <span style="color: #B8860B; font-size: 12px;">🔜</span>
+      </a>
+    </div>
+  </div>
+       <a href="shared/contact.html">Contact Us</a>
+         <a href="store/index.html">📚 Bookstore</a>
+        <a href="user-profile.html">My Profile</a>
+          <a href="all-categories.html" class="mobile-only">Categories</a>
+      
+      <!-- Mobile logout button INSIDE the menu (below all links) -->
+      <button id="mobile-menu-logout-btn" class="mobile-menu-logout">Sign Out</button>
+    </div>
+
+<div class="nav-right">
+  <!-- Desktop username with logout toggle wrapper -->
+  <div class="desktop-logout-wrapper">
+    <span id="username-display" class="username-display"></span>
+    <button id="logout-desktop-btn" class="logout-desktop-btn hide-logout">Sign out</button>
+  </div>
+  
+  <!-- Mobile username only (no logout button next to it) -->
+  <span id="username-display-sm" class="username-sm"></span>
+
+  <!-- Login link - opens universal login -->
+  <a href="shared/universal-login.html?platform=poetry&redirect=index.html&returnUrl=encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)" id="login-link">Login</a>
+  <button id="logoutBtn" style="display: none;">Logout</button>
+
+  <!-- Mobile Icons -->
+  <div class="mobile-icons">
+    <div class="search-toggle" id="search-toggle">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="20" fill="none"
+        stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
+        stroke-linejoin="round" viewBox="0 0 24 24">
+        <path
+          d="M10.5 3a7.5 7.5 0 015.9 12.09l3.7 3.7a1 1 0 01-1.42 1.42l-3.7-3.7A7.5 7.5 0 1110.5 3z" />
+      </svg>
+    </div>
+    <div class="menu-toggle" id="menu-toggle">☰</div>
+  </div>
+</div>
+</nav>
+
+<!-- MOBILE SEARCH DROPDOWN -->
+<div class="mobile-search-dropdown" id="search-dropdown">
+  <input
+    type="text"
+    id="mobile-search-input"
+    placeholder="Search poems, authors, or categories..."
+    autocomplete="off"
+  />
+</div>
+
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <img src="images/logo.png" alt="Volant Poetry Logo" class="hero-logo">
+  </div>
+  <div class="hero-right">
+    <h1>Volant<br><span>Poetry</span></h1>
+  </div>
+  <div class="hero-line-content">
+    
+ <p>A space where words take breath-<br>
+where poets share, read, and grow together.<br>
+Just voices, words, and connection.</p>
+<a href="poems.html" class="cta-btn">Explore Poems</a>
+
+  </div>
+</section>
+
+<!-- TABS SECTION -->
+<section class="tabs-section">
+  <div class="tabs-nav">
+    <button class="tab-btn" data-tab="recent">Recent Poems</button>
+     <button class="tab-btn" data-tab="links">Links</button>
+    <button class="tab-btn" data-tab="featured">Featured Poems</button>
+    <button class="tab-btn" data-tab="weekly">Weekly Highlights</button>
+    <button class="tab-btn" data-tab="rank-poems">Ranking Poems</button>
+    <button class="tab-btn" data-tab="rank-poets">Ranking Poets</button>
+    <button class="tab-btn" data-tab="submit">Submit</button>
+  </div>
+
+  <div class="tab-content-container">
+    <!-- RECENT POEMS -->
+    <div class="tab-content active" id="recent">
+      <div id="recent-poems-container" class="recent-poems-container"></div>
+    </div>
+
+ <div class="tab-content" id="links">
+      <div class="links-header">
+        <h2>Shareable Poem Links</h2>
+        <p>Click any link to open the poem. Perfect for sharing with friends or on social media!</p>
+        
+        <div class="copy-all-container">
+          <button id="copy-all-links-btn" class="copy-all-btn">
+            <span></span> Copy All Links
+          </button>
+          <span id="copy-all-feedback" class="copy-feedback"></span>
         </div>
+      </div>
 
-        <div class="footer-bottom">
-            <p>&copy; 2026 Volant Foundry. All Rights reserved.</p>
-        </div>
-    </footer>
+      <div id="links-container">
+        <!-- Poem links will be dynamically inserted here -->
+        <div class="loading-links">Loading poems...</div>
+      </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js">
-    </script>
+      <div class="load-more-container">
+        <button id="load-more-poems" class="load-more-btn">Load More Poems</button>
+      </div>
+    </div>
 
-    <script>
-        // ===== FIREBASE CONFIG =====
-        const firebaseConfig = {
-            apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
-            authDomain: "silent-depth.firebaseapp.com",
-            projectId: "silent-depth",
-            storageBucket: "silent-depth.appspot.com",
-            messagingSenderId: "78008755450",
-            appId: "1:78008755450:web:3fd0f0f298a08820935543"
+
+    <!-- FEATURED POEMS -->
+    <div class="tab-content" id="featured">
+      <div id="featured-poems-container" class="recent-poems-container"></div>
+      <div style="text-align: center; margin-top: 15px;">
+        <button id="load-more-featured" style="padding: 8px 16px; border: none; background: #4b2aad; color: #fff; border-radius: 5px; cursor: pointer; display: none;">
+          Load More
+        </button>
+      </div>
+    </div>
+
+    <!-- WEEKLY HIGHLIGHTS -->
+    <div class="tab-content" id="weekly">
+      <h3>Poem of the Week</h3>
+      <a href="poem-of-the-week.html" class="weekly-link">Read Poem of the Week</a>
+
+      <h3 style="margin-top: 2rem;">Quote of the Week</h3>
+      <a href="quote-of-the-week.html" class="weekly-link">View Quote of the Week</a>
+    </div>
+
+    <!-- RANKING POEMS -->
+<div class="tab-content" id="rank-poems">
+  <h3>Ranking Poems</h3>
+  <p>These poems are ranked based on popularity: views, likes, and comments combined.</p>
+
+  <!-- Container for ranked poems -->
+  <ul id="ranking-poems-list" style="list-style: none; padding: 0; margin-top: 15px;">
+    <!-- JS will dynamically append <li> items here -->
+  </ul>
+</div>
+
+<!-- RANKING POETS -->
+<div class="tab-content" id="rank-poets">
+  <div id="ranking-poets-container"></div>
+</div>
+
+
+    <!-- SUBMIT -->
+    <div class="tab-content" id="submit">
+      <h3>Submit Your Work</h3>
+      <p>Share your poetry with the world. Join Volant Poetry today.</p>
+      <a href="submitpoems.html" class="cta-btn">Submit a Poem</a>
+    </div>
+  </div>
+</section>
+
+
+    <div id="poem-categories-container" style="display: none;">
+  <h4 class="categories-title">Categories</h4>
+  <div id="poem-categories"></div>
+</div>
+
+<!-- JOIN COMMUNITY SECTION -->
+<section class="community-section">
+  <div class="community-content">
+    <h2>Join the Volant Poetry Community</h2>
+    <p>Be part of a world where words take flight.  
+    Share your poems, connect with fellow poets, and celebrate creativity every day.</p>
+    <a href="shared/universal-signup.html?platform=poetry&redirect=index.html&returnUrl=encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)" class="join-btn">Join the Community</a>
+  </div>
+  <div class="community-image">
+    <img src="images/community-art.png" alt="Poetry Community">
+  </div>
+
+</section>
+
+<!-- POETRY IN MOTION GALLERY -->
+<section class="gallery-section">
+  <h2>Poetry in Motion</h2>
+  <div class="poetry-gallery" id="poetry-gallery">
+    <!-- Poems will load dynamically from Firestore -->
+  </div>
+</section>
+
+
+
+<!-- ====== UPDATED FOOTER ====== -->
+<footer style="padding:30px 20px; text-align:center; border-top:1px solid #eee; background:#faf9fe;">
+  <div class="footer-links" style="margin-bottom:10px; display:flex; flex-wrap:wrap; justify-content:center; gap:8px 16px;">
+    <div class="footer-row">
+      <a href="shared/terms.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Terms</a>
+      <a href="shared/contact.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Contact</a>
+      <a href="store/index.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">📚 Bookstore</a>
+    </div>
+    <div class="footer-row">
+      <a href="submission-guidelines.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Submission Guidelines</a>
+      <a href="volant_foundry/index.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem; font-weight:600;">🏛️ Volant Foundry</a>
+    </div>
+  </div>
+  
+  <div style="font-size:0.8rem; color:#888; margin-bottom:6px;">
+    <span style="background:linear-gradient(135deg,#2a1a4a,#4b2aad); color:white; padding:3px 14px; border-radius:20px; font-weight:500; display:inline-block; font-size:0.7rem;">
+      Part of the Volant Foundry Platform
+    </span>
+  </div>
+
+  <div class="footer-copy" style="font-size:0.85rem; color:#555; margin-top:6px;">
+    &copy; 2026 Volant Poetry. All Rights Reserved.
+  </div>
+</footer>
+
+<style>
+  /* Mobile responsive for smaller screens */
+  @media (max-width: 480px) {
+    .footer-links {
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 4px 0 !important;
+    }
+    
+    .footer-row {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 6px 12px !important;
+      width: 100% !important;
+    }
+    
+    .footer-row a {
+      font-size: 0.85rem !important;
+      padding: 3px 0;
+      white-space: nowrap;
+    }
+    
+    footer {
+      padding: 20px 10px !important;
+    }
+  }
+
+  /* For very small screens 380px and below */
+  @media (max-width: 380px) {
+    .footer-row {
+      gap: 4px 8px !important;
+    }
+    
+    .footer-row a {
+      font-size: 0.8rem !important;
+      padding: 2px 0;
+    }
+    
+    .footer-links {
+      gap: 2px 0 !important;
+    }
+    
+    footer {
+      padding: 15px 6px !important;
+    }
+  }
+</style>
+
+  <!-- Scripts -->
+  <script type="module" src="script.js"></script>
+
+<!-- SCRIPT TO POPULATE LINKS TAB AND FEATURED POEMS -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+  authDomain: "silent-depth.firebaseapp.com",
+  projectId: "silent-depth",
+  storageBucket: "silent-depth.appspot.com",
+  messagingSenderId: "78008755450",
+  appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+// --- Load ALL Poems Links (from multiple collections) ---
+async function loadAllPoemsLinks() {
+  try {
+    const container = document.getElementById("links-container");
+    const loadMoreBtn = document.getElementById("load-more-poems");
+    
+    container.innerHTML = '<div class="loading-links">Loading poems...</div>';
+    
+    const poems = [];
+    const collections = ['recentPoems', 'featuredPoems', 'classicPoems'];
+
+    for (const collectionName of collections) {
+      const colRef = collection(db, collectionName);
+      const snapshot = await getDocs(colRef);
+      
+      if (snapshot.empty) continue;
+
+      const collectionPoems = await Promise.all(snapshot.docs.map(async (docSnap) => {
+        const data = docSnap.data();
+
+        let displayName = data.submittedBy || data.author || data.authorName || "Anonymous";
+
+        const userId = data.userId || data.authorId;
+        if (userId) {
+          try {
+            const userDoc = await getDoc(doc(db, "users", userId));
+            if (userDoc.exists()) {
+              displayName = userDoc.data().username || displayName;
+            }
+          } catch (err) {
+            console.warn("Failed to fetch username:", err);
+          }
+        }
+
+        const slug = data.slug || 
+                    (data.title ? data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : docSnap.id);
+
+        return {
+          title: data.title || "Untitled",
+          slug: slug,
+          username: displayName,
+          collection: collectionName,
+          id: docSnap.id
+        };
+      }));
+
+      poems.push(...collectionPoems);
+    }
+
+    if (poems.length === 0) {
+      container.innerHTML = '<p>No poems found.</p>';
+      return;
+    }
+
+    for (let i = poems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [poems[i], poems[j]] = [poems[j], poems[i]];
+    }
+
+    window.allPoems = poems.map(poem => ({
+      title: poem.title,
+      poet: poem.username,
+      url: `poem.html?collection=${poem.collection}&slug=${poem.slug}`,
+      fullUrl: window.location.origin + `/poem.html?collection=${poem.collection}&slug=${poem.slug}`
+    }));
+
+    const INITIAL_COUNT = 20;
+    let displayedCount = 0;
+
+    container.innerHTML = '';
+    const ul = document.createElement("ul");
+    ul.id = "poems-list";
+    ul.style.listStyle = "none";
+    ul.style.padding = "0";
+    ul.style.marginTop = "10px";
+    container.appendChild(ul);
+
+    function renderPoems(count) {
+      const slice = poems.slice(displayedCount, displayedCount + count);
+
+      slice.forEach((poem) => {
+        const li = document.createElement("li");
+        li.style.marginBottom = "12px";
+        li.style.padding = "15px 20px";
+        li.style.background = "white";
+        li.style.borderRadius = "12px";
+        li.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)";
+        li.style.display = "flex";
+        li.style.justifyContent = "space-between";
+        li.style.alignItems = "center";
+        li.style.border = "1px solid #eee";
+
+        const linkDiv = document.createElement("div");
+        linkDiv.className = "link-content";
+        linkDiv.style.flex = "1";
+        linkDiv.style.display = "flex";
+        linkDiv.style.justifyContent = "space-between";
+        linkDiv.style.alignItems = "center";
+        linkDiv.style.cursor = "pointer";
+        
+        const a = document.createElement("a");
+        a.href = `poem.html?collection=${poem.collection}&slug=${poem.slug}`;
+        a.target = "_blank";
+        a.textContent = poem.title;
+        a.style.color = "#4b2aad";
+        a.style.textDecoration = "none";
+        a.style.fontWeight = "600";
+        a.style.fontSize = "1.1rem";
+        a.onmouseover = () => (a.style.textDecoration = "underline");
+        a.onmouseout = () => (a.style.textDecoration = "none");
+
+        const poetSpan = document.createElement("span");
+        poetSpan.className = "poet-name";
+        poetSpan.textContent = `by ${poem.username}`;
+        poetSpan.style.color = "#B8860B";
+        poetSpan.style.fontStyle = "italic";
+        poetSpan.style.fontSize = "0.95rem";
+        poetSpan.style.marginLeft = "15px";
+
+        linkDiv.appendChild(a);
+        linkDiv.appendChild(poetSpan);
+        
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-individual-btn";
+        copyBtn.innerHTML = "📋";
+        copyBtn.title = "Copy link";
+        copyBtn.style.background = "none";
+        copyBtn.style.border = "none";
+        copyBtn.style.color = "#999";
+        copyBtn.style.cursor = "pointer";
+        copyBtn.style.fontSize = "1.2rem";
+        copyBtn.style.padding = "8px 12px";
+        copyBtn.style.borderRadius = "8px";
+        copyBtn.style.transition = "all 0.2s";
+        
+        const fullUrl = window.location.origin + `/poem.html?collection=${poem.collection}&slug=${poem.slug}`;
+        copyBtn.onclick = async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          try {
+            await navigator.clipboard.writeText(fullUrl);
+            copyBtn.innerHTML = "✅";
+            copyBtn.style.color = "#28a745";
+            setTimeout(() => {
+              copyBtn.innerHTML = "📋";
+              copyBtn.style.color = "#999";
+            }, 2000);
+          } catch (err) {
+            alert("Failed to copy link");
+          }
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
+        li.appendChild(linkDiv);
+        li.appendChild(copyBtn);
+        
+        linkDiv.onclick = (e) => {
+          if (e.target.tagName !== 'A') {
+            window.open(a.href, '_blank');
+          }
+        };
 
-        // ===== LIGHTBOX =====
-        function openLightbox(src) {
-            const lightbox = document.getElementById('lightbox');
-            const img = document.getElementById('lightbox-img');
-            img.src = src;
-            lightbox.classList.add('active');
-            document.body.style.overflow = 'hidden';
+        ul.appendChild(li);
+      });
+
+      displayedCount += slice.length;
+      loadMoreBtn.style.display = displayedCount < poems.length ? "inline-block" : "none";
+    }
+
+    renderPoems(INITIAL_COUNT);
+    loadMoreBtn.onclick = () => renderPoems(10);
+
+    const copyAllBtn = document.getElementById("copy-all-links-btn");
+    if (copyAllBtn) {
+      copyAllBtn.onclick = async () => {
+        if (!window.allPoems || window.allPoems.length === 0) {
+          alert("No poems to copy");
+          return;
         }
-
-        function closeLightbox() {
-            const lightbox = document.getElementById('lightbox');
-            lightbox.classList.remove('active');
-            document.body.style.overflow = 'auto';
+        
+        const links = window.allPoems.map(p => `${p.title} by ${p.poet}\n${p.fullUrl}`).join("\n\n");
+        
+        try {
+          await navigator.clipboard.writeText(links);
+          const feedback = document.getElementById("copy-all-feedback");
+          feedback.textContent = "✅ All links copied!";
+          setTimeout(() => {
+            feedback.textContent = "";
+          }, 3000);
+        } catch (err) {
+          alert("Failed to copy links");
         }
+      };
+    }
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeLightbox();
-            }
+  } catch (err) {
+    console.error("Error loading poems link:", err);
+    const container = document.getElementById("links-container");
+    if (container) {
+      container.innerHTML = `<p style="color: red; text-align: center;">Error loading poems. Please refresh.</p>`;
+    }
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadAllPoemsLinks();
+  loadFeaturedPoems();
+});
+
+async function loadFeaturedPoems() {
+  try {
+    const snapshot = await getDocs(collection(db, "classicPoems"));
+    if (snapshot.empty) return;
+
+    const featuredContainer = document.getElementById("featured-poems-container");
+    const loadMoreBtn = document.getElementById("load-more-featured");
+
+    const poems = snapshot.docs.map(docSnap => {
+      const data = docSnap.data();
+      return {
+        title: data.title || "Untitled",
+        author: data.authorName || "Anonymous",
+        content: data.content || ""
+      };
+    });
+
+    const INITIAL_COUNT = 15;
+    let displayedCount = 0;
+
+    function renderPoems(count) {
+      const slice = poems.slice(displayedCount, displayedCount + count);
+      slice.forEach(poem => {
+        const poemCard = document.createElement("div");
+        poemCard.className = "featured-poem-card";
+
+        const title = document.createElement("h4");
+        title.textContent = poem.title;
+        title.className = "title";
+
+        const author = document.createElement("p");
+        author.textContent = `by ${poem.author}`;
+        author.className = "author";
+
+        const content = document.createElement("p");
+        content.textContent = poem.content;
+        content.className = "content";
+
+        poemCard.appendChild(title);
+        poemCard.appendChild(author);
+        poemCard.appendChild(content);
+
+        featuredContainer.appendChild(poemCard);
+      });
+
+      displayedCount += slice.length;
+
+      if (displayedCount < poems.length) {
+        loadMoreBtn.style.display = "inline-block";
+      } else {
+        loadMoreBtn.style.display = "none";
+      }
+    }
+
+    renderPoems(INITIAL_COUNT);
+    loadMoreBtn.addEventListener("click", () => renderPoems(5));
+  } catch (err) {
+    console.error("Error loading featured poems:", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadFeaturedPoems();
+});
+
+</script>
+
+
+<script>
+  const menuToggle = document.getElementById("menu-toggle");
+  const navLinks = document.getElementById("nav-links");
+  const closeBtn = document.getElementById("close-btn");
+  const searchToggle = document.getElementById("search-toggle");
+  const searchDropdown = document.getElementById("search-dropdown");
+
+  menuToggle.addEventListener("click", () => navLinks.classList.add("show"));
+  closeBtn.addEventListener("click", () => navLinks.classList.remove("show"));
+  searchToggle.addEventListener("click", () => searchDropdown.classList.toggle("show"));
+
+  document.addEventListener("click", (e) => {
+    if (!searchDropdown.contains(e.target) && !searchToggle.contains(e.target)) {
+      searchDropdown.classList.remove("show");
+    }
+  });
+
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabBtns.forEach(b => b.classList.remove("active"));
+      tabContents.forEach(c => c.classList.remove("active"));
+
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const tabContents = document.querySelectorAll(".tab-content");
+
+  const ACTIVE_TAB_KEY = "volant_active_tab";
+
+  function activateTab(tabId) {
+    tabBtns.forEach(b => b.classList.remove("active"));
+    tabContents.forEach(c => c.classList.remove("active"));
+
+    const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    const content = document.getElementById(tabId);
+
+    if (btn && content) {
+      btn.classList.add("active");
+      content.classList.add("active");
+    }
+  }
+
+  const savedTab = localStorage.getItem(ACTIVE_TAB_KEY);
+  if (savedTab) {
+    activateTab(savedTab);
+  } else {
+    activateTab(tabBtns[0].dataset.tab);
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const tabId = btn.dataset.tab;
+
+      activateTab(tabId);
+      localStorage.setItem(ACTIVE_TAB_KEY, tabId);
+    });
+  });
+});
+</script>
+<script>
+(function() {
+  function initDropdown() {
+    const dropdown = document.querySelector('.dropdown');
+    if (!dropdown) {
+      console.log('Dropdown not found');
+      return;
+    }
+    
+    const dropdownLink = dropdown.children[0];
+    if (!dropdownLink || dropdownLink.tagName !== 'A') {
+      console.log('Dropdown link not found');
+      return;
+    }
+    
+    dropdownLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      dropdown.classList.toggle('active');
+    });
+    
+    document.body.addEventListener('click', function(e) {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('active');
+      }
+    });
+    
+    const dropdownContent = dropdown.querySelector('.dropdown-content');
+    if (dropdownContent) {
+      const links = dropdownContent.querySelectorAll('a');
+      if (links[0]) {
+        links[0].addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          dropdown.classList.remove('active');
+          alert('🏆 Competitions coming soon! Stay tuned.');
         });
-
-        // ===== HAMBURGER MENU TOGGLE =====
-        const menuBtn = document.getElementById('menu-btn');
-        const navLinks = document.getElementById('navLinks');
-
-        menuBtn.addEventListener('click', function() {
-            navLinks.classList.toggle('open');
+      }
+      if (links[1]) {
+        links[1].addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          dropdown.classList.remove('active');
+          alert('👥 Groups coming soon! Stay tuned.');
         });
+      }
+    }
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDropdown);
+  } else {
+    initDropdown();
+  }
+})();
+</script>
+<style>
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
 
-        document.querySelectorAll('.nav-links a').forEach(function(link) {
-            link.addEventListener('click', function() {
-                navLinks.classList.remove('open');
-            });
+.dropdown > a {
+  cursor: pointer;
+  text-decoration: none;
+    color: #4b2aad  !important;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 180px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  border-radius: 8px;
+  z-index: 9999;
+  top: 100%;
+  left: 0;
+  margin-top: 5px;
+}
+
+.dropdown.active .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 12px 16px !important;
+  color: #4b2aad  !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid #eee;
+}
+
+.dropdown-content a:last-child {
+  border-bottom: none;
+}
+
+.dropdown-content a:hover {
+  background-color: #f5f0ff !important;
+  color: #4b2aad !important;
+}
+
+@media (max-width: 768px) {
+  .dropdown-content {
+    position: static;
+    box-shadow: none;
+    margin-left: 20px;
+    width: calc(100% - 40px);
+  }
+}
+</style>
+
+<!-- Logout Toggle Functionality - FIXED: Mobile logout button hides when logged out -->
+<!-- Logout Toggle Functionality - Simplified -->
+<script>
+(function() {
+  // DOM elements
+  const usernameDesktop = document.getElementById('username-display');
+  const usernameMobile = document.getElementById('username-display-sm');
+  const logoutDesktopBtn = document.getElementById('logout-desktop-btn');
+  const mobileMenuLogoutBtn = document.getElementById('mobile-menu-logout-btn');
+  const loginLink = document.getElementById('login-link');
+  
+  // Function to update UI from global user data
+  function updateAuthUI() {
+    // Get user data from global window object (set by script.js)
+    const user = window.currentUser;
+    
+    if (user && user.username) {
+      // Show username
+      if (usernameDesktop) {
+        usernameDesktop.textContent = user.username;
+        usernameDesktop.style.display = (window.innerWidth <= 768) ? 'none' : 'inline-block';
+      }
+      if (usernameMobile) {
+        usernameMobile.textContent = user.username;
+        usernameMobile.style.display = (window.innerWidth <= 768) ? 'inline-block' : 'none';
+      }
+      
+      // Hide desktop logout initially
+      if (logoutDesktopBtn) logoutDesktopBtn.classList.add('hide-logout');
+      
+      // Show mobile logout button
+      if (mobileMenuLogoutBtn) {
+        mobileMenuLogoutBtn.classList.add('show-mobile-logout');
+      }
+      
+      // Hide login link
+      if (loginLink) loginLink.style.display = 'none';
+    } else {
+      // Hide everything
+      if (usernameDesktop) usernameDesktop.style.display = 'none';
+      if (usernameMobile) usernameMobile.style.display = 'none';
+      if (logoutDesktopBtn) logoutDesktopBtn.classList.add('hide-logout');
+      if (mobileMenuLogoutBtn) mobileMenuLogoutBtn.classList.remove('show-mobile-logout');
+      if (loginLink) loginLink.style.display = 'inline-block';
+    }
+  }
+  
+  // Desktop logout toggle
+  let desktopMenuOpen = false;
+  function closeDesktopLogout() {
+    if (logoutDesktopBtn) logoutDesktopBtn.classList.add('hide-logout');
+    desktopMenuOpen = false;
+  }
+  
+  if (usernameDesktop) {
+    usernameDesktop.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (!window.currentUser) return;
+      if (window.innerWidth <= 768) return;
+      
+      if (desktopMenuOpen) {
+        closeDesktopLogout();
+      } else {
+        logoutDesktopBtn.classList.remove('hide-logout');
+        desktopMenuOpen = true;
+      }
+    });
+  }
+  
+  document.addEventListener('click', function(e) {
+    const wrapper = document.querySelector('.desktop-logout-wrapper');
+    if (wrapper && !wrapper.contains(e.target) && desktopMenuOpen) {
+      closeDesktopLogout();
+    }
+  });
+  
+  // Desktop logout button - use global logout function
+  if (logoutDesktopBtn) {
+    logoutDesktopBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (window.logoutUser) {
+        window.logoutUser().then(() => {
+          window.location.href = getReturnUrl();
         });
+      } else {
+        window.location.href = getReturnUrl();
+      }
+    });
+  }
+  
+  // Mobile logout button
+  if (mobileMenuLogoutBtn) {
+    mobileMenuLogoutBtn.addEventListener('click', function() {
+      if (window.logoutUser) {
+        window.logoutUser().then(() => {
+          const navLinksMenu = document.getElementById('nav-links');
+          if (navLinksMenu) navLinksMenu.classList.remove('show');
+          window.location.href = getReturnUrl();
+        });
+      } else {
+        window.location.href = getReturnUrl();
+      }
+    });
+  }
+  
+  // Listen for auth state changes from script.js
+  window.addEventListener('authStateChanged', function() {
+    updateAuthUI();
+    if (desktopMenuOpen) closeDesktopLogout();
+  });
+  
+  window.addEventListener('resize', function() {
+    if (window.currentUser) {
+      if (usernameDesktop) usernameDesktop.style.display = (window.innerWidth <= 768) ? 'none' : 'inline-block';
+      if (usernameMobile) usernameMobile.style.display = (window.innerWidth <= 768) ? 'inline-block' : 'none';
+    }
+    if (desktopMenuOpen) closeDesktopLogout();
+  });
+  
+  // Initial update
+  updateAuthUI();
+})();
+</script>
+<script src="return-url-handler.js"></script>
 
-        // ===== SMOOTH SCROLL =====
-        document.querySelectorAll('[data-target]').forEach(function(link) {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('data-target');
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            <script>
+            // Return URL Handler - Redirect to previous page after login
+            (function() {
+                // Function to get return URL
+                function getReturnUrl() {
+                    // Check URL parameters first
+                    const urlParams = new URLSearchParams(window.location.search);
+                    let returnUrl = urlParams.get('returnUrl');
+                    
+                    // Check session storage
+                    if (!returnUrl) {
+                        returnUrl = sessionStorage.getItem('returnUrl');
+                    }
+                    
+                    // Check referrer
+                    if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
+                        returnUrl = document.referrer || window.location.pathname;
+                    }
+                    
+                    // Exclude auth pages
+                    const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+                    if (excludePages.some(page => returnUrl.includes(page))) {
+                        returnUrl = '/index.html';
+                    }
+                    
+                    // Clean up URL
+                    if (returnUrl) {
+                        // Remove any existing returnUrl parameters to avoid loops
+                        returnUrl = returnUrl.split('?')[0];
+                        // Make sure it starts with /
+                        if (!returnUrl.startsWith('/') && !returnUrl.startsWith('http')) {
+                            returnUrl = '/' + returnUrl;
+                        }
+                    }
+                    
+                    return returnUrl || '/index.html';
                 }
-            });
-        });
-
-        // ===== JOIN THE HORIZON =====
-        function handleJoin(emailInput) {
-            const email = emailInput.value.trim();
-            if (email === '') {
-                alert('Please enter your email address.');
-                emailInput.focus();
-                return;
-            }
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
-                emailInput.focus();
-                return;
-            }
-            const user = auth.currentUser;
-            db.collection('mailing').add({
-                    email: email,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    userId: user ? user.uid : null,
-                    userName: user ? user.displayName : null,
-                    userEmail: user ? user.email : null,
-                    source: 'volant-foundry-website',
-                    status: 'active'
-                })
-                .then(() => {
-                    alert('✅ Thank you for joining the horizon! 🚀');
-                    emailInput.value = '';
-                })
-                .catch((error) => {
-                    console.error('Error saving email: ', error);
-                    alert('Something went wrong. Please try again.');
+                
+                // Function to redirect after successful login
+                window.redirectAfterLogin = function() {
+                    const returnUrl = getReturnUrl();
+                    sessionStorage.removeItem('returnUrl'); // Clean up
+                    window.location.href = returnUrl;
+                };
+                
+                // Save return URL when page loads (for login page)
+                if (window.location.pathname.includes('login') || 
+                    window.location.pathname.includes('signup')) {
+                    const returnUrl = getReturnUrl();
+                    sessionStorage.setItem('returnUrl', returnUrl);
+                    
+                    // Update any login form action to include returnUrl
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const forms = document.querySelectorAll('form');
+                        forms.forEach(form => {
+                            if (form.action && form.action.includes('login')) {
+                                const hiddenInput = document.createElement('input');
+                                hiddenInput.type = 'hidden';
+                                hiddenInput.name = 'returnUrl';
+                                hiddenInput.value = returnUrl;
+                                form.appendChild(hiddenInput);
+                            }
+                        });
+                    });
+                }
+                
+                // Intercept successful login responses
+                const originalFetch = window.fetch;
+                window.fetch = function(...args) {
+                    return originalFetch.apply(this, args).then(response => {
+                        // Check if this is a login response
+                        const url = args[0];
+                        if (typeof url === 'string' && url.includes('login')) {
+                            const clonedResponse = response.clone();
+                            clonedResponse.json().then(data => {
+                                if (data.success || data.token || data.user) {
+                                    // Login successful - redirect
+                                    setTimeout(() => {
+                                        const returnUrl = getReturnUrl();
+                                        sessionStorage.removeItem('returnUrl');
+                                        window.location.href = returnUrl;
+                                    }, 500);
+                                }
+                            }).catch(() => {});
+                        }
+                        return response;
+                    });
+                };
+                
+                // Store current page before navigating to login
+                document.addEventListener('click', function(e) {
+                    const link = e.target.closest('a');
+                    if (link) {
+                        const href = link.getAttribute('href');
+                        if (href && (href.includes('login') || href.includes('signup'))) {
+                            // Store current page before leaving
+                            const currentPath = window.location.pathname;
+                            if (!currentPath.includes('login') && !currentPath.includes('signup')) {
+                                sessionStorage.setItem('returnUrl', currentPath);
+                            }
+                        }
+                    }
                 });
-        }
-
-        document.getElementById('joinBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            handleJoin(document.getElementById('join-field'));
-        });
-
-        document.getElementById('joinBtnMobile').addEventListener('click', function(e) {
-            e.preventDefault();
-            handleJoin(document.getElementById('join-field-mobile'));
-        });
-
-        document.getElementById('join-field').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') document.getElementById('joinBtn').click();
-        });
-
-        document.getElementById('join-field-mobile').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') document.getElementById('joinBtnMobile').click();
-        });
-    </script>
-
+            })();
+            </script>
+            
 </body>
 </html>
