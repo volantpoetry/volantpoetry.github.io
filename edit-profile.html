@@ -13,11 +13,55 @@
     body { font-family: sans-serif; background:#f5f5f5; padding:20px; }
     .profile-form { max-width:400px; margin:auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
     .profile-form label { display:block; margin-top:10px; font-weight:600; }
-    .profile-form input, .profile-form textarea { width:100%; padding:6px; margin-top:4px; border-radius:4px; border:1px solid #ccc; }
-    .profile-form button { margin-top:15px; padding:8px 12px; border:none; background:#5a3cb3; color:white; border-radius:6px; cursor:pointer; }
+    .profile-form input, .profile-form textarea { width:100%; padding:8px 10px; margin-top:4px; border-radius:4px; border:1px solid #ccc; font-size:14px; transition:0.3s; }
+    .profile-form input:focus, .profile-form textarea:focus { outline:none; border-color:#5a3cb3; box-shadow:0 0 0 3px rgba(90,60,179,0.1); }
+    .profile-form button { margin-top:15px; padding:10px 16px; border:none; background:#5a3cb3; color:white; border-radius:6px; cursor:pointer; font-weight:600; transition:0.2s; }
+    .profile-form button:hover:not(:disabled) { background:#4a2f99; transform:translateY(-1px); }
     .profile-form button:disabled { opacity:0.6; cursor:not-allowed; }
-    .success-msg { color:green; margin-top:10px; }
-    .error-msg { color:red; margin-top:10px; }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-wrapper input {
+      padding-right: 40px;
+    }
+    .validation-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      transition: 0.2s;
+      pointer-events: none;
+    }
+    .validation-icon.valid { color: #28a745; }
+    .validation-icon.invalid { color: #dc3545; }
+    .validation-icon.loading { color: #5a3cb3; animation: spin 1s linear infinite; }
+
+    .validation-message {
+      font-size: 0.8rem;
+      margin-top: 4px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      display: none;
+    }
+    .validation-message.show { display: block; }
+    .validation-message.success { color: #28a745; background: #d4edda; }
+    .validation-message.error { color: #dc3545; background: #f8d7da; }
+    .validation-message.info { color: #5a3cb3; background: #e8e0f0; }
+    .validation-message.warning { color: #856404; background: #fff3cd; }
+
+    @keyframes spin {
+      0% { transform: translateY(-50%) rotate(0deg); }
+      100% { transform: translateY(-50%) rotate(360deg); }
+    }
+
+    .hint { font-size:0.75rem; color:#888; margin-top:4px; }
+
+    .success-msg { color:green; margin-top:10px; padding:10px; background:#d4edda; border-radius:4px; display:none; }
+    .error-msg { color:red; margin-top:10px; padding:10px; background:#f8d7da; border-radius:4px; display:none; }
     
   </style>
 </head>
@@ -30,23 +74,32 @@
     <input type="text" id="editRealName" placeholder="Enter your real name (optional)">
 
     <label>Username:</label>
-    <input type="text" id="editUsername" placeholder="Enter your username">
+    <div class="input-wrapper">
+      <input type="text" id="editUsername" placeholder="3-11 characters, any characters allowed" maxlength="11" />
+      <span class="validation-icon" id="usernameIcon"></span>
+    </div>
+    <div class="validation-message" id="usernameValidation"></div>
+    <div class="hint">3-11 characters, spaces and special characters allowed</div>
 
     <label>Email:</label>
-    <input type="email" id="editEmail" placeholder="Enter your email">
+    <div class="input-wrapper">
+      <input type="email" id="editEmail" placeholder="Enter your email" />
+      <span class="validation-icon" id="emailIcon"></span>
+    </div>
+    <div class="validation-message" id="emailValidation"></div>
 
     <label>Bio:</label>
     <textarea id="editBio" rows="4" placeholder="Write something about yourself"></textarea>
 
-    <button id="saveProfileBtn">Save Changes</button>
+    <button id="saveProfileBtn" disabled>Save Changes</button>
 
-    <p class="success-msg" id="successMsg" style="display:none;">Profile updated successfully!</p>
-    <p class="error-msg" id="errorMsg" style="display:none;">Failed to update profile. Try again.</p>
+    <p class="success-msg" id="successMsg">Profile updated successfully!</p>
+    <p class="error-msg" id="errorMsg">Failed to update profile. Try again.</p>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, doc, getDoc, updateDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
@@ -62,6 +115,7 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
+    // DOM refs
     const realNameInput = document.getElementById("editRealName");
     const usernameInput = document.getElementById("editUsername");
     const emailInput = document.getElementById("editEmail");
@@ -69,8 +123,216 @@
     const saveBtn = document.getElementById("saveProfileBtn");
     const successMsg = document.getElementById("successMsg");
     const errorMsg = document.getElementById("errorMsg");
+    const usernameIcon = document.getElementById("usernameIcon");
+    const usernameValidation = document.getElementById("usernameValidation");
+    const emailIcon = document.getElementById("emailIcon");
+    const emailValidation = document.getElementById("emailValidation");
 
     let currentUserUid = null;
+    let originalUsername = '';
+    let originalEmail = '';
+    let usernameValid = false;
+    let emailValid = false;
+    let usernameTimeout = null;
+    let emailTimeout = null;
+
+    // ===== VALIDATION FUNCTIONS =====
+
+    function validateUsernameFormat(username) {
+      if (!username || username.length < 3) {
+        return { valid: false, message: 'Username must be at least 3 characters' };
+      }
+      if (username.length > 11) {
+        // Auto-truncate
+        const truncated = username.substring(0, 11);
+        usernameInput.value = truncated;
+        return { valid: true, message: 'Username truncated to 11 characters', truncated: true };
+      }
+      // NO character restrictions - allow anything
+      return { valid: true, message: 'Username is available!' };
+    }
+
+    function validateEmailFormat(email) {
+      if (!email || !email.includes('@') || !email.includes('.')) {
+        return { valid: false, message: 'Please enter a valid email address' };
+      }
+      return { valid: true, message: 'Email format is valid' };
+    }
+
+    async function checkUsernameAvailability(username) {
+      if (!username || username.length < 3) return { available: false, error: 'Username too short' };
+      
+      if (username === originalUsername) {
+        return { available: true, isOriginal: true };
+      }
+      
+      try {
+        const q = query(collection(db, 'users'), where('username', '==', username));
+        const snapshot = await getDocs(q);
+        const taken = !snapshot.empty;
+        return { available: !taken, taken: taken };
+      } catch (err) {
+        console.warn('Error checking username:', err);
+        return { available: false, error: 'Error checking availability' };
+      }
+    }
+
+    async function checkEmailAvailability(email) {
+      if (!email || !email.includes('@')) return { available: false, error: 'Invalid email' };
+      
+      if (email === originalEmail) {
+        return { available: true, isOriginal: true };
+      }
+      
+      try {
+        const q = query(collection(db, 'users'), where('email', '==', email));
+        const snapshot = await getDocs(q);
+        const taken = !snapshot.empty;
+        return { available: !taken, taken: taken };
+      } catch (err) {
+        console.warn('Error checking email:', err);
+        return { available: false, error: 'Error checking availability' };
+      }
+    }
+
+    // ===== UPDATE UI FUNCTIONS =====
+
+    function updateUsernameValidation(result) {
+      if (result.valid && result.available) {
+        usernameIcon.className = 'validation-icon valid';
+        usernameIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        usernameValidation.className = 'validation-message show success';
+        usernameValidation.textContent = result.isOriginal ? '✓ Current username' : '✓ Username is available!';
+        usernameValid = true;
+      } else if (result.valid && !result.available) {
+        usernameIcon.className = 'validation-icon invalid';
+        usernameIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+        usernameValidation.className = 'validation-message show error';
+        usernameValidation.textContent = '✗ This username is already taken';
+        usernameValid = false;
+      } else if (!result.valid) {
+        usernameIcon.className = 'validation-icon invalid';
+        usernameIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+        usernameValidation.className = 'validation-message show warning';
+        usernameValidation.textContent = result.message || 'Invalid username';
+        usernameValid = false;
+      }
+      updateSaveButton();
+    }
+
+    function updateEmailValidation(result) {
+      if (result.valid && result.available) {
+        emailIcon.className = 'validation-icon valid';
+        emailIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        emailValidation.className = 'validation-message show success';
+        emailValidation.textContent = result.isOriginal ? '✓ Current email' : '✓ Email is available!';
+        emailValid = true;
+      } else if (result.valid && !result.available) {
+        emailIcon.className = 'validation-icon invalid';
+        emailIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+        emailValidation.className = 'validation-message show error';
+        emailValidation.textContent = '✗ This email is already registered';
+        emailValid = false;
+      } else if (!result.valid) {
+        emailIcon.className = 'validation-icon invalid';
+        emailIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+        emailValidation.className = 'validation-message show warning';
+        emailValidation.textContent = result.message || 'Invalid email';
+        emailValid = false;
+      }
+      updateSaveButton();
+    }
+
+    function updateSaveButton() {
+      const changed = usernameInput.value !== originalUsername || emailInput.value !== originalEmail;
+      const canSave = usernameValid && emailValid && changed;
+      saveBtn.disabled = !canSave;
+      
+      if (!changed) {
+        saveBtn.disabled = true;
+      }
+    }
+
+    // ===== SETUP VALIDATION LISTENERS =====
+
+    function setupValidation() {
+      // Username validation
+      usernameInput.addEventListener('input', function() {
+        const value = this.value;
+        
+        usernameIcon.className = 'validation-icon loading';
+        usernameIcon.innerHTML = '<i class="fas fa-spinner"></i>';
+        usernameValidation.className = 'validation-message show info';
+        usernameValidation.textContent = 'Checking availability...';
+        
+        clearTimeout(usernameTimeout);
+        usernameTimeout = setTimeout(async () => {
+          const formatResult = validateUsernameFormat(value);
+          if (!formatResult.valid) {
+            updateUsernameValidation(formatResult);
+            return;
+          }
+          
+          const availability = await checkUsernameAvailability(value);
+          updateUsernameValidation({
+            valid: formatResult.valid,
+            available: availability.available,
+            isOriginal: availability.isOriginal || false,
+            message: formatResult.message
+          });
+        }, 500);
+      });
+
+      // Email validation
+      emailInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        emailIcon.className = 'validation-icon loading';
+        emailIcon.innerHTML = '<i class="fas fa-spinner"></i>';
+        emailValidation.className = 'validation-message show info';
+        emailValidation.textContent = 'Checking availability...';
+        
+        clearTimeout(emailTimeout);
+        emailTimeout = setTimeout(async () => {
+          const formatResult = validateEmailFormat(value);
+          if (!formatResult.valid) {
+            updateEmailValidation(formatResult);
+            return;
+          }
+          
+          const availability = await checkEmailAvailability(value);
+          updateEmailValidation({
+            valid: formatResult.valid,
+            available: availability.available,
+            isOriginal: availability.isOriginal || false,
+            message: formatResult.message
+          });
+        }, 500);
+      });
+
+      // Blur validation
+      usernameInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (value && value.length >= 3) {
+          const formatResult = validateUsernameFormat(value);
+          if (formatResult.valid) {
+            this.dispatchEvent(new Event('input'));
+          }
+        }
+      });
+
+      emailInput.addEventListener('blur', function() {
+        const value = this.value.trim();
+        if (value && value.includes('@')) {
+          const formatResult = validateEmailFormat(value);
+          if (formatResult.valid) {
+            this.dispatchEvent(new Event('input'));
+          }
+        }
+      });
+    }
+
+    // ===== AUTH & LOAD USER DATA =====
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
@@ -88,10 +350,11 @@
         const data = userDoc.data();
         realNameInput.value = data.realName || "";
         usernameInput.value = data.username || "";
+        originalUsername = data.username || "";
         emailInput.value = data.email || "";
+        originalEmail = data.email || "";
         bioInput.value = data.bio || "";
       } else {
-        // Create a new document if missing
         await setDoc(userRef, { 
           realName: "",
           username: user.displayName || "", 
@@ -100,10 +363,33 @@
         });
         realNameInput.value = "";
         usernameInput.value = user.displayName || "";
+        originalUsername = user.displayName || "";
         emailInput.value = user.email || "";
+        originalEmail = user.email || "";
         bioInput.value = "";
       }
+
+      // Initialize validation states
+      usernameValid = true;
+      emailValid = true;
+      
+      usernameIcon.className = 'validation-icon valid';
+      usernameIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+      usernameValidation.className = 'validation-message show success';
+      usernameValidation.textContent = '✓ Current username';
+      
+      emailIcon.className = 'validation-icon valid';
+      emailIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+      emailValidation.className = 'validation-message show success';
+      emailValidation.textContent = '✓ Current email';
+      
+      updateSaveButton();
+      
+      // Setup validation after loading data
+      setupValidation();
     });
+
+    // ===== SAVE PROFILE =====
 
     saveBtn.addEventListener("click", async () => {
       if (!currentUserUid) return;
@@ -115,6 +401,23 @@
 
       if (!newUsername || !newEmail) {
         errorMsg.textContent = "Username and Email are required!";
+        errorMsg.style.display = "block";
+        successMsg.style.display = "none";
+        return;
+      }
+
+      // Final validation check
+      const usernameCheck = await checkUsernameAvailability(newUsername);
+      if (!usernameCheck.available && newUsername !== originalUsername) {
+        errorMsg.textContent = 'Username "' + newUsername + '" is already taken.';
+        errorMsg.style.display = "block";
+        successMsg.style.display = "none";
+        return;
+      }
+
+      const emailCheck = await checkEmailAvailability(newEmail);
+      if (!emailCheck.available && newEmail !== originalEmail) {
+        errorMsg.textContent = 'Email "' + newEmail + '" is already registered.';
         errorMsg.style.display = "block";
         successMsg.style.display = "none";
         return;
@@ -133,9 +436,24 @@
           bio: newBio
         });
 
+        originalUsername = newUsername;
+        originalEmail = newEmail;
+        
         successMsg.style.display = "block";
+        successMsg.textContent = "Profile updated successfully!";
+        
+        // Re-validate after save
+        usernameValid = true;
+        emailValid = true;
+        updateSaveButton();
+
+        setTimeout(() => {
+          successMsg.style.display = "none";
+        }, 5000);
+
       } catch (err) {
         console.error("Error updating profile:", err);
+        errorMsg.textContent = "Failed to update profile. Try again.";
         errorMsg.style.display = "block";
       } finally {
         saveBtn.disabled = false;
@@ -143,143 +461,130 @@
     });
   </script>
 
-<script>
-// Dynamic login/signup link setup for current page redirect
-(function() {
-  function setupDynamicAuthLinks() {
-    const currentPage = window.location.href;
-    const currentFile = window.location.pathname.split('/').pop();
-    let platform = 'poetry';
-    if (currentFile.startsWith('store/')) platform = 'reads';
-    if (currentFile === 'parent-house.html') platform = 'foundry';
-    
-    const loginParams = new URLSearchParams();
-    loginParams.append('platform', platform);
-    loginParams.append('redirect', currentPage);
-    
-    document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
-      link.href = `universal-login.html?${loginParams.toString()}`;
-    });
-    
-    document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
-      link.href = `universal-signup.html?${loginParams.toString()}`;
-    });
-  }
-  
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
-  } else {
-    setupDynamicAuthLinks();
-  }
-})();
-</script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-            <script>
-            // Return URL Handler - Redirect to previous page after login
-            (function() {
-                // Function to get return URL
-                function getReturnUrl() {
-                    // Check URL parameters first
-                    const urlParams = new URLSearchParams(window.location.search);
-                    let returnUrl = urlParams.get('returnUrl');
-                    
-                    // Check session storage
-                    if (!returnUrl) {
-                        returnUrl = sessionStorage.getItem('returnUrl');
-                    }
-                    
-                    // Check referrer
-                    if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
-                        returnUrl = document.referrer || window.location.pathname;
-                    }
-                    
-                    // Exclude auth pages
-                    const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
-                    if (excludePages.some(page => returnUrl.includes(page))) {
-                        returnUrl = '/index.html';
-                    }
-                    
-                    // Clean up URL
-                    if (returnUrl) {
-                        // Remove any existing returnUrl parameters to avoid loops
-                        returnUrl = returnUrl.split('?')[0];
-                        // Make sure it starts with /
-                        if (!returnUrl.startsWith('/') && !returnUrl.startsWith('http')) {
-                            returnUrl = '/' + returnUrl;
-                        }
-                    }
-                    
-                    return returnUrl || '/index.html';
-                }
-                
-                // Function to redirect after successful login
-                window.redirectAfterLogin = function() {
-                    const returnUrl = getReturnUrl();
-                    sessionStorage.removeItem('returnUrl'); // Clean up
-                    window.location.href = returnUrl;
-                };
-                
-                // Save return URL when page loads (for login page)
-                if (window.location.pathname.includes('login') || 
-                    window.location.pathname.includes('signup')) {
-                    const returnUrl = getReturnUrl();
-                    sessionStorage.setItem('returnUrl', returnUrl);
-                    
-                    // Update any login form action to include returnUrl
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const forms = document.querySelectorAll('form');
-                        forms.forEach(form => {
-                            if (form.action && form.action.includes('login')) {
-                                const hiddenInput = document.createElement('input');
-                                hiddenInput.type = 'hidden';
-                                hiddenInput.name = 'returnUrl';
-                                hiddenInput.value = returnUrl;
-                                form.appendChild(hiddenInput);
-                            }
-                        });
-                    });
-                }
-                
-                // Intercept successful login responses
-                const originalFetch = window.fetch;
-                window.fetch = function(...args) {
-                    return originalFetch.apply(this, args).then(response => {
-                        // Check if this is a login response
-                        const url = args[0];
-                        if (typeof url === 'string' && url.includes('login')) {
-                            const clonedResponse = response.clone();
-                            clonedResponse.json().then(data => {
-                                if (data.success || data.token || data.user) {
-                                    // Login successful - redirect
-                                    setTimeout(() => {
-                                        const returnUrl = getReturnUrl();
-                                        sessionStorage.removeItem('returnUrl');
-                                        window.location.href = returnUrl;
-                                    }, 500);
-                                }
-                            }).catch(() => {});
-                        }
-                        return response;
-                    });
-                };
-                
-                // Store current page before navigating to login
-                document.addEventListener('click', function(e) {
-                    const link = e.target.closest('a');
-                    if (link) {
-                        const href = link.getAttribute('href');
-                        if (href && (href.includes('login') || href.includes('signup'))) {
-                            // Store current page before leaving
-                            const currentPath = window.location.pathname;
-                            if (!currentPath.includes('login') && !currentPath.includes('signup')) {
-                                sessionStorage.setItem('returnUrl', currentPath);
-                            }
-                        }
-                    }
-                });
-            })();
-            </script>
-            
-<script src="return-url-handler.js"></script>
+  <script>
+  // Dynamic login/signup link setup for current page redirect
+  (function() {
+    function setupDynamicAuthLinks() {
+      const currentPage = window.location.href;
+      const currentFile = window.location.pathname.split('/').pop();
+      let platform = 'poetry';
+      if (currentFile.startsWith('store/')) platform = 'reads';
+      if (currentFile === 'parent-house.html') platform = 'foundry';
+      
+      const loginParams = new URLSearchParams();
+      loginParams.append('platform', platform);
+      loginParams.append('redirect', currentPage);
+      
+      document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
+        link.href = `universal-login.html?${loginParams.toString()}`;
+      });
+      
+      document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
+        link.href = `universal-signup.html?${loginParams.toString()}`;
+      });
+    }
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
+    } else {
+      setupDynamicAuthLinks();
+    }
+  })();
+  </script>
+
+  <script>
+  // Return URL Handler - Redirect to previous page after login
+  (function() {
+    function getReturnUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      let returnUrl = urlParams.get('returnUrl');
+      
+      if (!returnUrl) {
+        returnUrl = sessionStorage.getItem('returnUrl');
+      }
+      
+      if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
+        returnUrl = document.referrer || window.location.pathname;
+      }
+      
+      const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+      if (excludePages.some(page => returnUrl.includes(page))) {
+        returnUrl = '/index.html';
+      }
+      
+      if (returnUrl) {
+        returnUrl = returnUrl.split('?')[0];
+        if (!returnUrl.startsWith('/') && !returnUrl.startsWith('http')) {
+          returnUrl = '/' + returnUrl;
+        }
+      }
+      
+      return returnUrl || '/index.html';
+    }
+    
+    window.redirectAfterLogin = function() {
+      const returnUrl = getReturnUrl();
+      sessionStorage.removeItem('returnUrl');
+      window.location.href = returnUrl;
+    };
+    
+    if (window.location.pathname.includes('login') || 
+        window.location.pathname.includes('signup')) {
+      const returnUrl = getReturnUrl();
+      sessionStorage.setItem('returnUrl', returnUrl);
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+          if (form.action && form.action.includes('login')) {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'returnUrl';
+            hiddenInput.value = returnUrl;
+            form.appendChild(hiddenInput);
+          }
+        });
+      });
+    }
+    
+    const originalFetch = window.fetch;
+    window.fetch = function(...args) {
+      return originalFetch.apply(this, args).then(response => {
+        const url = args[0];
+        if (typeof url === 'string' && url.includes('login')) {
+          const clonedResponse = response.clone();
+          clonedResponse.json().then(data => {
+            if (data.success || data.token || data.user) {
+              setTimeout(() => {
+                const returnUrl = getReturnUrl();
+                sessionStorage.removeItem('returnUrl');
+                window.location.href = returnUrl;
+              }, 500);
+            }
+          }).catch(() => {});
+        }
+        return response;
+      });
+    };
+    
+    document.addEventListener('click', function(e) {
+      const link = e.target.closest('a');
+      if (link) {
+        const href = link.getAttribute('href');
+        if (href && (href.includes('login') || href.includes('signup'))) {
+          const currentPath = window.location.pathname;
+          if (!currentPath.includes('login') && !currentPath.includes('signup')) {
+            sessionStorage.setItem('returnUrl', currentPath);
+          }
+        }
+      }
+    });
+  })();
+  </script>
+  
+  <script src="return-url-handler.js"></script>
 </body>
 </html>

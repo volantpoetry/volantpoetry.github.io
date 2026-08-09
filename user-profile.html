@@ -1675,6 +1675,54 @@ nav {
   opacity: 1;
   visibility: visible;
 }
+
+/* Google Verified Badge Style */
+.google-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #4285f4;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  position: relative;
+  font-family: 'Google Sans', 'Inter', sans-serif;
+}
+
+.google-verified-badge:hover {
+  transform: scale(1.1);
+}
+
+.google-verified-badge::after {
+  content: "Verified with Google";
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  font-size: 11px;
+  font-weight: normal;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 100;
+  font-family: 'Inter', sans-serif;
+}
+
+.google-verified-badge:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
 /* Hide divider anywhere after hidden email row */
 #emailRow.email-row-private ~ hr {
   display: none !important;
@@ -1745,6 +1793,7 @@ nav {
     <h3 class="username-main" id="username"></h3>
     <span id="verifiedBadge" class="verified-badge" style="display: none;">✓</span>
     <span id="unverifiedBadge" class="unverified-badge" style="display: none;">⚠️ Unverified</span>
+    <span id="googleBadge" class="google-verified-badge" style="display: none;">G</span>
   </div>
   <button id="followActionBtn" class="follow-btn" style="display: none;">Follow</button>
 </div>
@@ -2397,13 +2446,16 @@ async function calculateTotalViews(username) {
   return totalViews;
 }
 
-// Function to check if user is verified and show appropriate badge
-// Function to show verification badge ONLY to the profile owner
+// ============================================================
+// ====== UPDATED: VERIFICATION BADGE WITH GOOGLE INDICATOR ======
+// ============================================================
+
 async function updateVerificationBadge(userId, isOwnProfile = false) {
   if (!userId) return;
   
   const verifiedBadge = document.getElementById("verifiedBadge");
   const unverifiedBadge = document.getElementById("unverifiedBadge");
+  const googleBadge = document.getElementById("googleBadge");
   
   if (!verifiedBadge || !unverifiedBadge) return;
   
@@ -2411,6 +2463,7 @@ async function updateVerificationBadge(userId, isOwnProfile = false) {
   if (!isOwnProfile) {
     verifiedBadge.style.display = "none";
     unverifiedBadge.style.display = "none";
+    if (googleBadge) googleBadge.style.display = "none";
     return;
   }
   
@@ -2419,21 +2472,41 @@ async function updateVerificationBadge(userId, isOwnProfile = false) {
     if (userDoc.exists()) {
       const userData = userDoc.data();
       const isVerified = userData.isVerified === true || userData.emailVerified === true;
+      const authProvider = userData.authProvider || 'email';
+      const isGoogleUser = authProvider === 'google';
       
       if (isVerified) {
         verifiedBadge.style.display = "inline-flex";
         unverifiedBadge.style.display = "none";
+        
+        if (isGoogleUser) {
+          // Show Google badge
+          verifiedBadge.style.display = "none";
+          if (googleBadge) {
+            googleBadge.style.display = "inline-flex";
+            googleBadge.textContent = "G";
+            googleBadge.setAttribute('data-tooltip', 'Verified with Google');
+          }
+        } else {
+          // Show regular verified badge
+          if (googleBadge) googleBadge.style.display = "none";
+          verifiedBadge.style.display = "inline-flex";
+          verifiedBadge.textContent = "✓";
+          verifiedBadge.style.background = "#1a73e8";
+          verifiedBadge.setAttribute('data-tooltip', 'Verified Poet');
+        }
       } else {
+        verifiedBadge.style.display = "none";
+        if (googleBadge) googleBadge.style.display = "none";
         unverifiedBadge.style.display = "inline-flex";
         unverifiedBadge.innerHTML = "⚠️ Unverified";
         unverifiedBadge.onclick = () => {
           window.location.href = "verify-email.html";
         };
-        verifiedBadge.style.display = "none";
       }
     }
   } catch (err) {
-    // Silent fail - no console logs
+    // Silent fail
   }
 }
 

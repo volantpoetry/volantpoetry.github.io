@@ -8,6 +8,8 @@
   <!-- Google Font & Font Awesome -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- reCAPTCHA v2 -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png">
 <link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png">
@@ -91,6 +93,74 @@
       background: rgba(75, 42, 173, 0.02);
       border-radius: 0 4px 4px 0;
     }
+
+    /* ----- Google Sign-In Button ----- */
+    .google-btn {
+      width: 100%;
+      padding: 0.9rem;
+      border: 2px solid #e4e0ed;
+      border-radius: 40px;
+      background: white;
+      color: #1d1a2b;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 1.2rem;
+    }
+    .google-btn:hover:not(:disabled) {
+      background: #f8f7fc;
+      border-color: #4b2aad;
+      transform: scale(1.01);
+      box-shadow: 0 4px 12px rgba(75, 42, 173, 0.1);
+    }
+    .google-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .google-btn i {
+      font-size: 1.2rem;
+      color: #4285f4;
+    }
+    .google-btn .google-text {
+      color: #1d1a2b;
+    }
+
+    /* ----- reCAPTCHA ----- */
+    .recaptcha-container {
+      display: flex;
+      justify-content: center;
+      margin: 1.2rem 0 0.5rem;
+    }
+    .recaptcha-container > div {
+      transform: scale(0.95);
+      transform-origin: center;
+    }
+
+    .divider-text {
+      text-align: center;
+      margin: 1rem 0 1.2rem;
+      color: #bfbad0;
+      font-size: 0.8rem;
+      letter-spacing: 0.3px;
+      position: relative;
+    }
+    .divider-text::before,
+    .divider-text::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 30%;
+      height: 1px;
+      background: #e4e0ed;
+    }
+    .divider-text::before { left: 0; }
+    .divider-text::after { right: 0; }
 
     /* ----- form elements ----- */
     form label {
@@ -267,6 +337,7 @@
       .container { padding: 1.8rem 1.4rem; border-radius: 28px; }
       h2 { font-size: 1.6rem; }
       .platform-badge { font-size: 0.65rem; padding: 0.3rem 1rem; }
+      .recaptcha-container > div { transform: scale(0.8); }
     }
   </style>
 </head>
@@ -289,36 +360,42 @@
   <h2>Welcome back</h2>
   <p class="subtitle">Sign in to your account</p>
 
+  <!-- Google Sign-In Button -->
+  <button id="googleSignInBtn" class="google-btn" disabled>
+    <i class="fab fa-google"></i>
+    <span class="google-text">Continue with Google</span>
+  </button>
+
+  <div class="divider-text">or continue with email</div>
+
   <form id="login-form" class="auth-form">
-                <input type="hidden" name="returnUrl" id="returnUrl" value="">
-                <script>
-                    // Store return URL from query parameter
-                    (function() {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const returnUrl = urlParams.get('returnUrl') || 
-                                        sessionStorage.getItem('returnUrl') || 
-                                        document.referrer || 
-                                        window.location.pathname;
-                        
-                        // Don't redirect to login or signup pages
-                        const excludePages = ['login', 'signup', 'verify', 'reset'];
-                        let finalReturnUrl = returnUrl;
-                        if (excludePages.some(page => finalReturnUrl.includes(page))) {
-                            finalReturnUrl = '/index.html';
-                        }
-                        
-                        // Store in session storage
-                        sessionStorage.setItem('returnUrl', finalReturnUrl);
-                        
-                        // Set hidden input
-                        const input = document.getElementById('returnUrl');
-                        if (input) {
-                            input.value = finalReturnUrl;
-                        }
-                    })();
-                </script>
-                
     <input type="hidden" name="returnUrl" id="returnUrl" value="">
+    <script>
+        // Store return URL from query parameter
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const returnUrl = urlParams.get('returnUrl') || 
+                            sessionStorage.getItem('returnUrl') || 
+                            document.referrer || 
+                            window.location.pathname;
+            
+            // Don't redirect to login or signup pages
+            const excludePages = ['login', 'signup', 'verify', 'reset'];
+            let finalReturnUrl = returnUrl;
+            if (excludePages.some(page => finalReturnUrl.includes(page))) {
+                finalReturnUrl = '/index.html';
+            }
+            
+            // Store in session storage
+            sessionStorage.setItem('returnUrl', finalReturnUrl);
+            
+            // Set hidden input
+            const input = document.getElementById('returnUrl');
+            if (input) {
+                input.value = finalReturnUrl;
+            }
+        })();
+    </script>
     
     <label for="login-email">Email or username</label>
     <input type="text" id="login-email" placeholder="you@example.com or username" autocomplete="email">
@@ -329,7 +406,12 @@
       <span id="toggle-password" class="password-eye"><i class="far fa-eye"></i></span>
     </div>
 
-    <button type="submit" class="btn-primary" id="login-button">
+    <!-- reCAPTCHA v2 -->
+    <div class="recaptcha-container">
+      <div class="g-recaptcha" data-sitekey="6LfEe3wtAAAAACMvQc1vCwhgMtwvrH562PtKuXTU" data-callback="onRecaptchaSuccess"></div>
+    </div>
+
+    <button type="submit" class="btn-primary" id="login-button" disabled>
       <span class="loading-spinner" id="spinner"><span class="spinner"></span></span>
       <span id="buttonText">Sign In</span>
     </button>
@@ -349,6 +431,39 @@
   <div class="divider">secure · encrypted</div>
 </div>
 
+<script>
+  // ============================================================
+  // ====== RECAPTCHA CALLBACK ======
+  // ============================================================
+  
+  let recaptchaVerified = false;
+  
+  function onRecaptchaSuccess() {
+    recaptchaVerified = true;
+    const loginButton = document.getElementById('login-button');
+    const googleBtn = document.getElementById('googleSignInBtn');
+    loginButton.disabled = false;
+    googleBtn.disabled = false;
+  }
+  
+  function onRecaptchaExpired() {
+    recaptchaVerified = false;
+    const loginButton = document.getElementById('login-button');
+    const googleBtn = document.getElementById('googleSignInBtn');
+    loginButton.disabled = true;
+    googleBtn.disabled = true;
+    const statusEl = document.getElementById('login-status');
+    showStatus('⚠️ reCAPTCHA expired. Please verify again.', 'info');
+  }
+
+  // Make showStatus available globally
+  window.showStatus = function(message, type = 'error') {
+    const statusEl = document.getElementById('login-status');
+    statusEl.textContent = message;
+    statusEl.className = `status show ${type}`;
+  };
+</script>
+
 <script type="module">
   // ----- Firebase imports -----
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -356,16 +471,22 @@
     getAuth,
     signInWithEmailAndPassword,
     signOut,
-    onAuthStateChanged
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signInWithRedirect
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import {
     getFirestore,
     doc,
     getDoc,
+    setDoc,
+    updateDoc,
     collection,
     query,
     where,
-    getDocs
+    getDocs,
+    serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   // Firebase Config
@@ -409,6 +530,7 @@
   const spinner = document.getElementById('spinner');
   const buttonText = document.getElementById('buttonText');
   const loginEmail = document.getElementById('login-email');
+  const googleSignInBtn = document.getElementById('googleSignInBtn');
 
   // ----- password toggle -----
   togglePassword.addEventListener("click", () => {
@@ -440,9 +562,230 @@
     statusEl.className = `status show ${type}`;
   }
 
-  // ----- LOGIN (FIXED with return URL support) -----
+  // ============================================================
+  // ====== SMART RETURN URL HANDLER ======
+  // ============================================================
+  
+  function getSmartReturnUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let returnUrl = urlParams.get('returnUrl');
+    
+    if (!returnUrl) {
+      returnUrl = sessionStorage.getItem('returnUrl');
+    }
+    
+    if (!returnUrl) {
+      returnUrl = localStorage.getItem('returnUrl');
+    }
+    
+    if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
+      returnUrl = document.referrer;
+    }
+    
+    if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
+      returnUrl = sessionStorage.getItem('preLoginPage');
+    }
+    
+    if (returnUrl && returnUrl !== 'null' && returnUrl !== 'undefined') {
+      try {
+        returnUrl = decodeURIComponent(returnUrl);
+      } catch (e) {}
+      
+      returnUrl = returnUrl.split('?')[0];
+      returnUrl = returnUrl.split('#')[0];
+      
+      const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+      if (excludePages.some(page => returnUrl.includes(page))) {
+        returnUrl = null;
+      }
+      
+      if (returnUrl === '' || returnUrl === '/' || returnUrl === 'null') {
+        returnUrl = null;
+      }
+    }
+    
+    return returnUrl || currentPlatform.homeUrl;
+  }
+
+  // ============================================================
+  // ====== UNIQUE USERNAME GENERATOR ======
+  // ============================================================
+  
+  async function isUsernameTaken(username) {
+    if (!username || username.length < 3) return false;
+    try {
+      const q = query(collection(db, 'users'), where('username', '==', username));
+      const querySnap = await getDocs(q);
+      return !querySnap.empty;
+    } catch (err) {
+      console.error('Error checking username:', err);
+      return false;
+    }
+  }
+
+  async function generateUniqueUsername(baseName) {
+    if (!baseName || baseName.length < 3) {
+      baseName = 'user';
+    }
+    
+    // Clean the username - allow any characters but truncate to 11
+    let clean = baseName
+      .replace(/\s/g, '_')
+      .substring(0, 11);
+    
+    // If empty after cleaning, use default
+    if (!clean || clean.length < 3) {
+      clean = 'user_' + Math.random().toString(36).substring(2, 6);
+    }
+    
+    // Check if taken
+    const taken = await isUsernameTaken(clean);
+    if (!taken) {
+      return clean;
+    }
+    
+    // Try with numbers
+    let counter = 1;
+    let newUsername;
+    do {
+      const suffix = counter.toString();
+      const maxLen = 11 - suffix.length;
+      const base = clean.substring(0, maxLen);
+      newUsername = base + suffix;
+      counter++;
+      if (counter > 100) break;
+    } while (await isUsernameTaken(newUsername));
+    
+    return newUsername || clean + '_' + Date.now().toString(36);
+  }
+
+  // ============================================================
+  // ====== GOOGLE SIGN-IN HANDLER (FIXED) ======
+  // ============================================================
+  
+  let isGoogleSignInProgress = false;
+  
+  async function signInWithGoogle() {
+    // Check reCAPTCHA first
+    if (!recaptchaVerified) {
+      showStatus('⚠️ Please complete the reCAPTCHA verification first.', 'error');
+      return;
+    }
+
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    
+    googleSignInBtn.disabled = true;
+    googleSignInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+    
+    isGoogleSignInProgress = true;
+    
+    try {
+      showStatus('Connecting to Google...', 'info');
+      
+      let result;
+      try {
+        result = await signInWithPopup(auth, provider);
+      } catch (popupError) {
+        if (popupError.code === 'auth/popup-blocked' || 
+            popupError.code === 'auth/popup-closed-by-user' ||
+            popupError.code === 'auth/cancelled-popup-request') {
+          await signInWithRedirect(auth, provider);
+          return;
+        }
+        throw popupError;
+      }
+      
+      const user = result.user;
+      
+      // Check if user exists in Firestore
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      
+      if (!userDoc.exists()) {
+        // NEW USER - Generate username and create account immediately
+        let baseUsername = user.displayName || user.email?.split('@')[0] || 'user';
+        const uniqueUsername = await generateUniqueUsername(baseUsername);
+        
+        // Create user document
+        await setDoc(doc(db, 'users', user.uid), {
+          username: uniqueUsername,
+          email: user.email,
+          displayName: user.displayName || uniqueUsername,
+          photoURL: user.photoURL || '',
+          createdAt: serverTimestamp(),
+          platform: platform,
+          emailVerified: true, // Google accounts are verified
+          authProvider: 'google',
+          lastLogin: serverTimestamp()
+        });
+        
+        showStatus('✅ Account created! Username: ' + uniqueUsername, 'success');
+        
+        let returnUrl = getSmartReturnUrl();
+        sessionStorage.removeItem('returnUrl');
+        sessionStorage.removeItem('preLoginPage');
+        localStorage.removeItem('returnUrl');
+        isGoogleSignInProgress = false;
+        
+        setTimeout(() => {
+          window.location.href = returnUrl;
+        }, 2000);
+        
+      } else {
+        // EXISTING USER - Sign in normally
+        await updateDoc(doc(db, 'users', user.uid), {
+          lastLogin: serverTimestamp()
+        });
+        
+        showStatus('✅ Google sign-in successful! Redirecting…', 'success');
+        
+        let returnUrl = getSmartReturnUrl();
+        sessionStorage.removeItem('returnUrl');
+        sessionStorage.removeItem('preLoginPage');
+        localStorage.removeItem('returnUrl');
+        isGoogleSignInProgress = false;
+        
+        setTimeout(() => {
+          window.location.href = returnUrl;
+        }, 1200);
+      }
+      
+    } catch (error) {
+      console.error('Google Sign-In error:', error);
+      
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        showStatus('An account already exists with this email. Please sign in with your password.', 'info');
+      } else if (error.code === 'auth/user-disabled') {
+        showStatus('This account has been disabled. Please contact support.', 'error');
+      } else if (error.code === 'auth/operation-not-allowed') {
+        showStatus('Google Sign-In is not enabled. Please contact support.', 'error');
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        showStatus('Sign-in cancelled. Please try again.', 'info');
+      } else {
+        showStatus('Google sign-in failed. Please try again or use email/password.', 'error');
+      }
+      
+      isGoogleSignInProgress = false;
+      googleSignInBtn.disabled = false;
+      googleSignInBtn.innerHTML = '<i class="fab fa-google"></i><span class="google-text">Continue with Google</span>';
+    }
+  }
+
+  googleSignInBtn.addEventListener('click', signInWithGoogle);
+
+  // ============================================================
+  // ====== LOGIN WITH SMART REDIRECT ======
+  // ============================================================
+  
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    // Check reCAPTCHA
+    if (!recaptchaVerified) {
+      showStatus('⚠️ Please complete the reCAPTCHA verification.', 'error');
+      return;
+    }
+
     const loginInput = loginEmail.value.trim();
     const password = passwordInput.value;
 
@@ -491,48 +834,9 @@
 
       showStatus("✅ Login successful! Redirecting…", 'success');
 
-      // ========================================
-      // FIX: Use return URL instead of hardcoded redirect
-      // ========================================
+      let finalRedirect = getSmartReturnUrl();
       
-      // Get return URL from multiple sources
-      let returnUrl = null;
-      
-      // 1. Check URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      returnUrl = urlParams.get('returnUrl');
-      
-      // 2. Check session storage
-      if (!returnUrl) {
-        returnUrl = sessionStorage.getItem('returnUrl');
-      }
-      
-      // 3. Check localStorage (as fallback)
-      if (!returnUrl) {
-        returnUrl = localStorage.getItem('returnUrl');
-      }
-      
-      // Clean up and validate
-      if (returnUrl) {
-        // Decode if encoded
-        try {
-          returnUrl = decodeURIComponent(returnUrl);
-        } catch (e) {
-          // Already decoded or not encoded
-        }
-        
-        // Don't redirect to auth pages
-        const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
-        if (excludePages.some(page => returnUrl.includes(page))) {
-          returnUrl = null;
-        }
-      }
-      
-      // If no valid return URL, use platform home or redirect parameter
-      let finalRedirect = returnUrl || currentPlatform.homeUrl;
-      
-      // If redirectUrl parameter exists and no returnUrl, use it
-      if (!returnUrl && redirectUrl) {
+      if (redirectUrl && finalRedirect === currentPlatform.homeUrl) {
         try {
           const decodedRedirect = decodeURIComponent(redirectUrl);
           if (!decodedRedirect.includes('universal-login') &&
@@ -543,13 +847,11 @@
               !decodedRedirect.includes('verify-email')) {
             finalRedirect = decodedRedirect;
           }
-        } catch (e) {
-          // Use default if decoding fails
-        }
+        } catch (e) {}
       }
       
-      // Clean up storage
       sessionStorage.removeItem('returnUrl');
+      sessionStorage.removeItem('preLoginPage');
       localStorage.removeItem('returnUrl');
       
       console.log('🔄 Redirecting to:', finalRedirect);
@@ -571,93 +873,153 @@
     }
   });
 
-  // ----- auth state -----
-  onAuthStateChanged(auth, (user) => {
-    if (user && user.emailVerified) {
-      // Only redirect if we're not already redirecting
-      if (!window._redirecting) {
-        window._redirecting = true;
-        // Get return URL before redirect
-        let returnUrl = sessionStorage.getItem('returnUrl') || 
-                       new URLSearchParams(window.location.search).get('returnUrl') ||
-                       currentPlatform.homeUrl;
-        
-        // Clean up
-        sessionStorage.removeItem('returnUrl');
-        window.location.href = returnUrl;
-      }
+  // ============================================================
+  // ====== AUTH STATE LISTENER (FIXED) ======
+  // ============================================================
+  
+  onAuthStateChanged(auth, async (user) => {
+    // Skip if Google sign-in is in progress
+    if (isGoogleSignInProgress) {
+      console.log('⏳ Google sign-in in progress, skipping auth listener');
+      return;
     }
-  });
-
-  // ========================================
-  // Helper: Store current page when clicking login links
-  // ========================================
-  document.addEventListener('click', function(e) {
-    const link = e.target.closest('a');
-    if (link) {
-      const href = link.getAttribute('href');
-      if (href && (href.includes('login') || href.includes('signup'))) {
-        const currentPath = window.location.pathname;
-        if (!currentPath.includes('login') && !currentPath.includes('signup')) {
-          sessionStorage.setItem('returnUrl', currentPath);
+    
+    if (user) {
+      // Only redirect if user document exists
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+      
+      if (userDoc.exists()) {
+        if (!window._redirecting) {
+          window._redirecting = true;
+          let returnUrl = getSmartReturnUrl();
+          
+          sessionStorage.removeItem('returnUrl');
+          sessionStorage.removeItem('preLoginPage');
+          localStorage.removeItem('returnUrl');
+          
+          window.location.href = returnUrl;
         }
       }
     }
   });
+
+  // ============================================================
+  // ====== STORE CURRENT PAGE BEFORE NAVIGATING TO LOGIN ======
+  // ============================================================
+  
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (link) {
+      const href = link.getAttribute('href');
+      if (href && (href.includes('login') || href.includes('signup') || href.includes('verify'))) {
+        const currentPage = window.location.pathname + window.location.search + window.location.hash;
+        
+        sessionStorage.setItem('preLoginPage', currentPage);
+        sessionStorage.setItem('returnUrl', currentPage);
+        localStorage.setItem('returnUrl', currentPage);
+        
+        console.log('📌 Stored pre-login page:', currentPage);
+      }
+    }
+  });
+
+  // ============================================================
+  // ====== RESTORE RETURN URL FROM SESSION ON PAGE LOAD ======
+  // ============================================================
+  
+  (function restoreReturnUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let returnUrl = urlParams.get('returnUrl');
+    
+    if (returnUrl) {
+      try {
+        returnUrl = decodeURIComponent(returnUrl);
+      } catch (e) {}
+      
+      sessionStorage.setItem('returnUrl', returnUrl);
+      sessionStorage.setItem('preLoginPage', returnUrl);
+      localStorage.setItem('returnUrl', returnUrl);
+      
+      const hiddenInput = document.getElementById('returnUrl');
+      if (hiddenInput) {
+        hiddenInput.value = returnUrl;
+      }
+      
+      console.log('📌 Restored return URL from query param:', returnUrl);
+    } else {
+      const storedUrl = sessionStorage.getItem('preLoginPage') || sessionStorage.getItem('returnUrl');
+      if (storedUrl && !storedUrl.includes('login') && !storedUrl.includes('signup')) {
+        const hiddenInput = document.getElementById('returnUrl');
+        if (hiddenInput) {
+          hiddenInput.value = storedUrl;
+        }
+        console.log('📌 Restored return URL from storage:', storedUrl);
+      }
+    }
+  })();
+
 </script>
 
 <script>
 // Return URL Handler - Redirect to previous page after login
 (function() {
-    // Function to get return URL
     function getReturnUrl() {
-        // Check URL parameters first
         const urlParams = new URLSearchParams(window.location.search);
         let returnUrl = urlParams.get('returnUrl');
         
-        // Check session storage
         if (!returnUrl) {
             returnUrl = sessionStorage.getItem('returnUrl');
         }
         
-        // Check referrer
+        if (!returnUrl) {
+            returnUrl = sessionStorage.getItem('preLoginPage');
+        }
+        
         if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
             returnUrl = document.referrer || window.location.pathname;
         }
         
-        // Exclude auth pages
         const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
         if (excludePages.some(page => returnUrl.includes(page))) {
-            returnUrl = '/index.html';
+            returnUrl = null;
         }
         
-        // Clean up URL
-        if (returnUrl) {
-            // Remove any existing returnUrl parameters to avoid loops
+        if (returnUrl && returnUrl !== 'null' && returnUrl !== 'undefined') {
             returnUrl = returnUrl.split('?')[0];
-            // Make sure it starts with /
+            returnUrl = returnUrl.split('#')[0];
             if (!returnUrl.startsWith('/') && !returnUrl.startsWith('http')) {
                 returnUrl = '/' + returnUrl;
             }
         }
         
-        return returnUrl || '/index.html';
+        const platform = urlParams.get('platform') || 'poetry';
+        const platformConfig = {
+            poetry: { homeUrl: '/index.html' },
+            reads: { homeUrl: '/store/index.html' },
+            foundry: { homeUrl: '/volant_foundry/index.html' }
+        };
+        const defaultHome = platformConfig[platform]?.homeUrl || '/index.html';
+        
+        return returnUrl || defaultHome;
     }
     
-    // Function to redirect after successful login
     window.redirectAfterLogin = function() {
         const returnUrl = getReturnUrl();
-        sessionStorage.removeItem('returnUrl'); // Clean up
+        sessionStorage.removeItem('returnUrl');
+        sessionStorage.removeItem('preLoginPage');
+        localStorage.removeItem('returnUrl');
         window.location.href = returnUrl;
     };
     
-    // Save return URL when page loads (for login page)
     if (window.location.pathname.includes('login') || 
         window.location.pathname.includes('signup')) {
         const returnUrl = getReturnUrl();
-        sessionStorage.setItem('returnUrl', returnUrl);
+        if (returnUrl && !returnUrl.includes('login') && !returnUrl.includes('signup')) {
+            sessionStorage.setItem('returnUrl', returnUrl);
+            sessionStorage.setItem('preLoginPage', returnUrl);
+        }
         
-        // Update any login form action to include returnUrl
         document.addEventListener('DOMContentLoaded', function() {
             const forms = document.querySelectorAll('form');
             forms.forEach(form => {
@@ -665,27 +1027,57 @@
                     const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
                     hiddenInput.name = 'returnUrl';
-                    hiddenInput.value = returnUrl;
+                    hiddenInput.value = returnUrl || '/index.html';
                     form.appendChild(hiddenInput);
                 }
             });
+            
+            const hiddenInput = document.getElementById('returnUrl');
+            if (hiddenInput && returnUrl) {
+                hiddenInput.value = returnUrl;
+            }
         });
     }
     
-    // Store current page before navigating to login
     document.addEventListener('click', function(e) {
         const link = e.target.closest('a');
         if (link) {
             const href = link.getAttribute('href');
-            if (href && (href.includes('login') || href.includes('signup'))) {
-                // Store current page before leaving
-                const currentPath = window.location.pathname;
-                if (!currentPath.includes('login') && !currentPath.includes('signup')) {
+            if (href && (href.includes('login') || href.includes('signup') || href.includes('verify'))) {
+                const currentPath = window.location.pathname + window.location.search + window.location.hash;
+                if (!currentPath.includes('login') && !currentPath.includes('signup') && !currentPath.includes('verify')) {
                     sessionStorage.setItem('returnUrl', currentPath);
+                    sessionStorage.setItem('preLoginPage', currentPath);
+                    localStorage.setItem('returnUrl', currentPath);
+                    console.log('📌 Stored return URL from click:', currentPath);
                 }
             }
         }
     });
+    
+    document.addEventListener('submit', function(e) {
+        const form = e.target;
+        if (form && form.action && (form.action.includes('login') || form.action.includes('signup'))) {
+            const currentPath = window.location.pathname + window.location.search + window.location.hash;
+            if (!currentPath.includes('login') && !currentPath.includes('signup')) {
+                sessionStorage.setItem('returnUrl', currentPath);
+                sessionStorage.setItem('preLoginPage', currentPath);
+                localStorage.setItem('returnUrl', currentPath);
+            }
+            
+            let returnInput = form.querySelector('input[name="returnUrl"]');
+            if (!returnInput) {
+                returnInput = document.createElement('input');
+                returnInput.type = 'hidden';
+                returnInput.name = 'returnUrl';
+                form.appendChild(returnInput);
+            }
+            const storedUrl = sessionStorage.getItem('returnUrl') || sessionStorage.getItem('preLoginPage');
+            returnInput.value = storedUrl || '/index.html';
+        }
+    });
+    
+    console.log('✅ Smart Return URL Handler initialized');
 })();
 </script>
 </body>
