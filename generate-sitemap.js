@@ -1,25 +1,16 @@
-```js
+```javascript
 /**
- * 🔥 Auto Sitemap Generator for Volant Poetry / Volant Foundry
+ * 🔥 Auto Sitemap Generator for Volant Poetry
  *
- * GENERATES:
- *   1. Static .html URLs
+ * Generates:
+ *   1. Static HTML pages
  *   2. Dynamic Firestore poem URLs
  *
- * Example:
- *   https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=what-do-i-have-to-do-with-love-
+ * Dynamic poem example:
+ * https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=what-do-i-have-to-do-with-love-
  *
  * Runs on GitHub Actions.
- *
- * IMPORTANT:
- * This version does NOT use Firebase Admin credentials.
- * It reads publicly accessible Firestore documents through
- * the Firestore REST API.
  */
-
-// ============================================================
-// DEPENDENCIES
-// ============================================================
 
 const fs = require('fs');
 const path = require('path');
@@ -32,42 +23,24 @@ const glob = require('glob');
 const domain = 'https://volantpoetry.vercel.app';
 const publicFolder = './';
 
-// ------------------------------------------------------------
-// Firebase project ID
-// ------------------------------------------------------------
+// Your Firebase project ID.
+// Prefer setting this in GitHub Actions:
 //
-// OPTION 1:
-// Set this in GitHub Actions:
+// FIREBASE_PROJECT_ID
 //
-// FIREBASE_PROJECT_ID: your-project-id
-//
-// OPTION 2:
-// Replace the empty string below with your Firebase project ID.
-//
-// Do NOT put a service-account JSON here.
+// Example:
+// FIREBASE_PROJECT_ID: volant-poetry
 //
 const firebaseProjectId =
   process.env.FIREBASE_PROJECT_ID || '';
 
-// ------------------------------------------------------------
-// Public Firestore collections containing poems
-// ------------------------------------------------------------
-//
-// Add your other PUBLIC poem collections here if they exist.
-//
-// Example:
-// [
-//   'recentPoems',
-//   'classicPoems',
-//   'featuredPoems'
-// ]
-//
+// Public Firestore collections containing poems.
 const poemCollections = [
   'recentPoems'
 ];
 
 // ============================================================
-// BLOCKED / NO-INDEX STATIC PAGES
+// EXCLUDED STATIC PAGES
 // ============================================================
 
 const excludedPages = [
@@ -90,11 +63,8 @@ const excludedPages = [
   'assign-images.html',
   'poemcount.html',
 
-  // IMPORTANT:
-  // Exclude the generic poem.html page from static discovery.
-  //
-  // Individual Firestore poem URLs are added separately.
-  //
+  // Do NOT add the generic poem.html page.
+  // Individual Firestore poems are added separately.
   'poem.html',
 
   'addcategories.html',
@@ -133,9 +103,11 @@ function isExcluded(file) {
     }
   }
 
-  return excludedPages.some(ex =>
-    file.toLowerCase().includes(ex.toLowerCase())
-  );
+  return excludedPages.some(function (excluded) {
+    return file.toLowerCase().includes(
+      excluded.toLowerCase()
+    );
+  });
 }
 
 // ============================================================
@@ -152,7 +124,7 @@ function escapeXml(value) {
 }
 
 // ============================================================
-// URL WITH .HTML
+// URL PATH
 // ============================================================
 
 function getUrlWithHtml(filePath) {
@@ -160,24 +132,24 @@ function getUrlWithHtml(filePath) {
 
   cleanPath = cleanPath.replace(/^\.\//, '');
 
-  // Root index.html
+  // index.html at root
   if (cleanPath === 'index.html') {
     return '';
   }
 
-  // Subfolder index.html
-  //
   // store/index.html -> store/
-  //
   if (cleanPath.endsWith('/index.html')) {
-    return cleanPath.replace(/\/index\.html$/, '/');
+    return cleanPath.replace(
+      /\/index\.html$/,
+      '/'
+    );
   }
 
   return cleanPath;
 }
 
 // ============================================================
-// SCAN HTML FOLDER
+// SCAN FOLDER
 // ============================================================
 
 function scanFolderForHTML(folder) {
@@ -190,7 +162,7 @@ function scanFolderForHTML(folder) {
     }
   }
 
-  const pattern = `${folder}/*.html`;
+  const pattern = folder + '/*.html';
 
   return glob.sync(pattern, {
     cwd: publicFolder
@@ -227,8 +199,10 @@ function getStaticPages() {
   ];
 
   return allFiles
-    .filter(file => !isExcluded(file))
-    .map(file => {
+    .filter(function (file) {
+      return !isExcluded(file);
+    })
+    .map(function (file) {
       const filePath =
         path.join(publicFolder, file);
 
@@ -246,20 +220,13 @@ function getStaticPages() {
       if (urlPath === '') {
         url = domain;
       } else {
-        url = `${domain}/${urlPath}`;
+        url = domain + '/' + urlPath;
       }
-
-      // --------------------------------------------------------
-      // Defaults
-      // --------------------------------------------------------
 
       let priority = '0.8';
       let changefreq = 'monthly';
 
-      // --------------------------------------------------------
       // Homepage
-      // --------------------------------------------------------
-
       if (
         file === 'index.html' ||
         urlPath === '' ||
@@ -269,10 +236,7 @@ function getStaticPages() {
         changefreq = 'daily';
       }
 
-      // --------------------------------------------------------
-      // Important content
-      // --------------------------------------------------------
-
+      // Important pages
       else if (
         file === 'poems.html' ||
         file === 'submission-guidelines.html' ||
@@ -283,32 +247,19 @@ function getStaticPages() {
         changefreq = 'weekly';
       }
 
-      // --------------------------------------------------------
       // Shared pages
-      // --------------------------------------------------------
-
-      else if (
-        file.startsWith('shared/')
-      ) {
+      else if (file.startsWith('shared/')) {
         priority = '0.6';
         changefreq = 'monthly';
       }
 
-      // --------------------------------------------------------
       // Store
-      // --------------------------------------------------------
-
-      else if (
-        file.startsWith('store/')
-      ) {
+      else if (file.startsWith('store/')) {
         priority = '0.7';
         changefreq = 'weekly';
       }
 
-      // --------------------------------------------------------
       // Volant Foundry
-      // --------------------------------------------------------
-
       else if (
         file.startsWith('volant_foundry/')
       ) {
@@ -318,9 +269,9 @@ function getStaticPages() {
 
       return {
         loc: url,
-        lastmod,
-        changefreq,
-        priority,
+        lastmod: lastmod,
+        changefreq: changefreq,
+        priority: priority,
         type: 'static'
       };
     });
@@ -329,87 +280,37 @@ function getStaticPages() {
 // ============================================================
 // FIRESTORE VALUE CONVERTER
 // ============================================================
-//
-// Firestore REST returns values like:
-//
-// {
-//   "stringValue": "hello"
-// }
-//
-// or:
-//
-// {
-//   "timestampValue": "2026-08-11T..."
-// }
-//
-// This converts them into normal JavaScript values.
-//
 
 function firestoreValueToJs(value) {
   if (!value) {
     return null;
   }
 
-  if (
-    Object.prototype.hasOwnProperty.call(
-      value,
-      'stringValue'
-    )
-  ) {
+  if (value.stringValue !== undefined) {
     return value.stringValue;
   }
 
-  if (
-    Object.prototype.hasOwnProperty.call(
-      value,
-      'booleanValue'
-    )
-  ) {
+  if (value.booleanValue !== undefined) {
     return value.booleanValue;
   }
 
-  if (
-    Object.prototype.hasOwnProperty.call(
-      value,
-      'integerValue'
-    )
-  ) {
+  if (value.integerValue !== undefined) {
     return Number(value.integerValue);
   }
 
-  if (
-    Object.prototype.hasOwnProperty.call(
-      value,
-      'doubleValue'
-    )
-  ) {
+  if (value.doubleValue !== undefined) {
     return Number(value.doubleValue);
   }
 
-  if (
-    Object.prototype.hasOwnProperty.call(
-      value,
-      'timestampValue'
-    )
-  ) {
+  if (value.timestampValue !== undefined) {
     return value.timestampValue;
   }
 
-  if (
-    Object.prototype.hasOwnProperty.call(
-      value,
-      'nullValue'
-    )
-  ) {
+  if (value.nullValue !== undefined) {
     return null;
   }
 
-  if (
-    Object.prototype.hasOwnProperty.call(
-      value,
-      'arrayValue'
-    )
-  ) {
+  if (value.arrayValue !== undefined) {
     const values =
       value.arrayValue.values || [];
 
@@ -418,38 +319,32 @@ function firestoreValueToJs(value) {
     );
   }
 
-  if (
-    Object.prototype.hasOwnProperty.call(
-      value,
-      'mapValue'
-    )
-  ) {
-    const fields =
-      value.mapValue.fields || {};
-
-    return firestoreFieldsToJs(fields);
+  if (value.mapValue !== undefined) {
+    return firestoreFieldsToJs(
+      value.mapValue.fields || {}
+    );
   }
 
   return null;
 }
 
 // ============================================================
-// FIRESTORE FIELD CONVERTER
+// FIRESTORE FIELDS
 // ============================================================
 
 function firestoreFieldsToJs(fields) {
   const result = {};
 
-  for (const [key, value] of Object.entries(fields || {})) {
+  Object.keys(fields || {}).forEach(function (key) {
     result[key] =
-      firestoreValueToJs(value);
-  }
+      firestoreValueToJs(fields[key]);
+  });
 
   return result;
 }
 
 // ============================================================
-// FIRESTORE REST FETCH
+// FIRESTORE REST
 // ============================================================
 
 async function fetchFirestoreCollection(
@@ -457,30 +352,27 @@ async function fetchFirestoreCollection(
 ) {
   if (!firebaseProjectId) {
     throw new Error(
-      'Firebase project ID is missing. ' +
-      'Set FIREBASE_PROJECT_ID in GitHub Actions ' +
-      'or put your Firebase project ID in the script.'
+      'FIREBASE_PROJECT_ID is not configured.'
     );
   }
 
   const baseUrl =
-    `https://firestore.googleapis.com/v1/projects/` +
-    `${encodeURIComponent(firebaseProjectId)}` +
-    `/databases/(default)/documents/` +
-    `${encodeURIComponent(collectionName)}`;
+    'https://firestore.googleapis.com/v1/projects/' +
+    encodeURIComponent(firebaseProjectId) +
+    '/databases/(default)/documents/' +
+    encodeURIComponent(collectionName);
 
   let documents = [];
-  let nextPageToken = '';
+  let pageToken = '';
 
   do {
-    const url =
-      nextPageToken
-        ? `${baseUrl}?pageToken=${encodeURIComponent(nextPageToken)}`
-        : baseUrl;
+    let url = baseUrl;
 
-    console.log(
-      `   🔎 Fetching Firestore: ${collectionName}`
-    );
+    if (pageToken) {
+      url +=
+        '?pageToken=' +
+        encodeURIComponent(pageToken);
+    }
 
     const response =
       await fetch(url);
@@ -490,7 +382,10 @@ async function fetchFirestoreCollection(
         await response.text();
 
       throw new Error(
-        `Firestore request failed (${response.status}): ${body}`
+        'Firestore API returned ' +
+        response.status +
+        ': ' +
+        body
       );
     }
 
@@ -502,10 +397,10 @@ async function fetchFirestoreCollection(
         documents.concat(json.documents);
     }
 
-    nextPageToken =
+    pageToken =
       json.nextPageToken || '';
 
-  } while (nextPageToken);
+  } while (pageToken);
 
   return documents;
 }
@@ -519,7 +414,6 @@ function isPublicPoem(data) {
     return false;
   }
 
-  // Explicit negative flags
   if (data.published === false) {
     return false;
   }
@@ -540,14 +434,13 @@ function isPublicPoem(data) {
     return false;
   }
 
-  // Status fields
-  const statuses = [
+  const statusFields = [
     data.status,
     data.publicationStatus,
     data.publishStatus
   ];
 
-  for (const status of statuses) {
+  for (const status of statusFields) {
     if (typeof status !== 'string') {
       continue;
     }
@@ -571,7 +464,7 @@ function isPublicPoem(data) {
 }
 
 // ============================================================
-// FIRESTORE LAST MODIFIED
+// LAST MODIFIED
 // ============================================================
 
 function getLastModified(data) {
@@ -590,8 +483,7 @@ function getLastModified(data) {
       continue;
     }
 
-    const date =
-      new Date(value);
+    const date = new Date(value);
 
     if (!Number.isNaN(date.getTime())) {
       return date.toISOString();
@@ -602,7 +494,7 @@ function getLastModified(data) {
 }
 
 // ============================================================
-// POEM URL
+// CREATE POEM URL
 // ============================================================
 
 function createPoemUrl(
@@ -610,9 +502,11 @@ function createPoemUrl(
   slug
 ) {
   return (
-    `${domain}/poem.html` +
-    `?collection=${encodeURIComponent(collectionName)}` +
-    `&slug=${encodeURIComponent(slug)}`
+    domain +
+    '/poem.html?collection=' +
+    encodeURIComponent(collectionName) +
+    '&slug=' +
+    encodeURIComponent(slug)
   );
 }
 
@@ -627,11 +521,10 @@ async function getFirestorePoemPages() {
 
   const poemPages = [];
 
-  for (
-    const collectionName of poemCollections
-  ) {
+  for (const collectionName of poemCollections) {
     console.log(
-      `\n📚 Collection: ${collectionName}`
+      '\n📚 Collection: ' +
+      collectionName
     );
 
     const documents =
@@ -640,48 +533,39 @@ async function getFirestorePoemPages() {
       );
 
     console.log(
-      `   Found ${documents.length} documents`
+      '   Found ' +
+      documents.length +
+      ' documents'
     );
 
     let included = 0;
     let skipped = 0;
 
     for (const document of documents) {
-      const fields =
+      const data =
         firestoreFieldsToJs(
           document.fields || {}
         );
 
-      // --------------------------------------------------------
-      // Public/indexable check
-      // --------------------------------------------------------
-
-      if (!isPublicPoem(fields)) {
+      if (!isPublicPoem(data)) {
         skipped++;
         continue;
       }
 
-      // --------------------------------------------------------
-      // Slug
-      // --------------------------------------------------------
-
       const slug =
-        typeof fields.slug === 'string'
-          ? fields.slug.trim()
+        typeof data.slug === 'string'
+          ? data.slug.trim()
           : '';
 
       if (!slug) {
         console.warn(
-          `   ⚠️ Skipping document without slug: ${document.name}`
+          '   ⚠️ Skipping document without slug: ' +
+          document.name
         );
 
         skipped++;
         continue;
       }
-
-      // --------------------------------------------------------
-      // URL
-      // --------------------------------------------------------
 
       const loc =
         createPoemUrl(
@@ -689,16 +573,9 @@ async function getFirestorePoemPages() {
           slug
         );
 
-      // --------------------------------------------------------
-      // Last modified
-      // --------------------------------------------------------
-
-      const lastmod =
-        getLastModified(fields);
-
       poemPages.push({
-        loc,
-        lastmod,
+        loc: loc,
+        lastmod: getLastModified(data),
         changefreq: 'monthly',
         priority: '0.8',
         type: 'poem'
@@ -708,16 +585,19 @@ async function getFirestorePoemPages() {
     }
 
     console.log(
-      `   ✅ Included: ${included}`
+      '   ✅ Included: ' +
+      included
     );
 
     console.log(
-      `   🚫 Skipped: ${skipped}`
+      '   🚫 Skipped: ' +
+      skipped
     );
   }
 
   console.log(
-    `\n📖 Total Firestore poem URLs: ${poemPages.length}`
+    '\n📖 Total Firestore poem URLs: ' +
+    poemPages.length
   );
 
   return poemPages;
@@ -728,26 +608,45 @@ async function getFirestorePoemPages() {
 // ============================================================
 
 function buildXML(urls) {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset
-  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  const entries = urls.map(function (u) {
+    let xml =
+      '  <url>\n' +
+      '    <loc>' +
+      escapeXml(u.loc) +
+      '</loc>\n';
 
-${urls.map(u => `
-  <url>
-    <loc>${escapeXml(u.loc)}</loc>
-    ${u.lastmod
-      ? `<lastmod>${escapeXml(u.lastmod)}</lastmod>`
-      : ''}
-    ${u.changefreq
-      ? `<changefreq>${u.changefreq}</changefreq>`
-      : ''}
-    ${u.priority
-      ? `<priority>${u.priority}</priority>`
-      : ''}
-  </url>
-`).join('')}
+    if (u.lastmod) {
+      xml +=
+        '    <lastmod>' +
+        escapeXml(u.lastmod) +
+        '</lastmod>\n';
+    }
 
-</urlset>`;
+    if (u.changefreq) {
+      xml +=
+        '    <changefreq>' +
+        u.changefreq +
+        '</changefreq>\n';
+    }
+
+    if (u.priority) {
+      xml +=
+        '    <priority>' +
+        u.priority +
+        '</priority>\n';
+    }
+
+    xml += '  </url>';
+
+    return xml;
+  });
+
+  return (
+    '<?xml version="1.0" encoding="UTF-8"?>\n' +
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n\n' +
+    entries.join('\n\n') +
+    '\n\n</urlset>\n'
+  );
 }
 
 // ============================================================
@@ -755,34 +654,33 @@ ${urls.map(u => `
 // ============================================================
 
 function generateRobotsTxt() {
-  const robots = `# Robots.txt for Volant Poetry
-
-User-agent: *
-Allow: /
-
-# Sitemap
-Sitemap: ${domain}/sitemap.xml
-
-# Block admin and private pages
-Disallow: /admin/
-Disallow: /api/
-Disallow: /dashboard/
-Disallow: /manage/
-Disallow: /editor/
-Disallow: /login/
-Disallow: /signup/
-Disallow: /reset/
-Disallow: /verify/
-Disallow: /approvals/
-Disallow: /universal-login/
-Disallow: /universal-signup/
-Disallow: /check-verification/
-Disallow: /existingVerify/
-Disallow: /users-reset/
-Disallow: /user-edit-poems/
-Disallow: /notifications/
-Disallow: /messages/
-`;
+  const robots =
+    '# Robots.txt for Volant Poetry\n\n' +
+    'User-agent: *\n' +
+    'Allow: /\n\n' +
+    '# Sitemap\n' +
+    'Sitemap: ' +
+    domain +
+    '/sitemap.xml\n\n' +
+    '# Block admin and private pages\n' +
+    'Disallow: /admin/\n' +
+    'Disallow: /api/\n' +
+    'Disallow: /dashboard/\n' +
+    'Disallow: /manage/\n' +
+    'Disallow: /editor/\n' +
+    'Disallow: /login/\n' +
+    'Disallow: /signup/\n' +
+    'Disallow: /reset/\n' +
+    'Disallow: /verify/\n' +
+    'Disallow: /approvals/\n' +
+    'Disallow: /universal-login/\n' +
+    'Disallow: /universal-signup/\n' +
+    'Disallow: /check-verification/\n' +
+    'Disallow: /existingVerify/\n' +
+    'Disallow: /users-reset/\n' +
+    'Disallow: /user-edit-poems/\n' +
+    'Disallow: /notifications/\n' +
+    'Disallow: /messages/\n';
 
   fs.writeFileSync(
     path.join(
@@ -831,7 +729,8 @@ async function generateSitemap() {
     );
 
     console.log(
-      `📁 Domain: ${domain}`
+      '📁 Domain: ' +
+      domain
     );
 
     console.log(
@@ -843,25 +742,26 @@ async function generateSitemap() {
     );
 
     // --------------------------------------------------------
-    // STATIC
+    // Static pages
     // --------------------------------------------------------
 
     const staticPages =
       getStaticPages();
 
     console.log(
-      `📄 Static URLs found: ${staticPages.length}`
+      '📄 Static URLs found: ' +
+      staticPages.length
     );
 
     // --------------------------------------------------------
-    // FIRESTORE
+    // Firestore poems
     // --------------------------------------------------------
 
     const poemPages =
       await getFirestorePoemPages();
 
     // --------------------------------------------------------
-    // COMBINE
+    // Combine
     // --------------------------------------------------------
 
     const allPages = [
@@ -870,18 +770,19 @@ async function generateSitemap() {
     ];
 
     // --------------------------------------------------------
-    // DEDUPLICATE
+    // Deduplicate
     // --------------------------------------------------------
 
     const unique =
       removeDuplicates(allPages);
 
     console.log(
-      `\n📊 Total unique URLs: ${unique.length}`
+      '\n📊 Total unique URLs: ' +
+      unique.length
     );
 
     // --------------------------------------------------------
-    // WRITE SITEMAP
+    // Write sitemap
     // --------------------------------------------------------
 
     const xml =
@@ -901,83 +802,81 @@ async function generateSitemap() {
     );
 
     // --------------------------------------------------------
-    // ROBOTS
+    // Robots
     // --------------------------------------------------------
 
     generateRobotsTxt();
 
     // --------------------------------------------------------
-    // STATISTICS
+    // Statistics
     // --------------------------------------------------------
 
     const staticCount =
-      unique.filter(
-        u => u.type === 'static'
-      ).length;
+      unique.filter(function (u) {
+        return u.type === 'static';
+      }).length;
 
     const poemCount =
-      unique.filter(
-        u => u.type === 'poem'
-      ).length;
+      unique.filter(function (u) {
+        return u.type === 'poem';
+      }).length;
 
     console.log(
       '\n📊 Sitemap Statistics:'
     );
 
     console.log(
-      `   Total URLs: ${unique.length}`
+      '   Total URLs: ' +
+      unique.length
     );
 
     console.log(
-      `   Static pages: ${staticCount}`
+      '   Static pages: ' +
+      staticCount
     );
 
     console.log(
-      `   Firestore poems: ${poemCount}`
+      '   Firestore poems: ' +
+      poemCount
     );
 
     console.log(
-      `   Priority 1.0: ${
-        unique.filter(
-          u => u.priority === '1.0'
-        ).length
-      }`
+      '   Priority 1.0: ' +
+      unique.filter(function (u) {
+        return u.priority === '1.0';
+      }).length
     );
 
     console.log(
-      `   Priority 0.9: ${
-        unique.filter(
-          u => u.priority === '0.9'
-        ).length
-      }`
+      '   Priority 0.9: ' +
+      unique.filter(function (u) {
+        return u.priority === '0.9';
+      }).length
     );
 
     console.log(
-      `   Priority 0.8: ${
-        unique.filter(
-          u => u.priority === '0.8'
-        ).length
-      }`
+      '   Priority 0.8: ' +
+      unique.filter(function (u) {
+        return u.priority === '0.8';
+      }).length
     );
 
     console.log(
-      `   Priority 0.7: ${
-        unique.filter(
-          u => u.priority === '0.7'
-        ).length
-      }`
+      '   Priority 0.7: ' +
+      unique.filter(function (u) {
+        return u.priority === '0.7';
+      }).length
     );
 
     console.log(
-      `   Priority 0.6: ${
-        unique.filter(
-          u => u.priority === '0.6'
-        ).length
-      }`
+      '   Priority 0.6: ' +
+      unique.filter(function (u) {
+        return u.priority === '0.6';
+      }).length
     );
 
     // --------------------------------------------------------
-    // SAMPLE POEMS
+    // Sample poem URLs
     // --------------------------------------------------------
 
     console.log(
@@ -986,9 +885,9 @@ async function generateSitemap() {
 
     const samples =
       unique
-        .filter(
-          u => u.type === 'poem'
-        )
+        .filter(function (u) {
+          return u.type === 'poem';
+        })
         .slice(0, 5);
 
     if (samples.length === 0) {
@@ -996,11 +895,12 @@ async function generateSitemap() {
         '   ⚠️ No Firestore poem URLs generated.'
       );
     } else {
-      for (const poem of samples) {
+      samples.forEach(function (poem) {
         console.log(
-          `   - ${poem.loc}`
+          '   - ' +
+          poem.loc
         );
-      }
+      });
     }
 
     console.log(
@@ -1009,9 +909,10 @@ async function generateSitemap() {
 
   } catch (err) {
     console.error(
-      '\n❌ Sitemap generation failed:',
-      err.message
+      '\n❌ Sitemap generation failed:'
     );
+
+    console.error(err);
 
     process.exit(1);
   }
