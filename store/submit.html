@@ -6,7 +6,7 @@
     <title>Volant Reads · Submit Your Book</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
-       <link rel="icon" type="image/png" href="../images/volant-reads-favicon.png" />
+    <link rel="icon" type="image/png" href="../images/volant-reads-favicon.png" />
     <link rel="apple-touch-icon" href="../images/volant-reads-favicon.png" />
 
    <style>
@@ -898,6 +898,15 @@
             cursor: pointer;
         }
 
+        .checkbox-group label a {
+            color: var(--primary);
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        .checkbox-group label a:hover {
+            color: var(--primary-dark);
+        }
+
         .conditional-input {
             margin-top: 4px;
             display: none;
@@ -1226,6 +1235,48 @@
             background: #922;
         }
 
+        /* ===== RIGHTS & TERMS SECTION ===== */
+        .legal-section {
+            background: #fcf9f6;
+            padding: 0.8rem 1rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-light);
+        }
+
+        .legal-section .legal-item {
+            padding: 0.3rem 0;
+        }
+
+        .legal-section .legal-item:not(:last-child) {
+            border-bottom: 1px solid #f0ece6;
+        }
+
+        .legal-section .legal-item .checkbox-group {
+            padding: 0.1rem 0;
+        }
+
+        .legal-section .legal-item .checkbox-group label {
+            font-size: 0.85rem;
+        }
+
+        .legal-section .legal-item .checkbox-group label a {
+            color: var(--primary);
+            text-decoration: underline;
+            font-weight: 500;
+        }
+
+        .legal-section .legal-item .checkbox-group label a:hover {
+            color: var(--primary-dark);
+        }
+
+        .legal-section .legal-subtext {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-left: 28px;
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 0.5rem 0.4rem;
@@ -1453,6 +1504,16 @@
             .preorder-fields .preorder-price-input .form-group {
                 width: 100%;
             }
+            .legal-section {
+                padding: 0.6rem 0.8rem;
+            }
+            .legal-section .legal-item .checkbox-group label {
+                font-size: 0.78rem;
+            }
+            .legal-section .legal-subtext {
+                font-size: 0.65rem;
+                margin-left: 24px;
+            }
         }
 
         @media (max-width: 450px) {
@@ -1562,25 +1623,42 @@
             .draft-notice .draft-actions {
                 justify-content: flex-end;
             }
+            .preorder-fields {
+                padding: 0.5rem 0.6rem;
+            }
+            .preorder-fields .preorder-price-input {
+                flex-direction: column;
+            }
+            .preorder-fields .preorder-price-input .form-group {
+                width: 100%;
+            }
+            .legal-section .legal-item .checkbox-group label {
+                font-size: 0.72rem;
+            }
+            .legal-section .legal-subtext {
+                font-size: 0.6rem;
+                margin-left: 20px;
+            }
         }
 
         .platform-badge.reads {
             background: linear-gradient(135deg, #d4a574, #c9944d);
         }
 
-        /* Only hide on submit page */
-        body .checkbox-group:has(#preorderCheckbox) {
-            display: none !important;
-        }
-        body #preorderFields {
-            display: none !important;
-        }
-        .form-group .hint:last-child {
-            display: none !important;
-        }
-        .form-group .hint[style*="color"] {
-            display: none !important;
-        }
+       /* Hide pre-order section */
+#preorderCheckbox,
+#preorderCheckbox + label,
+#preorderCheckbox + label + .hint,
+.preorder-fields,
+.preorder-fields.show,
+.preorder-fields .form-group,
+.preorder-fields .preorder-price-input,
+.preorder-fields .preorder-price-input .form-group,
+.preorder-fields .hint {
+    display: none !important;
+}
+.hint {display: none !important;}
+      
     </style>
 </head>
 <body>
@@ -1665,11 +1743,43 @@
         <div id="formWrapper" style="display: none;">
             <form id="bookSubmissionForm" class="form-grid" enctype="multipart/form-data">
 
-                <!-- AUTHOR NAME -->
+                <!-- AUTHOR NAME - Fetched from user settings -->
                 <div class="form-group">
                     <label for="authorName"><i class="fas fa-user-edit"></i> Author Name <span style="color:#b76e4b;">*</span></label>
                     <input type="text" id="authorName" placeholder="Enter the author name (e.g., your pen name or full name)" required />
                     <span class="hint"><i class="fas fa-info-circle"></i> Enter the name you want to appear as the author of this book.</span>
+                </div>
+
+                <!-- PUBLISHER NAME -->
+                <div class="form-group">
+                    <label for="publisherName"><i class="fas fa-building"></i> Publisher Name <span class="optional-badge">optional</span></label>
+                    <input type="text" id="publisherName" placeholder="Publisher name (leave empty to use author name)" />
+                    <span class="hint"><i class="fas fa-info-circle"></i> If different from author name. Leave empty to use author name as publisher.</span>
+                </div>
+
+                <!-- EMAIL ADDRESS - Fetched from user email -->
+                <div class="form-group">
+                    <label for="authorEmail"><i class="fas fa-envelope"></i> Email Address <span style="color:#b76e4b;">*</span></label>
+                    <input type="email" id="authorEmail" placeholder="your-email@gmail.com" required />
+                    <span class="hint">We'll use this to contact you about your submission.</span>
+                </div>
+
+                <!-- COUNTRY -->
+                <div class="form-group">
+                    <label for="countryInput"><i class="fas fa-map-marker-alt"></i> Country <span style="color:#b76e4b;">*</span></label>
+                    <div class="country-select-wrapper">
+                        <input type="text" id="countryInput" placeholder="Start typing to search for your country..." autocomplete="off" />
+                        <input type="hidden" id="countryHidden" value="" />
+                        <div class="country-dropdown" id="countryDropdown"></div>
+                    </div>
+                    <span class="hint">Type to filter countries, then click to select.</span>
+                </div>
+
+                <!-- PHONE NUMBER -->
+                <div class="form-group">
+                    <label for="phoneNumber"><i class="fas fa-phone"></i> Phone number <span style="color:#b76e4b;">*</span></label>
+                    <input type="tel" id="phoneNumber" placeholder="+233 24 444 4444" required />
+                    <span class="hint">Include country code (e.g., +233 for Ghana, +44 for UK).</span>
                 </div>
 
                 <!-- TITLE & SUBTITLE -->
@@ -1759,31 +1869,6 @@
                         <input type="text" id="languageOther" placeholder="Please specify your language" />
                     </div>
                     <span class="hint">Select the book's primary language. If "Other", specify in the field below.</span>
-                </div>
-
-                <!-- COUNTRY -->
-                <div class="form-group">
-                    <label for="countryInput"><i class="fas fa-map-marker-alt"></i> Country <span style="color:#b76e4b;">*</span></label>
-                    <div class="country-select-wrapper">
-                        <input type="text" id="countryInput" placeholder="Start typing to search for your country..." autocomplete="off" />
-                        <input type="hidden" id="countryHidden" value="" />
-                        <div class="country-dropdown" id="countryDropdown"></div>
-                    </div>
-                    <span class="hint">Type to filter countries, then click to select.</span>
-                </div>
-
-                <!-- PHONE NUMBER -->
-                <div class="form-group">
-                    <label for="phoneNumber"><i class="fas fa-phone"></i> Phone number <span style="color:#b76e4b;">*</span></label>
-                    <input type="tel" id="phoneNumber" placeholder="+233 24 444 4444" required />
-                    <span class="hint">Include country code (e.g., +233 for Ghana, +44 for UK).</span>
-                </div>
-
-                <!-- EMAIL ADDRESS -->
-                <div class="form-group">
-                    <label for="authorEmail"><i class="fas fa-envelope"></i> Email Address <span style="color:#b76e4b;">*</span></label>
-                    <input type="email" id="authorEmail" placeholder="your-email@gmail.com" required />
-                    <span class="hint">We'll use this to contact you about your submission.</span>
                 </div>
 
                 <!-- ===== NUMBER OF PAGES (COMPULSORY) ===== -->
@@ -1891,21 +1976,21 @@
                     <span class="hint">Add at least 3 and up to 5 keywords to help readers find your book.</span>
                 </div>
 
+                <!-- ===== PRE-ORDER COMING SOON NOTICE ===== -->
+                <div style="background: #fef3e2; border: 1px solid #f5cba7; border-radius: 12px; padding: 0.8rem 1.2rem; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-clock" style="color: #b76e4b; font-size: 1.1rem;"></i>
+                        <div>
+                            <p style="margin: 0; font-weight: 600; color: #7a4a2a; font-size: 0.9rem;">
+                                📅 Pre-orders Coming Soon
+                            </p>
+                            <p style="margin: 0; font-size: 0.8rem; color: #8a6a4a;">
+                                We're working on allowing pre-orders for books. Stay tuned!
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-                <!-- ===== PRE-ORDER COMING SOON MESSAGE ===== -->
-<div style="background: #fef3e2; border: 1px solid #f5cba7; border-radius: 12px; padding: 0.8rem 1.2rem; margin-bottom: 1rem;">
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <i class="fas fa-clock" style="color: #b76e4b; font-size: 1.1rem;"></i>
-        <div>
-            <p style="margin: 0; font-weight: 600; color: #7a4a2a; font-size: 0.9rem;">
-                📅 Pre-orders Coming Soon
-            </p>
-            <p style="margin: 0; font-size: 0.8rem; color: #8a6a4a;">
-                We're working on allowing pre-orders for books. Stay tuned!
-            </p>
-        </div>
-    </div>
-</div>
                 <!-- ===== PRE-ORDER SECTION ===== -->
                 <div class="form-group">
                     <div class="checkbox-group">
@@ -1986,6 +2071,39 @@
                 </div>
 
                 <hr class="divider" />
+
+                <!-- ============================================================ -->
+                <!-- ===== RIGHTS DECLARATION & TERMS ===== -->
+                <!-- ============================================================ -->
+                <div class="legal-section">
+                    <div class="legal-item">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="rightsDeclaration" required />
+                            <label for="rightsDeclaration">
+                                <i class="fas fa-check-circle" style="color: var(--primary);"></i>
+                                I declare that I have the full rights to distribute this book
+                            </label>
+                        </div>
+                        <div class="legal-subtext">
+                            By checking this box, I confirm that I own the copyright or have obtained all necessary permissions 
+                            to publish and distribute this book. I understand that false claims may result in termination of my account 
+                            and legal action.
+                        </div>
+                    </div>
+
+                    <div class="legal-item">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="termsAgreement" required />
+                            <label for="termsAgreement">
+                                <i class="fas fa-file-contract" style="color: var(--primary);"></i>
+                                I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
+                            </label>
+                        </div>
+                        <div class="legal-subtext">
+                            By submitting this book, you agree to our Terms of Service and Privacy Policy.
+                        </div>
+                    </div>
+                </div>
 
                 <div class="form-actions">
                     <button type="submit" class="btn-primary" id="submitBookBtn"><i class="fas fa-cloud-upload-alt"></i> Submit to Volant Reads</button>
@@ -2120,13 +2238,22 @@
         const currencySymbolSpan = document.getElementById('currencySymbol');
         const priceAmount = document.getElementById('priceAmount');
         const pendingNotice = document.getElementById('pendingNotice');
-        const authorEmail = document.getElementById('authorEmail');
+        const authorNameInput = document.getElementById('authorName');
+        const authorEmailInput = document.getElementById('authorEmail');
+        const publisherNameInput = document.getElementById('publisherName');
+        const phoneNumberInput = document.getElementById('phoneNumber');
         const pageCountInput = document.getElementById('pageCount');
+
+        // ===== PRE-ORDER DOM REFS =====
         const preorderCheckbox = document.getElementById('preorderCheckbox');
         const preorderFields = document.getElementById('preorderFields');
         const preorderReleaseDate = document.getElementById('preorderReleaseDate');
         const preorderPrice = document.getElementById('preorderPrice');
         const originalPrice = document.getElementById('originalPrice');
+
+        // ===== RIGHTS & TERMS DOM REFS =====
+        const rightsDeclaration = document.getElementById('rightsDeclaration');
+        const termsAgreement = document.getElementById('termsAgreement');
 
         // ===== DRAFT DOM REFS =====
         const draftNotice = document.getElementById('draftNotice');
@@ -2251,6 +2378,22 @@
                 'KES': 7.6, 'ZAR': 1.09, 'INR': 4.8, 'JPY': 8.9, 'CNY': 0.42, 'BRL': 0.29 }
         };
 
+        // --- Pre-order functions ---
+        function togglePreorderFields() {
+            if (preorderCheckbox.checked) {
+                preorderFields.classList.add('show');
+                preorderReleaseDate.setAttribute('required', 'required');
+            } else {
+                preorderFields.classList.remove('show');
+                preorderReleaseDate.removeAttribute('required');
+                preorderReleaseDate.value = '';
+                preorderPrice.value = '';
+                originalPrice.value = '';
+            }
+        }
+
+        preorderCheckbox.addEventListener('change', togglePreorderFields);
+
         // --- Downloads logic ---
         function toggleCustomDownloadInput() {
             const selected = downloadsSelect.value;
@@ -2281,22 +2424,6 @@
                 return parseInt(selected);
             }
         }
-
-        // --- Pre-order functions ---
-        function togglePreorderFields() {
-            if (preorderCheckbox.checked) {
-                preorderFields.classList.add('show');
-                preorderReleaseDate.setAttribute('required', 'required');
-            } else {
-                preorderFields.classList.remove('show');
-                preorderReleaseDate.removeAttribute('required');
-                preorderReleaseDate.value = '';
-                preorderPrice.value = '';
-                originalPrice.value = '';
-            }
-        }
-
-        preorderCheckbox.addEventListener('change', togglePreorderFields);
 
         // --- Currency functions ---
         async function fetchExchangeRates(baseCurrency) {
@@ -2689,6 +2816,61 @@
         }
 
         // ================================================================
+        // ===== LOAD USER SETTINGS =====
+        // ================================================================
+
+        async function loadUserSettings(userId) {
+            try {
+                const userDoc = await getDoc(doc(db, "users", userId));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    
+                    // Author Name - from username or displayName
+                    const authorName = data.username || data.displayName || data.authorName || '';
+                    if (authorName) {
+                        authorNameInput.value = authorName;
+                        console.log('✅ Author name loaded:', authorName);
+                    }
+                    
+                    // Email - from user email
+                    if (data.email || currentUser?.email) {
+                        authorEmailInput.value = data.email || currentUser?.email || '';
+                        console.log('✅ Email loaded:', authorEmailInput.value);
+                    }
+                    
+                    // Country
+                    if (data.country) {
+                        selectedCountry = data.country;
+                        countryInput.value = data.country;
+                        countryHidden.value = data.country;
+                        console.log('✅ Country loaded:', data.country);
+                    }
+                    
+                    // Phone Number
+                    if (data.phoneNumber) {
+                        phoneNumberInput.value = data.phoneNumber;
+                        console.log('✅ Phone number loaded:', data.phoneNumber);
+                    }
+                    
+                    // Publisher Name
+                    if (data.publisherName) {
+                        publisherNameInput.value = data.publisherName;
+                        console.log('✅ Publisher name loaded:', data.publisherName);
+                    }
+                }
+            } catch (err) {
+                console.warn('Error loading user settings:', err);
+                // Fallback: use auth user info
+                if (currentUser) {
+                    authorEmailInput.value = currentUser.email || '';
+                    if (currentUser.displayName) {
+                        authorNameInput.value = currentUser.displayName;
+                    }
+                }
+            }
+        }
+
+        // ================================================================
         // ===== DRAFT FUNCTIONS =====
         // ================================================================
 
@@ -2705,6 +2887,10 @@
         function saveDraft() {
             const draft = {
                 authorName: document.getElementById('authorName').value,
+                publisherName: document.getElementById('publisherName').value,
+                authorEmail: document.getElementById('authorEmail').value,
+                country: countryHidden.value,
+                phoneNumber: document.getElementById('phoneNumber').value,
                 bookTitle: document.getElementById('bookTitle').value,
                 bookSubtitle: document.getElementById('bookSubtitle').value,
                 authorBio: document.getElementById('authorBio').value,
@@ -2715,9 +2901,6 @@
                 genreOther: document.getElementById('genreOther').value,
                 bookLanguage: document.getElementById('bookLanguage').value,
                 languageOther: document.getElementById('languageOther').value,
-                country: countryHidden.value,
-                phoneNumber: document.getElementById('phoneNumber').value,
-                authorEmail: document.getElementById('authorEmail').value,
                 pageCount: document.getElementById('pageCount').value,
                 downloadsSelect: document.getElementById('downloadsSelect').value,
                 customDownloads: document.getElementById('customDownloads').value,
@@ -2729,6 +2912,8 @@
                 preorderReleaseDate: document.getElementById('preorderReleaseDate').value,
                 preorderPrice: document.getElementById('preorderPrice').value,
                 originalPrice: document.getElementById('originalPrice').value,
+                rightsDeclaration: document.getElementById('rightsDeclaration').checked,
+                termsAgreement: document.getElementById('termsAgreement').checked,
                 savedAt: new Date().toISOString()
             };
             localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
@@ -2737,6 +2922,14 @@
         function loadDraft(draft) {
             if (!draft) return;
             document.getElementById('authorName').value = draft.authorName || '';
+            document.getElementById('publisherName').value = draft.publisherName || '';
+            document.getElementById('authorEmail').value = draft.authorEmail || '';
+            if (draft.country) {
+                selectedCountry = draft.country;
+                countryHidden.value = draft.country;
+                countryInput.value = draft.country;
+            }
+            document.getElementById('phoneNumber').value = draft.phoneNumber || '';
             document.getElementById('bookTitle').value = draft.bookTitle || '';
             document.getElementById('bookSubtitle').value = draft.bookSubtitle || '';
             document.getElementById('authorBio').value = draft.authorBio || '';
@@ -2753,13 +2946,6 @@
                 languageOtherContainer.classList.add('visible');
                 document.getElementById('languageOther').value = draft.languageOther || '';
             }
-            if (draft.country) {
-                selectedCountry = draft.country;
-                countryHidden.value = draft.country;
-                countryInput.value = draft.country;
-            }
-            document.getElementById('phoneNumber').value = draft.phoneNumber || '';
-            document.getElementById('authorEmail').value = draft.authorEmail || '';
             document.getElementById('pageCount').value = draft.pageCount || '';
             document.getElementById('downloadsSelect').value = draft.downloadsSelect || '5';
             toggleCustomDownloadInput();
@@ -2775,7 +2961,8 @@
             document.getElementById('preorderReleaseDate').value = draft.preorderReleaseDate || '';
             document.getElementById('preorderPrice').value = draft.preorderPrice || '';
             document.getElementById('originalPrice').value = draft.originalPrice || '';
-            // Trigger currency converter after loading
+            document.getElementById('rightsDeclaration').checked = draft.rightsDeclaration || false;
+            document.getElementById('termsAgreement').checked = draft.termsAgreement || false;
             if (draft.priceAmount && parseFloat(draft.priceAmount) > 0) {
                 setTimeout(() => { updateCurrencyConverter(); }, 300);
             }
@@ -2806,14 +2993,14 @@
                 el.addEventListener('change', () => { if (currentUser) saveDraft(); });
                 el.addEventListener('input', () => { if (currentUser) saveDraft(); });
             });
-            // Also save when keywords change
             const origUpdateUI = updateKeywordUI;
             updateKeywordUI = function() {
                 origUpdateUI();
                 if (currentUser) saveDraft();
             };
-            // Save on preorder toggle
             preorderCheckbox.addEventListener('change', () => { if (currentUser) saveDraft(); });
+            rightsDeclaration.addEventListener('change', () => { if (currentUser) saveDraft(); });
+            termsAgreement.addEventListener('change', () => { if (currentUser) saveDraft(); });
         }
 
         // ================================================================
@@ -2869,13 +3056,11 @@
                 userBadge.style.display = 'inline-flex';
                 userNameDisplay.textContent = currentUsername;
                 
-                // ===== CHECK PAYOUT ACCOUNT =====
-                await updatePayoutWarning(user.uid);
-
-                // ===== CHECK DRAFT =====
-                checkDraft();
+                // ===== LOAD USER SETTINGS =====
+                await loadUserSettings(user.uid);
                 
-                // ===== SETUP AUTO-SAVE =====
+                await updatePayoutWarning(user.uid);
+                checkDraft();
                 setupAutoSave();
                 
             } else {
@@ -2914,23 +3099,35 @@
             e.preventDefault();
             if (!currentUser) { showFeedback('❌ You must be signed in to submit a book.', 'error'); return; }
 
-            // ================================================================
-            // ===== CHECK PAYOUT ACCOUNT FIRST =====
-            // ================================================================
+            // ===== CHECK RIGHTS DECLARATION =====
+            if (!rightsDeclaration.checked) {
+                showFeedback('❌ You must declare that you have the rights to distribute this book.', 'error');
+                rightsDeclaration.focus();
+                return;
+            }
+
+            // ===== CHECK TERMS AGREEMENT =====
+            if (!termsAgreement.checked) {
+                showFeedback('❌ You must agree to the Terms of Service and Privacy Policy.', 'error');
+                termsAgreement.focus();
+                return;
+            }
+
+            // ===== CHECK PAYOUT ACCOUNT =====
             const checkResult = await checkPayoutAccount(currentUser.uid);
             
             if (!checkResult.hasAccount) {
                 showFeedback('💳 Please set up your payout account first. It takes less than 6 minutes! Go to Settings to add your bank or mobile money details.', 'error');
                 if (payoutWarningBanner) {
                     payoutWarningBanner.classList.add('show');
-                }
-                if (payoutWarningBanner) {
                     payoutWarningBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
                 return;
             }
 
-            const authorName = document.getElementById('authorName').value.trim();
+            const authorName = authorNameInput.value.trim();
+            const publisherName = publisherNameInput.value.trim();
+            const authorEmail = authorEmailInput.value.trim();
             const title = document.getElementById('bookTitle').value.trim();
             const subtitle = document.getElementById('bookSubtitle').value.trim();
             const authorBio = document.getElementById('authorBio').value.trim();
@@ -2940,13 +3137,15 @@
             const language = document.getElementById('bookLanguage').value;
             const country = countryHidden.value.trim();
             const phoneNumber = document.getElementById('phoneNumber').value.trim();
-            const email = document.getElementById('authorEmail').value.trim();
             const pageCount = parseInt(document.getElementById('pageCount').value.trim());
             const price = priceAmount.value.trim();
             const currency = currencySelect.value;
 
             if (!authorName) { showFeedback('❌ Author name is required.', 'error');
-                document.getElementById('authorName').focus(); return; }
+                authorNameInput.focus(); return; }
+            if (!authorEmail || !authorEmail.includes('@') || !authorEmail.includes('.')) { showFeedback(
+                    '❌ Please enter a valid email address.', 'error');
+                authorEmailInput.focus(); return; }
             if (!title) { showFeedback('❌ Book title is required.', 'error');
                 document.getElementById('bookTitle').focus(); return; }
             if (!authorBio) { showFeedback('❌ Author bio is required.', 'error');
@@ -2963,9 +3162,6 @@
                 countryInput.focus(); return; }
             if (!phoneNumber) { showFeedback('❌ Phone number is required.', 'error');
                 document.getElementById('phoneNumber').focus(); return; }
-            if (!email || !email.includes('@') || !email.includes('.')) { showFeedback('❌ Please enter a valid email address.',
-                    'error');
-                document.getElementById('authorEmail').focus(); return; }
             if (!pageCount || pageCount < 1) { showFeedback('❌ Please enter a valid number of pages (minimum 1).',
                     'error');
                 document.getElementById('pageCount').focus(); return; }
@@ -2985,7 +3181,6 @@
                     'error');
                 keywordInput.focus(); return; }
 
-            // --- Validate downloads ---
             const downloadsValue = getDownloadsValue();
             if (downloadsValue === null) {
                 showFeedback('❌ Please enter a valid number of downloads (minimum 3).', 'error');
@@ -3045,6 +3240,8 @@
 
                 const bookData = {
                     authorName,
+                    publisherName: publisherName || authorName,
+                    authorEmail,
                     title,
                     subtitle: subtitle || null,
                     authorBio,
@@ -3055,7 +3252,6 @@
                     language: finalLanguage,
                     country,
                     phoneNumber,
-                    email,
                     pageCount,
                     downloads: 0,
                     downloadLimit: downloadsValue,
@@ -3068,15 +3264,15 @@
                     submittedBy: currentUser.uid,
                     submittedByUsername: currentUsername,
                     status: 'pending',
+                    rightsDeclared: true,
+                    termsAgreed: true,
                     submittedAt: serverTimestamp(),
                     updatedAt: serverTimestamp()
                 };
 
                 await addDoc(collection(db, "books"), bookData);
                 
-                // ===== DISCARD DRAFT AFTER SUCCESSFUL SUBMISSION =====
                 discardDraft();
-                
                 showProgress(false);
                 pendingNotice.classList.add('show');
 
@@ -3093,13 +3289,14 @@
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         📖 Title: ${title}${subtitle ? ` (${subtitle})` : ''}
         ✍️ Author: ${authorName}
+        🏢 Publisher: ${publisherName || authorName}
+        📧 Email: ${authorEmail}
         📝 Pages: ${pageCount}
         📅 Publish date: ${publishDate}
         🏷️ Genre: ${finalGenre}
         🌐 Language: ${finalLanguage}
         📍 Country: ${country}
         📱 Phone: ${phoneNumber}
-        📧 Email: ${email}
         💰 Price: ${priceDisplay} ${currencyNames[currency] || currency}
         📥 Download Limit: ${downloadsDisplay} downloads per buyer
         🔑 Keywords (${keywords.length}): ${keywordList}
@@ -3162,7 +3359,12 @@
             preorderReleaseDate.value = '';
             preorderPrice.value = '';
             originalPrice.value = '';
-            // Don't discard draft on reset — user might want to keep it
+            rightsDeclaration.checked = false;
+            termsAgreement.checked = false;
+            // Reload user settings after reset
+            if (currentUser) {
+                loadUserSettings(currentUser.uid);
+            }
         });
 
         // --- Init ---
@@ -3173,7 +3375,7 @@
         updateCurrencySymbol();
         toggleCustomDownloadInput();
         togglePreorderFields();
-        console.log('📝 Volant Reads submission form ready with draft autosave.');
+        console.log('📝 Volant Reads submission form ready with Author Name, Publisher Name, Country, Phone, Email, Pre-order, Rights Declaration, and Terms Agreement.');
     </script>
     <script src="../shared/return-url-handler.js"></script>
 </body>

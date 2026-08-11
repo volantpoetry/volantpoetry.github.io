@@ -56,6 +56,11 @@
       display: none !important;
     }
 
+    /* ----- hide secure · encrypted text ----- */
+    .divider {
+      display: none !important;
+    }
+
     /* ----- platform badge (dynamic) ----- */
     .platform-badge {
       display: inline-block;
@@ -94,7 +99,7 @@
       border-radius: 0 4px 4px 0;
     }
 
-    /* ----- Google Sign-In Button ----- */
+    /* ----- Google Sign-In Button - Always enabled ----- */
     .google-btn {
       width: 100%;
       padding: 0.9rem;
@@ -311,14 +316,6 @@
     }
     .links a:hover { color: #4b2aad; border-bottom-color: #4b2aad; }
 
-    .divider {
-      text-align: center;
-      margin: 1.2rem 0 0.4rem;
-      color: #bfbad0;
-      font-size: 0.8rem;
-      letter-spacing: 0.3px;
-    }
-
     /* spinner */
     .loading-spinner { display: none; }
     .spinner {
@@ -360,8 +357,8 @@
   <h2>Welcome back</h2>
   <p class="subtitle">Sign in to your account</p>
 
-  <!-- Google Sign-In Button -->
-  <button id="googleSignInBtn" class="google-btn" disabled>
+  <!-- Google Sign-In Button - Always enabled -->
+  <button id="googleSignInBtn" class="google-btn">
     <i class="fab fa-google"></i>
     <span class="google-text">Continue with Google</span>
   </button>
@@ -406,7 +403,7 @@
       <span id="toggle-password" class="password-eye"><i class="far fa-eye"></i></span>
     </div>
 
-    <!-- reCAPTCHA v2 -->
+    <!-- reCAPTCHA v2 - Only affects email/password form -->
     <div class="recaptcha-container">
       <div class="g-recaptcha" data-sitekey="6LfEe3wtAAAAACMvQc1vCwhgMtwvrH562PtKuXTU" data-callback="onRecaptchaSuccess"></div>
     </div>
@@ -428,6 +425,7 @@
     <a href="#" id="forgotPasswordLink">Forgot password?</a>
   </div>
 
+  <!-- Hidden via CSS -->
   <div class="divider">secure · encrypted</div>
 </div>
 
@@ -440,18 +438,18 @@
   
   function onRecaptchaSuccess() {
     recaptchaVerified = true;
+    // Enable ONLY the email/password login button
     const loginButton = document.getElementById('login-button');
-    const googleBtn = document.getElementById('googleSignInBtn');
     loginButton.disabled = false;
-    googleBtn.disabled = false;
+    // Google button remains enabled regardless
   }
   
   function onRecaptchaExpired() {
     recaptchaVerified = false;
+    // Disable ONLY the email/password login button
     const loginButton = document.getElementById('login-button');
-    const googleBtn = document.getElementById('googleSignInBtn');
     loginButton.disabled = true;
-    googleBtn.disabled = true;
+    // Google button remains enabled regardless
     const statusEl = document.getElementById('login-status');
     showStatus('⚠️ reCAPTCHA expired. Please verify again.', 'info');
   }
@@ -660,17 +658,13 @@
   }
 
   // ============================================================
-  // ====== GOOGLE SIGN-IN HANDLER (FIXED) ======
+  // ====== GOOGLE SIGN-IN HANDLER (No reCAPTCHA required) ======
   // ============================================================
   
   let isGoogleSignInProgress = false;
   
   async function signInWithGoogle() {
-    // Check reCAPTCHA first
-    if (!recaptchaVerified) {
-      showStatus('⚠️ Please complete the reCAPTCHA verification first.', 'error');
-      return;
-    }
+    // NO reCAPTCHA check - Google button works independently
 
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
@@ -774,13 +768,13 @@
   googleSignInBtn.addEventListener('click', signInWithGoogle);
 
   // ============================================================
-  // ====== LOGIN WITH SMART REDIRECT ======
+  // ====== LOGIN WITH SMART REDIRECT (requires reCAPTCHA) ======
   // ============================================================
   
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Check reCAPTCHA
+    // Check reCAPTCHA - this is the ONLY place it's required
     if (!recaptchaVerified) {
       showStatus('⚠️ Please complete the reCAPTCHA verification.', 'error');
       return;

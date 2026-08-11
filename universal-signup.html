@@ -70,7 +70,7 @@
 
     /* ----- breadcrumb / back ----- */
     .back-link {
-      display: none;
+      display: none !important;
       align-items: center;
       gap: 6px;
       color: #4b2aad;
@@ -84,7 +84,7 @@
     .back-link:hover { color: #2f1b6b; text-decoration: underline; }
 
     .breadcrumb {
-      display: none;
+      display: none !important;
       font-size: 0.8rem;
       color: #8a8a9a;
       margin-bottom: 1.2rem;
@@ -97,6 +97,11 @@
       font-weight: 500;
     }
     .breadcrumb a:hover { text-decoration: underline; }
+
+    /* Hide secure · encrypted text */
+    .divider {
+      display: none !important;
+    }
 
     /* ----- typography ----- */
     h2 {
@@ -401,8 +406,8 @@
   <h2>Create account</h2>
   <p class="subtitle">Join us and start creating</p>
 
-  <!-- Google Sign-Up Button (disabled until reCAPTCHA verified) -->
-  <button id="googleSignUpBtn" class="google-btn" disabled>
+  <!-- Google Sign-Up Button - Always enabled -->
+  <button id="googleSignUpBtn" class="google-btn">
     <i class="fab fa-google"></i>
     <span class="google-text">Sign up with Google</span>
   </button>
@@ -457,7 +462,7 @@
     <div class="password-strength" id="passwordStrength"></div>
     <div class="field-hint">8+ characters with letters &amp; numbers recommended</div>
 
-    <!-- reCAPTCHA v2 -->
+    <!-- reCAPTCHA v2 - Only affects email/password form -->
     <div class="recaptcha-container">
       <div class="g-recaptcha" data-sitekey="6LfEe3wtAAAAACMvQc1vCwhgMtwvrH562PtKuXTU" data-callback="onRecaptchaSuccess"></div>
     </div>
@@ -489,19 +494,18 @@
   
   function onRecaptchaSuccess() {
     recaptchaVerified = true;
-    // Enable BOTH buttons
+    // Enable ONLY the email/password signup button
     const signupButton = document.getElementById('signup-button');
-    const googleBtn = document.getElementById('googleSignUpBtn');
     signupButton.disabled = false;
-    googleBtn.disabled = false;
+    // Google button remains enabled regardless
   }
   
   function onRecaptchaExpired() {
     recaptchaVerified = false;
+    // Disable ONLY the email/password signup button
     const signupButton = document.getElementById('signup-button');
-    const googleBtn = document.getElementById('googleSignUpBtn');
     signupButton.disabled = true;
-    googleBtn.disabled = true;
+    // Google button remains enabled regardless
     const statusEl = document.getElementById('signup-status');
     showStatus('⚠️ reCAPTCHA expired. Please verify again.', 'info');
   }
@@ -599,6 +603,49 @@
   }
 
   // ============================================================
+  // ====== GET RETURN URL ======
+  // ============================================================
+  
+  function getReturnUrl() {
+    // Check URL params first
+    let returnUrl = urlParams.get('returnUrl');
+    
+    if (!returnUrl) {
+      returnUrl = sessionStorage.getItem('returnUrl');
+    }
+    
+    if (!returnUrl) {
+      returnUrl = sessionStorage.getItem('preLoginPage');
+    }
+    
+    if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
+      returnUrl = document.referrer;
+    }
+    
+    // Clean up the URL
+    if (returnUrl && returnUrl !== 'null' && returnUrl !== 'undefined') {
+      try {
+        returnUrl = decodeURIComponent(returnUrl);
+      } catch (e) {}
+      
+      returnUrl = returnUrl.split('?')[0];
+      returnUrl = returnUrl.split('#')[0];
+      
+      const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+      if (excludePages.some(page => returnUrl.includes(page))) {
+        returnUrl = null;
+      }
+    }
+    
+    // If redirectUrl is provided in URL params and it's valid
+    if (redirectUrl && !redirectUrl.includes('login') && !redirectUrl.includes('signup')) {
+      return redirectUrl;
+    }
+    
+    return returnUrl || currentPlatform.homeUrl;
+  }
+
+  // ============================================================
   // ====== UNIQUE USERNAME GENERATOR ======
   // ============================================================
   
@@ -651,17 +698,13 @@
   }
 
   // ============================================================
-  // ====== GOOGLE SIGN-UP HANDLER (AUTO-COMPLETE) ======
+  // ====== GOOGLE SIGN-UP HANDLER (No reCAPTCHA required) ======
   // ============================================================
   
-  let isGoogleSignInProgress = false; // Flag to prevent auth listener from redirecting
+  let isGoogleSignInProgress = false;
   
   async function signUpWithGoogle() {
-    // Check reCAPTCHA first
-    if (!recaptchaVerified) {
-      showStatus('⚠️ Please complete the reCAPTCHA verification first.', 'error');
-      return;
-    }
+    // NO reCAPTCHA check - Google button works independently
 
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
@@ -669,7 +712,6 @@
     googleSignUpBtn.disabled = true;
     googleSignUpBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
     
-    // Set flag to prevent auth listener from redirecting
     isGoogleSignInProgress = true;
     
     try {
@@ -710,7 +752,7 @@
       let baseUsername = user.displayName || user.email?.split('@')[0] || 'user';
       const uniqueUsername = await generateUniqueUsername(baseUsername);
       
-      // Create user document immediately (no password needed for Google users)
+      // Create user document immediately
       await setDoc(doc(db, 'users', user.uid), {
         username: uniqueUsername,
         email: user.email,
@@ -718,27 +760,25 @@
         photoURL: user.photoURL || '',
         createdAt: serverTimestamp(),
         platform: platform,
-        emailVerified: true, // Google accounts are verified
+        emailVerified: true,
         authProvider: 'google',
         lastLogin: serverTimestamp()
       });
       
       showStatus('✅ Account created with Google! Username: ' + uniqueUsername, 'success');
       
-      // Clear the flag before redirecting
       isGoogleSignInProgress = false;
       
-      // Get return URL and redirect
-      let returnUrl = redirectUrl || currentPlatform.homeUrl;
-      const storedUrl = sessionStorage.getItem('returnUrl');
-      if (storedUrl && !storedUrl.includes('login') && !storedUrl.includes('signup')) {
-        returnUrl = storedUrl;
-      }
+      // Get the return URL
+      const returnUrl = getReturnUrl();
       
+      // Clear stored data
       sessionStorage.removeItem('returnUrl');
       sessionStorage.removeItem('preLoginPage');
       localStorage.removeItem('returnUrl');
       sessionStorage.removeItem('googleSignUpData');
+      
+      console.log('🔄 Redirecting to:', returnUrl);
       
       setTimeout(() => {
         window.location.href = returnUrl;
@@ -774,13 +814,13 @@
   googleSignUpBtn.addEventListener('click', signUpWithGoogle);
 
   // ============================================================
-  // ====== EMAIL SIGNUP WITH RECAPTCHA ======
+  // ====== EMAIL SIGNUP (requires reCAPTCHA) ======
   // ============================================================
   
   signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Check reCAPTCHA
+    // Check reCAPTCHA - ONLY for email signup
     if (!recaptchaVerified) {
       showStatus('⚠️ Please complete the reCAPTCHA verification.', 'error');
       return;
@@ -795,7 +835,7 @@
     buttonText.textContent = 'Creating account…';
 
     try {
-      // Check if username is taken (final check)
+      // Check if username is taken
       const usernameTaken = await isUsernameTaken(username);
       if (usernameTaken) {
         showStatus('❌ Username already taken. Please choose another.', 'error');
@@ -816,7 +856,7 @@
         return;
       }
 
-      // Regular email/password signup (requires password)
+      // Regular email/password signup
       if (!password || password.length < 6) {
         showStatus('❌ Password must be at least 6 characters.', 'error');
         signupButton.disabled = false;
@@ -866,30 +906,25 @@
   });
 
   // ============================================================
-  // ====== AUTH STATE LISTENER (FIXED) ======
+  // ====== AUTH STATE LISTENER ======
   // ============================================================
   
   onAuthStateChanged(auth, async (user) => {
-    // Skip if Google sign-in is in progress
     if (isGoogleSignInProgress) {
       console.log('⏳ Google sign-in in progress, skipping auth listener');
       return;
     }
     
     if (user) {
-      // Only redirect if user document exists
       const userDocRef = doc(db, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);
       
       if (userDoc.exists()) {
-        let returnUrl = redirectUrl || currentPlatform.homeUrl;
-        const storedUrl = sessionStorage.getItem('returnUrl');
-        if (storedUrl && !storedUrl.includes('login') && !storedUrl.includes('signup')) {
-          returnUrl = storedUrl;
-        }
+        const returnUrl = getReturnUrl();
         sessionStorage.removeItem('returnUrl');
         sessionStorage.removeItem('preLoginPage');
         localStorage.removeItem('returnUrl');
+        console.log('🔄 Auth listener redirecting to:', returnUrl);
         window.location.href = returnUrl;
       }
     }
@@ -903,6 +938,40 @@
     params.append('platform', platform);
     if (redirectUrl) params.append('redirect', redirectUrl);
     window.location.href = `universal-login.html?${params.toString()}`;
+  });
+
+  // ----- password toggle -----
+  togglePassword.addEventListener("click", () => {
+    const isPassword = passwordInput.type === "password";
+    passwordInput.type = isPassword ? "text" : "password";
+    togglePassword.classList.toggle("showing", isPassword);
+    togglePassword.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="far fa-eye"></i>';
+  });
+
+  // ----- password strength -----
+  passwordInput.addEventListener('input', () => {
+    const pwd = passwordInput.value;
+    let strength = 'weak';
+    let message = 'Weak password';
+
+    if (pwd.length >= 8) {
+      if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd) && /[0-9]/.test(pwd)) {
+        strength = 'strong';
+        message = '✅ Strong password';
+      } else if (/[a-z]/.test(pwd) && /[0-9]/.test(pwd)) {
+        strength = 'medium';
+        message = '⚠️ Medium strength';
+      } else if (pwd.length >= 10) {
+        strength = 'medium';
+        message = '⚠️ Medium strength';
+      }
+    }
+    if (pwd.length > 0) {
+      passwordStrength.textContent = message;
+      passwordStrength.className = `password-strength show ${strength}`;
+    } else {
+      passwordStrength.classList.remove('show');
+    }
   });
 
 </script>

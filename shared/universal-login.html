@@ -339,6 +339,10 @@
       .platform-badge { font-size: 0.65rem; padding: 0.3rem 1rem; }
       .recaptcha-container > div { transform: scale(0.8); }
     }
+
+    .divider {
+  display: none !important;
+}
   </style>
 </head>
 <body>
@@ -360,8 +364,8 @@
   <h2>Welcome back</h2>
   <p class="subtitle">Sign in to your account</p>
 
-  <!-- Google Sign-In Button -->
-  <button id="googleSignInBtn" class="google-btn" disabled>
+  <!-- Google Sign-In Button - Always enabled -->
+  <button id="googleSignInBtn" class="google-btn">
     <i class="fab fa-google"></i>
     <span class="google-text">Continue with Google</span>
   </button>
@@ -380,7 +384,7 @@
       <span id="toggle-password" class="password-eye"><i class="far fa-eye"></i></span>
     </div>
 
-    <!-- reCAPTCHA v2 -->
+    <!-- reCAPTCHA v2 - Only affects email/password form -->
     <div class="recaptcha-container">
       <div class="g-recaptcha" data-sitekey="6LfEe3wtAAAAACMvQc1vCwhgMtwvrH562PtKuXTU" data-callback="onRecaptchaSuccess"></div>
     </div>
@@ -414,19 +418,18 @@
   
   function onRecaptchaSuccess() {
     recaptchaVerified = true;
-    // Enable both buttons
+    // Enable ONLY the email/password login button
     const loginButton = document.getElementById('login-button');
-    const googleBtn = document.getElementById('googleSignInBtn');
     loginButton.disabled = false;
-    googleBtn.disabled = false;
+    // Google button remains enabled regardless
   }
   
   function onRecaptchaExpired() {
     recaptchaVerified = false;
+    // Disable ONLY the email/password login button
     const loginButton = document.getElementById('login-button');
-    const googleBtn = document.getElementById('googleSignInBtn');
     loginButton.disabled = true;
-    googleBtn.disabled = true;
+    // Google button remains enabled regardless
     const statusEl = document.getElementById('login-status');
     showStatus('⚠️ reCAPTCHA expired. Please verify again.', 'info');
   }
@@ -638,17 +641,13 @@
   }
 
   // ============================================================
-  // ====== FIXED GOOGLE SIGN-IN HANDLER ======
+  // ====== GOOGLE SIGN-IN HANDLER (No reCAPTCHA required) ======
   // ============================================================
   
   let isGoogleSignInProgress = false; // Flag to prevent auth listener from redirecting
   
   async function signInWithGoogle() {
-    // Check reCAPTCHA first
-    if (!recaptchaVerified) {
-      showStatus('⚠️ Please complete the reCAPTCHA verification first.', 'error');
-      return;
-    }
+    // NO reCAPTCHA check - Google button works independently
 
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
@@ -854,13 +853,13 @@
   googleSignInBtn.addEventListener('click', signInWithGoogle);
 
   // ============================================================
-  // ====== LOGIN WITH SMART REDIRECT ======
+  // ====== EMAIL LOGIN (requires reCAPTCHA) ======
   // ============================================================
   
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Check reCAPTCHA
+    // Check reCAPTCHA - this is the ONLY place it's required
     if (!recaptchaVerified) {
       showStatus('⚠️ Please complete the reCAPTCHA verification.', 'error');
       return;
