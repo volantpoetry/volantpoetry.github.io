@@ -1,4 +1,3 @@
-```javascript
 /**
  * 🔥 Auto Sitemap Generator for Volant Poetry
  *
