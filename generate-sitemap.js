@@ -20,11 +20,10 @@ const domain = 'https://volantpoetry.vercel.app';
 const publicFolder = './';
 
 // Firebase project ID.
-// Set this in GitHub Actions as FIREBASE_PROJECT_ID.
+// Add FIREBASE_PROJECT_ID to GitHub Actions Secrets/Variables.
 const firebaseProjectId =
   process.env.FIREBASE_PROJECT_ID || '';
 
-// Firestore collections containing public poems.
 const poemCollections = [
   'recentPoems'
 ];
@@ -111,23 +110,18 @@ function escapeXml(value) {
 }
 
 // ============================================================
-// STATIC URL BUILDER
+// URL BUILDER
 // ============================================================
 
 function getUrlWithHtml(filePath) {
-  let cleanPath = filePath;
-
-  cleanPath = cleanPath.replace(/^\.\//, '');
+  let cleanPath = filePath.replace(/^\.\//, '');
 
   if (cleanPath === 'index.html') {
     return '';
   }
 
   if (cleanPath.endsWith('/index.html')) {
-    return cleanPath.replace(
-      /\/index\.html$/,
-      '/'
-    );
+    return cleanPath.replace(/\/index\.html$/, '/');
   }
 
   return cleanPath;
@@ -200,13 +194,10 @@ function getStaticPages() {
       const urlPath =
         getUrlWithHtml(file);
 
-      let url;
-
-      if (urlPath === '') {
-        url = domain;
-      } else {
-        url = domain + '/' + urlPath;
-      }
+      const url =
+        urlPath === ''
+          ? domain
+          : domain + '/' + urlPath;
 
       let priority = '0.8';
       let changefreq = 'monthly';
@@ -221,7 +212,7 @@ function getStaticPages() {
         changefreq = 'daily';
       }
 
-      // Main content pages
+      // Important content
       else if (
         file === 'poems.html' ||
         file === 'submission-guidelines.html' ||
@@ -329,7 +320,7 @@ function firestoreFieldsToJs(fields) {
 }
 
 // ============================================================
-// FIRESTORE REST API
+// FETCH FIRESTORE COLLECTION
 // ============================================================
 
 async function fetchFirestoreCollection(
@@ -338,7 +329,7 @@ async function fetchFirestoreCollection(
   if (!firebaseProjectId) {
     throw new Error(
       'FIREBASE_PROJECT_ID is missing. ' +
-      'Add FIREBASE_PROJECT_ID to GitHub Actions environment variables.'
+      'Add FIREBASE_PROJECT_ID to GitHub Actions.'
     );
   }
 
@@ -361,7 +352,7 @@ async function fetchFirestoreCollection(
     }
 
     console.log(
-      '   🔎 Fetching Firestore: ' +
+      '🔎 Fetching Firestore collection: ' +
       collectionName
     );
 
@@ -397,7 +388,7 @@ async function fetchFirestoreCollection(
 }
 
 // ============================================================
-// DETERMINE WHETHER POEM IS PUBLIC
+// CHECK WHETHER POEM SHOULD BE INDEXED
 // ============================================================
 
 function isPublicPoem(data) {
@@ -405,7 +396,6 @@ function isPublicPoem(data) {
     return false;
   }
 
-  // Explicit false values
   if (data.published === false) {
     return false;
   }
@@ -426,7 +416,6 @@ function isPublicPoem(data) {
     return false;
   }
 
-  // Status checks
   const statusFields = [
     data.status,
     data.publicationStatus,
@@ -457,7 +446,7 @@ function isPublicPoem(data) {
 }
 
 // ============================================================
-// GET LAST MODIFIED DATE
+// LAST MODIFIED DATE
 // ============================================================
 
 function getLastModified(data) {
@@ -560,14 +549,11 @@ async function getFirestorePoemPages() {
         continue;
       }
 
-      const url =
-        createPoemUrl(
+      poemPages.push({
+        loc: createPoemUrl(
           collectionName,
           slug
-        );
-
-      poemPages.push({
-        loc: url,
+        ),
         lastmod: getLastModified(data),
         changefreq: 'monthly',
         priority: '0.8',
@@ -660,7 +646,7 @@ function generateRobotsTxt() {
     domain +
     '/sitemap.xml\n' +
     '\n' +
-    '# Private/admin pages\n' +
+    '# Block private/admin pages\n' +
     'Disallow: /admin/\n' +
     'Disallow: /api/\n' +
     'Disallow: /dashboard/\n' +
@@ -752,7 +738,7 @@ async function generateSitemap() {
     );
 
     // --------------------------------------------------------
-    // STATIC
+    // STATIC PAGES
     // --------------------------------------------------------
 
     const staticPages =
@@ -764,7 +750,7 @@ async function generateSitemap() {
     );
 
     // --------------------------------------------------------
-    // FIRESTORE
+    // FIRESTORE POEMS
     // --------------------------------------------------------
 
     const poemPages =
@@ -854,43 +840,8 @@ async function generateSitemap() {
       poemCount
     );
 
-    console.log(
-      'Priority 1.0: ' +
-      unique.filter(function (u) {
-        return u.priority === '1.0';
-      }).length
-    );
-
-    console.log(
-      'Priority 0.9: ' +
-      unique.filter(function (u) {
-        return u.priority === '0.9';
-      }).length
-    );
-
-    console.log(
-      'Priority 0.8: ' +
-      unique.filter(function (u) {
-        return u.priority === '0.8';
-      }).length
-    );
-
-    console.log(
-      'Priority 0.7: ' +
-      unique.filter(function (u) {
-        return u.priority === '0.7';
-      }).length
-    );
-
-    console.log(
-      'Priority 0.6: ' +
-      unique.filter(function (u) {
-        return u.priority === '0.6';
-      }).length
-    );
-
     // --------------------------------------------------------
-    // SHOW SAMPLE POEMS
+    // SAMPLE POEMS
     // --------------------------------------------------------
 
     console.log(
@@ -911,7 +862,8 @@ async function generateSitemap() {
     } else {
       samples.forEach(function (poem) {
         console.log(
-          '   ' + poem.loc
+          '   ' +
+          poem.loc
         );
       });
     }
@@ -936,4 +888,3 @@ async function generateSitemap() {
 // ============================================================
 
 generateSitemap();
-```
