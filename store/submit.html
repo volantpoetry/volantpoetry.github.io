@@ -20,6 +20,7 @@
             --text-muted: #6f6252;
             --border-light: #ede7df;
             --border-input: #d6ccc0;
+            --section-bg: #f8f5f0;
         }
 
         /* ---------- RESET & BASE ---------- */
@@ -295,6 +296,97 @@
 
         .user-badge i {
             color: var(--primary);
+        }
+
+        /* ================================================================ */
+        /* ===== SECTION DIVIDERS ===== */
+        /* ================================================================ */
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 1.5rem 0 1rem 0;
+            position: relative;
+        }
+
+        .section-divider .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, var(--border-light), transparent);
+        }
+
+        .section-divider .divider-line:first-child {
+            background: linear-gradient(to left, var(--border-light), transparent);
+        }
+
+        .section-divider .divider-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            background: var(--bg-white);
+            padding: 0 12px;
+            white-space: nowrap;
+            border: 1px solid var(--border-light);
+            border-radius: 30px;
+            padding: 0.3rem 1.2rem;
+            background: var(--section-bg);
+        }
+
+        .section-divider .divider-label i {
+            color: var(--primary);
+            font-size: 0.7rem;
+        }
+
+        .section-divider .divider-label .label-icon {
+            color: var(--primary);
+            font-size: 0.7rem;
+        }
+
+        /* Alternative: Simple divider with title */
+        .section-title-block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 1.2rem 0 0.8rem 0;
+            padding: 0.5rem 0;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .section-title-block .title-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .section-title-block h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+            letter-spacing: 0.3px;
+        }
+
+        .section-title-block .section-badge {
+            margin-left: auto;
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            background: var(--section-bg);
+            padding: 0.15rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid var(--border-light);
         }
 
         /* ---------- FORM ELEMENTS ---------- */
@@ -979,6 +1071,34 @@
             border-color: var(--primary);
         }
 
+        /* Save Profile Button - appears when changes detected */
+        #saveProfileBtn {
+            display: none;
+            background: #6a34ff;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1 1 auto;
+            justify-content: center;
+        }
+
+        #saveProfileBtn:hover {
+            background: #5428d9;
+            transform: scale(1.01);
+        }
+
+        #saveProfileBtn.show {
+            display: inline-flex !important;
+        }
+
         /* ---------- PERSISTENT SUCCESS FEEDBACK ---------- */
         #formFeedback {
             margin-top: 1rem;
@@ -1323,7 +1443,8 @@
                 gap: 0.6rem;
             }
             .btn-primary,
-            .btn-secondary {
+            .btn-secondary,
+            #saveProfileBtn {
                 width: 100%;
                 justify-content: center;
                 padding: 0.7rem 1.5rem;
@@ -1514,6 +1635,13 @@
                 font-size: 0.65rem;
                 margin-left: 24px;
             }
+            .section-divider .divider-label {
+                font-size: 0.6rem;
+                padding: 0.2rem 0.8rem;
+            }
+            .section-title-block h3 {
+                font-size: 0.85rem;
+            }
         }
 
         @media (max-width: 450px) {
@@ -1558,7 +1686,8 @@
                 min-height: 50px;
             }
             .btn-primary,
-            .btn-secondary {
+            .btn-secondary,
+            #saveProfileBtn {
                 font-size: 0.85rem;
                 padding: 0.6rem 1.2rem;
             }
@@ -1638,6 +1767,18 @@
             .legal-section .legal-subtext {
                 font-size: 0.6rem;
                 margin-left: 20px;
+            }
+            .section-divider .divider-label {
+                font-size: 0.55rem;
+                padding: 0.15rem 0.6rem;
+            }
+            .section-title-block h3 {
+                font-size: 0.8rem;
+            }
+            .section-title-block .title-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 0.7rem;
             }
         }
 
@@ -1743,6 +1884,15 @@
         <div id="formWrapper" style="display: none;">
             <form id="bookSubmissionForm" class="form-grid" enctype="multipart/form-data">
 
+                <!-- ============================================================ -->
+                <!-- SECTION 1: AUTHOR INFORMATION -->
+                <!-- ============================================================ -->
+                <div class="section-title-block">
+                    <div class="title-icon"><i class="fas fa-user-pen"></i></div>
+                    <h3>Author Information</h3>
+                    <span class="section-badge">Required</span>
+                </div>
+
                 <!-- AUTHOR NAME - Fetched from user settings -->
                 <div class="form-group">
                     <label for="authorName"><i class="fas fa-user-edit"></i> Author Name <span style="color:#b76e4b;">*</span></label>
@@ -1782,6 +1932,15 @@
                     <span class="hint">Include country code (e.g., +233 for Ghana, +44 for UK).</span>
                 </div>
 
+                <!-- ============================================================ -->
+                <!-- SECTION 2: BOOK DETAILS -->
+                <!-- ============================================================ -->
+                <div class="section-title-block">
+                    <div class="title-icon"><i class="fas fa-book-open"></i></div>
+                    <h3>Book Details</h3>
+                    <span class="section-badge">Required</span>
+                </div>
+
                 <!-- TITLE & SUBTITLE -->
                 <div class="form-row">
                     <div class="form-group" style="flex: 2;">
@@ -1818,6 +1977,15 @@
                         <label for="publishDate"><i class="fas fa-calendar-alt"></i> Publishing date <span style="color:#b76e4b;">*</span></label>
                         <input type="date" id="publishDate" required />
                     </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- SECTION 3: GENRE & LANGUAGE -->
+                <!-- ============================================================ -->
+                <div class="section-title-block">
+                    <div class="title-icon"><i class="fas fa-tags"></i></div>
+                    <h3>Genre &amp; Language</h3>
+                    <span class="section-badge">Required</span>
                 </div>
 
                 <!-- GENRE -->
@@ -1871,14 +2039,23 @@
                     <span class="hint">Select the book's primary language. If "Other", specify in the field below.</span>
                 </div>
 
-                <!-- ===== NUMBER OF PAGES (COMPULSORY) ===== -->
+                <!-- ============================================================ -->
+                <!-- SECTION 4: BOOK SPECIFICATIONS -->
+                <!-- ============================================================ -->
+                <div class="section-title-block">
+                    <div class="title-icon"><i class="fas fa-sliders-h"></i></div>
+                    <h3>Book Specifications</h3>
+                    <span class="section-badge">Required</span>
+                </div>
+
+                <!-- NUMBER OF PAGES -->
                 <div class="form-group">
                     <label for="pageCount"><i class="fas fa-file-alt"></i> Number of Pages <span style="color:#b76e4b;">*</span></label>
                     <input type="number" id="pageCount" placeholder="e.g. 320" min="1" required />
                     <span class="hint">Total number of pages in the book.</span>
                 </div>
 
-                <!-- ===== DOWNLOADS SECTION ===== -->
+                <!-- DOWNLOADS SECTION -->
                 <div class="downloads-group">
                     <div class="downloads-title">
                         <i class="fas fa-download"></i> Number of Downloads <span style="color:#b76e4b;">*</span>
@@ -1905,10 +2082,18 @@
                     </div>
                 </div>
 
-                <!-- ===== PRICING SECTION ===== -->
+                <!-- ============================================================ -->
+                <!-- SECTION 5: PRICING -->
+                <!-- ============================================================ -->
+                <div class="section-title-block">
+                    <div class="title-icon"><i class="fas fa-coins"></i></div>
+                    <h3>Pricing</h3>
+                    <span class="section-badge">Required</span>
+                </div>
+
                 <div class="pricing-group">
                     <div class="pricing-title">
-                        <i class="fas fa-tag"></i> Pricing <span style="color:#b76e4b;">*</span>
+                        <i class="fas fa-tag"></i> Set Your Price
                     </div>
                     <div class="pricing-row">
                         <div class="form-group">
@@ -1961,6 +2146,15 @@
                     </div>
                 </div>
 
+                <!-- ============================================================ -->
+                <!-- SECTION 6: KEYWORDS & FILES -->
+                <!-- ============================================================ -->
+                <div class="section-title-block">
+                    <div class="title-icon"><i class="fas fa-key"></i></div>
+                    <h3>Keywords &amp; Files</h3>
+                    <span class="section-badge">Required</span>
+                </div>
+
                 <!-- KEYWORDS -->
                 <div class="form-group">
                     <label for="keywordInput"><i class="fas fa-hashtag"></i> Keywords <span style="color:#b76e4b;">*</span></label>
@@ -1974,51 +2168,6 @@
                         <span class="count-required">(minimum 3, maximum 5)</span>
                     </div>
                     <span class="hint">Add at least 3 and up to 5 keywords to help readers find your book.</span>
-                </div>
-
-                <!-- ===== PRE-ORDER COMING SOON NOTICE ===== -->
-                <div style="background: #fef3e2; border: 1px solid #f5cba7; border-radius: 12px; padding: 0.8rem 1.2rem; margin-bottom: 1rem;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-clock" style="color: #b76e4b; font-size: 1.1rem;"></i>
-                        <div>
-                            <p style="margin: 0; font-weight: 600; color: #7a4a2a; font-size: 0.9rem;">
-                                📅 Pre-orders Coming Soon
-                            </p>
-                            <p style="margin: 0; font-size: 0.8rem; color: #8a6a4a;">
-                                We're working on allowing pre-orders for books. Stay tuned!
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ===== PRE-ORDER SECTION ===== -->
-                <div class="form-group">
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="preorderCheckbox" />
-                        <label for="preorderCheckbox"><i class="fas fa-clock"></i> Mark as pre-order</label>
-                    </div>
-                    <span class="hint">Check if the book is available for pre-order.</span>
-                </div>
-
-                <!-- Pre-order Fields -->
-                <div id="preorderFields" class="preorder-fields">
-                    <div class="form-group">
-                        <label for="preorderReleaseDate"><i class="fas fa-calendar-day"></i> Release Date <span style="color:#b76e4b;">*</span></label>
-                        <input type="date" id="preorderReleaseDate" />
-                        <span class="hint">The date when the book will be available for download.</span>
-                    </div>
-                    <div class="preorder-price-input">
-                        <div class="form-group">
-                            <label for="preorderPrice"><i class="fas fa-tag"></i> Pre-order Price</label>
-                            <input type="number" id="preorderPrice" placeholder="0.00" step="0.01" min="0" />
-                            <span class="hint">Leave empty to use the regular price.</span>
-                        </div>
-                        <div class="form-group">
-                            <label for="originalPrice"><i class="fas fa-tag"></i> Original Price (for display)</label>
-                            <input type="number" id="originalPrice" placeholder="0.00" step="0.01" min="0" />
-                            <span class="hint">Show original price crossed out next to pre-order price.</span>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- PDF UPLOAD -->
@@ -2050,6 +2199,59 @@
                     <span class="hint">Mention anything else that might be relevant (e.g., cover artist, translator).</span>
                 </div>
 
+                <!-- ============================================================ -->
+                <!-- SECTION 7: PRE-ORDER (HIDDEN) -->
+                <!-- ============================================================ -->
+                <div class="section-title-block" style="display:none;">
+                    <div class="title-icon"><i class="fas fa-clock"></i></div>
+                    <h3>Pre-Order (Coming Soon)</h3>
+                    <span class="section-badge">Optional</span>
+                </div>
+
+                <!-- PRE-ORDER COMING SOON NOTICE -->
+                <div style="background: #fef3e2; border: 1px solid #f5cba7; border-radius: 12px; padding: 0.8rem 1.2rem; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-clock" style="color: #b76e4b; font-size: 1.1rem;"></i>
+                        <div>
+                            <p style="margin: 0; font-weight: 600; color: #7a4a2a; font-size: 0.9rem;">
+                                📅 Pre-orders Coming Soon
+                            </p>
+                            <p style="margin: 0; font-size: 0.8rem; color: #8a6a4a;">
+                                We're working on allowing pre-orders for books. Stay tuned!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRE-ORDER SECTION (HIDDEN) -->
+                <div class="form-group" style="display:none;">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="preorderCheckbox" />
+                        <label for="preorderCheckbox"><i class="fas fa-clock"></i> Mark as pre-order</label>
+                    </div>
+                    <span class="hint">Check if the book is available for pre-order.</span>
+                </div>
+
+                <div id="preorderFields" class="preorder-fields" style="display:none;">
+                    <div class="form-group">
+                        <label for="preorderReleaseDate"><i class="fas fa-calendar-day"></i> Release Date <span style="color:#b76e4b;">*</span></label>
+                        <input type="date" id="preorderReleaseDate" />
+                        <span class="hint">The date when the book will be available for download.</span>
+                    </div>
+                    <div class="preorder-price-input">
+                        <div class="form-group">
+                            <label for="preorderPrice"><i class="fas fa-tag"></i> Pre-order Price</label>
+                            <input type="number" id="preorderPrice" placeholder="0.00" step="0.01" min="0" />
+                            <span class="hint">Leave empty to use the regular price.</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="originalPrice"><i class="fas fa-tag"></i> Original Price (for display)</label>
+                            <input type="number" id="originalPrice" placeholder="0.00" step="0.01" min="0" />
+                            <span class="hint">Show original price crossed out next to pre-order price.</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- UPLOAD PROGRESS -->
                 <div id="uploadProgress" class="upload-progress">
                     <div class="progress-status" id="progressStatus">Preparing upload...</div>
@@ -2073,8 +2275,14 @@
                 <hr class="divider" />
 
                 <!-- ============================================================ -->
-                <!-- ===== RIGHTS DECLARATION & TERMS ===== -->
+                <!-- SECTION 8: RIGHTS & TERMS -->
                 <!-- ============================================================ -->
+                <div class="section-title-block">
+                    <div class="title-icon"><i class="fas fa-gavel"></i></div>
+                    <h3>Rights &amp; Terms</h3>
+                    <span class="section-badge">Required</span>
+                </div>
+
                 <div class="legal-section">
                     <div class="legal-item">
                         <div class="checkbox-group">
@@ -2107,6 +2315,9 @@
 
                 <div class="form-actions">
                     <button type="submit" class="btn-primary" id="submitBookBtn"><i class="fas fa-cloud-upload-alt"></i> Submit to Volant Reads</button>
+                    <button type="button" class="btn-secondary" id="saveProfileBtn" style="background:#6a34ff; color:white; border:none; display:none;">
+                        <i class="fas fa-save"></i> Save Profile
+                    </button>
                     <button type="reset" class="btn-secondary"><i class="fas fa-undo-alt"></i> Reset form</button>
                 </div>
 
@@ -2128,7 +2339,7 @@
     <script type="module">
         import { initializeApp } from "firebase/app";
         import {
-            getFirestore, collection, addDoc, serverTimestamp, doc, getDoc
+            getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, updateDoc
         } from "firebase/firestore";
         import {
             getAuth, onAuthStateChanged
@@ -2243,6 +2454,8 @@
         const publisherNameInput = document.getElementById('publisherName');
         const phoneNumberInput = document.getElementById('phoneNumber');
         const pageCountInput = document.getElementById('pageCount');
+        const authorBioInput = document.getElementById('authorBio');
+        const saveProfileBtn = document.getElementById('saveProfileBtn');
 
         // ===== PRE-ORDER DOM REFS =====
         const preorderCheckbox = document.getElementById('preorderCheckbox');
@@ -2274,6 +2487,14 @@
         let currentUser = null;
         let currentUsername = '';
         let selectedCountry = '';
+
+        // ===== ORIGINAL VALUES FOR CHANGE DETECTION =====
+        let originalAuthorName = '';
+        let originalAuthorBio = '';
+        let originalAuthorEmail = '';
+        let originalPublisherName = '';
+        let originalPhoneNumber = '';
+        let originalCountry = '';
 
         const MAX_PDF_SIZE = 15 * 1024 * 1024;
         const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
@@ -2816,6 +3037,135 @@
         }
 
         // ================================================================
+        // ===== CHANGE DETECTION =====
+        // ================================================================
+
+        function checkForChanges() {
+            const currentAuthorName = authorNameInput.value.trim();
+            const currentAuthorBio = authorBioInput.value.trim();
+            const currentAuthorEmail = authorEmailInput.value.trim();
+            const currentPublisherName = publisherNameInput.value.trim();
+            const currentPhoneNumber = phoneNumberInput.value.trim();
+            const currentCountry = countryHidden.value.trim();
+
+            const hasChanges = 
+                currentAuthorName !== originalAuthorName ||
+                currentAuthorBio !== originalAuthorBio ||
+                currentAuthorEmail !== originalAuthorEmail ||
+                currentPublisherName !== originalPublisherName ||
+                currentPhoneNumber !== originalPhoneNumber ||
+                currentCountry !== originalCountry;
+
+            if (hasChanges) {
+                saveProfileBtn.classList.add('show');
+                saveProfileBtn.style.display = 'inline-flex';
+            } else {
+                saveProfileBtn.classList.remove('show');
+                saveProfileBtn.style.display = 'none';
+            }
+
+            return hasChanges;
+        }
+
+        // ================================================================
+        // ===== SAVE PROFILE =====
+        // ================================================================
+
+        async function saveProfile() {
+            if (!currentUser) {
+                showToast('❌ Please sign in first.', 'error');
+                return;
+            }
+
+            const authorName = authorNameInput.value.trim();
+            const authorBio = authorBioInput.value.trim();
+            const email = authorEmailInput.value.trim();
+            const phone = phoneNumberInput.value.trim();
+            const country = countryHidden.value.trim();
+            const publisher = publisherNameInput.value.trim();
+
+            if (!authorName) {
+                showFeedback('❌ Author name is required.', 'error');
+                authorNameInput.focus();
+                return;
+            }
+
+            if (!authorBio) {
+                showFeedback('❌ Author bio is required.', 'error');
+                authorBioInput.focus();
+                return;
+            }
+
+            if (!email || !email.includes('@')) {
+                showFeedback('❌ Valid email is required.', 'error');
+                authorEmailInput.focus();
+                return;
+            }
+
+            if (!phone) {
+                showFeedback('❌ Phone number is required.', 'error');
+                phoneNumberInput.focus();
+                return;
+            }
+
+            if (!country) {
+                showFeedback('❌ Please select your country.', 'error');
+                countryInput.focus();
+                return;
+            }
+
+            const saveBtn = saveProfileBtn;
+            const origText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+
+            try {
+                const updateData = {
+                    authorName: authorName,
+                    authorBio: authorBio,
+                    gmail: email,
+                    phoneNumber: phone,
+                    country: country,
+                    publisherName: publisher || '',
+                    updatedAt: new Date().toISOString()
+                };
+
+                await updateDoc(doc(db, "users", currentUser.uid), updateData);
+
+                // Update original values to match current
+                originalAuthorName = authorName;
+                originalAuthorBio = authorBio;
+                originalAuthorEmail = email;
+                originalPublisherName = publisher;
+                originalPhoneNumber = phone;
+                originalCountry = country;
+
+                // Hide the save button
+                saveProfileBtn.classList.remove('show');
+                saveProfileBtn.style.display = 'none';
+
+                showToast('✅ Profile settings saved successfully!', 'success');
+                showFeedback('✅ Your author profile has been updated.', 'success');
+
+                // Update the user display name
+                currentUsername = authorName;
+                userNameDisplay.textContent = authorName;
+
+                setTimeout(() => {
+                    if (feedback.classList.contains('success')) {
+                        feedback.style.display = 'none';
+                    }
+                }, 3000);
+
+            } catch (err) {
+                showFeedback('❌ Error saving profile: ' + err.message, 'error');
+            } finally {
+                saveBtn.innerHTML = origText;
+                saveBtn.disabled = false;
+            }
+        }
+
+        // ================================================================
         // ===== LOAD USER SETTINGS =====
         // ================================================================
 
@@ -2825,16 +3175,27 @@
                 if (userDoc.exists()) {
                     const data = userDoc.data();
                     
-                    // Author Name - from username or displayName
-                    const authorName = data.username || data.displayName || data.authorName || '';
+                    // Author Name - from authorName field, fallback to username/displayName
+                    const authorName = data.authorName || data.username || data.displayName || '';
                     if (authorName) {
                         authorNameInput.value = authorName;
+                        originalAuthorName = authorName;
                         console.log('✅ Author name loaded:', authorName);
                     }
                     
-                    // Email - from user email
-                    if (data.email || currentUser?.email) {
-                        authorEmailInput.value = data.email || currentUser?.email || '';
+                    // Author Bio - from authorBio field
+                    const authorBio = data.authorBio || '';
+                    if (authorBio) {
+                        authorBioInput.value = authorBio;
+                        originalAuthorBio = authorBio;
+                        console.log('✅ Author bio loaded:', authorBio.substring(0, 50) + '...');
+                    }
+                    
+                    // Email - from gmail field, fallback to email
+                    const email = data.gmail || data.email || currentUser?.email || '';
+                    if (email) {
+                        authorEmailInput.value = email;
+                        originalAuthorEmail = email;
                         console.log('✅ Email loaded:', authorEmailInput.value);
                     }
                     
@@ -2843,28 +3204,36 @@
                         selectedCountry = data.country;
                         countryInput.value = data.country;
                         countryHidden.value = data.country;
+                        originalCountry = data.country;
                         console.log('✅ Country loaded:', data.country);
                     }
                     
                     // Phone Number
                     if (data.phoneNumber) {
                         phoneNumberInput.value = data.phoneNumber;
+                        originalPhoneNumber = data.phoneNumber;
                         console.log('✅ Phone number loaded:', data.phoneNumber);
                     }
                     
                     // Publisher Name
                     if (data.publisherName) {
                         publisherNameInput.value = data.publisherName;
+                        originalPublisherName = data.publisherName;
                         console.log('✅ Publisher name loaded:', data.publisherName);
                     }
+
+                    // Check for changes after loading
+                    setTimeout(checkForChanges, 100);
                 }
             } catch (err) {
                 console.warn('Error loading user settings:', err);
                 // Fallback: use auth user info
                 if (currentUser) {
                     authorEmailInput.value = currentUser.email || '';
+                    originalAuthorEmail = currentUser.email || '';
                     if (currentUser.displayName) {
                         authorNameInput.value = currentUser.displayName;
+                        originalAuthorName = currentUser.displayName;
                     }
                 }
             }
@@ -2966,6 +3335,9 @@
             if (draft.priceAmount && parseFloat(draft.priceAmount) > 0) {
                 setTimeout(() => { updateCurrencyConverter(); }, 300);
             }
+            
+            // Check for changes after loading draft
+            setTimeout(checkForChanges, 100);
         }
 
         function discardDraft() {
@@ -2990,8 +3362,18 @@
         function setupAutoSave() {
             const inputs = form.querySelectorAll('input, textarea, select');
             inputs.forEach(el => {
-                el.addEventListener('change', () => { if (currentUser) saveDraft(); });
-                el.addEventListener('input', () => { if (currentUser) saveDraft(); });
+                el.addEventListener('change', () => { 
+                    if (currentUser) {
+                        saveDraft();
+                        checkForChanges();
+                    }
+                });
+                el.addEventListener('input', () => { 
+                    if (currentUser) {
+                        saveDraft();
+                        checkForChanges();
+                    }
+                });
             });
             const origUpdateUI = updateKeywordUI;
             updateKeywordUI = function() {
@@ -3040,6 +3422,12 @@
             
             return result.hasAccount;
         }
+
+        // ================================================================
+        // ===== SAVE PROFILE BUTTON EVENT =====
+        // ================================================================
+        
+        saveProfileBtn.addEventListener('click', saveProfile);
 
         // --- Auth ---
         onAuthStateChanged(auth, async (user) => {
@@ -3238,38 +3626,37 @@
                 const finalGenre = genre === 'Other' ? genreOtherInput.value.trim() : genre;
                 const finalLanguage = language === 'Other' ? languageOtherInput.value.trim() : language;
 
-                const bookData = {
-                    authorName,
-                    publisherName: publisherName || authorName,
-                    authorEmail,
-                    title,
-                    subtitle: subtitle || null,
-                    authorBio,
-                    synopsis,
-                    isbn: isbn || null,
-                    publishDate,
-                    genre: finalGenre,
-                    language: finalLanguage,
-                    country,
-                    phoneNumber,
-                    pageCount,
-                    downloads: 0,
-                    downloadLimit: downloadsValue,
-                    keywords,
-                    ...preorderData,
-                    otherDetails: otherDetails || null,
-                    imageUrl,
-                    pdfUrl,
-                    pricing: { currency, amount: parseFloat(price) },
-                    submittedBy: currentUser.uid,
-                    submittedByUsername: currentUsername,
-                    status: 'pending',
-                    rightsDeclared: true,
-                    termsAgreed: true,
-                    submittedAt: serverTimestamp(),
-                    updatedAt: serverTimestamp()
-                };
-
+               const bookData = {
+    authorName,
+    publisherName: publisherName || authorName,
+    email: authorEmail,                   
+    title,
+    subtitle: subtitle || null,
+    authorBio,
+    synopsis,
+    isbn: isbn || null,
+    publishDate,
+    genre: finalGenre,
+    language: finalLanguage,
+    country,
+    phoneNumber,                          
+    pageCount,
+    downloads: 0,
+    downloadLimit: downloadsValue,
+    keywords,
+    ...preorderData,
+    otherDetails: otherDetails || null,
+    imageUrl,
+    pdfUrl,
+    pricing: { currency, amount: parseFloat(price) },
+    submittedBy: currentUser.uid,
+    submittedByUsername: currentUsername,
+    status: 'pending',
+    rightsDeclared: true,
+    termsAgreed: true,
+    submittedAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+};
                 await addDoc(collection(db, "books"), bookData);
                 
                 discardDraft();
@@ -3361,6 +3748,9 @@
             originalPrice.value = '';
             rightsDeclaration.checked = false;
             termsAgreement.checked = false;
+            // Hide save profile button on reset
+            saveProfileBtn.classList.remove('show');
+            saveProfileBtn.style.display = 'none';
             // Reload user settings after reset
             if (currentUser) {
                 loadUserSettings(currentUser.uid);

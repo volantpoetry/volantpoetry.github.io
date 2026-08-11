@@ -225,6 +225,18 @@
             font-size: 1rem;
             margin: 4px 0;
         }
+        .book-card .info .publisher {
+            color: #8a7b6a;
+            font-size: 0.85rem;
+            margin: 2px 0 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .book-card .info .publisher i {
+            color: #b76e4b;
+            font-size: 0.75rem;
+        }
         .book-card .info .contact-info {
             display: flex;
             flex-wrap: wrap;
@@ -1982,6 +1994,11 @@ Volant Reads Team
         const statusClass = book.status === 'pending' ? 'pending' : book.status === 'approved' ? 'approved' : 'rejected';
         const statusDisplay = book.status ? book.status.charAt(0).toUpperCase() + book.status.slice(1) : 'Unknown';
         
+        // Check if publisher exists and is different from author name
+        const publisherDisplay = book.publisherName && book.publisherName !== book.authorName 
+            ? book.publisherName 
+            : null;
+        
         return `
             <div class="book-card" data-id="${book.id}">
                 <div class="cover" onclick="openImageModal('${imageUrl || ''}', '${safeTitle}')">
@@ -1994,6 +2011,11 @@ Volant Reads Team
                 <div class="info">
                     <div class="title">${safeTitle}</div>
                     <div class="author">by ${book.authorName || 'Anonymous'}</div>
+                    ${publisherDisplay ? `
+                        <div class="publisher">
+                            <i class="fas fa-building"></i> Published by: ${publisherDisplay}
+                        </div>
+                    ` : ''}
                     <div style="margin: 4px 0;">
                         <span class="status-badge ${statusClass}">${statusDisplay}</span>
                     </div>

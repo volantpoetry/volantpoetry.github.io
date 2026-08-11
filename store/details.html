@@ -353,6 +353,23 @@
     .book-details .book-info .author i {
       display: none !important;
     }
+    /* ===== PUBLISHER STYLES ===== */
+    .book-details .book-info .publisher {
+      font-size: 1rem;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: -0.2rem;
+    }
+    .book-details .book-info .publisher i {
+      color: var(--secondary);
+      font-size: 0.85rem;
+    }
+    .book-details .book-info .publisher .publisher-name {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
     .book-details .book-info .price {
       font-size: 2.2rem;
       font-weight: 700;
@@ -1640,6 +1657,7 @@
       .book-details .book-info .title { font-size: 1.8rem; text-align: center; }
       .book-details .book-info .subtitle { font-size: 1rem; text-align: center; }
       .book-details .book-info .author { font-size: 1rem; text-align: center; justify-content: center; }
+      .book-details .book-info .publisher { font-size: 0.9rem; text-align: center; justify-content: center; }
       .book-details .book-info .price { font-size: 1.8rem; text-align: center; margin: 0.2rem 0; }
       .book-details .book-info .badges { justify-content: center; }
       .book-details .book-sidebar { grid-template-columns: 1fr; gap: 1rem; margin-top: 0.5rem; padding-top: 0.8rem; }
@@ -1690,6 +1708,7 @@
       .book-details .book-info .title { font-size: 1.3rem; }
       .book-details .book-info .subtitle { font-size: 0.9rem; }
       .book-details .book-info .author { font-size: 0.9rem; }
+      .book-details .book-info .publisher { font-size: 0.8rem; }
       .book-details .book-info .price { font-size: 1.3rem; }
       .book-details .book-info .badges .badge { font-size: 0.6rem; padding: 0.15rem 0.6rem; }
       .book-details .book-sidebar .sidebar-section { padding: 0.7rem 0.9rem; }
@@ -2273,6 +2292,11 @@ function goToLogin() {
             <div class="title" id="bookTitle">Book Title</div>
             <div class="subtitle" id="bookSubtitle"></div>
             <div class="author" id="bookAuthor">Author Name</div>
+            <!-- ===== PUBLISHER DISPLAY ===== -->
+            <div class="publisher" id="bookPublisher" style="display:none;">
+              <i class="fas fa-building"></i>
+              <span class="publisher-name" id="bookPublisherName"></span>
+            </div>
             <div class="price" id="bookPrice">GHS 0.00</div>
             <div class="badges" id="bookBadges"></div>
           </div>
@@ -2445,6 +2469,8 @@ function goToLogin() {
     const bookTitle = document.getElementById('bookTitle');
     const bookSubtitle = document.getElementById('bookSubtitle');
     const bookAuthor = document.getElementById('bookAuthor');
+    const bookPublisher = document.getElementById('bookPublisher');
+    const bookPublisherName = document.getElementById('bookPublisherName');
     const bookPrice = document.getElementById('bookPrice');
     const bookBadges = document.getElementById('bookBadges');
     const bookSynopsis = document.getElementById('bookSynopsis');
@@ -4221,6 +4247,17 @@ function goToLogin() {
       bookTitle.textContent = book.title || 'Untitled';
       if (book.subtitle && book.subtitle.trim() !== '') { bookSubtitle.textContent = book.subtitle; bookSubtitle.style.display = 'block'; } else { bookSubtitle.style.display = 'none'; }
       bookAuthor.textContent = book.authorName || 'Anonymous';
+      
+      // ===== DISPLAY PUBLISHER (ONLY IF EXISTS AND DIFFERENT FROM AUTHOR) =====
+      const publisherName = book.publisherName || '';
+      const authorName = book.authorName || '';
+      if (publisherName && publisherName.trim() !== '' && publisherName.trim() !== authorName.trim()) {
+        bookPublisherName.textContent = publisherName;
+        bookPublisher.style.display = 'flex';
+      } else {
+        bookPublisher.style.display = 'none';
+      }
+
       const currency = book.pricing?.currency || 'GHS';
       const amount = book.pricing?.amount || 0;
       bookPrice.innerHTML = `${currency} ${amount.toFixed(2)}`;
