@@ -8,6 +8,9 @@
 <link rel="icon" type="image/png" href="images/volant-favicon.png">
 <link rel="apple-touch-icon" href="images/volant-favicon.png">
 
+<!-- Google Fonts: Garamond (EB Garamond) -->
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+
 <style>
 body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135deg,#fdf6f0,#e2e9f0,#f7f0e5,#e8e0d8); background-size:400% 400%; animation:gradientShift 15s ease infinite; color:#4b3f2f; }
 @keyframes gradientShift { 0% { background-position:0% 50%; } 50% { background-position:100% 50%; } 100% { background-position:0% 50%; } }
@@ -18,25 +21,34 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
 .author-line img { width:50px; height:50px; border-radius:50%; object-fit:cover; }
 .author-line a { font-weight:700; color:#B8860B; text-decoration:none; }
 
-#poem-title {   font-family: 'Playfair Display', serif;
+/* ===== GARAMOND FONT FOR POEM TITLE ===== */
+#poem-title {
+  font-family: 'EB Garamond', 'Georgia', serif;
   color: #4b2aad;
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  margin-bottom: 6px; }
-.poem-content {  white-space: pre-line;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+/* ===== GARAMOND FONT FOR POEM CONTENT ===== */
+.poem-content {
+  white-space: pre-line;
   margin-bottom: 10px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  color: #4b3f2f;
-  line-height: 1.6;
-   padding-left: 10px;  
-  
-  }
+  font-family: 'EB Garamond', 'Georgia', serif;
+  font-size: 1.2rem;
+  color: #3d352a;
+  line-height: 1.5;
+  padding-left: 10px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
 .interactive-section { display:none; flex-direction:column; gap:6px; }
 .poem-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:6px; }
 .comment-section { flex:1; display:flex; gap:6px; }
-.comment-input { flex:1; border-radius:8px; border:1px solid #ccc; padding:6px 10px; }
-.comment-btn, .like-btn { border:none; border-radius:8px; padding:6px 12px; background:#4b3f2f; color:#fff; cursor:pointer; }
+.comment-input { flex:1; border-radius:8px; border:1px solid #ccc; padding:6px 10px; font-family:'Inter',sans-serif; }
+.comment-btn, .like-btn { border:none; border-radius:8px; padding:6px 12px; background:#4b3f2f; color:#fff; cursor:pointer; font-family:'Inter',sans-serif; }
 .like-btn.liked { background:#e63946; }
 /* Comment list styles - external container that toggles */
 .comments-outer-wrapper {
@@ -52,7 +64,7 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
   margin-top:12px;
 }
 .comment { background:#f4ede7; border-radius:8px; padding:8px; }
-.home-link { position:absolute; top:20px; right:20px; font-weight:600; color:#e63946; text-decoration:none; font-size:1rem; transition:color 0.3s; z-index:1000; }
+.home-link { position:absolute; top:20px; right:20px; font-weight:600; color:#e63946; text-decoration:none; font-size:1rem; transition:color 0.3s; z-index:1000; font-family:'Inter',sans-serif; }
 .home-link:hover { color:#e63946; }
 
 /* 🔽 Small screens only */
@@ -65,9 +77,53 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
   .comments-outer-wrapper {
     padding:0 16px 40px 16px;
   }
+  #poem-title {
+    font-size: 1.4rem;
+  }
+  .poem-content {
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
 }
 .message-count {
   cursor: pointer;
+}
+
+/* ===== WELCOME BANNER ===== */
+.welcome-banner {
+  display: none;
+  background: linear-gradient(135deg, #d4edda, #b7dfc9);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 12px;
+  border-left: 4px solid #2d7d46;
+  color: #155724;
+  font-weight: 500;
+  font-size: 0.95rem;
+  animation: slideDown 0.5s ease;
+}
+.welcome-banner.show {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.welcome-banner i {
+  font-size: 1.2rem;
+  color: #2d7d46;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== SIGNED-IN STATE ===== */
+.comment-section .comment-input:focus {
+  border-color: #4b2aad;
+  box-shadow: 0 0 0 3px rgba(75, 42, 173, 0.1);
+}
+.comment-section .comment-input.signed-in {
+  border-color: #4b2aad;
+  background: #faf8ff;
 }
 </style>
 </head>
@@ -82,19 +138,24 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
     </div>
 
     <h2 id="poem-title"></h2>
-    <p id="poem-content"></p>
+    <p id="poem-content" class="poem-content"></p>
 
     <div class="interactive-section">
+      <!-- ===== WELCOME BANNER ===== -->
+      <div class="welcome-banner" id="welcomeBanner">
+        <i class="fas fa-check-circle"></i>
+        <span id="welcomeMessage">You're signed in! ✨ Now you can like, comment, and reply.</span>
+      </div>
+
       <div class="poem-actions">
         <div class="comment-section">
-          <input class="comment-input" placeholder="Write a comment...">
-          <button class="comment-btn">Post</button>
+          <input class="comment-input" id="commentInput" placeholder="Write a comment...">
+          <button class="comment-btn" id="commentBtn">Post</button>
         </div>
         <button class="like-btn">❤️</button>
         <span class="like-count">0</span>
         <span class="message-count" id="messageCountTrigger">💬</span>
       </div>
-      <!-- comment-list removed from here - moved outside poem card below -->
     </div>
   </div>
 </section>
@@ -121,8 +182,12 @@ const slug = params.get("slug");
 const collectionName = params.get("collection") || "recentPoems";
 
 let currentUser = null;
-let currentPoemId = null; // store current poem doc id for comment operations
-let commentsLoadedForPoem = false; // track if comments have been loaded at least once for current poem
+let currentPoemId = null;
+let commentsLoadedForPoem = false;
+let isFirstLoad = true;
+
+// ===== SAVED COMMENT KEY =====
+const SAVED_COMMENT_KEY = 'volant_saved_comment';
 
 const titleEl = document.getElementById("poem-title");
 const contentEl = document.getElementById("poem-content");
@@ -133,32 +198,86 @@ const interactiveSection = poemCard.querySelector(".interactive-section");
 const commentsOuterWrapper = document.getElementById("commentsOuterWrapper");
 const externalCommentList = document.getElementById("externalCommentList");
 const messageCountTrigger = document.getElementById("messageCountTrigger");
+const welcomeBanner = document.getElementById("welcomeBanner");
+const welcomeMessage = document.getElementById("welcomeMessage");
+const commentInput = document.getElementById("commentInput");
+const commentBtn = document.getElementById("commentBtn");
 
 // Helper function to redirect to login page with return URL
-function redirectToLogin() {
+function redirectToLogin(saveComment = false) {
   const currentUrl = encodeURIComponent(window.location.href);
-  window.location.href = `universal-login.html?platform=poetry&redirect=${currentUrl}`;
+  const loginUrl = `universal-login.html?platform=poetry&redirect=${currentUrl}`;
+  
+  // If there's a comment, save it to localStorage first
+  if (saveComment) {
+    const comment = commentInput.value.trim();
+    if (comment) {
+      localStorage.setItem(SAVED_COMMENT_KEY, comment);
+      console.log('💾 Comment saved to localStorage:', comment);
+    }
+  }
+  
+  window.location.href = loginUrl;
 }
 
 // Custom alert that redirects on OK
 function showLoginAlertAndRedirect(message) {
-  if (confirm(message + "\n\nClick OK to sign in.")) {
-    redirectToLogin();
+  if (confirm(message + "\n\nClick OK to sign in. Your comment will be saved.")) {
+    redirectToLogin(true);
   }
 }
 
-onAuthStateChanged(auth, user => { currentUser = user; if(slug) loadPoem(slug); });
+// Check if user just signed in
+function checkJustSignedIn() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const justSignedIn = urlParams.get('signedIn') === 'true' || 
+                        sessionStorage.getItem('justSignedIn') === 'true';
+  if (justSignedIn) {
+    sessionStorage.removeItem('justSignedIn');
+    if (urlParams.has('signedIn')) {
+      urlParams.delete('signedIn');
+      const newUrl = window.location.pathname + '?' + urlParams.toString() + window.location.hash;
+      window.history.replaceState({}, '', newUrl);
+    }
+    return true;
+  }
+  return false;
+}
+
+// Check for saved comment from localStorage (silently restore)
+function checkSavedComment() {
+  const savedComment = localStorage.getItem(SAVED_COMMENT_KEY);
+  if (savedComment) {
+    commentInput.value = savedComment;
+    return true;
+  }
+  return false;
+}
+
+// Clear saved comment after posting
+function clearSavedComment() {
+  localStorage.removeItem(SAVED_COMMENT_KEY);
+  commentInput.value = '';
+}
+
+onAuthStateChanged(auth, user => { 
+  const previousUser = currentUser;
+  currentUser = user; 
+  
+  const justSignedIn = (previousUser === null && user !== null) || checkJustSignedIn();
+  
+  if(slug) loadPoem(slug, justSignedIn); 
+});
 
 function slugify(text){ return text.toLowerCase().replace(/\s+/g,"-"); }
 
-// Helper: render comments in the external container (below poem card)
+// Helper: render comments
 async function renderCommentsExternal(poemDocId, preserveVisibility = false) {
   if (!poemDocId) return;
   
   try {
     const commentsSnapshot = await getDocs(collection(db, "recentPoems", poemDocId, "comments"));
     const commentCount = commentsSnapshot.size;
-    // Update the message count bubble in the poem card
     const messageCountSpan = poemCard.querySelector(".message-count");
     if (messageCountSpan) messageCountSpan.textContent = `💬 ${commentCount}`;
     
@@ -184,7 +303,6 @@ async function renderCommentsExternal(poemDocId, preserveVisibility = false) {
         <div class="reply-section" style="margin-left:20px;margin-top:6px;"></div>`;
       externalCommentList.appendChild(div);
       
-      // Load replies for this comment
       const repliesCol = collection(db, "recentPoems", poemDocId, "comments", c.id, "replies");
       const repliesSnap = await getDocs(repliesCol);
       if (!repliesSnap.empty) {
@@ -197,7 +315,6 @@ async function renderCommentsExternal(poemDocId, preserveVisibility = false) {
       }
     }
     
-    // Attach reply toggle listeners after rendering
     document.querySelectorAll('.reply-toggle').forEach(toggle => {
       toggle.removeEventListener('click', handleReplyClick);
       toggle.addEventListener('click', handleReplyClick);
@@ -237,10 +354,8 @@ async function handleReplyClick(e) {
       timestamp: new Date()
     });
     
-    // Re-render comments to show new reply (preserve current visibility state)
     const wasVisible = commentsOuterWrapper.style.display === "block";
     await renderCommentsExternal(currentPoemId);
-    // Keep visibility as is after reply
     if (wasVisible) {
       commentsOuterWrapper.style.display = "block";
     } else {
@@ -262,7 +377,7 @@ function escapeHtml(str) {
   });
 }
 
-async function loadPoem(slug){
+async function loadPoem(slug, justSignedIn = false){
   const snapshot = await getDocs(collection(db, collectionName));
   for(const snap of snapshot.docs){
     const data = snap.data();
@@ -271,7 +386,6 @@ async function loadPoem(slug){
       titleEl.textContent = data.title;
       contentEl.innerHTML = data.content.replace(/\n/g,"<br>");
 
-      // Author info
       const poetUid = data.authorId || "";
       let displayName = data.author || "Anonymous";
       let profileLink = "#";
@@ -291,29 +405,70 @@ async function loadPoem(slug){
       authorLinkEl.href = profileLink;
       authorLinkEl.textContent = displayName;
 
-      // Show interactive only for recent poems that are not featured
       if(collectionName==="recentPoems" && !data.isFeatured){
         interactiveSection.style.display="flex";
         poemCard.dataset.id = snap.id;
-        currentPoemId = snap.id; // store for later comment operations
+        currentPoemId = snap.id;
         
-        // Initially comments are hidden (default CSS display:none)
         commentsOuterWrapper.style.display = "none";
         commentsLoadedForPoem = false;
         
-        // Likes
         const likeBtn = poemCard.querySelector(".like-btn");
         const likeCount = poemCard.querySelector(".like-count");
         likeCount.textContent = data.likes||0;
         if(currentUser && data.likedBy?.includes(currentUser.uid)) likeBtn.classList.add("liked");
         
-        // Preload comments data but keep hidden (so when toggled they appear instantly)
+        if (currentUser) {
+          commentInput.classList.add('signed-in');
+          commentInput.placeholder = 'Write a comment...';
+          commentBtn.textContent = 'Post';
+          commentBtn.style.background = '#4b2aad';
+        } else {
+          commentInput.classList.remove('signed-in');
+          commentInput.placeholder = 'Sign in to comment...';
+          commentBtn.textContent = 'Post';
+          commentBtn.style.background = '#4b3f2f';
+        }
+        
         await renderCommentsExternal(snap.id);
-        // Ensure it stays hidden after preload
         commentsOuterWrapper.style.display = "none";
         
+        // ===== SILENTLY CHECK FOR SAVED COMMENT =====
+        const hasSavedComment = checkSavedComment();
+        
+        if (justSignedIn && currentUser) {
+          // User just signed in - show welcome
+          welcomeBanner.classList.add('show');
+          const userName = currentUser.displayName || currentUser.email?.split('@')[0] || 'Reader';
+          
+          if (hasSavedComment) {
+            welcomeMessage.textContent = `Welcome back, ${userName}! ✨ Your comment is ready to post.`;
+            // Auto-open comments (no visible notice)
+            setTimeout(() => {
+              commentsOuterWrapper.style.display = "block";
+              commentInput.focus();
+              commentInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+          } else {
+            welcomeMessage.textContent = `Welcome back, ${userName}! ✨ You can now like, comment, and reply.`;
+          }
+          
+          setTimeout(() => {
+            welcomeBanner.classList.remove('show');
+          }, 5000);
+          
+        } else if (currentUser && isFirstLoad) {
+          // User already signed in
+          welcomeBanner.classList.add('show');
+          const userName = currentUser.displayName || currentUser.email?.split('@')[0] || 'Reader';
+          welcomeMessage.textContent = `Welcome, ${userName}! 💫 Share your thoughts below.`;
+          setTimeout(() => {
+            welcomeBanner.classList.remove('show');
+          }, 3000);
+          isFirstLoad = false;
+        }
+        
       } else {
-        // For featured poems or other collections, hide interactive and comments wrapper
         interactiveSection.style.display = "none";
         commentsOuterWrapper.style.display = "none";
       }
@@ -325,29 +480,27 @@ async function loadPoem(slug){
   commentsOuterWrapper.style.display = "none";
 }
 
-// --- Toggle comment section visibility when 💬 is clicked (show/collapse below poem card) ---
+// --- Toggle comment section ---
 function toggleCommentSection() {
   if (!currentPoemId) return;
   
-  // If comments are currently hidden, show them
   if (commentsOuterWrapper.style.display === "none" || commentsOuterWrapper.style.display === "") {
-    // Ensure comments are loaded before showing (just in case)
     if (!commentsLoadedForPoem && currentPoemId) {
       renderCommentsExternal(currentPoemId).then(() => {
         commentsOuterWrapper.style.display = "block";
-        // Smooth scroll to comments after showing
         setTimeout(() => {
           commentsOuterWrapper.scrollIntoView({ behavior: "smooth", block: "start" });
+          if (currentUser) commentInput.focus();
         }, 100);
       });
     } else {
       commentsOuterWrapper.style.display = "block";
       setTimeout(() => {
         commentsOuterWrapper.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (currentUser) commentInput.focus();
       }, 100);
     }
   } else {
-    // Collapse/hide comments
     commentsOuterWrapper.style.display = "none";
   }
 }
@@ -356,7 +509,6 @@ function toggleCommentSection() {
 document.addEventListener("click", async e=>{
   const user = auth.currentUser;
 
-  // Like / Unlike
   if(e.target.classList.contains("like-btn")){
     if(!user){ 
       showLoginAlertAndRedirect("Please sign in to like poems!");
@@ -376,7 +528,6 @@ document.addEventListener("click", async e=>{
         let likes = data.likes || 0;
 
         if(likedBy.includes(user.uid)){
-            // Unlike (remove their like)
             const newLikes = Math.max(likes - 1, 0);
             await updateDoc(poemRef,{
                 likes: newLikes,
@@ -385,7 +536,6 @@ document.addEventListener("click", async e=>{
             likeBtn.classList.remove("liked");
             countSpan.textContent = newLikes;
         } else {
-            // Like
             const newLikes = likes + 1;
             await updateDoc(poemRef,{
                 likes: newLikes,
@@ -398,21 +548,28 @@ document.addEventListener("click", async e=>{
     }catch(err){ console.error(err); }
   }
 
-  // Toggle comment list visibility when 💬 (message-count) is clicked - now shows/collapses below
   if(e.target.classList.contains("message-count") || e.target.id === "messageCountTrigger" || e.target.closest(".message-count")){
     toggleCommentSection();
     return;
   }
 
-  // Post comment - updates external container and keeps comments visible if they were visible
-  if(e.target.classList.contains("comment-btn")){
+  // ===== POST COMMENT =====
+  if(e.target.classList.contains("comment-btn") || e.target.id === "commentBtn"){
     if(!user){ 
-      showLoginAlertAndRedirect("Please sign in to comment!");
+      // Save comment to localStorage before redirecting
+      const comment = commentInput.value.trim();
+      if (comment) {
+        localStorage.setItem(SAVED_COMMENT_KEY, comment);
+        showLoginAlertAndRedirect("Please sign in to post your comment.");
+      } else {
+        showLoginAlertAndRedirect("Please sign in to comment!");
+      }
       return; 
     }
+    
     const card = e.target.closest(".poem-card");
     const docId = card.dataset.id;
-    const input = card.querySelector(".comment-input");
+    const input = document.getElementById("commentInput");
     const text = input.value.trim();
     if(!text) return;
     
@@ -429,31 +586,48 @@ document.addEventListener("click", async e=>{
         timestamp: new Date() 
       });
 
-      // Clear input
-      input.value = "";
+      // Clear input and remove saved comment
+      clearSavedComment();
       
-      // Remember if comments were visible before re-render
       const wasVisible = (commentsOuterWrapper.style.display === "block");
-      
-      // Re-render comments in external container
       await renderCommentsExternal(docId);
       
-      // After posting, if comments were visible, keep them visible; if they were hidden, keep hidden.
-      // But also if they were hidden but user just posted, it's nice to show comments automatically.
-      if (wasVisible || true) {
-        // Automatically show comments after posting a new comment (better UX)
-        commentsOuterWrapper.style.display = "block";
-        // Scroll to comments to see the new post
-        commentsOuterWrapper.scrollIntoView({ behavior: "smooth", block: "start" });
-      } else {
-        commentsOuterWrapper.style.display = "none";
-      }
+      commentsOuterWrapper.style.display = "block";
+      commentsOuterWrapper.scrollIntoView({ behavior: "smooth", block: "start" });
+      
+      // Show success feedback
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2d7d46;color:#fff;padding:12px 24px;border-radius:30px;font-weight:500;z-index:9999;animation:slideDown 0.3s ease;box-shadow:0 4px 15px rgba(0,0,0,0.2);';
+      toast.innerHTML = '✅ Comment posted successfully!';
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
       
     } catch(err){ console.error(err); alert("Failed to post comment."); }
   }
 });
 
-// Also attach click handler directly to message count element for reliability
+// Enter key to submit comment
+commentInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    commentBtn.click();
+  }
+});
+
+// Save comment to localStorage when user types (silently)
+commentInput.addEventListener('input', () => {
+  const comment = commentInput.value.trim();
+  if (comment) {
+    localStorage.setItem(SAVED_COMMENT_KEY, comment);
+  } else {
+    localStorage.removeItem(SAVED_COMMENT_KEY);
+  }
+});
+
 if (messageCountTrigger) {
   messageCountTrigger.addEventListener("click", (e) => {
     e.stopPropagation();

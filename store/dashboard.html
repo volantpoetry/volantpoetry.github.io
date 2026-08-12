@@ -516,6 +516,112 @@ body { background:#f7f7fb; color:#1d1833; }
   border: 1px solid #d9d0f0;
 }
 
+/* ===== SETUP ALERT BANNER ===== */
+#setupAlertBanner {
+  display: none;
+  background: linear-gradient(135deg, #fef3e2 0%, #fcf7f0 100%);
+  border-left: 4px solid #e67e22;
+  padding: 18px 22px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(230, 126, 34, 0.08);
+}
+#setupAlertBanner.show {
+  display: block;
+}
+#setupAlertBanner .banner-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+#setupAlertBanner .banner-content .banner-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff3e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #e67e22;
+  margin-top: 2px;
+}
+#setupAlertBanner .banner-content .banner-text {
+  flex: 1;
+}
+#setupAlertBanner .banner-content .banner-text h4 {
+  margin: 0 0 4px 0;
+  color: #a8640b;
+  font-size: 1rem;
+  font-weight: 700;
+}
+#setupAlertBanner .banner-content .banner-text p {
+  margin: 0 0 6px 0;
+  color: #7a4a2a;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+#setupAlertBanner .banner-content .banner-text .banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+#setupAlertBanner .banner-content .banner-text .btn-go-settings {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #6a34ff;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.3s;
+  text-decoration: none;
+}
+#setupAlertBanner .banner-content .banner-text .btn-go-settings:hover {
+  background: #5428d9;
+  transform: scale(1.02);
+  box-shadow: 0 4px 15px rgba(106, 52, 255, 0.3);
+}
+#setupAlertBanner .banner-content .banner-text .btn-go-settings i {
+  font-size: 0.8rem;
+}
+#setupAlertBanner .banner-content .banner-text .banner-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #8a7b6a;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 4px 14px;
+  border-radius: 30px;
+  border: 1px solid #ede7df;
+}
+#setupAlertBanner .banner-content .banner-text .banner-time i {
+  color: #2d7d46;
+}
+.setup-check-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  padding: 2px 0;
+}
+.setup-check-item i {
+  width: 18px;
+}
+.setup-check-item .check-done {
+  color: #2d7d46;
+}
+.setup-check-item .check-missing {
+  color: #b76e4b;
+}
+
 /* ===== PAYOUT WARNING BANNER ===== */
 #payoutWarningBanner {
   display: none;
@@ -1334,6 +1440,56 @@ nav {
       </div>
     </div>
 
+    <!-- ===== SETUP ALERT BANNER ===== -->
+    <div id="setupAlertBanner" class="">
+      <div class="banner-content">
+        <div class="banner-icon">
+          <i class="fas fa-clipboard-list"></i>
+        </div>
+        <div class="banner-text">
+          <h4>📋 Complete Your Profile & Payout Setup</h4>
+          <p>
+            To publish books and receive payments, please complete your author profile and payout settings.
+            This only takes a few minutes!
+          </p>
+          <div style="margin: 8px 0;">
+            <div class="setup-check-item">
+              <i class="fas fa-check-circle check-done" id="checkAuthorName"></i>
+              <span id="checkAuthorNameText">Author Name</span>
+            </div>
+            <div class="setup-check-item">
+              <i class="fas fa-check-circle check-done" id="checkAuthorBio"></i>
+              <span id="checkAuthorBioText">Author Bio</span>
+            </div>
+            <div class="setup-check-item">
+              <i class="fas fa-check-circle check-done" id="checkGmail"></i>
+              <span id="checkGmailText">Gmail for Publishing</span>
+            </div>
+            <div class="setup-check-item">
+              <i class="fas fa-check-circle check-done" id="checkPhone"></i>
+              <span id="checkPhoneText">Phone Number</span>
+            </div>
+            <div class="setup-check-item">
+              <i class="fas fa-check-circle check-done" id="checkCountry"></i>
+              <span id="checkCountryText">Country</span>
+            </div>
+            <div class="setup-check-item">
+              <i class="fas fa-check-circle check-done" id="checkPayout"></i>
+              <span id="checkPayoutText">Payout Account</span>
+            </div>
+          </div>
+          <div class="banner-actions">
+            <a href="#" class="btn-go-settings" onclick="event.preventDefault(); showPage('settings');">
+              <i class="fas fa-cog"></i> Go to Settings
+            </a>
+            <span class="banner-time">
+              <i class="fas fa-clock"></i> Complete setup to start publishing
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== PAGE SECTIONS ===== -->
 
     <!-- DASHBOARD PAGE -->
@@ -1954,6 +2110,21 @@ nav {
   const myBooksGrid = document.getElementById('myBooksGrid');
   const chartDays = document.getElementById('chartDays');
 
+  // Setup Alert Banner DOM refs
+  const setupAlertBanner = document.getElementById('setupAlertBanner');
+  const checkAuthorName = document.getElementById('checkAuthorName');
+  const checkAuthorNameText = document.getElementById('checkAuthorNameText');
+  const checkAuthorBio = document.getElementById('checkAuthorBio');
+  const checkAuthorBioText = document.getElementById('checkAuthorBioText');
+  const checkGmail = document.getElementById('checkGmail');
+  const checkGmailText = document.getElementById('checkGmailText');
+  const checkPhone = document.getElementById('checkPhone');
+  const checkPhoneText = document.getElementById('checkPhoneText');
+  const checkCountry = document.getElementById('checkCountry');
+  const checkCountryText = document.getElementById('checkCountryText');
+  const checkPayout = document.getElementById('checkPayout');
+  const checkPayoutText = document.getElementById('checkPayoutText');
+
   // Validation DOM refs
   const usernameIcon = document.getElementById('usernameIcon');
   const usernameValidation = document.getElementById('usernameValidation');
@@ -2030,19 +2201,85 @@ nav {
   }
 
   // ============================================================
-  // ====== LIVE VALIDATION FUNCTIONS (NO RESTRICTIONS) ======
+  // ====== UPDATE SETUP ALERT BANNER ======
+  // ============================================================
+
+  function updateSetupAlert(userData) {
+    if (!userData) {
+      setupAlertBanner.classList.remove('show');
+      return;
+    }
+
+    const checks = {
+      authorName: !!userData.authorName?.trim(),
+      authorBio: !!userData.authorBio?.trim(),
+      gmail: !!userData.gmail?.trim() && userData.gmail.includes('@'),
+      phone: !!userData.phoneNumber?.trim(),
+      country: !!userData.country?.trim(),
+      payout: !!userData.subaccountCode && userData.hasPayoutAccount === true
+    };
+
+    // Update check icons
+    const iconMap = {
+      authorName: checkAuthorName,
+      authorBio: checkAuthorBio,
+      gmail: checkGmail,
+      phone: checkPhone,
+      country: checkCountry,
+      payout: checkPayout
+    };
+
+    const textMap = {
+      authorName: checkAuthorNameText,
+      authorBio: checkAuthorBioText,
+      gmail: checkGmailText,
+      phone: checkPhoneText,
+      country: checkCountryText,
+      payout: checkPayoutText
+    };
+
+    const allComplete = Object.values(checks).every(v => v === true);
+    let missingCount = 0;
+
+    for (const [key, value] of Object.entries(checks)) {
+      const icon = iconMap[key];
+      const text = textMap[key];
+      if (value) {
+        icon.className = 'fas fa-check-circle check-done';
+        text.style.color = '#2d7d46';
+        text.style.textDecoration = 'line-through';
+        text.style.opacity = '0.7';
+      } else {
+        icon.className = 'fas fa-times-circle check-missing';
+        text.style.color = '#b76e4b';
+        text.style.textDecoration = 'none';
+        text.style.opacity = '1';
+        missingCount++;
+      }
+    }
+
+    if (!allComplete) {
+      setupAlertBanner.classList.add('show');
+      // Update the message with count
+      const bannerText = setupAlertBanner.querySelector('.banner-text p');
+      if (bannerText) {
+        bannerText.textContent = `You have ${missingCount} item${missingCount > 1 ? 's' : ''} to complete. Please set up your author profile and payout details to start publishing and receiving payments.`;
+      }
+    } else {
+      setupAlertBanner.classList.remove('show');
+    }
+  }
+
+  // ============================================================
+  // ====== LIVE VALIDATION FUNCTIONS ======
   // ============================================================
 
   function validateUsernameFormat(username) {
-    // Check minimum length
     if (!username || username.length < 3) {
       return { valid: false, message: 'Username must be at least 3 characters' };
     }
-    // Check maximum length - automatically truncate to 11
     if (username.length > 11) {
-      // Truncate the username to 11 characters
       const truncated = username.substring(0, 11);
-      // Update the input field with truncated value
       settingsName.value = truncated;
       return { 
         valid: true, 
@@ -2050,7 +2287,6 @@ nav {
         truncated: true
       };
     }
-    // NO character restrictions - allow anything (spaces, special chars, emojis, etc.)
     return { valid: true, message: 'Username is available!' };
   }
 
@@ -2064,7 +2300,6 @@ nav {
   async function checkUsernameAvailability(username) {
     if (!username || username.length < 3) return { available: false, error: 'Username too short' };
     
-    // Skip check if same as original
     if (username === originalUsername) {
       return { available: true, isOriginal: true };
     }
@@ -2083,7 +2318,6 @@ nav {
   async function checkEmailAvailability(email) {
     if (!email || !email.includes('@')) return { available: false, error: 'Invalid email' };
     
-    // Skip check if same as original
     if (email === originalEmail) {
       return { available: true, isOriginal: true };
     }
@@ -2169,11 +2403,9 @@ nav {
   let emailTimeout = null;
 
   function setupValidation() {
-    // Username validation with debounce
     settingsName.addEventListener('input', function() {
       const value = this.value.trim();
       
-      // Show loading
       usernameIcon.className = 'validation-icon loading';
       usernameIcon.innerHTML = '<i class="fas fa-spinner"></i>';
       usernameValidation.className = 'validation-message show info';
@@ -2181,14 +2413,12 @@ nav {
       
       clearTimeout(usernameTimeout);
       usernameTimeout = setTimeout(async () => {
-        // Validate format
         const formatResult = validateUsernameFormat(value);
         if (!formatResult.valid) {
           updateUsernameValidation(formatResult);
           return;
         }
         
-        // Check availability
         const availability = await checkUsernameAvailability(value);
         updateUsernameValidation({
           valid: formatResult.valid,
@@ -2199,11 +2429,9 @@ nav {
       }, 500);
     });
 
-    // Email validation with debounce
     settingsEmail.addEventListener('input', function() {
       const value = this.value.trim();
       
-      // Show loading
       emailIcon.className = 'validation-icon loading';
       emailIcon.innerHTML = '<i class="fas fa-spinner"></i>';
       emailValidation.className = 'validation-message show info';
@@ -2211,14 +2439,12 @@ nav {
       
       clearTimeout(emailTimeout);
       emailTimeout = setTimeout(async () => {
-        // Validate format
         const formatResult = validateEmailFormat(value);
         if (!formatResult.valid) {
           updateEmailValidation(formatResult);
           return;
         }
         
-        // Check availability
         const availability = await checkEmailAvailability(value);
         updateEmailValidation({
           valid: formatResult.valid,
@@ -2229,13 +2455,11 @@ nav {
       }, 500);
     });
 
-    // Also validate on blur
     settingsName.addEventListener('blur', function() {
       const value = this.value.trim();
       if (value && value.length >= 3) {
         const formatResult = validateUsernameFormat(value);
         if (formatResult.valid) {
-          // Trigger check again
           this.dispatchEvent(new Event('input'));
         }
       }
@@ -2246,7 +2470,6 @@ nav {
       if (value && value.includes('@')) {
         const formatResult = validateEmailFormat(value);
         if (formatResult.valid) {
-          // Trigger check again
           this.dispatchEvent(new Event('input'));
         }
       }
@@ -2380,9 +2603,12 @@ nav {
           if (data.subaccountCode) {
             payoutStatus.textContent = '✅ Payout account activated! Subaccount: ' + data.subaccountCode;
             payoutStatus.className = 'success';
-            // Hide warning banner if payout is set
             if (payoutWarningBanner) {
               payoutWarningBanner.classList.remove('show');
+            }
+            // Update setup alert
+            if (currentUser) {
+              updateSetupAlert(data);
             }
           }
         }
@@ -2401,7 +2627,7 @@ nav {
       }
       const data = userDoc.data();
       const hasAccount = data.subaccountCode && data.hasPayoutAccount === true;
-      return { hasAccount: hasAccount };
+      return { hasAccount: hasAccount, data: data };
     } catch (err) {
       console.warn('Error checking payout account:', err);
       return { hasAccount: false };
@@ -2486,7 +2712,6 @@ nav {
         return;
       }
       
-      // Validate phone number - keep the 0 prefix!
       const cleanPhone = phoneNumber.replace(/\s/g, '');
       if (!/^(0[0-9]{9}|[0-9]{10})$/.test(cleanPhone) && !cleanPhone.startsWith('233')) {
         showToast('❌ Please enter a valid phone number (e.g., 024XXXXXXX)', 'error');
@@ -2551,9 +2776,14 @@ nav {
         payoutStatus.className = 'success';
         showToast('✅ Payout account activated!', 'success');
         
-        // Hide the warning banner
         if (payoutWarningBanner) {
           payoutWarningBanner.classList.remove('show');
+        }
+        
+        // Update setup alert
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if (userDoc.exists()) {
+          updateSetupAlert(userDoc.data());
         }
         
         loadEarnings(currentUser.uid);
@@ -2724,6 +2954,8 @@ nav {
     document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
     const navLink = document.querySelector(`.nav a[data-page="${pageId}"]`);
     if (navLink) navLink.classList.add('active');
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function getInitials(name) {
@@ -3434,9 +3666,10 @@ nav {
       let gmail = '';
       let phoneNumber = '';
       let publisherName = '';
+      let userData = {};
       
       if (userDoc.exists()) {
-        const userData = userDoc.data();
+        userData = userDoc.data();
         username = userData.username || user.displayName || user.email?.split('@')[0] || 'Author';
         bio = userData.bio || '';
         photoURL = userData.photoURL || userData.cachedAvatarURL || '';
@@ -3469,6 +3702,9 @@ nav {
       settingsGmail.value = gmail || '';
       settingsPhoneNumber.value = phoneNumber || '';
       settingsPublisherName.value = publisherName || '';
+      
+      // Update setup alert banner
+      updateSetupAlert(userData);
       
       // Initialize validation states
       usernameValid = true;
@@ -3569,13 +3805,16 @@ nav {
   async function loadAuthorData(user) {
     try {
       let allBooksData = [];
+      let userData = {};
       
       try {
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
-          const data = userDoc.data();
-          if (data.username) userDisplayName = data.username;
-          if (data.bio) settingsBio.value = data.bio;
+          userData = userDoc.data();
+          if (userData.username) userDisplayName = userData.username;
+          if (userData.bio) settingsBio.value = userData.bio;
+          // Update setup alert
+          updateSetupAlert(userData);
         }
       } catch (_) {}
 
@@ -3716,7 +3955,6 @@ nav {
       return;
     }
     
-    // Re-validate before saving
     const username = settingsName.value.trim();
     const email = settingsEmail.value.trim();
     const bio = settingsBio.value.trim();
@@ -3731,7 +3969,6 @@ nav {
       return;
     }
     
-    // Final availability check
     const usernameCheck = await checkUsernameAvailability(username);
     if (!usernameCheck.available && username !== originalUsername) {
       showToast('❌ Username "' + username + '" is already taken.', 'error');
@@ -3761,7 +3998,6 @@ nav {
       greeting.textContent = `Welcome back, ${userDisplayName} 👋`;
       showToast('✅ Profile settings saved successfully!', 'success');
       
-      // Reset validation states
       usernameValid = true;
       emailValid = true;
       updateSaveButton();
@@ -3832,7 +4068,12 @@ nav {
       
       showToast('✅ Author & Publishing settings saved successfully!', 'success');
       
-      // Update the UI
+      // Update setup alert
+      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+      if (userDoc.exists()) {
+        updateSetupAlert(userDoc.data());
+      }
+      
       await updateUserUI(currentUser);
       
     } catch (err) {

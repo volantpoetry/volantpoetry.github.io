@@ -51,8 +51,16 @@
 }
 </script>
   
+
   <style>
-    /* Your existing styles remain the same */
+    /* ============================================================
+       COMPLETE STYLES FOR POEMS PAGE
+       ============================================================ */
+
+    /* ===== GOOGLE FONT: EB Garamond ===== */
+    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+    /* ===== BASE STYLES ===== */
     .recent-poem-card {
       background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
       color: #4b3f2f;
@@ -97,40 +105,77 @@
       }
     }
 
+    /* ===== GARAMOND FONT FOR POEM TITLE ===== */
     .recent-poem-title {
       margin-bottom: 8px;
       letter-spacing: 0.4px;
       text-align: left;
-      font-family: 'Playfair Display', serif;
-      color: var(--primary);
-      font-size: 1.6rem;
-      font-weight: 700;
+      font-family: 'EB Garamond', 'Georgia', serif;
       color: #4b2aad;
+      font-size: 1.8rem;
+      font-weight: 700;
       margin-bottom: 6px;
     }
 
     @media (max-width: 600px) {
       .recent-poem-title {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         text-align: left;
       }
     }
 
+    /* ===== GARAMOND FONT FOR POEM CONTENT ===== */
+    .poem-content {
+      white-space: pre-wrap;
+      margin-top: 8px;
+      margin-left: 0;
+      padding-left: 0;
+      font-family: 'EB Garamond', 'Georgia', serif;
+      font-size: 1.1rem;
+      color: #3d352a;
+      line-height: 1.7;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+
+    @media (max-width: 768px) {
+      .poem-content {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .poem-content {
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+    }
+
+    /* ===== PAGE TITLE ===== */
     .page-title {
       text-align: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 2rem;
+      font-family: 'EB Garamond', 'Georgia', serif;
+      font-size: 2.4rem;
       font-weight: 700;
-      color: black;
+      color: #4b2aad;
       margin: 30px 0 20px 0;
+      letter-spacing: 1px;
     }
 
     @media (max-width: 600px) {
       .page-title {
-        font-size: 1.6rem;
+        font-size: 1.8rem;
       }
     }
 
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 1.5rem;
+      }
+    }
+
+    /* ===== LOADING INDICATOR ===== */
     .loading-indicator {
       text-align: center;
       padding: 20px;
@@ -155,6 +200,7 @@
       100% { transform: rotate(360deg); }
     }
 
+    /* ===== MESSAGES ===== */
     .error-message {
       text-align: center;
       padding: 20px;
@@ -181,8 +227,10 @@
       border-top: 1px solid #e0d6b0;
       margin-top: 20px;
       width: 100%;
+      font-family: 'EB Garamond', 'Georgia', serif;
     }
 
+    /* ===== AUTHOR LINE ===== */
     .author-line {
       display: flex;
       align-items: center;
@@ -200,14 +248,15 @@
     .author-link {
       font-size: 1.2rem;
       font-weight: 700;
-     
       text-decoration: none;
+      font-family: 'Inter', sans-serif;
     }
 
     .author-link:hover {
       text-decoration: underline;
     }
 
+    /* ===== COLLABORATORS ===== */
     .collaborator-line {
       margin-top: 4px;
       font-size: 0.95rem;
@@ -223,15 +272,26 @@
       text-decoration: underline;
     }
 
+    /* ===== CATEGORIES ===== */
+    .poem-category-line {
+      font-family: 'EB Garamond', 'Georgia', serif;
+      font-size: 0.85rem;
+      color: #666;
+      margin: 4px 0;
+    }
+
     .category-link {
       color: #B8860B;
       text-decoration: none;
+      font-family: 'EB Garamond', 'Georgia', serif;
+      font-size: 0.85rem;
     }
 
     .category-link:hover {
       text-decoration: underline;
     }
 
+    /* ===== AUDIO SECTION ===== */
     .poem-audio-section {
       margin-left: 0 !important;
       margin-right: 0 !important;
@@ -244,14 +304,7 @@
       height: 35px;
     }
 
-    .poem-content {
-      white-space: pre-wrap;
-      margin-top: 8px;
-      margin-left: 0;
-      padding-left: 0;
-    }
-
-    /* Mobile search styles */
+    /* ===== SEARCH STYLES ===== */
     .search-container {
       display: none;
       position: absolute;
@@ -313,6 +366,7 @@
       }
     }
 
+    /* ===== MOBILE ICONS ===== */
     .mobile-icons {
       display: flex;
       flex-direction: row;
@@ -334,6 +388,7 @@
       color: #6a45d1;
     }
 
+    /* ===== OFFLINE NOTICE ===== */
     .offline-notice {
       background: #ff9800;
       color: white;
@@ -344,7 +399,7 @@
       z-index: 1000;
     }
 
-    /* Scroll progress indicator */
+    /* ===== SCROLL PROGRESS ===== */
     .scroll-progress {
       position: fixed;
       top: 0;
@@ -356,7 +411,7 @@
       transition: width 0.1s ease;
     }
 
-    /* Search mode indicator */
+    /* ===== SEARCH MODE INDICATOR ===== */
     .search-mode-indicator {
       text-align: center;
       padding: 10px;
@@ -365,6 +420,7 @@
       margin: 10px auto;
       max-width: 600px;
       color: #4b2aad;
+      font-family: 'Inter', sans-serif;
     }
 
     .clear-search {
@@ -381,211 +437,612 @@
     .clear-search:hover {
       background: #6a45d1;
     }
-    /* Hide mobile icons (search and menu toggle) on screens larger than 768px */
-@media (min-width: 769px) {
-  .mobile-icons {
-    display: none !important;
-  }
-}
 
-/* Show mobile icons only on small screens */
-@media (max-width: 768px) {
-  .mobile-icons {
-    display: flex !important;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-  }
-}
+    /* ===== RESPONSIVE - HIDE/SHOW ===== */
+    @media (min-width: 769px) {
+      .mobile-icons {
+        display: none !important;
+      }
+    }
 
-/* Ensure desktop search is visible on larger screens */
-@media (min-width: 769px) {
-  .desktop-search-container {
-    display: block !important;
-  }
-}
+    @media (max-width: 768px) {
+      .mobile-icons {
+        display: flex !important;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+    }
 
-/* Hide desktop search on small screens */
-@media (max-width: 768px) {
-  .desktop-search-container {
-    display: none !important;
-  }
-}
+    @media (min-width: 769px) {
+      .desktop-search-container {
+        display: block !important;
+      }
+    }
 
-/* For small screens */
-@media (max-width: 768px) {
-  .page-title {
-    font-size: 1.5rem; /* Smaller font size */
-    margin: 20px 0 15px 0; /* Reduced margins */
-    padding: 0 15px; /* Add some side padding */
-    word-break: break-word; /* Prevent overflow */
-  }
-}
+    @media (max-width: 768px) {
+      .desktop-search-container {
+        display: none !important;
+      }
+    }
 
-/* For very small screens */
-@media (max-width: 480px) {
-  .page-title {
-    font-size: 1.3rem; /* Even smaller font size */
-    margin: 15px 0 10px 0; /* Further reduced margins */
-    padding: 0 10px; /* Adjust padding */
-  }
-}
-/* For small screens */
-@media (max-width: 768px) {
-  .read-more-btn {
-    font-size: 0.8rem; /* Slightly smaller font */
-    padding: 4px 0; /* Add some vertical padding for easier tapping */
-    margin: 8px 0; /* Increase margin for better spacing */
-  }
-}
+    /* ===== RESPONSIVE - PAGE TITLE ===== */
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 1.8rem;
+        margin: 20px 0 15px 0;
+        padding: 0 15px;
+        word-break: break-word;
+      }
+    }
 
-/* For very small screens */
-@media (max-width: 480px) {
-  .read-more-btn {
-    font-size: 0.8rem; /* Smaller font */
-    padding: 6px 0; /* Larger tap target */
-    width: 100%; /* Full width on very small screens */
-    text-align: left; /* Keep text left-aligned */
-    display: block; /* Make it block level for easier tapping */
-  }
-}
+    @media (max-width: 480px) {
+      .page-title {
+        font-size: 1.5rem;
+        margin: 15px 0 10px 0;
+        padding: 0 10px;
+      }
+    }
 
-/* For small screens - push categories closer to read more button */
-@media (max-width: 768px) {
-  .poem-category-line {
-    margin-bottom: 0px !important; /* Remove bottom margin completely */
-    margin-top: 2px !important; /* Minimal top margin */
-    line-height: 1.2; /* Tighter line height */
-    
-  }
-  
-  .read-more-btn {
-    margin-top: -7px !important; /* Negative margin to pull it up closer to categories */
-    display: block; /* Ensure block display */
-  }
-}
+    /* ===== READ MORE BUTTON ===== */
+    .read-more-btn {
+      background: none;
+      border: none;
+      color: #4b2aad;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 0;
+      font-size: 0.85rem;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s;
+    }
+    .read-more-btn:hover {
+      color: #6a45d1;
+      text-decoration: underline;
+    }
 
-/* For very small screens - even tighter */
-@media (max-width: 480px) {
-  .poem-category-line,  .poem-category-line em {
-    margin-bottom: 0px !important;
-    margin-top: 0px !important;
-    font-size: 0.65rem !important;
-  }
-  
-  .read-more-btn {
-    margin-top: -7px !important; /* Pull it up even more */
-  }
-}
-/* Make end message smaller and centered on small screens */
-@media (max-width: 480px) {
-  .end-message {
-    font-size: 0.8rem !important;
-    text-align: center !important;
-    padding: 15px !important;
-    width: 90% !important;
-    margin: 10px auto !important;
-    white-space: normal !important;
-    word-wrap: break-word !important;
-    line-height: 1.3 !important;
-  }
-}
+    /* ===== RESPONSIVE - READ MORE ===== */
+    @media (max-width: 768px) {
+      .read-more-btn {
+        font-size: 0.8rem;
+        padding: 4px 0;
+        margin: 8px 0;
+        font-family: 'Inter', sans-serif;
+      }
+    }
 
-/* Reduce logo text size on small screens */
-@media (max-width: 780px) {
-  .logo-text {
-    font-size: 1.2rem !important;
-  }
-}
-/* Reduce logo text size on small screens alone */
-@media (max-width: 480px) {
-  .logo-text {
-    font-size: 1rem !important;
-  }
-}
+    @media (max-width: 480px) {
+      .read-more-btn {
+        font-size: 0.8rem;
+        padding: 6px 0;
+        width: 100%;
+        text-align: left;
+        display: block;
+        font-family: 'Inter', sans-serif;
+      }
+    }
 
-/* Simple CSS to make the logo show properly on large screens */
+    /* ===== RESPONSIVE - CATEGORIES ===== */
+    @media (max-width: 768px) {
+      .poem-category-line {
+        margin-bottom: 0px !important;
+        margin-top: 2px !important;
+        line-height: 1.2;
+      }
+      
+      .read-more-btn {
+        margin-top: -7px !important;
+        display: block;
+      }
+    }
 
-/* Ensure the logo container doesn't get hidden or compressed */
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0; /* Prevents logo from shrinking */
-  min-width: fit-content; /* Ensures logo takes needed space */
-}
+    @media (max-width: 480px) {
+      .poem-category-line, .poem-category-line em {
+        margin-bottom: 0px !important;
+        margin-top: 0px !important;
+        font-size: 0.65rem !important;
+      }
+      
+      .read-more-btn {
+        margin-top: -7px !important;
+      }
+    }
 
-/* Logo image styling */
-.nav-logo-img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
+    /* ===== RESPONSIVE - END MESSAGE ===== */
+    @media (max-width: 480px) {
+      .end-message {
+        font-size: 0.8rem !important;
+        text-align: center !important;
+        padding: 15px !important;
+        width: 90% !important;
+        margin: 10px auto !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        line-height: 1.3 !important;
+      }
+    }
 
-/* Logo text styling */
-.logo-text {
-  font-size: 1.4rem;
-  font-weight: 600;
-  white-space: nowrap; /* Prevents text from wrapping */
-  flex-shrink: 0;
-}
+    /* ===== LOGO STYLES ===== */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      min-width: fit-content;
+    }
 
-/* For larger screens, you can even make the logo bigger */
-@media (min-width: 1200px) {
-  .nav-logo-img {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .logo-text {
-    font-size: 1.6rem;
-  }
-  
-  .logo {
-    gap: 15px;
-  }
-}
+    .nav-logo-img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
 
-/* Ensure nav has enough space for the logo */
-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 10px 20px;
-  flex-wrap: wrap; /* Allows wrapping on smaller screens if needed */
-}
+    .logo-text {
+      font-size: 1.4rem;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-family: 'Inter', sans-serif;
+    }
 
-/* On large screens, prevent nav items from overlapping */
-@media (min-width: 769px) {
-  nav {
-    flex-wrap: nowrap;
-  }
-  
-  .logo {
-    margin-right: 20px;
-  }
-}
-/* Reduce logo image size */
-.nav-logo-img {
-  width: 37px !important;
-  height: 37px !important;
-  object-fit: contain !important;
-  display: block !important;
-}
+    @media (max-width: 780px) {
+      .logo-text {
+        font-size: 1.2rem !important;
+      }
+    }
 
-/* Adjust the gap between logo image and text if needed */
-.logo {
-  gap: 8px !important;
-}
+    @media (max-width: 480px) {
+      .logo-text {
+        font-size: 1rem !important;
+      }
+    }
 
-/* If you want the text smaller too */
-.logo-text {
+    @media (min-width: 1200px) {
+      .nav-logo-img {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .logo-text {
+        font-size: 1.6rem;
+      }
+      
+      .logo {
+        gap: 15px;
+      }
+    }
+
+    .nav-logo-img {
+      width: 37px !important;
+      height: 37px !important;
+      object-fit: contain !important;
+      display: block !important;
+    }
+
+    .logo {
+      gap: 8px !important;
+    }
+
+    .logo-text {
+      font-size: 1.1rem !important;
+    }
+
+    /* ===== NAV STYLES ===== */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 10px 20px;
+      flex-wrap: wrap;
+    }
+
+    @media (min-width: 769px) {
+      nav {
+        flex-wrap: nowrap;
+      }
+      
+      .logo {
+        margin-right: 20px;
+      }
+    }
+
+    /* ===== POEM ACTIONS ===== */
+    .poem-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .comment-section {
+      flex: 1;
+      display: flex;
+      gap: 6px;
+    }
+
+    .comment-input {
+      flex: 1;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      font-family: 'Inter', sans-serif;
+      resize: vertical;
+      min-height: 38px;
+      max-height: 100px;
+    }
+
+    .comment-btn, .like-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      background: #4b3f2f;
+      color: #fff;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s;
+    }
+
+    .comment-btn:hover, .like-btn:hover {
+      opacity: 0.85;
+    }
+
+    .like-btn.liked {
+      background: #e63946;
+    }
+
+    .like-count, .message-count {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: #666;
+      cursor: pointer;
+    }
+
+    .message-count {
+      cursor: pointer;
+    }
+
+    /* ===== COMMENT LIST ===== */
+    .comment-list {
+      max-width: 750px;
+      width: 70%;
+      margin: 0 auto;
+      padding: 0 10px 20px 10px;
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .comment-list {
+        width: 90%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .comment-list {
+        width: 95%;
+      }
+    }
+
+    .comment {
+      background: #fff;
+      padding: 8px 12px;
+      margin: 6px 0;
+      border-radius: 6px;
+      border: 1px solid #eee;
+    }
+
+    .comment-author-link {
+      font-weight: 600;
+      color: #5a3cb3;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .comment-author-link:hover {
+      text-decoration: underline;
+    }
+
+    .reply-toggle {
+      color: #5a3cb3;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+    }
+
+    .reply-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .reply-section {
+      margin-left: 20px;
+      margin-top: 5px;
+    }
+
+    .send-reply-btn {
+      background: #5a3cb3;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .cancel-reply-btn {
+      background: #ccc;
+      color: #333;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ===== FOLLOW BUTTON ===== */
+    .follow-btn-on-card {
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 4px 12px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: auto;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .follow-btn-on-card:hover {
+      opacity: 0.85;
+      transform: scale(1.02);
+    }
+
+    .follow-btn-on-card.following {
+      background: #f44336;
+    }
+
+    .view-count-inline {
+      font-size: 0.85rem;
+      color: #333;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ===== NAV LINKS ===== */
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #4b3f2f;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #4b2aad;
+    }
+
+    .close-btn {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #4b3f2f;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.98);
+        padding: 60px 20px 20px;
+        gap: 15px;
+        z-index: 999;
+        overflow-y: auto;
+      }
+
+      .nav-links.show {
+        display: flex;
+      }
+
+      .close-btn {
+        display: block;
+        position: absolute;
+        top: 15px;
+        right: 20px;
+      }
+
+      .nav-links a {
+        font-size: 1.2rem;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        width: 100%;
+        text-align: center;
+      }
+
+      .nav-links .mobile-only {
+        display: block;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .nav-links .mobile-only {
+        display: none;
+      }
+      .close-btn {
+        display: none !important;
+      }
+    }
+
+    /* ===== TOAST NOTIFICATION ===== */
+    .toast-notification {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2d7d46;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      z-index: 9999;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      animation: slideUp 0.3s ease;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .toast-notification.show {
+      opacity: 1;
+    }
+    .toast-notification.hidden {
+      opacity: 0;
+    }
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+
+    /* ============================================================
+       OVERRIDES - INCREASE CATEGORY LINK SIZE
+       ============================================================ */
+    .category-link {
+      font-size: 0.85rem !important;
+    }
+
+    @media (max-width: 768px) {
+      .category-link {
+        font-size: 0.85rem !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .category-link {
+        font-size: 0.8rem !important;
+      }
+    }
+
+ /* ============================================================
+   OVERRIDE - INCREASE POEM CONTENT SIZE (Desktop & Phone)
+   ============================================================ */
+
+/* Desktop & Tablet */
+.poem-content,
+.recent-poem-card .poem-content {
   font-size: 1.1rem !important;
+  line-height: 1.4 !important;
 }
-  </style>
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+  .poem-content,
+  .recent-poem-card .poem-content {
+    font-size: 1.1rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  .poem-content,
+  .recent-poem-card .poem-content,
+  .poem-body .poem-content,
+  #poem-content {
+    font-size: 1.05rem !important;
+    line-height: 1.4 !important;
+  }
+}
+  
+  /* ============================================================
+   OVERRIDES FOR POEMS PAGE
+   ============================================================ */
+
+
+.category-link {
+  font-size: 0.90rem !important;  /* Increased from 0.85rem */
+}
+
+@media (max-width: 768px) {
+  .category-link {
+    font-size: 0.90rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-link {
+    font-size: 0.85rem !important;
+  }
+}
+
+/* ===== 4. INCREASE POEM CONTENT (Desktop & Phone) ===== */
+.poem-content,
+.recent-poem-card .poem-content {
+  font-size: 1.2rem !important;
+  line-height: 1.4 !important;
+}
+
+@media (max-width: 768px) {
+  .poem-content,
+  .recent-poem-card .poem-content {
+    font-size: 1.2rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .poem-content,
+  .recent-poem-card .poem-content,
+  .poem-body .poem-content,
+  #poem-content {
+    font-size: 1.05rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .read-more-btn {
+    font-size: 0.85rem !important;
+    margin-top: 10px !important;
+  }
+}
+
+/* ============================================================
+   POST COMMENT BUTTON - PURPLE COLOR
+   ============================================================ */
+
+.comment-btn {
+  background: #4b2aad !important;  /* Your brand purple */
+  color: #fff !important;
+  border: none !important;
+}
+
+.comment-btn:hover {
+  background: #3a1f8a !important;  /* Darker purple on hover */
+  transform: translateY(-1px) !important;
+}
+
+/* If you want the gradient effect like before but with purple */
+.comment-btn {
+  background: linear-gradient(90deg, #4b2aad, #6a45d1) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.comment-btn:hover {
+  background: linear-gradient(90deg, #3a1f8a, #4b2aad) !important;
+  transform: translateY(-1px) !important;
+}
+</style>
 </head>
 <body>
 
@@ -656,6 +1113,8 @@ nav {
   </div>
 </main>
 
+<!-- Toast notification -->
+<div id="toastNotification" class="toast-notification hidden"></div>
 <script type="module">
   import { 
     initializeApp 
@@ -689,6 +1148,17 @@ nav {
   let domReady = false;
   let authReady = false;
   let initialLoadStarted = false;
+
+  // Toast notification
+  function showToast(message, duration = 3000) {
+    const toast = document.getElementById('toastNotification');
+    toast.textContent = message;
+    toast.className = 'toast-notification show';
+    clearTimeout(toast._hideTimeout);
+    toast._hideTimeout = setTimeout(() => {
+      toast.className = 'toast-notification hidden';
+    }, duration);
+  }
 
   function refreshFollowButtons() {
     document.querySelectorAll('.follow-btn-on-card').forEach(async (btn) => {
@@ -739,94 +1209,93 @@ nav {
     return div.innerHTML;
   }
 
-// Function to check follow status
-async function checkFollowStatus(poetId, currentUid) {
-  if (!currentUid || !poetId || currentUid === poetId) return false;
-  if (followStates.has(poetId)) return followStates.get(poetId);
-  
-  try {
-    const docId = `${currentUid}_${poetId}`;
-    const followRef = doc(db, "social", docId);
-    const docSnap = await getDoc(followRef);
-    const isFollowing = docSnap.exists();
-    followStates.set(poetId, isFollowing);
-    return isFollowing;
-  } catch (err) {
-    console.warn("Error checking follow status:", err);
-    return false;
+  // Function to check follow status
+  async function checkFollowStatus(poetId, currentUid) {
+    if (!currentUid || !poetId || currentUid === poetId) return false;
+    if (followStates.has(poetId)) return followStates.get(poetId);
+    
+    try {
+      const docId = `${currentUid}_${poetId}`;
+      const followRef = doc(db, "social", docId);
+      const docSnap = await getDoc(followRef);
+      const isFollowing = docSnap.exists();
+      followStates.set(poetId, isFollowing);
+      return isFollowing;
+    } catch (err) {
+      console.warn("Error checking follow status:", err);
+      return false;
+    }
   }
-}
 
-// Function to send notification (ADDED)
-async function sendNotification(forUserId, fromUserId, type, data) {
-  if (!forUserId || !fromUserId || forUserId === fromUserId) return;
-  
-  try {
-    const userDoc = await getDoc(doc(db, "users", fromUserId));
-    const fromUserName = userDoc.exists() ? userDoc.data().username : "Someone";
+  // Function to send notification
+  async function sendNotification(forUserId, fromUserId, type, data) {
+    if (!forUserId || !fromUserId || forUserId === fromUserId) return;
     
-    const notification = {
-      forUser: forUserId,
-      fromUser: fromUserId,
-      fromUserName: fromUserName,
-      type: type,
-      timestamp: serverTimestamp(),
-      read: false
-    };
-    
-    if (type === 'like' || type === 'comment') {
-      notification.poemId = data.poemId;
-      notification.poemTitle = data.poemTitle;
-    }
-    if (type === 'comment') {
-      notification.commentText = data.commentText;
-    }
-    if (type === 'reply') {
-      notification.commentId = data.commentId;
-      notification.replyText = data.replyText;
-      notification.poemId = data.poemId;
-    }
-    
-    await addDoc(collection(db, "notifications"), notification);
-  } catch (err) {
-    console.warn("Error sending notification:", err);
-  }
-}
-
-// Function to handle follow/unfollow (UPDATED with notification)
-async function handleFollowFromPoem(poetId, buttonElement) {
-  if (!currentUserId || !poetId || currentUserId === poetId) return;
-  
-  try {
-    const docId = `${currentUserId}_${poetId}`;
-    const followRef = doc(db, "social", docId);
-    const docSnap = await getDoc(followRef);
-    const batch = writeBatch(db);
-    
-    if (docSnap.exists()) {
-      batch.delete(followRef);
-      batch.update(doc(db, "users", poetId), { followerCount: increment(-1) });
-      batch.update(doc(db, "users", currentUserId), { followingCount: increment(-1) });
-      await batch.commit();
-      followStates.set(poetId, false);
-      buttonElement.textContent = "Follow";
-      buttonElement.classList.remove("following");
-      buttonElement.style.background = "#4CAF50";
-    } else {
-      batch.set(followRef, { followerId: currentUserId, followedId: poetId, createdAt: serverTimestamp() });
-      batch.update(doc(db, "users", poetId), { followerCount: increment(1) });
-      batch.update(doc(db, "users", currentUserId), { followingCount: increment(1) });
-      await batch.commit();
-      followStates.set(poetId, true);
-      buttonElement.textContent = "Following";
-      buttonElement.classList.add("following");
-      buttonElement.style.background = "#f44336";
+    try {
+      const userDoc = await getDoc(doc(db, "users", fromUserId));
+      const fromUserName = userDoc.exists() ? userDoc.data().username : "Someone";
       
-      // Send follow notification
-      await sendNotification(poetId, currentUserId, 'follow', {});
+      const notification = {
+        forUser: forUserId,
+        fromUser: fromUserId,
+        fromUserName: fromUserName,
+        type: type,
+        timestamp: serverTimestamp(),
+        read: false
+      };
+      
+      if (type === 'like' || type === 'comment') {
+        notification.poemId = data.poemId;
+        notification.poemTitle = data.poemTitle;
+      }
+      if (type === 'comment') {
+        notification.commentText = data.commentText;
+      }
+      if (type === 'reply') {
+        notification.commentId = data.commentId;
+        notification.replyText = data.replyText;
+        notification.poemId = data.poemId;
+      }
+      
+      await addDoc(collection(db, "notifications"), notification);
+    } catch (err) {
+      console.warn("Error sending notification:", err);
     }
-  } catch (err) {
-    console.error("Error handling follow:", err);
+  }
+
+  // Function to handle follow/unfollow
+  async function handleFollowFromPoem(poetId, buttonElement) {
+    if (!currentUserId || !poetId || currentUserId === poetId) return;
+    
+    try {
+      const docId = `${currentUserId}_${poetId}`;
+      const followRef = doc(db, "social", docId);
+      const docSnap = await getDoc(followRef);
+      const batch = writeBatch(db);
+      
+      if (docSnap.exists()) {
+        batch.delete(followRef);
+        batch.update(doc(db, "users", poetId), { followerCount: increment(-1) });
+        batch.update(doc(db, "users", currentUserId), { followingCount: increment(-1) });
+        await batch.commit();
+        followStates.set(poetId, false);
+        buttonElement.textContent = "Follow";
+        buttonElement.classList.remove("following");
+        buttonElement.style.background = "#4CAF50";
+      } else {
+        batch.set(followRef, { followerId: currentUserId, followedId: poetId, createdAt: serverTimestamp() });
+        batch.update(doc(db, "users", poetId), { followerCount: increment(1) });
+        batch.update(doc(db, "users", currentUserId), { followingCount: increment(1) });
+        await batch.commit();
+        followStates.set(poetId, true);
+        buttonElement.textContent = "Following";
+        buttonElement.classList.add("following");
+        buttonElement.style.background = "#f44336";
+        
+        await sendNotification(poetId, currentUserId, 'follow', {});
+      }
+    } catch (err) {
+      console.error("Error handling follow:", err);
     }
   }
 
@@ -838,222 +1307,188 @@ async function handleFollowFromPoem(poetId, buttonElement) {
     return null;
   }
 
-  // Redirect to login function
+  // Redirect to login function (no comment saving)
   function redirectToLogin() {
-    const currentPage = window.location.href;
-    localStorage.setItem('redirectAfterLogin', currentPage);
-    window.location.href = `universal-login.html?platform=poetry&redirect=${encodeURIComponent(currentPage)}`;
+    const currentUrl = encodeURIComponent(window.location.href);
+    window.location.href = `universal-login.html?platform=poetry&redirect=${currentUrl}`;
   }
 
-// ============================================
-// PERFECT READ COUNT TRACKING CONFIGURATION
-// ============================================
-const READ_TRACKING_KEY = 'poem_read_tracking';
-const READ_TIMEOUT_MINUTES = 30;     // Don't count again for 30 minutes
-const READ_DELAY_SECONDS = 8;         // 8 seconds - Perfect balance for genuine reads
-const VIEW_THRESHOLD = 0.6;           // 60% of poem must be visible (not just a glimpse)
-
-// Track active timers for each poem
-const activeTimers = new Map();
-const viewStartTimes = new Map();     // Track when user started viewing
-
-// Get read tracking from sessionStorage
-function getReadTracking() {
-  const stored = sessionStorage.getItem(READ_TRACKING_KEY);
-  if (!stored) return {};
-  
-  try {
-    const tracking = JSON.parse(stored);
-    const now = Date.now();
-    const cleaned = {};
-    for (const [poemId, timestamp] of Object.entries(tracking)) {
-      if (now - timestamp < READ_TIMEOUT_MINUTES * 60 * 1000) {
-        cleaned[poemId] = timestamp;
-      }
+  // Custom alert that redirects on OK (no comment saving)
+  function showLoginAlertAndRedirect(message) {
+    if (confirm(message + "\n\nClick OK to sign in.")) {
+      const currentUrl = encodeURIComponent(window.location.href);
+      window.location.href = `universal-login.html?platform=poetry&redirect=${currentUrl}`;
     }
-    return cleaned;
-  } catch (e) {
-    return {};
   }
-}
 
-// Save read tracking to sessionStorage
-function saveReadTracking(tracking) {
-  try {
-    sessionStorage.setItem(READ_TRACKING_KEY, JSON.stringify(tracking));
-  } catch (e) {
-    // Silent fail
-  }
-}
+  // ============================================
+  // PERFECT READ COUNT TRACKING CONFIGURATION
+  // ============================================
+  const READ_TRACKING_KEY = 'poem_read_tracking';
+  const READ_TIMEOUT_MINUTES = 30;
+  const READ_DELAY_SECONDS = 8;
+  const VIEW_THRESHOLD = 0.6;
 
-// Check if poem was recently read
-function wasRecentlyRead(poemId) {
-  const tracking = getReadTracking();
-  const now = Date.now();
-  return tracking[poemId] && (now - tracking[poemId] < READ_TIMEOUT_MINUTES * 60 * 1000);
-}
+  // Track active timers for each poem
+  const activeTimers = new Map();
+  const viewStartTimes = new Map();
+  const followStates = new Map();
 
-// Actually record the view to Firebase
-async function recordViewToFirebase(poemId) {
-  // Double check before recording
-  if (wasRecentlyRead(poemId)) {
-    return false;
-  }
-  
-  try {
-    const poemRef = doc(db, "recentPoems", poemId);
-    await updateDoc(poemRef, {
-      views: increment(1)
-    });
+  // Get read tracking from sessionStorage
+  function getReadTracking() {
+    const stored = sessionStorage.getItem(READ_TRACKING_KEY);
+    if (!stored) return {};
     
-    // Update session storage
-    const tracking = getReadTracking();
-    tracking[poemId] = Date.now();
-    saveReadTracking(tracking);
-    
-    // Update the view count on the card if it exists
-    const card = document.querySelector(`.recent-poem-card[data-id="${poemId}"]`);
-    if (card) {
-      let viewCountSpan = card.querySelector('.view-count-inline');
-      if (!viewCountSpan) viewCountSpan = card.querySelector('.view-count');
-      if (!viewCountSpan) viewCountSpan = card.querySelector('.read-count');
-      
-      if (viewCountSpan) {
-        const currentText = viewCountSpan.textContent;
-        const match = currentText.match(/\d+/);
-        if (match) {
-          const currentCount = parseInt(match[0]);
-          const newCount = currentCount + 1;
-          
-          if (currentText.includes('👁️')) {
-            viewCountSpan.innerHTML = `👁️ ${newCount} ${newCount === 1 ? 'read' : 'reads'}`;
-          } else if (currentText.includes('reads')) {
-            viewCountSpan.textContent = `${newCount} reads`;
-          } else {
-            viewCountSpan.textContent = `${newCount}`;
-          }
-          
-          viewCountSpan.style.transition = 'all 0.3s ease';
-          viewCountSpan.style.color = '#4CAF50';
-          viewCountSpan.style.transform = 'scale(1.1)';
-          setTimeout(() => {
-            viewCountSpan.style.color = '#888';
-            viewCountSpan.style.transform = 'scale(1)';
-          }, 1000);
+    try {
+      const tracking = JSON.parse(stored);
+      const now = Date.now();
+      const cleaned = {};
+      for (const [poemId, timestamp] of Object.entries(tracking)) {
+        if (now - timestamp < READ_TIMEOUT_MINUTES * 60 * 1000) {
+          cleaned[poemId] = timestamp;
         }
       }
+      return cleaned;
+    } catch (e) {
+      return {};
+    }
+  }
+
+  // Save read tracking to sessionStorage
+  function saveReadTracking(tracking) {
+    try {
+      sessionStorage.setItem(READ_TRACKING_KEY, JSON.stringify(tracking));
+    } catch (e) {}
+  }
+
+  // Check if poem was recently read
+  function wasRecentlyRead(poemId) {
+    const tracking = getReadTracking();
+    const now = Date.now();
+    return tracking[poemId] && (now - tracking[poemId] < READ_TIMEOUT_MINUTES * 60 * 1000);
+  }
+
+  // Actually record the view to Firebase
+  async function recordViewToFirebase(poemId) {
+    if (wasRecentlyRead(poemId)) {
+      return false;
     }
     
-    return true;
-  } catch (err) {
-    // Silent fail
-    return false;
+    try {
+      const poemRef = doc(db, "recentPoems", poemId);
+      await updateDoc(poemRef, {
+        views: increment(1)
+      });
+      
+      const tracking = getReadTracking();
+      tracking[poemId] = Date.now();
+      saveReadTracking(tracking);
+      
+      const card = document.querySelector(`.recent-poem-card[data-id="${poemId}"]`);
+      if (card) {
+        let viewCountSpan = card.querySelector('.view-count-inline');
+        if (viewCountSpan) {
+          const currentText = viewCountSpan.textContent;
+          const match = currentText.match(/\d+/);
+          if (match) {
+            const currentCount = parseInt(match[0]);
+            const newCount = currentCount + 1;
+            viewCountSpan.textContent = `${newCount} Reads`;
+            viewCountSpan.style.transition = 'all 0.3s ease';
+            viewCountSpan.style.color = '#4CAF50';
+            viewCountSpan.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+              viewCountSpan.style.color = '#333';
+              viewCountSpan.style.transform = 'scale(1)';
+            }, 1000);
+          }
+        }
+      }
+      
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
-}
 
-// Start tracking a poem when it becomes visible
-function startTrackingPoem(poemId) {
-  if (!poemId) return;
-  
-  // Check if already counted recently
-  if (wasRecentlyRead(poemId)) {
-    return;
-  }
-  
-  // Check if timer already exists
-  if (activeTimers.has(poemId)) {
-    return;
-  }
-  
-  // Record when user started viewing
-  viewStartTimes.set(poemId, Date.now());
-  
-  // Set timer to record view after 8 seconds
-  const timer = setTimeout(async () => {
-    // Check if user actually viewed for full duration
-    const viewDuration = Date.now() - (viewStartTimes.get(poemId) || Date.now());
+  // Start tracking a poem when it becomes visible
+  function startTrackingPoem(poemId) {
+    if (!poemId || wasRecentlyRead(poemId) || activeTimers.has(poemId)) return;
     
-    if (!wasRecentlyRead(poemId)) {
-      if (viewDuration >= READ_DELAY_SECONDS * 1000) {
+    viewStartTimes.set(poemId, Date.now());
+    
+    const timer = setTimeout(async () => {
+      const viewDuration = Date.now() - (viewStartTimes.get(poemId) || Date.now());
+      
+      if (!wasRecentlyRead(poemId) && viewDuration >= READ_DELAY_SECONDS * 1000) {
         await recordViewToFirebase(poemId);
       }
+      
+      activeTimers.delete(poemId);
+      viewStartTimes.delete(poemId);
+    }, READ_DELAY_SECONDS * 1000);
+    
+    activeTimers.set(poemId, timer);
+  }
+
+  // Stop tracking a poem
+  function stopTrackingPoem(poemId) {
+    if (!poemId) return;
+    
+    const timer = activeTimers.get(poemId);
+    if (timer) {
+      clearTimeout(timer);
+      activeTimers.delete(poemId);
+      viewStartTimes.delete(poemId);
+    }
+  }
+
+  // Setup Intersection Observer for view tracking
+  function setupReadTracking() {
+    if (!window.IntersectionObserver) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        const card = entry.target;
+        const poemId = card.dataset.id;
+        if (!poemId) continue;
+        
+        if (entry.isIntersecting && entry.intersectionRatio >= VIEW_THRESHOLD) {
+          startTrackingPoem(poemId);
+        } else {
+          stopTrackingPoem(poemId);
+        }
+      }
+    }, {
+      threshold: [0, VIEW_THRESHOLD],
+      rootMargin: "0px"
+    });
+    
+    function observePoemCards() {
+      const cards = document.querySelectorAll('.recent-poem-card:not([data-read-tracked])');
+      cards.forEach(card => {
+        card.setAttribute('data-read-tracked', 'true');
+        observer.observe(card);
+      });
     }
     
-    // Clean up
-    activeTimers.delete(poemId);
-    viewStartTimes.delete(poemId);
-  }, READ_DELAY_SECONDS * 1000);
-  
-  activeTimers.set(poemId, timer);
-}
-
-// Stop tracking a poem (user scrolled away before required time)
-function stopTrackingPoem(poemId) {
-  if (!poemId) return;
-  
-  const timer = activeTimers.get(poemId);
-  if (timer) {
-    clearTimeout(timer);
-    activeTimers.delete(poemId);
-    viewStartTimes.delete(poemId);
-  }
-}
-
-// Setup Intersection Observer for view tracking (silent version)
-function setupReadTracking() {
-  if (!window.IntersectionObserver) {
-    return;
-  }
-  
-  const observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      const card = entry.target;
-      const poemId = card.dataset.id;
-      
-      if (!poemId) continue;
-      
-      // Poem is visible enough (60% or more in viewport)
-      if (entry.isIntersecting && entry.intersectionRatio >= VIEW_THRESHOLD) {
-        startTrackingPoem(poemId);
-      } 
-      // Poem is not visible enough (below 60%)
-      else {
-        stopTrackingPoem(poemId);
-      }
+    observePoemCards();
+    
+    const container = document.getElementById('poems-container');
+    if (container) {
+      const mutationObserver = new MutationObserver(() => {
+        observePoemCards();
+      });
+      mutationObserver.observe(container, { childList: true, subtree: false });
     }
-  }, {
-    threshold: [0, VIEW_THRESHOLD],
-    rootMargin: "0px"
-  });
-  
-  // Observe existing and future poem cards
-  function observePoemCards() {
-    const cards = document.querySelectorAll('.recent-poem-card:not([data-read-tracked])');
-    cards.forEach(card => {
-      card.setAttribute('data-read-tracked', 'true');
-      observer.observe(card);
-    });
   }
-  
-  // Initial observation
-  observePoemCards();
-  
-  // Watch for dynamically added cards (infinite scroll)
-  const container = document.getElementById('poems-container');
-  if (container) {
-    const mutationObserver = new MutationObserver(() => {
-      observePoemCards();
-    });
-    mutationObserver.observe(container, { childList: true, subtree: false });
-  }
-}
 
-// Initialize tracking when page loads (silent)
-document.addEventListener("DOMContentLoaded", () => {
-  domReady = true;
-  setupReadTracking();
-  maybeStartInitialLoad();
-});
+  // Initialize tracking when page loads
+  document.addEventListener("DOMContentLoaded", () => {
+    domReady = true;
+    setupReadTracking();
+    maybeStartInitialLoad();
+  });
   
   // Set to track loaded poem IDs to prevent duplicates
   const loadedPoemIds = new Set();
@@ -1063,6 +1498,8 @@ document.addEventListener("DOMContentLoaded", () => {
   let isSearchMode = false;
   let isLoading = false;
   let initialLoadComplete = false;
+  let currentSearchTerm = '';
+  let searchTimeout;
 
   // Helper functions
   function getInitials(name = "") {
@@ -1106,9 +1543,6 @@ document.addEventListener("DOMContentLoaded", () => {
     reachedEnd = false;
     loadedPoemIds.clear();
   }
-
-  // Track follow states to avoid repeated DB calls
-  const followStates = new Map();
 
   // Load poems alphabetically A-Z with infinite scroll
   async function loadPoems(initial = false) {
@@ -1155,11 +1589,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Filter out already loaded poems
       const newDocs = snapshot.docs.filter(doc => !loadedPoemIds.has(doc.id));
       
       if (newDocs.length === 0) {
-        // If all docs in this batch are already loaded, try to get next batch
         if (snapshot.docs.length > 0) {
           lastVisible = snapshot.docs[snapshot.docs.length - 1];
           isLoading = false;
@@ -1167,10 +1599,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      // Add new IDs to set
       newDocs.forEach(doc => loadedPoemIds.add(doc.id));
 
-      // Process each new document
       for (const docSnap of newDocs) {
         const poem = docSnap.data();
         const docId = docSnap.id;
@@ -1201,16 +1631,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 profileImage = userData.photoURL;
               } else if (userData.cachedAvatarURL) {
                 profileImage = userData.cachedAvatarURL;
-              } else {
-                // Generate avatar asynchronously but don't wait for it
-                const initials = getInitials(displayName);
-                const bgColor = colorFromName(displayName);
-                uploadAvatarToCloudinary(initials, bgColor, poetUid).then(url => {
-                  if (url) {
-                    const img = card.querySelector(".author-img");
-                    if (img) img.src = url;
-                  }
-                });
               }
             }
           } catch (err) {
@@ -1264,7 +1684,6 @@ document.addEventListener("DOMContentLoaded", () => {
           ? `<button class="follow-btn-on-card ${isFollowing ? 'following' : ''}" data-poet-id="${poetUid}" style="background: ${isFollowing ? '#f44336' : '#4CAF50'}; color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-size: 12px; margin-left: auto; transition: all 0.2s;">${isFollowing ? 'Following' : 'Follow'}</button>`
           : '';
 
-        // Build card HTML
         card.innerHTML = `
           <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
             <div style="display:flex; align-items:center; gap:10px;">
@@ -1297,7 +1716,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         container.appendChild(card);
 
-        // Add comment list as a sibling AFTER the card (like your working HTML)
+        // Add comment list as a sibling AFTER the card
         const commentListDiv = document.createElement("div");
         commentListDiv.className = "comment-list";
         commentListDiv.style.display = "none";
@@ -1363,7 +1782,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Infinite scroll handler with throttle for performance
+  // Infinite scroll handler
   let scrollTimeout;
   function handleScroll() {
     if (scrollTimeout) clearTimeout(scrollTimeout);
@@ -1375,7 +1794,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
       
-      // Load more when user is within 300px of the bottom
       if (scrollY + windowHeight >= documentHeight - 300) {
         loadPoems(false);
       }
@@ -1389,283 +1807,292 @@ document.addEventListener("DOMContentLoaded", () => {
     isSearchMode = false;
     currentSearchTerm = '';
     
-    // Hide search indicator
     document.getElementById("search-mode-indicator").style.display = "none";
-    
-    // Clear search inputs
     document.getElementById("desktop-search-input").value = '';
     document.getElementById("mobile-search-input").value = '';
     
-    // Reset and reload
     resetPagination();
     await loadPoems(true);
   }
 
-  // Search functionality with abort previous search
-// Search functionality with abort previous search
-let activeSearch = null;
+  // Search functionality
+  let activeSearch = null;
 
-async function performSearch(searchTerm) {
-  // Cancel previous search if still running
-  if (activeSearch) {
-    activeSearch.abort = true;
-  }
-  
-  const container = document.getElementById("poems-container");
-  const loadingIndicator = document.getElementById("loading-indicator");
-  const endMessage = document.getElementById("end-message");
-  const searchIndicator = document.getElementById("search-mode-indicator");
-  const searchTermDisplay = document.getElementById("search-term-display");
-  
-  const term = searchTerm.trim();
-  
-  if (!term) {
-    await clearSearch();
-    return;
-  }
-
-  // Set search mode
-  isSearchMode = true;
-  currentSearchTerm = term;
-  
-  // Show search indicator
-  searchTermDisplay.textContent = `Searching for: "${term}"`;
-  searchIndicator.style.display = "block";
-  
-  container.innerHTML = '<div class="loading-indicator"><div class="loading-spinner"></div><p>Searching...</p></div>';
-  if (loadingIndicator) loadingIndicator.style.display = "none";
-  if (endMessage) endMessage.style.display = "none";
-
-  // Create new search token
-  const searchToken = { abort: false };
-  activeSearch = searchToken;
-
-  try {
-    const colRef = collection(db, "recentPoems");
-    const snapshot = await getDocs(colRef);
-    
-    // Check if search was cancelled
-    if (searchToken.abort) return;
-    
-    const results = [];
-    const searchLower = term.toLowerCase();
-    const seenIds = new Set(); // Prevent duplicates within search results
-
-    for (const docSnap of snapshot.docs) {
-      // Check if search was cancelled
-      if (searchToken.abort) return;
-      
-      const poem = docSnap.data();
-      if (poem.title?.toLowerCase().includes(searchLower) ||
-          poem.author?.toLowerCase().includes(searchLower) ||
-          poem.content?.toLowerCase().includes(searchLower)) {
-        
-        // Check for duplicates
-        if (!seenIds.has(docSnap.id)) {
-          seenIds.add(docSnap.id);
-          results.push({ id: docSnap.id, ...poem });
-        }
-      }
+  async function performSearch(searchTerm) {
+    if (activeSearch) {
+      activeSearch.abort = true;
     }
-
-    // Sort results alphabetically
-    results.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
-
-    // Check if search was cancelled
-    if (searchToken.abort) return;
-
-    container.innerHTML = "";
-
-    if (results.length === 0) {
-      container.innerHTML = '<div class="no-poems-message">No poems found matching your search.</div>';
+    
+    const container = document.getElementById("poems-container");
+    const loadingIndicator = document.getElementById("loading-indicator");
+    const endMessage = document.getElementById("end-message");
+    const searchIndicator = document.getElementById("search-mode-indicator");
+    const searchTermDisplay = document.getElementById("search-term-display");
+    
+    const term = searchTerm.trim();
+    
+    if (!term) {
+      await clearSearch();
       return;
     }
 
-    // Display search results
-    for (const poem of results) {
-      // Check if search was cancelled
+    isSearchMode = true;
+    currentSearchTerm = term;
+    
+    searchTermDisplay.textContent = `Searching for: "${term}"`;
+    searchIndicator.style.display = "block";
+    
+    container.innerHTML = '<div class="loading-indicator"><div class="loading-spinner"></div><p>Searching...</p></div>';
+    if (loadingIndicator) loadingIndicator.style.display = "none";
+    if (endMessage) endMessage.style.display = "none";
+
+    const searchToken = { abort: false };
+    activeSearch = searchToken;
+
+    try {
+      const colRef = collection(db, "recentPoems");
+      const snapshot = await getDocs(colRef);
+      
       if (searchToken.abort) return;
       
-      const card = document.createElement("div");
-      card.className = "recent-poem-card";
-      card.dataset.id = poem.id;
+      const results = [];
+      const searchLower = term.toLowerCase();
+      const seenIds = new Set();
 
-      const truncated = truncatePoem(poem.content, 8);
-      const likes = typeof poem.likes === "number" ? poem.likes : 0;
-      const viewCount = typeof poem.views === "number" ? poem.views : 0;
-
-      // Get author info
-      const poetUid = poem.authorId || "";
-      let displayName = poem.author || "Anonymous";
-      let profileLink = "#";
-      let profileImage = "/images/default-avatar.png";
-
-      if (poetUid) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", poetUid));
-          if (userDoc.exists()) {
-            displayName = userDoc.data().username || displayName;
-            profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
-            const userData = userDoc.data();
-            if (userData.photoURL) profileImage = userData.photoURL;
-            else if (userData.cachedAvatarURL) profileImage = userData.cachedAvatarURL;
+      for (const docSnap of snapshot.docs) {
+        if (searchToken.abort) return;
+        
+        const poem = docSnap.data();
+        if (poem.title?.toLowerCase().includes(searchLower) ||
+            poem.author?.toLowerCase().includes(searchLower) ||
+            poem.content?.toLowerCase().includes(searchLower)) {
+          
+          if (!seenIds.has(docSnap.id)) {
+            seenIds.add(docSnap.id);
+            results.push({ id: docSnap.id, ...poem });
           }
-        } catch (err) {
-          console.warn("Failed to fetch user info:", err);
         }
       }
 
-      // Check follow status
-      let isFollowing = false;
-      if (currentUserId && currentUserId !== poetUid && poetUid) {
-        try {
-          isFollowing = await checkFollowStatus(poetUid, currentUserId);
-        } catch (err) {
-          console.warn("Failed to check follow status:", err);
-        }
+      results.sort((a, b) => (a.title || "").localeCompare(b.title || ""));
+
+      if (searchToken.abort) return;
+
+      container.innerHTML = "";
+
+      if (results.length === 0) {
+        container.innerHTML = '<div class="no-poems-message">No poems found matching your search.</div>';
+        return;
       }
 
-      // Collaborators info
-      let collaboratorsHTML = "";
-      if (Array.isArray(poem.collaborators) && poem.collaborators.length > 0) {
-        try {
-          const collaboratorLinks = [];
-          for (const collaborator of poem.collaborators) {
-            if (!collaborator.uid) continue;
-            let collabName = collaborator.username || "Unknown";
-            let collabLink = "#";
-            const collabDoc = await getDoc(doc(db, "users", collaborator.uid));
-            if (collabDoc.exists()) {
-              const collabData = collabDoc.data();
-              collabName = collabData.username || collabName;
-              collabLink = `/user-profile.html?uid=${encodeURIComponent(collaborator.uid)}`;
+      for (const poem of results) {
+        if (searchToken.abort) return;
+        
+        const card = document.createElement("div");
+        card.className = "recent-poem-card";
+        card.dataset.id = poem.id;
+
+        const truncated = truncatePoem(poem.content, 8);
+        const likes = typeof poem.likes === "number" ? poem.likes : 0;
+        const viewCount = typeof poem.views === "number" ? poem.views : 0;
+
+        const poetUid = poem.authorId || "";
+        let displayName = poem.author || "Anonymous";
+        let profileLink = "#";
+        let profileImage = "/images/default-avatar.png";
+
+        if (poetUid) {
+          try {
+            const userDoc = await getDoc(doc(db, "users", poetUid));
+            if (userDoc.exists()) {
+              displayName = userDoc.data().username || displayName;
+              profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
+              const userData = userDoc.data();
+              if (userData.photoURL) profileImage = userData.photoURL;
+              else if (userData.cachedAvatarURL) profileImage = userData.cachedAvatarURL;
             }
-            collaboratorLinks.push(`<a href="${collabLink}" class="collaborator-link">${collabName}</a>`);
+          } catch (err) {
+            console.warn("Failed to fetch user info:", err);
           }
-          if (collaboratorLinks.length) {
-            collaboratorsHTML = `<div class="collaborator-line" style="margin-top:4px; font-size:0.95rem; color:#555;"><em>Co-written with ${collaboratorLinks.join(", ")}</em></div>`;
-          }
-        } catch (err) {
-          console.warn("Failed to fetch collaborators:", err);
         }
-      }
 
-      // Audio section
-      let audioHTML = '';
-      if (poem.audioUrl) {
-        audioHTML = `<div class="poem-audio-section" style="margin: 15px 0 15px 0 !important; padding: 8px 12px !important; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;"><span style="font-size: 0.75rem; color: #4b2aad; font-weight: 600;">🎙️ Spoken Version</span></div><audio controls style="width: 100%; border-radius: 8px; height: 35px;" preload="metadata"><source src="${poem.audioUrl}" type="audio/mpeg">Your browser does not support the audio element.</audio></div>`;
-      }
+        let isFollowing = false;
+        if (currentUserId && currentUserId !== poetUid && poetUid) {
+          try {
+            isFollowing = await checkFollowStatus(poetUid, currentUserId);
+          } catch (err) {
+            console.warn("Failed to check follow status:", err);
+          }
+        }
 
-      // Follow button
-      const followButtonHTML = (currentUserId && currentUserId !== poetUid && poetUid)
-        ? `<button class="follow-btn-on-card ${isFollowing ? 'following' : ''}" data-poet-id="${poetUid}" style="background: ${isFollowing ? '#f44336' : '#4CAF50'}; color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-size: 12px; margin-left: auto; transition: all 0.2s;">${isFollowing ? 'Following' : 'Follow'}</button>`
-        : '';
+        let collaboratorsHTML = "";
+        if (Array.isArray(poem.collaborators) && poem.collaborators.length > 0) {
+          try {
+            const collaboratorLinks = [];
+            for (const collaborator of poem.collaborators) {
+              if (!collaborator.uid) continue;
+              let collabName = collaborator.username || "Unknown";
+              let collabLink = "#";
+              const collabDoc = await getDoc(doc(db, "users", collaborator.uid));
+              if (collabDoc.exists()) {
+                const collabData = collabDoc.data();
+                collabName = collabData.username || collabName;
+                collabLink = `/user-profile.html?uid=${encodeURIComponent(collaborator.uid)}`;
+              }
+              collaboratorLinks.push(`<a href="${collabLink}" class="collaborator-link">${collabName}</a>`);
+            }
+            if (collaboratorLinks.length) {
+              collaboratorsHTML = `<div class="collaborator-line" style="margin-top:4px; font-size:0.95rem; color:#555;"><em>Co-written with ${collaboratorLinks.join(", ")}</em></div>`;
+            }
+          } catch (err) {
+            console.warn("Failed to fetch collaborators:", err);
+          }
+        }
 
-      card.innerHTML = `
-        <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <img src="${profileImage}" alt="${displayName}" class="author-img" loading="lazy">
-            <div class="author-info">
-              <a href="${profileLink}" class="author-link" style="font-size:1.2rem; font-weight:700;">${displayName}</a>
-              <div class="follow-button-container" style="margin-top: 4px;">
-                ${followButtonHTML}
+        let audioHTML = '';
+        if (poem.audioUrl) {
+          audioHTML = `<div class="poem-audio-section" style="margin: 15px 0 15px 0 !important; padding: 8px 12px !important; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;"><span style="font-size: 0.75rem; color: #4b2aad; font-weight: 600;">🎙️ Spoken Version</span></div><audio controls style="width: 100%; border-radius: 8px; height: 35px;" preload="metadata"><source src="${poem.audioUrl}" type="audio/mpeg">Your browser does not support the audio element.</audio></div>`;
+        }
+
+        const followButtonHTML = (currentUserId && currentUserId !== poetUid && poetUid)
+          ? `<button class="follow-btn-on-card ${isFollowing ? 'following' : ''}" data-poet-id="${poetUid}" style="background: ${isFollowing ? '#f44336' : '#4CAF50'}; color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-size: 12px; margin-left: auto; transition: all 0.2s;">${isFollowing ? 'Following' : 'Follow'}</button>`
+          : '';
+
+        card.innerHTML = `
+          <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <img src="${profileImage}" alt="${displayName}" class="author-img" loading="lazy">
+              <div class="author-info">
+                <a href="${profileLink}" class="author-link" style="font-size:1.2rem; font-weight:700;">${displayName}</a>
+                <div class="follow-button-container" style="margin-top: 4px;">
+                  ${followButtonHTML}
+                </div>
               </div>
             </div>
+            <span class="view-count-inline" style="font-size:0.85rem; color:#333;">${viewCount} Reads</span>
           </div>
-          <span class="view-count-inline" style="font-size:0.85rem; color:#333;">${viewCount} Reads</span>
-        </div>
-        ${collaboratorsHTML}
-        <h3 class="recent-poem-title">${poem.title}</h3>
-        <p class="poem-content">${truncated.preview}</p>
-        ${truncated.truncated ? '<button class="read-more-btn">Read More</button>' : ''}
-        ${audioHTML}
-        ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${cat}</a>`).join(", ")}</em></p>` : ''}
-        <div class="poem-actions">
-          <div class="comment-section">
-            <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
-            <button class="comment-btn">Post</button>
+          ${collaboratorsHTML}
+          <h3 class="recent-poem-title">${poem.title}</h3>
+          <p class="poem-content">${truncated.preview}</p>
+          ${truncated.truncated ? '<button class="read-more-btn">Read More</button>' : ''}
+          ${audioHTML}
+          ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${cat}</a>`).join(", ")}</em></p>` : ''}
+          <div class="poem-actions">
+            <div class="comment-section">
+              <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+              <button class="comment-btn">Post</button>
+            </div>
+            <button class="like-btn">❤️</button>
+            <span class="like-count">${likes}</span>
+            <span class="message-count">💬 0</span>
           </div>
-          <button class="like-btn">❤️</button>
-          <span class="like-count">${likes}</span>
-          <span class="message-count">💬 0</span>
-        </div>
-      `;
+        `;
 
-      container.appendChild(card);
+        container.appendChild(card);
 
-      // Add comment list as a sibling AFTER the card
-      const commentListDiv = document.createElement("div");
-      commentListDiv.className = "comment-list";
-      commentListDiv.style.display = "none";
-      container.appendChild(commentListDiv);
+        const commentListDiv = document.createElement("div");
+        commentListDiv.className = "comment-list";
+        commentListDiv.style.display = "none";
+        container.appendChild(commentListDiv);
 
-      // 🔧 FIX: Add read more functionality for search results
-      if (truncated.truncated) {
-        const btn = card.querySelector(".read-more-btn");
-        const p = card.querySelector(".poem-content");
-        btn.addEventListener("click", () => {
-          if (btn.textContent === "Read More") {
-            p.textContent = truncated.full;
-            btn.textContent = "Show Less";
-          } else {
-            p.textContent = truncated.preview;
-            btn.textContent = "Read More";
-          }
+        if (truncated.truncated) {
+          const btn = card.querySelector(".read-more-btn");
+          const p = card.querySelector(".poem-content");
+          btn.addEventListener("click", () => {
+            if (btn.textContent === "Read More") {
+              p.textContent = truncated.full;
+              btn.textContent = "Show Less";
+            } else {
+              p.textContent = truncated.preview;
+              btn.textContent = "Read More";
+            }
+          });
+        }
+
+        try {
+          const commentsCol = collection(db, "recentPoems", poem.id, "comments");
+          const commentsSnapshot = await getDocs(commentsCol);
+          card.querySelector(".message-count").textContent = `💬 ${commentsSnapshot.size}`;
+        } catch (err) {
+          console.warn("Failed to get comment count:", err);
+        }
+
+        const textarea = card.querySelector(".comment-input");
+        textarea.addEventListener("input", () => {
+          textarea.style.height = "auto";
+          textarea.style.height = textarea.scrollHeight + "px";
         });
       }
 
-      // Set up comment count
-      try {
-        const commentsCol = collection(db, "recentPoems", poem.id, "comments");
-        const commentsSnapshot = await getDocs(commentsCol);
-        card.querySelector(".message-count").textContent = `💬 ${commentsSnapshot.size}`;
-      } catch (err) {
-        console.warn("Failed to get comment count:", err);
-      }
-
-      // Auto-resize textarea
-      const textarea = card.querySelector(".comment-input");
-      textarea.addEventListener("input", () => {
-        textarea.style.height = "auto";
-        textarea.style.height = textarea.scrollHeight + "px";
+      document.querySelectorAll('.follow-btn-on-card').forEach(btn => {
+        const poetId = btn.dataset.poetId;
+        btn.removeEventListener('click', btn._followHandler);
+        btn._followHandler = async (e) => {
+          e.stopPropagation();
+          await handleFollowFromPoem(poetId, btn);
+        };
+        btn.addEventListener('click', btn._followHandler);
       });
-    }
 
-    // Attach follow button event listeners for search results
-    document.querySelectorAll('.follow-btn-on-card').forEach(btn => {
-      const poetId = btn.dataset.poetId;
-      btn.removeEventListener('click', btn._followHandler);
-      btn._followHandler = async (e) => {
-        e.stopPropagation();
-        await handleFollowFromPoem(poetId, btn);
-      };
-      btn.addEventListener('click', btn._followHandler);
-    });
-
-  } catch (err) {
-    console.error("Search error:", err);
-    // Check if search was cancelled
-    if (!searchToken.abort) {
-      container.innerHTML = `<div class="error-message">Search failed: ${err.message}</div>`;
-    }
-  } finally {
-    if (activeSearch === searchToken) {
-      activeSearch = null;
+    } catch (err) {
+      console.error("Search error:", err);
+      if (!searchToken.abort) {
+        container.innerHTML = `<div class="error-message">Search failed: ${err.message}</div>`;
+      }
+    } finally {
+      if (activeSearch === searchToken) {
+        activeSearch = null;
+      }
     }
   }
-}
 
   // Set up clear search button
   document.getElementById("clear-search").addEventListener("click", clearSearch);
 
-  // Like, Comment, Reply handlers (same as before)
+  // Single search handler for both inputs
+  function handleSearchInput(value) {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      performSearch(value);
+    }, 300);
+  }
+
+  // Desktop search
+  const desktopSearchInput = document.getElementById("desktop-search-input");
+  if (desktopSearchInput) {
+    desktopSearchInput.addEventListener("input", (e) => {
+      const value = e.target.value;
+      const mobileSearchInput = document.getElementById("mobile-search-input");
+      if (mobileSearchInput) {
+        mobileSearchInput.value = value;
+      }
+      handleSearchInput(value);
+    });
+  }
+
+  // Mobile search
+  const mobileSearchInput = document.getElementById("mobile-search-input");
+  if (mobileSearchInput) {
+    mobileSearchInput.addEventListener("input", (e) => {
+      const value = e.target.value;
+      if (desktopSearchInput) {
+        desktopSearchInput.value = value;
+      }
+      handleSearchInput(value);
+    });
+  }
+
+  // ============================================================
+  // ====== LIKE, COMMENT, REPLY HANDLERS (NO SAVE FEATURE) ======
+  // ============================================================
+
   document.addEventListener("click", async (e) => {
     const user = auth.currentUser;
 
     // Like handler
     if (e.target.classList.contains("like-btn")) {
       if (!user) { 
-        redirectToLogin();
+        showLoginAlertAndRedirect("Please sign in to like poems!");
         return; 
       }
       
@@ -1705,10 +2132,10 @@ async function performSearch(searchTerm) {
       }
     }
 
-    // Comment handler
+    // ===== COMMENT HANDLER (NO SAVE FEATURE) =====
     if (e.target.classList.contains("comment-btn")) {
       if (!user) { 
-        alert("Please sign in to comment!"); 
+        showLoginAlertAndRedirect("Please sign in to comment!");
         return; 
       }
 
@@ -1757,7 +2184,6 @@ async function performSearch(searchTerm) {
           const poemData = poemSnap.data();
           const poemOwnerId = poemData.userId || poemData.authorId || null;
           if (poemOwnerId && poemOwnerId !== user.uid) {
-            // Send comment notification
             await sendNotification(poemOwnerId, user.uid, 'comment', {
               poemId: docId,
               poemTitle: poemData.title || "Untitled",
@@ -1765,6 +2191,8 @@ async function performSearch(searchTerm) {
             });
           }
         }
+        
+        showToast('✅ Comment posted successfully!', 2000);
       } catch (err) {
         console.error("Error posting comment:", err);
         alert("Failed to post comment. Please try again.");
@@ -1817,7 +2245,6 @@ async function performSearch(searchTerm) {
           `;
           commentList.appendChild(div);
           
-          // LOAD EXISTING REPLIES
           try {
             const repliesCol = collection(db, "recentPoems", docId, "comments", docSnap.id, "replies");
             const repliesSnapshot = await getDocs(query(repliesCol, orderBy("timestamp", "asc")));
@@ -1857,14 +2284,12 @@ async function performSearch(searchTerm) {
       const replySection = commentDiv.querySelector(".reply-section");
       if (!replySection) return;
 
-      // Remove existing reply input if any
       const existing = replySection.querySelector(".reply-input");
       if (existing) {
         existing.remove();
         return;
       }
 
-      // Create reply input form
       const inputContainer = document.createElement("div");
       inputContainer.className = "reply-input";
       inputContainer.style.marginTop = "8px";
@@ -1950,14 +2375,12 @@ async function performSearch(searchTerm) {
           timestamp: serverTimestamp()
         });
 
-        // Get comment owner for notification
         const commentDoc = await getDoc(doc(db, "recentPoems", docId, "comments", commentId));
         const commentOwnerId = commentDoc.exists() ? commentDoc.data().userId : null;
         
         const poemDoc = await getDoc(doc(db, "recentPoems", docId));
         const poemTitle = poemDoc.exists() ? poemDoc.data().title : "Untitled";
 
-        // Send reply notification
         if (commentOwnerId && commentOwnerId !== user.uid) {
           await sendNotification(commentOwnerId, user.uid, 'reply', {
             poemId: docId,
@@ -1994,6 +2417,8 @@ async function performSearch(searchTerm) {
         replySection.appendChild(tempMsg);
         setTimeout(() => tempMsg.remove(), 2000);
         
+        showToast('✅ Reply posted successfully!', 2000);
+        
       } catch (err) {
         console.error("Error sending reply:", err);
         alert(err.message || "Failed to send reply. Please try again.");
@@ -2001,6 +2426,21 @@ async function performSearch(searchTerm) {
         sendBtn.textContent = originalText;
         sendBtn.disabled = false;
         sendBtn.style.opacity = "1";
+      }
+    }
+  });
+
+  // Enter key to submit comment
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      const textarea = e.target;
+      if (textarea && textarea.classList.contains('comment-input')) {
+        e.preventDefault();
+        const card = textarea.closest('.recent-poem-card');
+        if (card) {
+          const btn = card.querySelector('.comment-btn');
+          if (btn) btn.click();
+        }
       }
     }
   });
@@ -2034,47 +2474,13 @@ async function performSearch(searchTerm) {
     // Mobile search toggle
     const searchToggle = document.getElementById("search-toggle");
     const mobileSearchContainer = document.getElementById("mobile-search-container");
-    const mobileSearchInput = document.getElementById("mobile-search-input");
 
     if (searchToggle && mobileSearchContainer) {
       searchToggle.addEventListener("click", () => {
         mobileSearchContainer.classList.toggle("visible");
         if (mobileSearchContainer.classList.contains("visible")) {
-          mobileSearchInput.focus();
+          mobileSearchInput?.focus();
         }
-      });
-    }
-
-    // Single search handler for both inputs
-    function handleSearchInput(value) {
-      if (searchTimeout) clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        performSearch(value);
-      }, 300);
-    }
-
-    // Desktop search
-    const desktopSearchInput = document.getElementById("desktop-search-input");
-    if (desktopSearchInput) {
-      desktopSearchInput.addEventListener("input", (e) => {
-        const value = e.target.value;
-        // Update mobile input
-        if (mobileSearchInput) {
-          mobileSearchInput.value = value;
-        }
-        handleSearchInput(value);
-      });
-    }
-
-    // Mobile search
-    if (mobileSearchInput) {
-      mobileSearchInput.addEventListener("input", (e) => {
-        const value = e.target.value;
-        // Update desktop input
-        if (desktopSearchInput) {
-          desktopSearchInput.value = value;
-        }
-        handleSearchInput(value);
       });
     }
 
@@ -2089,8 +2495,6 @@ async function performSearch(searchTerm) {
     window.addEventListener("online", () => {
       document.querySelectorAll(".offline-notice").forEach(el => el.remove());
     });
-
-    // Load initial poems will start once auth and DOM are ready
   });
 
 </script>

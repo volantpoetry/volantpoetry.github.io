@@ -1,162 +1,161 @@
-  
-    :root {
-      --primary: #4b2aad;
-      --text: #1a1a1a;
-      --muted: #6b6b6b;
-      --bg: #ffffff;
-      --accent-bg: #f7f5ff;
-      --radius: 14px;
-    }
+:root {
+  --primary: #4b2aad;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --bg: #ffffff;
+  --accent-bg: #f7f5ff;
+  --radius: 14px;
+}
 
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
 
-    header {
-      background: var(--bg);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+header {
+  background: var(--bg);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 
-    nav {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.5rem;
-      position: relative;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
+nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  position: relative;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
 
-    /* LOGO */
-    .logo {
-      display: flex;
-      align-items: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: var(--primary);
-      text-decoration: none;
-      gap: 0.6rem;
-    }
+/* LOGO */
+.logo {
+  display: flex;
+  align-items: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-decoration: none;
+  gap: 0.6rem;
+}
 
-    .nav-logo-img {
-      display: none;
-      width: 30px;
-      height: 30px;
-      border-radius: 6px;
-      object-fit: contain;
-    }
+.nav-logo-img {
+  display: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  object-fit: contain;
+}
 
-    /* SEARCH CONTAINER */
-    .search-container {
-      flex-grow: 1;
-      max-width: 200px;
-    }
+/* SEARCH CONTAINER */
+.search-container {
+  flex-grow: 1;
+  max-width: 200px;
+}
 
-    .search-container input {
-      width: 100%;
-      padding: 0.45rem 0.2rem;
-      border: 1px solid #ddd;
-      border-radius: 40px;
-      font-size: 0.95rem;
-      outline: none;
-      transition: 0.3s;
-    }
+.search-container input {
+  width: 100%;
+  padding: 0.45rem 0.2rem;
+  border: 1px solid #ddd;
+  border-radius: 40px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: 0.3s;
+}
 
-    .search-container input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px rgba(75,42,173,0.1);
-    }
+.search-container input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(75,42,173,0.1);
+}
 
-    /* NAV LINKS */
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
+/* NAV LINKS */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
 
-    .nav-links a {
-      text-decoration: none;
-      font-weight: 500;
-      color: var(--text);
-      transition: 0.3s;
-    }
+.nav-links a {
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--text);
+  transition: 0.3s;
+}
 
-    .nav-links a:hover {
-      color: var(--primary);
-    }
+.nav-links a:hover {
+  color: var(--primary);
+}
 
-    /* MENU & SEARCH TOGGLE ICONS */
-    .menu-toggle, .search-toggle {
-      display: none;
-      font-size: 1.4rem;
-      color: var(--primary);
-      cursor: pointer;
-      transition: color 0.3s ease;
-    }
+/* MENU & SEARCH TOGGLE ICONS */
+.menu-toggle, .search-toggle {
+  display: none;
+  font-size: 1.4rem;
+  color: var(--primary);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
 
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-    }
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
 
-    /* SEARCH DROPDOWN */
-    .search-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translate(-50%, -10px);
-      width: 85%;
-      max-width: 400px;
-      background: white;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-      border-radius: 10px;
-      padding: 0.8rem;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s ease;
-      z-index: 90;
-    }
+/* SEARCH DROPDOWN */
+.search-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -10px);
+  width: 85%;
+  max-width: 400px;
+  background: white;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  padding: 0.8rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 90;
+}
 
-    .search-dropdown.show {
-      opacity: 1;
-      transform: translate(-50%, 5px);
-      pointer-events: auto;
-    }
+.search-dropdown.show {
+  opacity: 1;
+  transform: translate(-50%, 5px);
+  pointer-events: auto;
+}
 
-    .search-dropdown input {
-      width: 100%;
-      padding: 0.5rem 0.9rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
+.search-dropdown input {
+  width: 100%;
+  padding: 0.5rem 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
 
-    /* HERO SECTION */
+/* HERO SECTION */
 .hero {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-    gap: 0.5rem; /* very small gap to bring title closer */
-  padding: 2rem 2rem; /* reduce padding to left */
-  margin-left: 0; /* remove any extra spacing */
-    min-height: 45vh;
+  gap: 0.5rem;
+  padding: 2rem 2rem;
+  margin-left: 0;
+  min-height: 45vh;
   position: relative;
   background: url('images/rose-Copy.jpg') top center / cover no-repeat;
-  background-attachment: scroll; /* ensures it moves normally */
+  background-attachment: scroll;
   color: white;
   overflow: hidden;
-  white-space: nowrap; /* keep tagline on one line too */
+  white-space: nowrap;
 }
 
 .hero::before {
@@ -172,188 +171,211 @@
 .hero-line-content {
   position: relative;
   z-index: 1;
-  top: -60px; /* move up by 50px, adjust as needed */
+  top: -60px;
 }
 
-    .hero-left img.hero-logo {
-      width: 160px;
-      border-radius: 10px;
-      object-fit: contain;
-     
-      transition: transform 0.3s ease;
-        height: 220px; /* slightly bigger if you like */
-          transition: top 0.3s ease;
-    }
+.hero-left img.hero-logo {
+  width: 160px;
+  border-radius: 10px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  height: 220px;
+}
 
-    .hero-left img.hero-logo:hover {
-      transform: scale(1.05);
-    }
+.hero-left img.hero-logo:hover {
+  transform: scale(1.05);
+}
 
-    .hero-right h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 5rem;
-      color: var(--primary);
-      margin: 0;
-      line-height: 1.1;
-        transition: top 0.3s ease;
-    }
+.hero-right h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 5rem;
+  color: var(--primary);
+  margin: 0;
+  line-height: 1.1;
+}
 
-    .hero-right h1 span {
-      display: block;
-      text-indent: 2.5ch;
-      color: #ffffff;
-    }
+.hero-right h1 span {
+  display: block;
+  text-indent: 2.5ch;
+  color: #ffffff;
+}
 
 .hero-right h1 {
   font-family: 'Playfair Display', serif;
   font-size: 5rem;
   line-height: 1.1;
   margin: 0;
-  color: #ffffff; /* pure white for readability */
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35); /* soft shadow for contrast */
-
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 .hero-right h1 span {
   display: block;
   text-indent: 2.5ch;
-  color: #6a4bc4; /* elegant lavender accent for “Poetry” */
+  color: #6a4bc4;
 }
 
+.hero-line-content {
+  position: absolute;
+  top: 57%;
+  left: calc(50% + 280px);
+  transform: translate(-50%, -50%);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
 
+.hero-line-content p {
+  color: var(--muted);
+  font-size: 1rem;
+  margin: 0;
+  max-width: 600px;
+  line-height: 1.6;
+}
 
-    .hero-line-content {
-      position: absolute;
-      top: 57%;
-      left: calc(50% + 280px);
-      transform: translate(-50%, -50%);
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.8rem;
-      
-    }
+.cta-btn {
+  background: var(--primary);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
 
-    .hero-line-content p {
-      color: var(--muted);
-      font-size: 1rem;
-      margin: 0;
-      max-width: 600px;
-      line-height: 1.6;
-    }
+.cta-btn:hover {
+  background: #361d86;
+}
 
-    .cta-btn {
-      background: var(--primary);
-      color: white;
-      padding: 0.6rem 1.2rem;
-      border-radius: var(--radius);
-      text-decoration: none;
-      font-weight: 600;
-      transition: 0.3s ease;
-    }
+/* ===== GARAMOND FONT FOR POEM CONTENT & CATEGORIES ===== */
+.poem-content {
+  font-family: 'EB Garamond', 'Georgia', serif;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #4b3f2f;
+}
 
-    .cta-btn:hover {
-      background: #361d86;
-    }
+.poem-category-line em,
+.poem-category {
+  font-family: 'EB Garamond', 'Georgia', serif;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #B8860B;
+}
 
-  
-    /* MOBILE STYLES */
-    @media (max-width: 768px) {
-      .nav-logo-img { display: inline-block; }
-      .hero-left, .hero-right { display: none; }
-      .hero {
-        padding: 1.5rem 1rem;
-        min-height: auto;
-        justify-content: center;
-      }
-      .hero-line-content {
-        position: static;
-        transform: none;
-        text-align: center;
-        align-items: center;
-        max-width: 100%;
-      }
-      .hero-line-content p {
-        font-size: 0.95rem;
-        padding: 0 1rem;
-      }
-      .search-container { display: none; }
-      .menu-toggle, .search-toggle { display: block; }
-      .nav-links {
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 100%;
-        height: 100vh;
-        background: rgba(75, 42, 173, 0.97);
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
-        padding: 75px 0 0 70px;
-        gap: 4px;
-        transform: translateX(100%);
-        transition: transform 0.4s ease;
-      }
-      .nav-links.show { transform: translateX(0); }
-      .nav-links a {
-        color: white;
-        font-size: 0.95rem;
-        text-transform: uppercase;
-        margin: 0.5rem 0;
-      }
-      .close-btn {
-        display: block;
-        position: absolute;
-        top: 1.2rem;
-        right: 1.5rem;
-        font-size: 1.2rem;
-        color: white;
-        cursor: pointer;
-      }
-    }
+.category-link {
+  font-family: 'EB Garamond', 'Georgia', serif;
+  color: #B8860B;
+  text-decoration: none;
+}
 
-    @media (min-width: 769px) {
-      .close-btn { display: none; }
-    }
+.category-link:hover {
+  text-decoration: underline;
+}
 
-    footer {
-      background: var(--accent-bg);
-      padding: 1.5rem;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.85rem;
-      margin-top: 2.5rem;
-    }
+.poem-title,
+.recent-poem-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
 
-    /* --- TABS SECTION --- */
-    .tabs-section {
-      max-width: 1000px;
-      margin: 5rem auto 3rem auto;
-      padding: 0 1rem;
-      text-align: center;
-      font-family: 'Inter', sans-serif;
- overflow: hidden;
-    }
+/* MOBILE STYLES */
+@media (max-width: 768px) {
+  .nav-logo-img { display: inline-block; }
+  .hero-left, .hero-right { display: none; }
+  .hero {
+    padding: 1.5rem 1rem;
+    min-height: auto;
+    justify-content: center;
+  }
+  .hero-line-content {
+    position: static;
+    transform: none;
+    text-align: center;
+    align-items: center;
+    max-width: 100%;
+  }
+  .hero-line-content p {
+    font-size: 0.95rem;
+    padding: 0 1rem;
+  }
+  .search-container { display: none; }
+  .menu-toggle, .search-toggle { display: block; }
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(75, 42, 173, 0.97);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 75px 0 0 70px;
+    gap: 4px;
+    transform: translateX(100%);
+    transition: transform 0.4s ease;
+  }
+  .nav-links.show { transform: translateX(0); }
+  .nav-links a {
+    color: white;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    margin: 0.5rem 0;
+  }
+  .close-btn {
+    display: block;
+    position: absolute;
+    top: 1.2rem;
+    right: 1.5rem;
+    font-size: 1.2rem;
+    color: white;
+    cursor: pointer;
+  }
+}
 
-    .tabs-nav {
-      display: inline-flex;
-      justify-content: center;
-      flex-wrap: nowrap;
-      gap: 0.6rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 0.6rem;
-      overflow-x: auto;
-      scrollbar-width: none;
-        transform: translateX(-40px); /* align with poem card edge */
-    }
-    .tabs-nav::-webkit-scrollbar { display: none; }
+@media (min-width: 769px) {
+  .close-btn { display: none; }
+}
 
-    
+footer {
+  background: var(--accent-bg);
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 2.5rem;
+}
 
-    /* Make it scrollable on small screens */
-/* Keep scrollable and centered on small screens */
+/* --- TABS SECTION --- */
+.tabs-section {
+  max-width: 1000px;
+  margin: 5rem auto 3rem auto;
+  padding: 0 1rem;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+.tabs-nav {
+  display: inline-flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.6rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  transform: translateX(-40px);
+}
+.tabs-nav::-webkit-scrollbar { display: none; }
+
 @media (max-width: 768px) {
   .tabs-section {
     text-align: center;
@@ -369,7 +391,7 @@
     margin: 0 auto;
     scrollbar-width: none;
     justify-content: center;
-    transform: none; /* remove left shift on small screens */
+    transform: none;
   }
 
   .tabs-nav::-webkit-scrollbar {
@@ -381,89 +403,86 @@
   }
 }
 
+.tab-btn {
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  flex-shrink: 0;
+  transition: 0.3s ease;
+  white-space: nowrap;
+}
 
-    .tab-btn {
-      background: none;
-      border: none;
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text);
-      cursor: pointer;
-      padding: 0.5rem 0.9rem;
-      border-radius: 8px;
-      flex-shrink: 0;
-      transition: 0.3s ease;
-      white-space: nowrap;
-    }
+.tab-btn:hover {
+  color: var(--primary);
+  background: var(--accent-bg);
+}
 
-    .tab-btn:hover {
-      color: var(--primary);
-      background: var(--accent-bg);
-    }
+.tab-btn.active {
+  color: #fff;
+  background: var(--primary);
+}
 
-    
-    .tab-btn.active {
-      color: #fff;
-      background: var(--primary);
-    }
+.tab-content-container {
+  text-align: left;
+  border-radius: var(--radius);
+  box-shadow: none;
+  padding: 0;
+  transition: 0.4s ease;
+}
 
-    .tab-content-container {
-      text-align: left;
-      border-radius: var(--radius);
-      box-shadow: none;
-      padding: 0;
-      transition: 0.4s ease;
-    }
+.tab-content {
+  display: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
 
-    .tab-content {
-      display: none;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
+.tab-content.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
 
-    .tab-content.active {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
+.tab-content h3 {
+  font-family: 'Playfair Display', serif;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
 
-    .tab-content h3 {
-      font-family: 'Playfair Display', serif;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-    }
+.tab-content p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
 
-    .tab-content p {
-      color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
+@media (max-width: 768px) {
+  .tabs-nav {
+    justify-content: flex-start;
+    gap: 0.4rem;
+  }
+  .tab-btn {
+    font-size: 0.85rem !important;
+    padding: 0.4rem 0.7rem !important;
+  }
+}
 
-    @media (max-width: 768px) {
-      .tabs-nav {
-        justify-content: flex-start;
-        gap: 0.4rem;
-      }
-      .tab-btn {
-        font-size: 0.85rem !important;
-        padding: 0.4rem 0.7rem !important;
-      }
-      
-    }
-
-    .hero-line-content p {
-  color: rgba(255, 255, 255, 0.85); /* soft white for readability */
+.hero-line-content p {
+  color: rgba(255, 255, 255, 0.85);
   font-size: 1.05rem;
   font-weight: 400;
   line-height: 1.6;
   margin: 0 0 1rem 0;
   max-width: 550px;
-  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5); /* adds subtle contrast on bright areas */
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
 }
 
 .hero-line-content .cta-btn {
-  background-color: #6a4bc4; /* brand purple */
+  background-color: #6a4bc4;
   color: #fff;
   padding: 0.6rem 1.4rem;
   border-radius: 8px;
@@ -473,19 +492,18 @@
 }
 
 .hero-line-content .cta-btn:hover {
-  background-color: #4a2ca1; /* slightly darker purple on hover */
+  background-color: #4a2ca1;
   transform: translateY(-2px);
 }
 
-/* 🌿 Responsive: keep same color, reduce font & spacing only */
 @media (max-width: 768px) {
   .hero-line-content {
-    text-align: center; /* optional — centers text for mobile */
+    text-align: center;
     align-items: center;
   }
 
   .hero-line-content p {
-    font-size: 0.80rem; /* slightly smaller text */
+    font-size: 0.80rem;
     line-height: 1.5;
     max-width: 95%;
   }
@@ -496,21 +514,21 @@
   }
 }
 
-/* Hero image */
 .hero-left img.hero-logo {
-  height: 210px; /* increase this value to make it bigger */
+  height: 210px;
   width: auto;
 }
+
 /* Recent Poems Container */
 .recent-poems-container {
   display: flex;
   flex-direction: column;
-  gap: 30px; /* space between poem cards */
-  width: 100%; /* fill full tab width */
+  gap: 30px;
+  width: 100%;
   margin: 0;
-  padding: 0; /* container takes full white space */
+  padding: 0;
   box-sizing: border-box;
-   padding-left: 70px; /* shift cards right without affecting tabs */
+  padding-left: 70px;
 }
 
 /* Individual Poem Card */
@@ -523,40 +541,33 @@
   font-family: 'Lato', sans-serif;
   color: #4b3f2f;
   line-height: 1.7;
-  width: 83%; /* full width of container */
+  width: 83%;
   box-sizing: border-box;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   overflow: hidden;
-  /* NEW: shift content slightly to the right */
-
-   padding-left: 25px; /* card content padding */
+  padding-left: 25px;
 }
 
-
-/* Card hover effect */
 .recent-poem-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 14px 24px rgba(0,0,0,0.12);
- 
 }
 
-/* Poem Title */
 .recent-poem-card .poem-title {
   font-family: 'Playfair Display', serif;
   color: var(--primary);
   font-size: 1.6rem;
   font-weight: 700;
-  color: #4b2aad; /* Title color */
+  color: #4b2aad;
   margin-bottom: 6px;
 }
 
-/* Poem Content */
 .recent-poem-card .poem-content {
   white-space: pre-line;
   margin-bottom: 10px;
-   font-family: 'Inter', sans-serif;
+  font-family: 'EB Garamond', 'Georgia', serif;
   font-size: 1rem;
-  color: #4b3f2f; /* Poem text color */
+  color: #4b3f2f;
   line-height: 1.6;
 }
 
@@ -571,14 +582,17 @@
   font-weight: 500;
   margin-bottom: 10px;
 }
-.read-more-btn:hover { color: #ff0000; }
+
+.read-more-btn:hover {
+  color: #ff0000;
+}
 
 /* Poem Tags */
 .poem-tags {
   font-size: 0.85rem;
   color: #777;
   font-style: italic;
- margin-bottom : 10px;
+  margin-bottom: 10px;
 }
 
 /* Actions */
@@ -600,6 +614,7 @@
   font-weight: 500;
   transition: background 0.25s ease, transform 0.2s ease;
 }
+
 .load-more-btn:hover {
   background: #6b1da6;
   transform: translateY(-2px);
@@ -616,7 +631,6 @@
   .read-more-btn { font-size: 0.85rem; }
   .load-more-btn { padding: 8px 16px; font-size: 0.9rem; }
 }
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -647,28 +661,27 @@
 /* Poem Titles */
 .poem-title,
 .recent-poem-title {
-  font-size: 2rem;      /* bigger title */
-  font-weight: 700;     /* bold */
+  font-size: 2rem;
+  font-weight: 700;
   color: var(--primary);
   margin-bottom: 10px;
 }
 
 /* Poem Content */
 .poem-content {
-  font-size: 1.2rem;    /* larger readable content */
-  line-height: 1.8;     /* better spacing */
+  font-size: 1.2rem;
+  line-height: 1.8;
   margin-bottom: 10px;
 }
 
 /* Poem Categories */
 .poem-category-line em,
 .poem-category {
-  font-size: 0.7rem;    /* bigger category text */
+  font-size: 0.7rem;
   font-style: italic;
-  color:  #B8860B;
-
+  color: #B8860B;
   margin-bottom: 8px;
-  display: inline-block; /* keeps spacing uniform */
+  display: inline-block;
 }
 
 /* Weekly highlight author and separator */
@@ -684,18 +697,7 @@
   .recent-poem-title { font-size: 1.6rem; }
   .poem-content { font-size: 1.05rem; }
   .poem-category-line em,
-  .poem-category { font-size: 1rem; }
-
-  /* Poem Categories */
-.poem-category-line em,
-.poem-category {
-  font-size: 0.7rem;    /* bigger category text */
-  font-style: italic;
-   color:  #B8860B; /* 💜 choose your favorite color here */
-
-  margin-bottom: 8px;
-  display: inline-block; /* keeps spacing uniform */
-}
+  .poem-category { font-size: 0.7rem; }
 }
 
 @media (max-width: 480px) {
@@ -708,14 +710,14 @@
 
 .poem-actions {
   display: flex;
-  justify-content: center; /* centers everything */
+  justify-content: center;
   align-items: center;
   gap: 10px;
   border-top: 1px solid #eee;
   padding-top: 10px;
   margin-top: 15px;
   font-family: 'Inter', sans-serif;
-  flex-wrap: wrap; /* ensures no overflow on small screens */
+  flex-wrap: wrap;
 }
 
 .comment-section {
@@ -759,7 +761,6 @@
   transform: translateY(-1px);
 }
 
-
 .poem-reactions {
   display: flex;
   align-items: center;
@@ -791,7 +792,6 @@
   color: #e74c3c;
 }
 
-
 @media (max-width: 600px) {
   .poem-actions {
     flex-direction: column;
@@ -804,97 +804,87 @@
 }
 
 @media (max-width: 768px) {
-  /* Space between tabs and poem cards */
   .tabs-section {
-    padding-top: 2rem; /* adds space above cards */
+    padding-top: 2rem;
   }
 
   .recent-poem-card {
-    width:  95%; /* full width minus container padding */
+    width: 95%;
     margin-bottom: 20px;
-
-       margin: 0 auto 20px;  /* center and spacing below */
-    padding: 18px 20px;   /* keep readable padding */
+    margin: 0 auto 20px;
+    padding: 18px 20px;
   }
 
-  /* Poem actions horizontal */
   .poem-actions {
-    flex-direction: row; /* keep horizontal */
-    flex-wrap: wrap;     /* wrap if needed */
+    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: flex-start;
     gap: 10px;
     padding-top: 8px;
   }
 
-  /* Comment input and button: smaller and fit in one line */
   .comment-section {
     flex-direction: row;
     gap: 5px;
-    flex-wrap: nowrap;  /* force on one line */
+    flex-wrap: nowrap;
     align-items: center;
   }
 
   .comment-input {
-    width: 60%;          /* smaller width */
-    padding: 6px 8px;    /* smaller padding */
-    font-size: 0.85rem;  /* smaller font */
-  }
-
-  .comment-btn {
-    width: auto;         /* size based on content */
-    padding: 6px 10px;   /* smaller padding */
+    width: 60%;
+    padding: 6px 8px;
     font-size: 0.85rem;
   }
 
-  /* Keep reactions horizontal */
+  .comment-btn {
+    width: auto;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+
   .poem-reactions {
     flex-direction: row;
     gap: 8px;
     font-size: 0.9rem;
   }
 
-  /* Optional: reduce Read More button */
   .read-more-btn {
     font-size: 0.85rem;
   }
 }
 
 @media (max-width: 768px) {
-  /* stretch and align to the left fully */
   .recent-poems-container {
-    width: 100vw;           /* occupy full viewport width */
-    margin: 0;              /* remove margins */
-    padding: 0 10px;        /* small side padding for breathing room */
+    width: 100vw;
+    margin: 0;
+    padding: 0 10px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* aligns cards to the left edge */
-    gap: 18px;              /* spacing between cards */
+    align-items: flex-start;
+    gap: 18px;
   }
 
   .recent-poem-card {
-    width: 91%;            /* take full width of container */
-    margin: 0;              /* no auto centering */
+    width: 91%;
+    margin: 0;
     padding: 16px 18px;
   }
 
-  /* give space between tabs and cards */
   .tabs-section {
     margin-bottom: 1.5rem;
   }
 
   .tabs-nav {
-    margin-bottom: 1.2rem;  /* adds clean space between tabs and poems */
+    margin-bottom: 1.2rem;
   }
 }
 
 @media (max-width: 768px) {
-  /* move the entire tab section up */
   .tabs-section {
-    margin-top: -17px; /* pull it closer to the hero */
+    margin-top: -17px;
   }
 
-  /* optional — keep space below it neat */
   .tabs-nav {
     margin-bottom: 12px;
   }
@@ -913,34 +903,32 @@
   }
 
   #load-more-poems:hover {
-    background: #4b2aad; /* optional: matches your brand color */
+    background: #4b2aad;
     transform: scale(1.05);
   }
 
-  /* Keep button centered under poems */
   .recent-poems-section div[style*="text-align: center"] {
     margin-top: 12px;
   }
 }
 
-/* Tighter spacing between poem cards on large screens */
 @media (min-width: 1024px) {
   .recent-poems-container {
-    gap: 20px; /* reduce space (was 30px before) */
+    gap: 20px;
   }
 
   .recent-poem-card {
-    margin-bottom: 0; /* remove extra bottom margin */
-    width: 85%; /* still nicely aligned within container */
-    padding: 20px 25px; /* comfortable but not bulky */
+    margin-bottom: 0;
+    width: 85%;
+    padding: 20px 25px;
   }
 }
+
 .logo {
   display: flex;
   align-items: center;
   cursor: default;
 }
-
 
 .logo-highlight {
   color: #fff;
@@ -949,8 +937,6 @@
     0 0 4px var(--primary),
     0 0 6px var(--primary);
 }
-
-
 
 /* Weekly Highlights Container */
 .weekly-container {
@@ -963,7 +949,6 @@
   padding: 0 20px;
 }
 
-/* Shared base styles */
 .weekly-card {
   flex: 1;
   padding: 25px;
@@ -994,9 +979,8 @@
   font-style: italic;
 }
 
-/* 🎨 Classic Backgrounds & Typography */
 .quote-card {
-  background: linear-gradient(145deg, #fdfcfb, #e2dcd5); /* parchment-like */
+  background: linear-gradient(145deg, #fdfcfb, #e2dcd5);
   border: 1px solid #d6cfc2;
   color: #2c2c2c;
   font-family: "Georgia", serif;
@@ -1004,14 +988,13 @@
 }
 
 .poem-card {
-  background: linear-gradient(145deg, #fafafa, #e4e4e4); /* soft grey paper */
+  background: linear-gradient(145deg, #fafafa, #e4e4e4);
   border: 1px solid #d1d1d1;
   color: #333;
- font-family: 'Lato', sans-serif;
+  font-family: 'Lato', sans-serif;
   font-size: 1.1rem;
 }
 
-/* Read More / Read Less button */
 #poem-wrapper .toggle-poem {
   background: none;
   border: none;
@@ -1023,10 +1006,9 @@
   font-weight: none;
   text-decoration: none;
   transition: color 0.3s ease;
-font-family: 'Lato', sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
-/* 🎯 Section Titles */
 .weekly-title {
   font-size: 1.8rem;
   font-weight: bold;
@@ -1034,34 +1016,32 @@ font-family: 'Lato', sans-serif;
   margin-bottom: 20px;
 }
 
-/* Quote of the Week title */
 .quote-card .weekly-title {
   font-family: "Times New Roman", serif;
   letter-spacing: 1px;
-    color: #8B0000; /* deep classic red */
+  color: #8B0000;
 }
 
-/* Poetry of the Week title */
 .poem-card .weekly-title {
-  color: #8B0000; /* deep classic red */
+  color: #8B0000;
   font-family: "Times New Roman", serif;
   font-style: italic;
 }
-/* Responsive */
+
 @media (max-width: 768px) {
   .weekly-container {
-    flex-direction: column;  /* stack vertically */
-    gap: 20px;               /* spacing between cards */
-    padding: 0 15px;         /* smaller padding on sides */
-    max-width: 100%;         /* don’t constrain container */
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 15px;
+    max-width: 100%;
   }
 
   .weekly-card {
-    width: 100%;             /* take full width */
-    max-width: 100%;         /* prevent overflow */
-    flex: none;              /* remove flex shrinking */
-    padding: 20px;           /* reduce padding for mobile */
-    box-sizing: border-box;  /* include padding in width */
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+    padding: 20px;
+    box-sizing: border-box;
   }
 
   .weekly-card h2 {
@@ -1078,7 +1058,6 @@ font-family: 'Lato', sans-serif;
   }
 }
 
-/* Footer */
 .site-footer {
   background: #222;
   color: white;
@@ -1113,14 +1092,13 @@ font-family: 'Lato', sans-serif;
   color: #fff;
 }
 
-
 .recent-poems-section {
   max-width: 800px;
   margin: 30px auto;
   padding: 20px;
-  background:  #fafafa;
+  background: #fafafa;
   border-radius: 12px;
-  box-shadow: 0 2px 6px  #fafafa;
+  box-shadow: 0 2px 6px #fafafa;
 }
 
 .recent-poems-section h2 {
@@ -1144,22 +1122,20 @@ font-family: 'Lato', sans-serif;
 }
 
 .recent-poem-card {
- background: linear-gradient(160deg, #f7f9fb, #e1e6eb); /* cool paper grey-blue */
-    padding: 15px 20px 15px 50px; /* top, right, bottom, left padding to move content right */
+  background: linear-gradient(160deg, #f7f9fb, #e1e6eb);
+  padding: 15px 20px 15px 50px;
   border-radius: 12px;
-  border: 1px solid #e0d6b0; /* Slight darker edge */
+  border: 1px solid #e0d6b0;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
   margin-bottom: 20px;
-font-family: 'Lato', sans-serif;
-  color: #4b3f2f; /* Warm brown text for old-paper feel */
+  font-family: 'Lato', sans-serif;
+  color: #4b3f2f;
   line-height: 1.7;
   position: relative;
   overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-
-/* Add subtle vignette edges to simulate aged paper */
 .recent-poem-card::before {
   content: "";
   position: absolute;
@@ -1169,7 +1145,6 @@ font-family: 'Lato', sans-serif;
   pointer-events: none;
 }
 
-/* Hover effect */
 .recent-poem-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 20px rgba(0,0,0,0.12);
@@ -1181,15 +1156,15 @@ font-family: 'Lato', sans-serif;
 
 .recent-poem-card p {
   margin: 10px 0;
-  white-space: pre-line; /* keep line breaks */
+  white-space: pre-line;
 }
 
 .recent-poem-card .author {
-    font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-style: italic;
   color: #B8860B;
   font-size: 1.0rem;
-   text-transform: none; /* ensures 'by' and name show exactly as written */
+  text-transform: none;
 }
 
 .read-more-btn {
@@ -1204,8 +1179,8 @@ font-family: 'Lato', sans-serif;
 
 #recent-poems-search {
   position: absolute;
-  top: 0;                
-  right: 10px;           
+  top: 0;
+  right: 10px;
   padding: 4px 8px;
   font-size: 0.9rem;
   border-radius: 12px;
@@ -1220,7 +1195,6 @@ font-family: 'Lato', sans-serif;
   box-shadow: 0 0 4px rgba(0,0,0,0.2);
 }
 
-
 .poem-header {
   display: flex;
   align-items: center;
@@ -1229,13 +1203,13 @@ font-family: 'Lato', sans-serif;
 }
 
 .poem-header .poem-title {
-    font-family: 'Playfair Display', serif;
-  flex: 2;                /* more space = shifts left */
+  font-family: 'Playfair Display', serif;
+  flex: 2;
   text-align: center;
   margin: 0;
   font-size: 1.6rem;
   font-weight: 700;
-    margin-bottom: 6px;
+  margin-bottom: 6px;
 }
 
 .poem-sort {
@@ -1262,38 +1236,31 @@ font-family: 'Lato', sans-serif;
   margin-bottom: 20px;
 }
 
-
-/* Hidden but clickable Admin link */
 .site-footer > .footer-container > a[href="admin.html"] {
-  color: transparent;       /* text is invisible */
-  text-decoration: none;    /* remove underline */
-  cursor: default;          /* normal cursor */
+  color: transparent;
+  text-decoration: none;
+  cursor: default;
 }
 
-
-/* User dropdown */
-/* --- Username Styling --- */
 #user-display {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Stylish font */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: bold;
-  color: #ff6f61; /* Stylish color */
+  color: #ff6f61;
   font-size: 16px;
   margin-right: 10px;
   cursor: pointer;
 }
 
-/* --- Dropdown container --- */
 .user-dropdown {
   position: relative;
   display: inline-block;
   font-weight: bold;
   font-family: 'Arial', sans-serif;
-  color: #ff6600; /* fallback color */
+  color: #ff6600;
   cursor: pointer;
-  margin-left: 15px; /* spacing from logo on large screens */
+  margin-left: 15px;
 }
 
-/* Dropdown content */
 .user-dropdown .dropdown-content {
   display: none;
   position: absolute;
@@ -1322,38 +1289,30 @@ font-family: 'Lato', sans-serif;
   display: block;
 }
 
-/* --- Responsive adjustment (small screens) --- */
 @media (max-width: 768px) {
-  /* Place username next to logo */
   #user-display {
     display: inline-block;
     margin-left: 10px;
     margin-right: 5px;
   }
 
-  /* Optional dropdown arrow next to username */
   #user-display::after {
     content: " ▼";
     font-size: 0.7rem;
     margin-left: 3px;
   }
 
-  /* Adjust dropdown positioning so it opens below username */
   .user-dropdown {
     margin-left: 0;
   }
 }
-
-
-
-
 
 /* ---------- Poem Actions & Comments Styling ---------- */
 .recent-poem-card .poem-actions {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px; /* space between elements */
+  gap: 10px;
   margin-top: 10px;
 }
 
@@ -1443,24 +1402,23 @@ font-family: 'Lato', sans-serif;
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px; /* smaller spacing */
+    gap: 6px;
   }
 
-  /* Like container (button + count) */
   .like-container {
     display: flex;
     align-items: center;
-    gap: 2px; /* smaller gap between like button and number */
-    order: -1; /* keep it first */
+    gap: 2px;
+    order: -1;
   }
 
   .like-btn {
-    font-size: 0.8rem; /* smaller */
-    padding: 4px 6px;   /* reduced padding */
+    font-size: 0.8rem;
+    padding: 4px 6px;
   }
 
   .like-count {
-    font-size: 0.8rem; /* smaller number */
+    font-size: 0.8rem;
   }
 
   .message-count {
@@ -1473,13 +1431,12 @@ font-family: 'Lato', sans-serif;
     padding: 4px 6px;
   }
 
-  /* Comment input box */
   .comment-input {
-    font-size: 0.8rem;      /* smaller text */
-    padding: 4px 6px;       /* smaller padding */
-    width: 120px;           /* reduced width */
-    max-width: calc(100% - 80px); /* ensures it doesn't overflow */
-    flex-grow: 1;            /* expand if possible */
+    font-size: 0.8rem;
+    padding: 4px 6px;
+    width: 120px;
+    max-width: calc(100% - 80px);
+    flex-grow: 1;
   }
 
   .comment-list {
@@ -1495,65 +1452,61 @@ font-family: 'Lato', sans-serif;
 /* 📌 Recent Poems Title */
 .recent-poem-title {
   font-family: "Georgia", "Times New Roman", serif;
-  font-size: 1.4rem;      /* slightly smaller */
+  font-size: 1.4rem;
   font-weight: 600;
   margin-bottom: 8px;
-  color: #333;            /* lighter than weekly poem */
+  color: #333;
   letter-spacing: 0.4px;
-  text-align: left;       /* align left for list style */
+  text-align: left;
 }
-/* 📱 Responsive adjustment for small screens */
+
 @media (max-width: 600px) {
   .recent-poem-title {
-    font-size: 1.2rem;   /* smaller on phones */
-    text-align: left; /* optional: center align for mobile */
+    font-size: 1.2rem;
+    text-align: left;
   }
 }
 
 .poem-separator {
   width: 400px;
   height: 2px;
-  background: #555; /* classic dark gray */
-  margin: 15px auto 5px auto; /* centers line above author */
+  background: #555;
+  margin: 15px auto 5px auto;
   border-radius: 2px;
 }
 
-/* Mobile view */
 @media (max-width: 768px) {
   .poem-separator {
-    width: 90%;       /* almost full width on mobile */
-    height: 2px;      /* keep thickness */
-    margin: 10px auto; /* slightly smaller margins */
+    width: 90%;
+    height: 2px;
+    margin: 10px auto;
   }
 }
 
 @media (max-width: 480px) {
   .poem-separator {
-    width: 95%;       /* full width on very small screens */
-    margin: 8px auto; /* tighter spacing */
+    width: 95%;
+    margin: 8px auto;
   }
 }
-
 
 .poem-title {
-  font-family: "Georgia", "Times New Roman", serif; /* classic literary font */
-  font-size: 1.6rem; /* bigger than body text */
-  font-weight: 600;  /* slightly bold */
-  text-align: left; /* keep it centered above poem */
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-align: left;
   margin-bottom: 12px;
-  color: #573737; /* dark, elegant color */
-  letter-spacing: 0.5px; /* subtle spacing */
+  color: #573737;
+  letter-spacing: 0.5px;
 }
 
-/* 📱 Responsive adjustment for small screens */
 @media (max-width: 600px) {
   .poem-title {
-    font-size: 1.2rem; /* smaller on phones */
-    text-align: left; /* optional: center on small screens */
+    font-size: 1.2rem;
+    text-align: left;
   }
-  }
+}
 
-  /* 📌 Recent Poems Section Title */
 .recent-poems-heading {
   text-align: center;
   font-family: "Georgia", "Times New Roman", serif;
@@ -1563,10 +1516,9 @@ font-family: 'Lato', sans-serif;
   color: #222;
 }
 
-/* 📱 Responsive adjustment */
 @media (max-width: 600px) {
   .recent-poems-heading {
-    font-size: 1.3rem;  /* shrink on small screens */
+    font-size: 1.3rem;
   }
 }
 
@@ -1580,51 +1532,42 @@ font-family: 'Lato', sans-serif;
   padding: 0 20px;
 }
 
-/* Left column wraps quote + categories vertically */
 .weekly-left {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* space between quote and categories */
-  flex: 1;    /* take up left half */
+  gap: 15px;
+  flex: 1;
 }
 
-
-
-/* Categories title (h4) */
 .categories-title {
   font-weight: bold;
   font-size: 2rem;
-  color: #2a7ae2;             /* color for title */
+  color: #2a7ae2;
   margin-bottom: 10px;
-    text-align: center; 
+  text-align: center;
 }
 
-/* Categories list container */
 #poem-categories {
   display: flex;
-  flex-wrap: wrap;             /* wrap to next line if too many categories */
+  flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
 }
 
-/* Individual category items */
 .poem-category {
-  cursor: pointer; 
-  color: #8B0000; /* deep classic red */      /* category text color */
+  cursor: pointer;
+  color: #8B0000;
   padding: 4px 8px;
-  background: #ffffff;         /* white background for each category */
+  background: #ffffff;
   border-radius: 4px;
-  white-space: nowrap;         /* prevent breaking text */
+  white-space: nowrap;
   transition: all 0.2s ease;
 }
 
-
-
-/* --- Responsive Small Screens --- */
 @media (max-width: 768px) {
   .weekly-left {
-    width: 100%;       /* full width on mobile */
-    gap: 12px;         /* smaller spacing */
+    width: 100%;
+    gap: 12px;
   }
 
   .weekly-left .quote-card {
@@ -1636,7 +1579,7 @@ font-family: 'Lato', sans-serif;
     font-size: 1.5rem;
   }
 
-  #weekly-quote  {
+  #weekly-quote {
     font-size: 0.95rem;
     line-height: 1.5;
   }
@@ -1659,46 +1602,39 @@ font-family: 'Lato', sans-serif;
   }
 }
 
-
-/* All Categories link style */
 .all-categories {
-  color: #006699;        /* blue color to stand out */
+  color: #006699;
   font-weight: bold;
   padding: 4px 8px;
   border-radius: 4px;
   transition: background 0.2s, color 0.2s;
-  cursor: pointer;        /* shows pointer on hover */
+  cursor: pointer;
 }
 
 .all-categories:hover {
-  background: #e0f0ff;   /* subtle hover highlight */
-  color: #004466;         /* darker blue on hover */
+  background: #e0f0ff;
+  color: #004466;
   text-decoration: none;
 }
 
-
-/* Categories container */
 #poem-categories-container {
   margin-top: 10px;
 }
 
-/* Title */
 .categories-title {
   font-size: 1.2rem;
   margin-bottom: 6px;
   font-weight: bold;
 }
 
-/* Categories list */
 #poem-categories {
   display: flex;
-  flex-wrap: wrap;          /* allow categories to wrap */
-  align-items: flex-start;   /* all lines start at top */
-  justify-content: flex-start; /* align left */
-  gap: 6px;                  /* spacing between categories */
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 6px;
 }
 
-/* Individual category item */
 #poem-categories a {
   display: inline-block;
   padding: 4px 8px;
@@ -1711,59 +1647,48 @@ font-family: 'Lato', sans-serif;
   text-align: center;
 }
 
-/* Hover effect */
-  .categories-container a:hover {
-    color: #DAA520; /* Lighter gold */
-    transform: translateY(-2px);
-  }
+.categories-container a:hover {
+  color: #DAA520;
+  transform: translateY(-2px);
+}
 
-
-/* Target the h2 inside weekly-left specifically */
 .weekly-left .weekly-card h2.weekly-title {
-  font-size: 24px;    /* change as needed */
+  font-size: 24px;
   font-weight: bold;
-  font-style: italic;  /* added italic */
+  font-style: italic;
   line-height: 1.3;
 }
 
-/* For smaller screens */
 @media (max-width: 768px) {
   .weekly-left .weekly-card h2.weekly-title {
     font-size: 20px;
   }
 }
 
-
-
-/* --- Responsive adjustment (small screens) --- */
 @media (max-width: 768px) {
-  /* Place username next to logo */
   #user-display {
     display: inline-block;
     margin-left: 10px;
     margin-right: 5px;
   }
 
-  /* Optional dropdown arrow next to username */
   #user-display::after {
     content: " ▼";
     font-size: 0.7rem;
     margin-left: 3px;
   }
 
-  /* Adjust dropdown positioning so it opens below username */
   .user-dropdown {
     margin-left: 0;
   }
 }
-
 
 /* ---------- Poem Actions & Comments Styling ---------- */
 .recent-poem-card .poem-actions {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px; /* space between elements */
+  gap: 10px;
   margin-top: 10px;
 }
 
@@ -1775,7 +1700,7 @@ font-family: 'Lato', sans-serif;
 
 .recent-poem-card .comment-input {
   flex: 1;
-  min-width: 120px; /* reduced width */
+  min-width: 120px;
   padding: 5px 10px;
   font-size: 0.9rem;
   border: 1px solid #ccc;
@@ -1793,9 +1718,9 @@ font-family: 'Lato', sans-serif;
 .recent-poem-card .comment-btn,
 .recent-poem-card .like-btn,
 .recent-poem-card .show-comments-btn {
-  padding: 5px 8px; /* reduced padding */
+  padding: 5px 8px;
   cursor: pointer;
-  font-size: 0.85rem; /* smaller font */
+  font-size: 0.85rem;
   border-radius: 6px;
   border: 1px solid #ccc;
   background-color: #f8f8f8;
@@ -1847,19 +1772,18 @@ font-family: 'Lato', sans-serif;
 }
 
 /* ---------- Responsive adjustments for small screens ---------- */
-/* Small screen adjustments for Poem Actions */
 @media screen and (max-width: 600px) {
   .recent-poem-card .poem-actions {
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;       /* don't wrap to next line */
+    flex-wrap: nowrap;
     align-items: center;
-    gap: 4px;               /* tight spacing */
+    gap: 4px;
   }
 
   .recent-poem-card .comment-input {
     order: 1;
-    flex-grow: 1;           /* input expands to fill available space */
+    flex-grow: 1;
     min-width: 150px;
     padding: 3px 6px;
     font-size: 0.8rem;
@@ -1884,14 +1808,10 @@ font-family: 'Lato', sans-serif;
   }
 }
 
-
-
-/* Hide by default */
 .bottom-categories {
   display: none;
 }
 
-/* Show only on small screens */
 @media (max-width: 768px) {
   .bottom-categories {
     display: block;
@@ -1906,7 +1826,7 @@ font-family: 'Lato', sans-serif;
 
   #bottom-poem-categories {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* ✅ 3 per row */
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     justify-items: center;
     align-items: center;
@@ -1924,7 +1844,7 @@ font-family: 'Lato', sans-serif;
     transition: all 0.3s ease;
     white-space: normal;
     text-align: center;
-    width: 100%; /* fits grid cell */
+    width: 100%;
     box-sizing: border-box;
   }
 
@@ -1934,10 +1854,9 @@ font-family: 'Lato', sans-serif;
   }
 }
 
-
 .poem-category-line {
   font-style: italic;
-  color:  #B8860B; /* 💜 choose your favorite color here */
+  color: #B8860B;
   margin-top: 10px;
   margin-bottom: 8px;
   font-size: 0.6em;
@@ -1945,9 +1864,8 @@ font-family: 'Lato', sans-serif;
 }
 
 .poem-category-line em {
-  color: inherit; /* keeps same color */
+  color: inherit;
 }
-
 
 html {
   scroll-behavior: smooth;
@@ -1963,10 +1881,6 @@ html {
   transform: translateY(0);
 }
 
-
-
-
-
 /* Container for user info in navbar */
 .user-display {
   display: flex;
@@ -1976,13 +1890,11 @@ html {
   font-size: 0.95rem;
 }
 
-/* Username display */
 #username-display {
   font-weight: 500;
   color: #4b2aad;
 }
 
-/* Login link */
 #login-link {
   color: #4b2aad;
   text-decoration: none;
@@ -1998,9 +1910,8 @@ html {
   color: #fff;
 }
 
-/* Logout button */
 #logoutBtn {
-  display: none; /* default hidden, shown via JS */
+  display: none;
   padding: 6px 12px;
   background: #ff4b4b;
   color: #fff;
@@ -2014,7 +1925,6 @@ html {
 #logoutBtn:hover {
   background: #c0392b;
 }
-
 
 /* --- JOIN COMMUNITY SECTION --- */
 .community-section {
@@ -2035,10 +1945,10 @@ html {
   font-family: 'Playfair Display', serif;
   font-size: 2rem;
   background: linear-gradient(90deg, #5a3cb3, #a67c52);
-  -webkit-background-clip: text; /* For Chrome, Safari, Edge */
-  background-clip: text;          /* ✅ Standard version */
+  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
-  color: transparent;             /* ✅ Fallback for compatibility */
+  color: transparent;
 }
 
 .community-content p {
@@ -2069,20 +1979,23 @@ html {
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
 @media (max-width: 480px) {
   .join-btn {
-    padding: 0.6rem 1.2rem; /* smaller padding */
-    font-size: 0.9rem;      /* slightly smaller text */
-    border-radius: 6px;     /* optional: slightly smaller rounding */
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    border-radius: 6px;
   }
 }
+
 @media (max-width: 480px) {
   .community-content p {
-    font-size: 0.85rem; /* smaller for mobile */
-    line-height: 1.4;   /* slightly tighter */
-    margin: 0.8rem 0 1.5rem; /* reduce spacing */
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 0.8rem 0 1.5rem;
   }
 }
+
 @media (max-width: 768px) {
   .community-section {
     flex-direction: column;
@@ -2096,7 +2009,6 @@ html {
   }
 }
 
-
 /* --- 🖼️ POETRY GALLERY SECTION --- */
 .gallery-section {
   text-align: center;
@@ -2106,36 +2018,26 @@ html {
   z-index: 1;
 }
 
-/* Section Title */
 .gallery-section h2 {
   font-family: 'Playfair Display', serif;
   font-size: 2.2rem;
   margin-bottom: 2.5rem;
   background: linear-gradient(90deg, #5a3cb3, #a67c52);
-
-  /* Standard property */
   background-clip: text;
-
-  /* Vendor prefix for WebKit browsers */
   -webkit-background-clip: text;
-
-  /* Make the text transparent to show the gradient */
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
 
-
-/* --- GRID LAYOUT --- */
 .poetry-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
-  justify-items: center; /* centers each card nicely */
+  justify-items: center;
   align-items: stretch;
   width: 100%;
 }
 
-/* --- INDIVIDUAL GALLERY ITEM --- */
 .gallery-item {
   position: relative;
   width: 100%;
@@ -2156,7 +2058,6 @@ html {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
-/* --- OVERLAY CONTENT --- */
 .gallery-overlay {
   position: relative;
   padding: 1.5rem;
@@ -2174,7 +2075,6 @@ html {
   background: linear-gradient(135deg, rgba(90, 60, 179, 0.9), rgba(166, 124, 82, 0.9));
 }
 
-/* --- TEXT STYLING --- */
 .gallery-overlay h3 {
   font-family: 'Playfair Display', serif;
   font-size: 1.3rem;
@@ -2196,7 +2096,6 @@ html {
   color: black;
 }
 
-/* --- MOBILE RESPONSIVE FIX --- */
 @media (max-width: 768px) {
   .gallery-section {
     padding: 3rem 6%;
@@ -2212,7 +2111,6 @@ html {
   }
 }
 
-
 .view-poem-btn {
   margin-top: 1.2rem;
   padding: 0.5rem 1.2rem;
@@ -2224,10 +2122,10 @@ html {
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.3s ease;
-      width: 40%;
-    display: block;       /* makes it a block element */
-    margin: 10px auto 0;  /* top margin 10px, centered horizontally */
-    text-align: center;   /* ensures text stays centered */
+  width: 40%;
+  display: block;
+  margin: 10px auto 0;
+  text-align: center;
 }
 
 .view-poem-btn:hover {
@@ -2235,9 +2133,10 @@ html {
   color: #fff;
   transform: translateY(-2px);
 }
-  .gallery-overlay p {
-    font-size: 1rem;
-  }
+
+.gallery-overlay p {
+  font-size: 1rem;
+}
 
 @media (max-width: 768px) {
   .gallery-section {
@@ -2250,7 +2149,7 @@ html {
 
   .gallery-item {
     max-width: 100%;
-    min-height: auto; /* auto to fit content */
+    min-height: auto;
   }
 
   .gallery-overlay h3 {
@@ -2260,36 +2159,34 @@ html {
   .gallery-overlay p {
     font-size: 1.13rem;
     line-height: 1.4;
-    white-space: pre-line; /* preserve line breaks */
+    white-space: pre-line;
   }
 
- 
-.view-poem-btn {
+  .view-poem-btn {
     font-size: 0.65rem;
     padding: 0.4rem 1rem;
     width: 30%;
-    display: block;       /* makes it a block element */
-    margin: 10px auto 0;  /* top margin 10px, centered horizontally */
-    text-align: center;   /* ensures text stays centered */
+    display: block;
+    margin: 10px auto 0;
+    text-align: center;
     text-decoration: none;
     background: #4b2aad;
     color: #fff;
     border-radius: 8px;
     transition: all 0.3s ease;
-}
+  }
 
-.view-poem-btn:hover {
+  .view-poem-btn:hover {
     background: #3a1f99;
     color: #fff;
     transform: translateY(-2px);
-}
+  }
 }
 
 .gallery-section {
-  display: none; /* hide initially */
+  display: none;
 }
 
-/* --- Default (desktop) --- */
 .poetry-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -2297,13 +2194,11 @@ html {
   margin-top: 20px;
 }
 
-/* Hide extra classic poems (only keep 1 classic + 2 recent = 3 total) */
 .gallery-item.classic:nth-of-type(n+5),
 .gallery-item.classic:nth-of-type(n+4) {
   display: none;
 }
 
-/* --- MOBILE HORIZONTAL SCROLL --- */
 @media (max-width: 768px) {
   .poetry-gallery {
     display: flex;
@@ -2317,21 +2212,19 @@ html {
     min-width: 80%;
     flex: 0 0 auto;
     scroll-snap-align: start;
-    display: block !important; /* show all on mobile */
+    display: block !important;
   }
 }
-
-
 
 /* --- MOBILE NAV PANEL --- */
 @media (max-width: 768px) {
   .nav-links {
-    position: fixed;          /* overlay the page */
+    position: fixed;
     top: 0;
-    right: -100%;             /* hidden offscreen initially */
-    width: 92%;               /* menu width */
-    height: 100vh;            /* full viewport height */
-    background-color: #fff;   /* menu background */
+    right: -100%;
+    width: 92%;
+    height: 100vh;
+    background-color: #fff;
     display: flex;
     flex-direction: column;
     padding: 2rem 1.5rem;
@@ -2341,40 +2234,33 @@ html {
     z-index: 9999;
   }
 
-  /* --- MENU IS EXPANDED --- */
   .nav-links.show {
-    right: 0;                 /* slide in from right */
+    right: 0;
   }
 
-/* Close button inside menu */
-.nav-links .close-btn {
-  align-self: flex-end;
-  font-size: 1.3rem;
-  cursor: pointer;
-  color: var(--primary);
-  margin-bottom: 1.5rem; /* pushes links further down */
-}
+  .nav-links .close-btn {
+    align-self: flex-end;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+  }
 
-
-@media (max-width: 768px) {
-  /* Shift links to the right */
   .nav-links a {
     font-size: 1.1rem;
     font-weight: 500;
     text-decoration: none;
     color: #4b2aad;
     transition: color 0.2s;
-    margin-top: 4.4rem;      /* optional: space from top */
-    margin-bottom: -5rem;   /* optional: space between links */
-    padding-left: 1rem;      /* shifts links to the right */
+    margin-top: 4.4rem;
+    margin-bottom: -5rem;
+    padding-left: 1rem;
   }
 
   .nav-links a:hover {
     color: #7b4cc2;
   }
-}
 
-  /* Optional: Add backdrop behind menu */
   body.menu-open::before {
     content: "";
     position: fixed;
@@ -2383,73 +2269,7 @@ html {
     width: 100vw;
     height: 100vh;
     background: rgba(0,0,0,0.3);
-    z-index: 9998;  /* behind menu but above content */
-  }
-}
-
-
-
-/* --- MOBILE NAV PANEL --- */
-@media (max-width: 768px) {
-  .nav-links {
-    position: fixed;          /* overlay the page */
-    top: 0;
-    right: -100%;             /* hidden offscreen initially */
-    width: 92%;               /* menu width */
-    height: 100vh;            /* full viewport height */
-    background-color: #fff;   /* menu background */
-    display: flex;
-    flex-direction: column;
-    padding: 2rem 1.5rem;
-    gap: 1.5rem;
-    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
-    transition: right 0.3s ease-in-out;
-    z-index: 9999;
-  }
-
-  /* --- MENU IS EXPANDED --- */
-  .nav-links.show {
-    right: 0;                 /* slide in from right */
-  }
-
-/* Close button inside menu */
-.nav-links .close-btn {
-  align-self: flex-end;
-  font-size: 1.3rem;
-  cursor: pointer;
-  color: var(--primary);
-  margin-bottom: 1.5rem; /* pushes links further down */
-}
-
-
-@media (max-width: 768px) {
-  /* Shift links to the right */
-  .nav-links a {
-    font-size: 1.1rem;
-    font-weight: 500;
-    text-decoration: none;
-    color: #4b2aad;
-    transition: color 0.2s;
-    margin-top: 4.4rem;      /* optional: space from top */
-    margin-bottom: -5rem;   /* optional: space between links */
-    padding-left: 1rem;      /* shifts links to the right */
-  }
-
-  .nav-links a:hover {
-    color: #7b4cc2;
-  }
-}
-
-  /* Optional: Add backdrop behind menu */
-  body.menu-open::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.3);
-    z-index: 9998;  /* behind menu but above content */
+    z-index: 9998;
   }
 }
 
@@ -2464,7 +2284,6 @@ html {
   transition: opacity 0.4s ease;
 }
 
-/* Hide on small screens */
 @media (max-width: 768px) {
   #poem-categories-container {
     display: none !important;
@@ -2478,7 +2297,6 @@ html {
   margin-bottom: 1rem;
 }
 
-/* Layout for categories */
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(11, 1fr);
@@ -2486,12 +2304,11 @@ html {
   width: 100%;
 }
 
-/* ✨ Fetched category links */
 .category-card {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 0.95rem;
-  color: #B8860B; /* Fetched categories = Gold */
+  color: #B8860B;
   text-decoration: none;
   transition: all 0.25s ease;
   background: none;
@@ -2500,7 +2317,7 @@ html {
 }
 
 .category-card:hover {
-  color: #DAA520; /* Slightly brighter gold on hover */
+  color: #DAA520;
   transform: translateY(-2px);
 }
 
@@ -2510,15 +2327,10 @@ html {
   text-decoration: underline;
 }
 
-
-
-
-/* Hide mobile-only links on desktop */
 .mobile-only {
   display: none;
 }
 
-/* Show mobile-only links only on small screens */
 @media (max-width: 768px) {
   .mobile-only {
     display: block;
@@ -2530,23 +2342,18 @@ html {
   margin-top: -8px;
 }
 
-
-
-/* Reduce logo text size on small screens */
 @media (max-width: 768px) {
   .logo-text {
-    font-size: 1.4rem; /* smaller text on tablets */
+    font-size: 1.4rem;
   }
 }
 
 @media (max-width: 480px) {
   .logo-text {
-    font-size: 1.4rem; /* even smaller on small phones */
+    font-size: 1.4rem;
   }
 }
 
-
-/* Shift all poem elements slightly left on small screens */
 @media (max-width: 768px) {
   .poem-card,
   .poem-title,
@@ -2571,8 +2378,6 @@ html {
   }
 }
 
-
-/* Tablet and small screens */
 @media (max-width: 768px) {
   .recent-poem-title,
   .author {
@@ -2581,11 +2386,10 @@ html {
   }
 
   .author {
-    font-size: 0.75rem; /* smaller */
+    font-size: 0.75rem;
   }
 }
 
-/* Very small phones */
 @media (max-width: 480px) {
   .recent-poem-title,
   .author {
@@ -2594,16 +2398,15 @@ html {
   }
 
   .author {
-    font-size: 0.75rem; /* even smaller on tiny phones */
+    font-size: 0.75rem;
   }
 }
-
 
 @media (max-width: 768px) {
   .author {
     position: relative;
     left: -9px;
-    font-size: 0.85rem !important; /* force size */
+    font-size: 0.85rem !important;
   }
 }
 
@@ -2611,86 +2414,70 @@ html {
   .author {
     position: relative;
     left: -13px;
-    font-size: 0.75rem !important; /* force smaller size */
+    font-size: 0.75rem !important;
   }
 }
 
-
 @media (max-width: 480px) {
+  .recent-poems-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    padding-left: 0;
+  }
 
-  /* Recent Poems Container */
-  /* Forced 480px Version */
+  .recent-poem-card {
+    background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
+    padding: 18px 20px;
+    border-radius: var(--radius);
+    border: 1px solid #e0d6b0;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+    font-family: 'Lato', sans-serif;
+    color: #4b3f2f;
+    line-height: 1.7;
+    width: 99%;
+    box-sizing: border-box;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    overflow: hidden;
+    margin: 0 auto;
+    padding-left: 22px;
+  }
 
-/* Recent Poems Container */
-.recent-poems-container {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  padding-left: 0; /* expand fully to screen edges */
-}
+  .recent-poem-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 18px rgba(0,0,0,0.1);
+  }
 
-/* Individual Poem Card */
-.recent-poem-card {
-  background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
-  padding: 18px 20px;
-  border-radius: var(--radius);
-  border: 1px solid #e0d6b0;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-  font-family: 'Lato', sans-serif;
-  color: #4b3f2f;
-  line-height: 1.7;
-  width: 99%; /* increased width (was 83%) */
-  box-sizing: border-box;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  overflow: hidden;
-  margin: 0 auto; /* center the card */
-  padding-left: 22px; /* gentle inner padding */
-}
+  .recent-poem-card .poem-title {
+    font-family: 'Playfair Display', serif;
+    color: #4b2aad;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
 
-/* Card hover effect */
-.recent-poem-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 18px rgba(0,0,0,0.1);
-}
-
-/* Poem Title */
-.recent-poem-card .poem-title {
-  font-family: 'Playfair Display', serif;
-  color: #4b2aad;
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-/* Poem Content */
-.recent-poem-card .poem-content {
-  white-space: pre-line;
-  margin-bottom: 10px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.9rem;
-  color: #4b3f2f;
-  line-height: 1.6;
-   padding-left: 10px; /* adjust this to move right more or less */
-}
+  .recent-poem-card .poem-content {
+    white-space: pre-line;
+    margin-bottom: 10px;
+    font-family: 'EB Garamond', 'Georgia', serif;
+    font-size: 0.9rem;
+    color: #4b3f2f;
+    line-height: 1.6;
+    padding-left: 10px;
+  }
 }
 
 @media (max-width: 480px) {
-
-
-
   .cta-btn:hover {
     background: #5135a2;
   }
 }
 
-
-/* Full-screen mobile nav for 480px and below */
 @media (max-width: 480px) {
-
   #logout-btn-mobile {
     width: 100%;
     padding: 15px 20px;
@@ -2703,17 +2490,14 @@ html {
     color: red;
     background: none;
     border: none;
-    margin-top: 20px; /* push down a bit */
+    margin-top: 20px;
   }
 
-  /* Optional: hide the original header when menu is open */
   .header {
-    z-index: 500; /* behind nav-links */
+    z-index: 500;
   }
 }
 
-
-* ---------- Container ---------- */
 #ranking-poets-container {
   max-width: 800px;
   margin: 120px auto 50px auto;
@@ -2724,7 +2508,6 @@ html {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-/* ---------- Title ---------- */
 #ranking-poets-container h1 {
   text-align: center;
   font-family: 'Playfair Display', serif;
@@ -2733,7 +2516,6 @@ html {
   color: #4b2aad;
 }
 
-/* ---------- Poet Card ---------- */
 .ranking-poet {
   display: flex;
   flex-direction: column;
@@ -2750,7 +2532,6 @@ html {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
-/* ---------- Poet Link ---------- */
 .poet-link {
   font-weight: 600;
   font-size: 1.2rem;
@@ -2764,20 +2545,17 @@ html {
   text-decoration: underline;
 }
 
-/* ---------- Badge ---------- */
 .poet-link::before {
   content: "";
   margin-right: 8px;
 }
 
-/* ---------- Activity Details ---------- */
 .ranking-poet p {
   margin: 8px 0 0 0;
   font-size: 0.95rem;
   color: #6b6b6b;
 }
 
-/* ---------- Responsive ---------- */
 @media (max-width: 768px) {
   #ranking-poets-container {
     margin: 80px 15px 30px 15px;
@@ -2797,12 +2575,10 @@ html {
   }
 }
 
-
-/* ---------- Mobile Adjustments for ≤480px ---------- */
 @media (max-width: 480px) {
   #ranking-poets-container {
-    margin: 60px 10px 20px 10px; /* Less top margin for small screens */
-    padding: 15px;               /* Smaller padding */
+    margin: 60px 10px 20px 10px;
+    padding: 15px;
   }
 
   #ranking-poets-container h1 {
@@ -2812,54 +2588,51 @@ html {
   }
 
   .ranking-poet {
-    padding: 10px 12px;           /* Compact card padding */
-    font-size: 0.95rem;            /* Slightly smaller font */
+    padding: 10px 12px;
+    font-size: 0.95rem;
   }
 
   .poet-link {
     font-size: 1rem;
-    word-break: break-word;        /* Prevent overflow on long names */
+    word-break: break-word;
   }
 
   .ranking-poet p {
-    font-size: 0.85rem;           /* Smaller activity text */
+    font-size: 0.85rem;
     margin-top: 6px;
   }
 
-  /* Reduce spacing between cards */
   .ranking-poet + .ranking-poet {
     margin-top: 10px;
   }
 }
 
-
 .author-link {
-  color:  #a67c52; /* Purple color, change as you like */
-  text-decoration: none; /* Removes the underline */
-  font-weight: 500; /* Optional: make it slightly bold */
-  transition: color 0.3s ease; /* Smooth hover effect */
+  color: #a67c52;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .author-link:hover {
-  color: #a67c52; /* Change color on hover */
-  text-decoration: underline; /* Optional: underline on hover */
+  color: #a67c52;
+  text-decoration: underline;
   cursor: pointer;
 }
 
-/* --- NAV CONTAINER FIX FOR SMALL SCREENS --- */
 @media (max-width: 480px) {
-  nav, 
-  .navbar, 
+  nav,
+  .navbar,
   .nav-container {
     width: 100%;
     max-width: 100%;
-    padding: 0.8rem 1rem;  /* keep even padding on both sides */
-    margin: 0 auto;        /* ensure it stays centered */
+    padding: 0.8rem 1rem;
+    margin: 0 auto;
     box-sizing: border-box;
   }
 
   .nav-right {
-    gap: 0.6rem; /* slightly smaller icon spacing */
+    gap: 0.6rem;
   }
 
   .menu-toggle, .search-toggle {
@@ -2867,8 +2640,6 @@ html {
   }
 }
 
-
-/* Load More Button */
 .load-more-btn {
   padding: 10px 18px;
   border: none;
@@ -2887,13 +2658,11 @@ html {
   transform: translateY(-2px);
 }
 
-/* Show class */
 .load-more-btn.show {
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .recent-poem-card { padding: 18px 20px; }
   .recent-poem-card .poem-title { font-size: 1.25rem; }
@@ -2904,12 +2673,6 @@ html {
   .read-more-btn { font-size: 0.85rem; }
   .load-more-btn { padding: 8px 16px; font-size: 0.9rem; }
 }
-
-
-
-
-
-
 
 .tab-content {
   display: none;
@@ -2928,28 +2691,22 @@ html {
   color: #fff;
 }
 
-
 .platform-container ol {
-  list-style-position: inside; /* numbers inside the container */
-  padding-left: 0;             /* remove extra left padding */
-  margin-left: 0;              /* remove default margin */
-  text-align: left;            /* ensure left alignment */
+  list-style-position: inside;
+  padding-left: 0;
+  margin-left: 0;
+  text-align: left;
 }
 
 .platform-container ol li {
-  margin-bottom: 8px;          /* optional spacing between items */
+  margin-bottom: 8px;
 }
-
-
-
-
 
 @media (max-width: 768px) {
   .poem-content {
     padding-left: 12px;
   }
 }
-
 
 .ranking-poet-card {
   display: flex;
@@ -2985,7 +2742,6 @@ html {
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
-
 }
 
 .poet-info {
@@ -3011,7 +2767,6 @@ html {
   margin-top: 2px;
 }
 
-/* 🔽 Small screens only */
 @media (max-width: 768px) {
   .author-img {
     width: 34px !important;
@@ -3025,19 +2780,15 @@ html {
 
   .author-line {
     gap: 6px !important;
-    margin-left: -16px;   /* ⬅ pull to left edge */
+    margin-left: -16px;
   }
 }
 
-
-/* 🔽 Small screens only */
 @media (max-width: 768px) {
   .poet-card-header {
     display: flex;
     align-items: center;
     gap: 8px;
-
-    /* ⬅➡ full bleed, NO side spacing */
     margin-left: -16px;
     margin-right: -16px;
     padding-left: 0;
@@ -3067,48 +2818,39 @@ html {
   }
 }
 
-
-/* ---------------- Collaborator Names ---------------- */
 .collaborator-line em {
-  font-style: normal;       /* optional */
+  font-style: normal;
   font-weight: 400;
-color: #555555;
-
-        /* NEW distinct color from author */
+  color: #555555;
   font-size: 0.95rem;
 }
 
 .collaborator-line em a.collaborator-link {
-  color: inherit;           
+  color: inherit;
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .collaborator-line em a.collaborator-link:hover {
   color: #333333;
-/* darker shade on hover */
   text-decoration: underline;
 }
 
-/* Reduce font size on small screens */
 @media (max-width: 768px) {
   .collaborator-line em {
-    font-size: 0.82rem;     /* smaller for mobile/tablet */
+    font-size: 0.82rem;
   }
 }
 
-
-
-
 .collaborators {
-  margin: -2px 0 8px 0 !important;   /* move up slightly */
-  padding-left: 0 !important;        /* flush left inside column */
+  margin: -2px 0 8px 0 !important;
+  padding-left: 0 !important;
   font-size: 0.95rem;
   color: #555555;
   font-style: normal;
   font-weight: 400;
   line-height: 1.3;
-  text-align: left !important;       /* force flush left */
+  text-align: left !important;
 }
 
 .collaborators a {
@@ -3128,7 +2870,6 @@ color: #555555;
   }
 }
 
-
 /* ============================================
    MOBILE-FRIENDLY COMMENT LIST STYLES
    ============================================ */
@@ -3145,14 +2886,13 @@ color: #555555;
   transition: all 0.3s ease;
 }
 
-/* Individual comment styling - LEFT BORDER REMOVED */
+/* Individual comment styling */
 .comment-list .comment {
   background: #faf8f5;
   padding: 14px 16px;
   margin: 10px 0;
   border-radius: 16px;
   transition: background 0.2s;
-  /* border-left: 3px solid #B8860B; - REMOVED */
 }
 
 .comment-list .comment:hover {
@@ -3208,7 +2948,7 @@ color: #555555;
   margin-left: 16px;
   margin-top: 12px;
   padding-left: 12px;
-  border-left: 2px solid #e0d6c8;
+  border-left: 0;
 }
 
 /* Reply styling - author name also matches categories color */
@@ -3412,23 +3152,14 @@ color: #555555;
   margin-left: 16px;
   margin-top: 12px;
   padding-left: 12px;
-  border-left: none; /* REMOVED the border */
-}
-
-/* Or if you want to completely remove it with no trace */
-.comment-list .reply-section {
-  margin-left: 16px;
-  margin-top: 12px;
-  padding-left: 12px;
   border-left: 0;
 }
 
-/* For smaller screens, also remove it there */
 @media (max-width: 768px) {
   .comment-list .reply-section {
     margin-left: 8px;
     padding-left: 8px;
-    border-left: none;
+    border-left: 0;
   }
 }
 
@@ -3436,7 +3167,7 @@ color: #555555;
   .comment-list .reply-section {
     margin-left: 6px;
     padding-left: 8px;
-    border-left: none;
+    border-left: 0;
   }
 }
 
@@ -3464,7 +3195,6 @@ color: #555555;
 .follow-btn-on-card.following:hover {
   background: #d32f2f;
 }
-
 
 /* Force hide hero-left and hero-right on ALL devices under 1024px */
 @media (max-width: 1024px) {
@@ -3496,35 +3226,23 @@ color: #555555;
   display: none !important;
 }
 
-/* Alternative: if the date is in a specific element */
 .recent-poem-card .poem-publish-date {
   display: none !important;
 }
 
-/* Hide any element containing date text (be cautious with this one) */
 .recent-poem-card .author-line span[style*="color:#888"] {
   display: none !important;
 }
 
-/* Hide the date range badge */
 #rank-poems .ranking-header span[style*="background: #e8e0f0"],
 #rank-poems .ranking-header > div span:first-child {
   display: none !important;
 }
 
-/* Or more simply, target by the text content pattern */
-#rank-poems .ranking-header span:has(> .📅),
-#rank-poems .ranking-header span:contains("📅") {
-  display: none !important;
-}
-
-/* Most reliable - hide the specific element */
 .ranking-header span[style*="background: #e8e0f0"] {
   display: none !important;
 }
 
-
-/* Move trending badge to the read count position */
 .recent-poem-card .author-line > div:last-child {
   position: relative;
   display: flex;
@@ -3538,65 +3256,7 @@ color: #555555;
   top: -30px;
 }
 
-/* Remove hover effect and style Read More button */
-.read-more-btn {
-  background: none !important;
-  border: none !important;
-  color: #960606 !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-  font-size: 0.92rem !important;
-  font-weight: 500 !important;
-  margin-bottom: 10px !important;
-  transition: none !important;
-  text-decoration: none !important;
-}
-
-/* Remove ALL hover effects */
-.read-more-btn:hover {
-  background: none !important;
-  color: #960606 !important;
-  transform: none !important;
-  text-decoration: none !important;
-  opacity: 1 !important;
-}
-
-/* Style using your CSS variables */
-.read-more-btn {
-  background: none !important;
-  border: none !important;
-  color: var(--primary, #960606) !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-  font-size: 0.95rem !important;
-  font-weight: 500 !important;
-  margin-bottom: 10px !important;
-  transition: none !important;
-}
-
-.read-more-btn:hover {
-  background: none !important;
-  color: var(--primary, #960606) !important;
-  transform: none !important;
-  text-decoration: none !important;
-}
-
-/* Hide weekly score from poem title */
-.recent-poem-title small {
-  display: none !important;
-}
-
-/* Alternative if the score is in a span with specific style */
-.recent-poem-title small[style*="font-weight:400"] {
-  display: none !important;
-}
-
-/* Target any small tag inside the poem title */
-.recent-poem-title small {
-  display: none !important;
-}
-
-/* Force Read More button color - NO hover change */
+/* Remove ALL hover effects from Read More button */
 .read-more-btn,
 .read-more-btn:hover,
 .read-more-btn:focus,
@@ -3617,6 +3277,15 @@ color: #555555;
   outline: none !important;
 }
 
+/* Hide weekly score from poem title */
+.recent-poem-title small {
+  display: none !important;
+}
+
+.recent-poem-title small[style*="font-weight:400"] {
+  display: none !important;
+}
+
 /* ============================================
    RANKING POETS CONTAINER
    ============================================ */
@@ -3627,7 +3296,6 @@ color: #555555;
   background: transparent;
 }
 
-/* Header Styling */
 #ranking-poets-container .ranking-header {
   text-align: center;
   margin-bottom: 30px;
@@ -3646,7 +3314,6 @@ color: #555555;
   margin-bottom: 15px;
 }
 
-/* Countdown and Week Badge */
 #ranking-poets-container .countdown-container {
   display: flex;
   justify-content: center;
@@ -3664,14 +3331,12 @@ color: #555555;
   font-weight: 500;
 }
 
-/* Poets Ranking List */
 .poets-ranking-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-/* Individual Poet Card */
 .ranking-poet-card {
   background: linear-gradient(135deg, #ffffff, #faf8f5);
   border-radius: 16px;
@@ -3687,7 +3352,6 @@ color: #555555;
   border-color: #e0d6b0;
 }
 
-/* Poet Card Header (flex row) */
 .poet-card-header {
   display: flex;
   align-items: center;
@@ -3695,7 +3359,6 @@ color: #555555;
   flex-wrap: wrap;
 }
 
-/* Rank Number */
 .rank-number {
   font-size: 1.8rem;
   font-weight: 700;
@@ -3704,14 +3367,12 @@ color: #555555;
   text-align: center;
 }
 
-/* Medal Badge */
 .poet-rank-badge {
   font-size: 1.8rem;
   min-width: 60px;
   text-align: center;
 }
 
-/* Avatar Image */
 .poet-avatar {
   width: 65px;
   height: 65px;
@@ -3721,12 +3382,10 @@ color: #555555;
   background: #f0ede8;
 }
 
-/* Poet Info Area */
 .poet-info {
   flex: 1;
 }
 
-/* Poet Name Line */
 .poet-name-line {
   display: flex;
   align-items: center;
@@ -3749,7 +3408,6 @@ color: #555555;
   text-decoration: underline;
 }
 
-/* Community Helper Badge */
 .community-badge {
   background: #4CAF50;
   color: white;
@@ -3759,7 +3417,6 @@ color: #555555;
   font-weight: 600;
 }
 
-/* Stats Grid - 4 columns on desktop */
 .poet-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -3798,7 +3455,6 @@ color: #555555;
   margin-left: 5px;
 }
 
-/* Warning Badge for Selfish Poets */
 .warning-badge {
   background: #ff9800;
   color: white;
@@ -3807,7 +3463,6 @@ color: #555555;
   font-size: 0.65rem;
 }
 
-/* Ranking Explanation Section */
 .ranking-explanation {
   margin-top: 30px;
   padding: 15px 20px;
@@ -3868,7 +3523,6 @@ color: #555555;
     font-size: 1rem;
   }
 
-  /* Stats grid becomes 2x2 on tablet */
   .poet-stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
@@ -3950,7 +3604,6 @@ color: #555555;
     padding: 2px 8px;
   }
 
-  /* Stats grid becomes 1 column on mobile */
   .poet-stats-grid {
     grid-template-columns: 1fr;
     gap: 8px;
@@ -4008,8 +3661,6 @@ color: #555555;
    ============================================ */
 
 @media (max-width: 768px) {
-  
-  /* Main Container - add side margins to prevent touching edges */
   #ranking-poets-container {
     padding: 10px 15px !important;
     margin: 0 auto !important;
@@ -4017,7 +3668,6 @@ color: #555555;
     box-sizing: border-box !important;
   }
 
-  /* Poet Card - no touching edges */
   .ranking-poet-card {
     padding: 12px 15px !important;
     margin-bottom: 12px !important;
@@ -4026,7 +3676,6 @@ color: #555555;
     box-sizing: border-box !important;
   }
 
-  /* Card Header - horizontal layout with avatar + name side by side */
   .poet-card-header {
     display: flex !important;
     flex-direction: row !important;
@@ -4036,7 +3685,6 @@ color: #555555;
     width: 100% !important;
   }
 
-  /* Rank Number - smaller */
   .rank-number {
     font-size: 1rem !important;
     min-width: 30px !important;
@@ -4044,7 +3692,6 @@ color: #555555;
     color: #4b2aad !important;
   }
 
-  /* Medal Badge - position top-right */
   .poet-rank-badge {
     position: absolute !important;
     top: 0 !important;
@@ -4053,7 +3700,6 @@ color: #555555;
     background: transparent !important;
   }
 
-  /* Avatar - fixed size */
   .poet-avatar {
     width: 45px !important;
     height: 45px !important;
@@ -4061,13 +3707,11 @@ color: #555555;
     flex-shrink: 0 !important;
   }
 
-  /* Poet Info - contains name and stats, takes remaining space */
   .poet-info {
     flex: 1 !important;
-    min-width: 0 !important; /* prevents overflow */
+    min-width: 0 !important;
   }
 
-  /* Name Line - name and badge on same line */
   .poet-name-line {
     display: flex !important;
     flex-direction: row !important;
@@ -4084,7 +3728,6 @@ color: #555555;
     text-decoration: none !important;
   }
 
-  /* Community Badge */
   .community-badge {
     font-size: 0.6rem !important;
     padding: 2px 8px !important;
@@ -4093,7 +3736,6 @@ color: #555555;
     border-radius: 20px !important;
   }
 
-  /* Stats Grid - 2 columns */
   .poet-stats-grid {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
@@ -4133,13 +3775,11 @@ color: #555555;
     font-size: 0.6rem !important;
   }
 
-  /* Warning Badge */
   .warning-badge {
     font-size: 0.55rem !important;
     padding: 2px 6px !important;
   }
 
-  /* Explanation Section */
   .ranking-explanation {
     margin-top: 15px !important;
     padding: 10px 12px !important;
@@ -4153,7 +3793,6 @@ color: #555555;
    ============================================ */
 
 @media (max-width: 480px) {
-  
   #ranking-poets-container {
     padding: 10px 12px !important;
   }
@@ -4243,6 +3882,7 @@ color: #555555;
     font-size: 0.75rem !important;
   }
 }
+
 /* Small screens only - move rank number from left edge */
 @media (max-width: 768px) {
   .rank-number {
@@ -4266,3 +3906,38 @@ color: #555555;
     object-fit: cover !important;
   }
 }
+
+
+/* ===== INCREASE CATEGORY LINK SIZE ===== */
+.category-link {
+  font-size: 0.85rem !important;  /* Change this to your desired size */
+}
+
+/* ===== RESPONSIVE SIZES ===== */
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+  .category-link {
+    font-size: 0.85rem !important;
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  .category-link {
+    font-size: 0.8rem !important;
+  }
+}
+
+/* ===== INCREASE POEM CONTENT SIZE ON PHONES ONLY ===== */
+@media (max-width: 480px) {
+  .recent-poem-card .poem-content,
+  .poem-content,
+  .poem-body .poem-content,
+  #poem-content {
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+
+

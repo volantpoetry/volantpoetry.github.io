@@ -5,17 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>Create Account · Volant</title>
-  <!-- Google Font & Font Awesome -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <!-- reCAPTCHA v2 -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<!-- Favicons -->
 <link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png">
 <link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png">
 
   <style>
-    /* ----- reset & base ----- */
     * {
       margin: 0;
       padding: 0;
@@ -33,7 +29,6 @@
       margin: 0;
     }
 
-    /* ----- card container (glassmorphism) ----- */
     .container {
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(12px);
@@ -50,7 +45,6 @@
       transition: all 0.2s ease;
     }
 
-    /* ----- platform badge ----- */
     .platform-badge {
       display: inline-block;
       padding: 0.45rem 1.2rem;
@@ -68,7 +62,6 @@
     .platform-badge.reads { background: linear-gradient(135deg, #d4a574, #c9944d); }
     .platform-badge.foundry { background: linear-gradient(135deg, #2c3e50, #4a627a); }
 
-    /* ----- breadcrumb / back ----- */
     .back-link {
       display: none;
       align-items: center;
@@ -98,7 +91,6 @@
     }
     .breadcrumb a:hover { text-decoration: underline; }
 
-    /* ----- typography ----- */
     h2 {
       font-size: 1.9rem;
       font-weight: 700;
@@ -117,7 +109,6 @@
       border-radius: 0 4px 4px 0;
     }
 
-    /* ----- Google Sign-Up Button ----- */
     .google-btn {
       width: 100%;
       padding: 0.9rem;
@@ -174,7 +165,6 @@
     .divider-text::before { left: 0; }
     .divider-text::after { right: 0; }
 
-    /* ----- form elements ----- */
     form label {
       display: block;
       font-size: 0.85rem;
@@ -236,7 +226,6 @@
     .password-eye:hover { background: rgba(75, 42, 173, 0.06); color: #4b2aad; }
     .password-eye.showing { color: #4b2aad; background: rgba(75, 42, 173, 0.08); }
 
-    /* password strength */
     .password-strength {
       margin-top: 0.5rem;
       font-size: 0.8rem;
@@ -259,7 +248,6 @@
       letter-spacing: 0.1px;
     }
 
-    /* ----- reCAPTCHA ----- */
     .recaptcha-container {
       display: flex;
       justify-content: center;
@@ -270,7 +258,6 @@
       transform-origin: center;
     }
 
-    /* ----- button & status ----- */
     .btn-primary {
       width: 100%;
       padding: 0.95rem;
@@ -328,7 +315,6 @@
       border-color: #c8d4f5;
     }
 
-    /* ----- account & footer ----- */
     .account-check {
       background: rgba(245, 242, 252, 0.5);
       backdrop-filter: blur(4px);
@@ -360,7 +346,6 @@
       display: block;
     }
 
-    /* spinner */
     .loading-spinner { display: none; }
     .spinner {
       border: 2.5px solid rgba(255,255,255,0.2);
@@ -373,7 +358,6 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* responsive */
     @media (max-width: 500px) {
       .container { padding: 1.8rem 1.4rem; border-radius: 28px; }
       h2 { font-size: 1.6rem; }
@@ -381,27 +365,21 @@
       .recaptcha-container > div { transform: scale(0.8); }
     }
 
-    /* Hide breadcrumb */
-.breadcrumb {
-  display: none !important;
-}
-
-/* Hide back link */
-.back-link {
-  display: none !important;
-}
+    .breadcrumb {
+      display: none !important;
+    }
+    .back-link {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- back link (hidden until redirect present) -->
   <a href="#" id="backLink" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
 
-  <!-- dynamic platform badge -->
   <div class="platform-badge" id="platformBadge">Volant Platform</div>
 
-  <!-- breadcrumb (hidden until redirect) -->
   <div class="breadcrumb" id="breadcrumb">
     <a href="#" id="breadcrumbHome">Home</a>
     <span>›</span>
@@ -411,7 +389,6 @@
   <h2>Create account</h2>
   <p class="subtitle">Join us and start creating</p>
 
-  <!-- Google Sign-Up Button - Always enabled -->
   <button id="googleSignUpBtn" class="google-btn">
     <i class="fab fa-google"></i>
     <span class="google-text">Sign up with Google</span>
@@ -420,7 +397,6 @@
   <div class="divider-text">or sign up with email</div>
 
   <form id="signup-form" class="auth-form">
-    <!-- Username - Hidden field for auto-generated username -->
     <input type="hidden" id="signup-username-hidden">
     
     <label for="signup-email">Email address</label>
@@ -428,7 +404,6 @@
            required autocomplete="email">
     <div class="field-hint">We'll send a verification link</div>
 
-    <!-- Password field - hidden for Google users, shown for email signup -->
     <div id="password-section">
       <label for="signup-password">Password</label>
       <div class="password-wrapper">
@@ -440,7 +415,6 @@
       <div class="field-hint">8+ characters with letters &amp; numbers recommended</div>
     </div>
 
-    <!-- reCAPTCHA v2 - Only affects email/password form -->
     <div class="recaptcha-container">
       <div class="g-recaptcha" data-sitekey="6LfEe3wtAAAAACMvQc1vCwhgMtwvrH562PtKuXTU" data-callback="onRecaptchaSuccess"></div>
     </div>
@@ -464,31 +438,22 @@
 </div>
 
 <script>
-  // ============================================================
-  // ====== RECAPTCHA CALLBACK ======
-  // ============================================================
-  
   let recaptchaVerified = false;
   
   function onRecaptchaSuccess() {
     recaptchaVerified = true;
-    // Enable ONLY the email/password signup button
     const signupButton = document.getElementById('signup-button');
     signupButton.disabled = false;
-    // Google button remains enabled regardless
   }
   
   function onRecaptchaExpired() {
     recaptchaVerified = false;
-    // Disable ONLY the email/password signup button
     const signupButton = document.getElementById('signup-button');
     signupButton.disabled = true;
-    // Google button remains enabled regardless
     const statusEl = document.getElementById('signup-status');
-    showStatus('⚠️ reCAPTCHA expired. Please verify again.', 'info');
+    window.showStatus('⚠️ reCAPTCHA expired. Please verify again.', 'info');
   }
 
-  // Make showStatus available globally
   window.showStatus = function(message, type = 'error') {
     const statusEl = document.getElementById('signup-status');
     statusEl.textContent = message;
@@ -497,7 +462,6 @@
 </script>
 
 <script type="module">
-  // ----- Firebase imports -----
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getAuth,
@@ -521,7 +485,6 @@
     serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
     authDomain: "silent-depth.firebaseapp.com",
@@ -535,7 +498,6 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // ----- PLATFORM DETECTION -----
   const urlParams = new URLSearchParams(window.location.search);
   const platform = urlParams.get('platform') || 'poetry';
   const redirectUrl = urlParams.get('redirect');
@@ -549,7 +511,6 @@
   };
   const currentPlatform = platformConfig[platform] || platformConfig.poetry;
 
-  // update UI
   document.getElementById('platformBadge').textContent = currentPlatform.name;
   document.getElementById('platformBadge').classList.add(currentPlatform.badge);
 
@@ -562,7 +523,6 @@
     document.getElementById('breadcrumb').style.display = 'flex';
   }
 
-  // ----- DOM refs -----
   const signupForm = document.getElementById('signup-form');
   const signupButton = document.getElementById('signup-button');
   const statusEl = document.getElementById('signup-status');
@@ -577,13 +537,78 @@
   const usernameHidden = document.getElementById('signup-username-hidden');
   const passwordSection = document.getElementById('password-section');
 
-  // Flag to track if this is a Google sign-up submission
   let isGoogleSignUpSubmission = false;
 
-  // ----- status helper -----
   function showStatus(message, type = 'error') {
     statusEl.textContent = message;
     statusEl.className = `status show ${type}`;
+  }
+
+  // ============================================================
+  // ====== GET THE CORRECT RETURN URL ======
+  // ============================================================
+  
+  function getReturnUrl() {
+    let returnUrl = redirectUrl;
+    
+    if (returnUrl) {
+      try {
+        returnUrl = decodeURIComponent(returnUrl);
+        if (returnUrl.startsWith('/') || returnUrl.startsWith('../')) {
+          const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+          if (!excludePages.some(page => returnUrl.includes(page))) {
+            console.log('✅ Using redirect URL from query param:', returnUrl);
+            return returnUrl;
+          }
+        }
+      } catch (e) {}
+    }
+    
+    let storedUrl = sessionStorage.getItem('returnUrl') || sessionStorage.getItem('preLoginPage');
+    if (storedUrl && storedUrl !== 'null' && storedUrl !== 'undefined') {
+      try {
+        storedUrl = decodeURIComponent(storedUrl);
+        const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+        if (!excludePages.some(page => storedUrl.includes(page))) {
+          console.log('✅ Using stored return URL:', storedUrl);
+          return storedUrl;
+        }
+      } catch (e) {}
+    }
+    
+    const referrer = document.referrer;
+    if (referrer && !referrer.includes('login') && !referrer.includes('signup')) {
+      try {
+        const url = new URL(referrer);
+        const path = url.pathname + url.search;
+        if (path && path !== '/') {
+          console.log('✅ Using referrer URL:', path);
+          return path;
+        }
+      } catch (e) {}
+    }
+    
+    console.log('ℹ️ Using default home URL:', currentPlatform.homeUrl);
+    return currentPlatform.homeUrl;
+  }
+
+  // ============================================================
+  // ====== REDIRECT AFTER SIGNUP ======
+  // ============================================================
+  
+  function redirectAfterSignup() {
+    const returnUrl = getReturnUrl();
+    
+    sessionStorage.removeItem('returnUrl');
+    sessionStorage.removeItem('preLoginPage');
+    localStorage.removeItem('returnUrl');
+    sessionStorage.removeItem('googleSignUpData');
+    
+    console.log('🔄 Redirecting to:', returnUrl);
+    
+    setTimeout(() => {
+      window.location.href = returnUrl;
+    }, 500);
   }
 
   // ============================================================
@@ -607,25 +632,21 @@
       baseName = 'user';
     }
     
-    // Clean the username
     let clean = baseName
       .replace(/\s/g, '_')
       .toLowerCase()
       .replace(/[^a-z0-9_]/g, '')
       .substring(0, 11);
     
-    // If empty after cleaning, use default
     if (!clean || clean.length < 3) {
       clean = 'user_' + Math.random().toString(36).substring(2, 6);
     }
     
-    // Check if taken
     const taken = await isUsernameTaken(clean);
     if (!taken) {
       return clean;
     }
     
-    // Try with numbers
     let counter = 1;
     let newUsername;
     do {
@@ -652,14 +673,9 @@
         if (data.email) {
           emailInput.value = data.email;
           emailInput.disabled = true;
-          
-          // Hide password section for Google users
           passwordSection.style.display = 'none';
           
-          // Use suggested username from URL parameter if available
           let username = suggestedUsername;
-          
-          // If no suggested username, generate from display name
           if (!username && data.displayName) {
             username = data.displayName
               .replace(/\s/g, '_')
@@ -667,18 +683,14 @@
               .replace(/[^a-z0-9_]/g, '')
               .substring(0, 11);
           }
-          
-          // If still empty, use default
           if (!username || username.length < 3) {
             username = 'user';
           }
           
-          // Generate unique username in background
           generateUniqueUsername(username).then(uniqueUsername => {
             usernameHidden.value = uniqueUsername;
-            showStatus('📝 Username "' + uniqueUsername + '" generated for you. You can change it later in settings.', 'info');
+            showStatus('📝 Username "' + uniqueUsername + '" generated for you.', 'info');
             
-            // Set flag and auto-submit the form since no password needed
             isGoogleSignUpSubmission = true;
             setTimeout(() => {
               signupForm.dispatchEvent(new Event('submit'));
@@ -693,7 +705,6 @@
     }
   }
 
-  // ----- password strength (only for email signup) -----
   passwordInput.addEventListener('input', () => {
     const pwd = passwordInput.value;
     let strength = 'weak';
@@ -719,7 +730,6 @@
     }
   });
 
-  // ----- password toggle (only for email signup) -----
   togglePassword.addEventListener("click", () => {
     const isPassword = passwordInput.type === "password";
     passwordInput.type = isPassword ? "text" : "password";
@@ -727,7 +737,6 @@
     togglePassword.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="far fa-eye"></i>';
   });
 
-  // ----- navigation -----
   goToLogin.addEventListener('click', (e) => {
     e.preventDefault();
     sessionStorage.removeItem('googleSignUpData');
@@ -738,12 +747,10 @@
   });
 
   // ============================================================
-  // ====== GOOGLE SIGN-UP HANDLER (No reCAPTCHA required) ======
+  // ====== GOOGLE SIGN-UP HANDLER ======
   // ============================================================
   
   async function signUpWithGoogle() {
-    // NO reCAPTCHA check - Google button works independently
-
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     
@@ -783,7 +790,6 @@
         return;
       }
       
-      // Generate unique username in background
       let baseUsername = user.displayName || 'user';
       let clean = baseUsername
         .replace(/\s/g, '_')
@@ -800,8 +806,6 @@
       emailInput.value = user.email || '';
       emailInput.disabled = true;
       usernameHidden.value = uniqueUsername;
-      
-      // Hide password section for Google users
       passwordSection.style.display = 'none';
       
       sessionStorage.setItem('googleSignUpData', JSON.stringify({
@@ -814,7 +818,6 @@
       
       showStatus('📝 Username "' + uniqueUsername + '" assigned. Creating account...', 'info');
       
-      // Set flag and auto-submit the form since no password needed
       isGoogleSignUpSubmission = true;
       setTimeout(() => {
         signupForm.dispatchEvent(new Event('submit'));
@@ -831,12 +834,6 @@
           if (redirectUrl) params.append('redirect', redirectUrl);
           window.location.href = `universal-login.html?${params.toString()}`;
         }, 1500);
-      } else if (error.code === 'auth/user-disabled') {
-        showStatus('This account has been disabled. Please contact support.', 'error');
-      } else if (error.code === 'auth/operation-not-allowed') {
-        showStatus('Google Sign-Up is not enabled. Please contact support.', 'error');
-      } else if (error.code === 'auth/popup-closed-by-user') {
-        showStatus('Sign-up cancelled. Please try again.', 'info');
       } else {
         showStatus('Google sign-up failed. Please try again or use email.', 'error');
       }
@@ -850,7 +847,7 @@
   googleSignUpBtn.addEventListener('click', signUpWithGoogle);
 
   // ============================================================
-  // ====== EMAIL SIGNUP (requires reCAPTCHA) ======
+  // ====== EMAIL SIGNUP ======
   // ============================================================
   
   signupForm.addEventListener('submit', async (e) => {
@@ -859,7 +856,6 @@
     const googleData = sessionStorage.getItem('googleSignUpData');
     const isGoogleUser = googleData && emailInput.disabled === true;
 
-    // Check reCAPTCHA - ONLY for email signup, skip for Google users
     if (!isGoogleUser && !recaptchaVerified) {
       showStatus('⚠️ Please complete the reCAPTCHA verification.', 'error');
       return;
@@ -888,16 +884,13 @@
           return;
         }
         
-        // Use the generated username (or generate one if missing)
         let username = usernameHidden.value || data.username;
         if (!username || username.length < 3) {
           username = await generateUniqueUsername(data.displayName || 'user');
         }
         
-        // Final check that username is still available
         const isTaken = await isUsernameTaken(username);
         if (isTaken) {
-          // Regenerate if taken
           username = await generateUniqueUsername(data.displayName || 'user');
         }
         
@@ -916,8 +909,12 @@
         sessionStorage.removeItem('googleSignUpData');
         showStatus('✅ Account created with Google! Redirecting…', 'success');
         
+        // ✅ SUCCESS - Redirect back
+        redirectAfterSignup();
+        return;
+        
       } else {
-        // Email signup - require password
+        // Email signup
         if (!password || password.length < 6) {
           showStatus('❌ Password must be at least 6 characters.', 'error');
           signupButton.disabled = false;
@@ -926,7 +923,6 @@
           return;
         }
         
-        // Check email
         const emailQuery = query(collection(db, 'users'), where('email', '==', email));
         const emailSnap = await getDocs(emailQuery);
         if (!emailSnap.empty) {
@@ -937,7 +933,6 @@
           return;
         }
 
-        // For email signup, generate a unique username from email
         let baseUsername = email.split('@')[0];
         if (!baseUsername || baseUsername.length < 3) {
           baseUsername = 'user';
@@ -972,19 +967,6 @@
         }, 2000);
         return;
       }
-
-      if (redirectUrl) {
-        localStorage.setItem('redirectAfterLogin', redirectUrl);
-      }
-
-      let returnUrl = redirectUrl || currentPlatform.homeUrl;
-      
-      // Clear the flag before redirect
-      isGoogleSignUpSubmission = false;
-      
-      setTimeout(() => {
-        window.location.href = returnUrl;
-      }, 1500);
 
     } catch (err) {
       console.error('Signup error:', err);

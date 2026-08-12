@@ -15,7 +15,6 @@
 <link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png">
 
  <style>
-    /* ----- reset & base ----- */
     * {
       margin: 0;
       padding: 0;
@@ -33,7 +32,6 @@
       margin: 0;
     }
 
-    /* ----- card container (glassmorphism) ----- */
     .container {
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(12px);
@@ -50,18 +48,15 @@
       transition: all 0.2s ease;
     }
 
-    /* ----- hide breadcrumb & back link completely ----- */
     .back-link,
     .breadcrumb {
       display: none !important;
     }
 
-    /* ----- hide secure · encrypted text ----- */
     .divider {
       display: none !important;
     }
 
-    /* ----- platform badge (dynamic) ----- */
     .platform-badge {
       display: inline-block;
       padding: 0.45rem 1.2rem;
@@ -80,7 +75,6 @@
     .platform-badge.reads { background: linear-gradient(135deg, #d4a574, #c9944d); }
     .platform-badge.foundry { background: linear-gradient(135deg, #2c3e50, #4a627a); }
 
-    /* ----- typography ----- */
     h2 {
       font-size: 1.9rem;
       font-weight: 700;
@@ -99,7 +93,6 @@
       border-radius: 0 4px 4px 0;
     }
 
-    /* ----- Google Sign-In Button - Always enabled ----- */
     .google-btn {
       width: 100%;
       padding: 0.9rem;
@@ -136,7 +129,6 @@
       color: #1d1a2b;
     }
 
-    /* ----- reCAPTCHA ----- */
     .recaptcha-container {
       display: flex;
       justify-content: center;
@@ -167,7 +159,6 @@
     .divider-text::before { left: 0; }
     .divider-text::after { right: 0; }
 
-    /* ----- form elements ----- */
     form label {
       display: block;
       font-size: 0.85rem;
@@ -224,7 +215,6 @@
     .password-eye:hover { background: rgba(75, 42, 173, 0.06); color: #4b2aad; }
     .password-eye.showing { color: #4b2aad; background: rgba(75, 42, 173, 0.08); }
 
-    /* ----- button & status ----- */
     .btn-primary {
       width: 100%;
       padding: 0.95rem;
@@ -282,7 +272,6 @@
       border-color: #c8d4f5;
     }
 
-    /* ----- account & links ----- */
     .account-check {
       background: rgba(245, 242, 252, 0.5);
       backdrop-filter: blur(4px);
@@ -316,7 +305,6 @@
     }
     .links a:hover { color: #4b2aad; border-bottom-color: #4b2aad; }
 
-    /* spinner */
     .loading-spinner { display: none; }
     .spinner {
       border: 2.5px solid rgba(255,255,255,0.2);
@@ -329,7 +317,6 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* responsive */
     @media (max-width: 500px) {
       .container { padding: 1.8rem 1.4rem; border-radius: 28px; }
       h2 { font-size: 1.6rem; }
@@ -341,13 +328,10 @@
 <body>
 <div class="container">
 
-  <!-- back link - hidden via CSS -->
   <a href="#" id="backLink" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
 
-  <!-- dynamic platform badge -->
   <div class="platform-badge" id="platformBadge">Volant Platform</div>
 
-  <!-- breadcrumb - hidden via CSS -->
   <div class="breadcrumb" id="breadcrumb">
     <a href="#" id="breadcrumbHome">Home</a>
     <span>›</span>
@@ -357,7 +341,6 @@
   <h2>Welcome back</h2>
   <p class="subtitle">Sign in to your account</p>
 
-  <!-- Google Sign-In Button - Always enabled -->
   <button id="googleSignInBtn" class="google-btn">
     <i class="fab fa-google"></i>
     <span class="google-text">Continue with Google</span>
@@ -368,7 +351,6 @@
   <form id="login-form" class="auth-form">
     <input type="hidden" name="returnUrl" id="returnUrl" value="">
     <script>
-        // Store return URL from query parameter
         (function() {
             const urlParams = new URLSearchParams(window.location.search);
             const returnUrl = urlParams.get('returnUrl') || 
@@ -376,17 +358,14 @@
                             document.referrer || 
                             window.location.pathname;
             
-            // Don't redirect to login or signup pages
             const excludePages = ['login', 'signup', 'verify', 'reset'];
             let finalReturnUrl = returnUrl;
             if (excludePages.some(page => finalReturnUrl.includes(page))) {
                 finalReturnUrl = '/index.html';
             }
             
-            // Store in session storage
             sessionStorage.setItem('returnUrl', finalReturnUrl);
             
-            // Set hidden input
             const input = document.getElementById('returnUrl');
             if (input) {
                 input.value = finalReturnUrl;
@@ -403,7 +382,6 @@
       <span id="toggle-password" class="password-eye"><i class="far fa-eye"></i></span>
     </div>
 
-    <!-- reCAPTCHA v2 - Only affects email/password form -->
     <div class="recaptcha-container">
       <div class="g-recaptcha" data-sitekey="6LfEe3wtAAAAACMvQc1vCwhgMtwvrH562PtKuXTU" data-callback="onRecaptchaSuccess"></div>
     </div>
@@ -425,36 +403,26 @@
     <a href="#" id="forgotPasswordLink">Forgot password?</a>
   </div>
 
-  <!-- Hidden via CSS -->
   <div class="divider">secure · encrypted</div>
 </div>
 
 <script>
-  // ============================================================
-  // ====== RECAPTCHA CALLBACK ======
-  // ============================================================
-  
   let recaptchaVerified = false;
   
   function onRecaptchaSuccess() {
     recaptchaVerified = true;
-    // Enable ONLY the email/password login button
     const loginButton = document.getElementById('login-button');
     loginButton.disabled = false;
-    // Google button remains enabled regardless
   }
   
   function onRecaptchaExpired() {
     recaptchaVerified = false;
-    // Disable ONLY the email/password login button
     const loginButton = document.getElementById('login-button');
     loginButton.disabled = true;
-    // Google button remains enabled regardless
     const statusEl = document.getElementById('login-status');
     showStatus('⚠️ reCAPTCHA expired. Please verify again.', 'info');
   }
 
-  // Make showStatus available globally
   window.showStatus = function(message, type = 'error') {
     const statusEl = document.getElementById('login-status');
     statusEl.textContent = message;
@@ -463,7 +431,6 @@
 </script>
 
 <script type="module">
-  // ----- Firebase imports -----
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getAuth,
@@ -487,7 +454,6 @@
     serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
     authDomain: "silent-depth.firebaseapp.com",
@@ -501,7 +467,6 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // ----- PLATFORM DETECTION -----
   const urlParams = new URLSearchParams(window.location.search);
   const platform = urlParams.get('platform') || 'poetry';
   const redirectUrl = urlParams.get('redirect');
@@ -513,11 +478,9 @@
   };
   const currentPlatform = platformConfig[platform] || platformConfig.poetry;
 
-  // update UI
   document.getElementById('platformBadge').textContent = currentPlatform.name;
   document.getElementById('platformBadge').classList.add(currentPlatform.badge);
 
-  // DOM refs
   const loginForm = document.getElementById('login-form');
   const loginButton = document.getElementById('login-button');
   const statusEl = document.getElementById('login-status');
@@ -530,7 +493,6 @@
   const loginEmail = document.getElementById('login-email');
   const googleSignInBtn = document.getElementById('googleSignInBtn');
 
-  // ----- password toggle -----
   togglePassword.addEventListener("click", () => {
     const isPassword = passwordInput.type === "password";
     passwordInput.type = isPassword ? "text" : "password";
@@ -538,7 +500,6 @@
     togglePassword.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="far fa-eye"></i>';
   });
 
-  // ----- navigation -----
   goToSignup.addEventListener('click', (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
@@ -554,14 +515,13 @@
     window.location.href = `users-reset.html?${params.toString()}`;
   });
 
-  // ----- status helper -----
   function showStatus(message, type = 'error') {
     statusEl.textContent = message;
     statusEl.className = `status show ${type}`;
   }
 
   // ============================================================
-  // ====== SMART RETURN URL HANDLER ======
+  // ====== SMART RETURN URL HANDLER - PRESERVES QUERY PARAMS ======
   // ============================================================
   
   function getSmartReturnUrl() {
@@ -589,11 +549,11 @@
         returnUrl = decodeURIComponent(returnUrl);
       } catch (e) {}
       
-      returnUrl = returnUrl.split('?')[0];
-      returnUrl = returnUrl.split('#')[0];
+      // ✅ FIX: Only check if it's a login/signup page, but KEEP query parameters
+      const cleanUrl = returnUrl.split('?')[0]; // Just for checking page name
       
       const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
-      if (excludePages.some(page => returnUrl.includes(page))) {
+      if (excludePages.some(page => cleanUrl.includes(page))) {
         returnUrl = null;
       }
       
@@ -626,23 +586,19 @@
       baseName = 'user';
     }
     
-    // Clean the username - allow any characters but truncate to 11
     let clean = baseName
       .replace(/\s/g, '_')
       .substring(0, 11);
     
-    // If empty after cleaning, use default
     if (!clean || clean.length < 3) {
       clean = 'user_' + Math.random().toString(36).substring(2, 6);
     }
     
-    // Check if taken
     const taken = await isUsernameTaken(clean);
     if (!taken) {
       return clean;
     }
     
-    // Try with numbers
     let counter = 1;
     let newUsername;
     do {
@@ -658,14 +614,12 @@
   }
 
   // ============================================================
-  // ====== GOOGLE SIGN-IN HANDLER (No reCAPTCHA required) ======
+  // ====== GOOGLE SIGN-IN HANDLER ======
   // ============================================================
   
   let isGoogleSignInProgress = false;
   
   async function signInWithGoogle() {
-    // NO reCAPTCHA check - Google button works independently
-
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     
@@ -692,15 +646,12 @@
       
       const user = result.user;
       
-      // Check if user exists in Firestore
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       
       if (!userDoc.exists()) {
-        // NEW USER - Generate username and create account immediately
         let baseUsername = user.displayName || user.email?.split('@')[0] || 'user';
         const uniqueUsername = await generateUniqueUsername(baseUsername);
         
-        // Create user document
         await setDoc(doc(db, 'users', user.uid), {
           username: uniqueUsername,
           email: user.email,
@@ -708,7 +659,7 @@
           photoURL: user.photoURL || '',
           createdAt: serverTimestamp(),
           platform: platform,
-          emailVerified: true, // Google accounts are verified
+          emailVerified: true,
           authProvider: 'google',
           lastLogin: serverTimestamp()
         });
@@ -721,12 +672,13 @@
         localStorage.removeItem('returnUrl');
         isGoogleSignInProgress = false;
         
+        console.log('🔄 [Google New User] Redirecting to:', returnUrl);
+        
         setTimeout(() => {
           window.location.href = returnUrl;
         }, 2000);
         
       } else {
-        // EXISTING USER - Sign in normally
         await updateDoc(doc(db, 'users', user.uid), {
           lastLogin: serverTimestamp()
         });
@@ -738,6 +690,8 @@
         sessionStorage.removeItem('preLoginPage');
         localStorage.removeItem('returnUrl');
         isGoogleSignInProgress = false;
+        
+        console.log('🔄 [Google Existing] Redirecting to:', returnUrl);
         
         setTimeout(() => {
           window.location.href = returnUrl;
@@ -768,13 +722,12 @@
   googleSignInBtn.addEventListener('click', signInWithGoogle);
 
   // ============================================================
-  // ====== LOGIN WITH SMART REDIRECT (requires reCAPTCHA) ======
+  // ====== EMAIL LOGIN WITH SMART REDIRECT ======
   // ============================================================
   
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Check reCAPTCHA - this is the ONLY place it's required
     if (!recaptchaVerified) {
       showStatus('⚠️ Please complete the reCAPTCHA verification.', 'error');
       return;
@@ -848,7 +801,7 @@
       sessionStorage.removeItem('preLoginPage');
       localStorage.removeItem('returnUrl');
       
-      console.log('🔄 Redirecting to:', finalRedirect);
+      console.log('🔄 [Email Login] Redirecting to:', finalRedirect);
 
       setTimeout(() => {
         window.location.href = finalRedirect;
@@ -868,18 +821,16 @@
   });
 
   // ============================================================
-  // ====== AUTH STATE LISTENER (FIXED) ======
+  // ====== AUTH STATE LISTENER ======
   // ============================================================
   
   onAuthStateChanged(auth, async (user) => {
-    // Skip if Google sign-in is in progress
     if (isGoogleSignInProgress) {
       console.log('⏳ Google sign-in in progress, skipping auth listener');
       return;
     }
     
     if (user) {
-      // Only redirect if user document exists
       const userDocRef = doc(db, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);
       
@@ -892,6 +843,7 @@
           sessionStorage.removeItem('preLoginPage');
           localStorage.removeItem('returnUrl');
           
+          console.log('🔄 [Auth Listener] Redirecting to:', returnUrl);
           window.location.href = returnUrl;
         }
       }
@@ -899,7 +851,7 @@
   });
 
   // ============================================================
-  // ====== STORE CURRENT PAGE BEFORE NAVIGATING TO LOGIN ======
+  // ====== STORE CURRENT PAGE BEFORE NAVIGATING ======
   // ============================================================
   
   document.addEventListener('click', function(e) {
@@ -919,7 +871,7 @@
   });
 
   // ============================================================
-  // ====== RESTORE RETURN URL FROM SESSION ON PAGE LOAD ======
+  // ====== RESTORE RETURN URL ON PAGE LOAD ======
   // ============================================================
   
   (function restoreReturnUrl() {
@@ -956,7 +908,6 @@
 </script>
 
 <script>
-// Return URL Handler - Redirect to previous page after login
 (function() {
     function getReturnUrl() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -980,8 +931,8 @@
         }
         
         if (returnUrl && returnUrl !== 'null' && returnUrl !== 'undefined') {
-            returnUrl = returnUrl.split('?')[0];
-            returnUrl = returnUrl.split('#')[0];
+            // ✅ FIX: Keep query parameters intact
+            // Only strip if it's a login/signup page (already handled above)
             if (!returnUrl.startsWith('/') && !returnUrl.startsWith('http')) {
                 returnUrl = '/' + returnUrl;
             }

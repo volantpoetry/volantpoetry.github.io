@@ -1049,6 +1049,12 @@
             box-shadow: 0 8px 20px rgba(183, 110, 75, 0.3);
         }
 
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .btn-secondary {
             background: #f0ece6;
             border: 1px solid var(--border-input);
@@ -1071,7 +1077,7 @@
             border-color: var(--primary);
         }
 
-        /* Save Profile Button - appears when changes detected */
+        /* Save Profile Button - appears before submit button */
         #saveProfileBtn {
             display: none;
             background: #6a34ff;
@@ -1176,7 +1182,7 @@
 
         .upload-progress {
             display: none;
-            margin: 0.8rem 0;
+            margin: 0.8rem 0 0.4rem 0;
             padding: 0.8rem;
             background: #f8f5f0;
             border-radius: 10px;
@@ -1223,6 +1229,7 @@
             border-radius: 12px;
             padding: 0.8rem 1rem;
             margin-top: 0.4rem;
+            margin-bottom: 0.4rem;
         }
 
         .pending-notice.show {
@@ -2252,26 +2259,6 @@
                     </div>
                 </div>
 
-                <!-- UPLOAD PROGRESS -->
-                <div id="uploadProgress" class="upload-progress">
-                    <div class="progress-status" id="progressStatus">Preparing upload...</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <div class="progress-text" id="progressText">0%</div>
-                </div>
-
-                <!-- PENDING NOTICE -->
-                <div id="pendingNotice" class="pending-notice">
-                    <div class="pending-content">
-                        <i class="fas fa-clock"></i>
-                        <div>
-                            <p class="pending-text">⏳ Pending Review</p>
-                            <p class="pending-sub">Your book has been submitted and is awaiting admin approval.</p>
-                        </div>
-                    </div>
-                </div>
-
                 <hr class="divider" />
 
                 <!-- ============================================================ -->
@@ -2304,7 +2291,7 @@
                             <input type="checkbox" id="termsAgreement" required />
                             <label for="termsAgreement">
                                 <i class="fas fa-file-contract" style="color: var(--primary);"></i>
-                                I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
+                                I agree to the <a href="../shared/terms.html" target="_blank">Terms of Service</a> and <a href="../shared/privacy.html" target="_blank">Privacy Policy</a>
                             </label>
                         </div>
                         <div class="legal-subtext">
@@ -2313,12 +2300,45 @@
                     </div>
                 </div>
 
+                <!-- ============================================================ -->
+                <!-- UPLOAD PROGRESS - RIGHT AFTER RIGHTS & TERMS (checkbox section) -->
+                <!-- ============================================================ -->
+                <div id="uploadProgress" class="upload-progress">
+                    <div class="progress-status" id="progressStatus">Preparing upload...</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0%</div>
+                </div>
+
+                <!-- PENDING NOTICE - RIGHT AFTER PROGRESS -->
+                <div id="pendingNotice" class="pending-notice">
+                    <div class="pending-content">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <p class="pending-text">⏳ Pending Review</p>
+                            <p class="pending-sub">Your book has been submitted and is awaiting admin approval.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================ -->
+                <!-- FORM ACTIONS: Save Profile BEFORE Submit Button -->
+                <!-- ============================================================ -->
                 <div class="form-actions">
-                    <button type="submit" class="btn-primary" id="submitBookBtn"><i class="fas fa-cloud-upload-alt"></i> Submit to Volant Reads</button>
+                    <!-- Save Profile Button - appears BEFORE submit when changes detected -->
                     <button type="button" class="btn-secondary" id="saveProfileBtn" style="background:#6a34ff; color:white; border:none; display:none;">
                         <i class="fas fa-save"></i> Save Profile
                     </button>
-                    <button type="reset" class="btn-secondary"><i class="fas fa-undo-alt"></i> Reset form</button>
+                    
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn-primary" id="submitBookBtn">
+                        <i class="fas fa-cloud-upload-alt"></i> Submit to Volant Reads
+                    </button>
+                    
+                    <button type="reset" class="btn-secondary">
+                        <i class="fas fa-undo-alt"></i> Reset form
+                    </button>
                 </div>
 
                 <div id="formFeedback"></div>
@@ -2335,7 +2355,6 @@
             }
         }
     </script>
-
     <script type="module">
         import { initializeApp } from "firebase/app";
         import {
@@ -2487,6 +2506,7 @@
         let currentUser = null;
         let currentUsername = '';
         let selectedCountry = '';
+        let isSubmitSuccess = false;
 
         // ===== ORIGINAL VALUES FOR CHANGE DETECTION =====
         let originalAuthorName = '';
@@ -2903,6 +2923,7 @@
 
         // --- Show persistent success message ---
         function showPersistentSuccess(message, bookData) {
+            isSubmitSuccess = true;
             feedback.innerHTML = `
                 <div style="white-space:pre-line; text-align:left; padding:0.2rem 0; font-size:0.9rem; line-height:1.8;">
                     ${message}
@@ -2919,14 +2940,23 @@
             feedback.className = 'success';
             feedback.style.display = 'block';
             
-            form.querySelectorAll('input, textarea, select, button').forEach(el => {
+            // Disable submit button and all form inputs
+            submitBookBtn.disabled = true;
+            form.querySelectorAll('input, textarea, select').forEach(el => {
                 el.disabled = true;
             });
+            
             const dismissBtn = feedback.querySelector('.btn-dismiss');
             if (dismissBtn) dismissBtn.disabled = false;
+            
+            // Scroll to the success message
+            setTimeout(() => {
+                feedback.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
         }
 
         window.dismissSubmissionSuccess = function() {
+            isSubmitSuccess = false;
             form.reset();
             keywords = [];
             updateKeywordUI();
@@ -2947,9 +2977,18 @@
             feedback.style.display = 'none';
             feedback.className = '';
             feedback.innerHTML = '';
-            form.querySelectorAll('input, textarea, select, button').forEach(el => {
+            
+            // Re-enable all form inputs and submit button
+            submitBookBtn.disabled = false;
+            form.querySelectorAll('input, textarea, select').forEach(el => {
                 el.disabled = false;
             });
+            
+            // Reload user settings
+            if (currentUser) {
+                loadUserSettings(currentUser.uid);
+            }
+            
             window.scrollTo({ top: 0, behavior: 'smooth' });
             showToast('✨ Ready to submit another book!', 'success');
         };
@@ -3041,6 +3080,9 @@
         // ================================================================
 
         function checkForChanges() {
+            // Don't check for changes if submit was successful
+            if (isSubmitSuccess) return false;
+            
             const currentAuthorName = authorNameInput.value.trim();
             const currentAuthorBio = authorBioInput.value.trim();
             const currentAuthorEmail = authorEmailInput.value.trim();
@@ -3056,10 +3098,12 @@
                 currentPhoneNumber !== originalPhoneNumber ||
                 currentCountry !== originalCountry;
 
-            if (hasChanges) {
+            if (hasChanges && !isSubmitSuccess) {
                 saveProfileBtn.classList.add('show');
                 saveProfileBtn.style.display = 'inline-flex';
-            } else {
+                // Re-enable submit button if it was disabled
+                submitBookBtn.disabled = false;
+            } else if (!hasChanges || isSubmitSuccess) {
                 saveProfileBtn.classList.remove('show');
                 saveProfileBtn.style.display = 'none';
             }
@@ -3140,16 +3184,16 @@
                 originalPhoneNumber = phone;
                 originalCountry = country;
 
+                // ⭐ FIX: DO NOT change currentUsername - it should stay the signed-in user's username
+                // currentUsername should NEVER be changed to the author name
+                // The user badge already shows the signed-in user's username
+
                 // Hide the save button
                 saveProfileBtn.classList.remove('show');
                 saveProfileBtn.style.display = 'none';
 
                 showToast('✅ Profile settings saved successfully!', 'success');
                 showFeedback('✅ Your author profile has been updated.', 'success');
-
-                // Update the user display name
-                currentUsername = authorName;
-                userNameDisplay.textContent = authorName;
 
                 setTimeout(() => {
                     if (feedback.classList.contains('success')) {
@@ -3363,13 +3407,13 @@
             const inputs = form.querySelectorAll('input, textarea, select');
             inputs.forEach(el => {
                 el.addEventListener('change', () => { 
-                    if (currentUser) {
+                    if (currentUser && !isSubmitSuccess) {
                         saveDraft();
                         checkForChanges();
                     }
                 });
                 el.addEventListener('input', () => { 
-                    if (currentUser) {
+                    if (currentUser && !isSubmitSuccess) {
                         saveDraft();
                         checkForChanges();
                     }
@@ -3378,11 +3422,11 @@
             const origUpdateUI = updateKeywordUI;
             updateKeywordUI = function() {
                 origUpdateUI();
-                if (currentUser) saveDraft();
+                if (currentUser && !isSubmitSuccess) saveDraft();
             };
-            preorderCheckbox.addEventListener('change', () => { if (currentUser) saveDraft(); });
-            rightsDeclaration.addEventListener('change', () => { if (currentUser) saveDraft(); });
-            termsAgreement.addEventListener('change', () => { if (currentUser) saveDraft(); });
+            preorderCheckbox.addEventListener('change', () => { if (currentUser && !isSubmitSuccess) saveDraft(); });
+            rightsDeclaration.addEventListener('change', () => { if (currentUser && !isSubmitSuccess) saveDraft(); });
+            termsAgreement.addEventListener('change', () => { if (currentUser && !isSubmitSuccess) saveDraft(); });
         }
 
         // ================================================================
@@ -3429,24 +3473,43 @@
         
         saveProfileBtn.addEventListener('click', saveProfile);
 
-        // --- Auth ---
+        // ================================================================
+        // ===== AUTH STATE HANDLER - FIX: currentUsername = SIGNED-IN USER =====
+        // ================================================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
+                
+                // ⭐ CRITICAL FIX: Get the signed-in user's username
+                // This should be the username from the user's profile, NOT the author name
                 try {
                     const docSnap = await getDoc(doc(db, "users", user.uid));
-                    currentUsername = docSnap.exists() ? docSnap.data().username || user.email || 'User' : user.email ||
-                        'User';
-                } catch (_) { currentUsername = user.email || 'User'; }
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        // Use the username field from the user's profile
+                        // This is the signed-in user's username, not the author name
+                        currentUsername = data.username || user.displayName || user.email?.split('@')[0] || 'User';
+                        console.log('✅ Signed-in user (submitter) username:', currentUsername);
+                        console.log('⚠️ Author name (separate field):', data.authorName || 'Not set');
+                    } else {
+                        currentUsername = user.displayName || user.email?.split('@')[0] || 'User';
+                        console.log('✅ Signed-in user (submitter) username (fallback):', currentUsername);
+                    }
+                } catch (_) {
+                    currentUsername = user.displayName || user.email?.split('@')[0] || 'User';
+                    console.log('✅ Signed-in user (submitter) username (error fallback):', currentUsername);
+                }
+                
+                // Show the form
                 authOverlay.classList.remove('show');
                 authOverlay.style.display = 'none';
                 formWrapper.style.display = 'block';
                 userBadge.style.display = 'inline-flex';
-                userNameDisplay.textContent = currentUsername;
+                userNameDisplay.textContent = currentUsername; // Shows the signed-in user
                 
-                // ===== LOAD USER SETTINGS =====
+                // Load author settings (this loads the AUTHOR's name, bio, email, etc.)
+                // These are separate from the signed-in user's username
                 await loadUserSettings(user.uid);
-                
                 await updatePayoutWarning(user.uid);
                 checkDraft();
                 setupAutoSave();
@@ -3454,6 +3517,7 @@
             } else {
                 currentUser = null;
                 currentUsername = '';
+                isSubmitSuccess = false;
                 authOverlay.style.display = 'block';
                 authOverlay.classList.add('show');
                 formWrapper.style.display = 'none';
@@ -3486,6 +3550,12 @@
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             if (!currentUser) { showFeedback('❌ You must be signed in to submit a book.', 'error'); return; }
+            
+            // If already submitted successfully, don't allow re-submit
+            if (isSubmitSuccess) {
+                showFeedback('✅ This book has already been submitted. Click "Got it, Submit Another" to submit a new book.', 'success');
+                return;
+            }
 
             // ===== CHECK RIGHTS DECLARATION =====
             if (!rightsDeclaration.checked) {
@@ -3687,12 +3757,11 @@
         💰 Price: ${priceDisplay} ${currencyNames[currency] || currency}
         📥 Download Limit: ${downloadsDisplay} downloads per buyer
         🔑 Keywords (${keywords.length}): ${keywordList}
-        ${preorderDisplay}
-        ${isbn ? `🔢 ISBN: ${isbn}` : ''}
+            ${isbn ? `🔢 ISBN: ${isbn}` : ''}
         ${otherDetails ? `📝 Additional: ${otherDetails}` : ''}
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-        ⏳ Your book is now PENDING REVIEW by an admin.
+        ⏳ Your book is now PENDING REVIEW.
         You will be notified when it's approved!
 
         💡 Click "Got it, Submit Another" to submit another book, 
@@ -3706,9 +3775,13 @@
                 showProgress(false);
                 pendingNotice.classList.remove('show');
                 showFeedback(`❌ Upload failed: ${err.message || 'Please try again.'}`, 'error');
+                submitBtn.disabled = false;
             } finally {
                 submitBtn.innerHTML = origText;
-                submitBtn.disabled = false;
+                // Only re-enable if not success
+                if (!isSubmitSuccess) {
+                    submitBtn.disabled = false;
+                }
             }
         });
 
@@ -3717,6 +3790,7 @@
             if (feedback.classList.contains('success') && feedback.style.display === 'block') {
                 return;
             }
+            isSubmitSuccess = false;
             feedback.style.display = 'none';
             feedback.className = '';
             pdfFeedback.textContent = '';
@@ -3748,6 +3822,8 @@
             originalPrice.value = '';
             rightsDeclaration.checked = false;
             termsAgreement.checked = false;
+            // Re-enable submit button
+            submitBookBtn.disabled = false;
             // Hide save profile button on reset
             saveProfileBtn.classList.remove('show');
             saveProfileBtn.style.display = 'none';

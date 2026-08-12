@@ -5,17 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
   <title>Sign In · Volant Foundry</title>
-  <!-- Google Font & Font Awesome -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <!-- reCAPTCHA v2 -->
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-<!-- Favicons -->
 <link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png">
 <link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png">
 
  <style>
-    /* ----- reset & base ----- */
     * {
       margin: 0;
       padding: 0;
@@ -33,7 +29,6 @@
       margin: 0;
     }
 
-    /* ----- card container (glassmorphism) ----- */
     .container {
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(12px);
@@ -50,13 +45,11 @@
       transition: all 0.2s ease;
     }
 
-    /* ----- hide breadcrumb & back link completely ----- */
     .back-link,
     .breadcrumb {
       display: none !important;
     }
 
-    /* ----- platform badge (dynamic) ----- */
     .platform-badge {
       display: inline-block;
       padding: 0.45rem 1.2rem;
@@ -75,7 +68,6 @@
     .platform-badge.reads { background: linear-gradient(135deg, #d4a574, #c9944d); }
     .platform-badge.foundry { background: linear-gradient(135deg, #2c3e50, #4a627a); }
 
-    /* ----- typography ----- */
     h2 {
       font-size: 1.9rem;
       font-weight: 700;
@@ -94,7 +86,6 @@
       border-radius: 0 4px 4px 0;
     }
 
-    /* ----- Google Sign-In Button ----- */
     .google-btn {
       width: 100%;
       padding: 0.9rem;
@@ -151,7 +142,6 @@
     .divider-text::before { left: 0; }
     .divider-text::after { right: 0; }
 
-    /* ----- reCAPTCHA ----- */
     .recaptcha-container {
       display: flex;
       justify-content: center;
@@ -162,7 +152,6 @@
       transform-origin: center;
     }
 
-    /* ----- form elements ----- */
     form label {
       display: block;
       font-size: 0.85rem;
@@ -219,7 +208,6 @@
     .password-eye:hover { background: rgba(75, 42, 173, 0.06); color: #4b2aad; }
     .password-eye.showing { color: #4b2aad; background: rgba(75, 42, 173, 0.08); }
 
-    /* ----- button & status ----- */
     .btn-primary {
       width: 100%;
       padding: 0.95rem;
@@ -277,7 +265,6 @@
       border-color: #c8d4f5;
     }
 
-    /* ----- account & links ----- */
     .account-check {
       background: rgba(245, 242, 252, 0.5);
       backdrop-filter: blur(4px);
@@ -312,14 +299,9 @@
     .links a:hover { color: #4b2aad; border-bottom-color: #4b2aad; }
 
     .divider {
-      text-align: center;
-      margin: 1.2rem 0 0.4rem;
-      color: #bfbad0;
-      font-size: 0.8rem;
-      letter-spacing: 0.3px;
+      display: none !important;
     }
 
-    /* spinner */
     .loading-spinner { display: none; }
     .spinner {
       border: 2.5px solid rgba(255,255,255,0.2);
@@ -332,29 +314,21 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* responsive */
     @media (max-width: 500px) {
       .container { padding: 1.8rem 1.4rem; border-radius: 28px; }
       h2 { font-size: 1.6rem; }
       .platform-badge { font-size: 0.65rem; padding: 0.3rem 1rem; }
       .recaptcha-container > div { transform: scale(0.8); }
     }
-
-    .divider {
-  display: none !important;
-}
   </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- back link - hidden via CSS -->
   <a href="#" id="backLink" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
 
-  <!-- dynamic platform badge -->
   <div class="platform-badge" id="platformBadge">Volant Platform</div>
 
-  <!-- breadcrumb - hidden via CSS -->
   <div class="breadcrumb" id="breadcrumb">
     <a href="#" id="breadcrumbHome">Home</a>
     <span>›</span>
@@ -364,7 +338,6 @@
   <h2>Welcome back</h2>
   <p class="subtitle">Sign in to your account</p>
 
-  <!-- Google Sign-In Button - Always enabled -->
   <button id="googleSignInBtn" class="google-btn">
     <i class="fab fa-google"></i>
     <span class="google-text">Continue with Google</span>
@@ -384,7 +357,6 @@
       <span id="toggle-password" class="password-eye"><i class="far fa-eye"></i></span>
     </div>
 
-    <!-- reCAPTCHA v2 - Only affects email/password form -->
     <div class="recaptcha-container">
       <div class="g-recaptcha" data-sitekey="6LfEe3wtAAAAACMvQc1vCwhgMtwvrH562PtKuXTU" data-callback="onRecaptchaSuccess"></div>
     </div>
@@ -410,31 +382,22 @@
 </div>
 
 <script>
-  // ============================================================
-  // ====== RECAPTCHA CALLBACK ======
-  // ============================================================
-  
   let recaptchaVerified = false;
   
   function onRecaptchaSuccess() {
     recaptchaVerified = true;
-    // Enable ONLY the email/password login button
     const loginButton = document.getElementById('login-button');
     loginButton.disabled = false;
-    // Google button remains enabled regardless
   }
   
   function onRecaptchaExpired() {
     recaptchaVerified = false;
-    // Disable ONLY the email/password login button
     const loginButton = document.getElementById('login-button');
     loginButton.disabled = true;
-    // Google button remains enabled regardless
     const statusEl = document.getElementById('login-status');
-    showStatus('⚠️ reCAPTCHA expired. Please verify again.', 'info');
+    window.showStatus('⚠️ reCAPTCHA expired. Please verify again.', 'info');
   }
 
-  // Make showStatus available globally
   window.showStatus = function(message, type = 'error') {
     const statusEl = document.getElementById('login-status');
     statusEl.textContent = message;
@@ -443,7 +406,6 @@
 </script>
 
 <script type="module">
-  // ----- Firebase imports -----
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getAuth,
@@ -467,7 +429,6 @@
     serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
     authDomain: "silent-depth.firebaseapp.com",
@@ -481,7 +442,6 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // ----- PLATFORM DETECTION -----
   const urlParams = new URLSearchParams(window.location.search);
   const platform = urlParams.get('platform') || 'poetry';
   const redirectUrl = urlParams.get('redirect');
@@ -493,11 +453,9 @@
   };
   const currentPlatform = platformConfig[platform] || platformConfig.poetry;
 
-  // update UI
   document.getElementById('platformBadge').textContent = currentPlatform.name;
   document.getElementById('platformBadge').classList.add(currentPlatform.badge);
 
-  // DOM refs
   const loginForm = document.getElementById('login-form');
   const loginButton = document.getElementById('login-button');
   const statusEl = document.getElementById('login-status');
@@ -510,7 +468,6 @@
   const loginEmail = document.getElementById('login-email');
   const googleSignInBtn = document.getElementById('googleSignInBtn');
 
-  // ----- password toggle -----
   togglePassword.addEventListener("click", () => {
     const isPassword = passwordInput.type === "password";
     passwordInput.type = isPassword ? "text" : "password";
@@ -518,7 +475,6 @@
     togglePassword.innerHTML = isPassword ? '<i class="fas fa-eye-slash"></i>' : '<i class="far fa-eye"></i>';
   });
 
-  // ----- navigation -----
   goToSignup.addEventListener('click', (e) => {
     e.preventDefault();
     const params = new URLSearchParams();
@@ -534,55 +490,84 @@
     window.location.href = `users-reset.html?${params.toString()}`;
   });
 
-  // ----- status helper -----
   function showStatus(message, type = 'error') {
     statusEl.textContent = message;
     statusEl.className = `status show ${type}`;
   }
 
   // ============================================================
-  // ====== SMART RETURN URL HANDLER ======
+  // ====== GET THE CORRECT RETURN URL ======
   // ============================================================
   
-  function getSmartReturnUrl() {
-    const urlParams = new URLSearchParams(window.location.search);
-    let returnUrl = urlParams.get('returnUrl');
+  function getReturnUrl() {
+    // Priority 1: The 'redirect' query parameter
+    let returnUrl = redirectUrl;
     
-    if (!returnUrl) {
-      returnUrl = sessionStorage.getItem('returnUrl');
-    }
-    
-    if (!returnUrl) {
-      returnUrl = localStorage.getItem('returnUrl');
-    }
-    
-    if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
-      returnUrl = document.referrer;
-    }
-    
-    if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
-      returnUrl = sessionStorage.getItem('preLoginPage');
-    }
-    
-    if (returnUrl && returnUrl !== 'null' && returnUrl !== 'undefined') {
+    if (returnUrl) {
       try {
         returnUrl = decodeURIComponent(returnUrl);
+        // Validate it's a valid relative path
+        if (returnUrl.startsWith('/') || returnUrl.startsWith('../')) {
+          // Make sure it's not a login/signup page
+          const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+          if (!excludePages.some(page => returnUrl.includes(page))) {
+            console.log('✅ Using redirect URL from query param:', returnUrl);
+            return returnUrl;
+          }
+        }
       } catch (e) {}
-      
-      returnUrl = returnUrl.split('?')[0];
-      returnUrl = returnUrl.split('#')[0];
-      
-      const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
-      if (excludePages.some(page => returnUrl.includes(page))) {
-        returnUrl = null;
-      }
-      
-      if (returnUrl === '' || returnUrl === '/' || returnUrl === 'null') {
-        returnUrl = null;
-      }
     }
     
-    return returnUrl || currentPlatform.homeUrl;
+    // Priority 2: Session storage (set by the previous page)
+    let storedUrl = sessionStorage.getItem('returnUrl') || sessionStorage.getItem('preLoginPage');
+    
+    if (storedUrl && storedUrl !== 'null' && storedUrl !== 'undefined') {
+      try {
+        storedUrl = decodeURIComponent(storedUrl);
+        const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+        if (!excludePages.some(page => storedUrl.includes(page))) {
+          console.log('✅ Using stored return URL:', storedUrl);
+          return storedUrl;
+        }
+      } catch (e) {}
+    }
+    
+    // Priority 3: The page we came from (referrer)
+    const referrer = document.referrer;
+    if (referrer && !referrer.includes('login') && !referrer.includes('signup')) {
+      try {
+        const url = new URL(referrer);
+        const path = url.pathname + url.search;
+        if (path && path !== '/') {
+          console.log('✅ Using referrer URL:', path);
+          return path;
+        }
+      } catch (e) {}
+    }
+    
+    // Priority 4: Default home URL
+    console.log('ℹ️ Using default home URL:', currentPlatform.homeUrl);
+    return currentPlatform.homeUrl;
+  }
+
+  // ============================================================
+  // ====== REDIRECT AFTER LOGIN ======
+  // ============================================================
+  
+  function redirectAfterLogin() {
+    const returnUrl = getReturnUrl();
+    
+    // Clear storage
+    sessionStorage.removeItem('returnUrl');
+    sessionStorage.removeItem('preLoginPage');
+    localStorage.removeItem('returnUrl');
+    
+    console.log('🔄 Redirecting to:', returnUrl);
+    
+    // Small delay to ensure everything is saved
+    setTimeout(() => {
+      window.location.href = returnUrl;
+    }, 500);
   }
 
   // ============================================================
@@ -606,25 +591,21 @@
       baseName = 'user';
     }
     
-    // Clean the username
     let clean = baseName
       .replace(/\s/g, '_')
       .toLowerCase()
       .replace(/[^a-z0-9_]/g, '')
       .substring(0, 11);
     
-    // If empty after cleaning, use default
     if (!clean || clean.length < 3) {
       clean = 'user_' + Math.random().toString(36).substring(2, 6);
     }
     
-    // Check if taken
     const taken = await isUsernameTaken(clean);
     if (!taken) {
       return clean;
     }
     
-    // Try with numbers (1, 2, 3, etc.)
     let counter = 1;
     let newUsername;
     do {
@@ -636,26 +617,21 @@
       if (counter > 100) break;
     } while (await isUsernameTaken(newUsername));
     
-    // Final fallback with timestamp
     return newUsername || clean + '_' + Date.now().toString(36);
   }
 
   // ============================================================
-  // ====== GOOGLE SIGN-IN HANDLER (No reCAPTCHA required) ======
+  // ====== GOOGLE SIGN-IN ======
   // ============================================================
   
-  let isGoogleSignInProgress = false; // Flag to prevent auth listener from redirecting
+  let isGoogleSignInProgress = false;
   
   async function signInWithGoogle() {
-    // NO reCAPTCHA check - Google button works independently
-
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     
     googleSignInBtn.disabled = true;
     googleSignInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
-    
-    // Set flag to prevent auth listener from redirecting during sign-up
     isGoogleSignInProgress = true;
     
     try {
@@ -677,61 +653,16 @@
       const user = result.user;
       console.log('✅ Google user:', user.email, 'UID:', user.uid);
       
-      // Check if user exists in Firestore
       const userDocRef = doc(db, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);
       
       if (!userDoc.exists()) {
-        // ===== NEW USER - GENERATE UNIQUE USERNAME =====
-        console.log('🆕 New user detected, generating username...');
+        // New user - create document
+        console.log('🆕 New user detected');
         
-        // STEP 1: Get base username from display name or email
         let baseUsername = user.displayName || user.email || 'user';
-        console.log('📝 Base username:', baseUsername);
+        let finalUsername = await generateUniqueUsername(baseUsername);
         
-        // STEP 2: Clean the username
-        let clean = baseUsername
-          .replace(/\s/g, '_')
-          .toLowerCase()
-          .replace(/[^a-z0-9_]/g, '')
-          .substring(0, 11);
-        
-        console.log('🧹 Cleaned username:', clean);
-        
-        // STEP 3: If still empty, use 'user' + random
-        if (!clean || clean.length < 3) {
-          clean = 'user_' + Math.random().toString(36).substring(2, 6);
-          console.log('🎲 Generated random username:', clean);
-        }
-        
-        // STEP 4: Generate unique username with counter
-        let finalUsername = clean;
-        let counter = 1;
-        
-        // Check if username exists
-        let usernameTaken = await isUsernameTaken(finalUsername);
-        console.log(`🔍 Checking if "${finalUsername}" is taken:`, usernameTaken);
-        
-        while (usernameTaken) {
-          const suffix = counter.toString();
-          const maxLen = 11 - suffix.length;
-          const base = clean.substring(0, maxLen);
-          finalUsername = base + suffix;
-          console.log(`🔄 Trying "${finalUsername}" (attempt ${counter})`);
-          usernameTaken = await isUsernameTaken(finalUsername);
-          counter++;
-          if (counter > 100) break;
-        }
-        
-        // If still taken (shouldn't happen), add timestamp
-        if (await isUsernameTaken(finalUsername)) {
-          finalUsername = clean + '_' + Date.now().toString(36);
-          console.log('⏰ Using timestamp fallback:', finalUsername);
-        }
-        
-        console.log('✅ Final username:', finalUsername);
-        
-        // STEP 5: Create user document with proper data
         const userData = {
           username: finalUsername,
           email: user.email,
@@ -745,30 +676,18 @@
           isVerified: true
         };
         
-        console.log('📦 Creating user document:', userData);
-        
-        // Create the document
         await setDoc(userDocRef, userData);
-        console.log('✅ User document created successfully');
+        console.log('✅ User created with username:', finalUsername);
         
         showStatus('✅ Account created! Username: ' + finalUsername, 'success');
         
-        // Get return URL and redirect
-        let returnUrl = getSmartReturnUrl();
-        sessionStorage.removeItem('returnUrl');
-        sessionStorage.removeItem('preLoginPage');
-        localStorage.removeItem('returnUrl');
-        
-        // Clear the flag before redirecting
         isGoogleSignInProgress = false;
-        
-        setTimeout(() => {
-          window.location.href = returnUrl;
-        }, 2000);
+        redirectAfterLogin();
         
       } else {
-        // ===== EXISTING USER =====
+        // Existing user
         console.log('👤 Existing user found');
+        
         const userData = userDoc.data();
         
         // Update last login
@@ -776,55 +695,18 @@
           lastLogin: new Date().toISOString()
         });
         
-        // Check if username exists (for legacy users)
+        // Add username if missing (legacy user)
         if (!userData.username) {
-          console.log('⚠️ Legacy user without username, generating one...');
           let baseUsername = user.displayName || user.email || 'user';
-          let clean = baseUsername
-            .replace(/\s/g, '_')
-            .toLowerCase()
-            .replace(/[^a-z0-9_]/g, '')
-            .substring(0, 11);
-          
-          if (!clean || clean.length < 3) {
-            clean = 'user_' + Math.random().toString(36).substring(2, 6);
-          }
-          
-          let finalUsername = clean;
-          let counter = 1;
-          
-          while (await isUsernameTaken(finalUsername)) {
-            const suffix = counter.toString();
-            const maxLen = 11 - suffix.length;
-            const base = clean.substring(0, maxLen);
-            finalUsername = base + suffix;
-            counter++;
-            if (counter > 100) break;
-          }
-          
-          if (await isUsernameTaken(finalUsername)) {
-            finalUsername = clean + '_' + Date.now().toString(36);
-          }
-          
-          await updateDoc(userDocRef, {
-            username: finalUsername
-          });
+          let finalUsername = await generateUniqueUsername(baseUsername);
+          await updateDoc(userDocRef, { username: finalUsername });
           console.log('✅ Username added for legacy user:', finalUsername);
         }
         
-        showStatus('✅ Welcome back! Redirecting…', 'success');
+        showStatus('✅ Welcome back!', 'success');
         
-        let returnUrl = getSmartReturnUrl();
-        sessionStorage.removeItem('returnUrl');
-        sessionStorage.removeItem('preLoginPage');
-        localStorage.removeItem('returnUrl');
-        
-        // Clear the flag before redirecting
         isGoogleSignInProgress = false;
-        
-        setTimeout(() => {
-          window.location.href = returnUrl;
-        }, 1200);
+        redirectAfterLogin();
       }
       
     } catch (error) {
@@ -843,23 +725,19 @@
       
       googleSignInBtn.disabled = false;
       googleSignInBtn.innerHTML = '<i class="fab fa-google"></i><span class="google-text">Continue with Google</span>';
-      
-      // Clear the flag on error
       isGoogleSignInProgress = false;
     }
   }
 
-  // Google Sign-In button click handler
   googleSignInBtn.addEventListener('click', signInWithGoogle);
 
   // ============================================================
-  // ====== EMAIL LOGIN (requires reCAPTCHA) ======
+  // ====== EMAIL LOGIN ======
   // ============================================================
   
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Check reCAPTCHA - this is the ONLY place it's required
     if (!recaptchaVerified) {
       showStatus('⚠️ Please complete the reCAPTCHA verification.', 'error');
       return;
@@ -911,33 +789,14 @@
         return;
       }
 
+      // ✅ SUCCESSFUL LOGIN - Redirect back
       showStatus("✅ Login successful! Redirecting…", 'success');
-
-      let finalRedirect = getSmartReturnUrl();
       
-      if (redirectUrl && finalRedirect === currentPlatform.homeUrl) {
-        try {
-          const decodedRedirect = decodeURIComponent(redirectUrl);
-          if (!decodedRedirect.includes('universal-login') &&
-              !decodedRedirect.includes('universal-signup') &&
-              !decodedRedirect.includes('users-login') &&
-              !decodedRedirect.includes('users-signup') &&
-              !decodedRedirect.includes('users-reset') &&
-              !decodedRedirect.includes('verify-email')) {
-            finalRedirect = decodedRedirect;
-          }
-        } catch (e) {}
-      }
+      loginButton.disabled = false;
+      spinner.style.display = 'none';
+      buttonText.textContent = 'Sign In';
       
-      sessionStorage.removeItem('returnUrl');
-      sessionStorage.removeItem('preLoginPage');
-      localStorage.removeItem('returnUrl');
-      
-      console.log('🔄 Redirecting to:', finalRedirect);
-
-      setTimeout(() => {
-        window.location.href = finalRedirect;
-      }, 1200);
+      redirectAfterLogin();
 
     } catch (err) {
       console.error("Login error:", err);
@@ -956,42 +815,43 @@
   // ====== AUTH STATE LISTENER (FIXED) ======
   // ============================================================
   
+  // Track if we're already redirecting to prevent loops
+  let isRedirecting = false;
+
   onAuthStateChanged(auth, async (user) => {
-    // Skip if Google sign-in is in progress
-    if (isGoogleSignInProgress) {
-      console.log('⏳ Google sign-in in progress, skipping auth listener');
+    // Skip if Google sign-in is in progress or we're already redirecting
+    if (isGoogleSignInProgress || isRedirecting) {
+      console.log('⏳ Sign-in in progress, skipping auth listener');
       return;
     }
     
     if (user && user.emailVerified) {
-      if (!window._redirecting) {
-        window._redirecting = true;
-        
+      isRedirecting = true;
+      
+      try {
         // Check if user document exists
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
         
-        // If user document doesn't exist, don't redirect - let the sign-in handler handle it
+        // If user document doesn't exist, wait for sign-in handler
         if (!userDoc.exists()) {
           console.log('⚠️ User authenticated but no user document found. Waiting for sign-in handler...');
-          window._redirecting = false;
+          isRedirecting = false;
           return;
         }
         
-        let returnUrl = getSmartReturnUrl();
+        console.log('👤 Auth listener: User authenticated, redirecting...');
+        redirectAfterLogin();
         
-        sessionStorage.removeItem('returnUrl');
-        sessionStorage.removeItem('preLoginPage');
-        localStorage.removeItem('returnUrl');
-        
-        console.log('🔄 Auth listener redirecting to:', returnUrl);
-        window.location.href = returnUrl;
+      } catch (error) {
+        console.error('Error in auth listener:', error);
+        isRedirecting = false;
       }
     }
   });
 
   // ============================================================
-  // ====== STORE CURRENT PAGE BEFORE NAVIGATING TO LOGIN ======
+  // ====== STORE CURRENT PAGE BEFORE NAVIGATING ======
   // ============================================================
   
   document.addEventListener('click', function(e) {
@@ -1000,18 +860,16 @@
       const href = link.getAttribute('href');
       if (href && (href.includes('login') || href.includes('signup') || href.includes('verify'))) {
         const currentPage = window.location.pathname + window.location.search + window.location.hash;
-        
         sessionStorage.setItem('preLoginPage', currentPage);
         sessionStorage.setItem('returnUrl', currentPage);
         localStorage.setItem('returnUrl', currentPage);
-        
         console.log('📌 Stored pre-login page:', currentPage);
       }
     }
   });
 
   // ============================================================
-  // ====== RESTORE RETURN URL FROM SESSION ON PAGE LOAD ======
+  // ====== RESTORE RETURN URL ON PAGE LOAD ======
   // ============================================================
   
   (function restoreReturnUrl() {
@@ -1033,22 +891,12 @@
       }
       
       console.log('📌 Restored return URL from query param:', returnUrl);
-    } else {
-      const storedUrl = sessionStorage.getItem('preLoginPage') || sessionStorage.getItem('returnUrl');
-      if (storedUrl && !storedUrl.includes('login') && !storedUrl.includes('signup')) {
-        const hiddenInput = document.getElementById('returnUrl');
-        if (hiddenInput) {
-          hiddenInput.value = storedUrl;
-        }
-        console.log('📌 Restored return URL from storage:', storedUrl);
-      }
     }
   })();
 
 </script>
 
 <script>
-// Return URL Handler - Redirect to previous page after login
 (function() {
     function getReturnUrl() {
         const urlParams = new URLSearchParams(window.location.search);
