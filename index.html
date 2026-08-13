@@ -1382,7 +1382,38 @@
   }
 }
 
+/* ===== LOGO TEXT STYLING - FIXED FOR MOBILE ===== */
 
+/* Hide logo text on desktop (screens wider than 768px) */
+@media (min-width: 769px) {
+  .logo-text {
+    display: none !important;
+  }
+}
+
+/* Show and style logo text on mobile */
+@media (max-width: 768px) {
+  .logo-text {
+    display: inline-block !important;
+    font-size: 1.4rem !important;
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 700 !important;
+    color: #4b2aad !important;
+  }
+  
+/* Small phones (480px and below) */
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 1rem !important;
+  }
+}
+
+/* Very small phones (380px and below) */
+@media (max-width: 380px) {
+  .logo-text {
+    font-size: 0.85rem !important;
+  }
+}
 /* Hide Contact Us link in navigation header */
 .nav-links a[href="shared/contact.html"] {
   display: none !important;
