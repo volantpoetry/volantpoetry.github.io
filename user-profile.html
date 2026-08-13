@@ -7,13 +7,16 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="style.css" />
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="images/volant-favicon.png">
 <link rel="apple-touch-icon" href="images/volant-favicon.png">
 
 <style>
-/* YOUR EXACT SAME CSS - PRESERVED */
+  /* ===== ADD THIS AT THE TOP OF YOUR STYLE SECTION ===== */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
 :root {
   --primary: #4b2aad;
   --bg: #f7f5ff;
@@ -1734,6 +1737,48 @@ nav {
   transition: all 0.3s ease;
 }
 
+/* ===== RECENT POEM CONTENT - FONT SIZE & LINE HEIGHT ONLY ===== */
+.poem-content {
+  font-size: 1.2rem !important;
+  line-height: 1.4 !important;
+  font-family: 'EB Garamond', 'Georgia', serif !important;
+}
+
+@media (max-width: 768px) {
+  .poem-content {
+    font-size: 1.2rem !important;
+    line-height: 1.4 !important;
+    font-family: 'EB Garamond', 'Georgia', serif !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .poem-content {
+    font-size: 1.05rem !important;
+    line-height: 1.4 !important;
+    font-family: 'EB Garamond', 'Georgia', serif !important;
+  }
+}
+
+/* ===== RECENT POEM TITLE - FONT SIZE ONLY ===== */
+.recent-poem-title {
+  font-size: 1.8rem !important;
+  font-family: 'EB Garamond', 'Georgia', serif !important;
+}
+
+@media (max-width: 768px) {
+  .recent-poem-title {
+    font-size: 1.4rem !important;
+    font-family: 'EB Garamond', 'Georgia', serif !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .recent-poem-title {
+    font-size: 1.2rem !important;
+    font-family: 'EB Garamond', 'Georgia', serif !important;
+  }
+}
 </style>
 </head>
 <body>

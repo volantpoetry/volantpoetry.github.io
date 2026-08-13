@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volant Foundry — Creative Technology Platform</title>
+    <title>Volant Foundry</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
@@ -142,6 +142,7 @@
         .nav-links a:hover {
             color: #4b2aad;
         }
+        
 
         /* Hamburger Menu Button */
         #menu-btn {
@@ -1705,26 +1706,60 @@
 
         .more-books-section {display: none;}
         .codes-grid {display: none;}
+
+        @media (max-width: 768px) {
+    #menu-btn {
+        display: block;
+    }
+    
+    #navLinks {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        background: #ffffff;
+        padding: 15px 0;
+        margin-top: 10px;
+        border-top: 1px solid #ede7df;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        z-index: 99;
+    }
+    
+    #navLinks.open {
+        display: flex;
+    }
+    
+    #navLinks a {
+        margin: 0;
+        padding: 12px 20px;
+        text-align: center;
+        width: 100%;
+        color: #2d2a24;
+        border-bottom: 1px solid #f5f3f0;
+    }
+}
     </style>
 </head>
 
 <body>
-    <header>
-        <a href="#" class="logo-image" style="text-decoration:none;">
-            <img src="../images/logo.png" alt="Volant Foundry Logo" class="img">
-            <span class="logo-text">
-                <span class="logo-highlight">Volant</span> Foundry
-            </span>
-        </a>
-        <button id="menu-btn">☰</button>
-
-        <nav class="nav-links" id="navLinks">
-            <a href="#" data-target="home">Home</a>
-            <a href="#" data-target="ecosystem">Our Platforms</a>
-            <a href="../shared/about.html">About Us</a>
-            <a href="../shared/contact.html">Contact Us</a>
-        </nav>
-    </header>
+   <header>
+    <a href="#" class="logo-image" style="text-decoration:none;">
+        <img src="../images/logo.png" alt="Volant Foundry Logo" class="img">
+        <span class="logo-text">
+            <span class="logo-highlight">Volant</span> Foundry
+        </span>
+    </a>
+    <button id="menu-btn">☰</button>
+    
+    <nav class="nav-links" id="navLinks">
+        <a href="#" data-target="home">Home</a>
+        <a href="#" data-target="ecosystem">Our Platforms</a>
+        <a href="../shared/about.html">About Us</a>
+        <a href="../shared/contact.html">Contact Us</a>
+    </nav>
+</header>
 
     <main>
         <section class="hero" id="home">
@@ -1854,9 +1889,9 @@
 
                 <!-- Column 3: JOIN THE HORIZON (right side on large screens) -->
                 <div class="join-horizon-right" id="contact">
-                    <h2 class="join-horizon">JOIN THE HORIZON</h2>
+                    <h2 class="join-horizon">SUBSCRIBE TO THE HORIZON</h2>
                     <P class="join-horizon-p1">Be part of something <br>meaningful</P>
-                    <p class="join-horizon-p2">Join our community and get updates, opportunities, and early access to newly published books, poems, and everything we build.</p>
+                    <p class="join-horizon-p2">Get updates, opportunities, and early access to newly published books, poems, and everything we build.</p>
                     <div class="join">
                         <input type="email" name="join-field" id="join-field" placeholder="Enter your email" class="join-field-css">
                         <button class="join-btn" id="joinBtn">Join Now</button>
@@ -1979,9 +2014,8 @@
         <!-- ===== JOIN THE HORIZON – mobile only ===== -->
         <section class="join-section-mobile" id="contact-mobile">
             <div class="join-container">
-                <h2 class="join-horizon">JOIN THE HORIZON</h2>
-                <P class="join-horizon-p1">Be part of something <br>meaningful</P>
-                <p class="join-horizon-p2">Join our community and get updates, opportunities, and early access to newly published books, poems, and everything we build.</p>
+                <h2 class="join-horizon">SUBSCRIBE TO THE HORIZON</h2>
+                     <p class="join-horizon-p2">Get updates, opportunities, and early access to newly published books, poems, and everything we build.</p>
                 <div class="join">
                     <input type="email" name="join-field-mobile" id="join-field-mobile" placeholder="Enter your email" class="join-field-css">
                     <button class="join-btn" id="joinBtnMobile">Join Now</button>

@@ -1811,15 +1811,27 @@
 </head>
 <body>
     <div class="container">
-        <!-- HEADER WITH LOGO -->
-        <div class="form-header">
-            <a class="logo" style="text-decoration:none;">
-                <img src="../images/logokk.png" alt="Volant Reads Logo" class="nav-logo-img" />
-                <span class="logo-text">
-                    <span class="logo-highlight">Volant</span> Reads
-                </span>
-            </a>
-        </div>
+      <!-- HEADER WITH LOGO AND BACK LINK - UPPER RIGHT -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 8px 0; border-bottom: 1px solid var(--border-light);">
+    <!-- Logo (left side) - Clickable to index.html with hand cursor -->
+    <div class="form-header" style="margin-bottom: 0;">
+        <a href="index.html" class="logo" style="text-decoration:none; font-size: 1.4rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer;">
+            <img src="../images/logokk.png" alt="Volant Reads Logo" class="nav-logo-img" style="height: 32px;" />
+            <span class="logo-text">
+                <span class="logo-highlight">Volant</span> Reads
+            </span>
+        </a>
+    </div>
+    
+    <!-- Back link (right side) -->
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="#" id="backLink" style="display: inline-flex; align-items: center; gap: 6px; color: var(--primary); text-decoration: none; font-weight: 500; font-size: 0.85rem; transition: 0.2s; padding: 6px 14px; border-radius: 30px; background: #f5f1eb; white-space: nowrap; cursor: pointer;">
+            <i class="fas fa-arrow-left"></i> <span id="backText">Back</span>
+        </a>
+        <span style="color: var(--text-muted); font-size: 0.7rem; display: none;" id="backDestination">Return to previous page</span>
+    </div>
+</div>
+
         <div class="subhead">
             <span class="tagline"><i class="fas fa-feather-alt"></i>Books with Soaring Words</span>
         </div>
@@ -2336,6 +2348,7 @@
                         <i class="fas fa-cloud-upload-alt"></i> Submit to Volant Reads
                     </button>
                     
+                    <!-- Reset Button -->
                     <button type="reset" class="btn-secondary">
                         <i class="fas fa-undo-alt"></i> Reset form
                     </button>
@@ -2355,7 +2368,7 @@
             }
         }
     </script>
-    <script type="module">
+<script type="module">
         import { initializeApp } from "firebase/app";
         import {
             getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, updateDoc
@@ -2363,6 +2376,138 @@
         import {
             getAuth, onAuthStateChanged
         } from "firebase/auth";
+
+        // ===== BACK LINK FUNCTIONALITY =====
+function setupBackLink() {
+    const backLink = document.getElementById('backLink');
+    const backText = document.getElementById('backText');
+    const backDestination = document.getElementById('backDestination');
+    
+    // Check if there's a return URL in localStorage or URL params
+    let returnUrl = null;
+    let returnText = '← Home';
+    let fullText = 'Back to Home';
+    
+    // ⭐ CHECK: Was this page opened directly?
+    // - No redirect parameter in URL
+    // - No stored return URL in localStorage
+    // - No stored return URL in sessionStorage
+    // - No referrer from the same site
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasRedirectParam = urlParams.has('redirect');
+    const hasStoredLocal = localStorage.getItem('volant_return_url') !== null;
+    const hasStoredSession = sessionStorage.getItem('volant_return_url') !== null;
+    const hasReferrer = document.referrer && new URL(document.referrer).hostname === window.location.hostname;
+    
+    // If no redirect param, no stored URLs, and no referrer, this page was opened directly
+    const isDirectOpen = !hasRedirectParam && !hasStoredLocal && !hasStoredSession && !hasReferrer;
+    
+    if (isDirectOpen) {
+        // ⭐ Page opened directly - go to index.html
+        returnUrl = 'index.html';
+        returnText = '← Home';
+        fullText = 'Back to Home';
+        console.log('📄 Page opened directly - Back link set to Home');
+    } else {
+        // 1. Check URL parameters for redirect parameter
+        if (hasRedirectParam) {
+            returnUrl = decodeURIComponent(urlParams.get('redirect'));
+            // Try to get a friendly name from the URL
+            if (returnUrl.includes('dashboard')) {
+                returnText = '← Dashboard';
+                fullText = 'Back to Dashboard';
+            } else if (returnUrl.includes('store')) {
+                returnText = '← Store';
+                fullText = 'Back to Store';
+            } else if (returnUrl.includes('details')) {
+                returnText = '← Details';
+                fullText = 'Back to Book Details';
+            } else if (returnUrl.includes('profile')) {
+                returnText = '← Profile';
+                fullText = 'Back to Profile';
+            } else if (returnUrl.includes('index')) {
+                returnText = '← Home';
+                fullText = 'Back to Home';
+            } else {
+                returnText = '← Back';
+                fullText = 'Back to Previous Page';
+            }
+        }
+        
+        // 2. Check localStorage for return URL (if not set by redirect param)
+        if (!returnUrl && hasStoredLocal) {
+            returnUrl = localStorage.getItem('volant_return_url');
+            const storedText = localStorage.getItem('volant_return_text');
+            returnText = storedText || '← Back';
+            fullText = storedText || 'Back to Previous Page';
+            // Clear after reading
+            localStorage.removeItem('volant_return_url');
+            localStorage.removeItem('volant_return_text');
+        }
+        
+        // 3. Check sessionStorage for return URL (if not set yet)
+        if (!returnUrl && hasStoredSession) {
+            returnUrl = sessionStorage.getItem('volant_return_url');
+            const storedText = sessionStorage.getItem('volant_return_text');
+            returnText = storedText || '← Back';
+            fullText = storedText || 'Back to Previous Page';
+            // Don't clear sessionStorage so it persists
+        }
+        
+        // 4. Check document.referrer (last resort)
+        if (!returnUrl && hasReferrer) {
+            const referrerUrl = new URL(document.referrer);
+            returnUrl = document.referrer;
+            if (returnUrl.includes('dashboard')) {
+                returnText = '← Dashboard';
+                fullText = 'Back to Dashboard';
+            } else if (returnUrl.includes('store')) {
+                returnText = '← Store';
+                fullText = 'Back to Store';
+            } else if (returnUrl.includes('details')) {
+                returnText = '← Details';
+                fullText = 'Back to Book Details';
+            } else if (returnUrl.includes('index')) {
+                returnText = '← Home';
+                fullText = 'Back to Home';
+            } else {
+                returnText = '← Back';
+                fullText = 'Back to Previous Page';
+            }
+        }
+        
+        // 5. Default fallback (if nothing else works)
+        if (!returnUrl) {
+            returnUrl = 'index.html';
+            returnText = '← Home';
+            fullText = 'Back to Home';
+        }
+    }
+    
+    // Update the back link
+    if (backLink) {
+        backLink.href = returnUrl;
+        backLink.title = fullText;
+    }
+    
+    if (backText) {
+        // Remove the arrow from the text if it exists
+        const cleanText = returnText.replace('←', '').trim();
+        backText.textContent = cleanText;
+        // Keep the arrow in the link HTML
+        backLink.innerHTML = `<i class="fas fa-arrow-left"></i> ${cleanText}`;
+    }
+    
+    if (backDestination) {
+        backDestination.textContent = fullText;
+    }
+    
+    console.log('🔙 Back link set to:', returnUrl, '-', fullText);
+}
+
+// Call setupBackLink when the page loads
+document.addEventListener('DOMContentLoaded', setupBackLink);
+      
 
         const firebaseConfig = {
             apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -2932,7 +3077,7 @@
                     <button class="btn-dismiss" onclick="window.dismissSubmissionSuccess()">
                         <i class="fas fa-check"></i> Got it, Submit Another
                     </button>
-                    <a href="dashboard.html" class="btn-dashboard">
+                    <a href="dashboard.html?refresh=${Date.now()}" class="btn-dashboard">
                         <i class="fas fa-tachometer-alt"></i> View Dashboard
                     </a>
                 </div>
@@ -3184,9 +3329,23 @@
                 originalPhoneNumber = phone;
                 originalCountry = country;
 
-                // ⭐ FIX: DO NOT change currentUsername - it should stay the signed-in user's username
-                // currentUsername should NEVER be changed to the author name
-                // The user badge already shows the signed-in user's username
+                // ⭐ STORE IN LOCALSTORAGE FOR CROSS-PAGE SYNC
+                try {
+                    localStorage.setItem('volant_user_country', country);
+                    localStorage.setItem('volant_user_updated', Date.now().toString());
+                    localStorage.setItem('volant_user_data', JSON.stringify({
+                        country: country,
+                        authorName: authorName,
+                        authorBio: authorBio,
+                        gmail: email,
+                        phoneNumber: phone,
+                        publisherName: publisher || '',
+                        timestamp: Date.now()
+                    }));
+                    console.log('✅ Stored user data in localStorage for sync');
+                } catch (e) {
+                    console.warn('Could not store in localStorage:', e);
+                }
 
                 // Hide the save button
                 saveProfileBtn.classList.remove('show');
@@ -3194,6 +3353,9 @@
 
                 showToast('✅ Profile settings saved successfully!', 'success');
                 showFeedback('✅ Your author profile has been updated.', 'success');
+
+                // Force a reload of the user data
+                await loadUserSettings(currentUser.uid);
 
                 setTimeout(() => {
                     if (feedback.classList.contains('success')) {
@@ -3250,6 +3412,8 @@
                         countryHidden.value = data.country;
                         originalCountry = data.country;
                         console.log('✅ Country loaded:', data.country);
+                    } else {
+                        console.log('⚠️ No country found in user data');
                     }
                     
                     // Phone Number
@@ -3474,23 +3638,19 @@
         saveProfileBtn.addEventListener('click', saveProfile);
 
         // ================================================================
-        // ===== AUTH STATE HANDLER - FIX: currentUsername = SIGNED-IN USER =====
+        // ===== AUTH STATE HANDLER =====
         // ================================================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 
-                // ⭐ CRITICAL FIX: Get the signed-in user's username
-                // This should be the username from the user's profile, NOT the author name
+                // Get the signed-in user's username
                 try {
                     const docSnap = await getDoc(doc(db, "users", user.uid));
                     if (docSnap.exists()) {
                         const data = docSnap.data();
-                        // Use the username field from the user's profile
-                        // This is the signed-in user's username, not the author name
                         currentUsername = data.username || user.displayName || user.email?.split('@')[0] || 'User';
                         console.log('✅ Signed-in user (submitter) username:', currentUsername);
-                        console.log('⚠️ Author name (separate field):', data.authorName || 'Not set');
                     } else {
                         currentUsername = user.displayName || user.email?.split('@')[0] || 'User';
                         console.log('✅ Signed-in user (submitter) username (fallback):', currentUsername);
@@ -3505,10 +3665,9 @@
                 authOverlay.style.display = 'none';
                 formWrapper.style.display = 'block';
                 userBadge.style.display = 'inline-flex';
-                userNameDisplay.textContent = currentUsername; // Shows the signed-in user
+                userNameDisplay.textContent = currentUsername;
                 
-                // Load author settings (this loads the AUTHOR's name, bio, email, etc.)
-                // These are separate from the signed-in user's username
+                // Load author settings
                 await loadUserSettings(user.uid);
                 await updatePayoutWarning(user.uid);
                 checkDraft();
@@ -3546,7 +3705,9 @@
             }
         });
 
-        // --- Form submit ---
+        // ================================================================
+        // ===== FORM SUBMIT =====
+        // ================================================================
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
             if (!currentUser) { showFeedback('❌ You must be signed in to submit a book.', 'error'); return; }
@@ -3599,6 +3760,7 @@
             const price = priceAmount.value.trim();
             const currency = currencySelect.value;
 
+            // Validation...
             if (!authorName) { showFeedback('❌ Author name is required.', 'error');
                 authorNameInput.focus(); return; }
             if (!authorEmail || !authorEmail.includes('@') || !authorEmail.includes('.')) { showFeedback(
@@ -3675,6 +3837,42 @@
                 return;
             }
 
+            // ⭐ SAVE PROFILE DATA TO FIRESTORE AND LOCALSTORAGE BEFORE SUBMITTING
+            try {
+                const profileUpdate = {
+                    country: country,
+                    authorName: authorName,
+                    gmail: authorEmail,
+                    phoneNumber: phoneNumber,
+                    authorBio: authorBio,
+                    publisherName: publisherName || '',
+                    updatedAt: new Date().toISOString()
+                };
+                
+                await updateDoc(doc(db, "users", currentUser.uid), profileUpdate);
+                
+                // ⭐ Store in localStorage for cross-page sync
+                try {
+                    localStorage.setItem('volant_user_country', country);
+                    localStorage.setItem('volant_user_updated', Date.now().toString());
+                    localStorage.setItem('volant_user_data', JSON.stringify({
+                        country: country,
+                        authorName: authorName,
+                        authorBio: authorBio,
+                        gmail: authorEmail,
+                        phoneNumber: phoneNumber,
+                        publisherName: publisherName || '',
+                        timestamp: Date.now()
+                    }));
+                    console.log('✅ Stored user data in localStorage from form submission');
+                } catch (e) {
+                    console.warn('Could not store in localStorage:', e);
+                }
+            } catch (err) {
+                console.warn('Could not update user profile:', err);
+                // Don't block the book submission if this fails
+            }
+
             const submitBtn = form.querySelector('.btn-primary');
             const origText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting for review...';
@@ -3696,37 +3894,37 @@
                 const finalGenre = genre === 'Other' ? genreOtherInput.value.trim() : genre;
                 const finalLanguage = language === 'Other' ? languageOtherInput.value.trim() : language;
 
-               const bookData = {
-    authorName,
-    publisherName: publisherName || authorName,
-    email: authorEmail,                   
-    title,
-    subtitle: subtitle || null,
-    authorBio,
-    synopsis,
-    isbn: isbn || null,
-    publishDate,
-    genre: finalGenre,
-    language: finalLanguage,
-    country,
-    phoneNumber,                          
-    pageCount,
-    downloads: 0,
-    downloadLimit: downloadsValue,
-    keywords,
-    ...preorderData,
-    otherDetails: otherDetails || null,
-    imageUrl,
-    pdfUrl,
-    pricing: { currency, amount: parseFloat(price) },
-    submittedBy: currentUser.uid,
-    submittedByUsername: currentUsername,
-    status: 'pending',
-    rightsDeclared: true,
-    termsAgreed: true,
-    submittedAt: serverTimestamp(),
-    updatedAt: serverTimestamp()
-};
+                const bookData = {
+                    authorName,
+                    publisherName: publisherName || authorName,
+                    email: authorEmail,                   
+                    title,
+                    subtitle: subtitle || null,
+                    authorBio,
+                    synopsis,
+                    isbn: isbn || null,
+                    publishDate,
+                    genre: finalGenre,
+                    language: finalLanguage,
+                    country,
+                    phoneNumber,                          
+                    pageCount,
+                    downloads: 0,
+                    downloadLimit: downloadsValue,
+                    keywords,
+                    ...preorderData,
+                    otherDetails: otherDetails || null,
+                    imageUrl,
+                    pdfUrl,
+                    pricing: { currency, amount: parseFloat(price) },
+                    submittedBy: currentUser.uid,
+                    submittedByUsername: currentUsername,
+                    status: 'pending',
+                    rightsDeclared: true,
+                    termsAgreed: true,
+                    submittedAt: serverTimestamp(),
+                    updatedAt: serverTimestamp()
+                };
                 await addDoc(collection(db, "books"), bookData);
                 
                 discardDraft();
@@ -3736,9 +3934,6 @@
                 const priceDisplay = `${currencySymbols[currency] || '¤'}${parseFloat(price).toFixed(2)}`;
                 const keywordList = keywords.join(', ');
                 const downloadsDisplay = downloadsValue === 'unlimited' ? 'Unlimited' : downloadsValue;
-                const preorderDisplay = preorderData ? 
-                    `⏳ Pre-order: Yes\n   Release Date: ${preorderData.preorderReleaseDate}\n   Pre-order Price: ${currencySymbols[currency] || '¤'}${preorderData.preorderPrice.toFixed(2)}\n   Original Price: ${currencySymbols[currency] || '¤'}${preorderData.originalPrice.toFixed(2)}` : 
-                    '📦 Pre-order: No';
                 
                 const successMessage = `
         ✅ BOOK SUCCESSFULLY SUBMITTED TO VOLANT READS!
@@ -3757,7 +3952,7 @@
         💰 Price: ${priceDisplay} ${currencyNames[currency] || currency}
         📥 Download Limit: ${downloadsDisplay} downloads per buyer
         🔑 Keywords (${keywords.length}): ${keywordList}
-            ${isbn ? `🔢 ISBN: ${isbn}` : ''}
+        ${isbn ? `🔢 ISBN: ${isbn}` : ''}
         ${otherDetails ? `📝 Additional: ${otherDetails}` : ''}
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 

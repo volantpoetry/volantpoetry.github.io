@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>All Poems A-Z | Volant Poetry</title>
+  <title>All Poems | Volant Poetry</title>
   <link rel="stylesheet" href="style.css" />
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="images/volant-favicon.png">
@@ -11,7 +11,7 @@
   
   <!-- SEO Meta Tags - Poems Page -->
 <meta name="description" content="Explore a collection of poems from talented poets. Read, share, and discover inspiring poetry at Volant Poetry." />
-<meta name="keywords" content="poems, poetry collection, Volant Poetry, poets, poetry community, read poems, share poems" />
+<meta name="keywords" content="poems, poetry collection, Volant Poetry, poets, poetry community, read poems, share poems, contemporary poems, modern poems" />
 
 <!-- Open Graph -->
 <meta property="og:title" content="Poems Collection | Volant Poetry" />
@@ -1042,6 +1042,13 @@
   background: linear-gradient(90deg, #3a1f8a, #4b2aad) !important;
   transform: translateY(-1px) !important;
 }
+
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: var(--primary);
+}
 </style>
 </head>
 <body>
@@ -1580,7 +1587,7 @@
 
       if (snapshot.empty) {
         if (initial) {
-          container.innerHTML = '<div class="no-poems-message">No poems found.</div>';
+          container.innerHTML = '<div class="no-poems-message">Check your internet connection and refresh the page.</div>';
         }
         if (loadingIndicator) loadingIndicator.style.display = "none";
         if (endMessage) endMessage.style.display = "block";

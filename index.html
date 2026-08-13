@@ -83,13 +83,111 @@
   ]
 }
 </script>
-  <style>
+<style>
+
+/* ===== GOOGLE FONT: EB Garamond ===== */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+/* ===== BROADER POEM CARD ON PHONE ===== */
+@media (max-width: 768px) {
+  .recent-poem-card {
+    width: 95% !important;
+    padding: 20px 18px 20px 22px !important;
+    margin: 0 auto 15px auto !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .recent-poem-card {
+    width: 98% !important;
+    padding: 18px 14px 18px 18px !important;
+    margin: 0 auto 12px auto !important;
+  }
+}
 
 /* Individual Poem Card */
 .recent-poem-card {
   background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
   color: #4b3f2f;
   padding: 20px 25px 20px 50px !important;
+}
+
+/* ===== GARAMOND FONT FOR POEM TITLE ===== */
+.recent-poem-title,
+.poem-title {
+  font-family: 'EB Garamond', 'Georgia', serif !important;
+  color: #4b2aad !important;
+  letter-spacing: 0.4px !important;
+}
+
+/* ===== GARAMOND FONT & INCREASED SIZE FOR POEM CONTENT ===== */
+.poem-content,
+.recent-poem-card .poem-content {
+  font-family: 'EB Garamond', 'Georgia', serif !important;
+  color: #3d352a !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.3px !important;
+  line-height: 1.4 !important;
+}
+
+/* Desktop & Tablet - Increased size */
+.poem-content,
+.recent-poem-card .poem-content {
+  font-size: 1.2rem !important;
+}
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+  .poem-content,
+  .recent-poem-card .poem-content {
+    font-size: 1.2rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  .poem-content,
+  .recent-poem-card .poem-content,
+  .poem-body .poem-content,
+  #poem-content {
+    font-size: 1.05rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+/* ===== GARAMOND FONT FOR CATEGORIES ===== */
+.poem-category-line,
+.poem-category-line em,
+.poem-category {
+  font-family: 'EB Garamond', 'Georgia', serif !important;
+  color: #B8860B !important;
+}
+
+.category-link {
+  font-family: 'EB Garamond', 'Georgia', serif !important;
+  color: #B8860B;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  font-size: 0.90rem !important;
+}
+
+.category-link:hover {
+  color: #8B4513;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .category-link {
+    font-size: 0.90rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-link {
+    font-size: 0.85rem !important;
+  }
 }
 
 /* Read More / Show Less */
@@ -102,25 +200,23 @@
   font-size: 0.92rem;
   font-weight: 500;
   margin-bottom: 10px;
+  font-family: 'Inter', sans-serif !important;
 }
 .read-more-btn:hover { color: #ff0000; }
 
-/* Poem Categories */
-.poem-category-line em,
-.poem-category {
-  font-size: 0.7rem;
-  font-style: italic;
-  color:  #B8860B;}
-
-.category-link {
-  color: #B8860B;
-  text-decoration: none;
-  transition: color 0.2s ease;
+/* ===== REDUCE READ MORE FONT & PUSH DOWN ===== */
+.read-more-btn {
+  font-size: 0.75rem !important;
+  margin-top: 8px !important;
+  display: block !important;
+  padding-top: 4px !important;
 }
 
-.category-link:hover {
-  color: #8B4513;
-  text-decoration: underline;
+@media (max-width: 480px) {
+  .read-more-btn {
+    font-size: 0.7rem !important;
+    margin-top: 10px !important;
+  }
 }
 
 #links-container ul {
@@ -206,7 +302,6 @@
     font-size: 0.95rem;
   }
 }
-
 /* Featured Poems Styling */
 .featured-poem-card {
   background: linear-gradient(160deg, #fdf6f0, #e2e9f0);
@@ -216,30 +311,36 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   margin-bottom: 15px;
   white-space: pre-wrap;
-    padding: 15px 20px 15px 50px;
+  padding: 15px 20px 15px 50px;
 }
 
+/* ===== GARAMOND FONT FOR FEATURED POEM TITLE ===== */
 .featured-poem-card .title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #4b2aad;
+  font-family: 'EB Garamond', 'Georgia', serif !important;
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  color: #4b2aad !important;
   margin-bottom: 6px;
+  letter-spacing: 0.4px !important;
 }
 
+/* ===== GARAMOND FONT FOR FEATURED POEM CONTENT ===== */
+.featured-poem-card .content {
+  font-family: 'EB Garamond', 'Georgia', serif !important;
+  font-size: 1.2rem !important;
+  color: #3d352a !important;
+  line-height: 1.4 !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.3px !important;
+}
+
+/* ===== AUTHOR - KEEP INTER ===== */
 .featured-poem-card .author {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.95rem !important;
   font-style: italic;
   color: #B8860B;
   margin-bottom: 10px;
-}
-
-.featured-poem-card .content {
-  font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  color: #4b3f2f;
-  line-height: 1.6;
 }
 
 /* Featured Poems Container */
@@ -265,20 +366,30 @@
   }
 
   .featured-poem-card .title {
-    font-size: 1.5rem;
-  }
-
-  .featured-poem-card .author {
-    font-size: 0.95rem;
+    font-size: 1.4rem !important;
   }
 
   .featured-poem-card .content {
-    font-size: 1rem;
-    line-height: 1.5;
+    font-size: 1.2rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .featured-poem-card .author {
+    font-size: 0.95rem !important;
   }
 }
 
+/* --- Mobile (480px and below) --- */
+@media (max-width: 480px) {
+  .featured-poem-card .title {
+    font-size: 1.2rem !important;
+  }
 
+  .featured-poem-card .content {
+    font-size: 1.05rem !important;
+    line-height: 1.4 !important;
+  }
+}
 /* Username styles */
 .username-display, .username-sm {
   font-family: 'Cormorant Garamond', serif;
@@ -835,7 +946,7 @@
   }
   
   .read-more-btn {
-    font-size: 0.85rem !important;
+    font-size: 0.75rem !important;
   }
   
   .poem-actions,
@@ -859,7 +970,7 @@
   }
   
   .read-more-btn {
-    font-size: 0.8rem !important;
+    font-size: 0.7rem !important;
   }
   
   .poem-actions,
@@ -1203,12 +1314,6 @@
   }
 }
 
-
-
-
-
-
-
 /* --- Bring categories UP slightly on small screens when no Read More --- */
 @media (max-width: 768px) {
   .recent-poem-card:not(:has(.read-more-btn)) .poem-category-line {
@@ -1243,10 +1348,90 @@
     padding-bottom: 12px !important;
   }
 }
+
+@media (max-width: 480px) {
+  .read-more-btn,
+  .poem-category-line em,
+  .poem-category {
+    margin-left: -10px !important;
+  }
+  
+  .poem-category-line em,
+  .poem-category {
+    position: relative !important;
+    top: -23px !important;
+  }
+  
+  .read-more-btn {
+    font-size: 0.7rem !important;
+    margin-top: 10px !important;
+    margin-bottom: 16px !important;  /* Added: more space below Read More */
+  }
+  
+  /* Fix categories position */
+  .poem-category-line {
+    margin-top: 10px !important;
+    padding-top: 6px !important;
+    clear: both !important;
+  }
+  
+  .poem-actions,
+  .comment-section,
+  .poem-reactions {
+    margin-left: -10px !important;
+  }
+}
+/* ===== LOGO TEXT STYLING - FIXED FOR MOBILE ===== */
+
+/* Hide logo text on desktop (screens wider than 768px) */
+@media (min-width: 769px) {
+  .logo-text {
+    display: none !important;
+  }
+}
+
+/* Show and style logo text on mobile */
+@media (max-width: 768px) {
+  .logo-text {
+    display: inline-block !important;
+    font-size: 1.4rem !important;
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 700 !important;
+    color: #4b2aad !important;
+  }
+  
+  .logo-text .logo-highlight {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+  }
+  
+  /* Make the logo container flex to align properly */
+  .logo {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* Small phones (480px and below) */
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* Very small phones (380px and below) */
+@media (max-width: 380px) {
+  .logo-text {
+    font-size: 1.0rem !important;
+  }
+}
+
 /* Hide Contact Us link in navigation header */
 .nav-links a[href="shared/contact.html"] {
   display: none !important;
 }
+
 </style>
 
 </head>
@@ -1611,7 +1796,7 @@ async function loadAllPoemsLinks() {
     }
 
     if (poems.length === 0) {
-      container.innerHTML = '<p>No poems found.</p>';
+      container.innerHTML = '<p>Check your internet connection and refresh the page.</p>';
       return;
     }
 

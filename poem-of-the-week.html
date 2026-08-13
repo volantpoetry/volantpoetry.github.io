@@ -3,8 +3,65 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Volant Poetry | Poem of the Week</title>
+  <title>Poem of the Week | Volant Poetry</title>
+
+<meta name="description" content="Discover the Poem of the Week at Volant Poetry. Read featured poems from talented poets, share your thoughts, and connect with the poetry community.">
+  <meta name="keywords" content="poem of the week, featured poem, poetry, Volant Poetry, poem, poet, weekly poem, poetry community">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://volantpoetry.vercel.app/poem-of-the-week.html">
+
+  <!-- ===== OPEN GRAPH / SOCIAL MEDIA ===== -->
+  <meta property="og:title" content="Poem of the Week | Volant Poetry">
+  <meta property="og:description" content="Discover the Poem of the Week at Volant Poetry. Read featured poems from talented poets.">
+  <meta property="og:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
+  <meta property="og:url" content="https://volantpoetry.vercel.app/poem-of-the-week.html">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Volant Poetry">
+  
+  <!-- ===== TWITTER CARDS ===== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Poem of the Week | Volant Poetry">
+  <meta name="twitter:description" content="Discover the Poem of the Week at Volant Poetry. Read featured poems from talented poets.">
+  <meta name="twitter:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
+
+  <!-- ===== JSON-LD STRUCTURED DATA ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Poem of the Week",
+    "description": "Discover the Poem of the Week at Volant Poetry. Read featured poems from talented poets.",
+    "image": "https://volantpoetry.vercel.app/images/volant-og.jpg",
+    "author": {
+      "@type": "Person",
+      "name": "Volant Poetry"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Volant Poetry",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://volantpoetry.vercel.app/images/volant-favicon.png"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://volantpoetry.vercel.app/poem-of-the-week.html"
+    },
+    "about": {
+      "@type": "Thing",
+      "name": "Poetry"
+    }
+  }
+  </script>
+
+  <!-- ===== ADDITIONAL SEO ===== -->
+  <meta name="theme-color" content="#4b2aad">
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://https://volantpoetry.github.io/sitemap.xml">
+
+
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="images/volant-favicon.png">
 <link rel="apple-touch-icon" href="images/volant-favicon.png">
@@ -70,6 +127,7 @@
       font-weight: 700;
       color: #B8860B;
       text-decoration: none;
+      font-family: 'Inter', sans-serif;
     }
     .follow-mini-btn {
       background: #4caf50;
@@ -81,6 +139,7 @@
       color: white;
       cursor: pointer;
       margin-left: 8px;
+      font-family: 'Inter', sans-serif;
     }
     .follow-mini-btn.following {
       background: #f44336;
@@ -92,13 +151,14 @@
       font-size: 0.85rem;
       border-radius: 30px;
       transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
     }
     .view-badge.view-update {
       color: #4CAF50;
       transform: scale(1.05);
     }
     .recent-poem-title {
-      font-family: 'Playfair Display', serif;
+      font-family: 'EB Garamond', 'Georgia', serif !important;
       color: #4b2aad;
       margin-top: 12px;
       font-size: 1.8rem;
@@ -107,9 +167,11 @@
       margin-top: 8px;
       white-space: pre-wrap;
       font-style: normal;
-      color: #4b3f2f;
-      line-height: 1.5;
-      font-family: 'Lato', serif;
+      color: #3d352a;
+      line-height: 1.4;
+      font-family: 'EB Garamond', 'Georgia', serif !important;
+      font-size: 1.2rem;
+      letter-spacing: 0.3px;
     }
     .read-more-btn {
       background: none;
@@ -117,8 +179,9 @@
       color: #960606;
       cursor: pointer;
       margin-top: 5px;
-      font-size: 0.95rem;
-      font-family: 'Lato', sans-serif;
+      font-size: 0.75rem;
+      font-family: 'Inter', sans-serif;
+      padding: 4px 0;
     }
     .poem-category-line {
       margin: 10px 0 4px;
@@ -129,6 +192,8 @@
       text-decoration: none;
       background: transparent !important;
       padding: 2px 0 !important;
+      font-family: 'EB Garamond', 'Georgia', serif !important;
+      font-size: 0.9rem;
     }
     .category-link:not(:last-child)::after {
       content: ", ";
@@ -145,13 +210,13 @@
     .comment-section {
       display: flex;
       gap: 6px;
-      flex: 0 1 auto;
-      max-width: 45%;
+      flex: 1;
+      min-width: 200px;
+      max-width: 100%;
     }
     .comment-input {
-      width: 100%;
-      min-width: 120px;
-      max-width: 180px;
+      flex: 1;
+      min-width: 100px;
       resize: vertical;
       min-height: 36px;
       border-radius: 8px;
@@ -164,15 +229,24 @@
       border-radius: 8px;
       padding: 6px 12px;
       cursor: pointer;
+      white-space: nowrap;
     }
     .comment-btn {
       background: #4b2aad !important;
       color: white !important;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s;
+    }
+    .comment-btn:hover {
+      background: #3a1f8a !important;
     }
     .like-btn {
       background: transparent !important;
       color: #e63946 !important;
       font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      padding: 6px 10px;
     }
     .like-btn.liked {
       background: #e63946 !important;
@@ -184,6 +258,8 @@
       font-size: 0.8rem;
       cursor: pointer;
       color: #2c3e50;
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
     }
     .comment-list-outside {
       margin-top: 16px;
@@ -204,6 +280,14 @@
       border-radius: 6px;
       margin-bottom: 8px;
       border: 1px solid #ede3d4;
+      font-family: 'EB Garamond', 'Georgia', serif !important;
+      font-size: 1rem;
+    }
+    .comment-author-link {
+      font-weight: 600;
+      color: #B8860B;
+      text-decoration: none;
+      font-family: 'EB Garamond', 'Georgia', serif !important;
     }
     .reply-toggle {
       color: #5a3cb3;
@@ -211,6 +295,7 @@
       font-size: 0.7rem;
       margin-top: 4px;
       display: inline-block;
+      font-family: 'Inter', sans-serif;
     }
     .reply-section {
       margin-left: 20px;
@@ -222,6 +307,7 @@
       border: 1px solid #ccc;
       padding: 6px;
       resize: none;
+      font-family: 'Inter', sans-serif;
     }
     .send-reply-btn {
       background: #5a3cb3;
@@ -231,41 +317,119 @@
       padding: 4px 10px;
       margin-top: 4px;
       cursor: pointer;
+      font-family: 'Inter', sans-serif;
     }
+
+    /* ===== TOAST NOTIFICATION ===== */
+    .toast-notification {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2d7d46;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      z-index: 9999;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      max-width: 90%;
+      text-align: center;
+    }
+    .toast-notification.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .toast-notification.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     @media (max-width: 768px) {
       .weekly-container { padding: 2rem 3%; }
       .weekly-card, .comment-list-outside { width: 90%; }
+      .poem-content { font-size: 1rem; }
+      .comment-section { 
+        flex: 1 1 100%; 
+        min-width: 100%;
+      }
+      .comment-input { 
+        min-width: 60%;
+        font-size: 0.85rem;
+      }
+      .comment-btn { 
+        font-size: 0.85rem;
+        padding: 6px 12px;
+      }
+      .poem-actions {
+        gap: 6px;
+      }
+      .like-btn, .like-count, .message-count {
+        font-size: 0.75rem;
+      }
     }
+
+    @media (max-width: 480px) {
+      .poem-content { font-size: 0.95rem; }
+      .comment-section { 
+        flex-wrap: nowrap;
+        gap: 4px;
+      }
+      .comment-input { 
+        min-width: 50%;
+        font-size: 0.8rem;
+        padding: 4px 8px;
+        min-height: 32px;
+      }
+      .comment-btn { 
+        font-size: 0.75rem;
+        padding: 4px 8px;
+      }
+      .like-btn, .like-count, .message-count {
+        font-size: 0.7rem;
+      }
+      .like-btn { padding: 4px 6px; }
+      .poem-actions {
+        gap: 4px;
+      }
+    }
+
     /* Compact categories styling */
-.poem-category-line {
-  margin: 6px 0 2px !important;
-  text-align: left;
-  font-size: 0.7rem !important;
-  line-height: 1.3;
-}
+    .poem-category-line {
+      margin: 6px 0 2px !important;
+      text-align: left;
+      font-size: 0.7rem !important;
+      line-height: 1.3;
+    }
 
-.category-link {
-  color: #B8860B;
-  text-decoration: none;
-  background: transparent !important;
-  padding: 0 !important;
-  font-size: 0.7rem !important;
-  font-weight: normal;
-  letter-spacing: normal;
-}
+    .category-link {
+      color: #B8860B;
+      text-decoration: none;
+      background: transparent !important;
+      padding: 0 !important;
+      font-size: 0.7rem !important;
+      font-weight: normal;
+      letter-spacing: normal;
+    }
 
-.category-link:not(:last-child)::after {
-  content: ", ";
-  color: #B8860B;
-  font-size: 0.7rem;
-}
+    .category-link:not(:last-child)::after {
+      content: ", ";
+      color: #B8860B;
+      font-size: 0.7rem;
+    }
 
-/* Optional: make category section even tighter */
-.poem-category-line em {
-  font-style: normal;
-  font-size: 0.7rem;
-}
+    .poem-category-line em {
+      font-style: normal;
+      font-size: 0.7rem;
+    }
 
+    .toast-notification.saved-comment {
+      background: #b76e4b;
+    }
   </style>
 </head>
 <body>
@@ -276,13 +440,16 @@
   <div class="comment-list-outside" id="commentsOutsideContainer"></div>
 </section>
 
+<!-- Toast Notification -->
+<div id="toastNotification" class="toast-notification hidden"></div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { 
     getFirestore, doc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, addDoc, 
     increment, serverTimestamp, query, orderBy, getDocs, writeBatch 
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -297,10 +464,92 @@
   const auth = getAuth(app);
 
   let currentUser = null;
-  onAuthStateChanged(auth, (user) => { currentUser = user; refreshAllFollowButtons(); });
+  let currentUsername = '';
+
+  // ===== SAVED COMMENT KEY =====
+  const SAVED_COMMENT_KEY = 'volant_weekly_saved_comment';
+
+  // Toast notification
+  function showToast(message, duration = 3000) {
+    const toast = document.getElementById('toastNotification');
+    toast.textContent = message;
+    toast.className = 'toast-notification show';
+    clearTimeout(toast._hideTimeout);
+    toast._hideTimeout = setTimeout(() => {
+      toast.className = 'toast-notification hidden';
+    }, duration);
+  }
+
+  // ===== REDIRECT TO LOGIN WITH COMMENT SAVING =====
+  function redirectToLogin(saveComment = false) {
+    const currentUrl = encodeURIComponent(window.location.href);
+    const loginUrl = `universal-login.html?platform=poetry&redirect=${currentUrl}`;
+    
+    if (saveComment) {
+      const commentInput = document.querySelector('.comment-input');
+      if (commentInput && commentInput.value.trim()) {
+        localStorage.setItem(SAVED_COMMENT_KEY, commentInput.value.trim());
+        showToast('💾 Your comment has been saved! Sign in to post it.', 3000);
+      }
+    }
+    
+    window.location.href = loginUrl;
+  }
+
+  // ===== CUSTOM ALERT WITH REDIRECT =====
+  function showLoginAlertAndRedirect(message) {
+    if (confirm(message + "\n\nClick OK to sign in. Your comment will be saved.")) {
+      const commentInput = document.querySelector('.comment-input');
+      if (commentInput && commentInput.value.trim()) {
+        localStorage.setItem(SAVED_COMMENT_KEY, commentInput.value.trim());
+        showToast('💾 Your comment has been saved! Sign in to post it.', 3000);
+      }
+      const currentUrl = encodeURIComponent(window.location.href);
+      window.location.href = `universal-login.html?platform=poetry&redirect=${currentUrl}`;
+    }
+  }
+
+  // ===== CHECK FOR SAVED COMMENT =====
+  function checkSavedComment() {
+    const savedComment = localStorage.getItem(SAVED_COMMENT_KEY);
+    const commentInput = document.querySelector('.comment-input');
+    if (savedComment && commentInput) {
+      commentInput.value = savedComment;
+      return true;
+    }
+    return false;
+  }
+
+  // ===== CLEAR SAVED COMMENT =====
+  function clearSavedComment() {
+    localStorage.removeItem(SAVED_COMMENT_KEY);
+  }
+
+  // ===== AUTH STATE =====
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    if (user) {
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        currentUsername = userDoc.exists() ? userDoc.data().username || user.email?.split('@')[0] || 'User' : user.email?.split('@')[0] || 'User';
+      } catch (_) {
+        currentUsername = user.email?.split('@')[0] || 'User';
+      }
+    } else {
+      currentUsername = '';
+    }
+    refreshAllFollowButtons();
+    // Check for saved comment when user signs in
+    if (user) {
+      const hasSaved = checkSavedComment();
+      if (hasSaved) {
+        showToast('📝 Your saved comment is ready to post!', 2000);
+      }
+    }
+  });
 
   // ============================================
-  // SILENT READ TRACKING SYSTEM (no console logs)
+  // SILENT READ TRACKING SYSTEM
   // ============================================
   const READ_TRACKING_KEY = 'weekly_poem_read_tracking';
   const READ_TIMEOUT_MINUTES = 30;
@@ -399,7 +648,7 @@
   }
 
   // ============================================
-  // SILENT NOTIFICATION SENDER (no console logs)
+  // SILENT NOTIFICATION SENDER
   // ============================================
   async function sendNotification(forUserId, fromUserId, type, data = {}) {
     if (!forUserId || !fromUserId || forUserId === fromUserId) return;
@@ -433,7 +682,10 @@
   }
 
   async function handleFollowClick(poetId, btnElement) {
-    if (!currentUser) { alert("Please sign in to follow poets."); return; }
+    if (!currentUser) { 
+      showLoginAlertAndRedirect("Please sign in to follow poets.");
+      return; 
+    }
     if (!poetId || currentUser.uid === poetId) return;
     const docId = `${currentUser.uid}_${poetId}`;
     const followRef = doc(db, "social", docId);
@@ -449,6 +701,7 @@
         btnElement.textContent = "Follow";
         btnElement.classList.remove("following");
         btnElement.style.background = "#4CAF50";
+        showToast('Unfollowed', 1500);
       } else {
         batch.set(followRef, { followerId: currentUser.uid, followedId: poetId, createdAt: serverTimestamp() });
         batch.update(doc(db, "users", poetId), { followerCount: increment(1) });
@@ -458,9 +711,12 @@
         btnElement.textContent = "Following";
         btnElement.classList.add("following");
         btnElement.style.background = "#f44336";
+        showToast('✅ Following!', 1500);
         await sendNotification(poetId, currentUser.uid, 'follow', {});
       }
-    } catch(err) { alert("Error updating follow."); }
+    } catch(err) { 
+      showToast('Error updating follow.', 'error');
+    }
   }
 
   function refreshAllFollowButtons() {
@@ -556,6 +812,9 @@
         </div>
       `;
 
+      // ===== CHECK FOR SAVED COMMENT =====
+      checkSavedComment();
+
       // READ MORE toggle
       const moreBtn = document.getElementById("readMoreBtn");
       const contentDiv = document.getElementById("poemContentBlock");
@@ -572,7 +831,10 @@
       const likeBtn = cardContainer.querySelector(".like-btn");
       const likeSpan = cardContainer.querySelector(".like-count-val");
       likeBtn.addEventListener("click", async () => {
-        if (!currentUser) { alert("Sign in to like."); return; }
+        if (!currentUser) { 
+          showLoginAlertAndRedirect("Please sign in to like!");
+          return; 
+        }
         const poemDocRef = doc(db, "weeklyHighlights", "weeklyPoem");
         const currSnap = await getDoc(poemDocRef);
         const currData = currSnap.data();
@@ -586,6 +848,7 @@
           await updateDoc(poemDocRef, { likes: newLikes + 1, likedBy: arrayUnion(currentUser.uid) });
           likeSpan.textContent = newLikes + 1;
           likeBtn.classList.add("liked");
+          showToast('❤️ Liked!', 1000);
           if (authorId && authorId !== currentUser.uid) {
             await sendNotification(authorId, currentUser.uid, 'like', { poemId: "weeklyPoem", poemTitle: title });
           }
@@ -638,7 +901,7 @@
           commentDivElem.className = "comment";
           commentDivElem.dataset.commentId = commentId;
           const authorName = com.username || "Anonymous";
-          const authorLink = com.userId ? `<a href="/user-profile.html?uid=${com.userId}" style="font-weight:600;color:#4b2aad; text-decoration:none;">${escapeHtml(authorName)}</a>` : `<strong>${escapeHtml(authorName)}</strong>`;
+          const authorLink = com.userId ? `<a href="/user-profile.html?uid=${com.userId}" class="comment-author-link">${escapeHtml(authorName)}</a>` : `<strong>${escapeHtml(authorName)}</strong>`;
           commentDivElem.innerHTML = `
             <div>${authorLink}: ${escapeHtml(com.text)}</div>
             <div><small class="reply-toggle" style="cursor:pointer;">Reply</small></div>
@@ -670,32 +933,85 @@
         } else {
           await renderCommentsAndCount();
           commentListDiv.style.display = "block";
+          // Scroll to comments
+          setTimeout(() => {
+            commentListDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 200);
         }
       });
-      await renderCommentsAndCount();
 
-      // POST COMMENT
+      // ===== INITIAL COMMENT COUNT =====
+      const commentsRef = collection(db, "weeklyHighlights", "weeklyPoem", "comments");
+      const initialSnap = await getDocs(commentsRef);
+      document.getElementById("commentCountBadge").innerText = initialSnap.size;
+
+      // ===== POST COMMENT WITH SAVE FEATURE =====
       const postBtn = cardContainer.querySelector(".comment-btn");
       const commentInput = cardContainer.querySelector(".comment-input");
+      
+      // Save comment as user types
+      commentInput.addEventListener('input', () => {
+        const text = commentInput.value.trim();
+        if (text) {
+          localStorage.setItem(SAVED_COMMENT_KEY, text);
+        } else {
+          localStorage.removeItem(SAVED_COMMENT_KEY);
+        }
+      });
+
       postBtn.addEventListener("click", async () => {
-        if (!currentUser) { alert("Please sign in to comment."); return; }
+        if (!currentUser) { 
+          const text = commentInput.value.trim();
+          if (text) {
+            localStorage.setItem(SAVED_COMMENT_KEY, text);
+            showToast('💾 Your comment has been saved! Sign in to post it.', 3000);
+          }
+          showLoginAlertAndRedirect("Please sign in to comment!");
+          return; 
+        }
+        
         const text = commentInput.value.trim();
         if (!text) return;
+        
         const userDoc = await getDoc(doc(db, "users", currentUser.uid));
         const username = userDoc.exists() ? userDoc.data().username : currentUser.email?.split('@')[0] || "Poet";
+        
         await addDoc(collection(db, "weeklyHighlights", "weeklyPoem", "comments"), {
-          userId: currentUser.uid, username: username, text: text, timestamp: serverTimestamp()
+          userId: currentUser.uid, 
+          username: username, 
+          text: text, 
+          timestamp: serverTimestamp()
         });
+        
+        // Clear saved comment
+        clearSavedComment();
         commentInput.value = "";
-        if (commentListDiv.style.display === "block") await renderCommentsAndCount();
-        else {
-          const commentsRef = collection(db, "weeklyHighlights", "weeklyPoem", "comments");
-          const newSnap = await getDocs(commentsRef);
+        
+        if (commentListDiv.style.display === "block") {
+          await renderCommentsAndCount();
+        } else {
+          const commentsRef2 = collection(db, "weeklyHighlights", "weeklyPoem", "comments");
+          const newSnap2 = await getDocs(commentsRef2);
           const badge = document.getElementById("commentCountBadge");
-          if (badge) badge.innerText = newSnap.size;
+          if (badge) badge.innerText = newSnap2.size;
         }
+        
+        showToast('✅ Comment posted!', 2000);
+        
         if (authorId && authorId !== currentUser.uid) {
-          await sendNotification(authorId, currentUser.uid, 'comment', { poemId: "weeklyPoem", poemTitle: title, commentText: text });
+          await sendNotification(authorId, currentUser.uid, 'comment', { 
+            poemId: "weeklyPoem", 
+            poemTitle: title, 
+            commentText: text 
+          });
+        }
+      });
+
+      // Enter key to submit comment
+      commentInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          postBtn.click();
         }
       });
 
@@ -709,9 +1025,15 @@
           inputArea.className = "reply-input";
           inputArea.innerHTML = `<textarea rows="2" placeholder="Write a reply..."></textarea><div><button class="send-reply-btn">Send Reply</button></div>`;
           replySection.appendChild(inputArea);
+          const textarea = inputArea.querySelector('textarea');
+          if (textarea) textarea.focus();
         }
+        
         if (e.target.classList.contains("send-reply-btn")) {
-          if (!currentUser) { alert("Sign in to reply."); return; }
+          if (!currentUser) { 
+            showLoginAlertAndRedirect("Please sign in to reply!");
+            return; 
+          }
           const replyBtn = e.target;
           const replyInputDiv = replyBtn.closest(".reply-input");
           const textarea = replyInputDiv.querySelector("textarea");
@@ -724,7 +1046,10 @@
           const username = userDoc.exists() ? userDoc.data().username : currentUser.email?.split('@')[0] || "Reader";
           
           await addDoc(collection(db, "weeklyHighlights", "weeklyPoem", "comments", commentId, "replies"), {
-            userId: currentUser.uid, username: username, text: replyText, timestamp: serverTimestamp()
+            userId: currentUser.uid, 
+            username: username, 
+            text: replyText, 
+            timestamp: serverTimestamp()
           });
           
           const commentSnap = await getDoc(doc(db, "weeklyHighlights", "weeklyPoem", "comments", commentId));
@@ -748,10 +1073,14 @@
             replySectionDiv.insertBefore(replyElem, replyInputDiv);
           });
           replyInputDiv.remove();
+          showToast('✅ Reply posted!', 1500);
 
           if (commentOwner && commentOwner !== currentUser.uid) {
             await sendNotification(commentOwner, currentUser.uid, 'reply', { 
-              poemId: "weeklyPoem", poemTitle: title, commentId: commentId, replyText: replyText 
+              poemId: "weeklyPoem", 
+              poemTitle: title, 
+              commentId: commentId, 
+              replyText: replyText 
             });
           }
         }
@@ -773,6 +1102,7 @@
 
   function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m) { if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m;}); }
 
+  // ===== INIT =====
   loadPoemOfTheWeek();
 </script>
 <script src="return-url-handler.js"></script>
