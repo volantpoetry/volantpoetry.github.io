@@ -1752,13 +1752,6 @@ nav {
   }
 }
 
-@media (max-width: 480px) {
-  .poem-content {
-    font-size: 1.05rem !important;
-    line-height: 1.4 !important;
-    font-family: 'EB Garamond', 'Georgia', serif !important;
-  }
-}
 
 /* ===== RECENT POEM TITLE - FONT SIZE ONLY ===== */
 .recent-poem-title {
@@ -1778,6 +1771,43 @@ nav {
     font-size: 1.2rem !important;
     font-family: 'EB Garamond', 'Georgia', serif !important;
   }
+}
+
+
+/* ===== INCREASE POEM CONTENT ON PHONES ONLY ===== */
+@media (max-width: 480px) {
+  .poem-content,
+  .recent-poem-card .poem-content {
+    font-size: 1.2rem !important;
+    line-height: 1.4 !important;
+      font-family: 'EB Garamond', 'Georgia', serif !important;
+  
+  }
+}
+/* ===== INCREASE POEM CONTENT ON SMALL PHONES ONLY ===== */
+@media (max-width: 380px) {
+  .poem-content,
+  .recent-poem-card .poem-content {
+    font-size: 1.1rem !important;
+    line-height: 1.4 !important;
+      font-family: 'EB Garamond', 'Georgia', serif !important;
+  
+  }
+}
+/* ===== INCREASE READ MORE BUTTON ON PHONES ONLY ===== */
+@media (max-width: 480px) {
+  .read-more-btn {
+    font-size: 0.86rem !important;
+    font-weight: 540 !important; /* Makes it bold */
+  }
+}
+body {
+  background: #f2f2f2 !important;
+}
+/* ===== BEAUTIFUL BACKGROUND COLOR FOR STATS SECTIONS ===== */
+.profile-stats-section,
+.panel-item {
+  background: #f2f2f2 !important;
 }
 </style>
 </head>
@@ -2812,7 +2842,7 @@ async function fetchUserPoems(usernameToFetch) {
         <button class="delete-btn" data-id="${docId}">🗑️ Delete</button>
         <div class="poem-body">
           <p class="poem-content" style="white-space:pre-wrap; margin-top:8px; margin-left:0; padding-left:0;">${escapeHtml(truncated.preview).replace(/\n/g, "<br>")}</p>
-          ${truncated.truncated ? `<button class="read-more-btn">Show More</button>` : ""}
+          ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
         </div>
         ${audioSectionHTML}
         ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${escapeHtml(cat)}</a>`).join(", ")}</em></p>` : ""}
@@ -2956,13 +2986,13 @@ document.addEventListener('click', async (e) => {
     const poem = await getDoc(doc(db, 'recentPoems', docId));
     if (!poem.exists()) return;
     const fullText = poem.data().content || '';
-    if (e.target.textContent.trim() === 'Show More' || e.target.textContent.trim() === 'Read More') {
+    if (e.target.textContent.trim() === 'Read More' || e.target.textContent.trim() === 'Read More') {
       paragraph.textContent = fullText;
       e.target.textContent = 'Show Less';
     } else {
       const truncated = truncatePoemByLines(fullText, 8);
       paragraph.textContent = truncated.preview;
-      e.target.textContent = 'Show More';
+      e.target.textContent = 'Read More';
     }
     return;
   }
