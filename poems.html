@@ -1050,6 +1050,171 @@
   color: var(--primary);
 }
 
+/* ===== OVERLAY MENU STYLES - LEFT ALIGNED, PURPLE, X VISIBLE ===== */
+.overlay-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  padding: 70px 32px 40px;
+  transform: translateX(100%);
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s 0.3s;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.overlay-menu.open {
+  transform: translateX(0);
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s 0s;
+}
+
+.overlay-menu .close-btn-overlay {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  font-size: 2.2rem;
+  background: none;
+  border: none;
+  color: #2d2a24;
+  cursor: pointer;
+  line-height: 1;
+  transition: 0.2s;
+  padding: 4px 8px;
+  z-index: 10;
+}
+
+.overlay-menu .close-btn-overlay:hover {
+  transform: rotate(90deg);
+  color: #4b2aad;
+}
+
+.overlay-menu a {
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: #4b2aad;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(75, 42, 173, 0.10);
+  transition: 0.2s;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+  width: 100%;
+}
+
+.overlay-menu a:hover {
+  color: #2d1a6b;
+  padding-left: 8px;
+  border-bottom-color: #4b2aad;
+}
+
+.overlay-menu a:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 768px) {
+  .overlay-menu {
+    display: flex;
+    padding: 65px 24px 30px;
+  }
+  .overlay-menu .close-btn-overlay {
+    top: 16px;
+    right: 20px;
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .overlay-menu {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .overlay-menu {
+    padding: 60px 20px 30px;
+  }
+  .overlay-menu a {
+    font-size: 1.3rem;
+    padding: 12px 0;
+  }
+  .overlay-menu .close-btn-overlay {
+    top: 14px;
+    right: 16px;
+    font-size: 1.8rem;
+  }
+}
+
+/* ===== DECREASE X BUTTON SIZE WITH PURPLE COLOR ===== */
+.overlay-menu .close-btn-overlay {
+  font-size: 1.6rem !important; /* Decreased from 2.2rem */
+  top: 20px;
+  right: 24px;
+  padding: 2px 6px;
+  color: #4b2aad !important; /* Purple color */
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.overlay-menu .close-btn-overlay:hover {
+  color: #2d1a6b !important; /* Darker purple on hover */
+  transform: rotate(90deg);
+}
+
+@media (max-width: 768px) {
+  .overlay-menu .close-btn-overlay {
+    font-size: 1.5rem !important; /* Decreased from 2rem */
+    top: 16px;
+    right: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .overlay-menu .close-btn-overlay {
+    font-size: 1.3rem !important; /* Decreased from 1.8rem */
+    top: 14px;
+    right: 16px;
+  }
+}
+
+/* ===== OVERLAY MENU LINKS - PURPLE, NORMAL WEIGHT ===== */
+.overlay-menu a {
+  font-size: 1.5rem;
+  font-weight: 400 !important; /* Normal weight, not bold */
+  text-decoration: none;
+  color: #4b2aad !important; /* Purple color */
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(75, 42, 173, 0.10);
+  transition: 0.2s;
+  font-family: 'Inter', sans-serif;
+  text-align: left;
+  width: 100%;
+}
+
+.overlay-menu a:hover {
+  color: #4b2aad !important; /* Same purple on hover */
+  padding-left: 8px;
+  border-bottom-color: #4b2aad;
+}
+
+.overlay-menu a:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 480px) {
+  .overlay-menu a {
+    font-size: 1.3rem;
+    padding: 12px 0;
+  }
+}
 </style>
 </head>
 <body>
@@ -1096,6 +1261,17 @@
       </div>
     </div>
   </nav>
+  
+  <!-- OVERLAY MENU - LEFT ALIGNED, PURPLE, X FULLY VISIBLE -->
+  <div class="overlay-menu" id="overlay-menu">
+    <button class="close-btn-overlay" id="close-menu-btn" aria-label="Close menu">✕</button>
+    <a href="index.html">Home</a>
+    <a href="shared/about.html">About</a>
+    <a href="shared/contact.html">Contact Us</a>
+    <a href="user-profile.html">My Profile</a>
+    <a href="all-categories.html">Categories</a>
+  </div>
+  
 </header>
 
 <main>
@@ -2453,28 +2629,38 @@
     }
   });
 
-  // Mobile menu toggle
+  // Mobile menu toggle (OVERLAY version - left aligned, purple, X visible)
   document.addEventListener("DOMContentLoaded", () => {
-    const toggle = document.getElementById("menu-toggle");
-    const closeBtn = document.getElementById("close-btn");
-    const navLinks = document.getElementById("nav-links");
+    const overlayMenu = document.getElementById("overlay-menu");
+    const menuToggle = document.getElementById("menu-toggle");
+    const closeMenuBtn = document.getElementById("close-menu-btn");
 
-    if (toggle && navLinks) {
-      toggle.addEventListener("click", () => {
-        navLinks.classList.add("show");
+    if (menuToggle && overlayMenu) {
+      menuToggle.addEventListener("click", () => {
+        overlayMenu.classList.add("open");
       });
     }
 
-    if (closeBtn && navLinks) {
-      closeBtn.addEventListener("click", () => {
-        navLinks.classList.remove("show");
+    if (closeMenuBtn && overlayMenu) {
+      closeMenuBtn.addEventListener("click", () => {
+        overlayMenu.classList.remove("open");
       });
     }
 
-    if (navLinks) {
-      navLinks.querySelectorAll("a").forEach(link => {
+    // Close overlay when clicking outside (on backdrop)
+    if (overlayMenu) {
+      overlayMenu.addEventListener("click", (e) => {
+        if (e.target === overlayMenu) {
+          overlayMenu.classList.remove("open");
+        }
+      });
+    }
+
+    // Close overlay when a link is clicked
+    if (overlayMenu) {
+      overlayMenu.querySelectorAll("a").forEach(link => {
         link.addEventListener("click", () => {
-          navLinks.classList.remove("show");
+          overlayMenu.classList.remove("open");
         });
       });
     }
