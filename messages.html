@@ -4,41 +4,130 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Volant Messenger | Poets' Private Chat</title>
-    <link rel="stylesheet" href="style.css" />
- <!-- Favicons -->
-<link rel="icon" type="image/png" href="images/volant-favicon.png">
-<link rel="apple-touch-icon" href="images/volant-favicon.png">
+  
+  <link rel="stylesheet" href="style.css" />
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="images/volant-favicon.png">
+  <link rel="apple-touch-icon" href="images/volant-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f6f5fc 0%, #f0eef9 100%); min-height: 100vh; }
-    header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; max-width: 1400px; margin: 0 auto; }
-    .logo { display: flex; align-items: center; gap: 10px; }
-    .nav-logo-img { height: 40px; width: auto; }
-    .logo-text { font-size: 1.3rem; font-weight: 600; color: #4b2aad; }
-    .nav-links { display: flex; gap: 2rem; align-items: center; }
-    .nav-links a { text-decoration: none; color: #4a5568; font-weight: 500; transition: color 0.3s; }
-    .nav-links a:hover, .nav-links a.active { color: #4b2aad; }
-    .menu-toggle { display: none; font-size: 1.8rem; cursor: pointer; color: #4b2aad; }
-    .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
-    .messenger-container { display: flex; gap: 24px; background: white; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden; min-height: 70vh; height: calc(100vh - 140px); }
+    body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #f6f5fc 0%, #f0eef9 100%); min-height: 100vh; padding: 0; padding-top: 80px; padding-bottom: 40px; }
+
+    /* ===== HEADER ===== */
+    .header-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 2000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(75, 42, 173, 0.1);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #4b2aad;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #4b2aad;
+      cursor: default;
+      user-select: none;
+    }
+
+    .nav-logo-img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      cursor: default;
+    }
+
+    .logo .highlight {
+      color: #ffffff;
+      text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad;
+    }
+
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      background: #f5f0ff;
+      color: #4b2aad;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.25s ease;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .home-btn:hover {
+      background: #4b2aad;
+      color: #ffffff;
+      transform: translateX(-2px);
+      box-shadow: 0 4px 12px rgba(75, 42, 173, 0.3);
+    }
+
+    /* ===== CONTAINER ===== */
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+    
+    /* ===== MESSENGER ===== */
+    .messenger-container { display: flex; gap: 0; background: white; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden; min-height: 70vh; height: calc(100vh - 140px); border: 1px solid rgba(0,0,0,0.04); }
+    
+    /* ===== CONVERSATIONS SIDEBAR ===== */
     .conversations-sidebar { width: 320px; background: #faf9ff; border-right: 1px solid #e9e4ff; display: flex; flex-direction: column; overflow: hidden; }
-    .sidebar-header { padding: 20px; border-bottom: 1px solid #e9e4ff; }
-    .sidebar-header h3 { font-size: 1.1rem; color: #1a1a1a; margin-bottom: 12px; }
+    
+    .sidebar-header { 
+      padding: 20px; 
+      border-bottom: 1px solid #e9e4ff;
+      text-align: center;
+    }
+    .sidebar-header h3 { 
+      font-size: 1.1rem; 
+      color: #1a1a1a; 
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    
     .new-message-btn { width: 100%; background: #4b2aad; color: white; border: none; padding: 10px; border-radius: 40px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .new-message-btn:hover { background: #3a1f8a; transform: translateY(-2px); }
+    
     .conversations-list { flex: 1; overflow-y: auto; padding: 10px; }
     .conversation-item { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; cursor: pointer; transition: all 0.2s; margin-bottom: 4px; }
     .conversation-item:hover { background: #f0edff; }
     .conversation-item.active { background: #e9e4ff; border-left: 3px solid #4b2aad; }
+    
     .conversation-avatar-img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: linear-gradient(135deg, #4b2aad, #7c5cbf); }
     .conversation-avatar-placeholder { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #4b2aad, #7c5cbf); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem; flex-shrink: 0; }
+    
     .conversation-info { flex: 1; min-width: 0; }
     .conversation-name { font-weight: 600; color: #1a1a1a; margin-bottom: 4px; display: flex; justify-content: space-between; }
     .conversation-last-msg { font-size: 0.75rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .unread-badge { background: #ff9800; color: white; border-radius: 30px; padding: 2px 8px; font-size: 0.7rem; font-weight: 600; }
+    
+    /* ===== CHAT AREA ===== */
     .chat-area { flex: 1; display: flex; flex-direction: column; background: white; overflow: hidden; }
+    
     .chat-header { padding: 20px; border-bottom: 1px solid #e9e4ff; display: flex; align-items: center; justify-content: space-between; background: white; }
     .chat-header-left { display: flex; align-items: center; gap: 12px; cursor: pointer; }
     .chat-header-left:hover .chat-header-info h4 { color: #4b2aad; text-decoration: underline; }
@@ -46,6 +135,8 @@
     .chat-header-avatar-placeholder { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #4b2aad, #7c5cbf); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
     .chat-header-info h4 { font-size: 1rem; margin-bottom: 4px; }
     .chat-header-info p { font-size: 0.75rem; color: #888; }
+    
+    /* ===== MESSAGES ===== */
     .messages-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; background: #faf9ff; }
     .message { display: flex; max-width: 70%; animation: fadeIn 0.3s ease; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -57,13 +148,23 @@
     .message-time { font-size: 0.65rem; margin-top: 4px; opacity: 0.7; text-align: right; }
     .message.sent .message-time { color: #ddd; }
     .message.received .message-time { color: #999; }
+    
+    /* Message date divider */
+    .message-divider { text-align: center; font-size: 0.7rem; color: #999; padding: 8px 0; margin: 4px 0; }
+    .message-divider span { background: #f0edff; padding: 4px 16px; border-radius: 20px; }
+    
+    /* ===== INPUT AREA ===== */
     .message-input-area { padding: 20px; border-top: 1px solid #e9e4ff; display: flex; gap: 12px; background: white; align-items: flex-end; }
     .message-input-area textarea { flex: 1; padding: 12px 16px; border: 1px solid #e9e4ff; border-radius: 24px; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; resize: vertical; min-height: 48px; max-height: 120px; line-height: 1.4; }
     .message-input-area textarea:focus { border-color: #4b2aad; }
     .send-btn { background: #4b2aad; color: white; border: none; padding: 0 24px; border-radius: 30px; font-weight: 600; cursor: pointer; height: 48px; transition: all 0.3s; }
     .send-btn:hover { background: #3a1f8a; transform: translateY(-2px); }
+    
     .empty-chat { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; color: #aaa; gap: 12px; }
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
+    .empty-chat span { font-size: 3rem; }
+    
+    /* ===== MODAL ===== */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items: center; justify-content: center; z-index: 1000; }
     .modal.active { display: flex; }
     .modal-content { background: white; border-radius: 24px; padding: 28px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
     .modal-content h3 { margin-bottom: 20px; color: #1a1a1a; }
@@ -76,44 +177,66 @@
     .close-modal { margin-top: 20px; width: 100%; padding: 10px; background: #eee; border: none; border-radius: 30px; cursor: pointer; }
     .username-link { color: #4b2aad; text-decoration: none; font-weight: 500; }
     .username-link:hover { text-decoration: underline; }
+
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
-      .messenger-container { flex-direction: column; height: auto; }
-      .conversations-sidebar { width: 100%; max-height: 300px; }
+      body { padding-top: 70px; }
+      .header-bar { padding: 10px 16px; }
+      .logo-text { font-size: 1.2rem; }
+      .nav-logo-img { height: 28px; }
+      .home-btn { font-size: 0.75rem; padding: 6px 14px; }
+      .container { padding: 0 12px; }
+      .messenger-container { flex-direction: column; height: auto; min-height: 80vh; border-radius: 16px; }
+      .conversations-sidebar { width: 100%; max-height: 280px; border-right: none; border-bottom: 1px solid #e9e4ff; }
       .message { max-width: 85%; }
-      .nav-links { display: none; position: absolute; top: 70px; left: 0; right: 0; background: white; flex-direction: column; padding: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-      .nav-links.show { display: flex; }
-      .menu-toggle { display: block; }
+      .chat-area { min-height: 400px; }
     }
-    .nav-logo-img {
-  display: block;
-  height: 32px;
-  width: auto;
-}
+
+    @media (max-width: 480px) {
+      body { padding-top: 60px; padding-bottom: 20px; }
+      .header-bar { padding: 8px 12px; }
+      .logo-text { font-size: 1rem; }
+      .nav-logo-img { height: 22px; }
+      .home-btn { font-size: 0.7rem; padding: 5px 12px; }
+      .container { padding: 0 8px; }
+      .messenger-container { border-radius: 12px; min-height: 90vh; }
+      .conversations-sidebar { max-height: 200px; }
+      .sidebar-header { padding: 14px; }
+      .sidebar-header h3 { font-size: 1rem; }
+      .new-message-btn { font-size: 0.85rem; padding: 8px; }
+      .conversation-item { padding: 10px 12px; }
+      .conversation-avatar-img, .conversation-avatar-placeholder { width: 36px; height: 36px; font-size: 0.9rem; }
+      .chat-header { padding: 14px 16px; }
+      .chat-header-avatar-img, .chat-header-avatar-placeholder { width: 32px; height: 32px; font-size: 0.8rem; }
+      .chat-header-info h4 { font-size: 0.9rem; }
+      .messages-container { padding: 14px; gap: 8px; }
+      .message { max-width: 90%; }
+      .message-bubble { padding: 8px 12px; font-size: 0.9rem; }
+      .message-input-area { padding: 12px; gap: 8px; flex-wrap: wrap; }
+      .message-input-area textarea { min-height: 40px; padding: 10px 14px; font-size: 0.9rem; }
+      .send-btn { height: 40px; padding: 0 16px; font-size: 0.85rem; }
+      .modal-content { padding: 20px; width: 95%; }
+    }
   </style>
 </head>
 <body>
-<header>
-  <nav>
+
+<!-- ===== HEADER ===== -->
+<header class="header-bar">
   <div class="logo">
-      <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img">
-      <span class="logo-text"><span class="logo-highlight">Volant</span> Poetry</span>
-    </div>
-    <div class="nav-links" id="nav-links">
-      <a href="index.html">Home</a>
-      <a href="poems.html">Poems</a>
-      <a href="shared/about.html">About</a>
-      <a href="shared/contact.html">Contact</a>
-      <a href="user-profile.html">My Profile</a>
-      <a href="messenger.html" class="active">💬 Messages</a>
-    </div>
-    <div class="menu-toggle" id="menu-toggle">☰</div>
-  </nav>
+    <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img">
+    <span class="logo-text">
+      <span class="highlight">Volant</span> Poetry
+    </span>
+  </div>
+  <a href="user-profile.html" class="home-btn">Back</a>
 </header>
+
 <div class="container">
   <div class="messenger-container">
     <div class="conversations-sidebar">
       <div class="sidebar-header">
-        <h3>💌 Conversations</h3>
+        <h3>Conversations</h3>
         <button id="newMessageBtn" class="new-message-btn">✏️ New Message</button>
       </div>
       <div id="conversationsList" class="conversations-list">Loading...</div>
@@ -133,6 +256,8 @@
     </div>
   </div>
 </div>
+
+<!-- ===== MODAL ===== -->
 <div id="newConversationModal" class="modal">
   <div class="modal-content">
     <h3>Start a new conversation</h3>
@@ -141,6 +266,7 @@
     <button class="close-modal" id="closeModalBtn">Cancel</button>
   </div>
 </div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { 
@@ -182,7 +308,6 @@
   function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
   function formatTime(date) { const diff = Date.now() - date; if (diff < 60000) return 'Just now'; if (diff < 3600000) return `${Math.floor(diff/60000)}m`; if (diff < 86400000) return `${Math.floor(diff/3600000)}h`; return date.toLocaleDateString(); }
 
-  // Auto-resize textarea
   function autoResizeTextarea(textarea) {
     textarea.style.height = 'auto';
     textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
@@ -334,7 +459,6 @@
         </div>
       </div>
     `;
-    // Add click handler to navigate to user profile
     document.querySelector('.chat-header-left')?.addEventListener('click', () => {
       window.location.href = `user-profile.html?uid=${otherUser.uid}`;
     });
@@ -373,7 +497,6 @@
         return timeA - timeB;
       });
       renderMessages(messages);
-      // Mark as read whenever new messages arrive and conversation is open
       if (currentConversationId === conversationId) {
         markMessagesAsRead(conversationId);
       }
@@ -384,16 +507,40 @@
     const container = document.getElementById('messagesContainer');
     if (!container) return;
     if (messages.length === 0) { container.innerHTML = '<div class="empty-chat"><span>💌</span><p>Send a message to start the conversation!</p></div>'; return; }
-    container.innerHTML = messages.map(msg => { 
+    
+    let lastDate = null;
+    let html = '';
+    
+    messages.forEach(msg => { 
+      const msgDate = msg.timestamp?.toDate ? msg.timestamp.toDate() : new Date(msg.timestamp);
+      const dateStr = msgDate.toLocaleDateString();
+      
+      if (dateStr !== lastDate) {
+        lastDate = dateStr;
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        let displayDate = dateStr;
+        if (dateStr === today.toLocaleDateString()) displayDate = 'Today';
+        else if (dateStr === yesterday.toLocaleDateString()) displayDate = 'Yesterday';
+        html += `<div class="message-divider"><span>${displayDate}</span></div>`;
+      }
+      
       const isSent = msg.senderId === currentUser.uid; 
       const time = msg.timestamp?.toDate ? formatTime(msg.timestamp.toDate()) : formatTime(new Date(msg.timestamp)); 
-      return `<div class="message ${isSent ? 'sent' : 'received'}">
-        <div class="message-bubble">
-          ${escapeHtml(msg.text)}
-          <div class="message-time">${time} ${isSent ? (msg.read ? '✓✓' : '✓') : ''}</div>
+      const status = isSent ? (msg.read ? '✓✓' : '✓') : '';
+      
+      html += `<div class="message ${isSent ? 'sent' : 'received'}">
+        <div class="message-bubble-wrapper">
+          <div class="message-bubble">
+            ${escapeHtml(msg.text)}
+            <div class="message-time">${time} ${status ? `<span class="message-status">${status}</span>` : ''}</div>
+          </div>
         </div>
       </div>`; 
-    }).join('');
+    });
+    
+    container.innerHTML = html;
     container.scrollTop = container.scrollHeight;
   }
 
@@ -469,10 +616,9 @@
         document.getElementById('newConversationModal').classList.remove('active'); 
     });
   });
-  document.getElementById("menu-toggle")?.addEventListener("click", () => document.getElementById("nav-links")?.classList.toggle("show"));
 </script>
+
 <script>
-// Dynamic login/signup link setup for current page redirect
 (function() {
   function setupDynamicAuthLinks() {
     const currentPage = window.location.href;

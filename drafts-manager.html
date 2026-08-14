@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="robots" content="noindex, nofollow">
-<title>Drafts Manager | Volant Poetry</title>
+<title>Drafts Manager</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- Favicons -->
@@ -12,134 +12,388 @@
 <link rel="apple-touch-icon" href="images/volant-favicon.png">
 
 <style>
-:root{
-  --primary:#4b2aad;
-  --muted:#6b6b6b;
+:root {
+  --primary: #4b2aad;
+  --primary-light: #6f4ae4;
+  --muted: #6b6b6b;
   --bg-start: #ff9a9e;
   --bg-mid: #fad0c4;
   --bg-end: #a18cd1;
   --card-bg: rgba(255,255,255,0.92);
-  --radius:12px;
+  --radius: 12px;
 }
 
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
-  min-height:100vh;
-  color:#111;
-  padding:40px 20px;
+  min-height: 100vh;
+  color: #111;
+  padding: 0;
+  padding-top: 80px;
+  padding-bottom: 40px;
 }
 
-/* Header / logo */
-.header {
-  display:flex;
-  align-items:center;
-  gap:16px;
-  margin-bottom:18px;
+/* ===== HEADER ===== */
+.header-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(75, 42, 173, 0.1);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
+
 .logo {
   font-family: 'Playfair Display', serif;
-  color:#fff;
-  font-size:1.6rem;
-  font-weight:700;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #4b2aad;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-/* Container */
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #4b2aad;
+  cursor: default;
+  user-select: none;
+}
+
+.nav-logo-img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  cursor: default;
+}
+
+.logo .highlight {
+  color: #ffffff;
+  text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad;
+}
+
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 30px;
+  background: #f5f0ff;
+  color: #4b2aad;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+.home-btn:hover {
+  background: #4b2aad;
+  color: #ffffff;
+  transform: translateX(-2px);
+  box-shadow: 0 4px 12px rgba(75, 42, 173, 0.3);
+}
+
+/* ===== CONTAINER ===== */
 .container {
-  max-width:900px;
-  margin:0 auto;
+  max-width: 900px;
+  margin: 0 auto;
   background: var(--card-bg);
-  padding:20px;
+  padding: 20px;
   border-radius: var(--radius);
   box-shadow: 0 8px 30px rgba(0,0,0,0.12);
 }
 
 /* Title + actions */
-.top-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:18px;
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
-.top-row h1{
-  font-size:1.2rem;
-  margin:0;
+.top-row h1 {
+  font-size: 1.2rem;
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  color: #4b2aad;
 }
-.top-row .actions { display:flex; gap:10px; align-items:center; }
+.top-row .actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
 
-/* Simple card list */
-.cards { display:flex; flex-direction:column; gap:12px; }
+/* ===== CARDS ===== */
+.cards { display: flex; flex-direction: column; gap: 12px; }
 .card {
   background: #fff;
-  border-radius:10px;
-  padding:12px;
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:12px;
-  border:1px solid rgba(0,0,0,0.04);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
 }
-.card .left { flex:1; }
-.card .title { font-weight:700; margin:0 0 6px 0; font-size:1rem;}
-.card .meta { font-size:0.85rem; color:var(--muted); margin-bottom:8px;}
-.card .excerpt { margin:0; white-space:pre-wrap; color:#222; max-height:70px; overflow:hidden; }
+.card:hover {
+  border-color: #4b2aad;
+  box-shadow: 0 4px 12px rgba(75, 42, 173, 0.08);
+}
+.card .left { flex: 1; }
+.card .title { font-weight: 700; margin: 0 0 6px 0; font-size: 1rem; color: #1a1a1a; }
+.card .meta { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; }
+.card .excerpt { margin: 0; white-space: pre-wrap; color: #222; max-height: 70px; overflow: hidden; }
 
-/* Buttons */
+/* ===== BUTTONS ===== */
 .btn {
-  border:0;
-  background:var(--primary);
-  color:#fff;
-  padding:8px 12px;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:0.9rem;
+  border: 0;
+  background: var(--primary);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
 }
-.btn.secondary { background:#e8e8e8; color:#111; }
-.btn.danger { background:#e34a4a; }
-.btn.ghost { background:transparent; border:1px solid rgba(0,0,0,0.08); color:#111; }
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(75, 42, 173, 0.25);
+}
+.btn.secondary { background: #e8e8e8; color: #111; }
+.btn.secondary:hover { background: #d5d5d5; }
+.btn.danger { background: #e34a4a; }
+.btn.danger:hover { background: #c03939; }
+.btn.ghost { background: transparent; border: 1px solid rgba(0,0,0,0.08); color: #111; }
+.btn.ghost:hover { border-color: #4b2aad; color: #4b2aad; }
 
-.card .controls { display:flex; gap:8px; flex-direction:column; align-items:flex-end; }
+.card .controls { display: flex; gap: 8px; flex-direction: column; align-items: flex-end; }
 
-/* small screens make controls row */
-@media(min-width:480px){ .card .controls { flex-direction:row; align-items:center; } }
+/* ===== BACK BUTTON ===== */
+.back-btn-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 30px;
+  background: #f0ece6;
+  color: #2d2a24;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+  border: 1px solid #e0d8d0;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
 
-/* Empty state */
+.back-btn-form:hover {
+  background: #4b2aad;
+  color: #ffffff;
+  border-color: #4b2aad;
+  transform: translateX(-2px);
+  box-shadow: 0 4px 12px rgba(75, 42, 173, 0.25);
+}
+
+/* ===== SMALL SCREENS ===== */
+@media (min-width: 480px) {
+  .card .controls {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-bar {
+    padding: 10px 16px;
+  }
+  .logo-text {
+    font-size: 1.2rem;
+  }
+  .nav-logo-img {
+    height: 28px;
+  }
+  .home-btn {
+    font-size: 0.75rem;
+    padding: 6px 14px;
+  }
+  .container {
+    padding: 16px;
+    margin: 0 12px;
+  }
+  .top-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .top-row .actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding-top: 70px;
+    padding-bottom: 20px;
+  }
+  .header-bar {
+    padding: 8px 12px;
+  }
+  .logo-text {
+    font-size: 1rem;
+  }
+  .nav-logo-img {
+    height: 22px;
+  }
+  .home-btn {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+  }
+  .container {
+    padding: 14px;
+    margin: 0 8px;
+  }
+  .card {
+    flex-direction: column;
+  }
+  .card .controls {
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .top-row h1 {
+    font-size: 1rem;
+  }
+}
+
+/* ===== EMPTY STATE ===== */
 .empty {
-  text-align:center;
-  padding:28px;
-  color:var(--muted);
+  text-align: center;
+  padding: 28px;
+  color: var(--muted);
 }
 
-/* Edit modal (simple) */
-.modal-backdrop{
-  position:fixed; inset:0; background:rgba(0,0,0,0.45); display:none; align-items:center; justify-content:center; z-index:2000;
+/* ===== EDIT MODAL ===== */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
 }
 .modal {
-  width:92%;
-  max-width:720px;
-  background:#fff;
-  border-radius:12px;
-  padding:16px;
-  box-shadow:0 10px 40px rgba(0,0,0,0.25);
+  width: 92%;
+  max-width: 720px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  max-height: 90vh;
+  overflow-y: auto;
 }
-.modal h2 { margin:0 0 8px 0; font-size:1.05rem }
-.form-row { margin-bottom:10px; }
-.form-row label { display:block; font-weight:600; font-size:0.9rem; margin-bottom:6px; }
-.form-row input, .form-row textarea { width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; font-family:inherit; font-size:0.95rem; }
-.modal .footer { display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
-.small-muted { font-size:0.85rem; color:var(--muted); }
+.modal h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.05rem;
+  font-family: 'Playfair Display', serif;
+  color: #4b2aad;
+}
+.form-row { margin-bottom: 10px; }
+.form-row label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; color: #2d2a24; }
+.form-row input, .form-row textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid #e8e4f0;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+.form-row input:focus, .form-row textarea:focus {
+  outline: none;
+  border-color: #4b2aad;
+  box-shadow: 0 0 0 4px rgba(75, 42, 173, 0.1);
+}
 
-.top-actions-note { font-size:0.9rem; color:var(--muted); }
+/* Required field indicator for publish */
+.form-row .required-publish {
+  color: #e34a4a;
+  margin-left: 4px;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+/* ===== READ-ONLY AUTHOR FIELD ===== */
+.form-row input[readonly] {
+  background: #f5f0ff;
+  color: #4b2aad;
+  font-weight: 600;
+  cursor: default;
+  border-color: #d8d0e8;
+}
+.form-row input[readonly]:focus {
+  box-shadow: none;
+  border-color: #d8d0e8;
+}
+
+/* Validation error styles - only for publish */
+.form-row .field-error-publish {
+  display: none;
+  color: #e34a4a;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+.form-row .field-error-publish.show {
+  display: block;
+}
+.form-row input.error-publish,
+.form-row textarea.error-publish {
+  border-color: #e34a4a;
+  background: #fff5f5;
+}
+
+.modal .footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.small-muted { font-size: 0.85rem; color: var(--muted); }
+.top-actions-note { font-size: 0.9rem; color: var(--muted); }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">Volant Poetry</div>
-  <div class="top-actions-note">Your drafts — edit, publish, or delete</div>
-</div>
+<!-- ===== HEADER ===== -->
+<header class="header-bar">
+  <div class="logo">
+    <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img">
+    <span class="logo-text">
+      <span class="highlight">Volant</span> Poetry
+    </span>
+  </div>
+  <a href="user-profile.html" class="home-btn">Back</a>
+</header>
 
 <div class="container">
   <div class="top-row">
@@ -147,6 +401,7 @@ body{
     <div class="actions">
       <button id="newDraftBtn" class="btn secondary">+ New Draft</button>
       <button id="refreshBtn" class="btn ghost">Refresh</button>
+      <a href="user-profile.html" class="back-btn-form">Back</a>
     </div>
   </div>
 
@@ -154,7 +409,7 @@ body{
 
   <div id="emptyState" class="empty" style="display:none;">
     <p><strong>No drafts yet.</strong></p>
-    <p class="small-muted">Click “New Draft” to create one — or submit a poem from the submission page.</p>
+    <p class="small-muted">Click "New Draft" to create one — or submit a poem from the submission page.</p>
   </div>
 </div>
 
@@ -164,28 +419,31 @@ body{
     <h2 id="modalTitle">Edit Draft</h2>
 
     <div class="form-row">
-      <label for="editTitle">Title</label>
-      <input id="editTitle" type="text" />
+      <label for="editTitle">Title <span class="required-publish">*Required for publishing</span></label>
+      <input id="editTitle" type="text" placeholder="Enter poem title" />
+      <div class="field-error-publish" id="titleErrorPublish">Title is required to publish</div>
     </div>
 
     <div class="form-row">
-      <label for="editContent">Content</label>
-      <textarea id="editContent" rows="8"></textarea>
+      <label for="editContent">Content <span class="required-publish">*Required for publishing</span></label>
+      <textarea id="editContent" rows="8" placeholder="Write your poem..."></textarea>
+      <div class="field-error-publish" id="contentErrorPublish">Content is required to publish</div>
     </div>
 
     <div class="form-row">
-      <label for="editCategories">Categories (comma-separated)</label>
-      <input id="editCategories" type="text" />
+      <label for="editCategories">Categories (comma-separated) <span class="required-publish">*Required for publishing</span></label>
+      <input id="editCategories" type="text" placeholder="Love, Life, Nature..." />
+      <div class="field-error-publish" id="categoriesErrorPublish">At least one category is required to publish</div>
     </div>
 
     <div class="form-row">
       <label for="editAuthor">Author</label>
-      <input id="editAuthor" type="text" />
+      <input id="editAuthor" type="text" readonly />
     </div>
 
     <div class="footer">
       <button id="closeModalBtn" class="btn secondary">Cancel</button>
-      <button id="saveDraftBtn" class="btn">Save</button>
+      <button id="saveDraftBtn" class="btn">Save Draft</button>
     </div>
   </div>
 </div>
@@ -236,47 +494,153 @@ const editAuthor = document.getElementById('editAuthor');
 const closeModalBtn = document.getElementById('closeModalBtn');
 const saveDraftBtn = document.getElementById('saveDraftBtn');
 
+// Error elements for publish validation
+const titleErrorPublish = document.getElementById('titleErrorPublish');
+const contentErrorPublish = document.getElementById('contentErrorPublish');
+const categoriesErrorPublish = document.getElementById('categoriesErrorPublish');
+
 let currentUser = null;
+let currentUsername = "Anonymous";
 let unsubscribe = null;
 let editingDraftId = null;
 
-function formatTimestamp(ts){
-  if(!ts) return '—';
+/* ===== FETCH USERNAME FROM FIRESTORE ===== */
+async function fetchUsername(userId) {
+  try {
+    const userDoc = await getDoc(doc(db, "users", userId));
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      return data.username || data.displayName || data.authorName || "Anonymous";
+    }
+    return "Anonymous";
+  } catch (err) {
+    console.error("Error fetching username:", err);
+    return "Anonymous";
+  }
+}
+
+/* ===== VALIDATE FOR PUBLISH (NOT FOR SAVE) ===== */
+function validateForPublish() {
+  let isValid = true;
+  
+  const title = editTitle.value.trim();
+  if (!title) {
+    editTitle.classList.add('error-publish');
+    titleErrorPublish.classList.add('show');
+    isValid = false;
+  } else {
+    editTitle.classList.remove('error-publish');
+    titleErrorPublish.classList.remove('show');
+  }
+  
+  const content = editContent.value.trim();
+  if (!content) {
+    editContent.classList.add('error-publish');
+    contentErrorPublish.classList.add('show');
+    isValid = false;
+  } else {
+    editContent.classList.remove('error-publish');
+    contentErrorPublish.classList.remove('show');
+  }
+  
+  const categories = editCategories.value.trim();
+  if (!categories) {
+    editCategories.classList.add('error-publish');
+    categoriesErrorPublish.classList.add('show');
+    isValid = false;
+  } else {
+    editCategories.classList.remove('error-publish');
+    categoriesErrorPublish.classList.remove('show');
+  }
+  
+  return isValid;
+}
+
+function clearPublishErrors() {
+  editTitle.classList.remove('error-publish');
+  editContent.classList.remove('error-publish');
+  editCategories.classList.remove('error-publish');
+  titleErrorPublish.classList.remove('show');
+  contentErrorPublish.classList.remove('show');
+  categoriesErrorPublish.classList.remove('show');
+}
+
+/* ===== INPUT EVENT LISTENERS - Clear publish errors on input ===== */
+editTitle.addEventListener('input', () => {
+  if (editTitle.value.trim()) {
+    editTitle.classList.remove('error-publish');
+    titleErrorPublish.classList.remove('show');
+  }
+});
+
+editContent.addEventListener('input', () => {
+  if (editContent.value.trim()) {
+    editContent.classList.remove('error-publish');
+    contentErrorPublish.classList.remove('show');
+  }
+});
+
+editCategories.addEventListener('input', () => {
+  if (editCategories.value.trim()) {
+    editCategories.classList.remove('error-publish');
+    categoriesErrorPublish.classList.remove('show');
+  }
+});
+
+function formatTimestamp(ts) {
+  if (!ts) return '—';
   try {
     const d = ts.toDate ? ts.toDate() : new Date(ts);
     return d.toLocaleString();
-  } catch(e){
+  } catch (e) {
     return '—';
   }
 }
 
-function openModal(draft){
+/* ===== OPEN/CLOSE MODAL ===== */
+function openModal(draft) {
   editingDraftId = draft.id;
   editTitle.value = draft.title || '';
   editContent.value = draft.content || '';
   editCategories.value = (Array.isArray(draft.categories) ? draft.categories.join(', ') : draft.categories || '');
-  editAuthor.value = draft.author || '';
+  
+  if (currentUsername && currentUsername !== "Anonymous") {
+    editAuthor.value = currentUsername;
+  } else if (draft.author) {
+    editAuthor.value = draft.author;
+  } else {
+    editAuthor.value = "Anonymous";
+  }
+  
+  clearPublishErrors();
   modalBackdrop.style.display = 'flex';
   editTitle.focus();
 }
 
-function closeModal(){
+function closeModal() {
   editingDraftId = null;
+  clearPublishErrors();
   modalBackdrop.style.display = 'none';
 }
 
-onAuthStateChanged(auth, user => {
-  if(!user){
+/* ===== AUTH STATE ===== */
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
     alert('Please log in to manage drafts.');
     window.location.href = `universal-login.html?platform=poetry&redirect=${encodeURIComponent(window.location.href)}`;
     return;
   }
+  
   currentUser = user;
+  currentUsername = await fetchUsername(user.uid);
+  console.log('✅ Username loaded from Firestore:', currentUsername);
+  
   startListeningToDrafts();
 });
 
-function startListeningToDrafts(){
-  if(unsubscribe) unsubscribe();
+/* ===== LISTEN TO DRAFTS ===== */
+function startListeningToDrafts() {
+  if (unsubscribe) unsubscribe();
 
   const draftsRef = collection(db, 'draftPoems');
   const q = query(draftsRef, where('authorId', '==', currentUser.uid));
@@ -288,19 +652,18 @@ function startListeningToDrafts(){
   });
 }
 
-function renderDrafts(drafts){
+/* ===== RENDER DRAFTS ===== */
+function renderDrafts(drafts) {
   draftsList.innerHTML = '';
-
-  // 🔥 UPDATE COUNTER
   document.getElementById("draftCount").textContent = drafts.length;
 
-  if(!drafts.length){
+  if (!drafts.length) {
     emptyState.style.display = 'block';
     return;
   }
   emptyState.style.display = 'none';
 
-  drafts.sort((a,b) => {
+  drafts.sort((a, b) => {
     const ta = a.timestamp?.toDate?.().getTime?.() || 0;
     const tb = b.timestamp?.toDate?.().getTime?.() || 0;
     return tb - ta;
@@ -325,7 +688,7 @@ function renderDrafts(drafts){
     const excerpt = document.createElement('p');
     excerpt.className = 'excerpt';
     const txt = d.content || '';
-    excerpt.textContent = txt.length > 300 ? txt.slice(0,300) + '…' : txt;
+    excerpt.textContent = txt.length > 300 ? txt.slice(0, 300) + '…' : txt;
 
     left.appendChild(titleEl);
     left.appendChild(meta);
@@ -359,66 +722,102 @@ function renderDrafts(drafts){
   });
 }
 
+/* ===== NEW DRAFT ===== */
 newDraftBtn.onclick = async () => {
-  if(!currentUser) return alert('Not authenticated.');
-  try{
+  if (!currentUser) return alert('Not authenticated.');
+  try {
+    const freshUsername = await fetchUsername(currentUser.uid);
+    currentUsername = freshUsername;
+    
     const ref = await addDoc(collection(db, 'draftPoems'), {
-      title: 'Untitled',
+      title: '',
       content: '',
       categories: [],
-      author: currentUser.displayName || currentUser.email.split('@')[0],
+      author: currentUsername,
       authorId: currentUser.uid,
       timestamp: serverTimestamp(),
-      submittedBy: currentUser.displayName || currentUser.email.split('@')[0],
+      submittedBy: currentUsername,
       status: 'draft'
     });
 
     const snap = await getDoc(doc(db, 'draftPoems', ref.id));
     openModal({ id: ref.id, ...snap.data() });
 
-  }catch(err){
+  } catch (err) {
     alert('Error creating draft: ' + err.message);
   }
 };
 
+/* ===== REFRESH ===== */
 refreshBtn.onclick = () => {
-  if(unsubscribe){
+  if (unsubscribe) {
     unsubscribe();
     startListeningToDrafts();
   }
 };
 
+/* ===== SAVE DRAFT - NO VALIDATION REQUIRED ===== */
 saveDraftBtn.onclick = async () => {
-  if(!editingDraftId) return;
+  if (!editingDraftId) return;
+  
+  // Clear any publish errors when saving
+  clearPublishErrors();
+  
+  const freshUsername = await fetchUsername(currentUser.uid);
+  currentUsername = freshUsername;
+  
   const updated = {
     title: editTitle.value.trim() || 'Untitled',
-    content: editContent.value,
+    content: editContent.value || '',
     categories: (editCategories.value || '').split(',').map(x => x.trim()).filter(Boolean),
-    author: editAuthor.value.trim() || currentUser.displayName || currentUser.email.split('@')[0],
+    author: currentUsername,
     timestamp: serverTimestamp()
   };
 
-  try{
+  try {
     await updateDoc(doc(db, 'draftPoems', editingDraftId), updated);
     closeModal();
 
-  }catch(err){
+  } catch (err) {
     alert('Error saving draft: ' + err.message);
   }
 };
 
-async function deleteDraft(d){
-  if(!confirm('Delete this draft permanently?')) return;
-  try{
-    await deleteDoc(doc(db, 'draftPoems', d.id));
-  }catch(err){
-    alert('Error deleting draft: ' + err.message);
+/* ===== PUBLISH DRAFT - VALIDATION REQUIRED ===== */
+async function publishDraft(d) {
+  // Check if draft has required fields for publishing
+  if (!d.title || !d.title.trim()) {
+    // If the draft is missing fields, open the modal with errors
+    openModal(d);
+    // Highlight the missing fields
+    if (!d.title || !d.title.trim()) {
+      editTitle.classList.add('error-publish');
+      titleErrorPublish.classList.add('show');
+      editTitle.focus();
+    }
+    return;
   }
-}
-
-async function publishDraft(d){
-  if(!confirm('Publish this draft?')) return;
-  try{
+  if (!d.content || !d.content.trim()) {
+    openModal(d);
+    editContent.classList.add('error-publish');
+    contentErrorPublish.classList.add('show');
+    if (!editTitle.classList.contains('error-publish')) {
+      editContent.focus();
+    }
+    return;
+  }
+  if (!d.categories || (Array.isArray(d.categories) && d.categories.length === 0) || !d.categories.toString().trim()) {
+    openModal(d);
+    editCategories.classList.add('error-publish');
+    categoriesErrorPublish.classList.add('show');
+    if (!editTitle.classList.contains('error-publish') && !editContent.classList.contains('error-publish')) {
+      editCategories.focus();
+    }
+    return;
+  }
+  
+  if (!confirm('Publish this draft?')) return;
+  try {
     await addDoc(collection(db, 'recentPoems'), {
       title: d.title,
       content: d.content,
@@ -434,21 +833,31 @@ async function publishDraft(d){
     });
 
     await deleteDoc(doc(db, 'draftPoems', d.id));
-    alert('Draft published!');
+    alert('✅ Draft published successfully!');
 
-  }catch(err){
+  } catch (err) {
     alert('Error publishing draft: ' + err.message);
+  }
+}
+
+/* ===== DELETE DRAFT ===== */
+async function deleteDraft(d) {
+  if (!confirm('Delete this draft permanently?')) return;
+  try {
+    await deleteDoc(doc(db, 'draftPoems', d.id));
+  } catch (err) {
+    alert('Error deleting draft: ' + err.message);
   }
 }
 
 closeModalBtn.onclick = closeModal;
 
 modalBackdrop.onclick = e => {
-  if(e.target === modalBackdrop) closeModal();
+  if (e.target === modalBackdrop) closeModal();
 };
 
 document.onkeydown = e => {
-  if(e.key === 'Escape' && modalBackdrop.style.display === 'flex') closeModal();
+  if (e.key === 'Escape' && modalBackdrop.style.display === 'flex') closeModal();
 };
 </script>
 

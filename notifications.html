@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Notifications | Volant Poetry</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<!-- Favicons -->
-<link rel="icon" type="image/png" href="images/volant-favicon.png">
-<link rel="apple-touch-icon" href="images/volant-favicon.png">
- <style>
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="images/volant-favicon.png">
+  <link rel="apple-touch-icon" href="images/volant-favicon.png">
+  
+  <style>
     * {
       margin: 0;
       padding: 0;
@@ -19,73 +21,92 @@
       font-family: 'Inter', sans-serif;
       background: linear-gradient(135deg, #f6f5fc 0%, #f0eef9 100%);
       min-height: 100vh;
+      padding: 0;
+      padding-top: 80px;
+      padding-bottom: 40px;
     }
 
-    header {
-      background: white;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      position: sticky;
+    /* ===== HEADER ===== */
+    .header-bar {
+      position: fixed;
       top: 0;
-      z-index: 100;
-    }
-
-    nav {
+      left: 0;
+      right: 0;
+      z-index: 2000;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 5%;
-      max-width: 1400px;
-      margin: 0 auto;
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(75, 42, 173, 0.1);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     }
 
     .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #4b2aad;
+      text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 10px;
-    }
-
-    .nav-logo-img {
-      height: 40px;
-      width: auto;
-      display: block;
+      gap: 4px;
     }
 
     .logo-text {
-      font-size: 1.3rem;
-      font-weight: 600;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
       color: #4b2aad;
+      cursor: default;
+      user-select: none;
     }
 
-    .nav-links {
-      display: flex;
-      gap: 2rem;
+    .nav-logo-img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      cursor: default;
+    }
+
+    .logo .highlight {
+      color: #ffffff;
+      text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad;
+    }
+
+    .home-btn {
+      display: inline-flex;
       align-items: center;
-    }
-
-    .nav-links a {
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      background: #f5f0ff;
+      color: #4b2aad;
       text-decoration: none;
-      color: #4a5568;
-      font-weight: 500;
-      transition: color 0.3s;
-    }
-
-    .nav-links a:hover {
-      color: #4b2aad;
-    }
-
-    .menu-toggle {
-      display: none;
-      font-size: 1.8rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.25s ease;
+      border: none;
       cursor: pointer;
-      color: #4b2aad;
+      font-family: 'Inter', sans-serif;
     }
 
+    .home-btn:hover {
+      background: #4b2aad;
+      color: #ffffff;
+      transform: translateX(-2px);
+      box-shadow: 0 4px 12px rgba(75, 42, 173, 0.3);
+    }
+
+    /* ===== CONTAINER ===== */
     .container {
       max-width: 900px;
-      margin: 40px auto;
+      margin: 0 auto;
       padding: 0 20px;
     }
 
+    /* ===== NOTIFICATIONS HEADER ===== */
     .notifications-header {
       display: flex;
       justify-content: space-between;
@@ -95,10 +116,11 @@
       gap: 15px;
     }
 
-    h1 {
+    .notifications-header h1 {
       font-family: 'Playfair Display', serif;
       font-size: 2rem;
-      color: #1a1a1a;
+      color: #4b2aad;
+      margin: 0;
     }
 
     .mark-read-btn {
@@ -111,6 +133,7 @@
       font-size: 14px;
       font-weight: 500;
       transition: all 0.3s;
+      font-family: 'Inter', sans-serif;
     }
 
     .mark-read-btn:hover {
@@ -118,6 +141,7 @@
       transform: translateY(-2px);
     }
 
+    /* ===== TABS ===== */
     .tabs-wrapper {
       overflow-x: auto;
       overflow-y: hidden;
@@ -126,6 +150,18 @@
       scrollbar-width: thin;
       margin-bottom: 25px;
       padding-bottom: 8px;
+    }
+
+    .tabs-wrapper::-webkit-scrollbar {
+      height: 4px;
+    }
+    .tabs-wrapper::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    .tabs-wrapper::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 10px;
     }
 
     .tabs {
@@ -150,6 +186,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      font-family: 'Inter', sans-serif;
     }
 
     .tab-btn.active {
@@ -162,27 +199,21 @@
       color: #4b2aad;
     }
 
-    .tabs-wrapper::-webkit-scrollbar {
-      height: 4px;
+    .tab-content {
+      display: none;
     }
 
-    .tabs-wrapper::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 10px;
+    .tab-content.active {
+      display: block;
     }
 
-    .tabs-wrapper::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 10px;
-    }
-
+    /* ===== NOTIFICATION LIST ===== */
     .notification-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
-    /* NOTIFICATION CARD - clickable area for marking as read, but not for navigation */
     .notification-item {
       background: white;
       border-radius: 12px;
@@ -224,7 +255,7 @@
 
     .notification-content {
       flex: 1;
-      pointer-events: none; /* Let parent handle clicks, but clickable spans will re-enable */
+      pointer-events: none;
     }
 
     .notification-message {
@@ -235,14 +266,13 @@
       word-break: break-word;
     }
 
-    /* Clickable spans inside message: poem title and username */
     .clickable-link {
       cursor: pointer;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.2s;
       display: inline-block;
-      pointer-events: auto; /* Re-enable clicks on these elements */
+      pointer-events: auto;
       position: relative;
       z-index: 2;
     }
@@ -251,7 +281,6 @@
       text-decoration: underline;
     }
 
-    /* Author/username specific style - color #B8860B (goldenrod) */
     .clickable-user {
       cursor: pointer;
       font-weight: 600;
@@ -267,7 +296,6 @@
       color: #9a6e0a;
     }
 
-    /* Poem title link style */
     .poem-title-link {
       font-weight: 700;
       color: #4b2aad;
@@ -290,6 +318,19 @@
       pointer-events: none;
     }
 
+    .collab-badge {
+      display: inline-block;
+      background: #e9e4ff;
+      color: #4b2aad;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 8px;
+      pointer-events: none;
+    }
+
+    /* ===== EMPTY STATE ===== */
     .empty-state {
       text-align: center;
       padding: 60px 20px;
@@ -311,131 +352,232 @@
       color: #999;
     }
 
-    .tab-content {
-      display: none;
-    }
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      body {
+        padding-top: 70px;
+      }
 
-    .tab-content.active {
-      display: block;
-    }
+      .header-bar {
+        padding: 10px 16px;
+      }
 
-    .collab-badge {
-      display: inline-block;
-      background: #e9e4ff;
-      color: #4b2aad;
-      border-radius: 20px;
-      padding: 2px 10px;
-      font-size: 11px;
-      font-weight: 600;
-      margin-left: 8px;
-      pointer-events: none;
-    }
+      .logo-text {
+        font-size: 1.2rem;
+      }
 
-    @media (max-width: 650px) {
+      .nav-logo-img {
+        height: 28px;
+      }
+
+      .home-btn {
+        font-size: 0.75rem;
+        padding: 6px 14px;
+      }
+
       .container {
         padding: 0 15px;
       }
-      
+
+      .notifications-header h1 {
+        font-size: 1.5rem;
+      }
+
       .notification-item {
         padding: 12px 15px;
       }
-      
+
       .notification-icon {
         font-size: 24px;
         min-width: 40px;
       }
-      
-      h1 {
-        font-size: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding-top: 60px;
+        padding-bottom: 20px;
       }
-      
-      .nav-links {
-        display: none;
-        position: absolute;
-        top: 70px;
-        left: 0;
-        right: 0;
-        background: white;
+
+      .header-bar {
+        padding: 8px 12px;
+      }
+
+      .logo-text {
+        font-size: 1rem;
+      }
+
+      .nav-logo-img {
+        height: 22px;
+      }
+
+      .home-btn {
+        font-size: 0.7rem;
+        padding: 5px 12px;
+      }
+
+      .container {
+        padding: 0 12px;
+      }
+
+      .notifications-header {
         flex-direction: column;
-        padding: 1rem;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        z-index: 99;
+        align-items: flex-start;
       }
-      
-      .nav-links.show {
-        display: flex;
+
+      .notifications-header h1 {
+        font-size: 1.3rem;
       }
-      
-      .menu-toggle {
-        display: block;
+
+      .mark-read-btn {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        font-size: 13px;
+      }
+
+      .tab-btn {
+        font-size: 12px;
+        padding: 8px 14px;
+      }
+
+      .notification-item {
+        padding: 10px 12px;
+        gap: 10px;
+      }
+
+      .notification-icon {
+        font-size: 20px;
+        min-width: 32px;
+      }
+
+      .notification-message {
+        font-size: 14px;
+      }
+
+      .empty-state {
+        padding: 40px 16px;
+      }
+
+      .empty-state-icon {
+        font-size: 48px;
       }
     }
-    /* ========== VOLANT POETRY LOGO ========== */
 
-.logo {
-  display: flex;
-  align-items: center;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #4b2aad;
-  text-decoration: none;
-  gap: 0.6rem;
-  cursor: default;
+    /* ===== NOTIFICATIONS HEADER - FORCED ===== */
+.notifications-header {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-bottom: 30px !important;
+  flex-wrap: wrap !important;
+  gap: 15px !important;
 }
 
-.logo-highlight {
-  color: #fff;
-  text-shadow: 
-    0 0 2px #4b2aad,
-    0 0 4px #4b2aad,
-    0 0 6px #4b2aad;
+.notifications-header h1 {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 2rem !important;
+  color: #4b2aad !important;
+  margin: 0 !important;
+  text-align: center !important;
 }
 
-.nav-logo-img {
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
-  object-fit: contain;
-}
-
-/* Mobile adjustment */
+/* ===== RESPONSIVE - FORCED ===== */
 @media (max-width: 768px) {
-  .logo {
-    font-size: 1.4rem;
-  }
-  
-  .nav-logo-img {
-    display: inline-block;
+  .notifications-header h1 {
+    font-size: 1.5rem !important;
   }
 }
 
 @media (max-width: 480px) {
-  .logo {
-    font-size: 1.2rem;
+  .notifications-header {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+  
+  .notifications-header h1 {
+    font-size: 1.3rem !important;
+  }
+  
+  .mark-read-btn {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 10px !important;
+    font-size: 13px !important;
+  }
+}
+
+/* ===== NOTIFICATIONS HEADER - FORCED ===== */
+.notifications-header {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  margin-bottom: 30px !important;
+  gap: 15px !important;
+}
+
+.notifications-header h1 {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 2rem !important;
+  color: #4b2aad !important;
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+.mark-read-btn {
+  background: #4b2aad !important;
+  color: white !important;
+  border: none !important;
+  padding: 10px 20px !important;
+  border-radius: 25px !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.mark-read-btn:hover {
+  background: #3a1f8a !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ===== RESPONSIVE - FORCED ===== */
+@media (max-width: 768px) {
+  .notifications-header h1 {
+    font-size: 1.5rem !important;
+  }
+  
+  .mark-read-btn {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 10px !important;
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .notifications-header h1 {
+    font-size: 1.3rem !important;
   }
 }
   </style>
 </head>
 <body>
 
-<header>
-  <nav>
-    <div class="logo">
-      <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img" onerror="this.style.display='none'">
-      <span class="logo-text"><span class="logo-highlight">Volant</span> Poetry</span>
-    </div>
-    <div class="nav-links" id="nav-links">
-      <a href="index.html">Home</a>
-      <a href="poems.html">Poems</a>
-      <a href="shared/about.html">About</a>
-      <a href="shared/contact.html">Contact</a>
-      <a href="user-profile.html">My Profile</a>
-    </div>
-    <div class="menu-toggle" id="menu-toggle">☰</div>
-  </nav>
+<!-- ===== HEADER ===== -->
+<header class="header-bar">
+  <div class="logo">
+    <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img">
+    <span class="logo-text">
+      <span class="highlight">Volant</span> Poetry
+    </span>
+  </div>
+  <a href="user-profile.html" class="home-btn">Back</a>
 </header>
 
+<!-- ===== MAIN CONTENT ===== -->
 <div class="container">
   <div class="notifications-header">
     <h1> Notifications</h1>
@@ -444,7 +586,7 @@
 
   <div class="tabs-wrapper">
     <div class="tabs" id="tabsContainer">
-      <button class="tab-btn active" data-tab="all"> All</button>
+      <button class="tab-btn active" data-tab="all">📬 All</button>
       <button class="tab-btn" data-tab="likes">❤️ Likes</button>
       <button class="tab-btn" data-tab="comments">💬 Comments</button>
       <button class="tab-btn" data-tab="replies">↩️ Replies</button>
@@ -453,6 +595,7 @@
     </div>
   </div>
 
+  <!-- Tab Contents -->
   <div id="allTab" class="tab-content active">
     <div id="allNotifications" class="notification-list"></div>
   </div>
@@ -506,6 +649,7 @@ const auth = getAuth(app);
 
 let currentUser = null;
 let existingCollaborationsLoaded = false;
+let userCache = {};
 
 function formatTime(timestamp) {
   if (!timestamp) return "Just now";
@@ -519,9 +663,9 @@ function formatTime(timestamp) {
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
   if (minutes < 1) return "Just now";
-  if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-  if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-  if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+  if (minutes < 60) return `${minutes}m`;
+  if (hours < 24) return `${hours}h`;
+  if (days < 7) return `${days}d`;
   return date.toLocaleDateString();
 }
 
@@ -563,21 +707,32 @@ async function getPoemSlugAndTitle(poemId) {
       }
       return { slug, title };
     }
-  } catch (err) { console.warn(err); }
+  } catch (err) { /* silent fail */ }
   return { slug: null, title: null };
 }
 
-// Build notification HTML - ONLY username and poem title are clickable links
-// Username gets color #B8860B
+async function getUsername(uid) {
+  if (!uid) return 'Someone';
+  if (userCache[uid]) return userCache[uid];
+  try {
+    const userDoc = await getDoc(doc(db, "users", uid));
+    if (userDoc.exists()) {
+      const name = userDoc.data().username || 'Someone';
+      userCache[uid] = name;
+      return name;
+    }
+  } catch (err) { /* silent fail */ }
+  return 'Someone';
+}
+
 function buildNotificationHTML(notification, poemSlug, poemTitle) {
   const usernameRaw = notification.fromUserName || 'Someone';
   const safeUsername = escapeHtml(usernameRaw);
   let messageHtml = '';
   const type = notification.type;
-  const commentExcerpt = notification.commentText ? escapeHtml(notification.commentText.substring(0, 100)) : '';
-  const replyExcerpt = notification.replyText ? escapeHtml(notification.replyText.substring(0, 100)) : '';
+  const commentExcerpt = notification.commentText ? escapeHtml(notification.commentText.substring(0, 80)) : '';
+  const replyExcerpt = notification.replyText ? escapeHtml(notification.replyText.substring(0, 80)) : '';
   
-  // Username link - color #B8860B (goldenrod)
   const userProfileUrl = `user-profile.html?uid=${notification.fromUser || ''}`;
   const usernameLink = `<span class="clickable-user" data-href="${userProfileUrl}" data-id="${notification.id}" data-read="${notification.read}">${safeUsername}</span>`;
   
@@ -585,40 +740,40 @@ function buildNotificationHTML(notification, poemSlug, poemTitle) {
     const poemDisplay = poemTitle ? 
       `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(poemSlug || '')}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(poemTitle)}”</span>` : 
       'a poem';
-    messageHtml = `${usernameLink} liked your poem ${poemDisplay}`;
+    messageHtml = `${usernameLink} liked ${poemDisplay}`;
   } 
   else if (type === 'comment') {
     const poemDisplay = poemTitle ? 
       `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(poemSlug || '')}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(poemTitle)}”</span>` : 
       'a poem';
-    const snippet = commentExcerpt ? `<br><em>"${commentExcerpt}${notification.commentText?.length > 100 ? '...' : ''}"</em>` : '';
-    messageHtml = `${usernameLink} commented on ${poemDisplay}:${snippet}`;
+    const snippet = commentExcerpt ? `: <em>"${commentExcerpt}${notification.commentText?.length > 80 ? '...' : ''}"</em>` : '';
+    messageHtml = `${usernameLink} commented on ${poemDisplay}${snippet}`;
   }
   else if (type === 'reply') {
-    const snippet = replyExcerpt ? `<br><em>"${replyExcerpt}${notification.replyText?.length > 100 ? '...' : ''}"</em>` : '';
-    messageHtml = `${usernameLink} replied to your comment: ${snippet}`;
+    const snippet = replyExcerpt ? `: <em>"${replyExcerpt}${notification.replyText?.length > 80 ? '...' : ''}"</em>` : '';
+    messageHtml = `${usernameLink} replied to your comment${snippet}`;
   }
   else if (type === 'follow') {
-    messageHtml = `${usernameLink} started following you`;
+    messageHtml = `${usernameLink} followed you`;
   }
   else if (type === 'collaboration') {
     if (notification.isExistingCollaborator && notification.workTitle) {
       const workDisplay = notification.poemSlug ? 
         `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(notification.poemSlug)}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(notification.workTitle)}”</span>` :
         `<strong>“${escapeHtml(notification.workTitle)}”</strong>`;
-      messageHtml = `${usernameLink} added you as a collaborator on ${workDisplay} ✨ You are now part of this creative team!`;
+      messageHtml = `${usernameLink} added you as a collaborator on ${workDisplay}`;
     } 
     else if (notification.collaborationTitle) {
       const collabUrl = `collaboration.html?id=${encodeURIComponent(notification.collaborationId || '')}`;
       const collabDisplay = `<span class="clickable-link poem-title-link" data-href="${collabUrl}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(notification.collaborationTitle)}”</span>`;
-      messageHtml = `${usernameLink} invited you to collaborate on ${collabDisplay} 🤝`;
+      messageHtml = `${usernameLink} invited you to collaborate on ${collabDisplay}`;
     }
     else if (poemTitle) {
       const poemDisplay = `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(poemSlug || '')}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(poemTitle)}”</span>`;
-      messageHtml = `${usernameLink} requested a collaboration on your poem ${poemDisplay}`;
+      messageHtml = `${usernameLink} wants to collaborate on ${poemDisplay}`;
     }
     else {
-      messageHtml = `${usernameLink} wants to collaborate with you on a poetic project`;
+      messageHtml = `${usernameLink} wants to collaborate with you`;
     }
   }
   else {
@@ -637,13 +792,8 @@ async function fetchExistingCollaborationsAsNotifications() {
     for (const collabDoc of collabSnapshot.docs) {
       const collabData = collabDoc.data();
       const addedBy = collabData.ownerId || collabData.createdBy || collabData.addedBy;
-      let addedByName = "A poet";
-      if (addedBy && addedBy !== currentUser.uid) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", addedBy));
-          if (userDoc.exists()) addedByName = userDoc.data().username || "A poet";
-        } catch(e) {}
-      } else if (addedBy === currentUser.uid) continue;
+      if (!addedBy || addedBy === currentUser.uid) continue;
+      const addedByName = await getUsername(addedBy);
       const workTitle = collabData.title || collabData.workTitle || "a poetry work";
       const poemId = collabData.poemId || collabData.workId;
       let poemSlug = null;
@@ -671,13 +821,8 @@ async function fetchExistingCollaborationsAsNotifications() {
     for (const poemDoc of poemsSnapshot.docs) {
       const poemData = poemDoc.data();
       const addedBy = poemData.ownerId || poemData.authorId || poemData.createdBy;
-      let addedByName = "The author";
-      if (addedBy && addedBy !== currentUser.uid) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", addedBy));
-          if (userDoc.exists()) addedByName = userDoc.data().username || "The author";
-        } catch(e) {}
-      } else continue;
+      if (!addedBy || addedBy === currentUser.uid) continue;
+      const addedByName = await getUsername(addedBy);
       const poemSlugObj = await getPoemSlugAndTitle(poemDoc.id);
       const alreadyExists = collaborationNotifs.some(n => n.poemId === poemDoc.id);
       if (!alreadyExists) {
@@ -695,28 +840,41 @@ async function fetchExistingCollaborationsAsNotifications() {
         });
       }
     }
-  } catch (err) { console.warn(err); }
+  } catch (err) { /* silent fail */ }
   existingCollaborationsLoaded = true;
   return collaborationNotifs;
 }
 
 async function loadNotifications() {
-  if (!currentUser) return [];
+  if (!currentUser) {
+    const container = document.getElementById("allNotifications");
+    if(container) container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔔</div><h3>Sign in to see notifications</h3></div>';
+    return [];
+  }
+  
   try {
+    // Show loading state immediately
+    const container = document.getElementById("allNotifications");
+    if(container) container.innerHTML = '<div style="text-align:center; padding:40px; color:#999;">Loading notifications...</div>';
+    
     const notificationsRef = collection(db, "notifications");
-    const q = query(notificationsRef, where("forUser", "==", currentUser.uid), orderBy("timestamp", "desc"), limit(150));
+    const q = query(notificationsRef, where("forUser", "==", currentUser.uid), orderBy("timestamp", "desc"), limit(100));
     const snapshot = await getDocs(q);
     let notifications = [];
+    
+    // Process notifications in parallel for speed
+    const processedNotifications = [];
     for (const docSnap of snapshot.docs) {
       const notification = { id: docSnap.id, ...docSnap.data() };
       notification.timestamp = notification.timestamp || notification.createdAt || null;
       notification.fromUser = notification.fromUser || notification.userId || null;
+      
+      // Get username from cache or fetch
       if (notification.fromUser && !notification.fromUserName) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", notification.fromUser));
-          notification.fromUserName = userDoc.exists() ? userDoc.data().username : "Someone";
-        } catch (err) { notification.fromUserName = "Someone"; }
+        notification.fromUserName = await getUsername(notification.fromUser);
       }
+      
+      // Get poem details if needed
       if ((notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply' || notification.type === 'collaboration') && notification.poemId) {
         const { slug, title } = await getPoemSlugAndTitle(notification.poemId);
         notification.poemTitle = title || notification.poemTitle;
@@ -726,24 +884,28 @@ async function loadNotifications() {
         try {
           const collabDoc = await getDoc(doc(db, "collaborations", notification.collaborationId));
           if (collabDoc.exists()) notification.collaborationTitle = collabDoc.data().title || "poetry collaboration";
-        } catch (e) {}
+        } catch (e) { /* silent fail */ }
       }
-      notifications.push(notification);
+      processedNotifications.push(notification);
     }
+    notifications = processedNotifications;
+    
+    // Load collaborations in background
     const existingCollabNotifs = await fetchExistingCollaborationsAsNotifications();
     const existingIds = new Set();
     notifications.forEach(n => { if (n.collaborationId) existingIds.add(n.collaborationId); if (n.poemId) existingIds.add(n.poemId); });
     const newCollabNotifs = existingCollabNotifs.filter(c => !existingIds.has(c.collaborationId || c.poemId));
     notifications = [...notifications, ...newCollabNotifs];
     notifications.sort((a,b) => (b.timestamp?.toDate?.() || new Date(b.timestamp)) - (a.timestamp?.toDate?.() || new Date(a.timestamp)));
+    
     renderNotifications(notifications);
     const unreadCount = notifications.filter(n => !n.read).length;
-    document.title = unreadCount ? `(${unreadCount}) Notifications | Volant Poetry` : `Notifications | Volant Poetry`;
+    document.title = unreadCount ? `(${unreadCount}) Notifications` : `Notifications | Volant Poetry`;
     return notifications;
   } catch (err) {
     console.error(err);
     const container = document.getElementById("allNotifications");
-    if(container) container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Unable to load notifications</h3><p>Please check your connection</p></div>';
+    if(container) container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Unable to load notifications</h3><p>Please refresh</p></div>';
   }
 }
 
@@ -751,7 +913,7 @@ async function markAsRead(notificationId) {
   if (!notificationId || notificationId.startsWith('collab_existing_')) return;
   try {
     await updateDoc(doc(db, "notifications", notificationId), { read: true });
-  } catch (err) { console.error(err); }
+  } catch (err) { /* silent fail */ }
 }
 
 async function markAllAsRead() {
@@ -775,12 +937,16 @@ function renderNotifications(notifications) {
     follows: document.getElementById("followsNotifications"),
     collaborations: document.getElementById("collaborationsNotifications")
   };
+  
+  // Clear all containers
   Object.values(containers).forEach(c => { if(c) c.innerHTML = ''; });
+  
   if (notifications.length === 0) {
     const emptyHTML = `<div class="empty-state"><div class="empty-state-icon">🔔</div><h3>No notifications yet</h3><p>When someone interacts, you'll see it here!</p></div>`;
     Object.values(containers).forEach(c => { if(c) c.innerHTML = emptyHTML; });
     return;
   }
+  
   const filtered = {
     all: notifications,
     likes: notifications.filter(n => n.type === 'like'),
@@ -789,6 +955,7 @@ function renderNotifications(notifications) {
     follows: notifications.filter(n => n.type === 'follow'),
     collaborations: notifications.filter(n => n.type === 'collaboration')
   };
+  
   for (const [tab, notifs] of Object.entries(filtered)) {
     const container = containers[tab];
     if (!container) continue;
@@ -796,6 +963,10 @@ function renderNotifications(notifications) {
       container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">✨</div><h3>No ${tab === 'all' ? '' : tab} notifications</h3></div>`;
       continue;
     }
+    
+    // Use DocumentFragment for faster rendering
+    const fragment = document.createDocumentFragment();
+    
     notifs.forEach(notification => {
       const poemSlug = notification.poemSlug || null;
       const poemTitle = notification.poemTitle || null;
@@ -808,19 +979,15 @@ function renderNotifications(notifications) {
         <div class="notification-icon">${getNotificationIcon(notification.type)}</div>
         <div class="notification-content">
           <div class="notification-message">${messageHtmlContent}</div>
-          <div class="notification-time">${formatTime(notification.timestamp)} ${notification.isExistingCollaborator ? '<span class="collab-badge">Existing collaborator</span>' : ''}</div>
+          <div class="notification-time">${formatTime(notification.timestamp)}${notification.isExistingCollaborator ? ' <span class="collab-badge">Collaborator</span>' : ''}</div>
         </div>
       `;
       
-      // Handle click on the notification item itself -> mark as read
+      // Event listener for marking as read
       notificationDiv.addEventListener('click', async (e) => {
-        // If the click target is a clickable link (username or poem title), do NOT mark as read here,
-        // let the link's own handler do the marking and navigation.
         const target = e.target;
         const isClickable = target.closest('.clickable-user, .clickable-link, .poem-title-link');
         if (isClickable) return;
-        
-        // Otherwise, mark as read without navigation
         if (!notification.read && !notification.id?.startsWith('collab_existing_')) {
           await markAsRead(notification.id);
           notification.read = true;
@@ -829,12 +996,11 @@ function renderNotifications(notifications) {
         }
       });
       
-      // Attach click handlers to clickable elements (username and poem title)
+      // Click handlers for links
       const clickableSpans = notificationDiv.querySelectorAll('.clickable-user, .clickable-link, .poem-title-link');
       clickableSpans.forEach(span => {
         span.addEventListener('click', async (e) => {
           e.stopPropagation();
-          // Mark as read if unread
           if (!notification.read && !notification.id?.startsWith('collab_existing_')) {
             await markAsRead(notification.id);
             notification.read = true;
@@ -848,8 +1014,10 @@ function renderNotifications(notifications) {
         });
       });
       
-      container.appendChild(notificationDiv);
+      fragment.appendChild(notificationDiv);
     });
+    
+    container.appendChild(fragment);
   }
 }
 
@@ -877,11 +1045,8 @@ onAuthStateChanged(auth, async (user) => {
   setupTabs();
   document.getElementById("markAllReadBtn")?.addEventListener("click", markAllAsRead);
 });
-
-document.getElementById("menu-toggle")?.addEventListener("click", () => {
-  document.getElementById("nav-links")?.classList.toggle("show");
-});
 </script>
+
 <script>
 // Dynamic login/signup link setup for current page redirect
 (function() {

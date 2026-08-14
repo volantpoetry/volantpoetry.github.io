@@ -4,7 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>Submit Your Poem | Volant Poetry</title>
+<title>Submit Your Poem · Volant Poetry</title>
+
+<!-- SEO Meta Tags -->
+<meta name="description" content="Submit your poem to Volant Poetry. Share your emotions, inspire creativity, and connect with readers through the beauty of words.">
+<meta name="keywords" content="submit poem, poetry submission, share poetry, Volant Poetry, write poem, poetry platform">
+<meta name="author" content="Volant Poetry">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Submit Your Poem | Volant Poetry">
+<meta property="og:description" content="Share your emotions and inspire creativity by submitting your poem to Volant Poetry.">
+<meta property="og:image" content="https://volantpoetry.vercel.app/images/logo.png">
+<meta property="og:url" content="https://volantpoetry.vercel.app/submitpoems.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Volant Poetry">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Submit Your Poem | Volant Poetry">
+<meta name="twitter:description" content="Share your emotions and inspire creativity by submitting your poem to Volant Poetry.">
+<meta name="twitter:image" content="https://volantpoetry.vercel.app/images/logo.png">
+
+<!-- Canonical -->
+<link rel="canonical" href="https://volantpoetry.vercel.app/submitpoems.html">
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <!-- Favicons -->
@@ -13,10 +35,13 @@
 <style>
 :root {
   --primary: #4b2aad;
+  --primary-light: #6f4ae4;
   --text: #1a1a1a;
   --muted: #6b6b6b;
   --radius: 14px;
+  --bg-light: #faf9fe;
 }
+* { box-sizing: border-box; }
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -25,76 +50,516 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
+  padding: 0;
 }
-.logo { position: fixed; top: 15px; left: 20px; font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: #fff; z-index: 2000; }
-.floating { position: absolute; font-size: 2rem; color: rgba(255,255,255,0.6); animation: float 12s linear infinite alternate; user-select: none; }
-@keyframes float { 0% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(180deg); } 100% { transform: translateY(0) rotate(360deg); } }
-.container { max-width: 700px; margin: 120px auto 50px auto; padding: 30px; background: rgba(255,255,255,0.85); border-radius: var(--radius); backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(0,0,0,0.1); }
-.field-container { margin-bottom: 20px; }
-.field-container label { display: block; font-weight: 600; margin-bottom: 5px; }
-.field-container input, .field-container textarea { width: 100%; padding: 12px; border: 1px solid var(--muted); border-radius: var(--radius); font-size: 1rem; font-family: inherit; background: rgba(255,255,255,0.95); }
-button { background: var(--primary); color: #fff; padding: 12px 20px; border: none; border-radius: var(--radius); font-size: 1rem; cursor: pointer; }
-button:hover { background: #37187f; }
-.success-message { margin-top: 15px; font-weight: 600; text-align: center; }
-@media (max-width: 768px) { .container { margin: 100px 15px 30px 15px; padding: 20px; } .logo { font-size: 1.5rem; } }
+
+/* ===== HEADER WITH HOME BUTTON ===== */
+.header-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(75, 42, 173, 0.1);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #4b2aad;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #4b2aad;
+  cursor: default;
+  user-select: none;
+}
+
+.nav-logo-img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  cursor: default;
+}
+
+.logo .highlight {
+  color: #ffffff;
+  text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad;
+}
+
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 30px;
+  background: #4b2aad;
+  color: #f5f0ff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+.home-btn:hover {
+  background: #fff;
+  color: #4b2aad;
+  transform: translateX(-2px);
+  box-shadow: 0 4px 12px rgba(75, 42, 173, 0.25);
+}
+
+/* ===== FLOATING ELEMENTS ===== */
+.floating {
+  position: fixed;
+  font-size: 2rem;
+  color: rgba(255,255,255,0.5);
+  animation: float 12s linear infinite alternate;
+  user-select: none;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes float {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-25px) rotate(10deg); }
+  100% { transform: translateY(0) rotate(-10deg); }
+}
+
+/* ===== GUIDELINES BANNER ===== */
+.guidelines-banner {
+  max-width: 700px;
+  margin: 90px auto 20px auto;
+  padding: 16px 24px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius);
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid rgba(75, 42, 173, 0.08);
+  position: relative;
+  z-index: 1;
+}
+
+.guidelines-banner a {
+  color: #4b2aad;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.guidelines-banner a:hover {
+  color: #6f4ae4;
+}
+
+/* ===== CONTAINER / CARD ===== */
+.container {
+  max-width: 700px;
+  margin: 0 auto 50px auto;
+  padding: 35px 40px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+  border: 1px solid rgba(255,255,255,0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  color: #4b2aad;
+  font-size: 2rem;
+}
+
+/* ===== FORM FIELDS ===== */
+.field-container {
+  margin-bottom: 22px;
+}
+
+.field-container label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #2d2a24;
+  font-size: 0.9rem;
+}
+
+.field-container input,
+.field-container textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e8e4f0;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+  background: rgba(255,255,255,0.95);
+  transition: all 0.25s ease;
+  color: #1a1a1a;
+}
+
+.field-container input:focus,
+.field-container textarea:focus {
+  outline: none;
+  border-color: #4b2aad;
+  box-shadow: 0 0 0 4px rgba(75, 42, 173, 0.1);
+}
+
+.field-container textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.field-container small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* ===== READ-ONLY AUTHOR FIELD ===== */
+.field-container input[readonly] {
+  background: #f5f0ff;
+  color: #4b2aad;
+  font-weight: 600;
+  cursor: default;
+  border-color: #d8d0e8;
+}
+
+.field-container input[readonly]:focus {
+  box-shadow: none;
+  border-color: #d8d0e8;
+}
+
+/* ===== SUBMIT BUTTON ===== */
+.submit-btn {
+  background: linear-gradient(135deg, #4b2aad, #6f4ae4);
+  color: #fff;
+  padding: 14px 28px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(75, 42, 173, 0.3);
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ===== DRAFT BUTTON ===== */
+.draft-btn {
+  background: #6b6b6b;
+  color: #fff;
+  padding: 14px 28px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.draft-btn:hover:not(:disabled) {
+  background: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.draft-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.success-message {
+  margin-top: 15px;
+  font-weight: 600;
+  text-align: center;
+  padding: 10px;
+  border-radius: var(--radius);
+}
+
+.success-message.success {
+  color: #15723d;
+  background: #dff7e5;
+}
+
+.success-message.error {
+  color: #b33;
+  background: #fde8e8;
+}
+
+.success-message.draft {
+  color: #6b6b6b;
+  background: #f0ece6;
+}
+
+/* ===== SUBMIT ANOTHER BUTTON ===== */
+.submit-another-container {
+  display: none;
+  margin-top: 15px;
+}
+
+.submit-another-container.show {
+  display: block;
+}
+
+.submit-another-btn {
+  background: #4b2aad;
+  color: #fff;
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+.submit-another-btn:hover {
+  background: #6f4ae4;
+  transform: translateY(-2px);
+}
+
+/* ===== BACK BUTTON IN FORM ===== */
+.form-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.back-btn-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 24px;
+  border-radius: var(--radius);
+  background: #fff;
+  color: #4b2aad;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  border: 1px solid #e0d8d0;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  flex: 0 0 auto;
+}
+
+.back-btn-form:hover {
+  background: #fff;
+  color: #4b2aad;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .header-bar {
+    padding: 10px 16px;
+  }
+  
+  .logo-text {
+    font-size: 1.2rem;
+  }
+  
+  .nav-logo-img {
+    height: 28px;
+  }
+  
+  .home-btn {
+    font-size: 0.75rem;
+    padding: 6px 14px;
+  }
+  
+  .container {
+    margin: 0 12px 30px 12px;
+    padding: 24px 20px;
+    border-radius: 16px;
+  }
+  
+  .container h1 {
+    font-size: 1.6rem;
+  }
+  
+  .guidelines-banner {
+    margin: 80px 12px 16px 12px;
+    padding: 14px 18px;
+    font-size: 0.9rem;
+    border-radius: 12px;
+  }
+  
+  .form-footer {
+    flex-direction: column;
+  }
+  
+  .back-btn-form {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-bar {
+    padding: 8px 12px;
+  }
+  
+  .logo-text {
+    font-size: 1rem;
+  }
+  
+  .nav-logo-img {
+    height: 22px;
+  }
+  
+  .home-btn {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+  }
+  
+  .container {
+    margin: 0 8px 20px 8px;
+    padding: 18px 14px;
+    border-radius: 14px;
+  }
+  
+  .container h1 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+  }
+  
+  .field-container {
+    margin-bottom: 16px;
+  }
+  
+  .field-container input,
+  .field-container textarea {
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    border-radius: 12px;
+  }
+  
+  .guidelines-banner {
+    margin: 74px 8px 12px 8px;
+    padding: 12px 14px;
+    font-size: 0.8rem;
+    border-radius: 10px;
+  }
+}
 </style>
 </head>
 <body>
 
-<div class="logo">Volant Poetry</div>
+<!-- ===== HEADER WITH HOME BUTTON ===== -->
+<header class="header-bar">
+  <div class="logo">
+    <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img">
+    <span class="logo-text">
+      <span class="highlight">Volant</span> Poetry
+    </span>
+  </div>
+  <a href="index.html" id="homeLink" class="home-btn">Home</a>
+</header>
 
 <!-- Floating emojis -->
-<div class="floating" style="top: 10%; left: 5%;">✒️</div>
-<div class="floating" style="top: 20%; left: 80%;">📜</div>
-<div class="floating" style="top: 70%; left: 20%;">⭐</div>
-<div class="floating" style="top: 50%; left: 50%;">🖋️</div>
-<div class="floating" style="top: 80%; left: 70%;">🌙</div>
+<div class="floating" style="top: 12%; left: 4%;">✒️</div>
+<div class="floating" style="top: 22%; right: 6%;">📜</div>
+<div class="floating" style="top: 72%; left: 8%;">⭐</div>
+<div class="floating" style="top: 55%; left: 50%;">🖋️</div>
+<div class="floating" style="top: 85%; right: 10%;">🌙</div>
 
 <!-- Submission Guidelines Link -->
-<div style="max-width:700px; margin: 100px auto 20px auto; padding: 15px; background: rgba(255,255,255,0.85); border-radius:14px; text-align:center; font-weight:bold; box-shadow: 0 0 15px rgba(0,0,0,0.1);">
+<div class="guidelines-banner">
   Please read our 
-  <a href="submission-guidelines.html" style="color:#4b2aad; text-decoration:underline;">Submission Guidelines</a> 
+  <a href="submission-guidelines.html">Submission Guidelines</a> 
   before submitting your poem.
 </div>
 
+<!-- ===== MAIN FORM CARD ===== -->
 <div class="container">
-  <h1 style="text-align:center; margin-bottom:30px;">Submit Your Poem</h1>
+  <h1>Submit Your Poem</h1>
   
   <form id="recentPoemSubmitForm">
     <div class="field-container">
       <label for="title">Title</label>
-      <input type="text" id="title" placeholder="Your poem title" required>
+      <input type="text" id="title" placeholder="Your poem title">
     </div>
+    
     <div class="field-container">
       <label for="content">Full Content</label>
-      <textarea id="content" rows="6" placeholder="Write your poem..." required></textarea>
+      <textarea id="content" rows="6" placeholder="Write your poem..."></textarea>
     </div>
+    
     <div class="field-container">
       <label for="categories">Categories (comma-separated)</label>
-      <input type="text" id="categories" placeholder="Love, Life, Nature..." required>
+      <input type="text" id="categories" placeholder="Love, Life, Nature...">
     </div>
+    
     <div class="field-container">
       <label for="author">Author</label>
-      <input type="text" id="author" placeholder="Your name or pen name">
+      <input type="text" id="author" placeholder="Your name or pen name" readonly>
     </div>
-   <div class="field-container">
-  <label for="collaborators">Collaborators (optional)</label>
-  <input 
-    type="text"
-    id="collaborators"
-    placeholder="Type usernames, separated by commas"
-    list="collaboratorSuggestions"
-    autocomplete="off"
-  >
-  <small style="color:#6b6b6b;">
-    Example: poetOne, poetTwo
-  </small>
-  <datalist id="collaboratorSuggestions"></datalist>
-</div>
+    
+    <div class="field-container">
+      <label for="collaborators">Collaborators (optional)</label>
+      <input 
+        type="text"
+        id="collaborators"
+        placeholder="Type usernames, separated by commas"
+        list="collaboratorSuggestions"
+        autocomplete="off"
+      >
+      <small>Example: poetOne, poetTwo</small>
+      <datalist id="collaboratorSuggestions"></datalist>
+    </div>
 
-
-    <button type="submit">Submit Poem</button>
+    <div class="form-footer" id="formFooter">
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Poem</button>
+      <button type="button" class="draft-btn" id="draftBtn">Save as Draft</button>
+      <a href="user-profile.html" id="backBtnForm" class="back-btn-form">My Profile</a>
+    </div>
+    
     <p class="success-message" id="successMessage"></p>
+    
+    <div class="submit-another-container" id="submitAnotherContainer">
+      <button class="submit-another-btn" id="submitAnotherBtn">Submit Another Poem</button>
+    </div>
   </form>
 </div>
 
@@ -128,12 +593,24 @@ const db = getFirestore(app);
 
 /* ---------------- ELEMENTS ---------------- */
 const form = document.getElementById("recentPoemSubmitForm");
+const submitBtn = document.getElementById("submitBtn");
+const draftBtn = document.getElementById("draftBtn");
 const successMessage = document.getElementById("successMessage");
+const submitAnotherContainer = document.getElementById("submitAnotherContainer");
+const submitAnotherBtn = document.getElementById("submitAnotherBtn");
 const collaboratorsInput = document.getElementById("collaborators");
 const collaboratorList = document.getElementById("collaboratorSuggestions");
+const authorInput = document.getElementById("author");
+const titleInput = document.getElementById("title");
+const contentInput = document.getElementById("content");
+const categoriesInput = document.getElementById("categories");
 
 let currentUsername = "Anonymous";
+let currentUser = null;
 let knownUsers = [];
+let isSubmitted = false;
+let wasDraftSaved = false;
+let wasPoemSubmitted = false;
 
 /* ---------------- AUTH ---------------- */
 onAuthStateChanged(auth, async (user) => {
@@ -143,14 +620,14 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
+  currentUser = user;
   const userDoc = await getDoc(doc(db, "users", user.uid));
   currentUsername =
     userDoc.exists() && userDoc.data().username
       ? userDoc.data().username
       : user.email.split("@")[0];
 
-  document.getElementById("author").value = currentUsername;
-
+  authorInput.value = currentUsername;
   loadUsernames();
 });
 
@@ -202,27 +679,155 @@ collaboratorsInput.addEventListener("input", () => {
   });
 });
 
+/* ===== RESET FORM FOR NEW SUBMISSION ===== */
+function resetFormForNewSubmission() {
+  isSubmitted = false;
+  wasDraftSaved = false;
+  wasPoemSubmitted = false;
+  submitBtn.disabled = false;
+  draftBtn.disabled = false;
+  submitBtn.textContent = "Submit Poem";
+  draftBtn.textContent = "Save as Draft";
+  submitAnotherContainer.classList.remove('show');
+  successMessage.className = "success-message";
+  successMessage.textContent = "";
+  
+  form.querySelectorAll('input, textarea').forEach(el => {
+    el.disabled = false;
+  });
+  
+  form.reset();
+  authorInput.value = currentUsername;
+}
+
+/* ===== SUBMIT ANOTHER BUTTON ===== */
+submitAnotherBtn.addEventListener('click', () => {
+  resetFormForNewSubmission();
+});
+
+/* ===== VALIDATE FOR SUBMISSION ===== */
+function validateForSubmission() {
+  const title = titleInput.value.trim();
+  const content = contentInput.value.trim();
+  const categories = categoriesInput.value.trim();
+  
+  if (!title) {
+    alert("Please enter a title for your poem.");
+    titleInput.focus();
+    return false;
+  }
+  if (!content) {
+    alert("Please write your poem content.");
+    contentInput.focus();
+    return false;
+  }
+  if (!categories) {
+    alert("Please provide at least one category.");
+    categoriesInput.focus();
+    return false;
+  }
+  return true;
+}
+
+/* ===== GET FORM DATA ===== */
+function getFormData() {
+  return {
+    title: titleInput.value.trim() || 'Untitled',
+    content: contentInput.value.trim() || '',
+    author: authorInput.value.trim() || currentUsername,
+    authorId: currentUser.uid,
+    categories: (categoriesInput.value || '').split(',').map(c => c.trim()).filter(Boolean),
+    timestamp: serverTimestamp(),
+    submittedBy: currentUsername
+  };
+}
+
+/* ===== LOCK FORM AFTER SUBMISSION ===== */
+function lockFormAfterSubmit() {
+  isSubmitted = true;
+  submitBtn.disabled = true;
+  draftBtn.disabled = true;
+  
+  submitBtn.textContent = "✅ Submitted";
+  draftBtn.textContent = "Save As Draft";
+  
+  form.querySelectorAll('input, textarea').forEach(el => {
+    el.disabled = true;
+  });
+}
+
+/* ===== SAVE AS DRAFT ===== */
+draftBtn.addEventListener('click', async function(e) {
+  e.preventDefault();
+  
+  if (isSubmitted) return;
+  if (!currentUser) {
+    alert("Please sign in first.");
+    return;
+  }
+  
+  // Disable ONLY the draft button
+  draftBtn.disabled = true;
+  draftBtn.textContent = "Saving...";
+
+  try {
+    const data = getFormData();
+    
+    await addDoc(collection(db, "draftPoems"), {
+      ...data,
+      status: 'draft'
+    });
+
+    wasDraftSaved = true;
+    wasPoemSubmitted = false;
+    
+    successMessage.className = "success-message draft";
+    successMessage.textContent = "📝 Poem saved as draft successfully! You can still submit it when ready.";
+    
+    // Only disable the draft button, keep submit active
+    draftBtn.textContent = "✅ Draft Saved";
+    draftBtn.disabled = true;
+    // Submit button stays active
+    submitBtn.disabled = false;
+
+  } catch (err) {
+    successMessage.className = "success-message error";
+    successMessage.textContent = "❌ Error saving draft: " + err.message;
+    
+    draftBtn.disabled = false;
+    draftBtn.textContent = "Save as Draft";
+  }
+});
+
 /* ---------------- SUBMIT ---------------- */
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  
+  if (isSubmitted) return;
+  
+  // Validate for submission
+  if (!validateForSubmission()) return;
+  
+  // Disable both buttons during submission
+  submitBtn.disabled = true;
+  draftBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+  
+  form.querySelectorAll('input, textarea').forEach(el => {
+    el.disabled = true;
+  });
 
-  const title = document.getElementById("title").value.trim();
-  const content = document.getElementById("content").value.trim();
-  const categoriesInput = document.getElementById("categories").value.trim();
-  const author = document.getElementById("author").value.trim() || currentUsername;
+  const title = titleInput.value.trim();
+  const content = contentInput.value.trim();
+  const categoriesInputVal = categoriesInput.value.trim();
+  const author = authorInput.value.trim() || currentUsername;
   const collaboratorsRaw = collaboratorsInput.value.trim();
 
-  if (!categoriesInput) {
-    alert("Please provide at least one category.");
-    return;
-  }
-
-  const categories = categoriesInput
+  const categories = categoriesInputVal
     .split(",")
     .map(c => c.trim())
     .filter(Boolean);
 
-  /* -------- VALIDATE COLLABORATORS -------- */
   let collaborators = [];
 
   if (collaboratorsRaw) {
@@ -240,11 +845,31 @@ form.addEventListener("submit", async (e) => {
 
       if (!user) {
         alert(`❌ Collaborator "${name}" not found.`);
+        isSubmitted = false;
+        wasDraftSaved = false;
+        wasPoemSubmitted = false;
+        submitBtn.disabled = false;
+        draftBtn.disabled = false;
+        submitBtn.textContent = "Submit Poem";
+        draftBtn.textContent = "Save as Draft";
+        form.querySelectorAll('input, textarea').forEach(el => {
+          el.disabled = false;
+        });
         return;
       }
 
       if (user.uid === auth.currentUser.uid) {
         alert("❌ You cannot add yourself as a collaborator.");
+        isSubmitted = false;
+        wasDraftSaved = false;
+        wasPoemSubmitted = false;
+        submitBtn.disabled = false;
+        draftBtn.disabled = false;
+        submitBtn.textContent = "Submit Poem";
+        draftBtn.textContent = "Save as Draft";
+        form.querySelectorAll('input, textarea').forEach(el => {
+          el.disabled = false;
+        });
         return;
       }
 
@@ -267,7 +892,6 @@ form.addEventListener("submit", async (e) => {
       submittedBy: currentUsername
     });
 
-    /* -------- NOTIFICATIONS -------- */
     for (const collaborator of collaborators) {
       await addDoc(collection(db, "notifications"), {
         userId: collaborator.uid,
@@ -279,51 +903,31 @@ form.addEventListener("submit", async (e) => {
       });
     }
 
-    successMessage.style.color = "green";
-    successMessage.textContent =
-      "🎉 Poem submitted successfully with collaborators!";
-
-    form.reset();
-    document.getElementById("author").value = currentUsername;
+    wasPoemSubmitted = true;
+    wasDraftSaved = false;
+    
+    successMessage.className = "success-message success";
+    successMessage.textContent = "🎉 Poem submitted successfully!";
+    
+    submitAnotherContainer.classList.add('show');
+    lockFormAfterSubmit();
 
   } catch (err) {
-    successMessage.style.color = "red";
-    successMessage.textContent =
-      "❌ Error submitting poem: " + err.message;
+    successMessage.className = "success-message error";
+    successMessage.textContent = "❌ Error submitting poem: " + err.message;
+    
+    isSubmitted = false;
+    wasDraftSaved = false;
+    wasPoemSubmitted = false;
+    submitBtn.disabled = false;
+    draftBtn.disabled = false;
+    submitBtn.textContent = "Submit Poem";
+    draftBtn.textContent = "Save as Draft";
+    form.querySelectorAll('input, textarea').forEach(el => {
+      el.disabled = false;
+    });
   }
 });
-</script>
-
-
-<script>
-// Dynamic login/signup link setup for current page redirect
-(function() {
-  function setupDynamicAuthLinks() {
-    const currentPage = window.location.href;
-    const currentFile = window.location.pathname.split('/').pop();
-    let platform = 'poetry';
-    if (currentFile.startsWith('store/')) platform = 'reads';
-    if (currentFile === 'parent-house.html') platform = 'foundry';
-    
-    const loginParams = new URLSearchParams();
-    loginParams.append('platform', platform);
-    loginParams.append('redirect', currentPage);
-    
-    document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
-      link.href = `universal-login.html?${loginParams.toString()}`;
-    });
-    
-    document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
-      link.href = `universal-signup.html?${loginParams.toString()}`;
-    });
-  }
-  
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
-  } else {
-    setupDynamicAuthLinks();
-  }
-})();
 </script>
 <script src="return-url-handler.js"></script>
 </body>
