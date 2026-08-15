@@ -49,6 +49,7 @@ async function fetchPoemsFromFirestore() {
   const collections = ['recentPoems', 'featuredPoems', 'classicPoems'];
   const allPoems = [];
   
+  // Firestore REST API URL
   const baseUrl = 'https://firestore.googleapis.com/v1/projects/silent-depth/databases/(default)/documents';
   
   console.log('🔥 Connecting to Firestore...');
@@ -88,14 +89,17 @@ async function fetchPoemsFromFirestore() {
       
       console.log(`   📄 Found ${data.documents.length} poems in ${collection}`);
       
+      // Show first document structure for debugging
       const firstDoc = data.documents[0];
       console.log(`   📝 First document ID: ${firstDoc.name.split('/').pop()}`);
       console.log(`   📝 Fields: ${Object.keys(firstDoc.fields || {}).join(', ')}`);
       
+      // Process each document
       for (const doc of data.documents) {
         const docId = doc.name.split('/').pop();
         const fields = doc.fields || {};
         
+        // Get title
         let title = 'Untitled';
         if (fields.title) {
           if (fields.title.stringValue) title = fields.title.stringValue;
@@ -103,6 +107,7 @@ async function fetchPoemsFromFirestore() {
           else if (fields.title.doubleValue) title = String(fields.title.doubleValue);
         }
         
+        // Get slug
         let slug = fields.slug?.stringValue || null;
         if (!slug) {
           slug = title.toLowerCase()
@@ -111,11 +116,13 @@ async function fetchPoemsFromFirestore() {
         }
         if (!slug || slug === '') slug = docId;
         
+        // Get author
         let author = 'Anonymous';
         if (fields.author?.stringValue) author = fields.author.stringValue;
         else if (fields.submittedBy?.stringValue) author = fields.submittedBy.stringValue;
         else if (fields.authorName?.stringValue) author = fields.authorName.stringValue;
         
+        // Get timestamp
         let timestamp = new Date().toISOString();
         if (fields.createdAt?.timestampValue) timestamp = fields.createdAt.timestampValue;
         else if (fields.createdAt?.stringValue) timestamp = fields.createdAt.stringValue;
@@ -134,6 +141,7 @@ async function fetchPoemsFromFirestore() {
       
     } catch (err) {
       console.log(`   ❌ Error fetching ${collection}:`, err.message);
+      console.log(`   Stack:`, err.stack);
     }
   }
   
@@ -320,6 +328,9 @@ async function generateSitemap() {
     
     // 2. Dynamic Poems from Firestore
     console.log("\n🔥 Fetching poems from Firestore...");
+    console.log("⚠️ Note: This requires Firestore REST API access.");
+    console.log("⚠️ If this fails, check Firebase rules and collection names.");
+    
     const poems = await fetchPoemsFromFirestore();
     const poemResults = generatePoemUrls(poems);
     console.log(`✅ ${poemResults.length} poem URLs generated`);
@@ -330,6 +341,15 @@ async function generateSitemap() {
     console.log(`\n📊 Total: ${allUrls.length} URLs`);
     console.log(`   Static: ${staticResults.length}`);
     console.log(`   Dynamic Poems: ${poemResults.length}`);
+    
+    if (poemResults.length === 0) {
+      console.log("\n⚠️ WARNING: No poem URLs generated!");
+      console.log("📋 Possible reasons:");
+      console.log("   1. Firestore REST API is disabled or requires authentication");
+      console.log("   2. Collection names are different (check 'recentPoems', 'featuredPoems', 'classicPoems')");
+      console.log("   3. No documents exist in these collections");
+      console.log("   4. Firebase security rules block read access");
+    }
     
     // 4. Build sitemap with proper XML escaping
     const xml = buildXML(allUrls);
