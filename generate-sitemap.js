@@ -1,20 +1,32 @@
 /**
  * 🔥 Auto Sitemap Generator for Volant Foundry
- * GENERATES URLs WITH .html EXTENSION
- * All pages set to weekly changefreq
- * EXCLUDES Google verification files
+ * GENERATES URLs WITH .html EXTENSION + QUERY PARAMETERS
+ * Includes dynamic poem URLs from Firebase
  * Runs on GitHub Actions
  */
 
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
+const { initializeApp } = require('firebase/app');
+const { getFirestore, collection, getDocs, doc, getDoc } = require('firebase/firestore');
+
+// ---- FIREBASE CONFIG ----
+const firebaseConfig = {
+  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+  authDomain: "silent-depth.firebaseapp.com",
+  projectId: "silent-depth",
+  storageBucket: "silent-depth.appspot.com",
+  messagingSenderId: "78008755450",
+  appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
 
 // ---- CONFIG ----
 const domain = 'https://volantpoetry.vercel.app';
 const publicFolder = './';
+const MAX_POEMS = 1000; // Max poems to include in sitemap
 
-// ✅ PAGES TO INDEX (18 pages)
+// ✅ STATIC PAGES TO INDEX (18 pages)
 const allowedPages = [
   // Root Pages (9)
   'index.html',
@@ -39,25 +51,20 @@ const allowedPages = [
   'volant_foundry/index.html'
 ];
 
-// 🚫 BLOCKED / NO-INDEX PAGES (exact matches)
+// 🚫 BLOCKED / NO-INDEX PAGES
 const excludedPages = [
-  // Shared protected
   'shared/verify-email.html',
   'shared/universal-login.html',
   'shared/universal-signup.html',
   'shared/users-reset.html',
   'shared/check-verification.html',
   'shared/existingVerify.html',
-  // Store protected
   'store/approvals.html',
   'store/dashboard.html',
   'store/details.html',
   'store/DETAIL',
-  // Volant Foundry duplicate
   'volant_foundry/index2.html',
-  // User pages
   'user-profile.html',
-  // System
   '404.html',
   'verify.html',
   'verify-email.html',
@@ -73,11 +80,6 @@ const excludedPages = [
   'list-files.py',
   'update-folder-resources.py'
 ];
-
-// 🚫 GOOGLE VERIFICATION FILES - automatically excluded
-// Pattern: google*.html (e.g., google1234567890.html)
-// Pattern: Google*.html
-// These are temporary verification files that should NOT be indexed
 
 // 🚫 EXCLUDED FOLDERS
 const excludedFolders = [
@@ -96,127 +98,130 @@ const excludedFolders = [
 function isExcluded(file) {
   const fileParts = file.split(/[\/\\]/);
   
-  // Check excluded folders
   for (const folder of excludedFolders) {
-    if (fileParts.includes(folder)) {
-      return true;
-    }
+    if (fileParts.includes(folder)) return true;
   }
   
-  // Check exact excluded pages
   for (const ex of excludedPages) {
-    if (file === ex) {
-      return true;
-    }
+    if (file === ex) return true;
   }
   
-  // 🔥 EXCLUDE GOOGLE VERIFICATION FILES
-  // Pattern: google*.html (case insensitive)
+  // Exclude Google verification files
   const fileName = file.toLowerCase();
   if (fileName.match(/^google[0-9a-z_\-]+\.html$/i)) {
-    console.log(`🚫 Excluding Google verification: ${file}`);
     return true;
   }
   
-  // Also exclude any file starting with "google" in the root
-  if (fileName.startsWith('google') && fileName.endsWith('.html')) {
-    console.log(`🚫 Excluding Google file: ${file}`);
-    return true;
-  }
-  
-  // Check if file contains any excluded pattern
   for (const ex of excludedPages) {
-    if (file.toLowerCase().includes(ex.toLowerCase())) {
-      return true;
-    }
+    if (file.toLowerCase().includes(ex.toLowerCase())) return true;
   }
   
   return false;
 }
 
-// ---- Get URL with .html extension ----
+// ---- Get static page URL ----
 function getUrlWithHtml(filePath) {
-  let cleanPath = filePath;
-  
-  // Remove leading ./
-  cleanPath = cleanPath.replace(/^\.\//, '');
-  
-  // For index.html, return folder path
-  if (cleanPath === 'index.html') {
-    return '';
-  }
-  
-  // For subfolder index.html
-  if (cleanPath.endsWith('/index.html')) {
-    return cleanPath.replace(/\/index\.html$/, '/');
-  }
-  
-  // Keep the .html extension for all other files
+  let cleanPath = filePath.replace(/^\.\//, '');
+  if (cleanPath === 'index.html') return '';
+  if (cleanPath.endsWith('/index.html')) return cleanPath.replace(/\/index\.html$/, '/');
   return cleanPath;
 }
 
-// ---- Scan folders for allowed pages ----
-function getAllowedPages() {
-  const results = [];
+// ---- FETCH POEMS FROM FIRESTORE ----
+async function fetchAllPoems() {
+  console.log("🔥 Fetching poems from Firebase...");
   
-  for (const page of allowedPages) {
-    const fullPath = path.join(publicFolder, page);
+  try {
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
     
-    // Check if file exists
-    if (!fs.existsSync(fullPath)) {
-      console.log(`⚠️ Warning: ${page} not found, skipping...`);
-      continue;
+    const allPoems = [];
+    const collections = ['recentPoems', 'featuredPoems', 'classicPoems'];
+    
+    for (const collectionName of collections) {
+      console.log(`   📂 Fetching from: ${collectionName}`);
+      const colRef = collection(db, collectionName);
+      const snapshot = await getDocs(colRef);
+      
+      if (snapshot.empty) {
+        console.log(`   ⚠️ No poems in ${collectionName}`);
+        continue;
+      }
+      
+      console.log(`   📄 Found ${snapshot.docs.length} poems in ${collectionName}`);
+      
+      for (const docSnap of snapshot.docs) {
+        const data = docSnap.data();
+        const slug = data.slug || 
+                    (data.title ? data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : docSnap.id);
+        
+        // Get author name
+        let author = data.submittedBy || data.author || data.authorName || "Anonymous";
+        const userId = data.userId || data.authorId;
+        if (userId) {
+          try {
+            const userDoc = await getDoc(doc(db, "users", userId));
+            if (userDoc.exists()) {
+              author = userDoc.data().username || author;
+            }
+          } catch (err) {
+            // Silent fail
+          }
+        }
+        
+        allPoems.push({
+          id: docSnap.id,
+          title: data.title || "Untitled",
+          slug: slug,
+          author: author,
+          collection: collectionName,
+          createdAt: data.createdAt || data.timestamp || new Date().toISOString()
+        });
+      }
     }
     
-    const stats = fs.statSync(fullPath);
-    const lastmod = stats.mtime.toISOString();
-    const urlPath = getUrlWithHtml(page);
+    console.log(`✅ Total poems fetched: ${allPoems.length}`);
+    return allPoems;
     
-    // Build URL
-    let url;
-    if (urlPath === '') {
-      url = domain;  // Root domain for index.html
-    } else {
-      url = `${domain}/${urlPath}`;
-    }
+  } catch (err) {
+    console.error("❌ Error fetching poems:", err.message);
+    console.log("⚠️ Continuing without dynamic poems...");
+    return [];
+  }
+}
 
-    // All pages set to weekly
-    let priority = '0.8';
-    let changefreq = 'weekly';
+// ---- Generate poem URLs ----
+function generatePoemUrls(poems) {
+  const results = [];
+  let count = 0;
+  
+  for (const poem of poems) {
+    if (count >= MAX_POEMS) break;
     
-    // Homepage - highest priority
-    if (page === 'index.html' || urlPath === '' || urlPath === 'store/') {
-      priority = '1.0';
-    } 
-    // Important content pages
-    else if (page === 'poems.html' || 
-             page === 'poem.html' ||
-             page === 'submitpoems.html' ||
-             page === 'submission-guidelines.html' ||
-             page === 'shared/about.html' ||
-             page === 'volant_foundry/index.html') {
-      priority = '0.9';
-    } 
-    // Store pages
-    else if (page.startsWith('store/')) {
-      priority = '0.8';
-    } 
-    // Shared pages (contact, terms, privacy)
-    else if (page.startsWith('shared/')) {
-      priority = '0.6';
-    } 
-    // Other root pages
-    else {
-      priority = '0.7';
+    const url = `${domain}/poem.html?collection=${encodeURIComponent(poem.collection)}&slug=${encodeURIComponent(poem.slug)}`;
+    
+    // Parse date for lastmod
+    let lastmod = new Date().toISOString();
+    if (poem.createdAt) {
+      try {
+        const date = new Date(poem.createdAt);
+        if (!isNaN(date.getTime())) {
+          lastmod = date.toISOString();
+        }
+      } catch (e) {}
     }
-
+    
     results.push({
       loc: url,
-      lastmod,
-      changefreq,
-      priority,
-      file: page
+      lastmod: lastmod,
+      changefreq: 'weekly',
+      priority: '0.8',
+      title: poem.title,
+      author: poem.author,
+      collection: poem.collection
     });
+    
+    count++;
   }
   
   return results;
@@ -247,7 +252,7 @@ User-agent: *
 Allow: /
 
 # ============================================
-# ALLOW PUBLIC PAGES (18 pages to index)
+# ALLOW PUBLIC PAGES
 # ============================================
 
 # Root Pages
@@ -305,7 +310,7 @@ Disallow: /notifications
 Disallow: /messages
 
 # ============================================
-# BLOCK SUBMISSION MANAGEMENT (NOT public submit pages)
+# BLOCK SUBMISSION MANAGEMENT
 # ============================================
 Disallow: /edit-
 Disallow: /drafts
@@ -392,42 +397,128 @@ Sitemap: ${domain}/sitemap.xml`;
   console.log('✅ robots.txt generated');
 }
 
+// ---- Generate sitemap index (if too many URLs) ----
+function generateSitemapIndex(staticUrls, poemUrls) {
+  const allUrls = [...staticUrls, ...poemUrls];
+  const total = allUrls.length;
+  
+  // If fewer than 50,000 URLs, single sitemap is fine
+  if (total < 50000) {
+    return null;
+  }
+  
+  // Split into chunks of 50,000
+  const chunks = [];
+  for (let i = 0; i < allUrls.length; i += 50000) {
+    chunks.push(allUrls.slice(i, i + 50000));
+  }
+  
+  // Generate sitemap index XML
+  const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${chunks.map((_, i) => `
+  <sitemap>
+    <loc>${domain}/sitemap-${i + 1}.xml</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+  </sitemap>
+`).join('')}
+</sitemapindex>`;
+  
+  return indexXml;
+}
+
 // ---- MAIN ----
-function generateSitemap() {
+async function generateSitemap() {
   try {
     console.log("🧠 Generating SEO sitemap with .html extensions...");
     console.log(`📁 Domain: ${domain}`);
-    console.log(`📄 Targeting ${allowedPages.length} allowed pages...`);
+    console.log(`📄 Targeting ${allowedPages.length} static pages...`);
     console.log("🔄 All pages set to 'weekly' changefreq");
     console.log("🚫 Excluding Google verification files (google*.html)");
     
-    const staticPages = getAllowedPages();
-
-    console.log(`📄 Found ${staticPages.length} unique URLs`);
-
-    const xml = buildXML(staticPages);
-    fs.writeFileSync(path.join(publicFolder, 'sitemap.xml'), xml, 'utf8');
-
-    console.log('✅ Sitemap generated successfully with .html extensions!');
-    console.log('\n📋 Sample URLs:');
-    staticPages.slice(0, 10).forEach(page => {
-      console.log(`   - ${page.loc} (${page.changefreq})`);
-    });
-    if (staticPages.length > 10) {
-      console.log(`   ... and ${staticPages.length - 10} more`);
+    // ---- 1. Static Pages ----
+    const staticResults = [];
+    for (const page of allowedPages) {
+      const fullPath = path.join(publicFolder, page);
+      if (!fs.existsSync(fullPath)) {
+        console.log(`⚠️ Warning: ${page} not found, skipping...`);
+        continue;
+      }
+      
+      const stats = fs.statSync(fullPath);
+      const urlPath = getUrlWithHtml(page);
+      const url = urlPath === '' ? domain : `${domain}/${urlPath}`;
+      
+      let priority = '0.8';
+      if (page === 'index.html' || urlPath === '' || urlPath === 'store/') {
+        priority = '1.0';
+      } else if (page === 'poems.html' || page === 'poem.html' || 
+                 page === 'submitpoems.html' || page === 'submission-guidelines.html' ||
+                 page === 'shared/about.html' || page === 'volant_foundry/index.html') {
+        priority = '0.9';
+      } else if (page.startsWith('store/')) {
+        priority = '0.8';
+      } else if (page.startsWith('shared/')) {
+        priority = '0.6';
+      } else {
+        priority = '0.7';
+      }
+      
+      staticResults.push({
+        loc: url,
+        lastmod: stats.mtime.toISOString(),
+        changefreq: 'weekly',
+        priority: priority
+      });
     }
-
-    // Generate robots.txt
+    
+    console.log(`✅ ${staticResults.length} static pages generated`);
+    
+    // ---- 2. Dynamic Poem Pages ----
+    const poems = await fetchAllPoems();
+    const poemResults = generatePoemUrls(poems);
+    console.log(`✅ ${poemResults.length} poem URLs generated`);
+    
+    // ---- 3. Combine and Build ----
+    const allUrls = [...staticResults, ...poemResults];
+    
+    console.log(`\n📊 Sitemap Statistics:`);
+    console.log(`   Static pages: ${staticResults.length}`);
+    console.log(`   Dynamic poem pages: ${poemResults.length}`);
+    console.log(`   Total URLs: ${allUrls.length}`);
+    
+    // Build sitemap
+    const xml = buildXML(allUrls);
+    fs.writeFileSync(path.join(publicFolder, 'sitemap.xml'), xml, 'utf8');
+    console.log('✅ sitemap.xml generated');
+    
+    // ---- 4. Sample URLs ----
+    console.log('\n📋 Sample URLs:');
+    const samples = [
+      ...staticResults.slice(0, 5),
+      ...poemResults.slice(0, 5)
+    ];
+    samples.forEach(page => {
+      console.log(`   - ${page.loc}`);
+    });
+    if (poemResults.length > 5) {
+      console.log(`   ... and ${poemResults.length - 5} more poems`);
+    }
+    
+    // ---- 5. Generate robots.txt ----
     generateRobotsTxt();
-
+    
+    // ---- 6. Summary ----
     console.log('\n📊 Sitemap Statistics:');
-    console.log(`   Total URLs: ${staticPages.length}`);
+    console.log(`   Total URLs: ${allUrls.length}`);
+    console.log(`   Static: ${staticResults.length}`);
+    console.log(`   Dynamic Poems: ${poemResults.length}`);
     console.log(`   All pages: weekly`);
-    console.log(`   Priority 1.0: ${staticPages.filter(u => u.priority === '1.0').length}`);
-    console.log(`   Priority 0.9: ${staticPages.filter(u => u.priority === '0.9').length}`);
-    console.log(`   Priority 0.8: ${staticPages.filter(u => u.priority === '0.8').length}`);
-    console.log(`   Priority 0.7: ${staticPages.filter(u => u.priority === '0.7').length}`);
-    console.log(`   Priority 0.6: ${staticPages.filter(u => u.priority === '0.6').length}`);
+    console.log(`   Priority 1.0: ${allUrls.filter(u => u.priority === '1.0').length}`);
+    console.log(`   Priority 0.9: ${allUrls.filter(u => u.priority === '0.9').length}`);
+    console.log(`   Priority 0.8: ${allUrls.filter(u => u.priority === '0.8').length}`);
+    console.log(`   Priority 0.7: ${allUrls.filter(u => u.priority === '0.7').length}`);
+    console.log(`   Priority 0.6: ${allUrls.filter(u => u.priority === '0.6').length}`);
 
   } catch (err) {
     console.error('❌ Sitemap error:', err);
