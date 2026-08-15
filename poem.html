@@ -507,7 +507,24 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
 </style>
 </head>
 <body>
-
+<script>
+  // ============================================
+  // FIX: Handle &amp; in URL from sitemap
+  // ============================================
+  (function() {
+    const currentUrl = window.location.href;
+    
+    // If URL contains &amp;, redirect to normal URL with &
+    if (currentUrl.includes('&amp;')) {
+      const fixedUrl = currentUrl.replace(/&amp;/g, '&');
+      console.log('🔄 Redirecting from &amp; to &');
+      window.location.replace(fixedUrl);
+      return;
+    }
+    
+    console.log('✅ URL parameters:', window.location.search);
+  })();
+</script>
 <section class="poem-section">
   <div class="poem-card">
     <!-- Author Image + Name -->
