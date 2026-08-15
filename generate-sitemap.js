@@ -1,6 +1,6 @@
 /**
  * 🔥 Auto Sitemap Generator for Volant Foundry
- * Uses Firebase REST API (the working version)
+ * Uses Firestore REST API (with proper authentication)
  * Runs on GitHub Actions
  */
 
@@ -44,74 +44,115 @@ function escapeXml(str) {
     .replace(/'/g, '&apos;');
 }
 
-// ---- FETCH POEMS USING THE WORKING REST API APPROACH ----
+// ---- FETCH POEMS FROM FIRESTORE USING RUN-QUERY ENDPOINT ----
 async function fetchPoemsFromFirestore() {
   const collections = ['recentPoems', 'featuredPoems', 'classicPoems'];
   const allPoems = [];
   
-  // Using the Realtime Database REST API (which works without auth)
-  const baseUrl = 'https://silent-depth-default-rtdb.firebaseio.com';
+  // Firestore REST API - using runQuery endpoint
+  const baseUrl = 'https://firestore.googleapis.com/v1/projects/silent-depth/databases/(default)/documents';
   
-  console.log('🔥 Connecting to Firebase Realtime Database...');
+  console.log('🔥 Connecting to Firestore...');
   console.log(`📡 Base URL: ${baseUrl}`);
   
   for (const collection of collections) {
     try {
       console.log(`\n   📂 Fetching from: ${collection}`);
       
-      // Try Realtime Database first
-      const url = `${baseUrl}/${collection}.json`;
+      // Method 1: Try list documents
+      const url = `${baseUrl}/${collection}`;
       console.log(`   🔗 URL: ${url}`);
       
       const response = await fetch(url);
       console.log(`   📊 Status: ${response.status} ${response.statusText}`);
       
       if (!response.ok) {
-        console.log(`   ❌ Failed to fetch ${collection}: HTTP ${response.status}`);
+        const errorText = await response.text();
+        console.log(`   ❌ Error response: ${errorText.substring(0, 500)}`);
+        
+        // Try alternative URL format
+        console.log(`   🔄 Trying alternative URL format...`);
+        const altUrl = `${baseUrl}:runQuery?structuredQuery={"from":[{"collectionId":"${collection}"}]}`;
+        const altResponse = await fetch(altUrl);
+        console.log(`   📊 Alt Status: ${altResponse.status} ${altResponse.statusText}`);
+        
+        if (altResponse.ok) {
+          const altData = await altResponse.json();
+          console.log(`   📄 Alt Response: ${JSON.stringify(altData).substring(0, 200)}...`);
+          
+          // Parse runQuery response
+          if (Array.isArray(altData)) {
+            for (const result of altData) {
+              if (result.document) {
+                const doc = result.document;
+                const docId = doc.name.split('/').pop();
+                const fields = doc.fields || {};
+                
+                const title = fields.title?.stringValue || 'Untitled';
+                const slug = fields.slug?.stringValue || 
+                            title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 
+                            docId;
+                const author = fields.author?.stringValue || 
+                              fields.submittedBy?.stringValue || 
+                              fields.authorName?.stringValue || 
+                              'Anonymous';
+                const timestamp = fields.createdAt?.timestampValue || 
+                                 fields.createdAt?.stringValue || 
+                                 fields.timestamp?.stringValue || 
+                                 new Date().toISOString();
+                
+                allPoems.push({
+                  id: docId,
+                  title: title,
+                  slug: slug,
+                  author: author,
+                  collection: collection,
+                  timestamp: timestamp
+                });
+              }
+            }
+          }
+        }
         continue;
       }
       
       const data = await response.json();
       
-      if (!data) {
-        console.log(`   ⚠️ No data in ${collection}`);
-        continue;
-      }
-      
-      // Check if data is an object with keys
-      if (typeof data !== 'object' || Array.isArray(data)) {
-        console.log(`   ⚠️ Unexpected data format in ${collection}`);
-        continue;
-      }
-      
-      // Convert object to array with keys
-      const keys = Object.keys(data);
-      console.log(`   📄 Found ${keys.length} items in ${collection}`);
-      
-      for (const id of keys) {
-        const poem = data[id];
-        
-        // Skip if poem is null or not an object
-        if (!poem || typeof poem !== 'object') continue;
-        
-        // Generate slug from title or use id
-        let slug = poem.slug;
-        if (!slug && poem.title) {
-          slug = poem.title.toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '');
+      if (!data || !data.documents) {
+        console.log(`   ⚠️ No 'documents' field in response`);
+        if (data.error) {
+          console.log(`   ❌ Firestore error: ${JSON.stringify(data.error)}`);
         }
-        if (!slug) slug = id;
+        continue;
+      }
+      
+      if (data.documents.length === 0) {
+        console.log(`   ⚠️ No documents in ${collection}`);
+        continue;
+      }
+      
+      console.log(`   📄 Found ${data.documents.length} poems in ${collection}`);
+      
+      for (const doc of data.documents) {
+        const docId = doc.name.split('/').pop();
+        const fields = doc.fields || {};
         
-        // Get author name
-        let author = poem.submittedBy || poem.author || poem.authorName || "Anonymous";
-        
-        // Get timestamp
-        let timestamp = poem.createdAt || poem.timestamp || poem.date || poem.created || new Date().toISOString();
+        const title = fields.title?.stringValue || 'Untitled';
+        const slug = fields.slug?.stringValue || 
+                    title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 
+                    docId;
+        const author = fields.author?.stringValue || 
+                      fields.submittedBy?.stringValue || 
+                      fields.authorName?.stringValue || 
+                      'Anonymous';
+        const timestamp = fields.createdAt?.timestampValue || 
+                         fields.createdAt?.stringValue || 
+                         fields.timestamp?.stringValue || 
+                         new Date().toISOString();
         
         allPoems.push({
-          id: id,
-          title: poem.title || "Untitled",
+          id: docId,
+          title: title,
           slug: slug,
           author: author,
           collection: collection,
@@ -305,8 +346,8 @@ async function generateSitemap() {
     
     console.log(`✅ ${staticResults.length} static pages generated`);
     
-    // 2. Dynamic Poems from Realtime Database
-    console.log("\n🔥 Fetching poems from Firebase Realtime Database...");
+    // 2. Dynamic Poems from Firestore
+    console.log("\n🔥 Fetching poems from Firestore...");
     const poems = await fetchPoemsFromFirestore();
     const poemResults = generatePoemUrls(poems);
     console.log(`✅ ${poemResults.length} poem URLs generated`);
@@ -317,11 +358,6 @@ async function generateSitemap() {
     console.log(`\n📊 Total: ${allUrls.length} URLs`);
     console.log(`   Static: ${staticResults.length}`);
     console.log(`   Dynamic Poems: ${poemResults.length}`);
-    
-    if (poemResults.length === 0) {
-      console.log("\n⚠️ WARNING: No poem URLs generated!");
-      console.log("📋 Trying alternative data structure...");
-    }
     
     // 4. Build sitemap with proper XML escaping
     const xml = buildXML(allUrls);
