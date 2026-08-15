@@ -1,6 +1,6 @@
 /**
  * 🔥 Auto Sitemap Generator for Volant Foundry
- * Uses Firebase Firestore REST API with debugging
+ * Uses Firebase Firestore REST API with XML escaping
  * Runs on GitHub Actions
  */
 
@@ -33,12 +33,22 @@ const allowedPages = [
   'volant_foundry/index.html'
 ];
 
+// ---- XML ESCAPE FUNCTION ----
+function escapeXml(str) {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
 // ---- FETCH POEMS FROM FIRESTORE USING REST API ----
 async function fetchPoemsFromFirestore() {
   const collections = ['recentPoems', 'featuredPoems', 'classicPoems'];
   const allPoems = [];
   
-  // Firestore REST API URL
   const baseUrl = 'https://firestore.googleapis.com/v1/projects/silent-depth/databases/(default)/documents';
   
   console.log('🔥 Connecting to Firestore...');
@@ -78,17 +88,14 @@ async function fetchPoemsFromFirestore() {
       
       console.log(`   📄 Found ${data.documents.length} poems in ${collection}`);
       
-      // Show first document structure for debugging
       const firstDoc = data.documents[0];
       console.log(`   📝 First document ID: ${firstDoc.name.split('/').pop()}`);
       console.log(`   📝 Fields: ${Object.keys(firstDoc.fields || {}).join(', ')}`);
       
-      // Process each document
       for (const doc of data.documents) {
         const docId = doc.name.split('/').pop();
         const fields = doc.fields || {};
         
-        // Get title
         let title = 'Untitled';
         if (fields.title) {
           if (fields.title.stringValue) title = fields.title.stringValue;
@@ -96,7 +103,6 @@ async function fetchPoemsFromFirestore() {
           else if (fields.title.doubleValue) title = String(fields.title.doubleValue);
         }
         
-        // Get slug
         let slug = fields.slug?.stringValue || null;
         if (!slug) {
           slug = title.toLowerCase()
@@ -105,13 +111,11 @@ async function fetchPoemsFromFirestore() {
         }
         if (!slug || slug === '') slug = docId;
         
-        // Get author
         let author = 'Anonymous';
         if (fields.author?.stringValue) author = fields.author.stringValue;
         else if (fields.submittedBy?.stringValue) author = fields.submittedBy.stringValue;
         else if (fields.authorName?.stringValue) author = fields.authorName.stringValue;
         
-        // Get timestamp
         let timestamp = new Date().toISOString();
         if (fields.createdAt?.timestampValue) timestamp = fields.createdAt.timestampValue;
         else if (fields.createdAt?.stringValue) timestamp = fields.createdAt.stringValue;
@@ -130,7 +134,6 @@ async function fetchPoemsFromFirestore() {
       
     } catch (err) {
       console.log(`   ❌ Error fetching ${collection}:`, err.message);
-      console.log(`   Stack:`, err.stack);
     }
   }
   
@@ -179,7 +182,7 @@ function getUrlWithHtml(filePath) {
   return cleanPath;
 }
 
-// ---- Build XML ----
+// ---- Build XML with proper escaping ----
 function buildXML(urls) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -187,10 +190,10 @@ function buildXML(urls) {
 
 ${urls.map(u => `
   <url>
-    <loc>${u.loc}</loc>
-    <lastmod>${u.lastmod}</lastmod>
-    <changefreq>${u.changefreq}</changefreq>
-    <priority>${u.priority}</priority>
+    <loc>${escapeXml(u.loc)}</loc>
+    <lastmod>${escapeXml(u.lastmod)}</lastmod>
+    <changefreq>${escapeXml(u.changefreq)}</changefreq>
+    <priority>${escapeXml(u.priority)}</priority>
   </url>
 `).join('')}
 
@@ -328,7 +331,7 @@ async function generateSitemap() {
     console.log(`   Static: ${staticResults.length}`);
     console.log(`   Dynamic Poems: ${poemResults.length}`);
     
-    // 4. Build sitemap
+    // 4. Build sitemap with proper XML escaping
     const xml = buildXML(allUrls);
     fs.writeFileSync(path.join(publicFolder, 'sitemap.xml'), xml, 'utf8');
     console.log('✅ sitemap.xml generated');
