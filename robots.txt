@@ -1,7 +1,39 @@
 User-agent: *
 Allow: /
 
-# Block admin pages only
+# ============================================
+# ALLOW PUBLIC PAGES (18 pages to index)
+# ============================================
+
+# Root Pages
+Allow: /$
+Allow: /index.html
+Allow: /poems.html
+Allow: /poem.html
+Allow: /submitpoems.html
+Allow: /submission-guidelines.html
+Allow: /all-categories.html
+Allow: /poem-of-the-week.html
+Allow: /quote-of-the-week.html
+
+# Shared Pages
+Allow: /shared/about.html
+Allow: /shared/contact.html
+Allow: /shared/terms.html
+Allow: /shared/privacy.html
+
+# Store / Volant Reads
+Allow: /store/index.html
+Allow: /store/submit.html
+Allow: /store/faq.html
+Allow: /store/refund.html
+
+# Volant Foundry
+Allow: /volant_foundry/index.html
+
+# ============================================
+# BLOCK ADMIN PAGES
+# ============================================
 Disallow: /admin
 Disallow: /admin-
 Disallow: /admin.
@@ -15,7 +47,9 @@ Disallow: /Select-
 Disallow: /Manage-
 Disallow: /assign-
 
-# Block login/system pages (but NOT user profiles)
+# ============================================
+# BLOCK LOGIN/SYSTEM PAGES
+# ============================================
 Disallow: /login
 Disallow: /signup
 Disallow: /register
@@ -25,13 +59,19 @@ Disallow: /forgot
 Disallow: /notifications
 Disallow: /messages
 
-# Block submission management (but allow viewing poems)
-Disallow: /submit
-Disallow: /submission-guidelines
+# ============================================
+# BLOCK SUBMISSION MANAGEMENT (NOT public submit pages)
+# ============================================
 Disallow: /edit-
 Disallow: /drafts
+Disallow: /submit?*
+Disallow: /submit/
+Disallow: /submission?*
+Disallow: /submission/
 
-# Block specific system files
+# ============================================
+# BLOCK SPECIFIC SYSTEM FILES
+# ============================================
 Disallow: /verify.html
 Disallow: /verify-email.html
 Disallow: /users-signup.html
@@ -40,11 +80,60 @@ Disallow: /users-login.html
 Disallow: /users-forgot.html
 Disallow: /user-edit-poems.html
 
-# IMPORTANT: Allow user profiles to be indexed!
-# Do NOT block these:
-# - /profile.html
-# - /users-profile.html  
-# - /user-profile.html
-# - /users-profile-page.html
+# ============================================
+# BLOCK STORE PROTECTED PAGES
+# ============================================
+Disallow: /store/approvals.html
+Disallow: /store/dashboard.html
+Disallow: /store/DETAIL
+Disallow: /store/details.html
 
+# ============================================
+# BLOCK VOLANT FOUNDRY DUPLICATE
+# ============================================
+Disallow: /volant_foundry/index2.html
+
+# ============================================
+# BLOCK SHARED PROTECTED PAGES
+# ============================================
+Disallow: /shared/verify-email.html
+Disallow: /shared/universal-login.html
+Disallow: /shared/universal-signup.html
+Disallow: /shared/users-reset.html
+Disallow: /shared/check-verification.html
+Disallow: /shared/existingVerify.html
+
+# ============================================
+# BLOCK USER-SPECIFIC PAGES
+# ============================================
+Disallow: /user-profile.html
+
+# ============================================
+# BLOCK NON-HTML FILES
+# ============================================
+Disallow: /*.js$
+Disallow: /*.css$
+Disallow: /*.css.map$
+Disallow: /*.js.map$
+Disallow: /*.json$
+Disallow: /*.xml$
+
+# ============================================
+# BLOCK NODE_MODULES
+# ============================================
+Disallow: /node_modules/
+
+# ============================================
+# BLOCK IMAGES
+# ============================================
+Disallow: /images/
+
+# ============================================
+# BLOCK 404 PAGE (error page - should not be indexed)
+# ============================================
+Disallow: /404.html
+
+# ============================================
+# SITEMAP LOCATION
+# ============================================
 Sitemap: https://volantpoetry.vercel.app/sitemap.xml
