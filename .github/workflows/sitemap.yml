@@ -2,9 +2,8 @@ name: Generate Sitemap
 
 on:
   schedule:
-    # Run daily at 2 AM UTC
     - cron: '0 2 * * *'
-  workflow_dispatch:  # Manual trigger from GitHub UI
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -28,9 +27,7 @@ jobs:
           node-version: '18'
           
       - name: 📦 Install dependencies
-        run: |
-          npm install glob
-          # No firebase package needed - using REST API!
+        run: npm install glob
         
       - name: 🗺️ Generate sitemap
         run: node generate-sitemap.js
@@ -41,21 +38,12 @@ jobs:
             echo "❌ sitemap.xml not generated!"
             exit 1
           fi
-          
-          # Count URLs in sitemap
           URL_COUNT=$(grep -c "<loc>" sitemap.xml || echo "0")
           echo "✅ sitemap.xml generated successfully"
           echo "📊 Total URLs in sitemap: $URL_COUNT"
           echo ""
           echo "📄 First 15 lines:"
           head -15 sitemap.xml
-          
-          # Verify robots.txt was generated
-          if [ -f robots.txt ]; then
-            echo "✅ robots.txt generated"
-          else
-            echo "⚠️ robots.txt not found"
-          fi
           
       - name: 📤 Commit and push if changed
         run: |
