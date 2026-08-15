@@ -12,7 +12,7 @@ const domain = 'https://volantpoetry.vercel.app';
 const publicFolder = './';
 const MAX_POEMS = 5000;
 
-// ✅ STATIC PAGES TO INDEX (18 pages)
+// ✅ STATIC PAGES TO INDEX (17 pages - removed duplicate)
 const allowedPages = [
   'index.html',
   'poems.html',
@@ -49,59 +49,58 @@ async function fetchPoemsFromFirestore() {
   console.log('🔍 Starting fetchPoemsFromFirestore...');
   
   try {
-    // Dynamic import for Firebase Admin SDK
-    console.log('📦 Loading firebase-admin...');
-    const admin = await import('firebase-admin');
-    console.log('✅ firebase-admin loaded');
+    // Use require instead of dynamic import
+    console.log('📦 Loading firebase-admin with require...');
+    const admin = require('firebase-admin');
+    console.log('✅ firebase-admin loaded successfully');
     
     // Check if Firebase is already initialized
-    if (admin.apps.length === 0) {
-      console.log('🔑 No Firebase app found, initializing...');
-      
-      let serviceAccount;
-      
-      // Try different secret names
-      const secretKey = process.env.FIREBASE_KEY || 
-                       process.env.FIREBASE_SERVICE_ACCOUNT || 
-                       process.env.SERVICE_ACCOUNT_KEY;
-      
-      console.log(`🔐 Secret available: ${!!secretKey}`);
-      console.log(`🔐 FIREBASE_KEY: ${!!process.env.FIREBASE_KEY}`);
-      console.log(`🔐 SERVICE_ACCOUNT_KEY: ${!!process.env.SERVICE_ACCOUNT_KEY}`);
-      
-      if (secretKey) {
-        console.log('🔐 Using service account from GitHub secret');
+    let serviceAccount;
+    
+    // Try different secret names
+    const secretKey = process.env.FIREBASE_KEY || 
+                     process.env.FIREBASE_SERVICE_ACCOUNT || 
+                     process.env.SERVICE_ACCOUNT_KEY;
+    
+    console.log(`🔐 Secret available: ${!!secretKey}`);
+    console.log(`🔐 FIREBASE_KEY: ${!!process.env.FIREBASE_KEY}`);
+    console.log(`🔐 SERVICE_ACCOUNT_KEY: ${!!process.env.SERVICE_ACCOUNT_KEY}`);
+    
+    if (secretKey) {
+      console.log('🔐 Using service account from GitHub secret');
+      try {
+        serviceAccount = JSON.parse(secretKey);
+        console.log('✅ Successfully parsed service account JSON');
+        console.log(`   Project ID: ${serviceAccount.project_id || 'N/A'}`);
+        console.log(`   Client Email: ${serviceAccount.client_email || 'N/A'}`);
+      } catch (parseError) {
+        console.log('⚠️ Failed to parse secret as JSON, trying base64 decode...');
         try {
-          serviceAccount = JSON.parse(secretKey);
-          console.log('✅ Successfully parsed service account JSON');
-          console.log(`   Project ID: ${serviceAccount.project_id}`);
-          console.log(`   Client Email: ${serviceAccount.client_email}`);
-        } catch (parseError) {
-          console.log('⚠️ Failed to parse secret as JSON, trying base64 decode...');
-          try {
-            const decoded = Buffer.from(secretKey, 'base64').toString('utf8');
-            serviceAccount = JSON.parse(decoded);
-            console.log('✅ Successfully decoded and parsed base64 service account');
-          } catch (base64Error) {
-            console.log('❌ Failed to parse service account:', base64Error.message);
-            return [];
-          }
-        }
-      } else {
-        console.log('📁 No secret found, trying local file...');
-        const keyPath = path.join(process.cwd(), 'service-account-key.json');
-        if (fs.existsSync(keyPath)) {
-          console.log(`📁 Found local file: ${keyPath}`);
-          serviceAccount = JSON.parse(fs.readFileSync(keyPath, 'utf8'));
-          console.log('✅ Loaded service account from local file');
-        } else {
-          console.log(`❌ No service account key found at: ${keyPath}`);
-          console.log('📋 Place service-account-key.json in project root for local testing');
-          console.log('📋 Or set FIREBASE_KEY, FIREBASE_SERVICE_ACCOUNT, or SERVICE_ACCOUNT_KEY environment variable');
+          const decoded = Buffer.from(secretKey, 'base64').toString('utf8');
+          serviceAccount = JSON.parse(decoded);
+          console.log('✅ Successfully decoded and parsed base64 service account');
+        } catch (base64Error) {
+          console.log('❌ Failed to parse service account:', base64Error.message);
           return [];
         }
       }
-      
+    } else {
+      console.log('📁 No secret found, trying local file...');
+      const keyPath = path.join(process.cwd(), 'service-account-key.json');
+      if (fs.existsSync(keyPath)) {
+        console.log(`📁 Found local file: ${keyPath}`);
+        serviceAccount = JSON.parse(fs.readFileSync(keyPath, 'utf8'));
+        console.log('✅ Loaded service account from local file');
+      } else {
+        console.log(`❌ No service account key found at: ${keyPath}`);
+        console.log('📋 Place service-account-key.json in project root for local testing');
+        console.log('📋 Or set FIREBASE_KEY, FIREBASE_SERVICE_ACCOUNT, or SERVICE_ACCOUNT_KEY environment variable');
+        return [];
+      }
+    }
+    
+    // Initialize Firebase Admin SDK if not already initialized
+    if (!admin.apps || admin.apps.length === 0) {
       console.log('🔧 Initializing Firebase Admin SDK...');
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
@@ -174,7 +173,6 @@ async function fetchPoemsFromFirestore() {
         
       } catch (err) {
         console.log(`   ❌ Error fetching ${collection}:`, err.message);
-        console.log(`   Stack:`, err.stack);
       }
     }
     
