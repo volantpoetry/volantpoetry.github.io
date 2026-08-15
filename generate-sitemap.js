@@ -46,12 +46,18 @@ function escapeXml(str) {
 
 // ---- FETCH POEMS FROM FIRESTORE USING ADMIN SDK ----
 async function fetchPoemsFromFirestore() {
+  console.log('🔍 Starting fetchPoemsFromFirestore...');
+  
   try {
     // Dynamic import for Firebase Admin SDK
+    console.log('📦 Loading firebase-admin...');
     const admin = await import('firebase-admin');
+    console.log('✅ firebase-admin loaded');
     
     // Check if Firebase is already initialized
     if (admin.apps.length === 0) {
+      console.log('🔑 No Firebase app found, initializing...');
+      
       let serviceAccount;
       
       // Try different secret names
@@ -59,35 +65,50 @@ async function fetchPoemsFromFirestore() {
                        process.env.FIREBASE_SERVICE_ACCOUNT || 
                        process.env.SERVICE_ACCOUNT_KEY;
       
+      console.log(`🔐 Secret available: ${!!secretKey}`);
+      console.log(`🔐 FIREBASE_KEY: ${!!process.env.FIREBASE_KEY}`);
+      console.log(`🔐 SERVICE_ACCOUNT_KEY: ${!!process.env.SERVICE_ACCOUNT_KEY}`);
+      
       if (secretKey) {
-        // In GitHub Actions, parse the secret
         console.log('🔐 Using service account from GitHub secret');
         try {
           serviceAccount = JSON.parse(secretKey);
+          console.log('✅ Successfully parsed service account JSON');
+          console.log(`   Project ID: ${serviceAccount.project_id}`);
+          console.log(`   Client Email: ${serviceAccount.client_email}`);
         } catch (parseError) {
           console.log('⚠️ Failed to parse secret as JSON, trying base64 decode...');
-          // If it's base64 encoded, decode it
-          const decoded = Buffer.from(secretKey, 'base64').toString('utf8');
-          serviceAccount = JSON.parse(decoded);
+          try {
+            const decoded = Buffer.from(secretKey, 'base64').toString('utf8');
+            serviceAccount = JSON.parse(decoded);
+            console.log('✅ Successfully decoded and parsed base64 service account');
+          } catch (base64Error) {
+            console.log('❌ Failed to parse service account:', base64Error.message);
+            return [];
+          }
         }
       } else {
-        // Local development - load from file
-        console.log('📁 Using service account from local file');
+        console.log('📁 No secret found, trying local file...');
         const keyPath = path.join(process.cwd(), 'service-account-key.json');
         if (fs.existsSync(keyPath)) {
+          console.log(`📁 Found local file: ${keyPath}`);
           serviceAccount = JSON.parse(fs.readFileSync(keyPath, 'utf8'));
+          console.log('✅ Loaded service account from local file');
         } else {
-          console.log('❌ No service account key found!');
+          console.log(`❌ No service account key found at: ${keyPath}`);
           console.log('📋 Place service-account-key.json in project root for local testing');
           console.log('📋 Or set FIREBASE_KEY, FIREBASE_SERVICE_ACCOUNT, or SERVICE_ACCOUNT_KEY environment variable');
           return [];
         }
       }
       
+      console.log('🔧 Initializing Firebase Admin SDK...');
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
       });
-      console.log('✅ Firebase Admin SDK initialized');
+      console.log('✅ Firebase Admin SDK initialized successfully!');
+    } else {
+      console.log('✅ Firebase Admin SDK already initialized');
     }
     
     const db = admin.firestore();
@@ -153,6 +174,7 @@ async function fetchPoemsFromFirestore() {
         
       } catch (err) {
         console.log(`   ❌ Error fetching ${collection}:`, err.message);
+        console.log(`   Stack:`, err.stack);
       }
     }
     
@@ -161,6 +183,7 @@ async function fetchPoemsFromFirestore() {
     
   } catch (err) {
     console.error('❌ Failed to load Firebase Admin SDK:', err.message);
+    console.error('Stack:', err.stack);
     console.log('📋 Make sure firebase-admin is installed: npm install firebase-admin');
     return [];
   }
@@ -304,7 +327,6 @@ async function generateSitemap() {
     console.log("🧠 Generating SEO sitemap...");
     console.log(`📁 Domain: ${domain}`);
     console.log(`📄 Targeting ${allowedPages.length} static pages...`);
-    console.log(`🔐 Secret available: ${!!(process.env.FIREBASE_KEY || process.env.SERVICE_ACCOUNT_KEY || process.env.FIREBASE_SERVICE_ACCOUNT)}`);
     
     // 1. Static Pages
     const staticResults = [];
@@ -356,6 +378,16 @@ async function generateSitemap() {
     console.log(`\n📊 Total: ${allUrls.length} URLs`);
     console.log(`   Static: ${staticResults.length}`);
     console.log(`   Dynamic Poems: ${poemResults.length}`);
+    
+    if (poemResults.length === 0) {
+      console.log("\n⚠️ WARNING: No poem URLs generated!");
+      console.log("📋 Check the logs above for errors.");
+      console.log("📋 Possible issues:");
+      console.log("   1. FIREBASE_KEY secret not set in GitHub Actions");
+      console.log("   2. Firestore collections are empty or don't exist");
+      console.log("   3. Firebase rules block read access");
+      console.log("   4. Service account doesn't have permission to read Firestore");
+    }
     
     // 4. Build sitemap with proper XML escaping
     const xml = buildXML(allUrls);
