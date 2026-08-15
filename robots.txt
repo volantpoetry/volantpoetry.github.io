@@ -2,10 +2,6 @@
 User-agent: *
 Allow: /
 
-# ============================================
-# ALLOW PUBLIC PAGES
-# ============================================
-
 # Root Pages
 Allow: /$
 Allow: /index.html
@@ -32,9 +28,7 @@ Allow: /store/refund.html
 # Volant Foundry
 Allow: /volant_foundry/index.html
 
-# ============================================
-# BLOCK ADMIN PAGES
-# ============================================
+# Block admin and private
 Disallow: /admin
 Disallow: /dashboard
 Disallow: /manage
@@ -42,57 +36,31 @@ Disallow: /login
 Disallow: /signup
 Disallow: /verify
 Disallow: /reset
-
-# ============================================
-# BLOCK STORE PROTECTED PAGES
-# ============================================
 Disallow: /store/approvals.html
 Disallow: /store/dashboard.html
 Disallow: /store/details.html
-
-# ============================================
-# BLOCK SHARED PROTECTED PAGES
-# ============================================
 Disallow: /shared/verify-email.html
 Disallow: /shared/universal-login.html
 Disallow: /shared/universal-signup.html
 Disallow: /shared/users-reset.html
-Disallow: /shared/check-verification.html
-
-# ============================================
-# BLOCK USER-SPECIFIC PAGES
-# ============================================
 Disallow: /user-profile.html
 
-# ============================================
-# BLOCK GOOGLE VERIFICATION FILES
-# ============================================
+# Block Google verification
 Disallow: /google*.html
 
-# ============================================
-# BLOCK NON-HTML FILES
-# ============================================
+# Block non-HTML files
 Disallow: /*.js$
 Disallow: /*.css$
 Disallow: /*.json$
 Disallow: /*.xml$
 
-# ============================================
-# BLOCK NODE_MODULES
-# ============================================
+# Block node_modules
 Disallow: /node_modules/
 
-# ============================================
-# BLOCK IMAGES
-# ============================================
+# Block images
 Disallow: /images/
 
-# ============================================
-# BLOCK 404 PAGE
-# ============================================
+# Block 404
 Disallow: /404.html
 
-# ============================================
-# SITEMAP LOCATION
-# ============================================
 Sitemap: https://volantpoetry.vercel.app/sitemap.xml
