@@ -784,10 +784,8 @@ draftBtn.addEventListener('click', async function(e) {
     successMessage.className = "success-message draft";
     successMessage.textContent = "📝 Poem saved as draft successfully! You can still submit it when ready.";
     
-    // Only disable the draft button, keep submit active
     draftBtn.textContent = "✅ Draft Saved";
     draftBtn.disabled = true;
-    // Submit button stays active
     submitBtn.disabled = false;
 
   } catch (err) {
@@ -805,10 +803,8 @@ form.addEventListener("submit", async (e) => {
   
   if (isSubmitted) return;
   
-  // Validate for submission
   if (!validateForSubmission()) return;
   
-  // Disable both buttons during submission
   submitBtn.disabled = true;
   draftBtn.disabled = true;
   submitBtn.textContent = "Submitting...";
@@ -892,15 +888,23 @@ form.addEventListener("submit", async (e) => {
       submittedBy: currentUsername
     });
 
+    // ===== SEND COLLABORATION NOTIFICATIONS - FIXED =====
     for (const collaborator of collaborators) {
-      await addDoc(collection(db, "notifications"), {
-        userId: collaborator.uid,
-        type: "collaboration",
-        poemId: poemRef.id,
-        message: `${currentUsername} added you as a collaborator on "${title}"`,
-        createdAt: serverTimestamp(),
-        read: false
-      });
+      try {
+        await addDoc(collection(db, "notifications"), {
+          forUser: collaborator.uid,        // ✅ Who receives it
+          fromUser: currentUser.uid,         // ✅ Who sent it
+          fromUserName: currentUsername,     // ✅ Their username
+          type: "collaboration",
+          poemId: poemRef.id,
+          poemTitle: title,
+          message: `${currentUsername} added you as a collaborator on "${title}"`,
+          timestamp: serverTimestamp(),
+          read: false
+        });
+      } catch (notifErr) {
+        console.warn("Error sending collaboration notification:", notifErr);
+      }
     }
 
     wasPoemSubmitted = true;

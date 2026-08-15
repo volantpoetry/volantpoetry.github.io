@@ -288,6 +288,21 @@
     margin-bottom: 1.2rem;
   }
 }
+
+/* ===== ADD BREATHING SPACE AT BOTTOM ON PHONES ===== */
+@media (max-width: 768px) {
+  .categories-container {
+    margin-bottom: 2rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .categories-container {
+    margin-bottom: 2.5rem !important;
+    padding-bottom: 2rem !important;
+  }
+}
 </style>
 </head>
 
@@ -306,10 +321,9 @@
       <span class="close-btn" id="close-btn">✕</span>
       <a href="index.html">Home</a>
       <a href="poems.html">Poems</a>
-      <a href="authors.html">Authors</a>
-      <a href="shared/about.html">About</a>
-      <a href="submit.html">Submit</a>
-    </div>
+            <a href="submitpoems.html">Submit Poems</a>
+          <a href="shared/about.html">About Us</a>
+         </div>
 
     <div class="nav-right">
       <div class="menu-toggle" id="menu-toggle">☰</div>

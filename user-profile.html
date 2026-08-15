@@ -1809,6 +1809,2049 @@ body {
 .panel-item {
   background: #f2f2f2 !important;
 }
+
+/* ===== TIGHTEN SPACE BETWEEN TITLE AND DATE ===== */
+.recent-poem-title {
+  margin-bottom: 2px !important; /* Reduce space below title */
+}
+
+.poem-date {
+  margin-top: 0 !important; /* Remove top margin */
+  margin-bottom: 6px !important; /* Small space before content */
+  display: block !important;
+  color: #888 !important;
+  font-size: 0.75rem !important;
+}
+
+/* ===== SEND MESSAGE BUTTON STYLING ===== */
+.message-btn {
+  background: #4b2aad !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 5px 15px !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+  transition: all 0.2s !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+}
+
+.message-btn:hover {
+  background: #3a1f8a !important;
+  transform: scale(1.02) !important;
+  box-shadow: 0 4px 12px rgba(75, 42, 173, 0.4) !important;
+}
+
+.message-btn:active {
+  transform: scale(0.98) !important;
+}
+
+/* Responsive for mobile */
+@media (max-width: 480px) {
+  .message-btn {
+    padding: 4px 12px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .message-btn {
+    padding: 3px 10px !important;
+    font-size: 11px !important;
+  }
+}
+
+/* ===== PROFILE IDENTITY LAYOUT ===== */
+.profile-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.username-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.username-main {
+  font-size: 24px;
+  font-weight: 600;
+  color: #B8860B;
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+}
+
+.real-name {
+  font-size: 14px;
+  color: #777;
+  margin: 0;
+  font-weight: 400;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+/* Follow Button */
+.follow-btn {
+  background: #4CAF50 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 20px !important;
+  padding: 5px 18px !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+  transition: all 0.2s !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 500 !important;
+}
+
+.follow-btn.following {
+  background: #f44336 !important;
+}
+
+.follow-btn:hover {
+  transform: scale(1.02) !important;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4) !important;
+}
+
+.follow-btn.following:hover {
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4) !important;
+}
+
+.message-btn:active,
+.follow-btn:active {
+  transform: scale(0.98) !important;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .username-main {
+    font-size: 20px;
+  }
+  
+  .real-name {
+    font-size: 13px;
+  }
+  
+  .message-btn,
+  .follow-btn {
+    padding: 4px 14px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .username-main {
+    font-size: 18px;
+  }
+  
+  .message-btn,
+  .follow-btn {
+    padding: 3px 12px !important;
+    font-size: 11px !important;
+  }
+  
+  .action-buttons {
+    gap: 6px;
+  }
+}
+
+/* ===== SEND MESSAGE MODAL - PROFESSIONAL ===== */
+.send-message-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeInModal 0.25s ease;
+  padding: 20px;
+}
+
+.send-message-modal.show {
+  display: flex;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.send-message-content {
+  background: white;
+  border-radius: 24px;
+  padding: 32px 36px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+  animation: slideUpModal 0.3s ease;
+  position: relative;
+}
+
+@keyframes slideUpModal {
+  from { transform: translateY(30px) scale(0.96); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.send-message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0edf7;
+}
+
+.send-message-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.send-message-icon {
+  font-size: 1.5rem;
+  background: #f5f0ff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.send-message-header-left h3 {
+  font-family: 'Playfair Display', serif;
+  color: #1a1a1a;
+  font-size: 1.3rem;
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.send-message-header-left p {
+  color: #888;
+  font-size: 0.85rem;
+  margin: 2px 0 0 0;
+}
+
+.send-message-header-left p span {
+  color: #4b2aad;
+  font-weight: 600;
+}
+
+.send-message-close {
+  background: #f5f5f5;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.send-message-close:hover {
+  background: #ff4d4d;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.send-message-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.message-to-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8f6ff;
+  border-radius: 12px;
+  border: 1px solid #ede8ff;
+}
+
+.to-label {
+  color: #888;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.to-name {
+  color: #4b2aad;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+#sendMessageInput {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #ede8ff;
+  border-radius: 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  resize: vertical;
+  outline: none;
+  min-height: 120px;
+  transition: border-color 0.25s ease;
+  line-height: 1.6;
+  background: #fafaff;
+}
+
+#sendMessageInput:focus {
+  border-color: #4b2aad;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(75, 42, 173, 0.08);
+}
+
+#sendMessageInput::placeholder {
+  color: #bbb;
+}
+
+.message-char-count {
+  text-align: right;
+  font-size: 0.75rem;
+  color: #bbb;
+  margin-top: -8px;
+}
+
+.message-char-count span {
+  color: #888;
+  font-weight: 500;
+}
+
+.send-message-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  justify-content: flex-end;
+}
+
+.cancel-btn {
+  padding: 10px 24px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.submit-btn {
+  padding: 10px 28px;
+  background: linear-gradient(135deg, #4b2aad, #6a45d1);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(75, 42, 173, 0.3);
+}
+
+.submit-btn .send-icon {
+  font-size: 0.9rem;
+  transition: transform 0.3s;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(75, 42, 173, 0.4);
+}
+
+.submit-btn:hover .send-icon {
+  transform: translateX(4px);
+}
+
+.submit-btn:active {
+  transform: scale(0.97);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Success state */
+.submit-btn.sent {
+  background: #2d7d46;
+  box-shadow: 0 4px 14px rgba(45, 125, 70, 0.3);
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .send-message-content {
+    padding: 24px 20px;
+    max-width: 100%;
+    border-radius: 18px;
+  }
+  
+  .send-message-header-left h3 {
+    font-size: 1.1rem;
+  }
+  
+  .send-message-header-left p {
+    font-size: 0.8rem;
+  }
+  
+  .send-message-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+  }
+  
+  #sendMessageInput {
+    min-height: 80px;
+    font-size: 0.9rem;
+    padding: 12px 14px;
+  }
+  
+  .submit-btn,
+  .cancel-btn {
+    padding: 8px 18px;
+    font-size: 0.85rem;
+  }
+  
+  .send-message-actions {
+    flex-wrap: wrap;
+  }
+  
+  .submit-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  
+  .cancel-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .send-message-content {
+    padding: 18px 16px;
+  }
+  
+  .send-message-header-left {
+    gap: 8px;
+  }
+  
+  .send-message-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+  
+  .send-message-header-left h3 {
+    font-size: 1rem;
+  }
+  
+  .to-name {
+    font-size: 0.85rem;
+  }
+}
+
+/* Joined date styling */
+#joined {
+  color: #666;
+  font-weight: 400;
+  font-size: 0.95rem;
+}
+
+/* ===== PROFESSIONAL SEND MESSAGE MODAL - FULLY RESPONSIVE ===== */
+
+/* Base modal styling */
+.send-message-modal {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
+  background: rgba(0, 0, 0, 0.55) !important;
+  backdrop-filter: blur(6px) !important;
+  z-index: 10000 !important;
+}
+
+.send-message-modal.show {
+  display: flex !important;
+}
+
+.send-message-content {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 480px !important;
+  margin: 0 auto !important;
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3) !important;
+  padding: 32px 28px !important;
+  box-sizing: border-box !important;
+  animation: modalSlideUp 0.35s ease !important;
+  max-height: 92vh !important;
+  overflow-y: auto !important;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.send-message-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  margin-bottom: 18px !important;
+  padding-bottom: 14px !important;
+  border-bottom: 2px solid #f0edf7 !important;
+}
+
+.send-message-header-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.send-message-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #f5f0ff, #e8e0ff) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.2rem !important;
+  flex-shrink: 0 !important;
+}
+
+.send-message-header-left h3 {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  color: #1a1a1a !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.send-message-header-left p {
+  font-size: 0.85rem !important;
+  color: #888 !important;
+  margin: 2px 0 0 0 !important;
+}
+
+.send-message-header-left p span {
+  color: #4b2aad !important;
+  font-weight: 600 !important;
+}
+
+.send-message-close {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background: #f5f5f5 !important;
+  border: none !important;
+  font-size: 1.1rem !important;
+  color: #666 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.25s ease !important;
+  flex-shrink: 0 !important;
+}
+
+.send-message-close:hover {
+  background: #ff4d4d !important;
+  color: #ffffff !important;
+  transform: rotate(90deg) !important;
+}
+
+/* Body */
+.send-message-body {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+.message-to-display {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 10px 14px !important;
+  background: #f8f6ff !important;
+  border-radius: 10px !important;
+  border: 1px solid #ede8ff !important;
+}
+
+.to-label {
+  font-size: 0.8rem !important;
+  color: #888 !important;
+  font-weight: 500 !important;
+}
+
+.to-name {
+  font-size: 0.9rem !important;
+  color: #4b2aad !important;
+  font-weight: 600 !important;
+}
+
+#sendMessageInput {
+  width: 100% !important;
+  padding: 14px 16px !important;
+  border: 2px solid #ede8ff !important;
+  border-radius: 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.95rem !important;
+  resize: vertical !important;
+  outline: none !important;
+  min-height: 110px !important;
+  transition: border-color 0.25s ease !important;
+  line-height: 1.6 !important;
+  background: #fafaff !important;
+  box-sizing: border-box !important;
+}
+
+#sendMessageInput:focus {
+  border-color: #4b2aad !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(75, 42, 173, 0.08) !important;
+}
+
+#sendMessageInput::placeholder {
+  color: #bbb !important;
+}
+
+.message-char-count {
+  text-align: right !important;
+  font-size: 0.7rem !important;
+  color: #bbb !important;
+  margin-top: -6px !important;
+  padding-right: 4px !important;
+}
+
+.message-char-count span {
+  color: #888 !important;
+  font-weight: 500 !important;
+}
+
+/* Actions */
+.send-message-actions {
+  display: flex !important;
+  gap: 10px !important;
+  margin-top: 4px !important;
+  justify-content: flex-end !important;
+}
+
+.cancel-btn {
+  padding: 10px 22px !important;
+  background: #f0f0f0 !important;
+  border: none !important;
+  border-radius: 30px !important;
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.85rem !important;
+  color: #666 !important;
+  transition: all 0.2s ease !important;
+}
+
+.cancel-btn:hover {
+  background: #e0e0e0 !important;
+  color: #333 !important;
+}
+
+.submit-btn {
+  padding: 10px 28px !important;
+  background: linear-gradient(135deg, #4b2aad, #6a45d1) !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 30px !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 0.85rem !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  box-shadow: 0 4px 14px rgba(75, 42, 173, 0.3) !important;
+}
+
+.submit-btn .send-icon {
+  font-size: 0.85rem !important;
+  transition: transform 0.3s ease !important;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(75, 42, 173, 0.4) !important;
+}
+
+.submit-btn:hover .send-icon {
+  transform: translateX(4px) !important;
+}
+
+.submit-btn:active {
+  transform: scale(0.97) !important;
+}
+
+.submit-btn:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+.submit-btn.sent {
+  background: #2d7d46 !important;
+  box-shadow: 0 4px 14px rgba(45, 125, 70, 0.3) !important;
+}
+
+/* ===== RESPONSIVE - TABLET ===== */
+@media (max-width: 768px) {
+  .send-message-content {
+    max-width: 92% !important;
+    padding: 28px 22px !important;
+    border-radius: 18px !important;
+  }
+  
+  .send-message-icon {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 1rem !important;
+  }
+  
+  .send-message-header-left h3 {
+    font-size: 1.1rem !important;
+  }
+  
+  #sendMessageInput {
+    min-height: 90px !important;
+    font-size: 0.9rem !important;
+    padding: 12px 14px !important;
+  }
+}
+
+/* ===== RESPONSIVE - MOBILE ===== */
+@media (max-width: 480px) {
+  .send-message-content {
+    max-width: 100% !important;
+    padding: 22px 16px !important;
+    border-radius: 16px !important;
+    max-height: 95vh !important;
+  }
+  
+  .send-message-modal {
+    padding: 10px !important;
+  }
+  
+  .send-message-header {
+    margin-bottom: 14px !important;
+    padding-bottom: 10px !important;
+  }
+  
+  .send-message-header-left {
+    gap: 8px !important;
+  }
+  
+  .send-message-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .send-message-header-left h3 {
+    font-size: 1rem !important;
+  }
+  
+  .send-message-header-left p {
+    font-size: 0.75rem !important;
+  }
+  
+  .send-message-close {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .message-to-display {
+    padding: 8px 12px !important;
+  }
+  
+  .to-label {
+    font-size: 0.75rem !important;
+  }
+  
+  .to-name {
+    font-size: 0.85rem !important;
+  }
+  
+  #sendMessageInput {
+    min-height: 70px !important;
+    font-size: 0.85rem !important;
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+  }
+  
+  .message-char-count {
+    font-size: 0.65rem !important;
+  }
+  
+  .send-message-actions {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    flex-direction: row !important;
+  }
+  
+  .cancel-btn {
+    order: 1 !important;
+  }
+  
+  .submit-btn {
+    order: 2 !important;
+    flex: 1 !important;
+    justify-content: center !important;
+    padding: 8px 16px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .cancel-btn {
+    flex: 1 !important;
+    justify-content: center !important;
+    padding: 8px 16px !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+/* ===== RESPONSIVE - SMALL PHONES ===== */
+@media (max-width: 380px) {
+  .send-message-content {
+    padding: 18px 12px !important;
+    border-radius: 14px !important;
+    max-height: 98vh !important;
+  }
+  
+  .send-message-modal {
+    padding: 6px !important;
+  }
+  
+  .send-message-header-left h3 {
+    font-size: 0.9rem !important;
+  }
+  
+  .send-message-icon {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .send-message-close {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  #sendMessageInput {
+    min-height: 60px !important;
+    font-size: 0.8rem !important;
+    padding: 8px 10px !important;
+  }
+  
+  .cancel-btn,
+  .submit-btn {
+    padding: 6px 12px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .send-message-actions {
+    gap: 6px !important;
+  }
+}
+
+/* Fix for very tall screens */
+@media (min-height: 900px) {
+  .send-message-content {
+    max-width: 460px !important;
+  }
+}
+
+/* Fix for very short screens */
+@media (max-height: 600px) {
+  .send-message-content {
+    max-height: 95vh !important;
+    padding: 18px 20px !important;
+  }
+  
+  #sendMessageInput {
+    min-height: 60px !important;
+  }
+  
+  .send-message-header {
+    margin-bottom: 10px !important;
+    padding-bottom: 8px !important;
+  }
+}
+
+/* ===== FLIGHT STAGE - HIDE REMAINING DETAILS FROM PUBLIC ===== */
+/* The level-info div containing remaining requirements is only shown to the profile owner */
+.panel-item .level-info {
+  display: none !important;
+}
+
+/* Show only when viewing own profile - this class will be added via JavaScript */
+.panel-item .level-info.visible {
+  display: block !important;
+}
+
+/* ===== SEND MESSAGE MODAL HEADER - "Send message to Username" ===== */
+.send-message-header-left h3 {
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  color: #1a1a1a !important;
+  margin: 0 !important;
+  line-height: 1.3 !important;
+}
+
+.send-message-header-left p {
+  font-size: 0.85rem !important;
+  color: #888 !important;
+  margin: 0 !important;
+}
+
+.send-message-header-left p span {
+  color: #4b2aad !important;
+  font-weight: 600 !important;
+}
+
+/* ===== INCREASE SEARCH BAR SIZE ON SMALL SCREENS ===== */
+@media (max-width: 600px) {
+  .search-bar {
+    width: auto !important;
+    padding-right: 15px !important;
+  }
+  
+  .search-bar input {
+    width: 140px !important;
+    padding: 6px 12px !important;
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar input {
+    width: 110px !important;
+    padding: 5px 10px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* ===== FIX SEARCH BLANKS ===== */
+.recent-poems-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 15px !important;
+}
+
+.recent-poem-card {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 70% !important;
+  max-width: 750px !important;
+}
+
+.recent-poem-card[style*="display: none"] {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+@media (max-width: 768px) {
+  .recent-poem-card {
+    width: 90% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .recent-poem-card {
+    width: 95% !important;
+  }
+}
+
+/* Hide the duplicate To: display in the body */
+.message-to-display {
+  display: none !important;
+}
+
+/* ===== SHARE BUTTON STYLING ===== */
+.share-btn {
+  background: none !important;
+  border: none !important;
+  color: #4b2aad !important;
+  cursor: pointer !important;
+  font-size: 0.85rem !important;
+  padding: 4px 8px !important;
+  transition: all 0.2s ease !important;
+  font-family: 'Inter', sans-serif !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.share-btn:hover {
+  background: #f0edff !important;
+  transform: scale(1.05) !important;
+}
+
+.share-btn:active {
+  transform: scale(0.95) !important;
+}
+
+/* Share modal */
+.share-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 20px;
+  animation: fadeInModal 0.25s ease;
+}
+
+.share-modal.show {
+  display: flex;
+}
+
+.share-modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+  animation: slideUpModal 0.3s ease;
+}
+
+.share-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f0edf7;
+}
+
+.share-modal-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.share-modal-close {
+  background: #f5f5f5;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-modal-close:hover {
+  background: #ff4d4d;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.share-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.share-link-display {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #f5f2ed;
+  border-radius: 12px;
+  padding: 10px 14px;
+  border: 1px solid #e8e0d6;
+}
+
+.share-link-display input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  color: #333;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  padding: 4px 0;
+}
+
+.copy-link-btn {
+  background: #4b2aad;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.copy-link-btn:hover {
+  background: #3a1f8a;
+  transform: scale(1.02);
+}
+
+.copy-link-btn.copied {
+  background: #2d7d46;
+}
+
+.share-options {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.share-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.share-option-btn:hover {
+  transform: translateY(-2px);
+}
+
+.share-option-btn.twitter {
+  background: #1DA1F2;
+  color: white;
+}
+
+.share-option-btn.facebook {
+  background: #4267B2;
+  color: white;
+}
+
+.share-option-btn.whatsapp {
+  background: #25D366;
+  color: white;
+}
+
+.share-option-btn.email {
+  background: #666;
+  color: white;
+}
+
+@media (max-width: 480px) {
+  .share-modal-content {
+    padding: 24px 16px;
+  }
+  
+  .share-option-btn {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+  
+  .share-link-display {
+    flex-wrap: wrap;
+  }
+  
+  .copy-link-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ===== SHARE BUTTON - Desktop (inline) ===== */
+.poem-actions {
+  display: flex;
+  flex-wrap: wrap;
+  
+  align-items: center;
+  margin-top: 8px;
+}
+
+.share-btn {
+  background: none !important;
+  border: none !important;
+  color: #4b2aad !important;
+  cursor: pointer !important;
+  font-size: 0.85rem !important;
+  padding: 4px 8px !important;
+  transition: all 0.2s ease !important;
+  font-family: 'Inter', sans-serif !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+/* ===== SHARE BUTTON - Mobile (600px and below) ===== */
+@media (max-width: 600px) {
+  .poem-actions {
+    display: flex;
+    flex-wrap: wrap;
+   
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  /* Make share button full width on its own row */
+  .share-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 6px 12px !important;
+    margin-top: 4px !important;
+    background: #f0edff !important;
+    border-radius: 8px !important;
+    font-size: 0.8rem !important;
+    border: 1px solid #e0d6b0 !important;
+  }
+  
+  .share-btn:hover {
+    background: #e8e0ff !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .share-btn {
+    font-size: 0.75rem !important;
+    padding: 5px 10px !important;
+  }
+}
+
+
+/* ===== SHARE BUTTON - Desktop (inline in poem-actions) ===== */
+.desktop-share-btn {
+  background: none !important;
+  border: none !important;
+  color: #4b2aad !important;
+  cursor: pointer !important;
+  font-size: 0.85rem !important;
+  padding: 4px 8px !important;
+  transition: all 0.2s ease !important;
+  font-family: 'Inter', sans-serif !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.desktop-share-btn:hover {
+  background: #f0edff !important;
+  transform: scale(1.05) !important;
+}
+
+.desktop-share-btn:active {
+  transform: scale(0.95) !important;
+}
+
+/* ===== MOBILE SHARE BUTTON - Separate row below actions ===== */
+.mobile-share-wrapper {
+  display: none;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.mobile-share-btn {
+  width: 100% !important;
+  justify-content: center !important;
+  padding: 8px 12px !important;
+  background: #f0edff !important;
+  border: 1px solid #e0d6b0 !important;
+  border-radius: 8px !important;
+  font-size: 0.85rem !important;
+  color: #4b2aad !important;
+  cursor: pointer !important;
+  font-family: 'Inter', sans-serif !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.mobile-share-btn:hover {
+  background: #e8e0ff !important;
+  transform: scale(1.01) !important;
+}
+
+.mobile-share-btn:active {
+  transform: scale(0.97) !important;
+}
+
+/* ===== RESPONSIVE: Hide desktop share, show mobile share on 600px and below ===== */
+@media (max-width: 600px) {
+  .desktop-share-btn {
+    display: none !important;
+  }
+  
+  .mobile-share-wrapper {
+    display: block !important;
+  }
+}
+
+/* ===== RESPONSIVE: Show desktop share, hide mobile share above 600px ===== */
+@media (min-width: 601px) {
+  .desktop-share-btn {
+    display: inline-flex !important;
+  }
+  
+  .mobile-share-wrapper {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-share-btn {
+    font-size: 0.8rem !important;
+    padding: 6px 10px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .mobile-share-btn {
+    font-size: 0.75rem !important;
+    padding: 5px 8px !important;
+  }
+}
+
+/* ===== SHARE MODAL - FULLY RESPONSIVE & CENTERED ===== */
+
+/* Base modal */
+.share-modal {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10001;
+  padding: 20px !important;
+  animation: fadeInModal 0.25s ease;
+  box-sizing: border-box !important;
+}
+
+.share-modal.show {
+  display: flex !important;
+}
+
+.share-modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+  animation: slideUpModal 0.3s ease;
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  box-sizing: border-box !important;
+}
+
+.share-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #f0edf7;
+}
+
+.share-modal-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.share-modal-close {
+  background: #f5f5f5;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.share-modal-close:hover {
+  background: #ff4d4d;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.share-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.share-poem-info {
+  margin-bottom: 4px;
+  padding: 8px 12px;
+  background: #f8f6ff;
+  border-radius: 10px;
+  border: 1px solid #ede8ff;
+}
+
+.share-poem-info strong {
+  color: #4b2aad;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  display: block;
+  word-break: break-word;
+  margin-bottom: 2px;
+}
+
+.share-poem-info span {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.share-link-display {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #f5f2ed;
+  border-radius: 12px;
+  padding: 12px 16px;
+  border: 1px solid #e8e0d6;
+  min-height: 50px;
+}
+
+.share-link-display input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  color: #333;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  padding: 6px 0;
+  min-width: 0;
+  width: 100%;
+  height: 32px;
+}
+
+.copy-link-btn {
+  background: #4b2aad;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-link-btn:hover {
+  background: #3a1f8a;
+  transform: scale(1.02);
+}
+
+.copy-link-btn.copied {
+  background: #2d7d46;
+}
+
+.share-options {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.share-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  flex: 1;
+  justify-content: center;
+  min-width: 70px;
+  height: 44px;
+}
+
+.share-option-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.share-option-btn.twitter {
+  background: #1DA1F2;
+  color: white;
+}
+
+.share-option-btn.facebook {
+  background: #4267B2;
+  color: white;
+}
+
+.share-option-btn.whatsapp {
+  background: #25D366;
+  color: white;
+}
+
+.share-option-btn.email {
+  background: #666;
+  color: white;
+}
+
+/* ===== RESPONSIVE - TABLET (768px and below) ===== */
+@media (max-width: 768px) {
+  .share-modal {
+    padding: 16px !important;
+  }
+  
+  .share-modal-content {
+    padding: 26px 22px;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 16px !important;
+    border-radius: 18px;
+  }
+  
+  .share-modal-header h3 {
+    font-size: 1.15rem;
+  }
+  
+  .share-modal-close {
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+  }
+  
+  .share-option-btn {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    min-width: 60px;
+    height: 40px;
+  }
+  
+  .share-link-display {
+    padding: 10px 14px;
+    min-height: 46px;
+  }
+  
+  .share-link-display input {
+    font-size: 0.85rem;
+    height: 28px;
+  }
+  
+  .copy-link-btn {
+    height: 34px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ===== RESPONSIVE - MOBILE (600px and below) ===== */
+@media (max-width: 600px) {
+  .share-modal {
+    padding: 12px !important;
+  }
+  
+  .share-modal-content {
+    padding: 24px 18px;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 10px !important;
+    border-radius: 16px;
+  }
+}
+
+/* ===== RESPONSIVE - MOBILE (480px and below) ===== */
+@media (max-width: 480px) {
+  .share-modal {
+    padding: 10px !important;
+  }
+  
+  .share-modal-content {
+    padding: 20px 16px;
+    border-radius: 16px;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 8px !important;
+  }
+  
+  .share-modal-header {
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+  }
+  
+  .share-modal-header h3 {
+    font-size: 1.05rem;
+  }
+  
+  .share-modal-close {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+  
+  .share-poem-info {
+    padding: 8px 12px;
+  }
+  
+  .share-poem-info strong {
+    font-size: 1rem;
+  }
+  
+  .share-poem-info span {
+    font-size: 0.8rem;
+  }
+  
+  .share-link-display {
+    padding: 10px 12px;
+    border-radius: 10px;
+    min-height: 44px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .share-link-display input {
+    font-size: 0.8rem;
+    width: 100%;
+    height: 26px;
+    padding: 4px 0;
+  }
+  
+  .copy-link-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    height: 36px;
+  }
+  
+  .share-options {
+    gap: 8px;
+  }
+  
+  .share-option-btn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    min-width: 45px;
+    flex: 1 1 40%;
+    height: 38px;
+    border-radius: 10px;
+  }
+}
+
+/* ===== RESPONSIVE - SMALL PHONES (380px and below) ===== */
+@media (max-width: 380px) {
+  .share-modal {
+    padding: 6px !important;
+  }
+  
+  .share-modal-content {
+    padding: 16px 12px;
+    border-radius: 14px;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 4px !important;
+  }
+  
+  .share-modal-header {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+  }
+  
+  .share-modal-header h3 {
+    font-size: 0.95rem;
+  }
+  
+  .share-modal-close {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+  }
+  
+  .share-poem-info {
+    padding: 6px 10px;
+  }
+  
+  .share-poem-info strong {
+    font-size: 0.9rem;
+  }
+  
+  .share-poem-info span {
+    font-size: 0.7rem;
+  }
+  
+  .share-link-display {
+    padding: 8px 10px;
+    border-radius: 8px;
+    min-height: 40px;
+  }
+  
+  .share-link-display input {
+    font-size: 0.75rem;
+    height: 22px;
+  }
+  
+  .copy-link-btn {
+    font-size: 0.7rem;
+    padding: 6px 10px;
+    height: 32px;
+  }
+  
+  .share-options {
+    gap: 6px;
+  }
+  
+  .share-option-btn {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    border-radius: 8px;
+    min-width: 35px;
+    flex: 1 1 45%;
+    height: 34px;
+    gap: 4px;
+  }
+  
+  .share-modal-body {
+    gap: 10px;
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpModal {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ===== REMOVE GAP BETWEEN COMMENT SECTION AND CATEGORY LINKS ===== */
+.poem-category-line {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  margin-bottom: 2px !important;
+}
+
+.poem-actions {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* For mobile 768px and below - NO GAP */
+@media (max-width: 768px) {
+  .poem-category-line {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .poem-actions {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* ===== FORCE NO GAP FOR 480px AND BELOW ===== */
+@media (max-width: 480px) {
+  .poem-category-line {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    position: relative !important;
+    top: 0 !important;
+  }
+  
+  .poem-actions {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  
+  .poem-category-line em,
+  .poem-category {
+    position: relative !important;
+    top: 0 !important;
+  }
+  
+  /* INCREASE message count size for 480px and below */
+  .message-count {
+    font-size: 0.9rem !important;
+  }
+}
+
+/* ===== EXTRA TIGHT FOR 409px AND BELOW ===== */
+@media (max-width: 409px) {
+  .poem-category-line {
+    margin-top: -2px !important;
+    padding-top: 0 !important;
+    margin-bottom: -2px !important;
+    padding-bottom: 0 !important;
+  }
+  
+  .poem-actions {
+    margin-top: -2px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    gap: 4px !important;
+  }
+  
+  .poem-category-line em,
+  .poem-category {
+    position: relative !important;
+    top: 0 !important;
+  }
+  
+  /* Tighter comment section */
+  .comment-section {
+    gap: 3px !important;
+  }
+  
+  .comment-input {
+    min-height: 30px !important;
+    padding: 4px 6px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .comment-btn {
+    padding: 4px 8px !important;
+    font-size: 0.7rem !important;
+  }
+  
+  .like-btn {
+    padding: 4px 6px !important;
+    font-size: 0.7rem !important;
+  }
+  
+  /* INCREASE message count size for 409px and below */
+  .message-count {
+    font-size: 0.85rem !important;
+  }
+  
+  .desktop-share-btn {
+    font-size: 0.65rem !important;
+    padding: 2px 4px !important;
+  }
+  
+  /* ===== FIX READ MORE BUTTON - PREVENT ALL MOVEMENT ===== */
+  .read-more-btn {
+    display: inline-block !important;
+    margin-top: 2px !important;
+    margin-bottom: 0 !important;
+    padding: 2px 0 !important;
+    line-height: normal !important;
+    transition: none !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    -moz-transform: none !important;
+    -ms-transform: none !important;
+    -o-transform: none !important;
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    vertical-align: baseline !important;
+    height: auto !important;
+    min-height: auto !important;
+    border: none !important;
+    outline: none !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+  
+  .read-more-btn:hover,
+  .read-more-btn:focus,
+  .read-more-btn:active {
+    transform: none !important;
+    -webkit-transform: none !important;
+    -moz-transform: none !important;
+    -ms-transform: none !important;
+    -o-transform: none !important;
+    top: 0 !important;
+    left: 0 !important;
+    position: relative !important;
+    text-decoration: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border: none !important;
+    margin: 2px 0 0 0 !important;
+    padding: 2px 0 !important;
+  }
+  
+  /* Also prevent any parent container from shifting */
+  .recent-poem-card {
+    position: relative !important;
+    overflow: visible !important;
+  }
+  
+  /* Prevent any line-height changes on hover */
+  .poem-content {
+    line-height: 1.4 !important;
+  }
+  
+  .poem-content:hover {
+    line-height: 1.4 !important;
+  }
+}
+
+/* ===== REMOVE BORDER/EDGE FROM REGULAR POEM CARDS ===== */
+.recent-poem-card {
+  border: none !important;
+  border-color: transparent !important;
+  outline: none !important;
+}
+
+/* ===== CO-WRITTEN WITH - PROFILE PAGE ===== */
+.profile-poems .collaborator-line {
+  margin-top: 4px !important;
+  font-size: 0.95rem !important;
+  color: #555 !important;
+  font-family: 'Inter', sans-serif !important;
+  padding-left: 0 !important;
+}
+
+.profile-poems .collaborator-line em {
+  font-style: normal !important;
+  color: #555 !important;
+}
+
+.profile-poems .collaborator-link {
+  color: #B8860B !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  transition: color 0.2s ease !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.profile-poems .collaborator-link:hover {
+  color: #B8860B !important;
+  text-decoration: underline !important;
+}
+
+@media (max-width: 480px) {
+  .profile-poems .collaborator-line {
+    font-size: 0.8rem !important;
+    margin-left: -5px !important;
+  }
+  .profile-poems .collaborator-link {
+    font-size: 0.8rem !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1863,18 +3906,20 @@ body {
         <input type="file" id="uploadPic" style="display:none;">
       </div>
 
-<!-- USERNAME FIRST with Follow Button and Badges -->
-<div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
-  <div class="username-wrapper">
-    <h3 class="username-main" id="username"></h3>
-    <span id="verifiedBadge" class="verified-badge" style="display: none;">✓</span>
-    <span id="unverifiedBadge" class="unverified-badge" style="display: none;">⚠️ Unverified</span>
-    <span id="googleBadge" class="google-verified-badge" style="display: none;">G</span>
-  </div>
-  <button id="followActionBtn" class="follow-btn" style="display: none;">Follow</button>
-</div>
-      <!-- REAL NAME BELOW -->
-      <p class="real-name" id="realName"></p>
+      <!-- USERNAME SECTION - NEW LAYOUT with Message & Follow buttons -->
+      <div class="profile-identity">
+        <div class="username-row">
+          <h3 class="username-main" id="username"></h3>
+          <span id="verifiedBadge" class="verified-badge" style="display: none;">✓</span>
+          <span id="unverifiedBadge" class="unverified-badge" style="display: none;">⚠️ Unverified</span>
+          <span id="googleBadge" class="google-verified-badge" style="display: none;">G</span>
+        </div>
+        <p class="real-name" id="realName"></p>
+        <div class="action-buttons">
+          <button id="messageUserBtn" class="message-btn" style="display: none;">✉️ Message</button>
+          <button id="followActionBtn" class="follow-btn" style="display: none;">Follow</button>
+        </div>
+      </div>
 
     </div>
 
@@ -1965,6 +4010,69 @@ body {
       <button class="badges-modal-close" id="closeBadgesModal">✕</button>
     </div>
     <div class="badges-modal-grid" id="badgesModalGrid"></div>
+  </div>
+</div>
+
+<!-- ===== SEND MESSAGE MODAL ===== -->
+<div id="sendMessageModal" class="send-message-modal" style="display: none;">
+  <div class="send-message-content">
+    <div class="send-message-header">
+      <div class="send-message-header-left">
+        <span class="send-message-icon">✉️</span>
+        <div>
+          <h3 id="sendMessageTitle">Send message to</h3>
+          <p id="sendMessageRecipient"><span></span></p>
+        </div>
+      </div>
+      <button class="send-message-close" id="closeSendMessageModal">✕</button>
+    </div>
+    
+    <div class="send-message-body">
+      <div class="message-to-display">
+        <span class="to-label">To:</span>
+        <span class="to-name" id="sendMessageToName"></span>
+      </div>
+      
+      <textarea id="sendMessageInput" placeholder="Write your message here..." rows="4"></textarea>
+      
+      <div class="message-char-count">
+        <span id="charCount">0</span> characters
+      </div>
+      
+      <div class="send-message-actions">
+        <button id="cancelSendMessage" class="cancel-btn">Cancel</button>
+        <button id="submitSendMessage" class="submit-btn">
+          <span class="send-icon">➤</span> Send Message
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SHARE MODAL ===== -->
+<div id="shareModal" class="share-modal" style="display: none;">
+  <div class="share-modal-content">
+    <div class="share-modal-header">
+      <h3>🔗 Share Poem</h3>
+      <button class="share-modal-close" id="closeShareModal">✕</button>
+    </div>
+    <div class="share-modal-body">
+      <div style="margin-bottom: 8px;">
+        <strong id="sharePoemTitle" style="color: #4b2aad; font-family: 'Playfair Display', serif; font-size: 1.1rem;"></strong>
+        <span style="color: #888; font-size: 0.9rem;"> by </span>
+        <span id="sharePoemAuthor" style="color: #555; font-size: 0.9rem;"></span>
+      </div>
+      <div class="share-link-display">
+        <input type="text" id="shareLinkInput" readonly value="">
+        <button class="copy-link-btn" id="copyLinkBtn">📋 Copy</button>
+      </div>
+      <div class="share-options">
+        <button class="share-option-btn twitter" data-platform="twitter">🐦 Twitter</button>
+        <button class="share-option-btn facebook" data-platform="facebook">📘 Facebook</button>
+        <button class="share-option-btn whatsapp" data-platform="whatsapp">💬 WhatsApp</button>
+        <button class="share-option-btn email" data-platform="email">✉️ Email</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2339,34 +4447,215 @@ async function loadCommentList(card) {
   }
 }
 
+// ===== UPDATED: SEND MESSAGE MODAL FUNCTIONS =====
+
+function showSendMessageModal(recipientName, recipientUid) {
+  const modal = document.getElementById('sendMessageModal');
+  if (!modal) return;
+  
+  // Safely set elements with existence checks
+  const titleEl = document.getElementById('sendMessageTitle');
+  if (titleEl) titleEl.textContent = 'Send message to';
+  
+  const recipientEl = document.getElementById('sendMessageRecipient');
+  if (recipientEl) {
+    const span = recipientEl.querySelector('span');
+    if (span) {
+      span.textContent = recipientName;
+    }
+  }
+  
+  const toNameEl = document.getElementById('sendMessageToName');
+  if (toNameEl) toNameEl.textContent = recipientName;
+  
+  const inputEl = document.getElementById('sendMessageInput');
+  if (inputEl) {
+    inputEl.value = '';
+    const charCountEl = document.getElementById('charCount');
+    if (charCountEl) charCountEl.textContent = '0';
+  }
+  
+  const submitBtn = document.getElementById('submitSendMessage');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<span class="send-icon">➤</span> Send Message';
+    submitBtn.classList.remove('sent');
+    submitBtn.dataset.recipientUid = recipientUid;
+  }
+  
+  modal.classList.add('show');
+  modal.style.display = 'flex';
+  
+  // Focus with slight delay for animation
+  setTimeout(() => {
+    if (inputEl) inputEl.focus();
+  }, 350);
+}
+
+function closeSendMessageModal() {
+  const modal = document.getElementById('sendMessageModal');
+  if (!modal) return;
+  modal.classList.remove('show');
+  setTimeout(() => {
+    modal.style.display = 'none';
+  }, 300);
+}
+
+// Character counter
+const messageInput = document.getElementById('sendMessageInput');
+if (messageInput) {
+  messageInput.addEventListener('input', function() {
+    const charCountEl = document.getElementById('charCount');
+    if (charCountEl) charCountEl.textContent = this.value.length;
+  });
+}
+
+async function sendDirectMessage() {
+  const submitBtn = document.getElementById('submitSendMessage');
+  if (!submitBtn) return;
+  
+  const recipientUid = submitBtn.dataset.recipientUid;
+  const messageInput = document.getElementById('sendMessageInput');
+  if (!messageInput) return;
+  
+  const message = messageInput.value.trim();
+  
+  if (!message) {
+    messageInput.style.borderColor = '#ff4d4d';
+    messageInput.focus();
+    setTimeout(() => {
+      messageInput.style.borderColor = '#ede8ff';
+    }, 2000);
+    return;
+  }
+  
+  if (!recipientUid || !currentUserUid) {
+    alert('Error: Unable to send message.');
+    return;
+  }
+  
+  // Disable button and show sending state
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span style="display:inline-block; animation:spin 1s linear infinite;">⟳</span> Sending...';
+  
+  try {
+    const convId = [currentUserUid, recipientUid].sort().join('_');
+    const convRef = doc(db, "conversations", convId);
+    const convSnap = await getDoc(convRef);
+    
+    const recipientDoc = await getDoc(doc(db, "users", recipientUid));
+    const recipientName = recipientDoc.exists() ? recipientDoc.data().username || 'Poet' : 'Poet';
+    const currentUserDoc = await getDoc(doc(db, "users", currentUserUid));
+    const currentUserName = currentUserDoc.exists() ? currentUserDoc.data().username || 'Me' : 'Me';
+    
+    if (!convSnap.exists()) {
+      await setDoc(convRef, { 
+        participants: [currentUserUid, recipientUid], 
+        participantDetails: { 
+          [currentUserUid]: { username: currentUserName, photoURL: null },
+          [recipientUid]: { username: recipientName, photoURL: null }
+        }, 
+        lastMessage: message, 
+        lastMessageTime: serverTimestamp(), 
+        createdAt: serverTimestamp() 
+      });
+    }
+    
+    await addDoc(collection(db, `conversations/${convId}/messages`), { 
+      text: message, 
+      senderId: currentUserUid, 
+      timestamp: serverTimestamp(), 
+      read: false 
+    });
+    
+    await updateDoc(convRef, { 
+      lastMessage: message, 
+      lastMessageTime: serverTimestamp() 
+    });
+    
+    // Success state
+    submitBtn.innerHTML = '✓ Sent!';
+    submitBtn.classList.add('sent');
+    submitBtn.style.background = '#2d7d46';
+    
+    // Close after success
+    setTimeout(() => {
+      closeSendMessageModal();
+      // Reset button for next time
+      setTimeout(() => {
+        submitBtn.innerHTML = '<span class="send-icon">➤</span> Send Message';
+        submitBtn.style.background = '';
+        submitBtn.classList.remove('sent');
+        submitBtn.disabled = false;
+      }, 300);
+    }, 800);
+    
+  } catch (err) {
+    console.error('Error sending message:', err);
+    submitBtn.innerHTML = '❌ Failed';
+    submitBtn.style.background = '#dc3545';
+    setTimeout(() => {
+      submitBtn.innerHTML = '<span class="send-icon">➤</span> Send Message';
+      submitBtn.style.background = '';
+      submitBtn.disabled = false;
+    }, 2000);
+  }
+}
+
+// Add spin animation for the loading state
+const styleSheet = document.createElement("style");
+styleSheet.textContent = `
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+`;
+document.head.appendChild(styleSheet);
+
+// ===== END SEND MESSAGE MODAL FUNCTIONS =====
+
+// ===== UPDATED: loadFollowButtonAndCounts - Shows Message button for others ONLY =====
 async function loadFollowButtonAndCounts(viewerUid, targetUid) {
   if (!targetUid) return;
   
-  // ✅ ALWAYS show BOTH followers AND following counts - even for public visitors
+  // ALWAYS show BOTH followers AND following counts
   await refreshUserCounts(targetUid);
   
-  // Handle follow button (ONLY for logged-in users viewing someone else)
   const followBtn = document.getElementById("followActionBtn");
+  const messageBtn = document.getElementById("messageUserBtn");
   
   // If no one is logged in (public view)
   if (!viewerUid) {
     if (followBtn) followBtn.style.display = "none";
-    return; // Counts (followers + following) already displayed by refreshUserCounts
+    if (messageBtn) messageBtn.style.display = "none";
+    return;
   }
   
-  // Logged in user viewing their own profile
+  // Logged in user viewing their OWN profile - HIDE both buttons
   if (viewerUid === targetUid) {
     if (followBtn) followBtn.style.display = "none";
+    if (messageBtn) messageBtn.style.display = "none";
     await refreshUserCounts(viewerUid);
   } 
-  // Logged in user viewing someone else's profile
+  // Logged in user viewing SOMEONE ELSE's profile - SHOW both buttons
   else {
+    // Show Follow button
     if (followBtn) {
       followBtn.style.display = "inline-block";
       followBtn.onclick = () => handleFollow(viewerUid, targetUid);
       const isFollowing = await checkIfFollowing(viewerUid, targetUid);
       followBtn.textContent = isFollowing ? "Unfollow" : "Follow";
       followBtn.classList.toggle("following", isFollowing);
+    }
+    
+    // Show Message button - OPENS THE MODAL
+    if (messageBtn) {
+      messageBtn.style.display = "inline-block";
+      messageBtn.onclick = () => {
+        // Get the recipient's name
+        const recipientName = document.getElementById('username').textContent || 'Poet';
+        showSendMessageModal(recipientName, targetUid);
+      };
     }
   }
 }
@@ -2823,39 +5112,85 @@ async function fetchUserPoems(usernameToFetch) {
         }catch(err){console.warn(err);}
       }
 
+      // ===== BUILD COLLABORATORS HTML =====
+      let collaboratorsHTML = '';
+      if (Array.isArray(poem.collaborators) && poem.collaborators.length > 0) {
+        const collaboratorLinks = [];
+        for (const collaborator of poem.collaborators) {
+          if (!collaborator.uid) continue;
+          let collabName = collaborator.username || "Unknown";
+          try {
+            const collabDoc = await getDoc(doc(db, "users", collaborator.uid));
+            if (collabDoc.exists()) {
+              const collabData = collabDoc.data();
+              collabName = collabData.username || collabName;
+            }
+          } catch (e) {}
+          collaboratorLinks.push(`<a href="/user-profile.html?uid=${encodeURIComponent(collaborator.uid)}" class="collaborator-link">${escapeHtml(collabName)}</a>`);
+        }
+        if (collaboratorLinks.length) {
+          collaboratorsHTML = `<div class="collaborator-line" style="margin-top:4px; font-size:0.95rem; color:#555; font-family:'Inter', sans-serif;"><em>Co-written with ${collaboratorLinks.join(", ")}</em></div>`;
+        }
+      }
+
       // View count
       const viewCount = poem.views || 0;
-
-      card.innerHTML = `
-        <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <img id="author-img-${docId}" src="${profileImage}" alt="Author" class="author-img" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
-            <div class="author-info">
-              <a id="author-link-${docId}" href="${profileLink}" class="author-link" style="font-size:1.2rem; font-weight:700;">${escapeHtml(displayName)}</a>
-            </div>
-          </div>
-          <span class="view-count-inline" style="font-size:0.85rem; color:#333;">👁️ ${viewCount}</span>
-        </div>
-
-        <h3 class="recent-poem-title" style="margin-top:12px;">${escapeHtml(poem.title)}</h3>
-        ${dateStr ? `<small class="poem-date">${escapeHtml(dateStr)}</small>` : ""}
-        <button class="delete-btn" data-id="${docId}">🗑️ Delete</button>
-        <div class="poem-body">
-          <p class="poem-content" style="white-space:pre-wrap; margin-top:8px; margin-left:0; padding-left:0;">${escapeHtml(truncated.preview).replace(/\n/g, "<br>")}</p>
-          ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
-        </div>
-        ${audioSectionHTML}
-        ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${escapeHtml(cat)}</a>`).join(", ")}</em></p>` : ""}
-        <div class="poem-actions">
-          <div class="comment-section">
-            <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
-            <button class="comment-btn">Post</button>
-          </div>
-          <button class="like-btn">❤️</button>
-          <span class="like-count">${likes}</span>
-          <span class="message-count">💬 ${commentsSnapCount}</span>
-        </div>
-      `;
+card.innerHTML = `
+  <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img id="author-img-${docId}" src="${profileImage}" alt="Author" class="author-img" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+      <div class="author-info">
+        <a id="author-link-${docId}" href="${profileLink}" class="author-link" style="font-size:1.2rem; font-weight:700;">${escapeHtml(displayName)}</a>
+      </div>
+    </div>
+    <span class="view-count-inline" style="font-size:0.85rem; color:#333;">👁️ ${viewCount}</span>
+  </div>
+  ${collaboratorsHTML}
+  <h3 class="recent-poem-title" style="margin-top:12px;">${escapeHtml(poem.title)}</h3>
+  ${dateStr ? `<small class="poem-date">${escapeHtml(dateStr)}</small>` : ""}
+  ${viewingOwnProfile ? `<button class="delete-btn" data-id="${docId}">🗑️ Delete</button>` : ''}
+  <div class="poem-body">
+    <p class="poem-content" style="white-space:pre-wrap; margin-top:8px; margin-left:0; padding-left:0;">${escapeHtml(truncated.preview).replace(/\n/g, "<br>")}</p>
+    ${truncated.truncated ? `<button class="read-more-btn">Read More</button>` : ""}
+  </div>
+  ${audioSectionHTML}
+  ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${escapeHtml(cat)}</a>`).join(", ")}</em></p>` : ""}
+  
+  <!-- POEM ACTIONS -->
+  <div class="poem-actions">
+    <div class="comment-section">
+      <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
+      <button class="comment-btn">Post</button>
+    </div>
+    <button class="like-btn">❤️</button>
+    <span class="like-count">${likes}</span>
+    <span class="message-count">💬 ${commentsSnapCount}</span>
+    <!-- Desktop share button - hidden on mobile -->
+    <button class="share-btn desktop-share-btn" 
+            data-poem-id="${docId}" 
+            data-collection="recentPoems"
+            data-slug="${poem.slug || poem.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}"
+            data-poem-title="${escapeHtml(poem.title)}"
+            data-poem-author="${escapeHtml(displayName)}"
+            title="Share this poem">
+      🔗 Share
+    </button>
+  </div>
+  
+  <!-- MOBILE SHARE BUTTON - separate row, hidden on desktop -->
+  <div class="mobile-share-wrapper">
+    <button class="share-btn mobile-share-btn" 
+            data-poem-id="${docId}" 
+            data-collection="recentPoems"
+            data-slug="${poem.slug || poem.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}"
+            data-poem-title="${escapeHtml(poem.title)}"
+            data-poem-author="${escapeHtml(displayName)}"
+            title="Share this poem">
+      🔗 Share This Poem
+    </button>
+  </div>
+`;
+       
       if (!viewingOwnProfile) card.querySelector('.delete-btn')?.remove();
       poemsContainer.appendChild(card);
       const commentListDiv = document.createElement('div');
@@ -2871,6 +5206,8 @@ async function fetchUserPoems(usernameToFetch) {
     attachDeleteListeners();
   } catch(e) { poemsContainer.innerHTML = `<p>Error loading poems.</p>`; }
 }
+       
+
 function attachDeleteListeners() { document.querySelectorAll('.delete-btn').forEach(btn => { btn._del = async () => { if (confirm('Delete this poem?')) { await deleteDoc(doc(db, "recentPoems", btn.dataset.id)); fetchUserPoems(profileUsername); } }; btn.addEventListener('click', btn._del); }); }
 
 document.addEventListener('click', async (e) => {
@@ -3158,7 +5495,31 @@ if (data.realName && data.realName.trim() !== "") {
   }
   
   document.getElementById("bio").innerText = data.bio || "No bio yet";
-  document.getElementById("joined").innerText = data.joined?.seconds ? new Date(data.joined.seconds*1000).toDateString() : "Unknown";
+  
+  // Show joined 
+  // Check both joined (for old users) and createdAt (for new users)
+let joinDate = null;
+
+if (data.joined?.seconds) {
+  joinDate = new Date(data.joined.seconds * 1000);
+} else if (data.createdAt?.seconds) {
+  joinDate = new Date(data.createdAt.seconds * 1000);
+}
+
+// Also handle if it's a string or number (fallback)
+if (!joinDate && data.joined) {
+  const parsed = new Date(data.joined);
+  if (!isNaN(parsed.getTime())) joinDate = parsed;
+}
+if (!joinDate && data.createdAt) {
+  const parsed = new Date(data.createdAt);
+  if (!isNaN(parsed.getTime())) joinDate = parsed;
+}
+
+document.getElementById("joined").innerText = joinDate ? 
+  joinDate.toLocaleString('en-US', { month: 'long', year: 'numeric' }) : 
+  "Unknown";
+ 
   
   // Setup email privacy toggle (only for own profile)
   if (viewingOwnProfile && user && user.uid === targetProfileUid) {
@@ -3243,6 +5604,19 @@ await updateVerificationBadge(targetProfileUid, viewingOwnProfile);
   await fetchUserPoems(profileUsername);
   setupReadTracking();
   await fetchTopPoems(profileUsername);
+
+// ===== FLIGHT STAGE - SHOW REMAINING DETAILS ONLY TO OWNER =====
+// After viewingOwnProfile is determined
+const levelInfoEl = document.querySelector('.panel-item .level-info');
+if (levelInfoEl) {
+  if (viewingOwnProfile) {
+    levelInfoEl.classList.add('visible');
+    levelInfoEl.style.display = 'block';
+  } else {
+    levelInfoEl.classList.remove('visible');
+    levelInfoEl.style.display = 'none';
+  }
+}
 });
 
 // Image modal
@@ -3262,7 +5636,259 @@ document.getElementById("loginNavBtn")?.addEventListener("click", () => { window
 // Search filter
 const searchInput = document.getElementById("searchInput");
 let debounceTimeout;
-if (searchInput) { searchInput.addEventListener("input", () => { clearTimeout(debounceTimeout); debounceTimeout = setTimeout(() => { const filter = searchInput.value.trim().toLowerCase(); document.querySelectorAll(".recent-poem-card").forEach(card => { const title = card.querySelector(".poem-title")?.textContent.toLowerCase() || ""; const content = card.querySelector(".poem-content")?.textContent.toLowerCase() || ""; card.style.display = (title.includes(filter) || content.includes(filter)) ? "block" : "none"; }); }, 300); }); }
+if (searchInput) { 
+  console.log("✅ Search input found!");
+  
+  // Remove any existing listeners to prevent duplicates
+  const newSearchInput = searchInput.cloneNode(true);
+  searchInput.parentNode.replaceChild(newSearchInput, searchInput);
+  
+  newSearchInput.addEventListener("input", function() { 
+    clearTimeout(debounceTimeout); 
+    debounceTimeout = setTimeout(() => { 
+      const filter = this.value.trim().toLowerCase(); 
+      
+      // Get all poem cards from the container
+      const container = document.getElementById("poemsContainer");
+      if (!container) {
+        console.error("❌ poemsContainer not found!");
+        return;
+      }
+      
+      // Get all cards and their comment lists
+      const cards = container.querySelectorAll(".recent-poem-card");
+      
+      if (filter === "") {
+        // Show all cards and their comment lists
+        cards.forEach(card => {
+          card.style.display = "";
+          // Show comment list if it was open
+          const commentList = card.nextElementSibling;
+          if (commentList && commentList.classList.contains("comment-list")) {
+            // Only show if it was previously visible
+            if (commentList.dataset.wasVisible === "true") {
+              commentList.style.display = "block";
+            } else {
+              commentList.style.display = "none";
+            }
+          }
+        });
+        return;
+      }
+      
+      // Filter cards
+      cards.forEach(card => {
+        const titleEl = card.querySelector(".recent-poem-title");
+        const title = titleEl ? titleEl.textContent.toLowerCase() : "";
+        
+        const contentEl = card.querySelector(".poem-content");
+        const content = contentEl ? contentEl.textContent.toLowerCase() : "";
+        
+        const authorEl = card.querySelector(".author-link");
+        const author = authorEl ? authorEl.textContent.toLowerCase() : "";
+        
+        const matches = title.includes(filter) || content.includes(filter) || author.includes(filter);
+        
+        // Save comment list visibility state before hiding
+        const commentList = card.nextElementSibling;
+        if (commentList && commentList.classList.contains("comment-list")) {
+          if (commentList.style.display === "block") {
+            commentList.dataset.wasVisible = "true";
+          } else {
+            commentList.dataset.wasVisible = "false";
+          }
+        }
+        
+        if (matches) {
+          card.style.display = "";
+          // Show comment list if it was previously visible
+          if (commentList && commentList.classList.contains("comment-list")) {
+            if (commentList.dataset.wasVisible === "true") {
+              commentList.style.display = "block";
+            } else {
+              commentList.style.display = "none";
+            }
+          }
+        } else {
+          card.style.display = "none";
+          // Hide comment list for hidden cards
+          if (commentList && commentList.classList.contains("comment-list")) {
+            commentList.style.display = "none";
+          }
+        }
+      });
+    }, 300); 
+  }); 
+} else {
+  console.error("❌ Search input not found!");
+}
+
+// ===== SEND MESSAGE MODAL EVENT LISTENERS =====
+// Modal event listeners - with existence checks
+const closeModalBtn = document.getElementById('closeSendMessageModal');
+if (closeModalBtn) {
+  closeModalBtn.addEventListener('click', closeSendMessageModal);
+}
+
+const cancelModalBtn = document.getElementById('cancelSendMessage');
+if (cancelModalBtn) {
+  cancelModalBtn.addEventListener('click', closeSendMessageModal);
+}
+
+const sendModal = document.getElementById('sendMessageModal');
+if (sendModal) {
+  sendModal.addEventListener('click', (e) => {
+    if (e.target === sendModal) {
+      closeSendMessageModal();
+    }
+  });
+}
+
+const submitMsgBtn = document.getElementById('submitSendMessage');
+if (submitMsgBtn) {
+  submitMsgBtn.addEventListener('click', sendDirectMessage);
+}
+
+// Enter key to send (Shift+Enter for new line)
+const sendMsgInput = document.getElementById('sendMessageInput');
+if (sendMsgInput) {
+  sendMsgInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendDirectMessage();
+    }
+  });
+}
+
+// ===== SHARE MODAL FUNCTIONS =====
+
+function showShareModal(poemId, poemTitle, poemAuthor, collection, slug) {
+  const modal = document.getElementById('shareModal');
+  if (!modal) return;
+  
+  // Use collection and slug format like your poem links page
+  const shareUrl = `${window.location.origin}/poem.html?collection=${encodeURIComponent(collection || 'recentPoems')}&slug=${encodeURIComponent(slug || poemTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}`;
+  
+  document.getElementById('shareLinkInput').value = shareUrl;
+  document.getElementById('sharePoemTitle').textContent = poemTitle || 'Poem';
+  document.getElementById('sharePoemAuthor').textContent = poemAuthor || 'Anonymous';
+  
+  modal.classList.add('show');
+  modal.style.display = 'flex';
+}
+
+function closeShareModal() {
+  const modal = document.getElementById('shareModal');
+  if (!modal) return;
+  modal.classList.remove('show');
+  setTimeout(() => {
+    modal.style.display = 'none';
+  }, 300);
+}
+
+// Copy link to clipboard
+async function copyShareLink() {
+  const input = document.getElementById('shareLinkInput');
+  if (!input) return;
+  
+  const copyBtn = document.getElementById('copyLinkBtn');
+  
+  try {
+    await navigator.clipboard.writeText(input.value);
+    copyBtn.textContent = '✅ Copied!';
+    copyBtn.classList.add('copied');
+    setTimeout(() => {
+      copyBtn.textContent = '📋 Copy';
+      copyBtn.classList.remove('copied');
+    }, 2000);
+  } catch (err) {
+    // Fallback
+    input.select();
+    document.execCommand('copy');
+    copyBtn.textContent = '✅ Copied!';
+    copyBtn.classList.add('copied');
+    setTimeout(() => {
+      copyBtn.textContent = '📋 Copy';
+      copyBtn.classList.remove('copied');
+    }, 2000);
+  }
+}
+
+// Share to social media
+function shareToPlatform(platform, url, poemTitle, poemAuthor) {
+  const text = `📝 "${poemTitle}" by ${poemAuthor}\n\nRead this beautiful poem on Volant Poetry:`;
+  
+  let shareUrl = '';
+  switch(platform) {
+    case 'twitter':
+      shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+      break;
+    case 'facebook':
+      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
+      break;
+    case 'whatsapp':
+      shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + url)}`;
+      break;
+    case 'email':
+      shareUrl = `mailto:?subject=${encodeURIComponent(`Poem: ${poemTitle}`)}&body=${encodeURIComponent(text + '\n\n' + url)}`;
+      break;
+    default:
+      return;
+  }
+  
+  window.open(shareUrl, '_blank', 'width=600,height=500');
+}
+
+// ===== SHARE BUTTON EVENT LISTENERS =====
+// Handle share button clicks
+document.addEventListener('click', function(e) {
+  const shareBtn = e.target.closest('.share-btn');
+  if (shareBtn) {
+    e.preventDefault();
+    const poemId = shareBtn.dataset.poemId;
+    const poemTitle = shareBtn.dataset.poemTitle || 'Poem';
+    const poemAuthor = shareBtn.dataset.poemAuthor || 'Anonymous';
+    const collection = shareBtn.dataset.collection || 'recentPoems';
+    const slug = shareBtn.dataset.slug || poemTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    showShareModal(poemId, poemTitle, poemAuthor, collection, slug);
+  }
+});
+
+// Share modal event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  // Close modal
+  const closeBtn = document.getElementById('closeShareModal');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeShareModal);
+  }
+  
+  const modal = document.getElementById('shareModal');
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        closeShareModal();
+      }
+    });
+  }
+  
+  // Copy link
+  const copyBtn = document.getElementById('copyLinkBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', copyShareLink);
+  }
+  
+// Social share buttons
+document.querySelectorAll('.share-option-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const platform = this.dataset.platform;
+    const url = document.getElementById('shareLinkInput')?.value || '';
+    const poemTitle = document.getElementById('sharePoemTitle')?.textContent || 'Poem';
+    const poemAuthor = document.getElementById('sharePoemAuthor')?.textContent || 'Anonymous';
+    shareToPlatform(platform, url, poemTitle, poemAuthor);
+  });
+});
+});
+
 </script>
 <script>
 // Dynamic login/signup link setup for current page redirect

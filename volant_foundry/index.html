@@ -1740,6 +1740,97 @@
         border-bottom: 1px solid #f5f3f0;
     }
 }
+
+/* ===== BUY NOW BUTTON STYLES ===== */
+.buy-now-link {
+    display: inline-block;
+    background: #4b2aad;
+    color: #fff;
+    padding: 4px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    width: fit-content;
+    margin-top: 4px;
+    margin-left: 19px;
+}
+.buy-now-link:hover {
+    background: #6a45d1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(75, 42, 173, 0.3);
+}
+
+/* Book title */
+.book-title {
+    color: #111111;
+    font-size: 23px;
+    margin-left: 19px;
+    padding-top: 0px !important;
+    margin-bottom: 2px;
+    font-weight: bold;
+    font-family: "Cormorant Garamond", serif;
+}
+
+/* Book description */
+.book-des {
+    font-size: 17px;
+    font-family: "Cormorant Garamond", serif;
+    margin-left: 19px;
+    margin-bottom: 2px;
+    margin-top: 0px;
+}
+
+/* Title container */
+.title-des-eco {
+    display: grid;
+    margin-left: 0px;
+    line-height: 1.4;
+    font-weight: 400;
+}
+
+/* Book title */
+.book-title {
+    color: #111111;
+    font-size: 23px;
+    margin-left: 19px;
+    padding-top: 0px !important;
+    margin-bottom: -5px;  /* Increased from -4px to -12px */
+      font-family: "Cormorant Garamond", serif;
+   
+}
+@media (min-width: 381px) and (max-width: 768px) {
+    /* Main book covers */
+    .book-cover {
+        height: 100px !important;
+        width: 70px !important;  /* Increased from 65px */
+        object-fit: cover;
+    }
+    
+    /* More books section covers */
+    .more-book-item img {
+        height: 85px !important;
+        width: 65px !important;  /* Increased from 55px */
+        object-fit: cover;
+    }
+}
+@media (max-width: 380px) {
+    .book-cover {
+        height: 95px !important;  /* Increased from 75px */
+        width: auto !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-text {
+        font-size: 1.0rem !important;
+    }
+}
+
+.nav-links.open a {
+    color: #4b2aad !important;
+}
     </style>
 </head>
 
@@ -1853,50 +1944,50 @@
             </div>
         </section>
 
-        <!-- ===== LATEST FROM VOLANT ===== -->
-        <section id="about">
-            <div class="latest-main">
-                <!-- Column 1: LATEST heading -->
-                <div class="latest">
-                    <h2 class="what-eco-fea">LATEST FROM VOLANT</h2>
-                    <p class="what-p-fea">Fresh drops from our platforms.</p>
-                </div>
+    <!-- ===== LATEST FROM VOLANT ===== -->
+<section id="about">
+    <div class="latest-main">
+        <!-- Column 1: LATEST heading -->
+        <div class="latest">
+            <h2 class="what-eco-fea">LATEST FROM VOLANT</h2>
+            <p class="what-p-fea">Fresh drops from our platforms.</p>
+        </div>
 
-                <!-- Column 2: Book listings -->
-                <div class="latest">
-                    <div class="books">
-                        <img src="../images/Black and Blue Fiction Book Cover (2).png" alt="Scentless Roses Cover" class="book-cover" onclick="openLightbox(this.src)">
-                        <div class="title-des-eco">
-                            <h2 class="book-title">Scentless Roses</h2>
-                            <div class="des-eco">
-                                <p class="book-des">A collection of poems by Rence Blunt</p>
-                                <p class="book-eco">Volant Reads . June 16, 2026</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="books">
-                        <img src="../images/Black and Blue Fiction Book Cover (8).jpg" alt="The Fall Of Twilight Cover" class="book-cover" onclick="openLightbox(this.src)">
-                        <div class="title-des-eco">
-                            <h2 class="book-title">The Fall Of Twilight</h2>
-                            <div class="des-eco">
-                                <p class="book-des">A collection of poems by Rence Blunt</p>
-                                <p class="book-eco">Volant Reads . Forthcoming</p>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Column 2: Book listings -->
+        <div class="latest">
+            <!-- Book 1: Scentless Roses -->
+            <div class="books">
+                <img src="../images/Black and Blue Fiction Book Cover (2).png" alt="Scentless Roses Cover" class="book-cover" onclick="openLightbox(this.src)">
+                <div class="title-des-eco">
+                    <h2 class="book-title">Scentless Roses</h2>
+                    <p class="book-des">A collection of poems by Rence Blunt</p>
+                    <a href="https://volantpoetry.vercel.app/store/details.html?id=MRsRtDKLmjNsPqXxmpnN" target="_blank" class="buy-now-link">Buy Now</a>
                 </div>
+            </div>
 
-                <!-- Column 3: JOIN THE HORIZON (right side on large screens) -->
-                <div class="join-horizon-right" id="contact">
-                    <h2 class="join-horizon">SUBSCRIBE TO THE HORIZON</h2>
-                    <P class="join-horizon-p1">Be part of something <br>meaningful</P>
-                    <p class="join-horizon-p2">Get updates, opportunities, and early access to newly published books, poems, and everything we build.</p>
-                    <div class="join">
-                        <input type="email" name="join-field" id="join-field" placeholder="Enter your email" class="join-field-css">
-                        <button class="join-btn" id="joinBtn">Join Now</button>
-                    </div>
+            <!-- Book 2: The Fall Of Twilight -->
+            <div class="books">
+                <img src="../images/Black and Blue Fiction Book Cover (8).jpg" alt="The Fall Of Twilight Cover" class="book-cover" onclick="openLightbox(this.src)">
+                <div class="title-des-eco">
+                    <h2 class="book-title">The Fall Of Twilight</h2>
+                    <p class="book-des">A collection of poems by Rence Blunt</p>
+                    <a href="https://volantpoetry.vercel.app/store/details.html?id=SSrzOZttEVBQL8NGhguy" target="_blank" class="buy-now-link">Buy Now</a>
                 </div>
+            </div>
+        </div>
+
+        <!-- Column 3: JOIN THE HORIZON (right side on large screens) -->
+        <div class="join-horizon-right" id="contact">
+            <h2 class="join-horizon">SUBSCRIBE TO THE HORIZON</h2>
+            <P class="join-horizon-p1">Be part of something <br>meaningful</P>
+            <p class="join-horizon-p2">Get updates, opportunities, and early access to newly published books, poems, and everything we build.</p>
+            <div class="join">
+                <input type="email" name="join-field" id="join-field" placeholder="Enter your email" class="join-field-css">
+                <button class="join-btn" id="joinBtn">Join Now</button>
+            </div>
+        </div>
+    </div>
+</section>
 
                 <!-- ===== MORE BOOKS (full width, same style as latest books) ===== -->
                 <div style="grid-column: 1 / -1; padding: 10px 0 0 0;">

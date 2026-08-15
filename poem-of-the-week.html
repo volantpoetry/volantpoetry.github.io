@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Poem of the Week | Volant Poetry</title>
 
-<meta name="description" content="Discover the Poem of the Week at Volant Poetry. Read featured poems from talented poets, share your thoughts, and connect with the poetry community.">
+  <meta name="description" content="Discover the Poem of the Week at Volant Poetry. Read featured poems from talented poets, share your thoughts, and connect with the poetry community.">
   <meta name="keywords" content="poem of the week, featured poem, poetry, Volant Poetry, poem, poet, weekly poem, poetry community">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <link rel="canonical" href="https://volantpoetry.vercel.app/poem-of-the-week.html">
@@ -57,14 +57,14 @@
 
   <!-- ===== ADDITIONAL SEO ===== -->
   <meta name="theme-color" content="#4b2aad">
-  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://https://volantpoetry.github.io/sitemap.xml">
-
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="https://volantpoetry.github.io/sitemap.xml">
 
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&family=Lato:wght@400;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-<!-- Favicons -->
-<link rel="icon" type="image/png" href="images/volant-favicon.png">
-<link rel="apple-touch-icon" href="images/volant-favicon.png">
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" href="images/volant-favicon.png">
+  <link rel="apple-touch-icon" href="images/volant-favicon.png">
 
   <style>
     * {
@@ -78,13 +78,88 @@
       font-family: 'Inter', sans-serif;
     }
 
+    /* ===== HEADER WITH HOME BUTTON ===== */
+    .header-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 2000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(75, 42, 173, 0.1);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #4b2aad;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #4b2aad;
+      cursor: default;
+      user-select: none;
+    }
+
+    .nav-logo-img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      cursor: default;
+    }
+
+    .logo .highlight {
+      color: #ffffff;
+      text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad;
+    }
+
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      background: #4b2aad;
+      color: #f5f0ff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.25s ease;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .home-btn:hover {
+      background: #fff;
+      color: #4b2aad;
+      transform: translateX(-2px);
+      box-shadow: 0 4px 12px rgba(75, 42, 173, 0.25);
+    }
+
     .weekly-container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem 5%;
+      padding: 6rem 5% 2rem;
       background: white;
+      min-height: 100vh;
     }
+
     .weekly-title {
       font-family: 'Playfair Display', serif;
       font-size: 2rem;
@@ -93,6 +168,7 @@
       margin-bottom: 1rem;
       text-align: center;
     }
+
     .weekly-card {
       background: linear-gradient(160deg, #fdf6f0, #e2e9f0) !important;
       padding: 1.5rem;
@@ -103,6 +179,7 @@
       text-align: left;
       transition: all 0.2s ease;
     }
+
     .author-line {
       display: flex;
       align-items: center;
@@ -111,17 +188,20 @@
       flex-wrap: wrap;
       justify-content: space-between;
     }
+
     .author-left {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .author-img {
       width: 50px;
       height: 50px;
       border-radius: 50%;
       object-fit: cover;
     }
+
     .author-link {
       font-size: 1.1rem;
       font-weight: 700;
@@ -129,6 +209,7 @@
       text-decoration: none;
       font-family: 'Inter', sans-serif;
     }
+
     .follow-mini-btn {
       background: #4caf50;
       border: none;
@@ -141,9 +222,11 @@
       margin-left: 8px;
       font-family: 'Inter', sans-serif;
     }
+
     .follow-mini-btn.following {
       background: #f44336;
     }
+
     .view-badge {
       background: transparent !important;
       padding: 4px 10px;
@@ -153,16 +236,19 @@
       transition: all 0.3s ease;
       font-family: 'Inter', sans-serif;
     }
+
     .view-badge.view-update {
       color: #4CAF50;
       transform: scale(1.05);
     }
+
     .recent-poem-title {
       font-family: 'EB Garamond', 'Georgia', serif !important;
       color: #4b2aad;
       margin-top: 12px;
       font-size: 1.8rem;
     }
+
     .poem-content {
       margin-top: 8px;
       white-space: pre-wrap;
@@ -173,6 +259,7 @@
       font-size: 1.2rem;
       letter-spacing: 0.3px;
     }
+
     .read-more-btn {
       background: none;
       border: none;
@@ -183,10 +270,12 @@
       font-family: 'Inter', sans-serif;
       padding: 4px 0;
     }
+
     .poem-category-line {
       margin: 10px 0 4px;
       text-align: left;
     }
+
     .category-link {
       color: #B8860B;
       text-decoration: none;
@@ -195,10 +284,12 @@
       font-family: 'EB Garamond', 'Georgia', serif !important;
       font-size: 0.9rem;
     }
+
     .category-link:not(:last-child)::after {
       content: ", ";
       color: #B8860B;
     }
+
     .poem-actions {
       display: flex;
       align-items: center;
@@ -207,6 +298,7 @@
       flex-wrap: wrap;
       justify-content: flex-start;
     }
+
     .comment-section {
       display: flex;
       gap: 6px;
@@ -214,6 +306,7 @@
       min-width: 200px;
       max-width: 100%;
     }
+
     .comment-input {
       flex: 1;
       min-width: 100px;
@@ -224,6 +317,7 @@
       padding: 6px 10px;
       font-family: 'Inter', sans-serif;
     }
+
     .comment-btn, .like-btn {
       border: none;
       border-radius: 8px;
@@ -231,15 +325,18 @@
       cursor: pointer;
       white-space: nowrap;
     }
+
     .comment-btn {
       background: #4b2aad !important;
       color: white !important;
       font-family: 'Inter', sans-serif;
       transition: background 0.2s;
     }
+
     .comment-btn:hover {
       background: #3a1f8a !important;
     }
+
     .like-btn {
       background: transparent !important;
       color: #e63946 !important;
@@ -248,10 +345,12 @@
       transition: all 0.2s;
       padding: 6px 10px;
     }
+
     .like-btn.liked {
       background: #e63946 !important;
       color: white !important;
     }
+
     .like-count, .message-count {
       background: transparent !important;
       padding: 4px 0 !important;
@@ -261,63 +360,307 @@
       font-family: 'Inter', sans-serif;
       white-space: nowrap;
     }
-    .comment-list-outside {
-      margin-top: 16px;
-      width: 80%;
-      max-width: 600px;
+
+    /* ===== SHARE BUTTON STYLING - MATCHES MAIN SITE ===== */
+    .desktop-share-btn {
+      background: none !important;
+      border: none !important;
+      color: #4b2aad !important;
+      cursor: pointer !important;
+      font-size: 0.85rem !important;
+      padding: 4px 8px !important;
+      transition: all 0.2s ease !important;
+      font-family: 'Inter', sans-serif !important;
+      border-radius: 6px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 4px !important;
     }
-    .comment-list {
-      background: white !important;
-      border-radius: 14px;
-      padding: 12px;
-      margin-top: 4px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      border: 1px solid #f0e6d8;
+
+    .desktop-share-btn:hover {
+      background: #f0edff !important;
+      transform: scale(1.05) !important;
     }
-    .comment {
-      background: #faf8f5 !important;
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin-bottom: 8px;
-      border: 1px solid #ede3d4;
-      font-family: 'EB Garamond', 'Georgia', serif !important;
-      font-size: 1rem;
+
+    .desktop-share-btn:active {
+      transform: scale(0.95) !important;
     }
-    .comment-author-link {
-      font-weight: 600;
-      color: #B8860B;
-      text-decoration: none;
-      font-family: 'EB Garamond', 'Georgia', serif !important;
+
+    .mobile-share-wrapper {
+      display: none;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
     }
-    .reply-toggle {
-      color: #5a3cb3;
+
+    .mobile-share-btn {
+      width: 100% !important;
+      justify-content: center !important;
+      padding: 8px 12px !important;
+      background: #f0edff !important;
+      border: 1px solid #e0d6b0 !important;
+      border-radius: 8px !important;
+      font-size: 0.85rem !important;
+      color: #4b2aad !important;
+      cursor: pointer !important;
+      font-family: 'Inter', sans-serif !important;
+      transition: all 0.2s ease !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+
+    .mobile-share-btn:hover {
+      background: #e8e0ff !important;
+      transform: scale(1.01) !important;
+    }
+
+    .mobile-share-btn:active {
+      transform: scale(0.97) !important;
+    }
+
+    /* ===== RESPONSIVE: Hide desktop share, show mobile share on 600px and below ===== */
+    @media (max-width: 600px) {
+      .desktop-share-btn {
+        display: none !important;
+      }
+      .mobile-share-wrapper {
+        display: block !important;
+      }
+    }
+
+    /* ===== RESPONSIVE: Show desktop share, hide mobile share above 600px ===== */
+    @media (min-width: 601px) {
+      .desktop-share-btn {
+        display: inline-flex !important;
+      }
+      .mobile-share-wrapper {
+        display: none !important;
+      }
+    }
+
+    /* ===== SHARE MODAL STYLES ===== */
+    .share-modal {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      display: none !important;
+      align-items: center !important;
+      justify-content: center !important;
+      z-index: 10001;
+      padding: 20px !important;
+      animation: fadeInModal 0.25s ease;
+      box-sizing: border-box !important;
+    }
+
+    .share-modal.show {
+      display: flex !important;
+    }
+
+    .share-modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto !important;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+      animation: slideUpModal 0.3s ease;
+      max-height: 92vh;
+      overflow-y: auto;
+      position: relative;
+      box-sizing: border-box !important;
+    }
+
+    .share-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f0edf7;
+    }
+
+    .share-modal-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: #1a1a1a;
+      margin: 0;
+    }
+
+    .share-modal-close {
+      background: #f5f5f5;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      color: #666;
       cursor: pointer;
-      font-size: 0.7rem;
-      margin-top: 4px;
-      display: inline-block;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .share-modal-close:hover {
+      background: #ff4d4d;
+      color: white;
+      transform: rotate(90deg);
+    }
+
+    .share-modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .share-poem-info {
+      margin-bottom: 4px;
+      padding: 8px 12px;
+      background: #f8f6ff;
+      border-radius: 10px;
+      border: 1px solid #ede8ff;
+    }
+
+    .share-poem-info strong {
+      color: #4b2aad;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      display: block;
+      word-break: break-word;
+      margin-bottom: 2px;
+    }
+
+    .share-poem-info span {
+      color: #888;
+      font-size: 0.85rem;
+    }
+
+    .share-link-display {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      background: #f5f2ed;
+      border-radius: 12px;
+      padding: 12px 16px;
+      border: 1px solid #e8e0d6;
+      min-height: 50px;
+    }
+
+    .share-link-display input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 0.9rem;
+      color: #333;
+      outline: none;
       font-family: 'Inter', sans-serif;
+      padding: 6px 0;
+      min-width: 0;
+      width: 100%;
+      height: 32px;
     }
-    .reply-section {
-      margin-left: 20px;
-      margin-top: 6px;
-    }
-    .reply-input textarea {
-      width: 95%;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      padding: 6px;
-      resize: none;
-      font-family: 'Inter', sans-serif;
-    }
-    .send-reply-btn {
-      background: #5a3cb3;
+
+    .copy-link-btn {
+      background: #4b2aad;
       color: white;
       border: none;
-      border-radius: 6px;
-      padding: 4px 10px;
+      border-radius: 8px;
+      padding: 8px 18px;
+      cursor: pointer;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-size: 0.85rem;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .copy-link-btn:hover {
+      background: #3a1f8a;
+      transform: scale(1.02);
+    }
+
+    .copy-link-btn.copied {
+      background: #2d7d46;
+    }
+
+    .share-options {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
       margin-top: 4px;
+    }
+
+    .share-option-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 12px;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      flex: 1;
+      justify-content: center;
+      min-width: 70px;
+      height: 44px;
+    }
+
+    .share-option-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .share-option-btn.twitter {
+      background: #1DA1F2;
+      color: white;
+    }
+
+    .share-option-btn.facebook {
+      background: #4267B2;
+      color: white;
+    }
+
+    .share-option-btn.whatsapp {
+      background: #25D366;
+      color: white;
+    }
+
+    .share-option-btn.email {
+      background: #666;
+      color: white;
+    }
+
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUpModal {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     /* ===== TOAST NOTIFICATION ===== */
@@ -340,65 +683,193 @@
       max-width: 90%;
       text-align: center;
     }
+
     .toast-notification.show {
       opacity: 1;
       pointer-events: auto;
     }
+
     .toast-notification.hidden {
       opacity: 0;
       pointer-events: none;
     }
 
+    .comment-list-outside {
+      margin-top: 16px;
+      width: 80%;
+      max-width: 600px;
+    }
+
+    .comment-list {
+      background: white !important;
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid #f0e6d8;
+    }
+
+    .comment {
+      background: #faf8f5 !important;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      border: 1px solid #ede3d4;
+      font-family: 'EB Garamond', 'Georgia', serif !important;
+      font-size: 1rem;
+    }
+
+    .comment-author-link {
+      font-weight: 600;
+      color: #B8860B;
+      text-decoration: none;
+      font-family: 'EB Garamond', 'Georgia', serif !important;
+    }
+
+    .reply-toggle {
+      color: #5a3cb3;
+      cursor: pointer;
+      font-size: 0.7rem;
+      margin-top: 4px;
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .reply-section {
+      margin-left: 20px;
+      margin-top: 6px;
+    }
+
+    .reply-input textarea {
+      width: 95%;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      padding: 6px;
+      resize: none;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .send-reply-btn {
+      background: #5a3cb3;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      margin-top: 4px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+
     @media (max-width: 768px) {
-      .weekly-container { padding: 2rem 3%; }
-      .weekly-card, .comment-list-outside { width: 90%; }
-      .poem-content { font-size: 1rem; }
-      .comment-section { 
-        flex: 1 1 100%; 
+      .header-bar {
+        padding: 10px 16px;
+      }
+      
+      .logo-text {
+        font-size: 1.2rem;
+      }
+      
+      .nav-logo-img {
+        height: 28px;
+      }
+      
+      .home-btn {
+        font-size: 0.75rem;
+        padding: 6px 14px;
+      }
+
+      .weekly-container {
+        padding: 5rem 3% 2rem;
+      }
+
+      .weekly-card, .comment-list-outside {
+        width: 90%;
+      }
+
+      .poem-content {
+        font-size: 1rem;
+      }
+
+      .comment-section {
+        flex: 1 1 100%;
         min-width: 100%;
       }
-      .comment-input { 
+
+      .comment-input {
         min-width: 60%;
         font-size: 0.85rem;
       }
-      .comment-btn { 
+
+      .comment-btn {
         font-size: 0.85rem;
         padding: 6px 12px;
       }
+
       .poem-actions {
         gap: 6px;
       }
+
       .like-btn, .like-count, .message-count {
         font-size: 0.75rem;
       }
     }
 
     @media (max-width: 480px) {
-      .poem-content { font-size: 0.95rem; }
-      .comment-section { 
+      .header-bar {
+        padding: 8px 12px;
+      }
+      
+      .logo-text {
+        font-size: 1rem;
+      }
+      
+      .nav-logo-img {
+        height: 22px;
+      }
+      
+      .home-btn {
+        font-size: 0.7rem;
+        padding: 5px 12px;
+      }
+
+      .weekly-container {
+        padding: 4.5rem 2% 1.5rem;
+      }
+
+      .poem-content {
+        font-size: 0.95rem;
+      }
+
+      .comment-section {
         flex-wrap: nowrap;
         gap: 4px;
       }
-      .comment-input { 
+
+      .comment-input {
         min-width: 50%;
         font-size: 0.8rem;
         padding: 4px 8px;
         min-height: 32px;
       }
-      .comment-btn { 
+
+      .comment-btn {
         font-size: 0.75rem;
         padding: 4px 8px;
       }
+
       .like-btn, .like-count, .message-count {
         font-size: 0.7rem;
       }
-      .like-btn { padding: 4px 6px; }
+
+      .like-btn {
+        padding: 4px 6px;
+      }
+
       .poem-actions {
         gap: 4px;
       }
     }
 
-    /* Compact categories styling */
     .poem-category-line {
       margin: 6px 0 2px !important;
       text-align: left;
@@ -430,15 +901,300 @@
     .toast-notification.saved-comment {
       background: #b76e4b;
     }
+
+    /* Share modal mobile responsive */
+    @media (max-width: 768px) {
+      .share-modal {
+        padding: 16px !important;
+      }
+      .share-modal-content {
+        padding: 26px 22px;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 16px !important;
+        border-radius: 18px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .share-modal {
+        padding: 12px !important;
+      }
+      .share-modal-content {
+        padding: 24px 18px;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 10px !important;
+        border-radius: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .share-modal {
+        padding: 10px !important;
+      }
+      .share-modal-content {
+        padding: 20px 16px;
+        border-radius: 16px;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 8px !important;
+      }
+      .share-modal-header h3 {
+        font-size: 1.05rem;
+      }
+      .share-modal-close {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+      }
+      .share-link-display {
+        padding: 10px 12px;
+        flex-wrap: wrap;
+        min-height: 44px;
+      }
+      .share-link-display input {
+        font-size: 0.8rem;
+        width: 100%;
+        height: 26px;
+      }
+      .copy-link-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        height: 36px;
+      }
+      .share-option-btn {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+        min-width: 45px;
+        flex: 1 1 40%;
+        height: 38px;
+      }
+    }
+
+    /* ===== INCREASE CATEGORY AND READ MORE SIZE ===== */
+    .poem-category-line {
+      margin: 8px 0 4px !important;
+      text-align: left;
+      font-size: 0.85rem !important;
+      line-height: 1.5;
+    }
+
+    .category-link {
+      color: #B8860B;
+      text-decoration: none;
+      background: transparent !important;
+      padding: 0 !important;
+      font-size: 0.85rem !important;
+      font-weight: 500;
+      letter-spacing: normal;
+    }
+
+    .category-link:not(:last-child)::after {
+      content: ", ";
+      color: #B8860B;
+      font-size: 0.85rem;
+    }
+
+    .poem-category-line em {
+      font-style: normal;
+      font-size: 0.85rem;
+    }
+
+    .read-more-btn {
+      background: none;
+      border: none;
+      color: #960606;
+      cursor: pointer;
+      margin-top: 6px;
+      font-size: 0.85rem !important;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      padding: 4px 0;
+    }
+
+    .read-more-btn:hover {
+      color: #ff0000;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .poem-category-line {
+        font-size: 0.8rem !important;
+      }
+      .category-link {
+        font-size: 0.8rem !important;
+      }
+      .category-link:not(:last-child)::after {
+        font-size: 0.8rem;
+      }
+      .poem-category-line em {
+        font-size: 0.8rem;
+      }
+      .read-more-btn {
+        font-size: 0.8rem !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .poem-category-line {
+        font-size: 0.75rem !important;
+      }
+      .category-link {
+        font-size: 0.75rem !important;
+      }
+      .category-link:not(:last-child)::after {
+        font-size: 0.75rem;
+      }
+      .poem-category-line em {
+        font-size: 0.75rem;
+      }
+      .read-more-btn {
+        font-size: 0.75rem !important;
+      }
+    }
+
+    /* ===== INCREASE CATEGORY AND READ MORE SIZE - FORCED ===== */
+    .weekly-card .poem-category-line,
+    #poemCard .poem-category-line,
+    div.weekly-card .poem-category-line {
+      margin: 8px 0 4px !important;
+      text-align: left !important;
+      font-size: 0.95rem !important;
+      line-height: 1.6 !important;
+    }
+
+    .weekly-card .category-link,
+    #poemCard .category-link,
+    div.weekly-card .category-link {
+      color: #B8860B !important;
+      text-decoration: none !important;
+      background: transparent !important;
+      padding: 0 !important;
+      font-size: 0.95rem !important;
+      font-weight: 500 !important;
+      letter-spacing: normal !important;
+    }
+
+    .weekly-card .category-link:not(:last-child)::after,
+    #poemCard .category-link:not(:last-child)::after {
+      content: ", " !important;
+      color: #B8860B !important;
+      font-size: 0.95rem !important;
+    }
+
+    .weekly-card .poem-category-line em,
+    #poemCard .poem-category-line em {
+      font-style: normal !important;
+      font-size: 0.95rem !important;
+    }
+
+    .weekly-card .read-more-btn,
+    #poemCard .read-more-btn,
+    div.weekly-card .read-more-btn {
+      background: none !important;
+      border: none !important;
+      color: #960606 !important;
+      cursor: pointer !important;
+      margin-top: 6px !important;
+      font-size: 0.95rem !important;
+      font-weight: 500 !important;
+      font-family: 'Inter', sans-serif !important;
+      padding: 4px 0 !important;
+      display: inline-block !important;
+    }
+
+    .weekly-card .read-more-btn:hover,
+    #poemCard .read-more-btn:hover {
+      color: #ff0000 !important;
+      text-decoration: underline !important;
+    }
+
+    @media (max-width: 768px) {
+      .weekly-card .poem-category-line,
+      #poemCard .poem-category-line {
+        font-size: 0.9rem !important;
+      }
+      .weekly-card .category-link,
+      #poemCard .category-link {
+        font-size: 0.9rem !important;
+      }
+      .weekly-card .category-link:not(:last-child)::after,
+      #poemCard .category-link:not(:last-child)::after {
+        font-size: 0.9rem !important;
+      }
+      .weekly-card .read-more-btn,
+      #poemCard .read-more-btn {
+        font-size: 0.9rem !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .weekly-card .poem-category-line,
+      #poemCard .poem-category-line {
+        font-size: 0.85rem !important;
+      }
+      .weekly-card .category-link,
+      #poemCard .category-link {
+        font-size: 0.85rem !important;
+      }
+      .weekly-card .category-link:not(:last-child)::after,
+      #poemCard .category-link:not(:last-child)::after {
+        font-size: 0.85rem !important;
+      }
+      .weekly-card .read-more-btn,
+      #poemCard .read-more-btn {
+        font-size: 0.85rem !important;
+      }
+    }
   </style>
 </head>
 <body>
+
+<!-- ===== HEADER WITH HOME BUTTON ===== -->
+<header class="header-bar">
+  <div class="logo">
+    <img src="images/logokk.png" alt="Volant Poetry Logo" class="nav-logo-img">
+    <span class="logo-text">
+      <span class="highlight">Volant</span> Poetry
+    </span>
+  </div>
+  <a href="index.html" id="homeLink" class="home-btn">Home</a>
+</header>
 
 <section class="weekly-container">
   <h2 class="weekly-title">Poem of the Week</h2>
   <div class="weekly-card" id="poemCard"></div>
   <div class="comment-list-outside" id="commentsOutsideContainer"></div>
 </section>
+
+<!-- ===== SHARE MODAL ===== -->
+<div id="shareModal" class="share-modal" style="display: none;">
+  <div class="share-modal-content">
+    <div class="share-modal-header">
+      <h3>🔗 Share Poem</h3>
+      <button class="share-modal-close" id="closeShareModal">✕</button>
+    </div>
+    <div class="share-modal-body">
+      <div class="share-poem-info">
+        <strong id="sharePoemTitle" style="color: #4b2aad; font-family: 'Playfair Display', serif;"></strong>
+        <span id="sharePoemAuthor" style="color: #888;"></span>
+      </div>
+      <div class="share-link-display">
+        <input type="text" id="shareLinkInput" readonly value="">
+        <button class="copy-link-btn" id="copyLinkBtn">📋 Copy</button>
+      </div>
+      <div class="share-options">
+        <button class="share-option-btn twitter" data-platform="twitter">🐦 Twitter</button>
+        <button class="share-option-btn facebook" data-platform="facebook">📘 Facebook</button>
+        <button class="share-option-btn whatsapp" data-platform="whatsapp">💬 WhatsApp</button>
+        <button class="share-option-btn email" data-platform="email">✉️ Email</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Toast Notification -->
 <div id="toastNotification" class="toast-notification hidden"></div>
@@ -465,6 +1221,8 @@
 
   let currentUser = null;
   let currentUsername = '';
+  let currentPoemTitle = '';
+  let currentPoemAuthor = '';
 
   // ===== SAVED COMMENT KEY =====
   const SAVED_COMMENT_KEY = 'volant_weekly_saved_comment';
@@ -479,6 +1237,115 @@
       toast.className = 'toast-notification hidden';
     }, duration);
   }
+
+  // ===== SHARE FUNCTIONS =====
+  function generateSlugFromTitle(title) {
+    if (!title) return 'poem-of-the-week';
+    return title.toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+  }
+
+  function showShareModal(poemTitle, poemAuthor) {
+    const modal = document.getElementById('shareModal');
+    if (!modal) return;
+    
+    const slug = generateSlugFromTitle(poemTitle);
+    const shareUrl = `${window.location.origin}/poem.html?collection=weeklyHighlights&slug=${slug}`;
+    
+    document.getElementById('shareLinkInput').value = shareUrl;
+    document.getElementById('sharePoemTitle').textContent = poemTitle || 'Poem of the Week';
+    document.getElementById('sharePoemAuthor').textContent = poemAuthor || 'Volant Poetry';
+    
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+  }
+
+  function closeShareModal() {
+    const modal = document.getElementById('shareModal');
+    if (!modal) return;
+    modal.classList.remove('show');
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 300);
+  }
+
+  async function copyShareLink() {
+    const input = document.getElementById('shareLinkInput');
+    if (!input) return;
+    const copyBtn = document.getElementById('copyLinkBtn');
+    try {
+      await navigator.clipboard.writeText(input.value);
+      copyBtn.textContent = '✅ Copied!';
+      copyBtn.classList.add('copied');
+      setTimeout(() => {
+        copyBtn.textContent = '📋 Copy';
+        copyBtn.classList.remove('copied');
+      }, 2000);
+    } catch (err) {
+      input.select();
+      document.execCommand('copy');
+      copyBtn.textContent = '✅ Copied!';
+      copyBtn.classList.add('copied');
+      setTimeout(() => {
+        copyBtn.textContent = '📋 Copy';
+        copyBtn.classList.remove('copied');
+      }, 2000);
+    }
+  }
+
+  function shareToPlatform(platform, url, poemTitle, poemAuthor) {
+    const text = `📝 "${poemTitle}" by ${poemAuthor}\n\nRead this beautiful poem on Volant Poetry:`;
+    let shareUrl = '';
+    switch(platform) {
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+        break;
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
+        break;
+      case 'whatsapp':
+        shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + ' ' + url)}`;
+        break;
+      case 'email':
+        shareUrl = `mailto:?subject=${encodeURIComponent(`Poem: ${poemTitle}`)}&body=${encodeURIComponent(text + '\n\n' + url)}`;
+        break;
+      default:
+        return;
+    }
+    window.open(shareUrl, '_blank', 'width=600,height=500');
+  }
+
+  // ===== SHARE MODAL EVENT LISTENERS =====
+  document.addEventListener('DOMContentLoaded', function() {
+    const closeBtn = document.getElementById('closeShareModal');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeShareModal);
+    }
+    const modal = document.getElementById('shareModal');
+    if (modal) {
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeShareModal();
+        }
+      });
+    }
+    const copyBtn = document.getElementById('copyLinkBtn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', copyShareLink);
+    }
+    document.querySelectorAll('.share-option-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const platform = this.dataset.platform;
+        const url = document.getElementById('shareLinkInput')?.value || '';
+        const poemTitle = document.getElementById('sharePoemTitle')?.textContent || 'Poem';
+        const poemAuthor = document.getElementById('sharePoemAuthor')?.textContent || 'Anonymous';
+        shareToPlatform(platform, url, poemTitle, poemAuthor);
+      });
+    });
+  });
 
   // ===== REDIRECT TO LOGIN WITH COMMENT SAVING =====
   function redirectToLogin(saveComment = false) {
@@ -539,7 +1406,6 @@
       currentUsername = '';
     }
     refreshAllFollowButtons();
-    // Check for saved comment when user signs in
     if (user) {
       const hasSaved = checkSavedComment();
       if (hasSaved) {
@@ -754,6 +1620,9 @@
       let profileLink = "#";
       let profileImage = "/images/default-avatar.png";
 
+      currentPoemTitle = data.title || "Untitled";
+      currentPoemAuthor = displayName;
+
       if (authorId) {
         try {
           const userDoc = await getDoc(doc(db, "users", authorId));
@@ -762,6 +1631,7 @@
             displayName = u.username || displayName;
             profileLink = `/user-profile.html?uid=${authorId}`;
             profileImage = u.photoURL || u.cachedAvatarURL || profileImage;
+            currentPoemAuthor = displayName;
           }
         } catch(e) {}
       }
@@ -784,6 +1654,8 @@
       const followBtnHtml = (currentUser && authorId && currentUser.uid !== authorId) 
         ? `<button class="follow-mini-btn ${followingStatus ? 'following' : ''}" data-poet-id="${authorId}" style="background: ${followingStatus ? '#f44336' : '#4CAF50'};">${followingStatus ? 'Following' : 'Follow'}</button>` 
         : '';
+
+      const poemSlug = generateSlugFromTitle(title);
 
       cardContainer.innerHTML = `
         <div class="author-line">
@@ -809,8 +1681,36 @@
           </div>
           <button class="like-btn ${likedBy.includes(currentUser?.uid) ? 'liked' : ''}">❤️ <span class="like-count-val">${likesCount}</span></button>
           <span class="message-count" id="toggleCommentsBtn">💬 <span id="commentCountBadge">0</span></span>
+          <!-- DESKTOP SHARE BUTTON - right after message count -->
+          <button class="desktop-share-btn" 
+                  data-poem-title="${escapeHtml(title)}"
+                  data-poem-author="${escapeHtml(displayName)}"
+                  data-poem-slug="${poemSlug}"
+                  title="Share this poem">
+            🔗 Share
+          </button>
+        </div>
+        <!-- MOBILE SHARE BUTTON - separate row below actions -->
+        <div class="mobile-share-wrapper">
+          <button class="mobile-share-btn" 
+                  data-poem-title="${escapeHtml(title)}"
+                  data-poem-author="${escapeHtml(displayName)}"
+                  data-poem-slug="${poemSlug}"
+                  title="Share this poem">
+            🔗 Share This Poem
+          </button>
         </div>
       `;
+
+      // ===== SHARE BUTTON EVENT LISTENERS =====
+      cardContainer.querySelectorAll('.desktop-share-btn, .mobile-share-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const poemTitle = this.dataset.poemTitle || 'Poem of the Week';
+          const poemAuthor = this.dataset.poemAuthor || 'Volant Poetry';
+          showShareModal(poemTitle, poemAuthor);
+        });
+      });
 
       // ===== CHECK FOR SAVED COMMENT =====
       checkSavedComment();
@@ -933,7 +1833,6 @@
         } else {
           await renderCommentsAndCount();
           commentListDiv.style.display = "block";
-          // Scroll to comments
           setTimeout(() => {
             commentListDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }, 200);
@@ -949,7 +1848,6 @@
       const postBtn = cardContainer.querySelector(".comment-btn");
       const commentInput = cardContainer.querySelector(".comment-input");
       
-      // Save comment as user types
       commentInput.addEventListener('input', () => {
         const text = commentInput.value.trim();
         if (text) {
@@ -983,7 +1881,6 @@
           timestamp: serverTimestamp()
         });
         
-        // Clear saved comment
         clearSavedComment();
         commentInput.value = "";
         
@@ -1007,7 +1904,6 @@
         }
       });
 
-      // Enter key to submit comment
       commentInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();

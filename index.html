@@ -1427,9 +1427,718 @@
   }
 }
 
+/* ===== INCREASE READ MORE BUTTON ON PHONES ONLY ===== */
+@media (max-width: 480px) {
+  .read-more-btn {
+    font-size: 0.86rem !important;
+    font-weight: 540 !important; /* Makes it bold */
+  }
+}
+
+
+/* ===== SHARE BUTTON STYLING ===== */
+.desktop-share-btn {
+  background: none !important;
+  border: none !important;
+  color: #4b2aad !important;
+  cursor: pointer !important;
+  font-size: 0.85rem !important;
+  padding: 4px 8px !important;
+  transition: all 0.2s ease !important;
+  font-family: 'Inter', sans-serif !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.desktop-share-btn:hover {
+  background: #f0edff !important;
+  transform: scale(1.05) !important;
+}
+
+.desktop-share-btn:active {
+  transform: scale(0.95) !important;
+}
+
+/* ===== MOBILE SHARE BUTTON ===== */
+.mobile-share-wrapper {
+  display: none;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.mobile-share-btn {
+  width: 100% !important;
+  justify-content: center !important;
+  padding: 8px 12px !important;
+  background: #f0edff !important;
+  border: 1px solid #e0d6b0 !important;
+  border-radius: 8px !important;
+  font-size: 0.85rem !important;
+  color: #4b2aad !important;
+  cursor: pointer !important;
+  font-family: 'Inter', sans-serif !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.mobile-share-btn:hover {
+  background: #e8e0ff !important;
+  transform: scale(1.01) !important;
+}
+
+.mobile-share-btn:active {
+  transform: scale(0.97) !important;
+}
+
+/* ===== RESPONSIVE: Hide desktop share, show mobile share on 600px and below ===== */
+@media (max-width: 600px) {
+  .desktop-share-btn {
+    display: none !important;
+  }
+  
+  .mobile-share-wrapper {
+    display: block !important;
+  }
+}
+
+/* ===== RESPONSIVE: Show desktop share, hide mobile share above 600px ===== */
+@media (min-width: 601px) {
+  .desktop-share-btn {
+    display: inline-flex !important;
+  }
+  
+  .mobile-share-wrapper {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-share-btn {
+    font-size: 0.8rem !important;
+    padding: 6px 10px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .mobile-share-btn {
+    font-size: 0.75rem !important;
+    padding: 5px 8px !important;
+  }
+}
+
+/* ===== SHARE MODAL STYLES ===== */
+.share-modal {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10001;
+  padding: 20px !important;
+  animation: fadeInModal 0.25s ease;
+  box-sizing: border-box !important;
+}
+
+.share-modal.show {
+  display: flex !important;
+}
+
+.share-modal-content {
+  background: white;
+  border-radius: 20px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+  animation: slideUpModal 0.3s ease;
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  box-sizing: border-box !important;
+}
+
+.share-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #f0edf7;
+}
+
+.share-modal-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.share-modal-close {
+  background: #f5f5f5;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.share-modal-close:hover {
+  background: #ff4d4d;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.share-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.share-poem-info {
+  margin-bottom: 4px;
+  padding: 8px 12px;
+  background: #f8f6ff;
+  border-radius: 10px;
+  border: 1px solid #ede8ff;
+}
+
+.share-poem-info strong {
+  color: #4b2aad;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  display: block;
+  word-break: break-word;
+  margin-bottom: 2px;
+}
+
+.share-poem-info span {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.share-link-display {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #f5f2ed;
+  border-radius: 12px;
+  padding: 12px 16px;
+  border: 1px solid #e8e0d6;
+  min-height: 50px;
+}
+
+.share-link-display input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  color: #333;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  padding: 6px 0;
+  min-width: 0;
+  width: 100%;
+  height: 32px;
+}
+
+.copy-link-btn {
+  background: #4b2aad;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-link-btn:hover {
+  background: #3a1f8a;
+  transform: scale(1.02);
+}
+
+.copy-link-btn.copied {
+  background: #2d7d46;
+}
+
+.share-options {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.share-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  flex: 1;
+  justify-content: center;
+  min-width: 70px;
+  height: 44px;
+}
+
+.share-option-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.share-option-btn.twitter {
+  background: #1DA1F2;
+  color: white;
+}
+
+.share-option-btn.facebook {
+  background: #4267B2;
+  color: white;
+}
+
+.share-option-btn.whatsapp {
+  background: #25D366;
+  color: white;
+}
+
+.share-option-btn.email {
+  background: #666;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .share-modal {
+    padding: 16px !important;
+  }
+  
+  .share-modal-content {
+    padding: 26px 22px;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 16px !important;
+    border-radius: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  .share-modal {
+    padding: 12px !important;
+  }
+  
+  .share-modal-content {
+    padding: 24px 18px;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 10px !important;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .share-modal {
+    padding: 10px !important;
+  }
+  
+  .share-modal-content {
+    padding: 20px 16px;
+    border-radius: 16px;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 8px !important;
+  }
+  
+  .share-modal-header h3 {
+    font-size: 1.05rem;
+  }
+  
+  .share-modal-close {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+  
+  .share-link-display {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    min-height: 44px;
+  }
+  
+  .share-link-display input {
+    font-size: 0.8rem;
+    width: 100%;
+    height: 26px;
+  }
+  
+  .copy-link-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    height: 36px;
+  }
+  
+  .share-option-btn {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    min-width: 45px;
+    flex: 1 1 40%;
+    height: 38px;
+  }
+}
+
+@media (max-width: 380px) {
+  .share-modal {
+    padding: 6px !important;
+  }
+  
+  .share-modal-content {
+    padding: 16px 12px;
+    border-radius: 14px;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 4px !important;
+  }
+  
+  .share-modal-header h3 {
+    font-size: 0.95rem;
+  }
+  
+  .share-modal-close {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+  }
+  
+  .share-link-display {
+    padding: 8px 10px;
+    min-height: 40px;
+  }
+  
+  .share-link-display input {
+    font-size: 0.75rem;
+    height: 22px;
+  }
+  
+  .copy-link-btn {
+    font-size: 0.7rem;
+    padding: 6px 10px;
+    height: 32px;
+  }
+  
+  .share-option-btn {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    min-width: 35px;
+    flex: 1 1 45%;
+    height: 34px;
+  }
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUpModal {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
 /* Hide Contact Us link in navigation header */
 .nav-links a[href="shared/contact.html"] {
   display: none !important;
+}
+
+/* ===== HIDE USERNAME ON VERY SMALL SCREENS (372px and below) ===== */
+@media (max-width: 372px) {
+  /* Hide desktop username */
+  #username-display,
+  .username-display {
+    display: none !important;
+  }
+  
+  /* Hide mobile username */
+  #username-display-sm,
+  .username-sm {
+    display: none !important;
+  }
+}
+
+/* ===== INCREASE LOGO TEXT ON 372px AND BELOW ===== */
+@media (max-width: 372px) {
+  .logo-text {
+    font-size: 1.1rem !important;
+  }
+}
+/* ===== REMOVE GAP BETWEEN COMMENT SECTION AND CATEGORY LINKS ===== */
+.poem-category-line {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  margin-bottom: 2px !important;
+}
+
+.poem-actions {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* For mobile 768px and below - NO GAP */
+@media (max-width: 768px) {
+  .poem-category-line {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .poem-actions {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* ===== REMOVE BORDER/EDGE FROM REGULAR POEM CARDS ONLY ===== */
+.recent-poem-card:not(#ranking-list .recent-poem-card) {
+  border: none !important;
+  border-color: transparent !important;
+  outline: none !important;
+}
+
+/* ===== CO-WRITTEN WITH - INTER FONT ===== */
+.collaborator-line {
+  margin-top: 4px !important;
+  font-size: 0.95rem !important;
+  color: #555 !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.collaborator-line em {
+  font-style: normal !important;
+  color: #555 !important;
+}
+
+.collaborator-link {
+  color: #B8860B !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  transition: color 0.2s ease !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.collaborator-link:hover {
+  color: #B8860B !important;
+  text-decoration: underline !important;
+}
+
+/* ===== CO-WRITTEN WITH - RANKING POEMS FONT STYLES ===== */
+
+/* Collaborator line - "Co-written with" text */
+#ranking-list .collaborator-line {
+  font-family: 'Inter', sans-serif !important;
+  color: #555 !important;
+  font-size: 0.95rem !important;
+  font-style: normal !important;  /* Added */
+}
+
+#ranking-list .collaborator-line em {
+  font-style: normal !important;
+  color: #555 !important;
+}
+
+/* Collaborator names - golden color */
+#ranking-list .collaborator-link {
+  font-family: 'Inter', sans-serif !important;
+  color: #B8860B !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  font-style: normal !important;  /* Added */
+}
+
+#ranking-list .collaborator-link:hover {
+  color: #B8860B !important;
+  text-decoration: underline !important;
+}
+
+/* ===== FORCE NO GAP FOR 480px AND BELOW ===== */
+@media (max-width: 480px) {
+  .poem-category-line {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    position: relative !important;
+    top: 0 !important;
+  }
+  
+  .poem-actions {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  
+  .poem-category-line em,
+  .poem-category {
+    position: relative !important;
+    top: 0 !important;
+  }
+  
+  /* INCREASE message count size for 480px and below */
+  .message-count {
+    font-size: 0.9rem !important;
+  }
+}
+
+/* ===== EXTRA TIGHT FOR 409px AND BELOW ===== */
+@media (max-width: 409px) {
+  .poem-category-line {
+    margin-top: -2px !important;
+    padding-top: 0 !important;
+    margin-bottom: -2px !important;
+    padding-bottom: 0 !important;
+  }
+  
+  .poem-actions {
+    margin-top: -2px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    gap: 4px !important;
+  }
+  
+  .poem-category-line em,
+  .poem-category {
+    position: relative !important;
+    top: 0 !important;
+  }
+  
+  /* Tighter comment section */
+  .comment-section {
+    gap: 3px !important;
+  }
+  
+  .comment-input {
+    min-height: 30px !important;
+    padding: 4px 6px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .comment-btn {
+    padding: 4px 8px !important;
+    font-size: 0.7rem !important;
+  }
+  
+  .like-btn {
+    padding: 4px 6px !important;
+    font-size: 0.7rem !important;
+  }
+  
+  /* INCREASE message count size for 409px and below */
+  .message-count {
+    font-size: 0.85rem !important;
+  }
+  
+  .desktop-share-btn {
+    font-size: 0.65rem !important;
+    padding: 2px 4px !important;
+  }
+  
+  /* ===== FIX READ MORE BUTTON - PREVENT ALL MOVEMENT ===== */
+  .read-more-btn {
+    display: inline-block !important;
+    margin-top: 2px !important;
+    margin-bottom: 0 !important;
+    padding: 2px 0 !important;
+    line-height: normal !important;
+    transition: none !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+    -moz-transform: none !important;
+    -ms-transform: none !important;
+    -o-transform: none !important;
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    vertical-align: baseline !important;
+    height: auto !important;
+    min-height: auto !important;
+    border: none !important;
+    outline: none !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+  
+  .read-more-btn:hover,
+  .read-more-btn:focus,
+  .read-more-btn:active {
+    transform: none !important;
+    -webkit-transform: none !important;
+    -moz-transform: none !important;
+    -ms-transform: none !important;
+    -o-transform: none !important;
+    top: 0 !important;
+    left: 0 !important;
+    position: relative !important;
+    text-decoration: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border: none !important;
+    margin: 2px 0 0 0 !important;
+    padding: 2px 0 !important;
+  }
+  
+  /* Also prevent any parent container from shifting */
+  .recent-poem-card {
+    position: relative !important;
+    overflow: visible !important;
+  }
+  
+  /* Prevent any line-height changes on hover */
+  .poem-content {
+    line-height: 1.4 !important;
+  }
+  
+  .poem-content:hover {
+    line-height: 1.4 !important;
+  }
 }
 
 </style>
@@ -1677,6 +2386,31 @@ Just voices, words, and connection.</p>
   </div>
 </footer>
 
+<!-- ===== SHARE MODAL ===== -->
+<div id="shareModal" class="share-modal" style="display: none;">
+  <div class="share-modal-content">
+    <div class="share-modal-header">
+      <h3>🔗 Share Poem</h3>
+      <button class="share-modal-close" id="closeShareModal">✕</button>
+    </div>
+    <div class="share-modal-body">
+      <div class="share-poem-info">
+        <strong id="sharePoemTitle" style="color: #4b2aad; font-family: 'Playfair Display', serif;"></strong>
+        <span id="sharePoemAuthor" style="color: #888;"></span>
+      </div>
+      <div class="share-link-display">
+        <input type="text" id="shareLinkInput" readonly value="">
+        <button class="copy-link-btn" id="copyLinkBtn">📋 Copy</button>
+      </div>
+      <div class="share-options">
+        <button class="share-option-btn twitter" data-platform="twitter">🐦 Twitter</button>
+        <button class="share-option-btn facebook" data-platform="facebook">📘 Facebook</button>
+        <button class="share-option-btn whatsapp" data-platform="whatsapp">💬 WhatsApp</button>
+        <button class="share-option-btn email" data-platform="email">✉️ Email</button>
+      </div>
+    </div>
+  </div>
+</div>
 <style>
   /* Mobile responsive for smaller screens */
   @media (max-width: 480px) {
@@ -1965,9 +2699,11 @@ async function loadFeaturedPoems() {
     const poems = snapshot.docs.map(docSnap => {
       const data = docSnap.data();
       return {
+        id: docSnap.id,
         title: data.title || "Untitled",
         author: data.authorName || "Anonymous",
-        content: data.content || ""
+        content: data.content || "",
+        slug: data.slug || (data.title ? data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : docSnap.id)
       };
     });
 
@@ -1989,12 +2725,77 @@ async function loadFeaturedPoems() {
         author.className = "author";
 
         const content = document.createElement("p");
-        content.textContent = poem.content;
+        content.textContent = poem.content; // FULL content - no truncation
         content.className = "content";
 
         poemCard.appendChild(title);
         poemCard.appendChild(author);
         poemCard.appendChild(content);
+
+        // NO READ MORE BUTTON - poems display fully
+
+        // Add share button section
+        const shareSection = document.createElement("div");
+        shareSection.className = "featured-share-section";
+        shareSection.style.cssText = "margin-top:12px; padding-top:8px; border-top:1px solid rgba(0,0,0,0.06);";
+        
+        // Desktop share button
+        const desktopShare = document.createElement("button");
+        desktopShare.className = "desktop-share-btn";
+        desktopShare.dataset.poemId = poem.id || 'featured';
+        desktopShare.dataset.collection = "classicPoems";
+        desktopShare.dataset.slug = poem.slug;
+        desktopShare.dataset.poemTitle = poem.title || 'Untitled';
+        desktopShare.dataset.poemAuthor = poem.author || 'Anonymous';
+        desktopShare.title = "Share this poem";
+        desktopShare.innerHTML = "🔗 Share";
+        desktopShare.style.cssText = "background:none; border:none; color:#4b2aad; cursor:pointer; font-size:0.85rem; padding:4px 8px; font-family:'Inter',sans-serif; border-radius:6px; display:inline-flex; align-items:center; gap:4px;";
+        desktopShare.addEventListener("mouseenter", () => desktopShare.style.background = "#f0edff");
+        desktopShare.addEventListener("mouseleave", () => desktopShare.style.background = "none");
+        
+        // Mobile share wrapper
+        const mobileWrapper = document.createElement("div");
+        mobileWrapper.className = "mobile-share-wrapper";
+        mobileWrapper.style.cssText = "display:none; margin-top:8px; padding-top:8px; border-top:1px solid rgba(0,0,0,0.06);";
+        
+        const mobileShare = document.createElement("button");
+        mobileShare.className = "mobile-share-btn";
+        mobileShare.dataset.poemId = poem.id || 'featured';
+        mobileShare.dataset.collection = "classicPoems";
+        mobileShare.dataset.slug = poem.slug;
+        mobileShare.dataset.poemTitle = poem.title || 'Untitled';
+        mobileShare.dataset.poemAuthor = poem.author || 'Anonymous';
+        mobileShare.title = "Share this poem";
+        mobileShare.textContent = "🔗 Share This Poem";
+        mobileShare.style.cssText = "width:100%; justify-content:center; padding:8px 12px; background:#f0edff; border:1px solid #e0d6b0; border-radius:8px; font-size:0.85rem; color:#4b2aad; cursor:pointer; font-family:'Inter',sans-serif; transition:all 0.2s ease; display:flex; align-items:center; gap:6px;";
+        mobileShare.addEventListener("mouseenter", () => mobileShare.style.background = "#e8e0ff");
+        mobileShare.addEventListener("mouseleave", () => mobileShare.style.background = "#f0edff");
+        
+        // Share click handler
+        const shareClickHandler = function(e) {
+          e.preventDefault();
+          const poemId = this.dataset.poemId;
+          const poemTitle = this.dataset.poemTitle || 'Poem';
+          const poemAuthor = this.dataset.poemAuthor || 'Anonymous';
+          const collection = this.dataset.collection || 'classicPoems';
+          const slug = this.dataset.slug || poemTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          
+          // Use the global showShareModal function if available
+          if (typeof showShareModal === 'function') {
+            showShareModal(poemId, poemTitle, poemAuthor, collection, slug);
+          } else {
+            // Fallback: open poem page
+            window.open(`poem.html?collection=${collection}&slug=${slug}`, '_blank');
+          }
+        };
+        
+        desktopShare.addEventListener('click', shareClickHandler);
+        mobileShare.addEventListener('click', shareClickHandler);
+        
+        mobileWrapper.appendChild(mobileShare);
+        shareSection.appendChild(desktopShare);
+        shareSection.appendChild(mobileWrapper);
+        poemCard.appendChild(shareSection);
 
         featuredContainer.appendChild(poemCard);
       });
@@ -2015,6 +2816,7 @@ async function loadFeaturedPoems() {
   }
 }
 
+    
 document.addEventListener("DOMContentLoaded", () => {
   loadFeaturedPoems();
 });
