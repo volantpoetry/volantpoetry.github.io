@@ -12,6 +12,7 @@ on:
       - '**/*.html'
       - '**/*.js'
       - 'generate-sitemap.js'
+      - 'package.json'
 
 jobs:
   generate-sitemap:
@@ -27,15 +28,13 @@ jobs:
           node-version: '18'
           
       - name: 📦 Install dependencies
-        run: |
-          npm install glob
-          npm install firebase-admin
+        run: npm install
         
       - name: 🗺️ Generate sitemap
         env:
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
           SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
-        run: node generate-sitemap.js
+        run: npm run generate-sitemap
         
       - name: ✅ Verify sitemap
         run: |
