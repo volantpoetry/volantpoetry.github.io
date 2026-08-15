@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting to Volant Foundry...</title>
+  <!-- Meta refresh - redirects immediately -->
+  <meta http-equiv="refresh" content="0; url=https://volantpoetry.vercel.app/shared/about.html">
+  <!-- Canonical to tell Google the correct URL -->
+  <link rel="canonical" href="https://volantpoetry.vercel.app/shared/about.html">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      padding: 50px 20px;
+      background: #f5f3ff;
+      color: #333;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    }
+    h1 { color: #4b2aad; font-family: 'Playfair Display', serif; }
+    .loader {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4b2aad;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 20px 0;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    a {
+      color: #4b2aad;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔄 Redirecting...</h1>
+    <div class="loader"></div>
+    <p>You are being redirected to <strong>Volant Foundry</strong>.</p>
+    <p style="font-size: 0.9rem; color: #888;">
+      If you are not redirected automatically, 
+      <a href="https://volantpoetry.vercel.app/shared/about.html">click here</a>.
+    </p>
+  </div>
+
+  <!-- JavaScript fallback redirect -->
+  <script>
+    window.location.href = "https://volantpoetry.vercel.app/shared/about.html";
+  </script>
+</body>
+</html>
