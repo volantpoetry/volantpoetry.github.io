@@ -9,13 +9,11 @@
     "generate-sitemap": "node generate-sitemap.js"
   },
   "dependencies": {
-    "paystack": "^1.0.0"
+    "paystack": "^1.0.0",
+    "firebase-admin": "^11.11.0"
   },
   "devDependencies": {
-    "vercel": "^34.2.5"
-  },
-  "optionalDependencies": {
-    "glob": "^10.3.10",
-    "firebase-admin": "^11.11.0"
+    "vercel": "^34.2.5",
+    "glob": "^10.3.10"
   }
 }
