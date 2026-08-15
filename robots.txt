@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # ============================================
-# ALLOW PUBLIC PAGES (18 pages to index)
+# ALLOW PUBLIC PAGES
 # ============================================
 
 # Root Pages
@@ -36,63 +36,19 @@ Allow: /volant_foundry/index.html
 # BLOCK ADMIN PAGES
 # ============================================
 Disallow: /admin
-Disallow: /admin-
-Disallow: /admin.
-Disallow: /administrators
 Disallow: /dashboard
 Disallow: /manage
-Disallow: /testadmin
-Disallow: /editor
-Disallow: /addcategories
-Disallow: /Select-
-Disallow: /Manage-
-Disallow: /assign-
-
-# ============================================
-# BLOCK LOGIN/SYSTEM PAGES
-# ============================================
 Disallow: /login
 Disallow: /signup
-Disallow: /register
 Disallow: /verify
 Disallow: /reset
-Disallow: /forgot
-Disallow: /notifications
-Disallow: /messages
-
-# ============================================
-# BLOCK SUBMISSION MANAGEMENT (NOT public submit pages)
-# ============================================
-Disallow: /edit-
-Disallow: /drafts
-Disallow: /submit?*
-Disallow: /submit/
-Disallow: /submission?*
-Disallow: /submission/
-
-# ============================================
-# BLOCK SPECIFIC SYSTEM FILES
-# ============================================
-Disallow: /verify.html
-Disallow: /verify-email.html
-Disallow: /users-signup.html
-Disallow: /users-reset.html
-Disallow: /users-login.html
-Disallow: /users-forgot.html
-Disallow: /user-edit-poems.html
 
 # ============================================
 # BLOCK STORE PROTECTED PAGES
 # ============================================
 Disallow: /store/approvals.html
 Disallow: /store/dashboard.html
-Disallow: /store/DETAIL
 Disallow: /store/details.html
-
-# ============================================
-# BLOCK VOLANT FOUNDRY DUPLICATE
-# ============================================
-Disallow: /volant_foundry/index2.html
 
 # ============================================
 # BLOCK SHARED PROTECTED PAGES
@@ -102,7 +58,6 @@ Disallow: /shared/universal-login.html
 Disallow: /shared/universal-signup.html
 Disallow: /shared/users-reset.html
 Disallow: /shared/check-verification.html
-Disallow: /shared/existingVerify.html
 
 # ============================================
 # BLOCK USER-SPECIFIC PAGES
@@ -119,8 +74,6 @@ Disallow: /google*.html
 # ============================================
 Disallow: /*.js$
 Disallow: /*.css$
-Disallow: /*.css.map$
-Disallow: /*.js.map$
 Disallow: /*.json$
 Disallow: /*.xml$
 
