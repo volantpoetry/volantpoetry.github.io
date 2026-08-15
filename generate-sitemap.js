@@ -1,6 +1,6 @@
 /**
  * 🔥 Auto Sitemap Generator for Volant Foundry
- * Uses Firestore REST API (with proper authentication)
+ * Uses Firebase Admin SDK with Service Account from GitHub Secrets
  * Runs on GitHub Actions
  */
 
@@ -44,129 +44,126 @@ function escapeXml(str) {
     .replace(/'/g, '&apos;');
 }
 
-// ---- FETCH POEMS FROM FIRESTORE USING RUN-QUERY ENDPOINT ----
+// ---- FETCH POEMS FROM FIRESTORE USING ADMIN SDK ----
 async function fetchPoemsFromFirestore() {
-  const collections = ['recentPoems', 'featuredPoems', 'classicPoems'];
-  const allPoems = [];
-  
-  // Firestore REST API - using runQuery endpoint
-  const baseUrl = 'https://firestore.googleapis.com/v1/projects/silent-depth/databases/(default)/documents';
-  
-  console.log('🔥 Connecting to Firestore...');
-  console.log(`📡 Base URL: ${baseUrl}`);
-  
-  for (const collection of collections) {
-    try {
-      console.log(`\n   📂 Fetching from: ${collection}`);
+  try {
+    // Dynamic import for Firebase Admin SDK
+    const admin = await import('firebase-admin');
+    
+    // Check if Firebase is already initialized
+    if (admin.apps.length === 0) {
+      let serviceAccount;
       
-      // Method 1: Try list documents
-      const url = `${baseUrl}/${collection}`;
-      console.log(`   🔗 URL: ${url}`);
+      // Try different secret names
+      const secretKey = process.env.FIREBASE_KEY || 
+                       process.env.FIREBASE_SERVICE_ACCOUNT || 
+                       process.env.SERVICE_ACCOUNT_KEY;
       
-      const response = await fetch(url);
-      console.log(`   📊 Status: ${response.status} ${response.statusText}`);
+      if (secretKey) {
+        // In GitHub Actions, parse the secret
+        console.log('🔐 Using service account from GitHub secret');
+        try {
+          serviceAccount = JSON.parse(secretKey);
+        } catch (parseError) {
+          console.log('⚠️ Failed to parse secret as JSON, trying base64 decode...');
+          // If it's base64 encoded, decode it
+          const decoded = Buffer.from(secretKey, 'base64').toString('utf8');
+          serviceAccount = JSON.parse(decoded);
+        }
+      } else {
+        // Local development - load from file
+        console.log('📁 Using service account from local file');
+        const keyPath = path.join(process.cwd(), 'service-account-key.json');
+        if (fs.existsSync(keyPath)) {
+          serviceAccount = JSON.parse(fs.readFileSync(keyPath, 'utf8'));
+        } else {
+          console.log('❌ No service account key found!');
+          console.log('📋 Place service-account-key.json in project root for local testing');
+          console.log('📋 Or set FIREBASE_KEY, FIREBASE_SERVICE_ACCOUNT, or SERVICE_ACCOUNT_KEY environment variable');
+          return [];
+        }
+      }
       
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.log(`   ❌ Error response: ${errorText.substring(0, 500)}`);
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+      });
+      console.log('✅ Firebase Admin SDK initialized');
+    }
+    
+    const db = admin.firestore();
+    const collections = ['recentPoems', 'featuredPoems', 'classicPoems'];
+    const allPoems = [];
+    
+    console.log('🔥 Connecting to Firestore...');
+    
+    for (const collection of collections) {
+      try {
+        console.log(`   📂 Fetching from: ${collection}`);
         
-        // Try alternative URL format
-        console.log(`   🔄 Trying alternative URL format...`);
-        const altUrl = `${baseUrl}:runQuery?structuredQuery={"from":[{"collectionId":"${collection}"}]}`;
-        const altResponse = await fetch(altUrl);
-        console.log(`   📊 Alt Status: ${altResponse.status} ${altResponse.statusText}`);
+        const snapshot = await db.collection(collection).get();
         
-        if (altResponse.ok) {
-          const altData = await altResponse.json();
-          console.log(`   📄 Alt Response: ${JSON.stringify(altData).substring(0, 200)}...`);
+        if (snapshot.empty) {
+          console.log(`   ⚠️ No documents in ${collection}`);
+          continue;
+        }
+        
+        console.log(`   📄 Found ${snapshot.size} poems in ${collection}`);
+        
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const docId = doc.id;
           
-          // Parse runQuery response
-          if (Array.isArray(altData)) {
-            for (const result of altData) {
-              if (result.document) {
-                const doc = result.document;
-                const docId = doc.name.split('/').pop();
-                const fields = doc.fields || {};
-                
-                const title = fields.title?.stringValue || 'Untitled';
-                const slug = fields.slug?.stringValue || 
-                            title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 
-                            docId;
-                const author = fields.author?.stringValue || 
-                              fields.submittedBy?.stringValue || 
-                              fields.authorName?.stringValue || 
-                              'Anonymous';
-                const timestamp = fields.createdAt?.timestampValue || 
-                                 fields.createdAt?.stringValue || 
-                                 fields.timestamp?.stringValue || 
-                                 new Date().toISOString();
-                
-                allPoems.push({
-                  id: docId,
-                  title: title,
-                  slug: slug,
-                  author: author,
-                  collection: collection,
-                  timestamp: timestamp
-                });
-              }
+          const title = data.title || 'Untitled';
+          const slug = data.slug || 
+                      title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 
+                      docId;
+          const author = data.author || data.submittedBy || data.authorName || 'Anonymous';
+          
+          // Handle timestamp
+          let timestamp = new Date().toISOString();
+          if (data.createdAt) {
+            if (typeof data.createdAt === 'object' && data.createdAt.toDate) {
+              timestamp = data.createdAt.toDate().toISOString();
+            } else if (typeof data.createdAt === 'string') {
+              timestamp = data.createdAt;
+            } else if (typeof data.createdAt === 'number') {
+              timestamp = new Date(data.createdAt).toISOString();
+            }
+          } else if (data.timestamp) {
+            if (typeof data.timestamp === 'object' && data.timestamp.toDate) {
+              timestamp = data.timestamp.toDate().toISOString();
+            } else if (typeof data.timestamp === 'string') {
+              timestamp = data.timestamp;
+            }
+          } else if (data.date) {
+            if (typeof data.date === 'string') {
+              timestamp = data.date;
             }
           }
-        }
-        continue;
-      }
-      
-      const data = await response.json();
-      
-      if (!data || !data.documents) {
-        console.log(`   ⚠️ No 'documents' field in response`);
-        if (data.error) {
-          console.log(`   ❌ Firestore error: ${JSON.stringify(data.error)}`);
-        }
-        continue;
-      }
-      
-      if (data.documents.length === 0) {
-        console.log(`   ⚠️ No documents in ${collection}`);
-        continue;
-      }
-      
-      console.log(`   📄 Found ${data.documents.length} poems in ${collection}`);
-      
-      for (const doc of data.documents) {
-        const docId = doc.name.split('/').pop();
-        const fields = doc.fields || {};
-        
-        const title = fields.title?.stringValue || 'Untitled';
-        const slug = fields.slug?.stringValue || 
-                    title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 
-                    docId;
-        const author = fields.author?.stringValue || 
-                      fields.submittedBy?.stringValue || 
-                      fields.authorName?.stringValue || 
-                      'Anonymous';
-        const timestamp = fields.createdAt?.timestampValue || 
-                         fields.createdAt?.stringValue || 
-                         fields.timestamp?.stringValue || 
-                         new Date().toISOString();
-        
-        allPoems.push({
-          id: docId,
-          title: title,
-          slug: slug,
-          author: author,
-          collection: collection,
-          timestamp: timestamp
+          
+          allPoems.push({
+            id: docId,
+            title: title,
+            slug: slug,
+            author: author,
+            collection: collection,
+            timestamp: timestamp
+          });
         });
+        
+      } catch (err) {
+        console.log(`   ❌ Error fetching ${collection}:`, err.message);
       }
-      
-    } catch (err) {
-      console.log(`   ❌ Error fetching ${collection}:`, err.message);
     }
+    
+    console.log(`\n✅ Total poems fetched: ${allPoems.length}`);
+    return allPoems;
+    
+  } catch (err) {
+    console.error('❌ Failed to load Firebase Admin SDK:', err.message);
+    console.log('📋 Make sure firebase-admin is installed: npm install firebase-admin');
+    return [];
   }
-  
-  console.log(`\n✅ Total poems fetched: ${allPoems.length}`);
-  return allPoems;
 }
 
 // ---- Generate poem URLs ----
@@ -307,6 +304,7 @@ async function generateSitemap() {
     console.log("🧠 Generating SEO sitemap...");
     console.log(`📁 Domain: ${domain}`);
     console.log(`📄 Targeting ${allowedPages.length} static pages...`);
+    console.log(`🔐 Secret available: ${!!(process.env.FIREBASE_KEY || process.env.SERVICE_ACCOUNT_KEY || process.env.FIREBASE_SERVICE_ACCOUNT)}`);
     
     // 1. Static Pages
     const staticResults = [];
@@ -347,7 +345,7 @@ async function generateSitemap() {
     console.log(`✅ ${staticResults.length} static pages generated`);
     
     // 2. Dynamic Poems from Firestore
-    console.log("\n🔥 Fetching poems from Firestore...");
+    console.log("\n🔥 Fetching poems from Firestore using Admin SDK...");
     const poems = await fetchPoemsFromFirestore();
     const poemResults = generatePoemUrls(poems);
     console.log(`✅ ${poemResults.length} poem URLs generated`);
