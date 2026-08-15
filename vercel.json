@@ -21,17 +21,6 @@
       "source": "/about",
       "destination": "/shared/about.html",
       "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "volantpoetry.github.io"
-        }
-      ],
-      "destination": "https://volantpoetry.vercel.app/shared/:path*",
-      "permanent": true
     }
   ]
 }
