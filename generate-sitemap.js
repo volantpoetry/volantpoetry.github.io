@@ -1,6 +1,6 @@
 /**
  * 🔥 Auto Sitemap Generator for Volant Foundry
- * Uses Firebase Firestore REST API
+ * Uses Firebase Firestore REST API with debugging
  * Runs on GitHub Actions
  */
 
@@ -42,34 +42,53 @@ async function fetchPoemsFromFirestore() {
   const baseUrl = 'https://firestore.googleapis.com/v1/projects/silent-depth/databases/(default)/documents';
   
   console.log('🔥 Connecting to Firestore...');
+  console.log(`📡 Base URL: ${baseUrl}`);
   
   for (const collection of collections) {
     try {
-      console.log(`   📂 Fetching from: ${collection}`);
+      console.log(`\n   📂 Fetching from: ${collection}`);
       
       const url = `${baseUrl}/${collection}`;
+      console.log(`   🔗 URL: ${url}`);
+      
       const response = await fetch(url);
+      console.log(`   📊 Status: ${response.status} ${response.statusText}`);
       
       if (!response.ok) {
-        console.log(`   ❌ Failed to fetch ${collection}: HTTP ${response.status}`);
+        const errorText = await response.text();
+        console.log(`   ❌ Error response: ${errorText.substring(0, 500)}`);
         continue;
       }
       
       const data = await response.json();
+      console.log(`   📄 Response keys: ${Object.keys(data).join(', ')}`);
       
-      if (!data || !data.documents || data.documents.length === 0) {
+      if (!data || !data.documents) {
+        console.log(`   ⚠️ No 'documents' field in response`);
+        if (data.error) {
+          console.log(`   ❌ Firestore error: ${JSON.stringify(data.error)}`);
+        }
+        continue;
+      }
+      
+      if (data.documents.length === 0) {
         console.log(`   ⚠️ No documents in ${collection}`);
         continue;
       }
       
       console.log(`   📄 Found ${data.documents.length} poems in ${collection}`);
       
+      // Show first document structure for debugging
+      const firstDoc = data.documents[0];
+      console.log(`   📝 First document ID: ${firstDoc.name.split('/').pop()}`);
+      console.log(`   📝 Fields: ${Object.keys(firstDoc.fields || {}).join(', ')}`);
+      
       // Process each document
       for (const doc of data.documents) {
         const docId = doc.name.split('/').pop();
         const fields = doc.fields || {};
         
-        // Get title - handle different field types
+        // Get title
         let title = 'Untitled';
         if (fields.title) {
           if (fields.title.stringValue) title = fields.title.stringValue;
@@ -98,7 +117,6 @@ async function fetchPoemsFromFirestore() {
         else if (fields.createdAt?.stringValue) timestamp = fields.createdAt.stringValue;
         else if (fields.timestamp?.stringValue) timestamp = fields.timestamp.stringValue;
         else if (fields.timestamp?.timestampValue) timestamp = fields.timestamp.timestampValue;
-        else if (fields.date?.stringValue) timestamp = fields.date.stringValue;
         
         allPoems.push({
           id: docId,
@@ -112,10 +130,11 @@ async function fetchPoemsFromFirestore() {
       
     } catch (err) {
       console.log(`   ❌ Error fetching ${collection}:`, err.message);
+      console.log(`   Stack:`, err.stack);
     }
   }
   
-  console.log(`✅ Total poems fetched: ${allPoems.length}`);
+  console.log(`\n✅ Total poems fetched: ${allPoems.length}`);
   return allPoems;
 }
 
