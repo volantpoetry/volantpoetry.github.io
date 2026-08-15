@@ -1,34 +1,20 @@
 /**
  * 🔥 Auto Sitemap Generator for Volant Foundry
- * GENERATES URLs WITH .html EXTENSION + QUERY PARAMETERS
- * Includes dynamic poem URLs from Firebase
+ * Uses Firebase REST API - No npm install needed
  * Runs on GitHub Actions
  */
 
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
-const { initializeApp } = require('firebase/app');
-const { getFirestore, collection, getDocs, doc, getDoc } = require('firebase/firestore');
-
-// ---- FIREBASE CONFIG ----
-const firebaseConfig = {
-  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
-  authDomain: "silent-depth.firebaseapp.com",
-  projectId: "silent-depth",
-  storageBucket: "silent-depth.appspot.com",
-  messagingSenderId: "78008755450",
-  appId: "1:78008755450:web:3fd0f0f298a08820935543"
-};
 
 // ---- CONFIG ----
 const domain = 'https://volantpoetry.vercel.app';
 const publicFolder = './';
-const MAX_POEMS = 1000; // Max poems to include in sitemap
+const MAX_POEMS = 5000;
 
 // ✅ STATIC PAGES TO INDEX (18 pages)
 const allowedPages = [
-  // Root Pages (9)
+  // Root Pages
   'index.html',
   'poems.html',
   'poem.html',
@@ -37,157 +23,100 @@ const allowedPages = [
   'all-categories.html',
   'poem-of-the-week.html',
   'quote-of-the-week.html',
-  // Shared Pages (4)
+  // Shared Pages
   'shared/about.html',
   'shared/contact.html',
   'shared/terms.html',
   'shared/privacy.html',
-  // Store Pages (4)
+  // Store Pages
   'store/index.html',
   'store/submit.html',
   'store/faq.html',
   'store/refund.html',
-  // Volant Foundry (1)
+  // Volant Foundry
   'volant_foundry/index.html'
 ];
 
-// 🚫 BLOCKED / NO-INDEX PAGES
-const excludedPages = [
-  'shared/verify-email.html',
-  'shared/universal-login.html',
-  'shared/universal-signup.html',
-  'shared/users-reset.html',
-  'shared/check-verification.html',
-  'shared/existingVerify.html',
-  'store/approvals.html',
-  'store/dashboard.html',
-  'store/details.html',
-  'store/DETAIL',
-  'volant_foundry/index2.html',
-  'user-profile.html',
-  '404.html',
-  'verify.html',
-  'verify-email.html',
-  'users-signup.html',
-  'users-reset.html',
-  'users-login.html',
-  'users-forgot.html',
-  'user-edit-poems.html',
-  'assign-images.html',
-  'poemcount.html',
-  'addcategories.html',
-  'Select-Poem-of-the-Week.html',
-  'list-files.py',
-  'update-folder-resources.py'
-];
-
-// 🚫 EXCLUDED FOLDERS
-const excludedFolders = [
-  'admin',
-  'api',
-  'node_modules',
-  '.git',
-  '.vscode',
-  '.continue',
-  'backup',
-  'backups_clean_urls',
-  'images'
-];
-
-// ---- Exclusion helper ----
-function isExcluded(file) {
-  const fileParts = file.split(/[\/\\]/);
+// ---- FETCH POEMS USING REST API ----
+async function fetchPoemsFromFirebase() {
+  const collections = ['recentPoems', 'featuredPoems', 'classicPoems'];
+  const allPoems = [];
   
-  for (const folder of excludedFolders) {
-    if (fileParts.includes(folder)) return true;
-  }
+  // Firebase REST API URL
+  const baseUrl = 'https://silent-depth-default-rtdb.firebaseio.com';
   
-  for (const ex of excludedPages) {
-    if (file === ex) return true;
-  }
-  
-  // Exclude Google verification files
-  const fileName = file.toLowerCase();
-  if (fileName.match(/^google[0-9a-z_\-]+\.html$/i)) {
-    return true;
-  }
-  
-  for (const ex of excludedPages) {
-    if (file.toLowerCase().includes(ex.toLowerCase())) return true;
-  }
-  
-  return false;
-}
-
-// ---- Get static page URL ----
-function getUrlWithHtml(filePath) {
-  let cleanPath = filePath.replace(/^\.\//, '');
-  if (cleanPath === 'index.html') return '';
-  if (cleanPath.endsWith('/index.html')) return cleanPath.replace(/\/index\.html$/, '/');
-  return cleanPath;
-}
-
-// ---- FETCH POEMS FROM FIRESTORE ----
-async function fetchAllPoems() {
-  console.log("🔥 Fetching poems from Firebase...");
-  
-  try {
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    
-    const allPoems = [];
-    const collections = ['recentPoems', 'featuredPoems', 'classicPoems'];
-    
-    for (const collectionName of collections) {
-      console.log(`   📂 Fetching from: ${collectionName}`);
-      const colRef = collection(db, collectionName);
-      const snapshot = await getDocs(colRef);
+  for (const collection of collections) {
+    try {
+      console.log(`   📂 Fetching from: ${collection}`);
       
-      if (snapshot.empty) {
-        console.log(`   ⚠️ No poems in ${collectionName}`);
+      const url = `${baseUrl}/${collection}.json`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        console.log(`   ⚠️ Failed to fetch ${collection}: ${response.status}`);
         continue;
       }
       
-      console.log(`   📄 Found ${snapshot.docs.length} poems in ${collectionName}`);
+      const data = await response.json();
       
-      for (const docSnap of snapshot.docs) {
-        const data = docSnap.data();
-        const slug = data.slug || 
-                    (data.title ? data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : docSnap.id);
+      if (!data) {
+        console.log(`   ⚠️ No data in ${collection}`);
+        continue;
+      }
+      
+      // Convert object to array with keys
+      const items = Object.entries(data).map(([id, value]) => ({
+        id: id,
+        ...value
+      }));
+      
+      console.log(`   📄 Found ${items.length} poems in ${collection}`);
+      
+      // Process each poem
+      for (const poem of items) {
+        const slug = poem.slug || 
+                    (poem.title ? poem.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : poem.id);
         
         // Get author name
-        let author = data.submittedBy || data.author || data.authorName || "Anonymous";
-        const userId = data.userId || data.authorId;
+        let author = poem.submittedBy || poem.author || poem.authorName || "Anonymous";
+        const userId = poem.userId || poem.authorId;
+        
+        // Try to get username from users collection
         if (userId) {
           try {
-            const userDoc = await getDoc(doc(db, "users", userId));
-            if (userDoc.exists()) {
-              author = userDoc.data().username || author;
+            const userUrl = `${baseUrl}/users/${userId}.json`;
+            const userResponse = await fetch(userUrl);
+            if (userResponse.ok) {
+              const userData = await userResponse.json();
+              if (userData && userData.username) {
+                author = userData.username;
+              }
             }
           } catch (err) {
-            // Silent fail
+            // Silent fail - keep original author
           }
         }
         
+        // Get timestamp
+        let timestamp = poem.createdAt || poem.timestamp || poem.date || new Date().toISOString();
+        
         allPoems.push({
-          id: docSnap.id,
-          title: data.title || "Untitled",
+          id: poem.id,
+          title: poem.title || "Untitled",
           slug: slug,
           author: author,
-          collection: collectionName,
-          createdAt: data.createdAt || data.timestamp || new Date().toISOString()
+          collection: collection,
+          timestamp: timestamp
         });
       }
+      
+    } catch (err) {
+      console.log(`   ⚠️ Error fetching ${collection}:`, err.message);
     }
-    
-    console.log(`✅ Total poems fetched: ${allPoems.length}`);
-    return allPoems;
-    
-  } catch (err) {
-    console.error("❌ Error fetching poems:", err.message);
-    console.log("⚠️ Continuing without dynamic poems...");
-    return [];
   }
+  
+  console.log(`✅ Total poems fetched: ${allPoems.length}`);
+  return allPoems;
 }
 
 // ---- Generate poem URLs ----
@@ -200,11 +129,10 @@ function generatePoemUrls(poems) {
     
     const url = `${domain}/poem.html?collection=${encodeURIComponent(poem.collection)}&slug=${encodeURIComponent(poem.slug)}`;
     
-    // Parse date for lastmod
     let lastmod = new Date().toISOString();
-    if (poem.createdAt) {
+    if (poem.timestamp) {
       try {
-        const date = new Date(poem.createdAt);
+        const date = new Date(poem.timestamp);
         if (!isNaN(date.getTime())) {
           lastmod = date.toISOString();
         }
@@ -215,16 +143,21 @@ function generatePoemUrls(poems) {
       loc: url,
       lastmod: lastmod,
       changefreq: 'weekly',
-      priority: '0.8',
-      title: poem.title,
-      author: poem.author,
-      collection: poem.collection
+      priority: '0.8'
     });
     
     count++;
   }
   
   return results;
+}
+
+// ---- Get static URL ----
+function getUrlWithHtml(filePath) {
+  let cleanPath = filePath.replace(/^\.\//, '');
+  if (cleanPath === 'index.html') return '';
+  if (cleanPath.endsWith('/index.html')) return cleanPath.replace(/\/index\.html$/, '/');
+  return cleanPath;
 }
 
 // ---- Build XML ----
@@ -252,7 +185,7 @@ User-agent: *
 Allow: /
 
 # ============================================
-# ALLOW PUBLIC PAGES
+# ALLOW PUBLIC PAGES (18 pages to index)
 # ============================================
 
 # Root Pages
@@ -310,7 +243,7 @@ Disallow: /notifications
 Disallow: /messages
 
 # ============================================
-# BLOCK SUBMISSION MANAGEMENT
+# BLOCK SUBMISSION MANAGEMENT (NOT public submit pages)
 # ============================================
 Disallow: /edit-
 Disallow: /drafts
@@ -397,36 +330,6 @@ Sitemap: ${domain}/sitemap.xml`;
   console.log('✅ robots.txt generated');
 }
 
-// ---- Generate sitemap index (if too many URLs) ----
-function generateSitemapIndex(staticUrls, poemUrls) {
-  const allUrls = [...staticUrls, ...poemUrls];
-  const total = allUrls.length;
-  
-  // If fewer than 50,000 URLs, single sitemap is fine
-  if (total < 50000) {
-    return null;
-  }
-  
-  // Split into chunks of 50,000
-  const chunks = [];
-  for (let i = 0; i < allUrls.length; i += 50000) {
-    chunks.push(allUrls.slice(i, i + 50000));
-  }
-  
-  // Generate sitemap index XML
-  const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${chunks.map((_, i) => `
-  <sitemap>
-    <loc>${domain}/sitemap-${i + 1}.xml</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-  </sitemap>
-`).join('')}
-</sitemapindex>`;
-  
-  return indexXml;
-}
-
 // ---- MAIN ----
 async function generateSitemap() {
   try {
@@ -436,7 +339,7 @@ async function generateSitemap() {
     console.log("🔄 All pages set to 'weekly' changefreq");
     console.log("🚫 Excluding Google verification files (google*.html)");
     
-    // ---- 1. Static Pages ----
+    // 1. Static Pages
     const staticResults = [];
     for (const page of allowedPages) {
       const fullPath = path.join(publicFolder, page);
@@ -474,41 +377,37 @@ async function generateSitemap() {
     
     console.log(`✅ ${staticResults.length} static pages generated`);
     
-    // ---- 2. Dynamic Poem Pages ----
-    const poems = await fetchAllPoems();
+    // 2. Dynamic Poems from Firebase REST API
+    console.log("🔥 Fetching poems from Firebase REST API...");
+    const poems = await fetchPoemsFromFirebase();
     const poemResults = generatePoemUrls(poems);
     console.log(`✅ ${poemResults.length} poem URLs generated`);
     
-    // ---- 3. Combine and Build ----
+    // 3. Combine
     const allUrls = [...staticResults, ...poemResults];
     
-    console.log(`\n📊 Sitemap Statistics:`);
-    console.log(`   Static pages: ${staticResults.length}`);
-    console.log(`   Dynamic poem pages: ${poemResults.length}`);
-    console.log(`   Total URLs: ${allUrls.length}`);
+    console.log(`\n📊 Total: ${allUrls.length} URLs`);
+    console.log(`   Static: ${staticResults.length}`);
+    console.log(`   Dynamic Poems: ${poemResults.length}`);
     
-    // Build sitemap
+    // 4. Build sitemap
     const xml = buildXML(allUrls);
     fs.writeFileSync(path.join(publicFolder, 'sitemap.xml'), xml, 'utf8');
     console.log('✅ sitemap.xml generated');
     
-    // ---- 4. Sample URLs ----
+    // 5. Sample URLs
     console.log('\n📋 Sample URLs:');
-    const samples = [
-      ...staticResults.slice(0, 5),
-      ...poemResults.slice(0, 5)
-    ];
-    samples.forEach(page => {
+    allUrls.slice(0, 10).forEach(page => {
       console.log(`   - ${page.loc}`);
     });
-    if (poemResults.length > 5) {
-      console.log(`   ... and ${poemResults.length - 5} more poems`);
+    if (allUrls.length > 10) {
+      console.log(`   ... and ${allUrls.length - 10} more`);
     }
     
-    // ---- 5. Generate robots.txt ----
+    // 6. Generate robots.txt
     generateRobotsTxt();
     
-    // ---- 6. Summary ----
+    // 7. Summary
     console.log('\n📊 Sitemap Statistics:');
     console.log(`   Total URLs: ${allUrls.length}`);
     console.log(`   Static: ${staticResults.length}`);
