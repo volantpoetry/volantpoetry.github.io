@@ -12,6 +12,7 @@ on:
     paths:
       - '**/*.html'
       - '**/*.js'
+      - 'generate-sitemap.js'
 
 jobs:
   generate-sitemap:
@@ -27,7 +28,9 @@ jobs:
           node-version: '18'
           
       - name: 📦 Install dependencies
-        run: npm install glob
+        run: |
+          npm install glob
+          # No firebase package needed - using REST API!
         
       - name: 🗺️ Generate sitemap
         run: node generate-sitemap.js
@@ -38,14 +41,26 @@ jobs:
             echo "❌ sitemap.xml not generated!"
             exit 1
           fi
+          
+          # Count URLs in sitemap
+          URL_COUNT=$(grep -c "<loc>" sitemap.xml || echo "0")
           echo "✅ sitemap.xml generated successfully"
-          echo "📄 First 20 lines:"
-          head -20 sitemap.xml
+          echo "📊 Total URLs in sitemap: $URL_COUNT"
+          echo ""
+          echo "📄 First 15 lines:"
+          head -15 sitemap.xml
+          
+          # Verify robots.txt was generated
+          if [ -f robots.txt ]; then
+            echo "✅ robots.txt generated"
+          else
+            echo "⚠️ robots.txt not found"
+          fi
           
       - name: 📤 Commit and push if changed
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add sitemap.xml
-          git diff --staged --quiet || git commit -m "🤖 Auto-update sitemap [skip ci]"
+          git add sitemap.xml robots.txt
+          git diff --staged --quiet || git commit -m "🤖 Auto-update sitemap and robots.txt [skip ci]"
           git push
