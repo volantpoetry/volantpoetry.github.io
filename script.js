@@ -26,6 +26,11 @@ const db = getFirestore(app);
 const auth = getAuth();
 
 // ============================================
+// PREVENT DUPLICATE COMMENTS
+// ============================================
+let isCommenting = false;
+
+// ============================================
 // PERFECT READ COUNT TRACKING CONFIGURATION
 // ============================================
 const READ_TRACKING_KEY = 'poem_read_tracking';
@@ -802,6 +807,9 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+// ============================================
+// MAIN EVENT LISTENERS WITH DUPLICATE PREVENTION
+// ============================================
 document.addEventListener("click", async (e) => {
   const user = auth.currentUser;
 
@@ -835,8 +843,26 @@ document.addEventListener("click", async (e) => {
     } catch (err) { console.error("Error updating like:", err); }
   }
 
-  if (e.target.classList.contains("comment-btn")) {
-    if (!user) { redirectToLogin(); return; }
+  // ===== POST COMMENT WITH DUPLICATE PREVENTION =====
+  if (e.target.classList.contains("comment-btn") || e.target.id === "commentBtn") {
+    // Prevent duplicate submissions
+    if (isCommenting) {
+      console.log("⏳ Comment already in progress, ignoring duplicate click");
+      return;
+    }
+    
+    if (!user) {
+      const commentInput = e.target.closest(".recent-poem-card")?.querySelector(".comment-input");
+      const comment = commentInput?.value.trim();
+      if (comment) {
+        localStorage.setItem('volant_saved_comment', comment);
+        redirectToLogin();
+      } else {
+        redirectToLogin();
+      }
+      return;
+    }
+    
     const card = e.target.closest(".recent-poem-card");
     if (!card) return;
     const docId = card.dataset.id;
@@ -844,6 +870,15 @@ document.addEventListener("click", async (e) => {
     const commentList = getCommentList(card);
     const text = input.value.trim();
     if (!text) return;
+    
+    // Set commenting flag
+    isCommenting = true;
+    const commentBtn = e.target;
+    const originalText = commentBtn.textContent;
+    commentBtn.textContent = "Posting...";
+    commentBtn.disabled = true;
+    commentBtn.style.opacity = "0.6";
+    
     try {
       const userDoc = await getDoc(doc(db, "users", user.uid));
       let username = "Anonymous";
@@ -883,9 +918,18 @@ document.addEventListener("click", async (e) => {
           });
         }
       }
+      
+      // Show success feedback
+      showToast("✅ Comment posted!");
+      
     } catch (err) {
       console.error("Error posting comment:", err);
-      alert("Failed to post comment. Please try again.");
+      showToast("❌ Failed to post comment. Please try again.", true);
+    } finally {
+      isCommenting = false;
+      commentBtn.textContent = originalText;
+      commentBtn.disabled = false;
+      commentBtn.style.opacity = "1";
     }
   }
   
@@ -1431,7 +1475,13 @@ async function createPoemCardFromSearch(poem) {
   `;
 }
 
+// ============================================
+// SEARCH RESULTS EVENT LISTENERS WITH DUPLICATE PREVENTION
+// ============================================
 function attachSearchResultEventListeners() {
+  // Track active comments per button using a Map
+  const activeComments = new Map();
+  
   document.querySelectorAll('#recent-poems-container .read-more-btn').forEach(btn => {
     btn.removeEventListener('click', btn._readMoreHandler);
     btn._readMoreHandler = () => {
@@ -1449,6 +1499,7 @@ function attachSearchResultEventListeners() {
     };
     btn.addEventListener('click', btn._readMoreHandler);
   });
+
   document.querySelectorAll('#recent-poems-container .like-btn').forEach(btn => {
     btn.removeEventListener('click', btn._likeHandler);
     btn._likeHandler = async (e) => {
@@ -1478,34 +1529,101 @@ function attachSearchResultEventListeners() {
     };
     btn.addEventListener('click', btn._likeHandler);
   });
+
+  // ===== SEARCH RESULTS COMMENT HANDLER WITH ROBUST DUPLICATE PREVENTION =====
   document.querySelectorAll('#recent-poems-container .comment-btn').forEach(btn => {
+    // Remove any existing listener
     btn.removeEventListener('click', btn._commentHandler);
-    btn._commentHandler = async () => {
-      if (!auth.currentUser) { redirectToLogin(); return; }
-      const card = btn.closest('.recent-poem-card');
+    
+    btn._commentHandler = async function(e) {
+      // Prevent duplicate submissions using a flag on the button
+      if (this.dataset.commenting === 'true') {
+        console.log("⏳ Comment already in progress, ignoring duplicate click");
+        return;
+      }
+      
+      // Also check the global flag
+      if (isCommenting) {
+        console.log("⏳ Global comment flag active, ignoring");
+        return;
+      }
+      
+      if (!auth.currentUser) { 
+        redirectToLogin(); 
+        return; 
+      }
+      
+      const card = this.closest('.recent-poem-card');
+      if (!card) {
+        console.error("Could not find card");
+        return;
+      }
+      
       const docId = card.dataset.id;
+      if (!docId) {
+        console.error("No docId found on card");
+        return;
+      }
+      
       const input = card.querySelector('.comment-input');
-      const commentList = card.nextElementSibling;
+      if (!input) {
+        console.error("No comment input found");
+        return;
+      }
+      
       const text = input.value.trim();
-      if (!text) return;
+      if (!text) {
+        console.log("Empty comment, ignoring");
+        return;
+      }
+      
+      // Set flags to prevent duplicates
+      this.dataset.commenting = 'true';
+      isCommenting = true;
+      
+      const originalText = this.textContent;
+      this.textContent = "Posting...";
+      this.disabled = true;
+      this.style.opacity = "0.6";
+      
       try {
         const userDoc = await getDoc(doc(db, "users", currentUserId));
         const username = userDoc.exists() ? userDoc.data().username : "Anonymous";
-        await addDoc(collection(db, "recentPoems", docId, "comments"), {
+        
+        const commentRef = collection(db, "recentPoems", docId, "comments");
+        await addDoc(commentRef, {
           userId: currentUserId,
           username: username,
           text: text,
           timestamp: serverTimestamp()
         });
+        
         input.value = "";
+        input.style.height = "auto";
+        
+        // Update comment count
         const commentsSnapshot = await getDocs(collection(db, "recentPoems", docId, "comments"));
-        card.querySelector(".message-count").textContent = `💬 ${commentsSnapshot.size}`;
-      } catch(err) {
+        const msgSpan = card.querySelector(".message-count");
+        if (msgSpan) msgSpan.textContent = `💬 ${commentsSnapshot.size}`;
+        
+        // Show feedback toast
+        showToast("✅ Comment posted!");
+        
+      } catch (err) {
         console.error("Error posting comment:", err);
+        showToast("❌ Failed to post comment. Please try again.", true);
+      } finally {
+        // Reset flags
+        this.dataset.commenting = 'false';
+        isCommenting = false;
+        this.textContent = originalText;
+        this.disabled = false;
+        this.style.opacity = "1";
       }
     };
     btn.addEventListener('click', btn._commentHandler);
   });
+
   document.querySelectorAll('#recent-poems-container .follow-btn-on-card').forEach(btn => {
     btn.removeEventListener('click', btn._followHandler);
     btn._followHandler = async (e) => {
@@ -1515,6 +1633,24 @@ function attachSearchResultEventListeners() {
     };
     btn.addEventListener('click', btn._followHandler);
   });
+}
+
+// Helper toast function
+function showToast(message, isError = false) {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:${isError ? '#d32f2f' : '#2d7d46'};color:#fff;
+    padding:12px 24px;border-radius:30px;font-weight:500;z-index:9999;
+    animation:slideDown 0.3s ease;box-shadow:0 4px 15px rgba(0,0,0,0.2);
+  `;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s';
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
 }
 
 async function performUniversalSearch(query) {
@@ -2031,76 +2167,132 @@ async function loadRankingPoemsRich() {
       const likeCountSpan = card.querySelector(".like-count");
       
       if (likeBtn) {
-        likeBtn.addEventListener("click", async () => {
+        likeBtn.addEventListener("click", async function() {
+          if (this.dataset.liking === 'true') {
+            console.log("⏳ Like already in progress");
+            return;
+          }
+          
           if (!user) {
             window.location.href = "universal-login.html";
             return;
           }
-          const poemRef = doc(db, "recentPoems", poem.id);
-          const likedBy = poem.likedBy || [];
-          const isLiked = likedBy.includes(user.uid);
-          if (isLiked) {
-            await updateDoc(poemRef, {
-              likes: (poem.totalLikes || 0) - 1,
-              likedBy: likedBy.filter(id => id !== user.uid)
-            });
-            poem.totalLikes--;
-            poem.recentLikes = Math.max(0, poem.recentLikes - 1);
-            likeBtn.style.color = "";
-            likeBtn.classList.remove("liked");
-          } else {
-            await updateDoc(poemRef, {
-              likes: (poem.totalLikes || 0) + 1,
-              likedBy: [...likedBy, user.uid],
-              likedByTimestamps: [...(data.likedByTimestamps || []), new Date()]
-            });
-            poem.totalLikes++;
-            poem.recentLikes++;
-            likeBtn.style.color = "#e74c3c";
-            likeBtn.classList.add("liked");
-          }
-          likeCountSpan.textContent = poem.totalLikes;
-          poem.score = (poem.totalViews * 1) + (poem.recentLikes * 3) + (poem.recentComments * 4);
-          const scoreBadge = card.querySelector("h3 small");
-          if (scoreBadge) scoreBadge.textContent = `(weekly score: ${poem.score})`;
-          const recentStats = card.querySelector(".recent-stats");
-          if (recentStats) {
-            recentStats.innerHTML = `📊 This week: ${poem.recentLikes} likes · ${poem.recentComments} comments`;
+          
+          this.dataset.liking = 'true';
+          
+          try {
+            const poemRef = doc(db, "recentPoems", poem.id);
+            const likedBy = poem.likedBy || [];
+            const isLiked = likedBy.includes(user.uid);
+            
+            if (isLiked) {
+              await updateDoc(poemRef, {
+                likes: (poem.totalLikes || 0) - 1,
+                likedBy: likedBy.filter(id => id !== user.uid)
+              });
+              poem.totalLikes--;
+              poem.recentLikes = Math.max(0, poem.recentLikes - 1);
+              this.style.color = "";
+              this.classList.remove("liked");
+            } else {
+              await updateDoc(poemRef, {
+                likes: (poem.totalLikes || 0) + 1,
+                likedBy: [...likedBy, user.uid],
+                likedByTimestamps: [...(poem.likedByTimestamps || []), new Date()]
+              });
+              poem.totalLikes++;
+              poem.recentLikes++;
+              this.style.color = "#e74c3c";
+              this.classList.add("liked");
+            }
+            likeCountSpan.textContent = poem.totalLikes;
+            poem.score = (poem.totalViews * 1) + (poem.recentLikes * 3) + (poem.recentComments * 4);
+            const scoreBadge = card.querySelector("h3 small");
+            if (scoreBadge) scoreBadge.textContent = `(weekly score: ${poem.score})`;
+            const recentStats = card.querySelector(".recent-stats");
+            if (recentStats) {
+              recentStats.innerHTML = `📊 This week: ${poem.recentLikes} likes · ${poem.recentComments} comments`;
+            }
+          } catch (err) {
+            console.error("Error updating like:", err);
+          } finally {
+            this.dataset.liking = 'false';
           }
         });
       }
 
+      // ===== RANKING POEMS COMMENT HANDLER WITH DUPLICATE PREVENTION =====
       const commentBtn = card.querySelector(".comment-btn");
       if (commentBtn) {
-        commentBtn.addEventListener("click", async () => {
+        commentBtn.addEventListener("click", async function() {
+          if (this.dataset.commenting === 'true') {
+            console.log("⏳ Comment already in progress");
+            return;
+          }
+          
+          if (isCommenting) {
+            console.log("⏳ Global comment flag active");
+            return;
+          }
+          
           if (!user) {
             window.location.href = "universal-login.html";
             return;
           }
+          
           const commentText = textarea?.value.trim();
           if (!commentText) return;
-          const commentsRef = collection(db, "recentPoems", poem.id, "comments");
-          await addDoc(commentsRef, {
-            text: commentText,
-            userId: user.uid,
-            username: user.displayName || "Anonymous",
-            timestamp: new Date()
-          });
-          if (textarea) textarea.value = "";
-          poem.totalComments++;
-          poem.recentComments++;
-          const msgSpan = card.querySelector(".message-count");
-          if (msgSpan) msgSpan.textContent = `💬 ${poem.totalComments}`;
-          poem.score = (poem.totalViews * 1) + (poem.recentLikes * 3) + (poem.recentComments * 4);
-          const scoreBadge = card.querySelector("h3 small");
-          if (scoreBadge) scoreBadge.textContent = `(weekly score: ${poem.score})`;
-          const recentStats = card.querySelector(".recent-stats");
-          if (recentStats) {
-            recentStats.innerHTML = `📊 This week: ${poem.recentLikes} likes · ${poem.recentComments} comments`;
+          
+          this.dataset.commenting = 'true';
+          isCommenting = true;
+          const originalText = this.textContent;
+          this.textContent = "Posting...";
+          this.disabled = true;
+          this.style.opacity = "0.6";
+          
+          try {
+            const commentsRef = collection(db, "recentPoems", poem.id, "comments");
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            const username = userDoc.exists() ? userDoc.data().username : "Anonymous";
+            
+            await addDoc(commentsRef, {
+              text: commentText,
+              userId: user.uid,
+              username: username,
+              timestamp: serverTimestamp()
+            });
+            
+            if (textarea) textarea.value = "";
+            poem.totalComments++;
+            poem.recentComments++;
+            const msgSpan = card.querySelector(".message-count");
+            if (msgSpan) msgSpan.textContent = `💬 ${poem.totalComments}`;
+            poem.score = (poem.totalViews * 1) + (poem.recentLikes * 3) + (poem.recentComments * 4);
+            const scoreBadge = card.querySelector("h3 small");
+            if (scoreBadge) scoreBadge.textContent = `(weekly score: ${poem.score})`;
+            const recentStats = card.querySelector(".recent-stats");
+            if (recentStats) {
+              recentStats.innerHTML = `📊 This week: ${poem.recentLikes} likes · ${poem.recentComments} comments`;
+            }
+            
+            showToast("✅ Comment posted!");
+            
+          } catch (err) {
+            console.error("Error posting comment:", err);
+            showToast("❌ Failed to post comment. Please try again.", true);
+          } finally {
+            this.dataset.commenting = 'false';
+            isCommenting = false;
+            this.textContent = originalText;
+            this.disabled = false;
+            this.style.opacity = "1";
           }
         });
       }
     }
+
+    // Store ranking poems data for later updates
+    window.rankingPoemsData = top;
 
     if (!listEl.children.length) {
       listEl.innerHTML = "<p style='color:#666;'>No poems to display.</p>";
@@ -2291,6 +2483,7 @@ async function loadRankingPoets() {
       return;
     }
 
+    // Get current week range (Monday to Sunday)
     const { weekStart, weekEnd, weekLabel } = getPreviousWeekRange();
     const poetsMap = new Map();
     const WEIGHTS = {
@@ -2300,6 +2493,9 @@ async function loadRankingPoets() {
       likesGiven: 3,
       commentsGiven: 4
     };
+
+    console.log(`📊 Loading rankings for week: ${weekLabel}`);
+    console.log(`📅 Week range: ${weekStart.toDateString()} - ${weekEnd.toDateString()}`);
 
     const [poemsSnapshot, usersSnapshot] = await Promise.all([
       getDocs(collection(db, "recentPoems")),
@@ -2320,7 +2516,8 @@ async function loadRankingPoets() {
       return;
     }
 
-    usersSnapshot.forEach(userDoc => {
+    // Initialize poets map with user data
+    for (const userDoc of usersSnapshot.docs) {
       const data = userDoc.data();
       poetsMap.set(userDoc.id, {
         userId: userDoc.id,
@@ -2334,16 +2531,22 @@ async function loadRankingPoets() {
         meaningfulCommentsGiven: 0,
         score: 0
       });
-    });
+    }
 
+    // ============================================
+    // 1. Process poems for poems written & likes received (weekly only)
+    // ============================================
     for (const docSnap of poemsSnapshot.docs) {
       const data = docSnap.data();
       const createdAt = data.timestamp ? data.timestamp.toDate() : new Date();
       const isInTargetWeek = createdAt >= weekStart && createdAt <= weekEnd;
       const authorId = data.authorId || data.userId || data.submittedBy;
+      
       if (authorId && poetsMap.has(authorId) && isInTargetWeek) {
         const poet = poetsMap.get(authorId);
         poet.poemsWritten += 1;
+        
+        // Quality bonus for poem quality
         const wordCount = (data.content || "").split(/\s+/).length;
         const hasAudio = !!data.audioUrl;
         const hasStructure = (data.content || "").includes("\n");
@@ -2351,10 +2554,37 @@ async function loadRankingPoets() {
         if (wordCount >= 50) qualityBonus += 0.5;
         if (hasAudio) qualityBonus += 0.5;
         if (hasStructure) qualityBonus += 0.5;
-        poet.likesReceived += (data.likes || 0) * qualityBonus;
-        poet.commentsReceived += (data.comments?.length || 0) * qualityBonus;
+        
+        // Only count likes from this week
+        let weeklyLikes = 0;
+        if (data.likedByTimestamps && Array.isArray(data.likedByTimestamps)) {
+          for (const likeTime of data.likedByTimestamps) {
+            const likeDate = likeTime?.toDate ? likeTime.toDate() : new Date(likeTime);
+            if (likeDate >= weekStart && likeDate <= weekEnd) {
+              weeklyLikes++;
+            }
+          }
+        } else if (data.likedBy) {
+          // Fallback: if no timestamps, count all likes (but this is less accurate)
+          weeklyLikes = (data.likedBy || []).length;
+        }
+        
+        poet.likesReceived += weeklyLikes * qualityBonus;
       }
-      if (data.likedBy && Array.isArray(data.likedBy) && isInTargetWeek) {
+      
+      // Count likes given (weekly only)
+      if (data.likedByTimestamps && Array.isArray(data.likedByTimestamps)) {
+        for (let i = 0; i < data.likedByTimestamps.length; i++) {
+          const likeTime = data.likedByTimestamps[i]?.toDate ? data.likedByTimestamps[i].toDate() : new Date(data.likedByTimestamps[i]);
+          if (likeTime >= weekStart && likeTime <= weekEnd) {
+            const uid = data.likedBy?.[i];
+            if (uid && poetsMap.has(uid)) {
+              poetsMap.get(uid).likesGiven += 1;
+            }
+          }
+        }
+      } else if (data.likedBy && Array.isArray(data.likedBy) && isInTargetWeek) {
+        // Fallback for older data
         data.likedBy.forEach(uid => {
           if (poetsMap.has(uid)) {
             poetsMap.get(uid).likesGiven += 1;
@@ -2363,64 +2593,110 @@ async function loadRankingPoets() {
       }
     }
 
+    // ============================================
+    // 2. Process comments for comments given AND comments received (weekly only)
+    // ============================================
     for (const docSnap of poemsSnapshot.docs) {
+      const poemData = docSnap.data();
+      const poemAuthorId = poemData.authorId || poemData.userId || poemData.submittedBy;
+      const poemCreatedAt = poemData.timestamp ? poemData.timestamp.toDate() : new Date();
+      const isPoemInTargetWeek = poemCreatedAt >= weekStart && poemCreatedAt <= weekEnd;
+      
       try {
         const commentsSnapshot = await getDocs(collection(db, "recentPoems", docSnap.id, "comments"));
+        
+        // Count comments received for the poem author (weekly only)
+        if (poemAuthorId && poetsMap.has(poemAuthorId) && isPoemInTargetWeek) {
+          const poet = poetsMap.get(poemAuthorId);
+          let commentsCount = 0;
+          for (const commentDoc of commentsSnapshot.docs) {
+            const comment = commentDoc.data();
+            const commentCreatedAt = comment.timestamp?.toDate ? comment.timestamp.toDate() : new Date(comment.timestamp);
+            if (commentCreatedAt >= weekStart && commentCreatedAt <= weekEnd) {
+              commentsCount++;
+            }
+          }
+          if (commentsCount > 0) {
+            poet.commentsReceived += commentsCount;
+          }
+        }
+        
+        // Count comments given (by commenters) - weekly only
         for (const commentDoc of commentsSnapshot.docs) {
           const comment = commentDoc.data();
           const commenterId = comment.userId || comment.user;
-          const createdAt = comment.timestamp?.toDate() || new Date();
+          const createdAt = comment.timestamp?.toDate ? comment.timestamp.toDate() : new Date(comment.timestamp);
           const isInTargetWeek = createdAt >= weekStart && createdAt <= weekEnd;
+          
           if (commenterId && poetsMap.has(commenterId) && isInTargetWeek) {
             const poet = poetsMap.get(commenterId);
             const commentText = comment.text || comment.content || "";
+            
+            // Check if comment is meaningful (not just "nice", "good", etc.)
             const isMeaningful = commentText.length >= 20 && 
                                 !/^(nice|good|great|awesome|cool|lovely|beautiful|amazing|wow|like it|beautiful poem|nice work|thanks for sharing|love this)$/i.test(commentText.trim());
+            
             let commentValue = 1;
             if (!isMeaningful) commentValue = 0.25;
+            
             poet.commentsGiven += commentValue;
             if (isMeaningful) poet.meaningfulCommentsGiven += 1;
           }
         }
       } catch (err) {
+        // Skip if comments subcollection doesn't exist
         continue;
       }
     }
 
+    // ============================================
+    // 3. Calculate scores
+    // ============================================
     for (const poet of poetsMap.values()) {
+      // Only count poets with any activity
+      if (poet.poemsWritten === 0 && poet.likesReceived === 0 && 
+          poet.commentsReceived === 0 && poet.likesGiven === 0 && 
+          poet.commentsGiven === 0) {
+        poet.score = 0;
+        continue;
+      }
+      
       let rawScore = 
         (poet.poemsWritten * WEIGHTS.poemsWritten) +
         (poet.likesReceived * WEIGHTS.likesReceived) +
         (poet.commentsReceived * WEIGHTS.commentsReceived) +
         (poet.likesGiven * WEIGHTS.likesGiven) +
         (poet.commentsGiven * WEIGHTS.commentsGiven);
-      if (rawScore === 0 && (poet.poemsWritten > 0 || poet.likesGiven > 0 || poet.commentsGiven > 0)) {
-        rawScore = 1;
-      }
-      poet.score = rawScore;
-      if (poet.commentsGiven >= 3) poet.score += 10;
-      if (poet.likesGiven >= 10) poet.score += 5;
+      
+      // Bonus for meaningful engagement
+      if (poet.commentsGiven >= 3) rawScore += 10;
+      if (poet.likesGiven >= 10) rawScore += 5;
       if (poet.poemsWritten >= 1 && (poet.commentsGiven >= 1 || poet.likesGiven >= 3)) {
-        poet.score += 15;
+        rawScore += 15;
       }
+      
+      poet.score = rawScore;
     }
 
+    // ============================================
+    // 4. Sort and display
+    // ============================================
     const sortedPoets = Array.from(poetsMap.values())
       .filter(poet => poet.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 20);
 
-    // NO WRITE ATTEMPT HERE - just display the rankings
-    // The weeklyWinners collection is read-only for users
+    console.log(`🏆 Found ${sortedPoets.length} poets with activity this week`);
 
     container.innerHTML = `
       <div class="ranking-header">
         <div style="margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
           <span style="background:#e8e0f0; padding:5px 12px; border-radius:20px; font-size:12px;">⏰ Resets in: <span id="countdown-timer">calculating...</span></span>
           <span style="background:#4b2aad; color:white; padding:5px 12px; border-radius:20px; font-size:12px;">📅 ${weekLabel}</span>
+          <span style="background:#ff9800; color:white; padding:5px 12px; border-radius:20px; font-size:12px;">📊 Weekly Rankings</span>
         </div>
         <p class="ranking-description">Based on: Writing (${WEIGHTS.poemsWritten} pts) · Support Given (likes ${WEIGHTS.likesGiven}, comments ${WEIGHTS.commentsGiven}) · Popularity (likes ${WEIGHTS.likesReceived}, comments ${WEIGHTS.commentsReceived})</p>
-        <small> Rankings reset every Monday | Showing previous week's champions</small>
+        <small> Rankings reset every Monday | Showing activity from ${weekLabel}</small>
       </div>
       <div class="poets-ranking-list"></div>
     `;
@@ -2459,6 +2735,7 @@ async function loadRankingPoets() {
       if (!poet.photoURL) {
         const initials = getInitials(poet.username);
         const bgColor = colorFromName(poet.username);
+        // Async upload - fire and forget
         uploadAvatarToCloudinary(initials, bgColor, poet.userId).then(url => {
           if (url) {
             const img = poetDiv.querySelector(".poet-avatar");
@@ -2509,14 +2786,14 @@ async function loadRankingPoets() {
     if (container) {
       container.innerHTML = `
         <div class="ranking-header">
-          <h3> Poet Rankings</h3>
+          <h3>🏆 Poet Rankings</h3>
           <p style="color:#666; text-align:center; padding:20px;">Unable to load rankings. Please refresh the page.</p>
         </div>
       `;
     }
   }
 }
-
+   
 function checkAndRefreshRankings() {
   const today = new Date();
   const isMonday = today.getDay() === 1;
