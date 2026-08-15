@@ -27,9 +27,14 @@ jobs:
           node-version: '18'
           
       - name: 📦 Install dependencies
-        run: npm install glob
+        run: |
+          npm install glob
+          npm install firebase-admin
         
       - name: 🗺️ Generate sitemap
+        env:
+          FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+          SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
         run: node generate-sitemap.js
         
       - name: ✅ Verify sitemap
