@@ -1,6 +1,6 @@
 /**
  * 🔥 Auto Sitemap Generator for Volant Foundry
- * Uses Firebase REST API - No npm install needed
+ * Uses Firebase REST API with better error handling
  * Runs on GitHub Actions
  */
 
@@ -14,7 +14,6 @@ const MAX_POEMS = 5000;
 
 // ✅ STATIC PAGES TO INDEX (18 pages)
 const allowedPages = [
-  // Root Pages
   'index.html',
   'poems.html',
   'poem.html',
@@ -23,85 +22,83 @@ const allowedPages = [
   'all-categories.html',
   'poem-of-the-week.html',
   'quote-of-the-week.html',
-  // Shared Pages
   'shared/about.html',
   'shared/contact.html',
   'shared/terms.html',
   'shared/privacy.html',
-  // Store Pages
   'store/index.html',
   'store/submit.html',
   'store/faq.html',
   'store/refund.html',
-  // Volant Foundry
   'volant_foundry/index.html'
 ];
 
-// ---- FETCH POEMS USING REST API ----
+// ---- FETCH POEMS USING REST API WITH BETTER ERROR HANDLING ----
 async function fetchPoemsFromFirebase() {
   const collections = ['recentPoems', 'featuredPoems', 'classicPoems'];
   const allPoems = [];
   
-  // Firebase REST API URL
+  // Firebase REST API URL - Using your config
   const baseUrl = 'https://silent-depth-default-rtdb.firebaseio.com';
+  
+  console.log('🔥 Connecting to Firebase Realtime Database...');
+  console.log(`📡 Base URL: ${baseUrl}`);
   
   for (const collection of collections) {
     try {
       console.log(`   📂 Fetching from: ${collection}`);
       
       const url = `${baseUrl}/${collection}.json`;
+      console.log(`   🔗 URL: ${url}`);
+      
       const response = await fetch(url);
       
       if (!response.ok) {
-        console.log(`   ⚠️ Failed to fetch ${collection}: ${response.status}`);
+        console.log(`   ❌ Failed to fetch ${collection}: HTTP ${response.status}`);
+        console.log(`   📝 Response: ${await response.text()}`);
         continue;
       }
       
       const data = await response.json();
       
       if (!data) {
-        console.log(`   ⚠️ No data in ${collection}`);
+        console.log(`   ⚠️ No data in ${collection} (null or empty)`);
+        continue;
+      }
+      
+      // Check if data is an object with keys
+      if (typeof data !== 'object' || Array.isArray(data)) {
+        console.log(`   ⚠️ Unexpected data format in ${collection}`);
         continue;
       }
       
       // Convert object to array with keys
-      const items = Object.entries(data).map(([id, value]) => ({
-        id: id,
-        ...value
-      }));
+      const keys = Object.keys(data);
+      console.log(`   📄 Found ${keys.length} items in ${collection}`);
       
-      console.log(`   📄 Found ${items.length} poems in ${collection}`);
-      
-      // Process each poem
-      for (const poem of items) {
-        const slug = poem.slug || 
-                    (poem.title ? poem.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') : poem.id);
+      for (const id of keys) {
+        const poem = data[id];
+        
+        // Skip if poem is null or not an object
+        if (!poem || typeof poem !== 'object') continue;
+        
+        // Generate slug from title or use id
+        let slug = poem.slug;
+        if (!slug && poem.title) {
+          slug = poem.title.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        }
+        if (!slug) slug = id;
         
         // Get author name
         let author = poem.submittedBy || poem.author || poem.authorName || "Anonymous";
-        const userId = poem.userId || poem.authorId;
-        
-        // Try to get username from users collection
-        if (userId) {
-          try {
-            const userUrl = `${baseUrl}/users/${userId}.json`;
-            const userResponse = await fetch(userUrl);
-            if (userResponse.ok) {
-              const userData = await userResponse.json();
-              if (userData && userData.username) {
-                author = userData.username;
-              }
-            }
-          } catch (err) {
-            // Silent fail - keep original author
-          }
-        }
         
         // Get timestamp
-        let timestamp = poem.createdAt || poem.timestamp || poem.date || new Date().toISOString();
+        let timestamp = poem.createdAt || poem.timestamp || poem.date || poem.created || new Date().toISOString();
         
         allPoems.push({
-          id: poem.id,
+          id: id,
           title: poem.title || "Untitled",
           slug: slug,
           author: author,
@@ -111,7 +108,7 @@ async function fetchPoemsFromFirebase() {
       }
       
     } catch (err) {
-      console.log(`   ⚠️ Error fetching ${collection}:`, err.message);
+      console.log(`   ❌ Error fetching ${collection}:`, err.message);
     }
   }
   
@@ -185,7 +182,7 @@ User-agent: *
 Allow: /
 
 # ============================================
-# ALLOW PUBLIC PAGES (18 pages to index)
+# ALLOW PUBLIC PAGES
 # ============================================
 
 # Root Pages
@@ -218,63 +215,19 @@ Allow: /volant_foundry/index.html
 # BLOCK ADMIN PAGES
 # ============================================
 Disallow: /admin
-Disallow: /admin-
-Disallow: /admin.
-Disallow: /administrators
 Disallow: /dashboard
 Disallow: /manage
-Disallow: /testadmin
-Disallow: /editor
-Disallow: /addcategories
-Disallow: /Select-
-Disallow: /Manage-
-Disallow: /assign-
-
-# ============================================
-# BLOCK LOGIN/SYSTEM PAGES
-# ============================================
 Disallow: /login
 Disallow: /signup
-Disallow: /register
 Disallow: /verify
 Disallow: /reset
-Disallow: /forgot
-Disallow: /notifications
-Disallow: /messages
-
-# ============================================
-# BLOCK SUBMISSION MANAGEMENT (NOT public submit pages)
-# ============================================
-Disallow: /edit-
-Disallow: /drafts
-Disallow: /submit?*
-Disallow: /submit/
-Disallow: /submission?*
-Disallow: /submission/
-
-# ============================================
-# BLOCK SPECIFIC SYSTEM FILES
-# ============================================
-Disallow: /verify.html
-Disallow: /verify-email.html
-Disallow: /users-signup.html
-Disallow: /users-reset.html
-Disallow: /users-login.html
-Disallow: /users-forgot.html
-Disallow: /user-edit-poems.html
 
 # ============================================
 # BLOCK STORE PROTECTED PAGES
 # ============================================
 Disallow: /store/approvals.html
 Disallow: /store/dashboard.html
-Disallow: /store/DETAIL
 Disallow: /store/details.html
-
-# ============================================
-# BLOCK VOLANT FOUNDRY DUPLICATE
-# ============================================
-Disallow: /volant_foundry/index2.html
 
 # ============================================
 # BLOCK SHARED PROTECTED PAGES
@@ -284,7 +237,6 @@ Disallow: /shared/universal-login.html
 Disallow: /shared/universal-signup.html
 Disallow: /shared/users-reset.html
 Disallow: /shared/check-verification.html
-Disallow: /shared/existingVerify.html
 
 # ============================================
 # BLOCK USER-SPECIFIC PAGES
@@ -301,8 +253,6 @@ Disallow: /google*.html
 # ============================================
 Disallow: /*.js$
 Disallow: /*.css$
-Disallow: /*.css.map$
-Disallow: /*.js.map$
 Disallow: /*.json$
 Disallow: /*.xml$
 
@@ -337,7 +287,6 @@ async function generateSitemap() {
     console.log(`📁 Domain: ${domain}`);
     console.log(`📄 Targeting ${allowedPages.length} static pages...`);
     console.log("🔄 All pages set to 'weekly' changefreq");
-    console.log("🚫 Excluding Google verification files (google*.html)");
     
     // 1. Static Pages
     const staticResults = [];
@@ -378,7 +327,7 @@ async function generateSitemap() {
     console.log(`✅ ${staticResults.length} static pages generated`);
     
     // 2. Dynamic Poems from Firebase REST API
-    console.log("🔥 Fetching poems from Firebase REST API...");
+    console.log("\n🔥 Fetching poems from Firebase REST API...");
     const poems = await fetchPoemsFromFirebase();
     const poemResults = generatePoemUrls(poems);
     console.log(`✅ ${poemResults.length} poem URLs generated`);
@@ -397,11 +346,12 @@ async function generateSitemap() {
     
     // 5. Sample URLs
     console.log('\n📋 Sample URLs:');
-    allUrls.slice(0, 10).forEach(page => {
-      console.log(`   - ${page.loc}`);
-    });
-    if (allUrls.length > 10) {
-      console.log(`   ... and ${allUrls.length - 10} more`);
+    const sampleCount = Math.min(10, allUrls.length);
+    for (let i = 0; i < sampleCount; i++) {
+      console.log(`   - ${allUrls[i].loc}`);
+    }
+    if (allUrls.length > sampleCount) {
+      console.log(`   ... and ${allUrls.length - sampleCount} more`);
     }
     
     // 6. Generate robots.txt
@@ -413,11 +363,6 @@ async function generateSitemap() {
     console.log(`   Static: ${staticResults.length}`);
     console.log(`   Dynamic Poems: ${poemResults.length}`);
     console.log(`   All pages: weekly`);
-    console.log(`   Priority 1.0: ${allUrls.filter(u => u.priority === '1.0').length}`);
-    console.log(`   Priority 0.9: ${allUrls.filter(u => u.priority === '0.9').length}`);
-    console.log(`   Priority 0.8: ${allUrls.filter(u => u.priority === '0.8').length}`);
-    console.log(`   Priority 0.7: ${allUrls.filter(u => u.priority === '0.7').length}`);
-    console.log(`   Priority 0.6: ${allUrls.filter(u => u.priority === '0.6').length}`);
 
   } catch (err) {
     console.error('❌ Sitemap error:', err);
