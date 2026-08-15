@@ -5,261 +5,121 @@
 
   <url>
     <loc>https://volantpoetry.vercel.app</loc>
-    <lastmod>2026-08-15T12:44:14.698Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.470Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/poems.html</loc>
-    <lastmod>2026-08-15T12:44:14.701Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.474Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/poem.html</loc>
-    <lastmod>2026-08-15T12:44:14.701Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.473Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/submitpoems.html</loc>
-    <lastmod>2026-08-15T12:44:14.706Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.479Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/submission-guidelines.html</loc>
-    <lastmod>2026-08-15T12:44:14.705Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.479Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/all-categories.html</loc>
-    <lastmod>2026-08-15T12:44:14.626Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.388Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/poem-of-the-week.html</loc>
-    <lastmod>2026-08-15T12:44:14.700Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.473Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/quote-of-the-week.html</loc>
-    <lastmod>2026-08-15T12:44:14.701Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.474Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/shared/about.html</loc>
-    <lastmod>2026-08-15T12:44:14.702Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.476Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/shared/contact.html</loc>
-    <lastmod>2026-08-15T12:44:14.702Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.476Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/shared/terms.html</loc>
-    <lastmod>2026-08-15T12:44:14.702Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.476Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/shared/privacy.html</loc>
-    <lastmod>2026-08-15T12:44:14.702Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.476Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/store/</loc>
-    <lastmod>2026-08-15T12:44:14.705Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.478Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/store/submit.html</loc>
-    <lastmod>2026-08-15T12:44:14.705Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.479Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/store/faq.html</loc>
-    <lastmod>2026-08-15T12:44:14.705Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.478Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/store/refund.html</loc>
-    <lastmod>2026-08-15T12:44:14.705Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.478Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/volant_foundry/</loc>
-    <lastmod>2026-08-15T12:44:14.707Z</lastmod>
+    <lastmod>2026-08-15T13:07:36.481Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=what-do-i-have-to-do-with-love</loc>
-    <lastmod>2025-11-15T00:27:14.895Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=dawn-of-the-girl</loc>
-    <lastmod>2025-11-15T00:27:52.856Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=when-love-finds-you-well</loc>
-    <lastmod>2025-11-24T08:14:01.633Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=beneath-the-pain</loc>
-    <lastmod>2025-11-15T00:24:53.006Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=you-d-hold-my-all-in-you</loc>
-    <lastmod>2025-11-15T00:23:23.643Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=o-june</loc>
-    <lastmod>2025-11-15T00:19:16.365Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=rivers</loc>
-    <lastmod>2026-05-26T18:22:57.755Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=he</loc>
-    <lastmod>2025-11-15T00:22:36.389Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=to-dorcas</loc>
-    <lastmod>2026-02-15T23:04:20.847Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=love-is-a-sad-book</loc>
-    <lastmod>2025-11-15T00:21:12.998Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=childhood</loc>
-    <lastmod>2026-07-09T01:44:01.630Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=dry-flowers</loc>
-    <lastmod>2025-11-15T23:21:54.554Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=the-perfect-bride</loc>
-    <lastmod>2025-11-15T00:18:22.855Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=the-fears-i-sigh</loc>
-    <lastmod>2025-11-25T22:54:49.125Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=falling-in-motion</loc>
-    <lastmod>2026-02-20T10:42:50.018Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=must-i-confide</loc>
-    <lastmod>2025-11-21T11:56:10.003Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=catch-fire</loc>
-    <lastmod>2025-11-15T00:21:44.313Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=love-is-prank</loc>
-    <lastmod>2025-11-15T00:26:18.065Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=genius-friendship</loc>
-    <lastmod>2025-11-15T00:25:22.656Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://volantpoetry.vercel.app/poem.html?collection=recentPoems&slug=still-poor</loc>
-    <lastmod>2025-11-15T00:23:58.456Z</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
   </url>
 
 
