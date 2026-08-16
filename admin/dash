@@ -1,0 +1,741 @@
+// ========== NOTIFICATION FUNCTIONS ==========
+
+// ===== HELPER: FIND USER BY USERNAME =====
+// Note: This function is already defined earlier in your code
+// If it's not, uncomment this:
+/*
+async function findUserByUsername(username) {
+    if (!username) return null;
+    try {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("username", "==", username));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            return { id: querySnapshot.docs[0].id, data: querySnapshot.docs[0].data() };
+        }
+        return null;
+    } catch (err) {
+        console.error("Error finding user:", err);
+        return null;
+    }
+}
+*/
+
+// ===== HELPER: GET USER DATA =====
+// Note: This function is already defined earlier in your code
+// If it's not, uncomment this:
+/*
+async function getUserData(userId) {
+    if (!userId) return null;
+    try {
+        const userRef = doc(db, "users", userId);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+            return userSnap.data();
+        }
+        return null;
+    } catch (err) {
+        console.error("Error getting user data:", err);
+        return null;
+    }
+}
+*/
+
+// ===== POEM OF THE WEEK - PERSONALIZED TO AUTHOR =====
+async function notifyPoemAuthorAboutPoemOfTheWeek(poemData) {
+    try {
+        const title = poemData.title || "Untitled";
+        
+        // Get the actual poem author
+        let author = poemData.author || poemData.authorName || null;
+        
+        if (!author) {
+            author = 'Anonymous';
+        }
+        
+        // Generate a slug
+        let slug = poemData.slug;
+        if (!slug && title) {
+            slug = title.toString().toLowerCase().trim()
+                .replace(/[\s\_]+/g, "-")
+                .replace(/[^a-z0-9\-]/g, "")
+                .replace(/\-+/g, "-")
+                .replace(/^\-+|\-+$/g, "");
+        }
+        
+        // Find the author by username
+        const user = await findUserByUsername(author);
+        
+        if (user) {
+            const userId = user.id;
+            const userData = user.data;
+            const username = userData.username || author;
+            const poemId = poemData.id || null;
+            const poemCollection = poemData.source || 'recentPoems';
+            
+            const authorMessage = `Hello ${username},
+
+We are thrilled to inform you that your poem "${title}" has been selected as the Poem of the Week.
+
+This is a special recognition of your creative work and contribution to the Volant Poetry community. Your poem will be featured on our homepage and highlighted to all our readers this week.
+
+We appreciate your artistic voice and look forward to seeing more of your beautiful work.
+Keep writing and inspiring others.
+
+Warm regards,
+The Volant Team
+reach.volant@gmail.com`;
+
+            await addDoc(collection(db, "notifications"), {
+                forUser: userId,
+                type: 'announcement',
+                fromUser: userId,
+                fromUserName: username,
+                message: authorMessage,
+                poemTitle: title,
+                poemId: poemId,
+                poemSlug: slug,
+                poemCollection: poemCollection,
+                isPoemOfWeek: true,
+                isAuthorNotification: true,
+                timestamp: new Date(),
+                read: false
+            });
+            
+            console.log(`✅ Personalized Poem of the Week notification sent to author: ${username}`);
+            showToast(`✅ Personalized notification sent to ${username}!`, 'success');
+        } else {
+            console.log(`❌ Author "${author}" not found. Sending general announcement only.`);
+            showToast(`⚠️ Author "${author}" not found. Sending general announcement only.`, 'info');
+        }
+        
+        // Send general announcement to all users (skip the author)
+        await notifyAllUsersAboutPoemOfTheWeek(poemData, slug, user?.id);
+        
+    } catch (err) {
+        console.error("❌ Error sending personalized Poem of the Week notification:", err);
+        showToast('❌ Error: ' + err.message, 'error');
+        await notifyAllUsersAboutPoemOfTheWeek(poemData, null);
+    }
+}
+
+// ===== POEM OF THE WEEK - GENERAL ANNOUNCEMENT =====
+async function notifyAllUsersAboutPoemOfTheWeek(poemData, slug = null, skipUserId = null) {
+    try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        if (usersSnapshot.empty) {
+            console.log("No users to notify");
+            return;
+        }
+        
+        const batch = writeBatch(db);
+        const notificationsRef = collection(db, "notifications");
+        const title = poemData.title || "Untitled";
+        
+        // Get the actual poem author
+        let poemAuthor = poemData.author || poemData.authorName || 'Anonymous';
+        
+        const poemId = poemData.id || null;
+        const poemCollection = poemData.source || 'recentPoems';
+        
+        if (!slug && title) {
+            slug = title.toString().toLowerCase().trim()
+                .replace(/[\s\_]+/g, "-")
+                .replace(/[^a-z0-9\-]/g, "")
+                .replace(/\-+/g, "-")
+                .replace(/^\-+|\-+$/g, "");
+        }
+        
+        const generalMessage = `We are excited to announce that "${title}" by ${poemAuthor} has been selected as our Poem of the Week.
+
+This beautiful piece will be featured on our homepage throughout the week. We invite you to read and celebrate this wonderful work with us.
+
+Share your thoughts in the comments.
+
+Warm regards,
+The Volant Team
+reach.volant@gmail.com`;
+        
+        let count = 0;
+        for (const userDoc of usersSnapshot.docs) {
+            const userId = userDoc.id;
+            // Skip the author if they already got a personalized notification
+            if (skipUserId && userId === skipUserId) continue;
+            
+            const userData = userDoc.data();
+            const username = userData.username || 'User';
+            
+            const newNotifRef = doc(notificationsRef);
+            batch.set(newNotifRef, {
+                forUser: userId,
+                type: 'announcement',
+                fromUser: userId,
+                fromUserName: username,
+                message: generalMessage,
+                poemTitle: title,
+                poemId: poemId,
+                poemSlug: slug,
+                poemCollection: poemCollection,
+                isPoemOfWeek: true,
+                isAuthorNotification: false,
+                timestamp: new Date(),
+                read: false
+            });
+            count++;
+        }
+        
+        await batch.commit();
+        console.log(`✅ Notified ${count} users about Poem of the Week by ${poemAuthor}`);
+        showToast(`✅ Notified ${count} users about Poem of the Week!`, 'success');
+        
+    } catch (err) {
+        console.error("❌ Error sending general Poem of the Week notifications:", err);
+        showToast('❌ Error: ' + err.message, 'error');
+    }
+}
+
+// ===== QUOTE OF THE WEEK - PERSONALIZED TO AUTHOR =====
+async function notifyQuoteAuthorAboutQuoteOfTheWeek(quoteData) {
+    try {
+        const authorName = quoteData.author || 'Anonymous';
+        const quote = quoteData.quote || "";
+        
+        if (!authorName || authorName === 'Anonymous') {
+            console.log("No author name provided for quote");
+            await notifyAllUsersAboutQuoteOfTheWeek(quoteData);
+            return;
+        }
+        
+        const user = await findUserByUsername(authorName);
+        
+        if (user) {
+            const userId = user.id;
+            const userData = user.data;
+            const username = userData.username || authorName;
+            
+            const authorMessage = `Hello ${username},
+
+We are delighted to inform you that your quote has been selected as the Quote of the Week.
+
+"${quote}"
+
+— ${username}
+
+Your words have inspired us and we believe they will inspire our entire community. Your quote will be featured on our homepage and shared with all our readers this week.
+
+We truly appreciate your wisdom and the unique perspective you bring to Volant Poetry.
+
+Thank you for sharing your voice with us.
+
+Warm regards,
+The Volant Team
+reach.volant@gmail.com`;
+
+            await addDoc(collection(db, "notifications"), {
+                forUser: userId,
+                type: 'announcement',
+                fromUser: userId,
+                fromUserName: username,
+                message: authorMessage,
+                quote: quote,
+                quoteAuthor: authorName,
+                isQuoteOfWeek: true,
+                isAuthorNotification: true,
+                timestamp: new Date(),
+                read: false
+            });
+            
+            console.log(`✅ Personalized Quote of the Week notification sent to author: ${username}`);
+            showToast(`✅ Personalized notification sent to ${username}!`, 'success');
+        } else {
+            console.log(`❌ Author "${authorName}" not found. Sending general announcement only.`);
+            showToast(`⚠️ Author "${authorName}" not found. Sending general announcement only.`, 'info');
+        }
+        
+        await notifyAllUsersAboutQuoteOfTheWeek(quoteData, user?.id);
+        
+    } catch (err) {
+        console.error("❌ Error sending personalized Quote of the Week notification:", err);
+        showToast('❌ Error: ' + err.message, 'error');
+        await notifyAllUsersAboutQuoteOfTheWeek(quoteData);
+    }
+}
+
+// ===== QUOTE OF THE WEEK - GENERAL ANNOUNCEMENT =====
+async function notifyAllUsersAboutQuoteOfTheWeek(quoteData, skipUserId = null) {
+    try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        if (usersSnapshot.empty) {
+            console.log("No users to notify");
+            return;
+        }
+        
+        const batch = writeBatch(db);
+        const notificationsRef = collection(db, "notifications");
+        const quote = quoteData.quote || "";
+        const quoteAuthor = quoteData.author || 'Anonymous';
+        
+        const generalMessage = `We are pleased to share this week's inspiring quote with you:
+
+"${quote}"
+
+— ${quoteAuthor}
+
+This thought-provoking quote will be featured on our homepage throughout the week. We hope it brings you inspiration and reflection.
+
+Warm regards,
+The Volant Team
+reach.volant@gmail.com`;
+        
+        let count = 0;
+        for (const userDoc of usersSnapshot.docs) {
+            const userId = userDoc.id;
+            if (skipUserId && userId === skipUserId) continue;
+            
+            const userData = userDoc.data();
+            const username = userData.username || 'User';
+            
+            const newNotifRef = doc(notificationsRef);
+            batch.set(newNotifRef, {
+                forUser: userId,
+                type: 'announcement',
+                fromUser: userId,
+                fromUserName: username,
+                message: generalMessage,
+                quote: quote,
+                quoteAuthor: quoteAuthor,
+                isQuoteOfWeek: true,
+                isAuthorNotification: false,
+                timestamp: new Date(),
+                read: false
+            });
+            count++;
+        }
+        
+        await batch.commit();
+        console.log(`✅ Notified ${count} users about Quote of the Week by ${quoteAuthor}`);
+        showToast(`✅ Notified ${count} users about Quote of the Week!`, 'success');
+        
+    } catch (err) {
+        console.error("❌ Error sending general Quote of the Week notifications:", err);
+        showToast('❌ Error: ' + err.message, 'error');
+    }
+}
+
+// ===== SEND WELCOME NOTIFICATION =====
+async function sendWelcomeNotification(userId, username) {
+    try {
+        const welcomeMessage = `Welcome to Volant Poetry, ${username}! 🎉
+
+We're so excited to have you join our community of poets and poetry lovers.
+
+Here's what you can do:
+✍️ Share your poems with the world
+❤️ Discover and appreciate other poets' work
+💬 Engage in meaningful conversations through comments
+🏆 Earn achievements and level up your profile
+
+To get started:
+1. Complete your profile
+2. Write and submit your first poem
+3. Explore and connect with other poets
+
+If you have any questions, feel free to reach out to us at reach.volant@gmail.com
+
+Happy writing!
+The Volant Team
+reach.volant@gmail.com`;
+
+        await addDoc(collection(db, "notifications"), {
+            forUser: userId,
+            type: 'welcome',
+            fromUser: userId,
+            fromUserName: username,
+            message: welcomeMessage,
+            timestamp: new Date(),
+            read: false
+        });
+        
+        console.log(`✅ Welcome notification sent to ${username}`);
+    } catch (err) {
+        console.error("❌ Error sending welcome notification:", err);
+    }
+}
+
+// ===== SEND ACHIEVEMENT UNLOCKED NOTIFICATION =====
+async function sendAchievementNotification(userId, achievementTitle, achievementDescription) {
+    try {
+        const userData = await getUserData(userId);
+        const username = userData?.username || 'User';
+        
+        const message = `🎉 Achievement Unlocked!
+
+You've earned the achievement "${achievementTitle}"!
+
+${achievementDescription || 'Keep up the great work!'}
+
+Keep writing and sharing your poetry with the community.
+
+The Volant Team
+reach.volant@gmail.com`;
+
+        await addDoc(collection(db, "notifications"), {
+            forUser: userId,
+            type: 'announcement',
+            fromUser: userId,
+            fromUserName: username,
+            message: message,
+            achievementTitle: achievementTitle,
+            isAchievementNotification: true,
+            timestamp: new Date(),
+            read: false
+        });
+        
+        console.log(`✅ Achievement notification sent to user: ${userId}`);
+    } catch (err) {
+        console.error("❌ Error sending achievement notification:", err);
+    }
+}
+
+// ===== SEND LIKE NOTIFICATION =====
+async function sendLikeNotification(poemId, poemTitle, likerId, poemAuthorId) {
+    try {
+        if (!poemAuthorId || !likerId) return;
+        if (poemAuthorId === likerId) return;
+        
+        const likerData = await getUserData(likerId);
+        const likerName = likerData?.username || 'Someone';
+        
+        const message = `${likerName} liked your poem "${poemTitle}"`;
+        
+        await addDoc(collection(db, "notifications"), {
+            forUser: poemAuthorId,
+            type: 'like',
+            fromUser: likerId,
+            fromUserName: likerName,
+            message: message,
+            poemId: poemId,
+            poemTitle: poemTitle,
+            timestamp: new Date(),
+            read: false
+        });
+        
+        console.log(`✅ Like notification sent to poet: ${poemAuthorId}`);
+    } catch (err) {
+        console.error("❌ Error sending like notification:", err);
+    }
+}
+
+// ===== SEND COMMENT NOTIFICATION =====
+async function sendCommentNotification(poemId, poemTitle, commenterId, poemAuthorId, commentText) {
+    try {
+        if (!poemAuthorId || !commenterId) return;
+        if (poemAuthorId === commenterId) return;
+        
+        const commenterData = await getUserData(commenterId);
+        const commenterName = commenterData?.username || 'Someone';
+        
+        const truncatedComment = commentText.length > 80 ? commentText.substring(0, 80) + '...' : commentText;
+        const message = `${commenterName} commented on your poem "${poemTitle}": "${truncatedComment}"`;
+        
+        await addDoc(collection(db, "notifications"), {
+            forUser: poemAuthorId,
+            type: 'comment',
+            fromUser: commenterId,
+            fromUserName: commenterName,
+            message: message,
+            poemId: poemId,
+            poemTitle: poemTitle,
+            commentText: commentText,
+            timestamp: new Date(),
+            read: false
+        });
+        
+        console.log(`✅ Comment notification sent to poet: ${poemAuthorId}`);
+    } catch (err) {
+        console.error("❌ Error sending comment notification:", err);
+    }
+}
+
+// ===== SEND REPLY NOTIFICATION =====
+async function sendReplyNotification(poemId, poemTitle, replierId, originalCommenterId, replyText, originalCommentText) {
+    try {
+        if (!originalCommenterId || !replierId) return;
+        if (originalCommenterId === replierId) return;
+        
+        const replierData = await getUserData(replierId);
+        const replierName = replierData?.username || 'Someone';
+        
+        const truncatedReply = replyText.length > 80 ? replyText.substring(0, 80) + '...' : replyText;
+        const message = `${replierName} replied to your comment on "${poemTitle}": "${truncatedReply}"`;
+        
+        await addDoc(collection(db, "notifications"), {
+            forUser: originalCommenterId,
+            type: 'reply',
+            fromUser: replierId,
+            fromUserName: replierName,
+            message: message,
+            poemId: poemId,
+            poemTitle: poemTitle,
+            replyText: replyText,
+            originalCommentText: originalCommentText,
+            timestamp: new Date(),
+            read: false
+        });
+        
+        console.log(`✅ Reply notification sent to commenter: ${originalCommenterId}`);
+    } catch (err) {
+        console.error("❌ Error sending reply notification:", err);
+    }
+}
+
+// ===== SEND FOLLOW NOTIFICATION =====
+async function sendFollowNotification(followerId, followedId) {
+    try {
+        if (!followerId || !followedId) return;
+        if (followerId === followedId) return;
+        
+        const followerData = await getUserData(followerId);
+        const followerName = followerData?.username || 'Someone';
+        
+        const message = `${followerName} followed you`;
+        
+        await addDoc(collection(db, "notifications"), {
+            forUser: followedId,
+            type: 'follow',
+            fromUser: followerId,
+            fromUserName: followerName,
+            message: message,
+            timestamp: new Date(),
+            read: false
+        });
+        
+        console.log(`✅ Follow notification sent to: ${followedId}`);
+    } catch (err) {
+        console.error("❌ Error sending follow notification:", err);
+    }
+}
+
+// ===== SEND FOLLOW BACK NOTIFICATION =====
+async function sendFollowBackNotification(followerId, followedId) {
+    try {
+        if (!followerId || !followedId) return;
+        if (followerId === followedId) return;
+        
+        const followerData = await getUserData(followerId);
+        const followerName = followerData?.username || 'Someone';
+        
+        const message = `${followerName} followed you back! 🤝`;
+        
+        await addDoc(collection(db, "notifications"), {
+            forUser: followedId,
+            type: 'follow_back',
+            fromUser: followerId,
+            fromUserName: followerName,
+            message: message,
+            timestamp: new Date(),
+            read: false
+        });
+        
+        console.log(`✅ Follow back notification sent to: ${followedId}`);
+    } catch (err) {
+        console.error("❌ Error sending follow back notification:", err);
+    }
+}
+
+// ===== SEND FRIENDS NOTIFICATION =====
+async function sendFriendsNotification(userId, friendId, friendName) {
+    try {
+        if (!userId || !friendId) return;
+        if (userId === friendId) return;
+        
+        const message = `You and ${friendName} are now friends! Start engaging with their poetry.`;
+        
+        await addDoc(collection(db, "notifications"), {
+            forUser: userId,
+            type: 'friends',
+            fromUser: friendId,
+            fromUserName: friendName,
+            message: message,
+            timestamp: new Date(),
+            read: false
+        });
+        
+        console.log(`✅ Friends notification sent to: ${userId}`);
+    } catch (err) {
+        console.error("❌ Error sending friends notification:", err);
+    }
+}
+
+// ===== SEND COLLABORATION NOTIFICATION =====
+async function sendCollaborationNotification(poemId, poemTitle, collaboratorId, poemAuthorId, poemSlug) {
+    try {
+        if (!poemAuthorId || !collaboratorId) return;
+        
+        const collaboratorData = await getUserData(collaboratorId);
+        const collaboratorName = collaboratorData?.username || 'Someone';
+        
+        const message = `${collaboratorName} added you as a collaborator on "${poemTitle}"`;
+        
+        await addDoc(collection(db, "notifications"), {
+            forUser: poemAuthorId,
+            type: 'collaboration',
+            fromUser: collaboratorId,
+            fromUserName: collaboratorName,
+            message: message,
+            poemId: poemId,
+            poemTitle: poemTitle,
+            poemSlug: poemSlug,
+            timestamp: new Date(),
+            read: false
+        });
+        
+        console.log(`✅ Collaboration notification sent to: ${poemAuthorId}`);
+    } catch (err) {
+        console.error("❌ Error sending collaboration notification:", err);
+    }
+}
+
+// ===== MARK NOTIFICATION AS READ =====
+async function markNotificationAsRead(notificationId) {
+    if (!notificationId) return;
+    try {
+        await updateDoc(doc(db, "notifications", notificationId), { read: true });
+    } catch (err) {
+        console.error("Error marking notification as read:", err);
+    }
+}
+
+// ===== MARK ALL NOTIFICATIONS AS READ FOR USER =====
+async function markAllNotificationsAsRead(userId) {
+    if (!userId) return;
+    try {
+        const q = query(
+            collection(db, "notifications"),
+            where("forUser", "==", userId),
+            where("read", "==", false)
+        );
+        const snapshot = await getDocs(q);
+        const batch = writeBatch(db);
+        snapshot.docs.forEach(docSnap => {
+            batch.update(doc(db, "notifications", docSnap.id), { read: true });
+        });
+        await batch.commit();
+        console.log(`Marked all notifications as read for user: ${userId}`);
+    } catch (err) {
+        console.error("Error marking all notifications as read:", err);
+    }
+}
+
+// ===== GET UNREAD COUNT =====
+async function getUnreadNotificationCount(userId) {
+    if (!userId) return 0;
+    try {
+        const q = query(
+            collection(db, "notifications"),
+            where("forUser", "==", userId),
+            where("read", "==", false)
+        );
+        const snapshot = await getDocs(q);
+        return snapshot.size;
+    } catch (err) {
+        console.error("Error getting unread count:", err);
+        return 0;
+    }
+}
+
+// ===== DELETE OLD NOTIFICATIONS (cleanup) =====
+async function deleteOldNotifications(daysOld = 90) {
+    try {
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - daysOld);
+        
+        const q = query(
+            collection(db, "notifications"),
+            where("timestamp", "<", cutoffDate)
+        );
+        const snapshot = await getDocs(q);
+        
+        if (snapshot.empty) {
+            console.log("No old notifications to delete");
+            return;
+        }
+        
+        const batch = writeBatch(db);
+        snapshot.docs.forEach(docSnap => {
+            batch.delete(doc(db, "notifications", docSnap.id));
+        });
+        await batch.commit();
+        console.log(`Deleted ${snapshot.size} old notifications (older than ${daysOld} days)`);
+    } catch (err) {
+        console.error("Error deleting old notifications:", err);
+    }
+}
+
+// ===== GET NOTIFICATION ICON =====
+function getNotificationIcon(type) {
+    switch(type) {
+        case 'like': return '❤️';
+        case 'comment': return '💬';
+        case 'reply': return '↩️';
+        case 'follow': return '👥';
+        case 'follow_back': return '🤝';
+        case 'friends': return '🤝';
+        case 'collaboration': return '🤝';
+        case 'announcement': return '📢';
+        case 'welcome': return '🎉';
+        default: return '🔔';
+    }
+}
+
+// ===== FORMAT TIME =====
+function formatTime(timestamp) {
+    if (!timestamp) return "Just now";
+    let date;
+    if (timestamp.toDate) date = timestamp.toDate();
+    else if (timestamp.seconds) date = new Date(timestamp.seconds * 1000);
+    else date = new Date(timestamp);
+    const now = new Date();
+    const diff = now - date;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return `${minutes}m`;
+    if (hours < 24) return `${hours}h`;
+    if (days < 7) return `${days}d`;
+    return date.toLocaleDateString();
+}
+
+// ===== ESCAPE HTML =====
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+// ===== EXPOSE FUNCTIONS TO GLOBAL SCOPE =====
+window.notifyPoemAuthorAboutPoemOfTheWeek = notifyPoemAuthorAboutPoemOfTheWeek;
+window.notifyAllUsersAboutPoemOfTheWeek = notifyAllUsersAboutPoemOfTheWeek;
+window.notifyQuoteAuthorAboutQuoteOfTheWeek = notifyQuoteAuthorAboutQuoteOfTheWeek;
+window.notifyAllUsersAboutQuoteOfTheWeek = notifyAllUsersAboutQuoteOfTheWeek;
+window.sendWelcomeNotification = sendWelcomeNotification;
+window.sendAchievementNotification = sendAchievementNotification;
+window.sendLikeNotification = sendLikeNotification;
+window.sendCommentNotification = sendCommentNotification;
+window.sendReplyNotification = sendReplyNotification;
+window.sendFollowNotification = sendFollowNotification;
+window.sendFollowBackNotification = sendFollowBackNotification;
+window.sendFriendsNotification = sendFriendsNotification;
+window.sendCollaborationNotification = sendCollaborationNotification;
+window.markNotificationAsRead = markNotificationAsRead;
+window.markAllNotificationsAsRead = markAllNotificationsAsRead;
+window.getUnreadNotificationCount = getUnreadNotificationCount;
+window.deleteOldNotifications = deleteOldNotifications;
+window.getNotificationIcon = getNotificationIcon;
+window.formatTime = formatTime;
+window.escapeHtml = escapeHtml;

@@ -96,37 +96,75 @@
     .google-btn {
       width: 100%;
       padding: 0.9rem;
-      border: 2px solid #e4e0ed;
+      border: none;
       border-radius: 40px;
-      background: white;
+      background: #ffffff;
       color: #1d1a2b;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: 0.2s;
+      transition: all 0.25s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
       font-family: 'Inter', sans-serif;
       margin-bottom: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      position: relative;
+      border: 2px solid #e4e0ed;
     }
+
+    .google-btn::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 42px;
+      padding: 2px;
+      background: linear-gradient(135deg, #4285f4, #ea4335, #fbbc05, #34a853);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask-composite: exclude;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    .google-btn:hover:not(:disabled)::before {
+      opacity: 0.4;
+    }
+
     .google-btn:hover:not(:disabled) {
       background: #f8f7fc;
-      border-color: #4b2aad;
-      transform: scale(1.01);
-      box-shadow: 0 4px 12px rgba(75, 42, 173, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(66, 133, 244, 0.2);
     }
-    .google-btn:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
+
+    .google-btn:active:not(:disabled) {
+      transform: scale(0.98);
     }
+
     .google-btn i {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       color: #4285f4;
+      background: white;
+      border-radius: 50%;
+      padding: 2px;
     }
+
     .google-btn .google-text {
       color: #1d1a2b;
+      font-weight: 600;
+    }
+
+    .google-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .google-btn:disabled::before {
+      opacity: 0.3;
     }
 
     .recaptcha-container {
@@ -324,95 +362,15 @@
       .recaptcha-container > div { transform: scale(0.8); }
     }
 
-    /* ===== GOOGLE SIGN-IN BUTTON - DEEP COLORS ALWAYS, LIGHTER ON HOVER ===== */
-.google-btn {
-  width: 100%;
-  padding: 0.9rem;
-  border: none;
-  border-radius: 40px;
-  background: #ffffff;
-  color: #1d1a2b;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-family: 'Inter', sans-serif;
-  margin-bottom: 1.2rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  position: relative;
-  border: 2px solid #e4e0ed;
-}
-
-/* ===== GOOGLE COLORED BORDER - DEEP & ALWAYS VISIBLE ===== */
-.google-btn::before {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 42px;
-  padding: 2px;
-  background: linear-gradient(135deg, #4285f4, #ea4335, #fbbc05, #34a853);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  opacity: 1;
-  transition: opacity 0.3s ease;
-}
-
-/* ===== HOVER - LIGHTER COLORS ===== */
-.google-btn:hover:not(:disabled)::before {
-  opacity: 0.4;
-}
-
-.google-btn:hover:not(:disabled) {
-  background: #f8f7fc;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(66, 133, 244, 0.2);
-}
-
-.google-btn:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-/* ===== GOOGLE ICON - ALWAYS COLORED ===== */
-.google-btn i {
-  font-size: 1.3rem;
-  color: #4285f4;
-  background: white;
-  border-radius: 50%;
-  padding: 2px;
-}
-
-.google-btn .google-text {
-  color: #1d1a2b;
-  font-weight: 600;
-}
-
-.google-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none !important;
-}
-
-.google-btn:disabled::before {
-  opacity: 0.3;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 500px) {
-  .google-btn {
-    padding: 0.8rem;
-    font-size: 0.9rem;
-  }
-  
-  .google-btn i {
-    font-size: 1.1rem;
-  }
-}
+    @media (max-width: 500px) {
+      .google-btn {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+      }
+      .google-btn i {
+        font-size: 1.1rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -541,7 +499,8 @@
     query,
     where,
     getDocs,
-    serverTimestamp
+    serverTimestamp,
+    addDoc
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -610,6 +569,49 @@
     statusEl.className = `status show ${type}`;
   }
 
+// ============================================================
+// ====== SEND WELCOME NOTIFICATION ======
+// ============================================================
+  
+async function sendWelcomeNotification(userId, username) {
+    try {
+        const welcomeMessage = `Welcome to Volant Poetry, ${username}! 🎉
+
+We're so excited to have you join our community of poets and poetry lovers.
+
+Here's what you can do:
+✍️ Share your poems with the world
+❤️ Discover and appreciate other poets' work
+💬 Engage in meaningful conversations through comments
+🏆 Earn achievements and level up your profile
+
+To get started:
+1. Complete your profile — you can change your username anytime in your profile settings!
+2. Write and submit your first poem
+3. Explore and connect with other poets
+4. Share your poems via email or on your social media to inspire even more readers!
+
+If you have any questions, feel free to reach out to us at reach.volant@gmail.com
+
+Happy writing!
+The Volant Team
+reach.volant@gmail.com`;
+
+        await addDoc(collection(db, "notifications"), {
+            forUser: userId,
+            type: 'welcome',
+            fromUser: userId,
+            fromUserName: username,
+            message: welcomeMessage,
+            timestamp: serverTimestamp(),
+            read: false
+        });
+        
+        console.log(`✅ Welcome notification sent to ${username}`);
+    } catch (err) {
+        console.error("❌ Error sending welcome notification:", err);
+    }
+}
   // ============================================================
   // ====== SMART RETURN URL HANDLER - PRESERVES QUERY PARAMS ======
   // ============================================================
@@ -639,8 +641,7 @@
         returnUrl = decodeURIComponent(returnUrl);
       } catch (e) {}
       
-      // ✅ FIX: Only check if it's a login/signup page, but KEEP query parameters
-      const cleanUrl = returnUrl.split('?')[0]; // Just for checking page name
+      const cleanUrl = returnUrl.split('?')[0];
       
       const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
       if (excludePages.some(page => cleanUrl.includes(page))) {
@@ -754,7 +755,10 @@
           lastLogin: serverTimestamp()
         });
         
-        showStatus('✅ Account created! Username: ' + uniqueUsername, 'success');
+        // ✅ SEND WELCOME NOTIFICATION FOR NEW USERS
+        await sendWelcomeNotification(user.uid, uniqueUsername);
+        
+        showStatus('✅ Account created! Welcome ' + uniqueUsername + '! 🎉', 'success');
         
         let returnUrl = getSmartReturnUrl();
         sessionStorage.removeItem('returnUrl');
@@ -1021,8 +1025,6 @@
         }
         
         if (returnUrl && returnUrl !== 'null' && returnUrl !== 'undefined') {
-            // ✅ FIX: Keep query parameters intact
-            // Only strip if it's a login/signup page (already handled above)
             if (!returnUrl.startsWith('/') && !returnUrl.startsWith('http')) {
                 returnUrl = '/' + returnUrl;
             }

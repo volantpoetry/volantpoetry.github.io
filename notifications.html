@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="images/volant-favicon.png">
   
   <style>
-    * {
+  * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
@@ -109,7 +109,7 @@
     /* ===== NOTIFICATIONS HEADER ===== */
     .notifications-header {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       margin-bottom: 30px;
       flex-wrap: wrap;
@@ -135,6 +135,7 @@
       font-weight: 500;
       transition: all 0.3s;
       font-family: 'Inter', sans-serif;
+      white-space: nowrap;
     }
 
     .mark-read-btn:hover {
@@ -212,18 +213,18 @@
     .notification-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 8px;
     }
 
     .notification-item {
       background: white;
-      border-radius: 12px;
-      padding: 16px 20px;
+      border-radius: 10px;
+      padding: 14px 16px;
       display: flex;
       align-items: flex-start;
-      gap: 15px;
+      gap: 12px;
       transition: all 0.2s ease;
-      border-left: 4px solid #4b2aad;
+      border-left: 3px solid #4b2aad;
       cursor: pointer;
       position: relative;
     }
@@ -246,12 +247,33 @@
       opacity: 0.75;
     }
 
+    .notification-item.announcement {
+      border-left-color: #ff6b35;
+      background: linear-gradient(135deg, #fff8f5, #fff0e8);
+    }
+
+    .notification-item.announcement.unread {
+      background: linear-gradient(135deg, #fff0ea, #ffe4d9);
+      border-left-color: #ff4500;
+    }
+
+    .notification-item.welcome {
+      border-left-color: #2ecc71;
+      background: linear-gradient(135deg, #f0fff4, #e6f7ed);
+    }
+
+    .notification-item.welcome.unread {
+      background: linear-gradient(135deg, #e8fcef, #d4f5e0);
+      border-left-color: #27ae60;
+    }
+
     .notification-icon {
-      font-size: 28px;
-      min-width: 50px;
+      font-size: 20px;
+      min-width: 36px;
       text-align: center;
       user-select: none;
       pointer-events: none;
+      margin-top: 1px;
     }
 
     .notification-content {
@@ -260,13 +282,74 @@
     }
 
     .notification-message {
-      font-size: 15px;
+      font-size: 14px;
       color: #1e1e2a;
-      margin-bottom: 6px;
-      line-height: 1.5;
+      margin-bottom: 4px;
+      line-height: 1.6;
       word-break: break-word;
+      font-family: 'Inter', sans-serif;
     }
 
+    /* ===== TAGS ===== */
+    .notification-message .announcement-tag {
+      display: inline-block;
+      background: #ff6b35;
+      color: white;
+      padding: 1px 8px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    .notification-message .welcome-tag {
+      display: inline-block;
+      background: #2ecc71;
+      color: white;
+      padding: 1px 8px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    .notification-message .poem-of-week-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, #f7971e, #ffd200);
+      color: #1a1a1a;
+      padding: 1px 10px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-right: 4px;
+      vertical-align: middle;
+      box-shadow: 0 1px 4px rgba(247, 151, 30, 0.3);
+    }
+
+    .notification-message .quote-of-week-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, #8e44ad, #9b59b6);
+      color: white;
+      padding: 1px 10px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-right: 4px;
+      vertical-align: middle;
+      box-shadow: 0 1px 4px rgba(142, 68, 173, 0.3);
+    }
+
+    /* ===== CLICKABLE STYLES ===== */
     .clickable-link {
       cursor: pointer;
       font-weight: 600;
@@ -290,11 +373,12 @@
       pointer-events: auto;
       position: relative;
       z-index: 2;
+      transition: color 0.2s ease;
     }
 
     .clickable-user:hover {
       text-decoration: underline;
-      color: #9a6e0a;
+      color: #DAA520;
     }
 
     .poem-title-link {
@@ -305,6 +389,7 @@
       pointer-events: auto;
       position: relative;
       z-index: 2;
+      transition: all 0.2s ease;
     }
 
     .poem-title-link:hover {
@@ -312,11 +397,43 @@
       color: #2c1a6e;
     }
 
+    .email-link {
+      color: #4b2aad;
+      text-decoration: none;
+      font-weight: 500;
+      pointer-events: auto;
+      position: relative;
+      z-index: 2;
+      transition: color 0.2s ease;
+    }
+
+    .email-link:hover {
+      text-decoration: underline;
+      color: #6f4ae4;
+    }
+
+    .quote-text-link {
+      font-style: italic;
+      color: #8e44ad;
+      cursor: pointer;
+      pointer-events: auto;
+      position: relative;
+      z-index: 2;
+      border-bottom: 1px dashed #d7bde2;
+      transition: all 0.2s ease;
+    }
+
+    .quote-text-link:hover {
+      border-bottom: 1px solid #8e44ad;
+      color: #6c3483;
+    }
+
     .notification-time {
-      font-size: 12px;
+      font-size: 11px;
       color: #999;
-      margin-top: 4px;
+      margin-top: 3px;
       pointer-events: none;
+      font-family: 'Inter', sans-serif;
     }
 
     .collab-badge {
@@ -331,21 +448,56 @@
       pointer-events: none;
     }
 
-    /* ===== FOLLOW BACK BUTTON - VIBRANT ===== */
+    /* ===== NOTIFICATION BODY ===== */
+    .notification-body {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .notification-body .msg-line {
+      margin-bottom: 1px;
+      line-height: 1.6;
+    }
+
+    .notification-body .msg-line:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ===== QUOTE DISPLAY ===== */
+    .quote-display {
+      padding: 6px 12px;
+      background: #f5f0ff;
+      border-radius: 8px;
+      border-left: 3px solid #8b5cf6;
+      margin: 6px 0;
+      font-style: italic;
+      font-size: 15px;
+      color: #2d2a24;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .quote-display .clickable-user {
+      font-style: normal;
+    }
+
+    /* ===== FOLLOW BACK BUTTON ===== */
     .follow-back-btn {
       background: #4CAF50;
       color: white;
       border: none;
       border-radius: 20px;
-      padding: 6px 18px;
-      font-size: 12px;
+      padding: 4px 14px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
       pointer-events: auto;
       position: relative;
       z-index: 3;
-      margin-top: 4px;
+      margin-top: 2px;
       font-family: 'Inter', sans-serif;
       display: inline-block;
       box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
@@ -379,8 +531,8 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 4px;
-      margin-top: 6px;
+      gap: 3px;
+      margin-top: 4px;
       pointer-events: none;
     }
 
@@ -389,10 +541,31 @@
     }
 
     .notification-footer .follow-hint {
-      font-size: 11px;
+      font-size: 10px;
       color: #888;
       font-weight: 400;
       pointer-events: none;
+    }
+
+    /* ===== READ LINK ===== */
+    .read-link {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 5px 16px;
+      background: #f0ece6;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #4b2aad;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+      pointer-events: auto;
+    }
+
+    .read-link:hover {
+      background: #e5e0d8;
+      text-decoration: none;
     }
 
     /* ===== EMPTY STATE ===== */
@@ -427,8 +600,9 @@
       .container { padding: 0 15px; }
       .notifications-header h1 { font-size: 1.5rem; }
       .notification-item { padding: 12px 15px; }
-      .notification-icon { font-size: 24px; min-width: 40px; }
-      .follow-back-btn { font-size: 11px; padding: 5px 14px; }
+      .notification-icon { font-size: 20px; min-width: 36px; }
+      .follow-back-btn { font-size: 10px; padding: 4px 12px; }
+      .quote-display { font-size: 14px; }
     }
 
     @media (max-width: 480px) {
@@ -443,13 +617,1374 @@
       .mark-read-btn { width: 100%; text-align: center; padding: 10px; font-size: 13px; }
       .tab-btn { font-size: 12px; padding: 8px 14px; }
       .notification-item { padding: 10px 12px; gap: 10px; }
-      .notification-icon { font-size: 20px; min-width: 32px; }
-      .notification-message { font-size: 14px; }
+      .notification-icon { font-size: 18px; min-width: 30px; }
+      .notification-message { font-size: 13px; line-height: 1.4; }
       .empty-state { padding: 40px 16px; }
       .empty-state-icon { font-size: 48px; }
       .follow-back-btn { font-size: 10px; padding: 4px 12px; }
       .follow-hint { font-size: 10px; }
+      .quote-display { font-size: 13px; padding: 4px 10px; }
     }
+
+    /* ============================================
+       FORCE FONT SIZES - CONSISTENT & SLIGHTLY LARGER
+       ============================================ */
+
+    /* Base notification message */
+    .notification-message {
+      font-size: 15px !important;
+      line-height: 1.6 !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+
+    /* Notification body lines */
+    .notification-body .msg-line {
+      font-size: 15px !important;
+      line-height: 1.6 !important;
+      margin-bottom: 1px !important;
+    }
+
+    /* Bold username in personalized notifications */
+    .notification-body .msg-line span[style*="font-weight:600"] {
+      font-size: 15px !important;
+    }
+
+    /* Clickable user links */
+    .clickable-user {
+      font-size: 15px !important;
+      font-weight: 600 !important;
+    }
+
+    /* Poem title links */
+    .poem-title-link {
+      font-size: 15px !important;
+      font-weight: 700 !important;
+    }
+
+    /* Email links */
+    .email-link {
+      font-size: 15px !important;
+      font-weight: 500 !important;
+    }
+
+    /* Quote display */
+    .quote-display {
+      font-size: 16px !important;
+      line-height: 1.7 !important;
+      padding: 8px 14px !important;
+    }
+
+    /* Read links (buttons) */
+    .read-link {
+      font-size: 13px !important;
+      padding: 5px 16px !important;
+    }
+
+    /* Tags */
+    .notification-message .poem-of-week-tag,
+    .notification-message .quote-of-week-tag,
+    .notification-message .announcement-tag,
+    .notification-message .welcome-tag {
+      font-size: 10px !important;
+      padding: 2px 12px !important;
+    }
+
+    /* Notification time */
+    .notification-time {
+      font-size: 12px !important;
+    }
+
+    /* Follow button */
+    .follow-back-btn {
+      font-size: 11px !important;
+    }
+
+    /* ============================================
+       PERSONALIZED NOTIFICATION - TIGHTER LINE HEIGHT
+       ============================================ */
+
+    /* Personalized notifications - has class 'personalized' */
+    .notification-item.personalized .notification-body .msg-line,
+    .notification-item.personalized .notification-body .msg-line * {
+      line-height: 1.4 !important;
+    }
+
+    .notification-item.personalized .notification-message,
+    .notification-item.personalized .notification-message * {
+      line-height: 1.4 !important;
+    }
+
+    /* ============================================
+       PERSONALIZED QUOTE NOTIFICATION - COMPLETE STYLING
+       ============================================ */
+
+    /* Quote display in personalized notifications - styled like general */
+    .notification-item.personalized .quote-display {
+      font-size: 16px !important;
+      line-height: 1.7 !important;
+      padding: 8px 14px !important;
+      background: #f5f0ff !important;
+      border-left: 3px solid #8b5cf6 !important;
+      border-radius: 8px !important;
+      font-style: italic !important;
+      color: #2d2a24 !important;
+      white-space: pre-wrap !important;
+      word-break: break-word !important;
+      margin: 6px 0 8px 0 !important;
+    }
+
+    /* ============================================
+       SPACING FOR PERSONALIZED QUOTE NOTIFICATION
+       ============================================ */
+
+    /* Tag to "Hello" line */
+    .notification-item.personalized .notification-body .msg-line:first-child {
+      margin-top: 6px !important;
+      margin-bottom: 2px !important;
+    }
+
+    /* "Hello Rence Blunt," to next line */
+    .notification-item.personalized .notification-body .msg-line:nth-child(2) {
+      margin-bottom: 2px !important;
+    }
+
+    /* "selected as the Quote of the Week." to quote box */
+    .notification-item.personalized .notification-body .msg-line:nth-child(3) {
+      margin-bottom: 4px !important;
+    }
+
+    /* Quote box to "Your words have inspired us..." */
+    .notification-item.personalized .quote-display + .msg-line {
+      margin-top: 8px !important;
+      margin-bottom: 2px !important;
+    }
+
+    /* "Your words have inspired us..." to "We truly appreciate..." */
+    .notification-item.personalized .notification-body .msg-line:nth-child(5) {
+      margin-bottom: 2px !important;
+    }
+
+    /* "We truly appreciate..." to "Thank you for sharing..." */
+    .notification-item.personalized .notification-body .msg-line:nth-child(6) {
+      margin-bottom: 2px !important;
+    }
+
+    /* "Thank you for sharing..." to "Warm regards" */
+    .notification-item.personalized .notification-body .msg-line:nth-child(7) {
+      margin-bottom: 8px !important;
+    }
+
+    /* ============================================
+       SPACING FOR PERSONALIZED POEM NOTIFICATION
+       ============================================ */
+
+    /* Tag to "Hello" line */
+    .notification-item.personalized .notification-body .msg-line:first-child {
+      margin-top: 6px !important;
+      margin-bottom: 2px !important;
+    }
+
+    /* "Hello Rence Blunt," to next line */
+    .notification-item.personalized .notification-body .msg-line:nth-child(2) {
+      margin-bottom: 2px !important;
+    }
+
+    /* "selected as the Poem of the Week." to next paragraph */
+    .notification-item.personalized .notification-body .msg-line:nth-child(3) {
+      margin-bottom: 2px !important;
+    }
+
+    /* Paragraph to next paragraph */
+    .notification-item.personalized .notification-body .msg-line:nth-child(4) {
+      margin-bottom: 2px !important;
+    }
+
+    /* Paragraph to next paragraph */
+    .notification-item.personalized .notification-body .msg-line:nth-child(5) {
+      margin-bottom: 2px !important;
+    }
+
+    /* "Keep writing and inspiring others." to "Warm regards" */
+    .notification-item.personalized .notification-body .msg-line:nth-child(6) {
+      margin-bottom: 8px !important;
+    }
+
+    /* ============================================
+       GENERAL ANNOUNCEMENT SPACING FIX
+       ============================================ */
+
+    /* Add MORE spacing before "Warm regards" - NO BORDER LINE */
+    .notification-item.announcement:not(.personalized) .notification-body .msg-line:last-child {
+      margin-top: 8px !important;
+    }
+
+    /* Quote display margin - for general announcements only */
+    .notification-item.announcement:not(.personalized) .quote-display {
+      margin: 6px 0 8px 0 !important;
+    }
+
+    /* ============================================
+       SPACING AFTER HEADING - Poem of the Week & Quote of the Week (General Only)
+       ============================================ */
+
+    /* Add spacing after the tag/heading - first message line after tag (General Only) */
+    .notification-item.announcement:not(.personalized) .notification-body .msg-line:first-child {
+      margin-top: 4px !important;
+    }
+
+    /* ============================================
+       HIDE READ ICONS ON NOTIFICATION CARDS
+       ============================================ */
+
+    /* Hide emoji icons from read links */
+    .read-link {
+      font-size: 0 !important;
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+
+    .read-link::after {
+      content: "Read the Poem" !important;
+      font-size: 13px !important;
+    }
+
+    .notification-item.personalized .read-link::after {
+      content: "Read Your Poem" !important;
+      font-size: 13px !important;
+    }
+
+    .notification-item.announcement:not(.personalized) .read-link::after {
+      content: "View the Quote" !important;
+      font-size: 13px !important;
+    }
+
+    .notification-item.personalized .read-link::after {
+      content: "View Your Quote" !important;
+      font-size: 13px !important;
+    }
+
+    /* ============================================
+       RESPONSIVE - TABLETS
+       ============================================ */
+    @media (max-width: 768px) {
+      .notification-message,
+      .notification-body .msg-line,
+      .clickable-user,
+      .poem-title-link,
+      .email-link {
+        font-size: 14px !important;
+      }
+      
+      .quote-display {
+        font-size: 15px !important;
+      }
+      
+      .read-link {
+        font-size: 0 !important;
+      }
+      
+      .read-link::after {
+        font-size: 12px !important;
+      }
+      
+      .notification-item.personalized .notification-body .msg-line,
+      .notification-item.personalized .notification-body .msg-line * {
+        line-height: 1.3 !important;
+      }
+    }
+
+    /* ============================================
+       RESPONSIVE - MOBILE
+       ============================================ */
+    @media (max-width: 480px) {
+      .notification-message,
+      .notification-body .msg-line,
+      .clickable-user,
+      .poem-title-link,
+      .email-link {
+        font-size: 13px !important;
+      }
+      
+      .quote-display {
+        font-size: 14px !important;
+      }
+      
+      .read-link {
+        font-size: 0 !important;
+      }
+      
+      .read-link::after {
+        font-size: 12px !important;
+      }
+      
+      .notification-item.personalized .notification-body .msg-line,
+      .notification-item.personalized .notification-body .msg-line * {
+        line-height: 1.3 !important;
+      }
+    }
+    
+
+    /* ============================================
+   REMOVE ALL EMOJIS FROM NOTIFICATION CARDS
+   ============================================ */
+
+/* Remove emoji icons from notification items */
+.notification-item .notification-icon {
+  display: none !important;
+}
+
+/* Remove emoji icons from notification content */
+.notification-item .notification-content .emoji,
+.notification-item .notification-content [class*="emoji"],
+.notification-item .notification-content .icon-emoji {
+  display: none !important;
+}
+
+/* Remove emoji icons from notification message */
+.notification-item .notification-message .emoji,
+.notification-item .notification-message [class*="emoji"] {
+  display: none !important;
+}
+
+/* Remove emoji icons from notification body */
+.notification-item .notification-body .emoji,
+.notification-item .notification-body [class*="emoji"] {
+  display: none !important;
+}
+
+/* Remove emoji icons from any span or element containing emoji */
+.notification-item span:has(> .emoji),
+.notification-item div:has(> .emoji) {
+  display: none !important;
+}
+
+/* Remove emoji icons from read links */
+.read-link {
+  font-size: 0 !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+.read-link::after {
+  content: "Read the Poem" !important;
+  font-size: 13px !important;
+}
+
+.notification-item.personalized .read-link::after {
+  content: "Read Your Poem" !important;
+  font-size: 13px !important;
+}
+
+.notification-item.announcement:not(.personalized) .read-link::after {
+  content: "View the Quote" !important;
+  font-size: 13px !important;
+}
+
+.notification-item.personalized .read-link::after {
+  content: "View Your Quote" !important;
+  font-size: 13px !important;
+}
+
+/* Remove emoji icons from all notification types */
+.notification-item .notification-icon i,
+.notification-item .notification-icon .fas,
+.notification-item .notification-icon .far,
+.notification-item .notification-icon .fa {
+  display: none !important;
+}
+
+/* Remove emoji icons from tabs */
+.tab-btn .fa,
+.tab-btn .fas,
+.tab-btn .far,
+.tab-btn i {
+  display: none !important;
+}
+
+/* Remove emoji icons from notification time */
+.notification-time .fa,
+.notification-time .fas,
+.notification-time .far,
+.notification-time i {
+  display: none !important;
+}
+
+/* Remove emoji icons from follow button */
+.follow-back-btn .fa,
+.follow-back-btn .fas,
+.follow-back-btn .far,
+.follow-back-btn i {
+  display: none !important;
+}
+
+/* Remove emoji icons from collab badge */
+.collab-badge .fa,
+.collab-badge .fas,
+.collab-badge .far,
+.collab-badge i {
+  display: none !important;
+}
+
+/* ============================================
+   REMOVE ALL TEXT DECORATIONS
+   ============================================ */
+
+/* Remove underlines from all links */
+a {
+  text-decoration: none !important;
+}
+
+/* Remove underlines from clickable users */
+.clickable-user {
+  text-decoration: none !important;
+}
+
+.clickable-user:hover {
+  text-decoration: none !important;
+}
+
+/* Remove underlines from poem title links */
+.poem-title-link {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+.poem-title-link:hover {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+/* Remove underlines from email links */
+.email-link {
+  text-decoration: none !important;
+}
+
+.email-link:hover {
+  text-decoration: none !important;
+}
+
+/* Remove underlines from read links */
+.read-link {
+  text-decoration: none !important;
+}
+
+.read-link:hover {
+  text-decoration: none !important;
+}
+
+/* Remove underlines from clickable links */
+.clickable-link {
+  text-decoration: none !important;
+}
+
+.clickable-link:hover {
+  text-decoration: none !important;
+}
+
+/* Remove underlines from quote text links */
+.quote-text-link {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+.quote-text-link:hover {
+  text-decoration: none !important;
+  border-bottom: none !important;
+}
+
+/* Remove underlines from all other links */
+a:hover,
+a:focus,
+a:active {
+  text-decoration: none !important;
+}
+
+/* ============================================
+   CENTER NOTIFICATIONS HEADER
+   ============================================ */
+
+.notifications-header {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-bottom: 30px !important;
+  gap: 12px !important;
+  text-align: center !important;
+}
+
+.notifications-header h1 {
+  margin-bottom: 0 !important;
+  text-align: center !important;
+}
+
+.mark-read-btn {
+  display: inline-block !important;
+  width: auto !important;
+  padding: 10px 24px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 25px !important;
+  background: #4b2aad !important;
+  color: white !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.3s !important;
+  font-family: 'Inter', sans-serif !important;
+  text-align: center !important;
+}
+
+.mark-read-btn:hover {
+  background: #3a1f8a !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ============================================
+   REMOVE ALL HOVER EFFECTS
+   ============================================ */
+
+/* Remove hover effects from notification items */
+.notification-item:hover {
+  box-shadow: none !important;
+  background: #fefefe !important;
+}
+
+/* Remove hover effects from clickable users */
+.clickable-user:hover {
+  color: #B8860B !important;
+  text-decoration: none !important;
+}
+
+/* Remove hover effects from poem title links */
+.poem-title-link:hover {
+  color: #4b2aad !important;
+  border-bottom: none !important;
+}
+
+/* Remove hover effects from email links */
+.email-link:hover {
+  color: #4b2aad !important;
+  text-decoration: none !important;
+}
+
+/* Remove hover effects from read links */
+.read-link:hover {
+  background: #f0ece6 !important;
+  text-decoration: none !important;
+}
+
+/* Remove hover effects from follow buttons */
+.follow-back-btn:hover {
+  transform: none !important;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3) !important;
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE
+   ============================================ */
+@media (max-width: 480px) {
+  .notifications-header {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  
+  .mark-read-btn {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 10px !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - TABLETS
+   ============================================ */
+@media (max-width: 768px) {
+  .notifications-header {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  
+  .mark-read-btn {
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - TABLETS & SMALLER SCREENS
+   ============================================ */
+@media (max-width: 768px) {
+  body {
+    padding-top: 70px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .header-bar {
+    padding: 10px 16px;
+  }
+
+  .logo-text {
+    font-size: 1.2rem;
+  }
+
+  .nav-logo-img {
+    height: 28px;
+  }
+
+  .home-btn {
+    font-size: 0.75rem;
+    padding: 6px 14px;
+  }
+
+  .container {
+    padding: 0 8px;
+  }
+
+  .notifications-header {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .notifications-header h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .mark-read-btn {
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .tabs-wrapper {
+    margin-bottom: 16px;
+    padding-bottom: 6px;
+  }
+
+  .tabs {
+    gap: 4px;
+  }
+
+  .tab-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  .tab-btn .badge {
+    font-size: 0.6rem;
+    padding: 0.05rem 0.5rem;
+  }
+
+  .notification-item {
+    padding: 12px 14px;
+    gap: 10px;
+    border-radius: 8px;
+  }
+
+  .notification-icon {
+    font-size: 18px;
+    min-width: 28px;
+  }
+
+  .notification-message {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  .notification-body .msg-line {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+
+  .quote-display {
+    font-size: 15px !important;
+    padding: 6px 12px !important;
+    line-height: 1.6 !important;
+  }
+
+  .read-link {
+    font-size: 0 !important;
+    padding: 4px 14px !important;
+  }
+
+  .read-link::after {
+    font-size: 12px !important;
+  }
+
+  .notification-time {
+    font-size: 11px;
+  }
+
+  .follow-back-btn {
+    font-size: 10px;
+    padding: 4px 12px;
+  }
+
+  .notification-footer .follow-hint {
+    font-size: 9px;
+  }
+
+  .clickable-user,
+  .poem-title-link,
+  .email-link {
+    font-size: 14px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line,
+  .notification-item.personalized .notification-body .msg-line * {
+    line-height: 1.3 !important;
+  }
+
+  .empty-state {
+    padding: 40px 16px;
+  }
+
+  .empty-state-icon {
+    font-size: 48px;
+  }
+
+  .empty-state h3 {
+    font-size: 1.1rem;
+  }
+
+  .empty-state p {
+    font-size: 0.9rem;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE PHONES
+   ============================================ */
+@media (max-width: 480px) {
+  body {
+    padding-top: 60px;
+    padding-bottom: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .header-bar {
+    padding: 8px 12px;
+  }
+
+  .logo-text {
+    font-size: 1rem;
+  }
+
+  .nav-logo-img {
+    height: 22px;
+  }
+
+  .home-btn {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+  }
+
+  .container {
+    padding: 0 4px;
+  }
+
+  .notifications-header {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .notifications-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .mark-read-btn {
+    width: 100%;
+    max-width: 100%;
+    padding: 10px;
+    font-size: 12px;
+    border-radius: 20px;
+  }
+
+  .tabs {
+    gap: 3px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+    white-space: nowrap;
+    border-radius: 30px;
+  }
+
+  .tab-btn .badge {
+    font-size: 0.5rem;
+    padding: 0.05rem 0.4rem;
+  }
+
+  .notification-item {
+    padding: 10px 12px;
+    gap: 8px;
+    border-radius: 6px;
+    border-left-width: 2px;
+  }
+
+  .notification-icon {
+    font-size: 16px;
+    min-width: 24px;
+  }
+
+  .notification-message {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+  }
+
+  .notification-body .msg-line {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0px !important;
+  }
+
+  .notification-body {
+    gap: 1px;
+  }
+
+  .quote-display {
+    font-size: 14px !important;
+    padding: 4px 10px !important;
+    line-height: 1.5 !important;
+    border-left-width: 2px;
+  }
+
+  .read-link {
+    font-size: 0 !important;
+    padding: 3px 12px !important;
+    margin-top: 3px;
+  }
+
+  .read-link::after {
+    font-size: 11px !important;
+  }
+
+  .notification-time {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .follow-back-btn {
+    font-size: 9px;
+    padding: 3px 10px;
+  }
+
+  .notification-footer .follow-hint {
+    font-size: 8px;
+  }
+
+  .clickable-user,
+  .poem-title-link,
+  .email-link {
+    font-size: 13px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line,
+  .notification-item.personalized .notification-body .msg-line * {
+    line-height: 1.3 !important;
+  }
+
+  .empty-state {
+    padding: 30px 12px;
+  }
+
+  .empty-state-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
+
+  .empty-state h3 {
+    font-size: 1rem;
+  }
+
+  .empty-state p {
+    font-size: 0.85rem;
+  }
+
+  .notification-item.personalized .quote-display {
+    margin: 4px 0 6px 0 !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:first-child {
+    margin-top: 4px !important;
+    margin-bottom: 1px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:nth-child(2) {
+    margin-bottom: 1px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:nth-child(3) {
+    margin-bottom: 2px !important;
+  }
+
+  .notification-item.personalized .quote-display + .msg-line {
+    margin-top: 6px !important;
+    margin-bottom: 1px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:nth-child(5) {
+    margin-bottom: 1px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:nth-child(6) {
+    margin-bottom: 1px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:nth-child(7) {
+    margin-bottom: 6px !important;
+  }
+
+  .notification-item.announcement:not(.personalized) .notification-body .msg-line:last-child {
+    margin-top: 6px !important;
+  }
+
+  .notification-item.announcement:not(.personalized) .quote-display {
+    margin: 4px 0 6px 0 !important;
+  }
+
+  .notification-item.announcement:not(.personalized) .notification-body .msg-line:first-child {
+    margin-top: 2px !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - VERY SMALL SCREENS
+   ============================================ */
+@media (max-width: 360px) {
+  .tab-btn {
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .notification-message {
+    font-size: 12px !important;
+  }
+
+  .notification-body .msg-line {
+    font-size: 12px !important;
+  }
+
+  .clickable-user,
+  .poem-title-link,
+  .email-link {
+    font-size: 12px !important;
+  }
+
+  .quote-display {
+    font-size: 13px !important;
+  }
+
+  .read-link::after {
+    font-size: 10px !important;
+  }
+
+  .notification-item {
+    padding: 8px 10px;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - TABLETS & SMALLER SCREENS
+   ============================================ */
+@media (max-width: 768px) {
+  body {
+    padding-top: 70px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .header-bar {
+    padding: 10px 16px;
+  }
+
+  .logo-text {
+    font-size: 1.2rem;
+  }
+
+  .nav-logo-img {
+    height: 28px;
+  }
+
+  .home-btn {
+    font-size: 0.75rem;
+    padding: 6px 14px;
+  }
+
+  .container {
+    padding: 0 8px;
+  }
+
+  .notifications-header {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .notifications-header h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .mark-read-btn {
+    width: auto;
+    min-width: 200px;
+    text-align: center;
+    padding: 10px 24px;
+    font-size: 13px;
+  }
+
+  .tabs-wrapper {
+    margin-bottom: 16px;
+    padding-bottom: 6px;
+  }
+
+  .tabs {
+    gap: 4px;
+  }
+
+  .tab-btn {
+    padding: 8px 14px;
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  .tab-btn .badge {
+    font-size: 0.6rem;
+    padding: 0.05rem 0.5rem;
+  }
+
+  .notification-item {
+    padding: 12px 14px;
+    gap: 10px;
+    border-radius: 8px;
+  }
+
+  .notification-icon {
+    font-size: 18px;
+    min-width: 28px;
+  }
+
+  .notification-message {
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+  }
+
+  .notification-body .msg-line {
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+  }
+
+  .quote-display {
+    font-size: 15px !important;
+    padding: 6px 12px !important;
+    line-height: 1.6 !important;
+  }
+
+  .read-link {
+    font-size: 0 !important;
+    padding: 4px 14px !important;
+  }
+
+  .read-link::after {
+    font-size: 13px !important;
+  }
+
+  .notification-time {
+    font-size: 11px;
+  }
+
+  .follow-back-btn {
+    font-size: 10px;
+    padding: 4px 12px;
+  }
+
+  .notification-footer .follow-hint {
+    font-size: 9px;
+  }
+
+  .clickable-user,
+  .poem-title-link,
+  .email-link {
+    font-size: 15px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line,
+  .notification-item.personalized .notification-body .msg-line * {
+    line-height: 1.3 !important;
+  }
+
+  .empty-state {
+    padding: 40px 16px;
+  }
+
+  .empty-state-icon {
+    font-size: 48px;
+  }
+
+  .empty-state h3 {
+    font-size: 1.1rem;
+  }
+
+  .empty-state p {
+    font-size: 0.9rem;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - MOBILE PHONES
+   ============================================ */
+@media (max-width: 480px) {
+  body {
+    padding-top: 60px;
+    padding-bottom: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .header-bar {
+    padding: 8px 12px;
+  }
+
+  .logo-text {
+    font-size: 1rem;
+  }
+
+  .nav-logo-img {
+    height: 22px;
+  }
+
+  .home-btn {
+    font-size: 0.7rem;
+    padding: 5px 12px;
+  }
+
+  .container {
+    padding: 0 4px;
+  }
+
+  .notifications-header {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .notifications-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .mark-read-btn {
+    width: auto;
+    min-width: 180px;
+    padding: 10px 20px;
+    font-size: 13px;
+    border-radius: 20px;
+  }
+
+  .tabs {
+    gap: 3px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+    white-space: nowrap;
+    border-radius: 30px;
+  }
+
+  .tab-btn .badge {
+    font-size: 0.5rem;
+    padding: 0.05rem 0.4rem;
+  }
+
+  .notification-item {
+    padding: 10px 12px;
+    gap: 8px;
+    border-radius: 6px;
+    border-left-width: 2px;
+  }
+
+  .notification-icon {
+    font-size: 16px;
+    min-width: 24px;
+  }
+
+  .notification-message {
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+  }
+
+  .notification-body .msg-line {
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0px !important;
+  }
+
+  .notification-body {
+    gap: 1px;
+  }
+
+  .quote-display {
+    font-size: 15px !important;
+    padding: 4px 10px !important;
+    line-height: 1.5 !important;
+    border-left-width: 2px;
+  }
+
+  .read-link {
+    font-size: 0 !important;
+    padding: 3px 12px !important;
+    margin-top: 3px;
+  }
+
+  .read-link::after {
+    font-size: 13px !important;
+  }
+
+  .notification-time {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  .follow-back-btn {
+    font-size: 9px;
+    padding: 3px 10px;
+  }
+
+  .notification-footer .follow-hint {
+    font-size: 8px;
+  }
+
+  .clickable-user,
+  .poem-title-link,
+  .email-link {
+    font-size: 15px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line,
+  .notification-item.personalized .notification-body .msg-line * {
+    line-height: 1.3 !important;
+  }
+
+  .empty-state {
+    padding: 30px 12px;
+  }
+
+  .empty-state-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+  }
+
+  .empty-state h3 {
+    font-size: 1rem;
+  }
+
+  .empty-state p {
+    font-size: 0.85rem;
+  }
+
+  .notification-item.personalized .quote-display {
+    margin: 4px 0 6px 0 !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:first-child {
+    margin-top: 4px !important;
+    margin-bottom: 1px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:nth-child(2) {
+    margin-bottom: 1px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:nth-child(3) {
+    margin-bottom: 2px !important;
+  }
+
+  .notification-item.personalized .quote-display + .msg-line {
+    margin-top: 6px !important;
+    margin-bottom: 1px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:nth-child(5) {
+    margin-bottom: 1px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:nth-child(6) {
+    margin-bottom: 1px !important;
+  }
+
+  .notification-item.personalized .notification-body .msg-line:nth-child(7) {
+    margin-bottom: 6px !important;
+  }
+
+  .notification-item.announcement:not(.personalized) .notification-body .msg-line:last-child {
+    margin-top: 6px !important;
+  }
+
+  .notification-item.announcement:not(.personalized) .quote-display {
+    margin: 4px 0 6px 0 !important;
+  }
+
+  .notification-item.announcement:not(.personalized) .notification-body .msg-line:first-child {
+    margin-top: 2px !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - VERY SMALL SCREENS
+   ============================================ */
+@media (max-width: 360px) {
+  .tab-btn {
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+
+  .notification-message {
+    font-size: 14px !important;
+  }
+
+  .notification-body .msg-line {
+    font-size: 14px !important;
+  }
+
+  .clickable-user,
+  .poem-title-link,
+  .email-link {
+    font-size: 14px !important;
+  }
+
+  .quote-display {
+    font-size: 14px !important;
+  }
+
+  .read-link::after {
+    font-size: 12px !important;
+  }
+
+  .notification-item {
+    padding: 8px 10px;
+  }
+
+  .mark-read-btn {
+    min-width: 150px;
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+}
   </style>
 </head>
 <body>
@@ -479,6 +2014,7 @@
       <button class="tab-btn" data-tab="comments">💬 Comments</button>
       <button class="tab-btn" data-tab="replies">↩️ Replies</button>
       <button class="tab-btn" data-tab="follows">👥 Follows</button>
+      <button class="tab-btn" data-tab="announcements">📢 Announcements</button>
       <button class="tab-btn" data-tab="collaborations">🤝 Collaborations</button>
     </div>
   </div>
@@ -498,6 +2034,9 @@
   </div>
   <div id="followsTab" class="tab-content">
     <div id="followsNotifications" class="notification-list"></div>
+  </div>
+  <div id="announcementsTab" class="tab-content">
+    <div id="announcementsNotifications" class="notification-list"></div>
   </div>
   <div id="collaborationsTab" class="tab-content">
     <div id="collaborationsNotifications" class="notification-list"></div>
@@ -594,6 +2133,8 @@ function getNotificationIcon(type) {
     case 'follow_back': return '🤝';
     case 'friends': return '🤝';
     case 'collaboration': return '🤝';
+    case 'announcement': return '📢';
+    case 'welcome': return '🎉';
     default: return '🔔';
   }
 }
@@ -647,24 +2188,20 @@ async function handleFollowBack(notificationId, followerId, button) {
     const docSnap = await getDoc(followRef);
     const batch = writeBatch(db);
     
-    // Get the actual username from the database
     const followerName = await getUsername(followerId);
     const currentUserName = await getUsername(currentUser.uid);
     
     if (docSnap.exists()) {
-      // Unfollow - toggle off
       batch.delete(followRef);
       batch.update(doc(db, "users", followerId), { followerCount: increment(-1) });
       batch.update(doc(db, "users", currentUser.uid), { followingCount: increment(-1) });
       await batch.commit();
       
-      // Update button
       button.textContent = 'Follow Back';
       button.classList.remove('following');
       button.style.background = '#4CAF50';
       button.disabled = false;
       
-      // Remove the "friends" notification if it exists
       try {
         const q = query(
           collection(db, "notifications"),
@@ -679,7 +2216,6 @@ async function handleFollowBack(notificationId, followerId, button) {
       } catch(e) {}
       
     } else {
-      // Follow back - toggle on
       batch.set(followRef, { 
         followerId: currentUser.uid, 
         followedId: followerId, 
@@ -689,7 +2225,6 @@ async function handleFollowBack(notificationId, followerId, button) {
       batch.update(doc(db, "users", currentUser.uid), { followingCount: increment(1) });
       await batch.commit();
       
-      // Update button
       button.textContent = 'Following';
       button.classList.add('following');
       button.style.background = '#e53935';
@@ -697,9 +2232,7 @@ async function handleFollowBack(notificationId, followerId, button) {
       
       followingCache.add(`${currentUser.uid}_${followerId}`);
       
-      // ===== SEND "FRIENDS" NOTIFICATION =====
       try {
-        // Send to current user
         await addDoc(collection(db, "notifications"), {
           forUser: currentUser.uid,
           fromUser: followerId,
@@ -710,7 +2243,6 @@ async function handleFollowBack(notificationId, followerId, button) {
           read: false
         });
         
-        // Send to the other person
         await addDoc(collection(db, "notifications"), {
           forUser: followerId,
           fromUser: currentUser.uid,
@@ -721,7 +2253,6 @@ async function handleFollowBack(notificationId, followerId, button) {
           read: false
         });
         
-        // Mark the original follow notification as read
         if (notificationId && !notificationId.startsWith('collab_existing_')) {
           await updateDoc(doc(db, "notifications", notificationId), { read: true });
         }
@@ -759,64 +2290,463 @@ async function getPoemSlugAndTitle(poemId) {
   return { slug: null, title: null };
 }
 
-function buildNotificationHTML(notification, poemSlug, poemTitle) {
+// ===== BUILD NOTIFICATION HTML WITH CLICKABLE ELEMENTS =====
+async function buildNotificationHTML(notification, poemSlug, poemTitle) {
   const usernameRaw = notification.fromUserName || 'Someone';
   const safeUsername = escapeHtml(usernameRaw);
+  const fromUserId = notification.fromUser || '';
+  
   let messageHtml = '';
   const type = notification.type;
   const commentExcerpt = notification.commentText ? escapeHtml(notification.commentText.substring(0, 80)) : '';
   const replyExcerpt = notification.replyText ? escapeHtml(notification.replyText.substring(0, 80)) : '';
   
-  const userProfileUrl = `user-profile.html?uid=${notification.fromUser || ''}`;
-  const usernameLink = `<span class="clickable-user" data-href="${userProfileUrl}" data-id="${notification.id}" data-read="${notification.read}">${safeUsername}</span>`;
-  
-  if (type === 'like') {
-    const poemDisplay = poemTitle ? 
-      `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(poemSlug || '')}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(poemTitle)}”</span>` : 
-      'a poem';
-    messageHtml = `${usernameLink} liked ${poemDisplay}`;
-  } 
-  else if (type === 'comment') {
-    const poemDisplay = poemTitle ? 
-      `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(poemSlug || '')}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(poemTitle)}”</span>` : 
-      'a poem';
-    const snippet = commentExcerpt ? `: <em>"${commentExcerpt}${notification.commentText?.length > 80 ? '...' : ''}"</em>` : '';
-    messageHtml = `${usernameLink} commented on ${poemDisplay}${snippet}`;
-  }
-  else if (type === 'reply') {
-    const snippet = replyExcerpt ? `: <em>"${replyExcerpt}${notification.replyText?.length > 80 ? '...' : ''}"</em>` : '';
-    messageHtml = `${usernameLink} replied to your comment${snippet}`;
-  }
-  else if (type === 'follow') {
-    messageHtml = `${usernameLink} followed you`;
-  }
-  else if (type === 'friends') {
-    // Make the username in the friends message clickable
-    // The message format is: "🤝 You and [username] are now friends! Start engaging with their poetry."
-    messageHtml = `You and ${usernameLink} are now friends! Start engaging with their poetry.`;
-  }
-  else if (type === 'follow_back') {
-    messageHtml = `${usernameLink} followed you back! 🤝`;
-  }
-  else if (type === 'collaboration') {
-    if (notification.workTitle) {
-      const workDisplay = notification.poemSlug ? 
-        `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(notification.poemSlug)}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(notification.workTitle)}”</span>` :
-        `<strong>“${escapeHtml(notification.workTitle)}”</strong>`;
-      messageHtml = `${usernameLink} added you as a collaborator on ${workDisplay}`;
-    } else if (poemTitle) {
-      const poemDisplay = `<span class="clickable-link poem-title-link" data-href="poem.html?slug=${encodeURIComponent(poemSlug || '')}" data-id="${notification.id}" data-read="${notification.read}">“${escapeHtml(poemTitle)}”</span>`;
-      messageHtml = `${usernameLink} added you as a collaborator on ${poemDisplay}`;
-    } else {
-      messageHtml = `${usernameLink} wants to collaborate with you`;
+  // ✅ Helper function to find a user by username
+  async function findUserByUsername(username) {
+    if (!username) return null;
+    try {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("username", "==", username));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        return { id: querySnapshot.docs[0].id, data: querySnapshot.docs[0].data() };
+      }
+      return null;
+    } catch (err) {
+      console.error("Error finding user:", err);
+      return null;
     }
   }
-  else {
-    messageHtml = notification.message ? `${usernameLink} ${escapeHtml(notification.message)}` : 'New notification';
+  
+  // ✅ Helper function to get user data
+  async function getUserData(userId) {
+    if (!userId) return null;
+    try {
+      const userRef = doc(db, "users", userId);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        return userSnap.data();
+      }
+      return null;
+    } catch (err) {
+      console.error("Error getting user data:", err);
+      return null;
+    }
   }
+  
+  // ✅ Function to create a clickable username link (for GENERAL announcements)
+  function createClickableLink(userId, userName) {
+    if (userId && userId !== 'system' && userId !== 'Volant Team' && userId !== 'Volant Poetry') {
+      const profileUrl = `/user-profile.html?uid=${userId}`;
+      return `<a href="${profileUrl}" class="clickable-user" data-href="${profileUrl}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">${escapeHtml(userName)}</a>`;
+    }
+    return `<span style="font-weight:600; color:#B8860B;">${escapeHtml(userName)}</span>`;
+  }
+  
+  // ✅ Function to create a bold username (for PERSONALIZED notifications - NOT clickable)
+  function createBoldUsername(userName) {
+    return `<span style="font-weight:600; color:#B8860B;">${escapeHtml(userName)}</span>`;
+  }
+  
+  // ✅ Function to create a clickable poem title link with proper slug
+  function createPoemLink(link, title) {
+    if (link && link !== '#') {
+      return `<a href="${link}" class="poem-title-link" data-href="${link}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">${escapeHtml(title)}</a>`;
+    }
+    return `<span style="font-weight:700; color:#4b2aad;">${escapeHtml(title)}</span>`;
+  }
+  
+  // ✅ Function to create a clickable email link
+  function createEmailLink(email) {
+    if (email) {
+      return `<a href="mailto:${email}" class="email-link" target="_blank">${escapeHtml(email)}</a>`;
+    }
+    return escapeHtml(email);
+  }
+  
+  if (type === 'announcement') {
+    let tag = '';
+    
+    // ===== POEM OF THE WEEK =====
+    if (notification.isPoemOfWeek) {
+      tag = '<span class="poem-of-week-tag">Poem of the Week</span>';
+      
+      const title = notification.poemTitle || 'Untitled';
+      const rawMessage = notification.message || '';
+      
+      // ✅ Build the poem link for the title - use actual slug if available
+      let poemLink = '#';
+      if (poemSlug && poemSlug !== 'null' && poemSlug !== 'undefined') {
+        poemLink = `/poem.html?collection=recentPoems&slug=${encodeURIComponent(poemSlug)}`;
+      } else if (notification.poemId) {
+        poemLink = `/poem.html?id=${encodeURIComponent(notification.poemId)}`;
+      } else {
+        // Fallback to poem-of-the-week.html
+        poemLink = '/poem-of-the-week.html';
+      }
+      
+      // ✅ Read Poem button always goes to poem-of-the-week.html
+      const readPoemLink = '/poem-of-the-week.html';
+      
+      const titleLink = createPoemLink(poemLink, title);
+      
+      // ✅ FIND THE POET'S NAME FOR GENERAL ANNOUNCEMENTS
+      let poetName = null;
+      let poetUserId = null;
+      
+      // Try to extract from message
+      const authorMatch = rawMessage.match(/by ([^h]+?)(?:\s+has been|\s+has\s+been|\s+has\s+selected)/);
+      if (authorMatch) {
+        poetName = authorMatch[1].trim();
+      }
+      
+      if (!poetName || poetName === 'domaxiditte') {
+        const simpleMatch = rawMessage.match(/by ([^\n]+?)(?:\s+has\s+been|\s+has\s+selected)/);
+        if (simpleMatch) {
+          poetName = simpleMatch[1].trim();
+        }
+      }
+      
+      if (!poetName || poetName === 'domaxiditte' || poetName === 'Volant Team') {
+        if (fromUserId && fromUserId !== 'system') {
+          try {
+            const userData = await getUserData(fromUserId);
+            if (userData && userData.username && userData.username !== 'domaxiditte') {
+              poetName = userData.username;
+            }
+          } catch (e) {}
+        }
+      }
+      
+      if (!poetName || poetName === 'domaxiditte') {
+        if (notification.poemId) {
+          try {
+            const poemDoc = await getDoc(doc(db, "recentPoems", notification.poemId));
+            if (poemDoc.exists()) {
+              const poemData = poemDoc.data();
+              if (poemData.author && poemData.author !== 'domaxiditte') {
+                poetName = poemData.author || poemData.authorName;
+              }
+            }
+          } catch (e) {}
+        }
+      }
+      
+      if (!poetName || poetName === 'domaxiditte') {
+        if (safeUsername && safeUsername !== 'domaxiditte' && safeUsername !== 'Volant Team') {
+          poetName = safeUsername;
+        }
+      }
+      
+      if (!poetName || poetName === 'domaxiditte' || poetName === 'Volant Team') {
+        poetName = 'Anonymous';
+      }
+      
+      // ✅ Find the poet's user ID for GENERAL announcements (clickable)
+      if (poetName && poetName !== 'Anonymous' && poetName !== 'Volant Team' && poetName !== 'Volant Poetry') {
+        try {
+          const user = await findUserByUsername(poetName);
+          if (user) {
+            poetUserId = user.id;
+          }
+        } catch (e) {}
+      }
+      
+      const authorLink = createClickableLink(poetUserId, poetName);
+      
+      let displayHtml = '';
+      
+      if (notification.isAuthorNotification && fromUserId && fromUserId !== 'system') {
+        // ✅ PERSONALIZED NOTIFICATION - Username is BOLD but NOT clickable
+        let message = rawMessage;
+        
+        // Extract the username from the message
+        let usernameInMsg = 'User';
+        const helloMatch = message.match(/Hello ([^,]+),/);
+        if (helloMatch) {
+          usernameInMsg = helloMatch[1].trim();
+        }
+        
+        // ✅ Create bold username (NOT clickable)
+        const boldUsername = createBoldUsername(usernameInMsg);
+        
+        // Get the rest of the message after "Hello username,"
+        let restOfMessage = message;
+        if (helloMatch) {
+          restOfMessage = message.replace(/Hello [^,]+,/, '').trim();
+        }
+        
+        // ✅ Replace the poem title with a link (clickable)
+        const titleMatch = restOfMessage.match(/"([^"]+)"/);
+        if (titleMatch && poemLink) {
+          const titleInMsg = titleMatch[1];
+          const newTitleLink = createPoemLink(poemLink, titleInMsg);
+          restOfMessage = restOfMessage.replace(`"${titleInMsg}"`, `"${newTitleLink}"`);
+        }
+        
+        // Replace email with clickable link
+        restOfMessage = restOfMessage.replace(/reach\.volant@gmail\.com/g, createEmailLink('reach.volant@gmail.com'));
+        
+        // Build the final message
+        displayHtml = `
+          <div class="notification-body">
+            <div class="msg-line" style="font-weight:500;">Hello ${boldUsername},</div>
+            <div class="msg-line">${restOfMessage.replace(/\n/g, '<br>')}</div>
+          </div>
+        `;
+        
+        // ✅ "Read Your Poem" goes to poem-of-the-week.html
+        displayHtml += `<div style="margin-top:6px;"><a href="${readPoemLink}" class="read-link" data-href="${readPoemLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">📖 Read Your Poem</a></div>`;
+        
+      } else {
+        // ✅ GENERAL ANNOUNCEMENT - Author name is clickable
+        displayHtml = `
+          <div class="notification-body">
+            <div class="msg-line">We are excited to announce that "${titleLink}" by ${authorLink} has been selected as our Poem of the Week.</div>
+            <div class="msg-line">This beautiful piece will be featured on our homepage throughout the week. We invite you to read and celebrate this wonderful work with us.</div>
+            <div class="msg-line">Share your thoughts in the comments.</div>
+            <div class="msg-line" style="margin-top:4px; color:#666;">Warm regards,<br>The Volant Team<br>${createEmailLink('reach.volant@gmail.com')}</div>
+          </div>
+        `;
+        
+        // ✅ "Read the Poem" goes to poem-of-the-week.html
+        displayHtml += `<div style="margin-top:6px;"><a href="${readPoemLink}" class="read-link" data-href="${readPoemLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">📖 Read the Poem</a></div>`;
+      }
+      
+      messageHtml = `${tag} ${displayHtml}`;
+      
+    // ===== QUOTE OF THE WEEK =====
+    } else if (notification.isQuoteOfWeek) {
+      tag = '<span class="quote-of-week-tag">Quote of the Week</span>';
+      
+      const quote = notification.quote || '';
+      let quoteAuthor = notification.quoteAuthor || 'Anonymous';
+      
+      // Try to find the quote author's user ID
+      let authorUserId = null;
+      let authorName = quoteAuthor;
+      
+      if (quoteAuthor === 'domaxiditte' || quoteAuthor === 'Volant Team') {
+        const rawMessage = notification.message || '';
+        const authorMatch = rawMessage.match(/— ([^\n]+)/);
+        if (authorMatch) {
+          const extracted = authorMatch[1].trim();
+          if (extracted !== 'domaxiditte' && extracted !== 'Volant Team') {
+            quoteAuthor = extracted;
+            authorName = extracted;
+          }
+        }
+      }
+      
+      if (quoteAuthor && quoteAuthor !== 'Anonymous' && quoteAuthor !== 'Volant Team' && quoteAuthor !== 'Volant Poetry' && quoteAuthor !== 'domaxiditte') {
+        try {
+          const user = await findUserByUsername(quoteAuthor);
+          if (user) {
+            authorUserId = user.id;
+            authorName = user.data.username || quoteAuthor;
+          }
+        } catch (e) {}
+      }
+      
+      if (notification.isAuthorNotification && fromUserId && fromUserId !== 'system') {
+        authorUserId = fromUserId;
+        authorName = safeUsername;
+      }
+      
+      const authorLink = createClickableLink(authorUserId, authorName);
+      const quoteLink = '/quote-of-the-week.html';
+      
+      let displayHtml = '';
+      
+      if (notification.isAuthorNotification && fromUserId && fromUserId !== 'system') {
+        // ✅ PERSONALIZED QUOTE NOTIFICATION
+        let message = notification.message || '';
+        let usernameInMsg = 'User';
+        const helloMatch = message.match(/Hello ([^,]+),/);
+        if (helloMatch) {
+          usernameInMsg = helloMatch[1].trim();
+        }
+        
+        const boldUsername = createBoldUsername(usernameInMsg);
+        
+        let restOfMessage = message;
+        if (helloMatch) {
+          restOfMessage = message.replace(/Hello [^,]+,/, '').trim();
+        }
+        
+        restOfMessage = restOfMessage.replace(/reach\.volant@gmail\.com/g, createEmailLink('reach.volant@gmail.com'));
+        
+        displayHtml = `
+          <div class="notification-body">
+            <div class="msg-line" style="font-weight:500;">Hello ${boldUsername},</div>
+            <div class="msg-line">${restOfMessage.replace(/\n/g, '<br>')}</div>
+          </div>
+        `;
+        displayHtml += `<div style="margin-top:6px;"><a href="${quoteLink}" class="read-link" data-href="${quoteLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">📝 View Your Quote</a></div>`;
+        
+      } else {
+        // ✅ GENERAL QUOTE ANNOUNCEMENT
+        displayHtml = `
+          <div class="notification-body">
+            <div class="msg-line">We are pleased to share this week's inspiring quote with you:</div>
+            <div class="quote-display">${escapeHtml(quote)}</div>
+            <div class="msg-line">— ${authorLink}</div>
+            <div class="msg-line">This thought-provoking quote will be featured on our homepage throughout the week. We hope it brings you inspiration and reflection.</div>
+            <div class="msg-line" style="margin-top:4px; color:#666;">Warm regards,<br>The Volant Team<br>${createEmailLink('reach.volant@gmail.com')}</div>
+          </div>
+        `;
+        displayHtml += `<div style="margin-top:6px;"><a href="${quoteLink}" class="read-link" data-href="${quoteLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">📝 View the Quote</a></div>`;
+      }
+      
+      messageHtml = `${tag} ${displayHtml}`;
+      
+    } else {
+      // ✅ OTHER ANNOUNCEMENTS
+      tag = '<span class="announcement-tag">Announcement</span>';
+      let message = notification.message || '';
+      const userMatch = message.match(/Hello ([^,]+),/);
+      if (userMatch && fromUserId && fromUserId !== 'system') {
+        const usernameInMsg = userMatch[1];
+        const boldUsername = createBoldUsername(usernameInMsg);
+        message = message.replace(`Hello ${usernameInMsg},`, `Hello ${boldUsername},`);
+      }
+      message = message.replace(/reach\.volant@gmail\.com/g, createEmailLink('reach.volant@gmail.com'));
+      messageHtml = `${tag} ${message.replace(/\n/g, '<br>')}`;
+    }
+    
+  } else if (type === 'welcome') {
+    const tag = '<span class="welcome-tag">Welcome</span>';
+    let message = notification.message || '';
+    const userMatch = message.match(/Welcome to Volant Poetry, ([^!]+)!/);
+    if (userMatch && fromUserId && fromUserId !== 'system') {
+      const usernameInMsg = userMatch[1];
+      const boldUsername = createBoldUsername(usernameInMsg);
+      message = message.replace(`Welcome to Volant Poetry, ${usernameInMsg}!`, `Welcome to Volant Poetry, ${boldUsername}!`);
+    }
+    message = message.replace(/reach\.volant@gmail\.com/g, createEmailLink('reach.volant@gmail.com'));
+    messageHtml = `${tag} ${message.replace(/\n/g, '<br>')}`;
+    
+  } else if (type === 'like') {
+    let poemDisplay = 'a poem';
+    if (poemTitle && poemSlug && poemSlug !== 'null' && poemSlug !== 'undefined') {
+      poemDisplay = `<a href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(poemSlug)}" class="poem-title-link" data-href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(poemSlug)}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">“${escapeHtml(poemTitle)}”</a>`;
+    } else if (poemTitle) {
+      poemDisplay = `<span style="font-weight:700; color:#4b2aad;">“${escapeHtml(poemTitle)}”</span>`;
+    }
+    
+    let userLink;
+    if (fromUserId && fromUserId !== 'system') {
+      userLink = createClickableLink(fromUserId, safeUsername);
+    } else {
+      const user = await findUserByUsername(safeUsername);
+      userLink = createClickableLink(user?.id, safeUsername);
+    }
+    
+    messageHtml = `${userLink} liked ${poemDisplay}`;
+    
+  } else if (type === 'comment') {
+    let poemDisplay = 'a poem';
+    if (poemTitle && poemSlug && poemSlug !== 'null' && poemSlug !== 'undefined') {
+      poemDisplay = `<a href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(poemSlug)}" class="poem-title-link" data-href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(poemSlug)}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">“${escapeHtml(poemTitle)}”</a>`;
+    } else if (poemTitle) {
+      poemDisplay = `<span style="font-weight:700; color:#4b2aad;">“${escapeHtml(poemTitle)}”</span>`;
+    }
+    const snippet = commentExcerpt ? `: <em>"${commentExcerpt}${notification.commentText?.length > 80 ? '...' : ''}"</em>` : '';
+    
+    let userLink;
+    if (fromUserId && fromUserId !== 'system') {
+      userLink = createClickableLink(fromUserId, safeUsername);
+    } else {
+      const user = await findUserByUsername(safeUsername);
+      userLink = createClickableLink(user?.id, safeUsername);
+    }
+    
+    messageHtml = `${userLink} commented on ${poemDisplay}${snippet}`;
+    
+  } else if (type === 'reply') {
+    const snippet = replyExcerpt ? `: <em>"${replyExcerpt}${notification.replyText?.length > 80 ? '...' : ''}"</em>` : '';
+    
+    let userLink;
+    if (fromUserId && fromUserId !== 'system') {
+      userLink = createClickableLink(fromUserId, safeUsername);
+    } else {
+      const user = await findUserByUsername(safeUsername);
+      userLink = createClickableLink(user?.id, safeUsername);
+    }
+    
+    messageHtml = `${userLink} replied to your comment${snippet}`;
+    
+  } else if (type === 'follow') {
+    let userLink;
+    if (fromUserId && fromUserId !== 'system') {
+      userLink = createClickableLink(fromUserId, safeUsername);
+    } else {
+      const user = await findUserByUsername(safeUsername);
+      userLink = createClickableLink(user?.id, safeUsername);
+    }
+    messageHtml = `${userLink} followed you`;
+    
+  } else if (type === 'friends') {
+    let userLink;
+    if (fromUserId && fromUserId !== 'system') {
+      userLink = createClickableLink(fromUserId, safeUsername);
+    } else {
+      const user = await findUserByUsername(safeUsername);
+      userLink = createClickableLink(user?.id, safeUsername);
+    }
+    messageHtml = `You and ${userLink} are now friends! Start engaging with their poetry.`;
+    
+  } else if (type === 'follow_back') {
+    let userLink;
+    if (fromUserId && fromUserId !== 'system') {
+      userLink = createClickableLink(fromUserId, safeUsername);
+    } else {
+      const user = await findUserByUsername(safeUsername);
+      userLink = createClickableLink(user?.id, safeUsername);
+    }
+    messageHtml = `${userLink} followed you back! 🤝`;
+    
+  } else if (type === 'collaboration') {
+    let workDisplay = 'a work';
+    if (notification.workTitle) {
+      if (notification.poemSlug && notification.poemSlug !== 'null' && notification.poemSlug !== 'undefined') {
+        workDisplay = `<a href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(notification.poemSlug)}" class="poem-title-link" data-href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(notification.poemSlug)}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">“${escapeHtml(notification.workTitle)}”</a>`;
+      } else {
+        workDisplay = `<strong>“${escapeHtml(notification.workTitle)}”</strong>`;
+      }
+    } else if (poemTitle) {
+      if (poemSlug && poemSlug !== 'null' && poemSlug !== 'undefined') {
+        workDisplay = `<a href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(poemSlug)}" class="poem-title-link" data-href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(poemSlug)}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">“${escapeHtml(poemTitle)}”</a>`;
+      } else {
+        workDisplay = `<span style="font-weight:700; color:#4b2aad;">“${escapeHtml(poemTitle)}”</span>`;
+      }
+    }
+    
+    let userLink;
+    if (fromUserId && fromUserId !== 'system') {
+      userLink = createClickableLink(fromUserId, safeUsername);
+    } else {
+      const user = await findUserByUsername(safeUsername);
+      userLink = createClickableLink(user?.id, safeUsername);
+    }
+    
+    messageHtml = `${userLink} added you as a collaborator on ${workDisplay}`;
+    
+  } else {
+    let userLink;
+    if (fromUserId && fromUserId !== 'system') {
+      userLink = createClickableLink(fromUserId, safeUsername);
+    } else {
+      const user = await findUserByUsername(safeUsername);
+      userLink = createClickableLink(user?.id, safeUsername);
+    }
+    let message = notification.message || '';
+    message = message.replace(/reach\.volant@gmail\.com/g, createEmailLink('reach.volant@gmail.com'));
+    messageHtml = message ? `${userLink} ${escapeHtml(message).replace(/\n/g, '<br>')}` : 'New notification';
+  }
+  
   return messageHtml;
 }
-
 async function loadNotifications() {
   if (!currentUser) {
     const container = document.getElementById("allNotifications");
@@ -854,6 +2784,13 @@ async function loadNotifications() {
         notification.poemTitle = title || notification.poemTitle;
         notification.poemSlug = slug;
       }
+      
+      if (notification.type === 'announcement' && notification.poemId && !notification.poemTitle) {
+        const { slug, title } = await getPoemSlugAndTitle(notification.poemId);
+        notification.poemTitle = title || notification.poemTitle;
+        notification.poemSlug = slug;
+      }
+      
       notifications.push(notification);
     }
     
@@ -897,6 +2834,7 @@ async function renderNotifications(notifications) {
     comments: document.getElementById("commentsNotifications"),
     replies: document.getElementById("repliesNotifications"),
     follows: document.getElementById("followsNotifications"),
+    announcements: document.getElementById("announcementsNotifications"),
     collaborations: document.getElementById("collaborationsNotifications")
   };
   
@@ -914,6 +2852,7 @@ async function renderNotifications(notifications) {
     comments: notifications.filter(n => n.type === 'comment'),
     replies: notifications.filter(n => n.type === 'reply'),
     follows: notifications.filter(n => n.type === 'follow' || n.type === 'follow_back' || n.type === 'friends'),
+    announcements: notifications.filter(n => n.type === 'announcement' || n.type === 'welcome'),
     collaborations: notifications.filter(n => n.type === 'collaboration')
   };
   
@@ -930,14 +2869,27 @@ async function renderNotifications(notifications) {
     for (const notification of notifs) {
       const poemSlug = notification.poemSlug || null;
       const poemTitle = notification.poemTitle || null;
-      const messageHtmlContent = buildNotificationHTML(notification, poemSlug, poemTitle);
+      const messageHtmlContent = await buildNotificationHTML(notification, poemSlug, poemTitle);
       const notificationDiv = document.createElement("div");
-      notificationDiv.className = `notification-item ${notification.read ? 'read' : 'unread'}`;
+      
+    let itemClass = `notification-item ${notification.read ? 'read' : 'unread'}`;
+
+if (notification.type === 'announcement') {
+  itemClass += ' announcement';
+} else if (notification.type === 'welcome') {
+  itemClass += ' welcome';
+}
+
+// ✅ Add 'personalized' class for personalized notifications
+if (notification.isAuthorNotification && notification.type === 'announcement') {
+  itemClass += ' personalized';
+}
+      
+      notificationDiv.className = itemClass;
       notificationDiv.dataset.id = notification.id;
       notificationDiv.dataset.read = notification.read;
       
       let followButtonHtml = '';
-      // Show follow button only for 'follow' type notifications (not 'friends' or 'follow_back')
       if (notification.type === 'follow' && notification.fromUser && currentUser && notification.fromUser !== currentUser.uid) {
         const isFollowing = await checkIfFollowing(currentUser.uid, notification.fromUser);
         const followerName = await getUsername(notification.fromUser);
@@ -951,7 +2903,6 @@ async function renderNotifications(notifications) {
             </div>
           `;
         } else {
-          // Already following - show "Following" with unfollow option
           followButtonHtml = `
             <div class="notification-footer">
               <button class="follow-back-btn following" data-follower-id="${notification.fromUser}" data-notif-id="${notification.id}" style="background:#e53935">
@@ -973,7 +2924,7 @@ async function renderNotifications(notifications) {
       
       notificationDiv.addEventListener('click', async (e) => {
         const target = e.target;
-        const isClickable = target.closest('.clickable-user, .clickable-link, .poem-title-link, .follow-back-btn');
+        const isClickable = target.closest('.clickable-user, .clickable-link, .poem-title-link, .follow-back-btn, .quote-text-link, .read-link, .email-link');
         if (isClickable) return;
         if (!notification.read) {
           await markAsRead(notification.id);
@@ -983,19 +2934,27 @@ async function renderNotifications(notifications) {
         }
       });
       
-      const clickableSpans = notificationDiv.querySelectorAll('.clickable-user, .clickable-link, .poem-title-link');
-      clickableSpans.forEach(span => {
-        span.addEventListener('click', async (e) => {
+      // Attach click handlers to ALL clickable elements including read-link and email-link
+      const clickableElements = notificationDiv.querySelectorAll('.clickable-user, .clickable-link, .poem-title-link, .read-link, .email-link');
+      clickableElements.forEach(el => {
+        el.addEventListener('click', async (e) => {
           e.stopPropagation();
+          e.preventDefault();
+          
           if (!notification.read) {
             await markAsRead(notification.id);
             notification.read = true;
             notificationDiv.classList.remove("unread");
             notificationDiv.classList.add("read");
           }
-          const url = span.getAttribute('data-href');
+          
+          const url = el.getAttribute('href') || el.getAttribute('data-href');
           if (url && url !== '#') {
-            window.location.href = url;
+            if (url.startsWith('mailto:')) {
+              window.location.href = url;
+            } else {
+              window.open(url, '_blank');
+            }
           }
         });
       });

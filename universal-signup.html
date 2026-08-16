@@ -630,7 +630,8 @@
     query,
     where,
     getDocs,
-    serverTimestamp
+    serverTimestamp,
+    addDoc
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   // Firebase Config
@@ -647,7 +648,16 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // ----- PLATFORM DETECTION -----
+  // ============================================================
+  // ====== FLAG TO PREVENT MULTIPLE WELCOME NOTIFICATIONS ======
+  // ============================================================
+  
+  let welcomeNotificationSent = false;
+
+  // ============================================================
+  // ====== PLATFORM DETECTION ======
+  // ============================================================
+  
   const urlParams = new URLSearchParams(window.location.search);
   const platform = urlParams.get('platform') || 'poetry';
   const redirectUrl = urlParams.get('redirect');
@@ -690,6 +700,59 @@
   function showStatus(message, type = 'error') {
     statusEl.textContent = message;
     statusEl.className = `status show ${type}`;
+  }
+
+  // ============================================================
+  // ====== SEND WELCOME NOTIFICATION (with guard) ======
+  // ============================================================
+  
+  async function sendWelcomeNotification(userId, username) {
+    // GUARD: Only send once
+    if (welcomeNotificationSent) {
+      console.log('⚠️ Welcome notification already sent, skipping duplicate');
+      return;
+    }
+    
+    try {
+        welcomeNotificationSent = true; // Set flag immediately
+        
+        const welcomeMessage = `Welcome to Volant Poetry, ${username}! 🎉
+
+We're so excited to have you join our community of poets and poetry lovers.
+
+Here's what you can do:
+✍️ Share your poems with the world
+❤️ Discover and appreciate other poets' work
+💬 Engage in meaningful conversations through comments
+🏆 Earn achievements and level up your profile
+
+To get started:
+1. Complete your profile — you can change your username anytime in your profile settings!
+2. Write and submit your first poem
+3. Explore and connect with other poets
+4. Share your poems via email or on your social media to inspire even more readers!
+
+If you have any questions, feel free to reach out to us at reach.volant@gmail.com
+
+Happy writing!
+The Volant Team
+reach.volant@gmail.com`;
+
+        await addDoc(collection(db, "notifications"), {
+            forUser: userId,
+            type: 'welcome',
+            fromUser: userId,
+            fromUserName: username,
+            message: welcomeMessage,
+            timestamp: serverTimestamp(),
+            read: false
+        });
+        
+        console.log(`✅ Welcome notification sent to ${username}`);
+    } catch (err) {
+        console.error("❌ Error sending welcome notification:", err);
+        welcomeNotificationSent = false; // Reset on error so it can retry
+    }
   }
 
   // ============================================================
@@ -794,8 +857,9 @@
   let isGoogleSignInProgress = false;
   
   async function signUpWithGoogle() {
-    // NO reCAPTCHA check - Google button works independently
-
+    // Reset welcome flag for this session
+    welcomeNotificationSent = false;
+    
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     
@@ -855,7 +919,10 @@
         lastLogin: serverTimestamp()
       });
       
-      showStatus('✅ Account created with Google! Username: ' + uniqueUsername, 'success');
+      // ✅ SEND WELCOME NOTIFICATION FOR GOOGLE SIGN-UP (only once)
+      await sendWelcomeNotification(user.uid, uniqueUsername);
+      
+      showStatus('✅ Account created with Google! Welcome ' + uniqueUsername + '! 🎉', 'success');
       
       isGoogleSignInProgress = false;
       
@@ -916,6 +983,9 @@
       return;
     }
 
+    // Reset welcome flag for this session
+    welcomeNotificationSent = false;
+
     const username = usernameInput.value.trim() || 'Anonymous';
     const email = emailInput.value;
     const password = passwordInput.value;
@@ -969,7 +1039,10 @@
         authProvider: 'email'
       });
 
-      showStatus('✅ Account created! Verification email sent. Redirecting…', 'success');
+      // ✅ SEND WELCOME NOTIFICATION FOR EMAIL SIGN-UP (only once)
+      await sendWelcomeNotification(user.uid, username);
+
+      showStatus('✅ Account created! Welcome ' + username + '! 🎉 Verification email sent.', 'success');
 
       const verifyParams = new URLSearchParams();
       verifyParams.append('email', email);

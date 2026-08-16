@@ -178,6 +178,7 @@
       text-align: center;
     }
 
+    /* ===== FIX: Preserve line breaks in quote ===== */
     #weekly-quote {
       font-size: 1.6rem;
       line-height: 1.8;
@@ -186,6 +187,8 @@
       color: #4b3f2f;
       font-family: 'EB Garamond', 'Georgia', serif !important;
       text-align: center;
+      white-space: pre-wrap;  /* ← Preserves line breaks */
+      word-break: break-word; /* ← Prevents overflow */
     }
 
     #quote-author {
@@ -355,6 +358,7 @@
       word-break: break-word;
       margin-bottom: 2px;
       font-style: italic;
+      white-space: pre-wrap; /* ← Preserves line breaks in modal */
     }
 
     .share-quote-info span {
@@ -646,50 +650,34 @@
     /* Large screens */
     @media (min-width: 1200px) {
       .weekly-container {
-        justify-content: flex-end;
-        padding-right: 10%;
+        justify-content: center !important;
+        padding-right: 5% !important;
+        padding-left: 5% !important;
       }
-
+      
+      .weekly-left {
+        max-width: 800px !important;
+        margin: 0 auto !important;
+      }
+      
       .weekly-title {
-        text-align: right;
+        text-align: center !important;
       }
-
-      #weekly-quote, #quote-author {
-        text-align: right;
+      
+      #weekly-quote, 
+      #quote-author {
+        text-align: center !important;
       }
     }
 
     /* ===== FIX LOGO IMAGE ON DESKTOP ===== */
-@media (min-width: 769px) {
-  .nav-logo-img {
-    display: inline-block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+  @media (min-width: 769px) {
+    .nav-logo-img {
+      display: inline-block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
   }
-}
-
-/* Large screens */
-@media (min-width: 1200px) {
-  .weekly-container {
-    justify-content: center !important;
-    padding-right: 5% !important;
-    padding-left: 5% !important;
-  }
-  
-  .weekly-left {
-    max-width: 800px !important;
-    margin: 0 auto !important;
-  }
-  
-  .weekly-title {
-    text-align: center !important;
-  }
-  
-  #weekly-quote, 
-  #quote-author {
-    text-align: center !important;
-  }
-}
   </style>
 </head>
 <body>
@@ -725,7 +713,7 @@
     </div>
     <div class="share-modal-body">
       <div class="share-quote-info">
-        <p id="shareQuoteText" style="color: #4b2aad; font-family: 'EB Garamond', 'Georgia', serif !important; font-size: 1.1rem; font-style: italic;"></p>
+        <p id="shareQuoteText" style="color: #4b2aad; font-family: 'EB Garamond', 'Georgia', serif !important; font-size: 1.1rem; font-style: italic; white-space: pre-wrap;"></p>
         <span id="shareQuoteAuthor" style="color: #888;"></span>
       </div>
       <div class="share-link-display">
@@ -781,7 +769,10 @@
     const shareUrl = window.location.href;
     
     document.getElementById('shareLinkInput').value = shareUrl;
-    document.getElementById('shareQuoteText').textContent = quoteText || 'Quote of the Week';
+    
+    // Preserve line breaks in the modal
+    const formattedQuote = escapeHtml(quoteText || 'Quote of the Week').replace(/\n/g, '<br>');
+    document.getElementById('shareQuoteText').innerHTML = `“${formattedQuote}”`;
     document.getElementById('shareQuoteAuthor').textContent = quoteAuthor ? `~ ${quoteAuthor}` : '';
     
     modal.classList.add('show');
@@ -889,7 +880,9 @@
         const authorElement = document.getElementById("quote-author");
         
         if (quoteElement) {
-          quoteElement.innerHTML = `<em>“${escapeHtml(quoteText)}”</em>`;
+          // Preserve line breaks by converting \n to <br>
+          const formattedQuote = escapeHtml(quoteText).replace(/\n/g, '<br>');
+          quoteElement.innerHTML = `<em>“${formattedQuote}”</em>`;
         }
         
         if (authorElement && author) {
