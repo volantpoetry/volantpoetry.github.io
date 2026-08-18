@@ -1,4 +1,5 @@
-<!html htmhtmlDOCTYPE lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -3989,70 +3990,9 @@ body {
 
     <button class="edit-btn" id="editProfileBtn">Edit Profile</button>
 
-    <!-- ===== GDPR COMPLIANT ACCOUNT DELETION SECTION (Amazon-style) ===== -->
-    <div style="margin-top: 25px; border-top: 2px solid #f0edf7; padding-top: 20px;">
-      
-      <div style="background: #fff3cd; border-radius: 10px; padding: 12px 15px; margin-bottom: 15px; border: 1px solid #ffeaa7;">
-        <p style="color: #856404; font-size: 0.85rem; margin: 0; text-align: center;">
-          ⚠️ <strong>Delete your account across ALL Volant platforms</strong><br>
-          <span style="font-size: 0.75rem;">This will permanently remove your data from Poetry, Reads, and Foundry</span>
-        </p>
-      </div>
-
-      <!-- Delete Account Button -->
-      <button id="deleteAccountBtn" style="
-        background: #dc3545;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        padding: 12px 20px;
-        cursor: pointer;
-        font-size: 0.9rem;
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-        transition: all 0.2s;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
-      ">🗑️ Delete Account (All Platforms)</button>
-      
-      <p style="font-size: 0.7rem; color: #888; margin-top: 8px; text-align: center; line-height: 1.5;">
-        <strong>30-day cooldown period</strong> — You can cancel anytime during cooldown.<br>
-        <span style="color: #999;">Data export available before deletion (GDPR Article 20)</span>
-      </p>
-
-      <!-- Data Export Button -->
-      <button id="exportDataBtn" style="
-        background: #4b2aad;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-size: 0.85rem;
-        font-family: 'Inter', sans-serif;
-        font-weight: 500;
-        transition: all 0.2s;
-        width: 100%;
-        margin-top: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        background: #6c5b8a;
-      ">📥 Request Data Export (GDPR)</button>
-      
-      <p style="font-size: 0.65rem; color: #aaa; margin-top: 5px; text-align: center;">
-        Export all your data including poems, comments, messages, and profile information
-      </p>
-    </div>
-
   </div>
 
-  <!-- RIGHT: VOLANT PANEL -->
+  <!-- RIGHT: VOLANT QUICK PANEL -->
   <div class="interaction-panel">
     <h3>Volant Quick</h3>
     <ul>
@@ -4064,6 +4004,12 @@ body {
       <li><a href="drafts-manager.html">Manage Draft Poems</a></li>
       <li><a href="store/index.html" style="color:#b76e4b; font-weight:600;">📚 Read & Sell books</a></li>
       <li><a href="gallery-achievements.html">🏆 Achievement Gallery</a></li>
+      <!-- ✅ Manage Account - Last item -->
+      <li style="border-top: 2px solid #f0edf7; margin-top: 10px; padding-top: 12px;">
+        <a href="#" id="manageAccountLink" style="color: #4b2aad; font-weight: 600;">
+          ⚙️ Manage Account
+        </a>
+      </li>
     </ul>
   </div>
 
@@ -4154,6 +4100,106 @@ body {
   </div>
 </div>
 
+<!-- ===== MANAGE ACCOUNT MODAL (Export Data + Delete Account) ===== -->
+<div id="manageAccountModal" class="send-message-modal" style="display: none;">
+  <div class="send-message-content" style="max-width: 520px;">
+    <div class="send-message-header">
+      <div class="send-message-header-left">
+        <span class="send-message-icon" style="background: #e8edfd;">⚙️</span>
+        <div>
+          <h3>Manage Account</h3>
+          <p>Control your account data and privacy</p>
+        </div>
+      </div>
+      <button class="send-message-close" id="closeManageAccountModal">✕</button>
+    </div>
+    
+    <div class="send-message-body">
+      
+      <!-- Account Info -->
+      <div style="background: #f8f6ff; border-radius: 12px; padding: 15px; border: 1px solid #ede8ff;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: #4b2aad; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0;">
+            <span id="manageAccountInitials">JD</span>
+          </div>
+          <div>
+            <div style="font-weight: 600; font-size: 1.05rem;" id="manageAccountUsername">username</div>
+            <div style="font-size: 0.85rem; color: #888;" id="manageAccountEmail">email@example.com</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Note about editing profile -->
+      <div style="background: #f0f4ff; border-radius: 8px; padding: 10px 14px; border: 1px solid #e0e8f5;">
+        <p style="font-size: 0.8rem; color: #555; margin: 0;">
+          ✏️ To edit your username, bio, or avatar, use the <strong>Edit Profile</strong> button on your profile page.
+        </p>
+      </div>
+      
+      <!-- Divider -->
+      <hr style="border: none; border-top: 2px solid #f0edf7; margin: 8px 0;">
+      
+      <!-- Export Data (GDPR) -->
+      <button id="manageExportBtn" style="
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 18px;
+        background: white;
+        border: 1px solid #ede8ff;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        width: 100%;
+        text-align: left;
+      ">
+        <span style="font-size: 1.4rem;">📥</span>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 0.95rem;">Export Data</div>
+          <div style="font-size: 0.8rem; color: #888;">Download all your poems, comments, messages, and profile data</div>
+        </div>
+        <span style="color: #bbb; font-size: 1.1rem;">→</span>
+      </button>
+      
+      <!-- Divider -->
+      <hr style="border: none; border-top: 2px solid #f0edf7; margin: 8px 0;">
+      
+      <!-- Delete Account (Danger) -->
+      <button id="manageDeleteBtn" style="
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 18px;
+        background: #fff5f5;
+        border: 1px solid #ffd4d4;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-family: 'Inter', sans-serif;
+        width: 100%;
+        text-align: left;
+      ">
+        <span style="font-size: 1.4rem;">🗑️</span>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 0.95rem; color: #dc3545;">Delete Account</div>
+          <div style="font-size: 0.8rem; color: #dc3545;">Permanently delete your account with a 30-day cooldown period</div>
+        </div>
+        <span style="color: #dc3545; font-size: 1.1rem;">→</span>
+      </button>
+      
+      <!-- Footer -->
+      <div style="margin-top: 14px; padding: 10px; background: #f8f6ff; border-radius: 8px; border: 1px solid #ede8ff;">
+        <p style="font-size: 0.7rem; color: #888; margin: 0; text-align: center;">
+          🔒 GDPR compliant. You have the right to access, modify, and delete your data.
+          <br>Questions? Contact us at <a href="mailto:reach.volant@gmail.com" style="color: #4b2aad;">reach.volant@gmail.com</a>
+        </p>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
 <!-- ===== GDPR DATA EXPORT MODAL ===== -->
 <div id="exportModal" class="send-message-modal" style="display: none;">
   <div class="send-message-content">
@@ -4161,7 +4207,7 @@ body {
       <div class="send-message-header-left">
         <span class="send-message-icon">📥</span>
         <div>
-          <h3>Request Data Export</h3>
+          <h3>Export Data</h3>
           <p>Download all your data (GDPR Article 20)</p>
         </div>
       </div>
@@ -4196,7 +4242,7 @@ body {
   </div>
 </div>
 
-<!-- ===== GDPR DELETE CONFIRMATION MODAL (Amazon-style 30-day cooldown) ===== -->
+<!-- ===== GDPR DELETE CONFIRMATION MODAL (30-day cooldown) ===== -->
 <div id="deleteConfirmModal" class="send-message-modal" style="display: none;">
   <div class="send-message-content">
     <div class="send-message-header" style="border-bottom-color: #ff4d4d;">
@@ -4253,10 +4299,13 @@ body {
         </label>
       </div>
       
-      <div style="background: #f0f4ff; border-radius: 10px; padding: 10px 15px; border: 1px solid #d2e3fc;">
+      <div style="background: #e8f0fe; border-radius: 10px; padding: 12px 15px; border: 1px solid #d2e3fc;">
         <p style="color: #1a56db; font-size: 0.8rem; margin: 0; text-align: center;">
-          📅 Your account will be deleted on: <strong id="deletionDateDisplay">30 days from now</strong>
-          <br><small>You'll receive a confirmation email with cooldown details</small>
+          📅 Your account will be permanently deleted on: <strong id="deletionDateDisplay">30 days from now</strong>
+          <br><small>
+            During the 30-day cooldown, you can <strong>sign in</strong> and <strong>cancel</strong> to restore your account.<br>
+            After this date, <strong>no data can be recovered</strong>.
+          </small>
         </p>
       </div>
       
@@ -4277,6 +4326,10 @@ body {
 </div>
 
 <script type="module">
+// ============================================================
+// ====== FIREBASE IMPORTS ======
+// ============================================================
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { 
   getFirestore, 
@@ -4303,7 +4356,19 @@ import {
   deleteUser 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const firebaseConfig = { apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU", authDomain: "silent-depth.firebaseapp.com", projectId: "silent-depth", storageBucket: "silent-depth.appspot.com", messagingSenderId: "78008755450", appId: "1:78008755450:web:3fd0f0f298a08820935543" };
+// ============================================================
+// ====== FIREBASE CONFIG ======
+// ============================================================
+
+const firebaseConfig = { 
+  apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU", 
+  authDomain: "silent-depth.firebaseapp.com", 
+  projectId: "silent-depth", 
+  storageBucket: "silent-depth.appspot.com", 
+  messagingSenderId: "78008755450", 
+  appId: "1:78008755450:web:3fd0f0f298a08820935543" 
+};
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -4312,17 +4377,49 @@ const auth = getAuth(app);
 // ====== CONSTANTS ======
 // ============================================================
 
-const DELETION_COOLDOWN_DAYS = 30; // Amazon-style 30-day cooldown
+const DELETION_COOLDOWN_DAYS = 30;
 const PLATFORM = 'poetry';
+const READ_TRACKING_KEY = 'poem_read_tracking';
+const READ_TIMEOUT_MINUTES = 30;
+const READ_DELAY_SECONDS = 8;
+const VIEW_THRESHOLD = 0.6;
+const activeTimers = new Map();
+const viewStartTimes = new Map();
 
 // ============================================================
 // ====== HELPER FUNCTIONS ======
 // ============================================================
 
-function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
-function truncatePoemByLines(text, maxLines = 8) { const lines = text.split(/\r?\n/); const truncated = lines.slice(0, maxLines).join("\n"); return { preview: truncated, full: text, truncated: lines.length > maxLines }; }
-function getInitials(name) { const parts = name.trim().split(" "); if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?"; return (parts[0][0] + parts[parts.length-1][0]).toUpperCase(); }
-function colorFromName(name) { let hash = 0; for (let i = 0; i < name.length; i++) { hash = name.charCodeAt(i) + ((hash << 5) - hash); } const hue = Math.abs(hash) % 360; return `hsl(${hue}, 60%, 45%)`; }
+function escapeHtml(str) { 
+  if (!str) return ""; 
+  return str.replace(/[&<>]/g, function(m) { 
+    if (m === '&') return '&amp;'; 
+    if (m === '<') return '&lt;'; 
+    if (m === '>') return '&gt;'; 
+    return m; 
+  }); 
+}
+
+function truncatePoemByLines(text, maxLines = 8) { 
+  const lines = text.split(/\r?\n/); 
+  const truncated = lines.slice(0, maxLines).join("\n"); 
+  return { preview: truncated, full: text, truncated: lines.length > maxLines }; 
+}
+
+function getInitials(name) { 
+  const parts = name.trim().split(" "); 
+  if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?"; 
+  return (parts[0][0] + parts[parts.length-1][0]).toUpperCase(); 
+}
+
+function colorFromName(name) { 
+  let hash = 0; 
+  for (let i = 0; i < name.length; i++) { 
+    hash = name.charCodeAt(i) + ((hash << 5) - hash); 
+  } 
+  const hue = Math.abs(hash) % 360; 
+  return `hsl(${hue}, 60%, 45%)`; 
+}
 
 // ============================================================
 // ====== SHOW STATUS ======
@@ -4331,7 +4428,6 @@ function colorFromName(name) { let hash = 0; for (let i = 0; i < name.length; i+
 function showStatus(message, type = 'error') {
   const statusEl = document.getElementById('signup-status');
   if (!statusEl) {
-    // Create status element if it doesn't exist
     const container = document.querySelector('.profile-container');
     if (!container) return;
     const newStatus = document.createElement('div');
@@ -4348,627 +4444,202 @@ function showStatus(message, type = 'error') {
 }
 
 // ============================================================
-// ====== AMAZON-STYLE 30-DAY COOLDOWN DELETION ======
+// ====== READ TRACKING ======
 // ============================================================
 
-async function requestAccountDeletion(user) {
-    if (!user) {
-        alert('You must be signed in to delete your account.');
-        return false;
-    }
-    
-    try {
-        const userId = user.uid;
-        const userRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userRef);
-        
-        if (!userDoc.exists()) {
-            alert('User not found.');
-            return false;
+function getReadTracking() {
+  try {
+    const stored = sessionStorage.getItem(READ_TRACKING_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch (err) {
+    return {};
+  }
+}
+
+function saveReadTracking(tracking) {
+  try {
+    sessionStorage.setItem(READ_TRACKING_KEY, JSON.stringify(tracking));
+  } catch (err) {}
+}
+
+function wasRecentlyRead(poemId) {
+  if (!poemId) return false;
+  const tracking = getReadTracking();
+  const timestamp = tracking[poemId];
+  if (!timestamp) return false;
+  return Date.now() - timestamp < READ_TIMEOUT_MINUTES * 60 * 1000;
+}
+
+async function recordViewToFirebase(poemId) {
+  if (!poemId || wasRecentlyRead(poemId)) return false;
+  try {
+    await updateDoc(doc(db, 'recentPoems', poemId), { views: increment(1) });
+    const tracking = getReadTracking();
+    tracking[poemId] = Date.now();
+    saveReadTracking(tracking);
+
+    const card = document.querySelector(`.recent-poem-card[data-id="${poemId}"]`);
+    if (card) {
+      const viewCountSpan = card.querySelector('.view-count-inline');
+      if (viewCountSpan) {
+        const currentText = viewCountSpan.textContent || '';
+        const match = currentText.match(/\d+/);
+        if (match) {
+          const currentCount = parseInt(match[0], 10);
+          const newCount = currentCount + 1;
+          if (currentText.includes('👁️')) {
+            viewCountSpan.innerHTML = `👁️ ${newCount}`;
+          } else {
+            viewCountSpan.textContent = `${newCount} Reads`;
+          }
+          viewCountSpan.style.transition = 'transform 0.2s ease, color 0.2s ease';
+          viewCountSpan.style.color = '#4CAF50';
+          viewCountSpan.style.transform = 'scale(1.05)';
+          setTimeout(() => {
+            viewCountSpan.style.color = '#333';
+            viewCountSpan.style.transform = 'scale(1)';
+          }, 600);
         }
-        
-        const userData = userDoc.data();
-        const username = userData?.username || 'unknown';
-        
-        // Check if deletion is already pending
-        if (userData.deletionRequested === true) {
-            const requestedAt = userData.deletionRequestedAt?.toDate?.() || new Date();
-            const daysLeft = Math.ceil(
-                (requestedAt.getTime() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000 - Date.now()) / 
-                (24 * 60 * 60 * 1000)
-            );
-            
-            if (daysLeft > 0) {
-                alert(`⚠️ Account deletion already requested. ${daysLeft} days remaining before permanent deletion.`);
-                return false;
-            }
-        }
-        
-        // Show confirmation with cooldown details
-        const confirmDelete = confirm(
-            `⚠️ ACCOUNT DELETION REQUEST (GDPR Article 17)\n\n` +
-            `You are requesting to delete your account: ${username}\n\n` +
-            `📋 What will happen:\n` +
-            `• A ${DELETION_COOLDOWN_DAYS}-day cooldown period will start\n` +
-            `• Your account will be frozen immediately\n` +
-            `• You can cancel deletion anytime during cooldown\n` +
-            `• After ${DELETION_COOLDOWN_DAYS} days, ALL data will be permanently deleted\n` +
-            `• This affects ALL Volant platforms (Poetry, Reads, Foundry)\n\n` +
-            `Do you want to proceed?`
-        );
-        
-        if (!confirmDelete) return false;
-        
-        // Calculate deletion date
-        const deletionDate = new Date(Date.now() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
-        
-        // Request deletion (start cooldown)
-        await updateDoc(userRef, {
-            deletionRequested: true,
-            deletionRequestedAt: serverTimestamp(),
-            deletionScheduledFor: deletionDate,
-            accountFrozen: true,
-            deletionReason: 'User requested deletion (GDPR Article 17)'
-        });
-        
-        // Send notification about cooldown
-        await addDoc(collection(db, "notifications"), {
-            forUser: userId,
-            type: 'account_deletion_pending',
-            fromUser: userId,
-            fromUserName: username,
-            message: `⚠️ Your account deletion request has been received.\n\n` +
-                     `A ${DELETION_COOLDOWN_DAYS}-day cooldown period has started.\n` +
-                     `Your account is now frozen. You can cancel this request anytime.\n\n` +
-                     `If you do nothing, your account will be permanently deleted on:\n` +
-                     `${deletionDate.toLocaleDateString()} ${deletionDate.toLocaleTimeString()}`,
-            timestamp: serverTimestamp(),
-            read: false
-        });
-        
-        showStatus(`✅ Deletion request submitted! ${DELETION_COOLDOWN_DAYS}-day cooldown started. You can cancel anytime.`, 'info');
-        
-        // Schedule deletion after cooldown
-        scheduleDeletion(userId, username, deletionDate);
-        
-        // Show countdown banner
-        showDeletionCountdown(userId, DELETION_COOLDOWN_DAYS);
-        
-        return true;
-        
-    } catch (error) {
-        console.error('Error requesting deletion:', error);
-        showStatus('❌ Failed to request deletion: ' + error.message, 'error');
-        return false;
+      }
     }
+    return true;
+  } catch (err) {
+    console.warn('Error recording poem view:', err);
+    return false;
+  }
+}
+
+function startTrackingPoem(poemId) {
+  if (!poemId) return;
+  if (wasRecentlyRead(poemId) || activeTimers.has(poemId)) return;
+  viewStartTimes.set(poemId, Date.now());
+  const timer = setTimeout(async () => {
+    const elapsed = Date.now() - (viewStartTimes.get(poemId) || Date.now());
+    if (!wasRecentlyRead(poemId) && elapsed >= READ_DELAY_SECONDS * 1000) {
+      await recordViewToFirebase(poemId);
+    }
+    activeTimers.delete(poemId);
+    viewStartTimes.delete(poemId);
+  }, READ_DELAY_SECONDS * 1000);
+  activeTimers.set(poemId, timer);
+}
+
+function stopTrackingPoem(poemId) {
+  if (!poemId) return;
+  const timer = activeTimers.get(poemId);
+  if (timer) {
+    clearTimeout(timer);
+    activeTimers.delete(poemId);
+  }
+  viewStartTimes.delete(poemId);
+}
+
+function setupReadTracking() {
+  if (!window.IntersectionObserver) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const card = entry.target;
+      const poemId = card?.dataset?.id;
+      if (!poemId) return;
+      if (entry.isIntersecting && entry.intersectionRatio >= VIEW_THRESHOLD) {
+        startTrackingPoem(poemId);
+      } else {
+        stopTrackingPoem(poemId);
+      }
+    });
+  }, {
+    threshold: [0, VIEW_THRESHOLD],
+    rootMargin: '0px'
+  });
+
+  function observePoemCards() {
+    document.querySelectorAll('.recent-poem-card:not([data-read-tracked])').forEach(card => {
+      card.dataset.readTracked = 'true';
+      observer.observe(card);
+    });
+  }
+
+  observePoemCards();
+  const mutationObserver = new MutationObserver(() => observePoemCards());
+  mutationObserver.observe(document.body, { childList: true, subtree: true });
 }
 
 // ============================================================
-// ====== SCHEDULE DELETION ======
+// ====== NOTIFICATION FUNCTIONS ======
 // ============================================================
 
-function scheduleDeletion(userId, username, deletionDate) {
-    // Store pending deletion in session for checking
-    const pendingDeletions = JSON.parse(sessionStorage.getItem('pendingDeletions') || '{}');
-    pendingDeletions[userId] = {
-        username: username,
-        scheduledFor: deletionDate.getTime()
+function setNavBadgeCount(elementId, count) {
+  const badge = document.getElementById(elementId);
+  if (!badge) return;
+  badge.textContent = count > 0 ? String(count) : '';
+}
+
+async function updateUnreadNotificationCount() {
+  try {
+    if (!auth.currentUser) return;
+    const notifsQuery = query(
+      collection(db, 'notifications'),
+      where('forUser', '==', auth.currentUser.uid),
+      where('read', '==', false)
+    );
+    const snapshot = await getDocs(notifsQuery);
+    setNavBadgeCount('notificationsBadge', snapshot.size);
+  } catch (err) {
+    console.warn('Error fetching unread notifications:', err);
+  }
+}
+
+async function updateUnreadMessageCount() {
+  try {
+    if (!auth.currentUser) return;
+    const convQuery = query(collection(db, 'conversations'), where('participants', 'array-contains', auth.currentUser.uid));
+    const convSnapshot = await getDocs(convQuery);
+    let unreadMessages = 0;
+    for (const convDoc of convSnapshot.docs) {
+      const messagesQuery = query(collection(db, 'conversations', convDoc.id, 'messages'), where('read', '==', false));
+      const messagesSnapshot = await getDocs(messagesQuery);
+      messagesSnapshot.forEach(msgDoc => {
+        const msg = msgDoc.data();
+        if (msg.senderId !== auth.currentUser.uid) {
+          unreadMessages += 1;
+        }
+      });
+    }
+    setNavBadgeCount('messagesBadge', unreadMessages);
+  } catch (err) {
+    console.warn('Error fetching unread messages:', err);
+  }
+}
+
+async function sendNotification(forUserId, fromUserId, type, data) {
+  if (!forUserId || !fromUserId || forUserId === fromUserId) return;
+  try {
+    const userDoc = await getDoc(doc(db, 'users', fromUserId));
+    const fromUserName = userDoc.exists() ? userDoc.data().username : 'Someone';
+    const notification = {
+      forUser: forUserId,
+      fromUser: fromUserId,
+      fromUserName,
+      type,
+      timestamp: serverTimestamp(),
+      read: false
     };
-    sessionStorage.setItem('pendingDeletions', JSON.stringify(pendingDeletions));
-    
-    // Show countdown on profile
-    const daysLeft = Math.ceil((deletionDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
-    if (daysLeft > 0) {
-        showDeletionCountdown(userId, daysLeft);
+    if (type === 'like' || type === 'comment') {
+      notification.poemId = data.poemId;
+      notification.poemTitle = data.poemTitle;
     }
-}
-
-// ============================================================
-// ====== SHOW DELETION COUNTDOWN BANNER ======
-// ============================================================
-
-function showDeletionCountdown(userId, daysLeft) {
-    // Remove existing banner
-    const existingBanner = document.getElementById('deletionCountdownBanner');
-    if (existingBanner) existingBanner.remove();
-    
-    if (!daysLeft || daysLeft <= 0) {
-        // Check actual days left from Firestore
-        checkPendingDeletions(auth.currentUser);
-        return;
+    if (type === 'comment') {
+      notification.commentText = data.commentText;
     }
-    
-    // Create banner
-    const banner = document.createElement('div');
-    banner.id = 'deletionCountdownBanner';
-    
-    banner.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-            <div>
-                <strong>⚠️ Account Deletion Pending</strong>
-                <div style="font-size: 0.9rem; margin-top: 4px;">
-                    Your account will be permanently deleted in <strong>${daysLeft} days</strong>
-                    <span style="font-size: 0.8rem; color: rgba(255,255,255,0.8); display: block; margin-top: 2px;">
-                        You can cancel anytime during the ${DELETION_COOLDOWN_DAYS}-day cooldown period
-                    </span>
-                </div>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button id="cancelDeletionBtn" style="
-                    background: #fff;
-                    color: #ff6b6b;
-                    border: none;
-                    border-radius: 8px;
-                    padding: 8px 16px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    font-family: 'Inter', sans-serif;
-                    transition: all 0.2s;
-                ">Cancel Deletion</button>
-                <button id="deleteNowBtn" style="
-                    background: #c0392b;
-                    color: white;
-                    border: none;
-                    border-radius: 8px;
-                    padding: 8px 16px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    font-family: 'Inter', sans-serif;
-                    transition: all 0.2s;
-                ">Delete Now</button>
-            </div>
-        </div>
-    `;
-    
-    // Insert after profile title
-    const profileTitle = document.querySelector('.profile-title');
-    if (profileTitle) {
-        profileTitle.after(banner);
-    } else {
-        document.querySelector('.profile-container')?.prepend(banner);
+    if (type === 'reply') {
+      notification.commentId = data.commentId;
+      notification.replyText = data.replyText;
+      notification.poemId = data.poemId;
     }
-    
-    // Cancel deletion button
-    document.getElementById('cancelDeletionBtn')?.addEventListener('click', async () => {
-        if (confirm('Cancel account deletion? Your account will be restored.')) {
-            await cancelDeletion(userId);
-            banner.remove();
-            showStatus('✅ Account deletion cancelled.', 'success');
-        }
-    });
-    
-    // Delete now button (bypass cooldown)
-    document.getElementById('deleteNowBtn')?.addEventListener('click', async () => {
-        if (confirm('⚠️ Are you sure? This will delete your account immediately without cooldown.')) {
-            const user = auth.currentUser;
-            if (user) {
-                await executeDeletion(userId, user);
-            }
-        }
-    });
-}
-
-// ============================================================
-// ====== CANCEL DELETION ======
-// ============================================================
-
-async function cancelDeletion(userId) {
-    try {
-        const userRef = doc(db, "users", userId);
-        await updateDoc(userRef, {
-            deletionRequested: false,
-            deletionRequestedAt: null,
-            deletionScheduledFor: null,
-            accountFrozen: false,
-            deletionReason: null
-        });
-        
-        // Remove from session
-        const pendingDeletions = JSON.parse(sessionStorage.getItem('pendingDeletions') || '{}');
-        delete pendingDeletions[userId];
-        sessionStorage.setItem('pendingDeletions', JSON.stringify(pendingDeletions));
-        
-        // Remove banner
-        const banner = document.getElementById('deletionCountdownBanner');
-        if (banner) banner.remove();
-        
-    } catch (err) {
-        console.error('Error cancelling deletion:', err);
-        alert('Failed to cancel deletion. Please try again.');
-    }
-}
-
-// ============================================================
-// ====== CHECK PENDING DELETIONS ======
-// ============================================================
-
-async function checkPendingDeletions(user) {
-    if (!user) return;
-    
-    try {
-        const userRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userRef);
-        
-        if (!userDoc.exists()) return;
-        
-        const userData = userDoc.data();
-        
-        // Check if deletion is pending
-        if (userData.deletionRequested === true) {
-            const requestedAt = userData.deletionRequestedAt?.toDate?.() || new Date();
-            const scheduledFor = userData.deletionScheduledFor?.toDate?.() || 
-                                new Date(requestedAt.getTime() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
-            
-            const daysLeft = Math.ceil((scheduledFor.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
-            
-            if (daysLeft <= 0) {
-                // Cooldown period is over - execute deletion
-                await executeDeletion(user.uid, user);
-                return;
-            }
-            
-            // Show countdown banner
-            showDeletionCountdown(user.uid, daysLeft);
-            
-            // Show notification
-            showStatus(
-                `⚠️ Your account deletion is pending. ${daysLeft} days remaining. Cancel to keep your account.`,
-                'info'
-            );
-        }
-    } catch (err) {
-        console.error('Error checking pending deletions:', err);
-    }
-}
-
-// ============================================================
-// ====== EXECUTE DELETION (After Cooldown or Manual) ======
-// ============================================================
-
-async function executeDeletion(userId, user) {
-    try {
-        const userRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userRef);
-        const userData = userDoc.exists() ? userDoc.data() : null;
-        const username = userData?.username || 'unknown';
-        
-        showStatus('🗑️ Deleting account from ALL Volant platforms...', 'info');
-        
-        // ============================================
-        // 1. DELETE POETRY DATA
-        // ============================================
-        
-        const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
-        const poemsSnap = await getDocs(poemsQuery);
-        for (const poemDoc of poemsSnap.docs) {
-            const commentsSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments"));
-            for (const commentDoc of commentsSnap.docs) {
-                const repliesSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments", commentDoc.id, "replies"));
-                for (const replyDoc of repliesSnap.docs) {
-                    await deleteDoc(replyDoc.ref);
-                }
-                await deleteDoc(commentDoc.ref);
-            }
-            await deleteDoc(poemDoc.ref);
-        }
-        
-        // Delete drafts
-        const draftsQuery = query(collection(db, "drafts"), where("userId", "==", userId));
-        const draftsSnap = await getDocs(draftsQuery);
-        for (const draftDoc of draftsSnap.docs) {
-            await deleteDoc(draftDoc.ref);
-        }
-        
-        // Remove likes from poems
-        const allPoemsSnap = await getDocs(collection(db, "recentPoems"));
-        for (const poemDoc of allPoemsSnap.docs) {
-            const poemData = poemDoc.data();
-            if (Array.isArray(poemData.likedBy) && poemData.likedBy.includes(userId)) {
-                await updateDoc(poemDoc.ref, {
-                    likes: increment(-1),
-                    likedBy: poemData.likedBy.filter(uid => uid !== userId)
-                });
-            }
-        }
-        
-        // ============================================
-        // 2. DELETE STORE/READS DATA
-        // ============================================
-        
-        try {
-            const storeQuery = query(collection(db, "store_items"), where("userId", "==", userId));
-            const storeSnap = await getDocs(storeQuery);
-            for (const storeDoc of storeSnap.docs) {
-                await deleteDoc(storeDoc.ref);
-            }
-            
-            const ordersQuery = query(collection(db, "store_orders"), where("userId", "==", userId));
-            const ordersSnap = await getDocs(ordersQuery);
-            for (const orderDoc of ordersSnap.docs) {
-                await deleteDoc(orderDoc.ref);
-            }
-        } catch (err) {
-            console.log('No store data found');
-        }
-        
-        // ============================================
-        // 3. DELETE FOUNDRY DATA
-        // ============================================
-        
-        try {
-            const foundryQuery = query(collection(db, "foundry_items"), where("userId", "==", userId));
-            const foundrySnap = await getDocs(foundryQuery);
-            for (const foundryDoc of foundrySnap.docs) {
-                await deleteDoc(foundryDoc.ref);
-            }
-        } catch (err) {
-            console.log('No foundry data found');
-        }
-        
-        // ============================================
-        // 4. DELETE SOCIAL DATA
-        // ============================================
-        
-        const socialQuery = query(collection(db, "social"));
-        const socialSnap = await getDocs(socialQuery);
-        for (const socialDoc of socialSnap.docs) {
-            const data = socialDoc.data();
-            if (data.followedId === userId || data.followerId === userId) {
-                if (data.followedId === userId) {
-                    await updateDoc(doc(db, "users", data.followerId), { followingCount: increment(-1) });
-                }
-                if (data.followerId === userId) {
-                    await updateDoc(doc(db, "users", data.followedId), { followerCount: increment(-1) });
-                }
-                await deleteDoc(socialDoc.ref);
-            }
-        }
-        
-        // ============================================
-        // 5. DELETE CONVERSATIONS
-        // ============================================
-        
-        const convQuery = query(collection(db, "conversations"), where("participants", "array-contains", userId));
-        const convSnap = await getDocs(convQuery);
-        for (const convDoc of convSnap.docs) {
-            const messagesSnap = await getDocs(collection(db, "conversations", convDoc.id, "messages"));
-            for (const msgDoc of messagesSnap.docs) {
-                await deleteDoc(msgDoc.ref);
-            }
-            await deleteDoc(convDoc.ref);
-        }
-        
-        // ============================================
-        // 6. DELETE NOTIFICATIONS
-        // ============================================
-        
-        const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
-        const notifSnap = await getDocs(notifQuery);
-        for (const notifDoc of notifSnap.docs) {
-            await deleteDoc(notifDoc.ref);
-        }
-        const sentNotifQuery = query(collection(db, "notifications"), where("fromUser", "==", userId));
-        const sentNotifSnap = await getDocs(sentNotifQuery);
-        for (const notifDoc of sentNotifSnap.docs) {
-            await deleteDoc(notifDoc.ref);
-        }
-        
-        // ============================================
-        // 7. DELETE USER DOCUMENT (affects ALL platforms)
-        // ============================================
-        
-        await deleteDoc(userRef);
-        
-        // ============================================
-        // 8. DELETE FROM FIREBASE AUTH
-        // ============================================
-        
-        if (user) {
-            await deleteUser(user);
-        }
-        
-        showStatus('✅ Account permanently deleted from ALL Volant platforms. Redirecting...', 'success');
-        
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 2000);
-        
-        return true;
-        
-    } catch (error) {
-        console.error('Error executing deletion:', error);
-        showStatus('❌ Failed to delete account: ' + error.message, 'error');
-        return false;
-    }
-}
-
-// ============================================================
-// ====== GDPR DATA EXPORT ======
-// ============================================================
-
-async function exportUserData(user) {
-    if (!user) {
-        alert('You must be signed in to export your data.');
-        return;
-    }
-    
-    try {
-        const userId = user.uid;
-        const userRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userRef);
-        const userData = userDoc.exists() ? userDoc.data() : null;
-        const username = userData?.username || 'unknown';
-        
-        showStatus('📥 Gathering your data... This may take a moment.', 'info');
-        
-        const exportData = {
-            user: {
-                uid: userId,
-                ...userData
-            },
-            poems: [],
-            drafts: [],
-            comments: [],
-            followers: [],
-            following: [],
-            conversations: [],
-            notifications: [],
-            exportDate: new Date().toISOString(),
-            platform: PLATFORM
-        };
-        
-        // Get poems
-        const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
-        const poemsSnap = await getDocs(poemsQuery);
-        for (const poemDoc of poemsSnap.docs) {
-            exportData.poems.push({ id: poemDoc.id, ...poemDoc.data() });
-        }
-        
-        // Get drafts
-        const draftsQuery = query(collection(db, "drafts"), where("userId", "==", userId));
-        const draftsSnap = await getDocs(draftsQuery);
-        for (const draftDoc of draftsSnap.docs) {
-            exportData.drafts.push({ id: draftDoc.id, ...draftDoc.data() });
-        }
-        
-        // Get notifications
-        const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
-        const notifSnap = await getDocs(notifQuery);
-        for (const notifDoc of notifSnap.docs) {
-            exportData.notifications.push({ id: notifDoc.id, ...notifDoc.data() });
-        }
-        
-        // Get social data
-        const socialQuery = query(collection(db, "social"));
-        const socialSnap = await getDocs(socialQuery);
-        for (const socialDoc of socialSnap.docs) {
-            const data = socialDoc.data();
-            if (data.followerId === userId) {
-                exportData.following.push(data);
-            }
-            if (data.followedId === userId) {
-                exportData.followers.push(data);
-            }
-        }
-        
-        // Get conversations
-        const convQuery = query(collection(db, "conversations"), where("participants", "array-contains", userId));
-        const convSnap = await getDocs(convQuery);
-        for (const convDoc of convSnap.docs) {
-            const messages = [];
-            const msgSnap = await getDocs(collection(db, "conversations", convDoc.id, "messages"));
-            for (const msgDoc of msgSnap.docs) {
-                messages.push({ id: msgDoc.id, ...msgDoc.data() });
-            }
-            exportData.conversations.push({ id: convDoc.id, ...convDoc.data(), messages });
-        }
-        
-        // Create and download JSON file
-        const jsonStr = JSON.stringify(exportData, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `volant_data_export_${username}_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        showStatus('✅ Data export downloaded successfully!', 'success');
-        
-    } catch (error) {
-        console.error('Error exporting data:', error);
-        showStatus('❌ Failed to export data: ' + error.message, 'error');
-    }
-}
-
-// ============================================================
-// ====== CHECK FOR FIRST-TIME VISITOR TO POETRY ======
-// ============================================================
-
-async function checkAndSendPoetryWelcome(userId, username) {
-    if (!userId || !username) return;
-    
-    try {
-        const userRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userRef);
-        
-        if (!userDoc.exists()) return;
-        
-        const userData = userDoc.data();
-        
-        if (userData.poetryWelcomeSent === true) {
-            console.log('✅ Poetry welcome already sent for this user');
-            return;
-        }
-        
-        const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
-        const poemsSnap = await getDocs(poemsQuery);
-        const hasVisitedBefore = userData.hasVisitedPoetry === true;
-        
-        if (!poemsSnap.empty || hasVisitedBefore) {
-            await updateDoc(userRef, { 
-                poetryWelcomeSent: true,
-                hasVisitedPoetry: true
-            });
-            return;
-        }
-        
-        console.log('🎉 First-time visitor to Poetry! Sending welcome notification...');
-        
-        const welcomeMessage = `Welcome to Volant Poetry, ${username}! 🎉
-
-We noticed you're already part of the Volant ecosystem, and we're so excited to welcome you to our Poetry community!
-
-Here's what you can do:
-✍️ Share your poems with the world
-❤️ Discover and appreciate other poets' work
-💬 Engage in meaningful conversations through comments
-🏆 Earn achievements and level up your profile
-
-To get started:
-1. Complete your profile — you can change your username anytime in your profile settings!
-2. Write and submit your first poem
-3. Explore and connect with other poets
-4. Share your poems via email or on your social media to inspire even more readers!
-
-If you have any questions, feel free to reach out to us at reach.volant@gmail.com
-
-Happy writing!
-The Volant Team
-reach.volant@gmail.com`;
-
-        await addDoc(collection(db, "notifications"), {
-            forUser: userId,
-            type: 'welcome',
-            fromUser: userId,
-            fromUserName: username,
-            message: welcomeMessage,
-            timestamp: serverTimestamp(),
-            read: false
-        });
-        
-        await updateDoc(userRef, { 
-            poetryWelcomeSent: true,
-            hasVisitedPoetry: true
-        });
-        
-        console.log(`✅ Poetry welcome notification sent to ${username}`);
-        await updateUnreadNotificationCount();
-        
-        const statusEl = document.getElementById('signup-status');
-        if (statusEl) {
-            statusEl.textContent = '🎉 Welcome to Volant Poetry! Check your notifications for a special welcome message.';
-            statusEl.className = 'status show success';
-            setTimeout(() => {
-                statusEl.classList.remove('show');
-            }, 6000);
-        }
-        
-    } catch (err) {
-        console.error("❌ Error checking/sending Poetry welcome:", err);
-    }
+    await addDoc(collection(db, 'notifications'), notification);
+  } catch (err) {
+    console.warn('Error sending notification:', err);
+  }
 }
 
 // ============================================================
@@ -5042,79 +4713,9 @@ function redirectToLogin() {
   window.location.href = `universal-login.html?platform=poetry&redirect=${encodeURIComponent(currentPage)}`;
 }
 
-async function sendNotification(forUserId, fromUserId, type, data) {
-  if (!forUserId || !fromUserId || forUserId === fromUserId) return;
-  try {
-    const userDoc = await getDoc(doc(db, 'users', fromUserId));
-    const fromUserName = userDoc.exists() ? userDoc.data().username : 'Someone';
-    const notification = {
-      forUser: forUserId,
-      fromUser: fromUserId,
-      fromUserName,
-      type,
-      timestamp: serverTimestamp(),
-      read: false
-    };
-    if (type === 'like' || type === 'comment') {
-      notification.poemId = data.poemId;
-      notification.poemTitle = data.poemTitle;
-    }
-    if (type === 'comment') {
-      notification.commentText = data.commentText;
-    }
-    if (type === 'reply') {
-      notification.commentId = data.commentId;
-      notification.replyText = data.replyText;
-      notification.poemId = data.poemId;
-    }
-    await addDoc(collection(db, 'notifications'), notification);
-  } catch (err) {
-    console.warn('Error sending notification:', err);
-  }
-}
-
-function setNavBadgeCount(elementId, count) {
-  const badge = document.getElementById(elementId);
-  if (!badge) return;
-  badge.textContent = count > 0 ? String(count) : '';
-}
-
-async function updateUnreadNotificationCount() {
-  try {
-    if (!auth.currentUser) return;
-    const notifsQuery = query(
-      collection(db, 'notifications'),
-      where('forUser', '==', auth.currentUser.uid),
-      where('read', '==', false)
-    );
-    const snapshot = await getDocs(notifsQuery);
-    setNavBadgeCount('notificationsBadge', snapshot.size);
-  } catch (err) {
-    console.warn('Error fetching unread notifications:', err);
-  }
-}
-
-async function updateUnreadMessageCount() {
-  try {
-    if (!auth.currentUser) return;
-    const convQuery = query(collection(db, 'conversations'), where('participants', 'array-contains', auth.currentUser.uid));
-    const convSnapshot = await getDocs(convQuery);
-    let unreadMessages = 0;
-    for (const convDoc of convSnapshot.docs) {
-      const messagesQuery = query(collection(db, 'conversations', convDoc.id, 'messages'), where('read', '==', false));
-      const messagesSnapshot = await getDocs(messagesQuery);
-      messagesSnapshot.forEach(msgDoc => {
-        const msg = msgDoc.data();
-        if (msg.senderId !== auth.currentUser.uid) {
-          unreadMessages += 1;
-        }
-      });
-    }
-    setNavBadgeCount('messagesBadge', unreadMessages);
-  } catch (err) {
-    console.warn('Error fetching unread messages:', err);
-  }
-}
+// ============================================================
+// ====== COMMENT FUNCTIONS ======
+// ============================================================
 
 function getCommentList(card) {
   if (!card) return null;
@@ -5385,6 +4986,612 @@ async function loadFollowButtonAndCounts(viewerUid, targetUid) {
       };
     }
   }
+}
+
+// ============================================================
+// ====== GDPR DATA EXPORT ======
+// ============================================================
+
+async function exportUserData(user) {
+    if (!user) {
+        alert('You must be signed in to export your data.');
+        return;
+    }
+    
+    try {
+        const userId = user.uid;
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
+        const userData = userDoc.exists() ? userDoc.data() : null;
+        const username = userData?.username || 'unknown';
+        
+        showStatus('📥 Gathering your data... This may take a moment.', 'info');
+        
+        const exportData = {
+            user: {
+                uid: userId,
+                username: username,
+                email: userData?.email || '',
+                realName: userData?.realName || '',
+                bio: userData?.bio || '',
+                joined: userData?.joined || userData?.createdAt || '',
+                photoURL: userData?.photoURL || '',
+                emailPrivacy: userData?.emailPrivacy || 'public',
+                followerCount: userData?.followerCount || 0,
+                followingCount: userData?.followingCount || 0,
+                isVerified: userData?.isVerified || false,
+                authProvider: userData?.authProvider || 'email'
+            },
+            poems: [],
+            drafts: [],
+            comments: [],
+            replies: [],
+            followers: [],
+            following: [],
+            conversations: [],
+            notifications: [],
+            likes: [],
+            exportDate: new Date().toISOString(),
+            platform: PLATFORM
+        };
+        
+        // Get poems
+        const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+        const poemsSnap = await getDocs(poemsQuery);
+        for (const poemDoc of poemsSnap.docs) {
+            const poemData = poemDoc.data();
+            // Get comments for each poem
+            const comments = [];
+            const commentsSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments"));
+            for (const commentDoc of commentsSnap.docs) {
+                const commentData = commentDoc.data();
+                const replies = [];
+                const repliesSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments", commentDoc.id, "replies"));
+                for (const replyDoc of repliesSnap.docs) {
+                    replies.push({ id: replyDoc.id, ...replyDoc.data() });
+                }
+                comments.push({ id: commentDoc.id, ...commentData, replies });
+            }
+            exportData.poems.push({ 
+                id: poemDoc.id, 
+                ...poemData, 
+                comments: comments 
+            });
+        }
+        
+        // Get drafts
+        const draftsQuery = query(collection(db, "drafts"), where("userId", "==", userId));
+        const draftsSnap = await getDocs(draftsQuery);
+        for (const draftDoc of draftsSnap.docs) {
+            exportData.drafts.push({ id: draftDoc.id, ...draftDoc.data() });
+        }
+        
+        // Get notifications
+        const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
+        const notifSnap = await getDocs(notifQuery);
+        for (const notifDoc of notifSnap.docs) {
+            exportData.notifications.push({ id: notifDoc.id, ...notifDoc.data() });
+        }
+        
+        // Get social data
+        const socialQuery = query(collection(db, "social"));
+        const socialSnap = await getDocs(socialQuery);
+        for (const socialDoc of socialSnap.docs) {
+            const data = socialDoc.data();
+            if (data.followerId === userId) {
+                exportData.following.push(data);
+            }
+            if (data.followedId === userId) {
+                exportData.followers.push(data);
+            }
+        }
+        
+        // Get conversations
+        const convQuery = query(collection(db, "conversations"), where("participants", "array-contains", userId));
+        const convSnap = await getDocs(convQuery);
+        for (const convDoc of convSnap.docs) {
+            const messages = [];
+            const msgSnap = await getDocs(collection(db, "conversations", convDoc.id, "messages"));
+            for (const msgDoc of msgSnap.docs) {
+                messages.push({ id: msgDoc.id, ...msgDoc.data() });
+            }
+            exportData.conversations.push({ id: convDoc.id, ...convDoc.data(), messages });
+        }
+        
+        // Get likes (poems user liked)
+        const allPoemsSnap = await getDocs(collection(db, "recentPoems"));
+        for (const poemDoc of allPoemsSnap.docs) {
+            const poemData = poemDoc.data();
+            if (Array.isArray(poemData.likedBy) && poemData.likedBy.includes(userId)) {
+                exportData.likes.push({
+                    poemId: poemDoc.id,
+                    poemTitle: poemData.title || 'Untitled',
+                    likedAt: poemData.likedAt || null
+                });
+            }
+        }
+        
+        // Create and download JSON file
+        const jsonStr = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `volant_data_export_${username}_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showStatus('✅ Data export downloaded successfully!', 'success');
+        
+    } catch (error) {
+        console.error('Error exporting data:', error);
+        showStatus('❌ Failed to export data: ' + error.message, 'error');
+    }
+}
+
+// ============================================================
+// ====== AMAZON-STYLE 30-DAY COOLDOWN DELETION ======
+// ============================================================
+
+async function requestAccountDeletion(user) {
+    if (!user) {
+        alert('You must be signed in to delete your account.');
+        return false;
+    }
+    
+    try {
+        const userId = user.uid;
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
+        
+        if (!userDoc.exists()) {
+            alert('User not found.');
+            return false;
+        }
+        
+        const userData = userDoc.data();
+        const username = userData?.username || 'unknown';
+        
+        // Check if deletion is already pending
+        if (userData.deletionRequested === true) {
+            const requestedAt = userData.deletionRequestedAt?.toDate?.() || new Date();
+            const daysLeft = Math.ceil(
+                (requestedAt.getTime() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000 - Date.now()) / 
+                (24 * 60 * 60 * 1000)
+            );
+            
+            if (daysLeft > 0) {
+                alert(`⚠️ Account deletion already requested. ${daysLeft} days remaining before permanent deletion.`);
+                return false;
+            }
+        }
+        
+        // Show confirmation with cooldown details
+        const confirmDelete = confirm(
+            `⚠️ ACCOUNT DELETION REQUEST (GDPR Article 17)\n\n` +
+            `You are requesting to delete your account: ${username}\n\n` +
+            `📋 What will happen:\n` +
+            `• A ${DELETION_COOLDOWN_DAYS}-day cooldown period will start\n` +
+            `• Your account will be frozen immediately\n` +
+            `• You can cancel deletion anytime during cooldown\n` +
+            `• After ${DELETION_COOLDOWN_DAYS} days, ALL data will be permanently deleted\n` +
+            `• This affects ALL Volant platforms (Poetry, Reads, Foundry)\n\n` +
+            `Do you want to proceed?`
+        );
+        
+        if (!confirmDelete) return false;
+        
+        // Calculate deletion date
+        const deletionDate = new Date(Date.now() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
+        
+        // Request deletion (start cooldown)
+        await updateDoc(userRef, {
+            deletionRequested: true,
+            deletionRequestedAt: serverTimestamp(),
+            deletionScheduledFor: deletionDate,
+            accountFrozen: true,
+            deletionReason: 'User requested deletion (GDPR Article 17)'
+        });
+        
+        // Send notification about cooldown
+        await addDoc(collection(db, "notifications"), {
+            forUser: userId,
+            type: 'account_deletion_pending',
+            fromUser: userId,
+            fromUserName: username,
+            message: `⚠️ Your account deletion request has been received.\n\n` +
+                     `A ${DELETION_COOLDOWN_DAYS}-day cooldown period has started.\n` +
+                     `Your account is now frozen. You can cancel this request anytime.\n\n` +
+                     `If you do nothing, your account will be permanently deleted on:\n` +
+                     `${deletionDate.toLocaleDateString()} ${deletionDate.toLocaleTimeString()}`,
+            timestamp: serverTimestamp(),
+            read: false
+        });
+        
+        showStatus(`✅ Deletion request submitted! ${DELETION_COOLDOWN_DAYS}-day cooldown started. You can cancel anytime.`, 'info');
+        
+        // Show countdown banner
+        showDeletionCountdown(userId, DELETION_COOLDOWN_DAYS);
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Error requesting deletion:', error);
+        showStatus('❌ Failed to request deletion: ' + error.message, 'error');
+        return false;
+    }
+}
+
+// ============================================================
+// ====== SHOW DELETION COUNTDOWN BANNER ======
+// ============================================================
+
+function showDeletionCountdown(userId, daysLeft) {
+    // Remove existing banner
+    const existingBanner = document.getElementById('deletionCountdownBanner');
+    if (existingBanner) existingBanner.remove();
+    
+    if (!daysLeft || daysLeft <= 0) {
+        checkPendingDeletions(auth.currentUser);
+        return;
+    }
+    
+    const banner = document.createElement('div');
+    banner.id = 'deletionCountdownBanner';
+    
+    banner.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <strong>⚠️ Account Deletion Pending</strong>
+                <div style="font-size: 0.9rem; margin-top: 4px;">
+                    Your account will be permanently deleted in <strong>${daysLeft} days</strong>
+                    <span style="font-size: 0.8rem; color: rgba(255,255,255,0.8); display: block; margin-top: 2px;">
+                        You can cancel anytime during the ${DELETION_COOLDOWN_DAYS}-day cooldown period
+                    </span>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button id="cancelDeletionBtn" style="
+                    background: #fff;
+                    color: #ff6b6b;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 8px 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    font-family: 'Inter', sans-serif;
+                    transition: all 0.2s;
+                ">Cancel Deletion</button>
+                <button id="deleteNowBtn" style="
+                    background: #c0392b;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 8px 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    font-family: 'Inter', sans-serif;
+                    transition: all 0.2s;
+                ">Delete Now</button>
+            </div>
+        </div>
+    `;
+    
+    const profileTitle = document.querySelector('.profile-title');
+    if (profileTitle) {
+        profileTitle.after(banner);
+    } else {
+        document.querySelector('.profile-container')?.prepend(banner);
+    }
+    
+    document.getElementById('cancelDeletionBtn')?.addEventListener('click', async () => {
+        if (confirm('Cancel account deletion? Your account will be restored.')) {
+            await cancelDeletion(userId);
+            banner.remove();
+            showStatus('✅ Account deletion cancelled.', 'success');
+        }
+    });
+    
+    document.getElementById('deleteNowBtn')?.addEventListener('click', async () => {
+        if (confirm('⚠️ Are you sure? This will delete your account immediately without cooldown.')) {
+            const user = auth.currentUser;
+            if (user) {
+                await executeDeletion(userId, user);
+            }
+        }
+    });
+}
+
+// ============================================================
+// ====== CANCEL DELETION ======
+// ============================================================
+
+async function cancelDeletion(userId) {
+    try {
+        const userRef = doc(db, "users", userId);
+        await updateDoc(userRef, {
+            deletionRequested: false,
+            deletionRequestedAt: null,
+            deletionScheduledFor: null,
+            accountFrozen: false,
+            deletionReason: null
+        });
+        
+        const pendingDeletions = JSON.parse(sessionStorage.getItem('pendingDeletions') || '{}');
+        delete pendingDeletions[userId];
+        sessionStorage.setItem('pendingDeletions', JSON.stringify(pendingDeletions));
+        
+        const banner = document.getElementById('deletionCountdownBanner');
+        if (banner) banner.remove();
+        
+    } catch (err) {
+        console.error('Error cancelling deletion:', err);
+        alert('Failed to cancel deletion. Please try again.');
+    }
+}
+
+// ============================================================
+// ====== CHECK PENDING DELETIONS ======
+// ============================================================
+
+async function checkPendingDeletions(user) {
+    if (!user) return;
+    
+    try {
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
+        
+        if (!userDoc.exists()) return;
+        
+        const userData = userDoc.data();
+        
+        if (userData.deletionRequested === true) {
+            const requestedAt = userData.deletionRequestedAt?.toDate?.() || new Date();
+            const scheduledFor = userData.deletionScheduledFor?.toDate?.() || 
+                                new Date(requestedAt.getTime() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
+            
+            const daysLeft = Math.ceil((scheduledFor.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+            
+            if (daysLeft <= 0) {
+                await executeDeletion(user.uid, user);
+                return;
+            }
+            
+            showDeletionCountdown(user.uid, daysLeft);
+            showStatus(
+                `⚠️ Your account deletion is pending. ${daysLeft} days remaining. Cancel to keep your account.`,
+                'info'
+            );
+        }
+    } catch (err) {
+        console.error('Error checking pending deletions:', err);
+    }
+}
+
+// ============================================================
+// ====== EXECUTE DELETION ======
+// ============================================================
+
+async function executeDeletion(userId, user) {
+    try {
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
+        const userData = userDoc.exists() ? userDoc.data() : null;
+        const username = userData?.username || 'unknown';
+        
+        showStatus('🗑️ Deleting account from ALL Volant platforms...', 'info');
+        
+        // 1. DELETE POETRY DATA
+        const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+        const poemsSnap = await getDocs(poemsQuery);
+        for (const poemDoc of poemsSnap.docs) {
+            const commentsSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments"));
+            for (const commentDoc of commentsSnap.docs) {
+                const repliesSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments", commentDoc.id, "replies"));
+                for (const replyDoc of repliesSnap.docs) {
+                    await deleteDoc(replyDoc.ref);
+                }
+                await deleteDoc(commentDoc.ref);
+            }
+            await deleteDoc(poemDoc.ref);
+        }
+        
+        // Delete drafts
+        const draftsQuery = query(collection(db, "drafts"), where("userId", "==", userId));
+        const draftsSnap = await getDocs(draftsQuery);
+        for (const draftDoc of draftsSnap.docs) {
+            await deleteDoc(draftDoc.ref);
+        }
+        
+        // Remove likes from poems
+        const allPoemsSnap = await getDocs(collection(db, "recentPoems"));
+        for (const poemDoc of allPoemsSnap.docs) {
+            const poemData = poemDoc.data();
+            if (Array.isArray(poemData.likedBy) && poemData.likedBy.includes(userId)) {
+                await updateDoc(poemDoc.ref, {
+                    likes: increment(-1),
+                    likedBy: poemData.likedBy.filter(uid => uid !== userId)
+                });
+            }
+        }
+        
+        // 2. DELETE STORE/READS DATA
+        try {
+            const storeQuery = query(collection(db, "store_items"), where("userId", "==", userId));
+            const storeSnap = await getDocs(storeQuery);
+            for (const storeDoc of storeSnap.docs) {
+                await deleteDoc(storeDoc.ref);
+            }
+            const ordersQuery = query(collection(db, "store_orders"), where("userId", "==", userId));
+            const ordersSnap = await getDocs(ordersQuery);
+            for (const orderDoc of ordersSnap.docs) {
+                await deleteDoc(orderDoc.ref);
+            }
+        } catch (err) {
+            console.log('No store data found');
+        }
+        
+        // 3. DELETE FOUNDRY DATA
+        try {
+            const foundryQuery = query(collection(db, "foundry_items"), where("userId", "==", userId));
+            const foundrySnap = await getDocs(foundryQuery);
+            for (const foundryDoc of foundrySnap.docs) {
+                await deleteDoc(foundryDoc.ref);
+            }
+        } catch (err) {
+            console.log('No foundry data found');
+        }
+        
+        // 4. DELETE SOCIAL DATA
+        const socialQuery = query(collection(db, "social"));
+        const socialSnap = await getDocs(socialQuery);
+        for (const socialDoc of socialSnap.docs) {
+            const data = socialDoc.data();
+            if (data.followedId === userId || data.followerId === userId) {
+                if (data.followedId === userId) {
+                    await updateDoc(doc(db, "users", data.followerId), { followingCount: increment(-1) });
+                }
+                if (data.followerId === userId) {
+                    await updateDoc(doc(db, "users", data.followedId), { followerCount: increment(-1) });
+                }
+                await deleteDoc(socialDoc.ref);
+            }
+        }
+        
+        // 5. DELETE CONVERSATIONS
+        const convQuery = query(collection(db, "conversations"), where("participants", "array-contains", userId));
+        const convSnap = await getDocs(convQuery);
+        for (const convDoc of convSnap.docs) {
+            const messagesSnap = await getDocs(collection(db, "conversations", convDoc.id, "messages"));
+            for (const msgDoc of messagesSnap.docs) {
+                await deleteDoc(msgDoc.ref);
+            }
+            await deleteDoc(convDoc.ref);
+        }
+        
+        // 6. DELETE NOTIFICATIONS
+        const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
+        const notifSnap = await getDocs(notifQuery);
+        for (const notifDoc of notifSnap.docs) {
+            await deleteDoc(notifDoc.ref);
+        }
+        const sentNotifQuery = query(collection(db, "notifications"), where("fromUser", "==", userId));
+        const sentNotifSnap = await getDocs(sentNotifQuery);
+        for (const notifDoc of sentNotifSnap.docs) {
+            await deleteDoc(notifDoc.ref);
+        }
+        
+        // 7. DELETE USER DOCUMENT
+        await deleteDoc(userRef);
+        
+        // 8. DELETE FROM FIREBASE AUTH
+        if (user) {
+            await deleteUser(user);
+        }
+        
+        showStatus('✅ Account permanently deleted from ALL Volant platforms. Redirecting...', 'success');
+        
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Error executing deletion:', error);
+        showStatus('❌ Failed to delete account: ' + error.message, 'error');
+        return false;
+    }
+}
+
+// ============================================================
+// ====== CHECK FOR FIRST-TIME VISITOR TO POETRY ======
+// ============================================================
+
+async function checkAndSendPoetryWelcome(userId, username) {
+    if (!userId || !username) return;
+    
+    try {
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
+        
+        if (!userDoc.exists()) return;
+        
+        const userData = userDoc.data();
+        
+        if (userData.poetryWelcomeSent === true) {
+            console.log('✅ Poetry welcome already sent for this user');
+            return;
+        }
+        
+        const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+        const poemsSnap = await getDocs(poemsQuery);
+        const hasVisitedBefore = userData.hasVisitedPoetry === true;
+        
+        if (!poemsSnap.empty || hasVisitedBefore) {
+            await updateDoc(userRef, { 
+                poetryWelcomeSent: true,
+                hasVisitedPoetry: true
+            });
+            return;
+        }
+        
+        console.log('🎉 First-time visitor to Poetry! Sending welcome notification...');
+        
+        const welcomeMessage = `Welcome to Volant Poetry, ${username}! 🎉
+
+We noticed you're already part of the Volant ecosystem, and we're so excited to welcome you to our Poetry community!
+
+Here's what you can do:
+✍️ Share your poems with the world
+❤️ Discover and appreciate other poets' work
+💬 Engage in meaningful conversations through comments
+🏆 Earn achievements and level up your profile
+
+To get started:
+1. Complete your profile — you can change your username anytime in your profile settings!
+2. Write and submit your first poem
+3. Explore and connect with other poets
+4. Share your poems via email or on your social media to inspire even more readers!
+
+If you have any questions, feel free to reach out to us at reach.volant@gmail.com
+
+Happy writing!
+The Volant Team
+reach.volant@gmail.com`;
+
+        await addDoc(collection(db, "notifications"), {
+            forUser: userId,
+            type: 'welcome',
+            fromUser: userId,
+            fromUserName: username,
+            message: welcomeMessage,
+            timestamp: serverTimestamp(),
+            read: false
+        });
+        
+        await updateDoc(userRef, { 
+            poetryWelcomeSent: true,
+            hasVisitedPoetry: true
+        });
+        
+        console.log(`✅ Poetry welcome notification sent to ${username}`);
+        await updateUnreadNotificationCount();
+        
+        const statusEl = document.getElementById('signup-status');
+        if (statusEl) {
+            statusEl.textContent = '🎉 Welcome to Volant Poetry! Check your notifications for a special welcome message.';
+            statusEl.className = 'status show success';
+            setTimeout(() => {
+                statusEl.classList.remove('show');
+            }, 6000);
+        }
+        
+    } catch (err) {
+        console.error("❌ Error checking/sending Poetry welcome:", err);
+    }
 }
 
 // ============================================================
@@ -6371,7 +6578,6 @@ document.getElementById("loginNavBtn")?.addEventListener("click", () => { window
 const searchInput = document.getElementById("searchInput");
 let debounceTimeout;
 if (searchInput) { 
-  console.log("✅ Search input found!");
   const newSearchInput = searchInput.cloneNode(true);
   searchInput.parentNode.replaceChild(newSearchInput, searchInput);
   newSearchInput.addEventListener("input", function() { 
@@ -6379,10 +6585,7 @@ if (searchInput) {
     debounceTimeout = setTimeout(() => { 
       const filter = this.value.trim().toLowerCase(); 
       const container = document.getElementById("poemsContainer");
-      if (!container) {
-        console.error("❌ poemsContainer not found!");
-        return;
-      }
+      if (!container) return;
       const cards = container.querySelectorAll(".recent-poem-card");
       if (filter === "") {
         cards.forEach(card => {
@@ -6432,8 +6635,6 @@ if (searchInput) {
       });
     }, 300); 
   }); 
-} else {
-  console.error("❌ Search input not found!");
 }
 
 // ============================================================
@@ -6601,50 +6802,147 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================================
-// ====== GDPR ACCOUNT DELETION BUTTON HANDLERS ======
+// ====== MANAGE ACCOUNT MODAL EVENT LISTENERS ======
 // ============================================================
 
-// Delete Account Button - Opens confirmation modal
-const deleteAccountBtn = document.getElementById('deleteAccountBtn');
-if (deleteAccountBtn) {
-  deleteAccountBtn.addEventListener('click', function() {
-    const user = auth.currentUser;
-    if (!user) {
-      alert('Please sign in first.');
-      return;
-    }
+// Open Manage Account modal from sidebar link
+document.getElementById('manageAccountLink')?.addEventListener('click', function(e) {
+  e.preventDefault();
+  
+  // Only the profile owner can access
+  if (!viewingOwnProfile) {
+    showStatus('⚠️ You can only manage your own account.', 'error');
+    return;
+  }
+  
+  const modal = document.getElementById('manageAccountModal');
+  if (modal) {
+    // Populate user info from the profile
+    const username = document.getElementById('username')?.textContent || 'User';
+    const email = document.getElementById('email')?.textContent || 'email@example.com';
+    const initials = username.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
     
-    // Set deletion date display
-    const deletionDate = new Date(Date.now() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
-    const dateDisplay = document.getElementById('deletionDateDisplay');
-    if (dateDisplay) {
-      dateDisplay.textContent = deletionDate.toLocaleDateString() + ' at ' + deletionDate.toLocaleTimeString();
-    }
+    document.getElementById('manageAccountUsername').textContent = username;
+    document.getElementById('manageAccountEmail').textContent = email;
+    document.getElementById('manageAccountInitials').textContent = initials;
     
-    // Open the delete confirmation modal
-    const modal = document.getElementById('deleteConfirmModal');
-    if (modal) {
-      // Reset form
-      document.getElementById('deleteConfirmCheckbox').checked = false;
-      document.getElementById('deleteTypeCheckbox').checked = false;
-      document.getElementById('gdprRightCheckbox').checked = false;
-      document.getElementById('deleteConfirmUsername').value = '';
-      document.getElementById('submitDeleteAccount').disabled = true;
-      modal.classList.add('show');
-      modal.style.display = 'flex';
-    }
-  });
-}
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+  }
+});
 
-// Close delete confirmation modal
+// Close Manage Account modal
+document.getElementById('closeManageAccountModal')?.addEventListener('click', function() {
+  document.getElementById('manageAccountModal').classList.remove('show');
+  document.getElementById('manageAccountModal').style.display = 'none';
+});
+
+document.getElementById('manageAccountModal')?.addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.remove('show');
+    this.style.display = 'none';
+  }
+});
+
+// Manage Export button - opens Export modal
+document.getElementById('manageExportBtn')?.addEventListener('click', function() {
+  document.getElementById('manageAccountModal').classList.remove('show');
+  document.getElementById('manageAccountModal').style.display = 'none';
+  // Open Export modal
+  const exportModal = document.getElementById('exportModal');
+  if (exportModal) {
+    document.getElementById('exportConfirmCheckbox').checked = false;
+    document.getElementById('submitExport').disabled = true;
+    exportModal.classList.add('show');
+    exportModal.style.display = 'flex';
+  }
+});
+
+// Manage Delete button - opens Delete confirmation modal
+document.getElementById('manageDeleteBtn')?.addEventListener('click', function() {
+  document.getElementById('manageAccountModal').classList.remove('show');
+  document.getElementById('manageAccountModal').style.display = 'none';
+  
+  // Set deletion date
+  const deletionDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  const dateDisplay = document.getElementById('deletionDateDisplay');
+  if (dateDisplay) {
+    dateDisplay.textContent = deletionDate.toLocaleDateString() + ' at ' + deletionDate.toLocaleTimeString();
+  }
+  
+  // Reset delete form
+  const confirmCheckbox = document.getElementById('deleteConfirmCheckbox');
+  const typeCheckbox = document.getElementById('deleteTypeCheckbox');
+  const gdprCheckbox = document.getElementById('gdprRightCheckbox');
+  const usernameInput = document.getElementById('deleteConfirmUsername');
+  const submitBtn = document.getElementById('submitDeleteAccount');
+  
+  if (confirmCheckbox) confirmCheckbox.checked = false;
+  if (typeCheckbox) typeCheckbox.checked = false;
+  if (gdprCheckbox) gdprCheckbox.checked = false;
+  if (usernameInput) usernameInput.value = '';
+  if (submitBtn) submitBtn.disabled = true;
+  
+  // Open Delete confirmation modal
+  const deleteModal = document.getElementById('deleteConfirmModal');
+  if (deleteModal) {
+    deleteModal.classList.add('show');
+    deleteModal.style.display = 'flex';
+  }
+});
+
+// ============================================================
+// ====== EXPORT MODAL EVENT LISTENERS ======
+// ============================================================
+
+document.getElementById('closeExportModal')?.addEventListener('click', function() {
+  document.getElementById('exportModal').classList.remove('show');
+  document.getElementById('exportModal').style.display = 'none';
+});
+
+document.getElementById('cancelExport')?.addEventListener('click', function() {
+  document.getElementById('exportModal').classList.remove('show');
+  document.getElementById('exportModal').style.display = 'none';
+});
+
+document.getElementById('exportModal')?.addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.remove('show');
+    this.style.display = 'none';
+  }
+});
+
+document.getElementById('exportConfirmCheckbox')?.addEventListener('change', function() {
+  const submitBtn = document.getElementById('submitExport');
+  if (submitBtn) {
+    submitBtn.disabled = !this.checked;
+  }
+});
+
+document.getElementById('submitExport')?.addEventListener('click', async function() {
+  const user = auth.currentUser;
+  if (!user) return;
+  
+  document.getElementById('exportModal').classList.remove('show');
+  document.getElementById('exportModal').style.display = 'none';
+  
+  await exportUserData(user);
+});
+
+// ============================================================
+// ====== DELETE CONFIRMATION MODAL EVENT LISTENERS ======
+// ============================================================
+
 document.getElementById('closeDeleteConfirmModal')?.addEventListener('click', function() {
   document.getElementById('deleteConfirmModal').classList.remove('show');
   document.getElementById('deleteConfirmModal').style.display = 'none';
 });
+
 document.getElementById('cancelDeleteConfirm')?.addEventListener('click', function() {
   document.getElementById('deleteConfirmModal').classList.remove('show');
   document.getElementById('deleteConfirmModal').style.display = 'none';
 });
+
 document.getElementById('deleteConfirmModal')?.addEventListener('click', function(e) {
   if (e.target === this) {
     this.classList.remove('show');
@@ -6652,7 +6950,6 @@ document.getElementById('deleteConfirmModal')?.addEventListener('click', functio
   }
 });
 
-// Enable/disable delete button based on checkbox and username
 document.getElementById('deleteConfirmCheckbox')?.addEventListener('change', checkDeleteForm);
 document.getElementById('deleteTypeCheckbox')?.addEventListener('change', checkDeleteForm);
 document.getElementById('gdprRightCheckbox')?.addEventListener('change', checkDeleteForm);
@@ -6671,7 +6968,6 @@ function checkDeleteForm() {
   }
 }
 
-// Submit account deletion request (starts 30-day cooldown)
 document.getElementById('submitDeleteAccount')?.addEventListener('click', async function() {
   const user = auth.currentUser;
   if (!user) {
@@ -6679,7 +6975,6 @@ document.getElementById('submitDeleteAccount')?.addEventListener('click', async 
     return;
   }
   
-  // Double-check confirmation
   const username = document.getElementById('username')?.textContent || '';
   const typedUsername = document.getElementById('deleteConfirmUsername')?.value || '';
   if (typedUsername !== username) {
@@ -6687,69 +6982,10 @@ document.getElementById('submitDeleteAccount')?.addEventListener('click', async 
     return;
   }
   
-  // Close modal
   document.getElementById('deleteConfirmModal').classList.remove('show');
   document.getElementById('deleteConfirmModal').style.display = 'none';
   
-  // Execute deletion request (starts cooldown)
   await requestAccountDeletion(user);
-});
-
-// ============================================================
-// ====== GDPR DATA EXPORT BUTTON HANDLERS ======
-// ============================================================
-
-// Open export modal
-document.getElementById('exportDataBtn')?.addEventListener('click', function() {
-  const user = auth.currentUser;
-  if (!user) {
-    alert('Please sign in first.');
-    return;
-  }
-  const modal = document.getElementById('exportModal');
-  if (modal) {
-    document.getElementById('exportConfirmCheckbox').checked = false;
-    document.getElementById('submitExport').disabled = true;
-    modal.classList.add('show');
-    modal.style.display = 'flex';
-  }
-});
-
-// Close export modal
-document.getElementById('closeExportModal')?.addEventListener('click', function() {
-  document.getElementById('exportModal').classList.remove('show');
-  document.getElementById('exportModal').style.display = 'none';
-});
-document.getElementById('cancelExport')?.addEventListener('click', function() {
-  document.getElementById('exportModal').classList.remove('show');
-  document.getElementById('exportModal').style.display = 'none';
-});
-document.getElementById('exportModal')?.addEventListener('click', function(e) {
-  if (e.target === this) {
-    this.classList.remove('show');
-    this.style.display = 'none';
-  }
-});
-
-// Enable export button
-document.getElementById('exportConfirmCheckbox')?.addEventListener('change', function() {
-  const submitBtn = document.getElementById('submitExport');
-  if (submitBtn) {
-    submitBtn.disabled = !this.checked;
-  }
-});
-
-// Submit export
-document.getElementById('submitExport')?.addEventListener('click', async function() {
-  const user = auth.currentUser;
-  if (!user) return;
-  
-  // Close modal
-  document.getElementById('exportModal').classList.remove('show');
-  document.getElementById('exportModal').style.display = 'none';
-  
-  // Execute export
-  await exportUserData(user);
 });
 
 // ============================================================
