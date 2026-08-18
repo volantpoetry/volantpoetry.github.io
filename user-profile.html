@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!html htmhtmlDOCTYPE lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -3852,6 +3851,25 @@ body {
     font-size: 0.8rem !important;
   }
 }
+
+/* ===== DELETION COUNTDOWN BANNER ===== */
+#deletionCountdownBanner {
+  background: #ff6b6b;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 12px;
+  margin: 15px 0;
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  animation: pulseWarning 2s infinite;
+}
+
+@keyframes pulseWarning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.9; }
+}
+
 </style>
 </head>
 <body>
@@ -3865,12 +3883,11 @@ body {
     <div class="nav-links" id="nav-links">
       <span class="close-btn" id="close-btn">✕</span>
       <a href="index.html">Home</a>
-         <a href="poems.html">Poems</a>
+      <a href="poems.html">Poems</a>
       <a href="shared/about.html">About Us</a>
       <a href="shared/contact.html">Contact Us</a>
     </div>
     <div class="nav-right">
-      <!-- LOGIN BUTTON - shows when no user is signed in -->
       <button id="loginNavBtn" class="btn login-nav-btn" style="display: none;">Login</button>
       <div class="mobile-icons"><button id="logoutBtnNav" class="btn logout-nav-btn">Logout</button></div>
       <div class="menu-toggle" id="menu-toggle">☰</div>
@@ -3906,7 +3923,7 @@ body {
         <input type="file" id="uploadPic" style="display:none;">
       </div>
 
-      <!-- USERNAME SECTION - NEW LAYOUT with Message & Follow buttons -->
+      <!-- USERNAME SECTION -->
       <div class="profile-identity">
         <div class="username-row">
           <h3 class="username-main" id="username"></h3>
@@ -3947,14 +3964,14 @@ body {
   </div>
 </div>
 
-    <!-- Info - Email row (will be hidden if private AND not owner) -->
+    <!-- Info -->
     <div class="card-box">
       <p id="emailRow"><strong>Email:</strong> <span id="email"></span></p>
       <hr>
       <p><strong>Joined:</strong> <span id="joined"></span></p>
     </div>
 
-    <!-- Email Privacy Toggle - ONLY SHOWN WHEN VIEWING OWN PROFILE -->
+    <!-- Email Privacy Toggle -->
     <div id="emailPrivacyToggle" class="card-box email-privacy-toggle" style="display: none;">
       <h4>📧 Email Privacy</h4>
       <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Control who can see your email address</p>
@@ -3972,6 +3989,67 @@ body {
 
     <button class="edit-btn" id="editProfileBtn">Edit Profile</button>
 
+    <!-- ===== GDPR COMPLIANT ACCOUNT DELETION SECTION (Amazon-style) ===== -->
+    <div style="margin-top: 25px; border-top: 2px solid #f0edf7; padding-top: 20px;">
+      
+      <div style="background: #fff3cd; border-radius: 10px; padding: 12px 15px; margin-bottom: 15px; border: 1px solid #ffeaa7;">
+        <p style="color: #856404; font-size: 0.85rem; margin: 0; text-align: center;">
+          ⚠️ <strong>Delete your account across ALL Volant platforms</strong><br>
+          <span style="font-size: 0.75rem;">This will permanently remove your data from Poetry, Reads, and Foundry</span>
+        </p>
+      </div>
+
+      <!-- Delete Account Button -->
+      <button id="deleteAccountBtn" style="
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        transition: all 0.2s;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+      ">🗑️ Delete Account (All Platforms)</button>
+      
+      <p style="font-size: 0.7rem; color: #888; margin-top: 8px; text-align: center; line-height: 1.5;">
+        <strong>30-day cooldown period</strong> — You can cancel anytime during cooldown.<br>
+        <span style="color: #999;">Data export available before deletion (GDPR Article 20)</span>
+      </p>
+
+      <!-- Data Export Button -->
+      <button id="exportDataBtn" style="
+        background: #4b2aad;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-family: 'Inter', sans-serif;
+        font-weight: 500;
+        transition: all 0.2s;
+        width: 100%;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: #6c5b8a;
+      ">📥 Request Data Export (GDPR)</button>
+      
+      <p style="font-size: 0.65rem; color: #aaa; margin-top: 5px; text-align: center;">
+        Export all your data including poems, comments, messages, and profile information
+      </p>
+    </div>
+
   </div>
 
   <!-- RIGHT: VOLANT PANEL -->
@@ -3984,7 +4062,7 @@ body {
       <li><a href="user-edit-poems.html">Edit Your Poems</a></li>
       <li><a href="submit-draft.html">Save as Draft</a></li>
       <li><a href="drafts-manager.html">Manage Draft Poems</a></li>
-       <li><a href="store/index.html" style="color:#b76e4b; font-weight:600;">📚 Read & Sell books</a></li>
+      <li><a href="store/index.html" style="color:#b76e4b; font-weight:600;">📚 Read & Sell books</a></li>
       <li><a href="gallery-achievements.html">🏆 Achievement Gallery</a></li>
     </ul>
   </div>
@@ -4076,6 +4154,122 @@ body {
   </div>
 </div>
 
+<!-- ===== GDPR DATA EXPORT MODAL ===== -->
+<div id="exportModal" class="send-message-modal" style="display: none;">
+  <div class="send-message-content">
+    <div class="send-message-header">
+      <div class="send-message-header-left">
+        <span class="send-message-icon">📥</span>
+        <div>
+          <h3>Request Data Export</h3>
+          <p>Download all your data (GDPR Article 20)</p>
+        </div>
+      </div>
+      <button class="send-message-close" id="closeExportModal">✕</button>
+    </div>
+    <div class="send-message-body">
+      <p style="color: #555; font-size: 0.95rem; line-height: 1.6;">
+        Your data export will include:
+      </p>
+      <ul style="color: #555; font-size: 0.9rem; line-height: 1.8; padding-left: 20px;">
+        <li>📝 All your poems, drafts, and written content</li>
+        <li>💬 All your comments, replies, and feedback</li>
+        <li>❤️ All your likes and interactions</li>
+        <li>👥 Your followers and following data</li>
+        <li>✉️ Your messages and conversations</li>
+        <li>🔔 Your notifications</li>
+        <li>👤 Your profile information and settings</li>
+      </ul>
+      <div style="background: #f8f6ff; border-radius: 10px; padding: 15px; margin-top: 10px; border: 1px solid #ede8ff;">
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; cursor: pointer;">
+          <input type="checkbox" id="exportConfirmCheckbox" style="width: 18px; height: 18px; accent-color: #4b2aad;">
+          I confirm that this is my account and I want to request a data export
+        </label>
+      </div>
+      <div class="send-message-actions">
+        <button id="cancelExport" class="cancel-btn">Cancel</button>
+        <button id="submitExport" class="submit-btn" disabled>
+          <span class="send-icon">📥</span> Request Export
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GDPR DELETE CONFIRMATION MODAL (Amazon-style 30-day cooldown) ===== -->
+<div id="deleteConfirmModal" class="send-message-modal" style="display: none;">
+  <div class="send-message-content">
+    <div class="send-message-header" style="border-bottom-color: #ff4d4d;">
+      <div class="send-message-header-left">
+        <span class="send-message-icon" style="background: #ffebee;">⚠️</span>
+        <div>
+          <h3 style="color: #dc3545;">Delete Account</h3>
+          <p style="color: #dc3545;">30-day cooldown period before permanent deletion</p>
+        </div>
+      </div>
+      <button class="send-message-close" id="closeDeleteConfirmModal">✕</button>
+    </div>
+    <div class="send-message-body">
+      
+      <div style="background: #fff3cd; border-radius: 10px; padding: 15px; border: 1px solid #ffeaa7;">
+        <p style="color: #856404; font-size: 0.95rem; margin: 0;">
+          ⚠️ <strong>What happens when you request deletion:</strong>
+        </p>
+        <ul style="color: #856404; font-size: 0.85rem; margin-top: 8px; padding-left: 20px;">
+          <li>Your account will be <strong>frozen</strong> immediately</li>
+          <li>A <strong>30-day cooldown</strong> period will start</li>
+          <li>You can <strong>cancel</strong> anytime during cooldown</li>
+          <li>After 30 days, your account is <strong>permanently deleted</strong></li>
+          <li>This affects <strong>ALL Volant platforms</strong> (Poetry, Reads, Foundry)</li>
+        </ul>
+      </div>
+      
+      <div style="background: #f8f6ff; border-radius: 10px; padding: 15px; border: 1px solid #ede8ff;">
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; cursor: pointer;">
+          <input type="checkbox" id="deleteConfirmCheckbox" style="width: 18px; height: 18px; accent-color: #dc3545;">
+          I understand this is <strong>permanent and irreversible</strong> after 30 days
+        </label>
+      </div>
+      
+      <div style="background: #f8f6ff; border-radius: 10px; padding: 15px; border: 1px solid #ede8ff;">
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; cursor: pointer;">
+          <input type="checkbox" id="deleteTypeCheckbox" style="width: 18px; height: 18px; accent-color: #dc3545;">
+          I want to <strong>permanently delete</strong> my account from ALL Volant platforms
+        </label>
+      </div>
+      
+      <div>
+        <label style="display: block; font-size: 0.9rem; font-weight: 600; color: #333; margin-bottom: 5px;">
+          Type your username to confirm:
+        </label>
+        <input type="text" id="deleteConfirmUsername" placeholder="Enter your username" 
+               style="width: 100%; padding: 10px 14px; border: 2px solid #ede8ff; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
+      </div>
+      
+      <div style="background: #e8f0fe; border-radius: 10px; padding: 12px 15px; border: 1px solid #d2e3fc;">
+        <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; color: #1a56db; cursor: pointer; line-height: 1.5;">
+          <input type="checkbox" id="gdprRightCheckbox" style="width: 18px; height: 18px; margin-top: 2px; accent-color: #4b2aad;">
+          I understand my GDPR rights and confirm I want to exercise my <strong>right to erasure</strong> (Article 17 GDPR)
+        </label>
+      </div>
+      
+      <div style="background: #f0f4ff; border-radius: 10px; padding: 10px 15px; border: 1px solid #d2e3fc;">
+        <p style="color: #1a56db; font-size: 0.8rem; margin: 0; text-align: center;">
+          📅 Your account will be deleted on: <strong id="deletionDateDisplay">30 days from now</strong>
+          <br><small>You'll receive a confirmation email with cooldown details</small>
+        </p>
+      </div>
+      
+      <div class="send-message-actions">
+        <button id="cancelDeleteConfirm" class="cancel-btn">Cancel</button>
+        <button id="submitDeleteAccount" class="submit-btn" style="background: #dc3545; box-shadow: 0 4px 14px rgba(220, 53, 69, 0.3);" disabled>
+          <span class="send-icon">🗑️</span> Request Deletion (30-day cooldown)
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="profile-poems">
   <h2>My Submitted Poems</h2>
   <div class="search-bar"><input type="text" id="searchInput" placeholder="Search poems..."></div>
@@ -4084,149 +4278,703 @@ body {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, where, getDocs, addDoc, deleteDoc, increment, arrayUnion, writeBatch, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { 
+  getFirestore, 
+  doc, 
+  getDoc, 
+  setDoc, 
+  updateDoc, 
+  collection, 
+  query, 
+  where, 
+  getDocs, 
+  addDoc, 
+  deleteDoc, 
+  increment, 
+  arrayUnion, 
+  writeBatch, 
+  serverTimestamp, 
+  orderBy 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { 
+  getAuth, 
+  onAuthStateChanged, 
+  signOut, 
+  deleteUser 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = { apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU", authDomain: "silent-depth.firebaseapp.com", projectId: "silent-depth", storageBucket: "silent-depth.appspot.com", messagingSenderId: "78008755450", appId: "1:78008755450:web:3fd0f0f298a08820935543" };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// Helper functions
+// ============================================================
+// ====== CONSTANTS ======
+// ============================================================
+
+const DELETION_COOLDOWN_DAYS = 30; // Amazon-style 30-day cooldown
+const PLATFORM = 'poetry';
+
+// ============================================================
+// ====== HELPER FUNCTIONS ======
+// ============================================================
+
 function escapeHtml(str) { if (!str) return ""; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
 function truncatePoemByLines(text, maxLines = 8) { const lines = text.split(/\r?\n/); const truncated = lines.slice(0, maxLines).join("\n"); return { preview: truncated, full: text, truncated: lines.length > maxLines }; }
 function getInitials(name) { const parts = name.trim().split(" "); if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?"; return (parts[0][0] + parts[parts.length-1][0]).toUpperCase(); }
 function colorFromName(name) { let hash = 0; for (let i = 0; i < name.length; i++) { hash = name.charCodeAt(i) + ((hash << 5) - hash); } const hue = Math.abs(hash) % 360; return `hsl(${hue}, 60%, 45%)`; }
 
-const READ_TRACKING_KEY = 'poem_read_tracking';
-const READ_TIMEOUT_MINUTES = 30;
-const READ_DELAY_SECONDS = 8;
-const VIEW_THRESHOLD = 0.6;
-const activeTimers = new Map();
-const viewStartTimes = new Map();
+// ============================================================
+// ====== SHOW STATUS ======
+// ============================================================
 
-function getReadTracking() {
-  try {
-    const stored = sessionStorage.getItem(READ_TRACKING_KEY);
-    return stored ? JSON.parse(stored) : {};
-  } catch (err) {
-    return {};
+function showStatus(message, type = 'error') {
+  const statusEl = document.getElementById('signup-status');
+  if (!statusEl) {
+    // Create status element if it doesn't exist
+    const container = document.querySelector('.profile-container');
+    if (!container) return;
+    const newStatus = document.createElement('div');
+    newStatus.id = 'signup-status';
+    newStatus.className = 'status';
+    container.appendChild(newStatus);
+    return showStatus(message, type);
   }
+  statusEl.textContent = message;
+  statusEl.className = `status show ${type}`;
+  setTimeout(() => {
+    statusEl.classList.remove('show');
+  }, 8000);
 }
 
-function saveReadTracking(tracking) {
-  try {
-    sessionStorage.setItem(READ_TRACKING_KEY, JSON.stringify(tracking));
-  } catch (err) {
-    // ignore storage failures
-  }
-}
+// ============================================================
+// ====== AMAZON-STYLE 30-DAY COOLDOWN DELETION ======
+// ============================================================
 
-function wasRecentlyRead(poemId) {
-  if (!poemId) return false;
-  const tracking = getReadTracking();
-  const timestamp = tracking[poemId];
-  if (!timestamp) return false;
-  return Date.now() - timestamp < READ_TIMEOUT_MINUTES * 60 * 1000;
-}
-
-async function recordViewToFirebase(poemId) {
-  if (!poemId || wasRecentlyRead(poemId)) return false;
-  try {
-    await updateDoc(doc(db, 'recentPoems', poemId), { views: increment(1) });
-    const tracking = getReadTracking();
-    tracking[poemId] = Date.now();
-    saveReadTracking(tracking);
-
-    // Update the view count on the visible card immediately.
-    const card = document.querySelector(`.recent-poem-card[data-id="${poemId}"]`);
-    if (card) {
-      const viewCountSpan = card.querySelector('.view-count-inline');
-      if (viewCountSpan) {
-        const currentText = viewCountSpan.textContent || '';
-        const match = currentText.match(/\d+/);
-        if (match) {
-          const currentCount = parseInt(match[0], 10);
-          const newCount = currentCount + 1;
-          if (currentText.includes('👁️')) {
-            viewCountSpan.innerHTML = `👁️ ${newCount}`;
-          } else {
-            viewCountSpan.textContent = `${newCount} Reads`;
-          }
-          viewCountSpan.style.transition = 'transform 0.2s ease, color 0.2s ease';
-          viewCountSpan.style.color = '#4CAF50';
-          viewCountSpan.style.transform = 'scale(1.05)';
-          setTimeout(() => {
-            viewCountSpan.style.color = '#333';
-            viewCountSpan.style.transform = 'scale(1)';
-          }, 600);
+async function requestAccountDeletion(user) {
+    if (!user) {
+        alert('You must be signed in to delete your account.');
+        return false;
+    }
+    
+    try {
+        const userId = user.uid;
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
+        
+        if (!userDoc.exists()) {
+            alert('User not found.');
+            return false;
         }
-      }
+        
+        const userData = userDoc.data();
+        const username = userData?.username || 'unknown';
+        
+        // Check if deletion is already pending
+        if (userData.deletionRequested === true) {
+            const requestedAt = userData.deletionRequestedAt?.toDate?.() || new Date();
+            const daysLeft = Math.ceil(
+                (requestedAt.getTime() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000 - Date.now()) / 
+                (24 * 60 * 60 * 1000)
+            );
+            
+            if (daysLeft > 0) {
+                alert(`⚠️ Account deletion already requested. ${daysLeft} days remaining before permanent deletion.`);
+                return false;
+            }
+        }
+        
+        // Show confirmation with cooldown details
+        const confirmDelete = confirm(
+            `⚠️ ACCOUNT DELETION REQUEST (GDPR Article 17)\n\n` +
+            `You are requesting to delete your account: ${username}\n\n` +
+            `📋 What will happen:\n` +
+            `• A ${DELETION_COOLDOWN_DAYS}-day cooldown period will start\n` +
+            `• Your account will be frozen immediately\n` +
+            `• You can cancel deletion anytime during cooldown\n` +
+            `• After ${DELETION_COOLDOWN_DAYS} days, ALL data will be permanently deleted\n` +
+            `• This affects ALL Volant platforms (Poetry, Reads, Foundry)\n\n` +
+            `Do you want to proceed?`
+        );
+        
+        if (!confirmDelete) return false;
+        
+        // Calculate deletion date
+        const deletionDate = new Date(Date.now() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
+        
+        // Request deletion (start cooldown)
+        await updateDoc(userRef, {
+            deletionRequested: true,
+            deletionRequestedAt: serverTimestamp(),
+            deletionScheduledFor: deletionDate,
+            accountFrozen: true,
+            deletionReason: 'User requested deletion (GDPR Article 17)'
+        });
+        
+        // Send notification about cooldown
+        await addDoc(collection(db, "notifications"), {
+            forUser: userId,
+            type: 'account_deletion_pending',
+            fromUser: userId,
+            fromUserName: username,
+            message: `⚠️ Your account deletion request has been received.\n\n` +
+                     `A ${DELETION_COOLDOWN_DAYS}-day cooldown period has started.\n` +
+                     `Your account is now frozen. You can cancel this request anytime.\n\n` +
+                     `If you do nothing, your account will be permanently deleted on:\n` +
+                     `${deletionDate.toLocaleDateString()} ${deletionDate.toLocaleTimeString()}`,
+            timestamp: serverTimestamp(),
+            read: false
+        });
+        
+        showStatus(`✅ Deletion request submitted! ${DELETION_COOLDOWN_DAYS}-day cooldown started. You can cancel anytime.`, 'info');
+        
+        // Schedule deletion after cooldown
+        scheduleDeletion(userId, username, deletionDate);
+        
+        // Show countdown banner
+        showDeletionCountdown(userId, DELETION_COOLDOWN_DAYS);
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Error requesting deletion:', error);
+        showStatus('❌ Failed to request deletion: ' + error.message, 'error');
+        return false;
     }
-
-    return true;
-  } catch (err) {
-    console.warn('Error recording poem view:', err);
-    return false;
-  }
 }
 
-function startTrackingPoem(poemId) {
-  if (!poemId) return;
-  if (wasRecentlyRead(poemId) || activeTimers.has(poemId)) return;
-  viewStartTimes.set(poemId, Date.now());
-  const timer = setTimeout(async () => {
-    const elapsed = Date.now() - (viewStartTimes.get(poemId) || Date.now());
-    if (!wasRecentlyRead(poemId) && elapsed >= READ_DELAY_SECONDS * 1000) {
-      await recordViewToFirebase(poemId);
+// ============================================================
+// ====== SCHEDULE DELETION ======
+// ============================================================
+
+function scheduleDeletion(userId, username, deletionDate) {
+    // Store pending deletion in session for checking
+    const pendingDeletions = JSON.parse(sessionStorage.getItem('pendingDeletions') || '{}');
+    pendingDeletions[userId] = {
+        username: username,
+        scheduledFor: deletionDate.getTime()
+    };
+    sessionStorage.setItem('pendingDeletions', JSON.stringify(pendingDeletions));
+    
+    // Show countdown on profile
+    const daysLeft = Math.ceil((deletionDate.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+    if (daysLeft > 0) {
+        showDeletionCountdown(userId, daysLeft);
     }
-    activeTimers.delete(poemId);
-    viewStartTimes.delete(poemId);
-  }, READ_DELAY_SECONDS * 1000);
-  activeTimers.set(poemId, timer);
 }
 
-function stopTrackingPoem(poemId) {
-  if (!poemId) return;
-  const timer = activeTimers.get(poemId);
-  if (timer) {
-    clearTimeout(timer);
-    activeTimers.delete(poemId);
-  }
-  viewStartTimes.delete(poemId);
-}
+// ============================================================
+// ====== SHOW DELETION COUNTDOWN BANNER ======
+// ============================================================
 
-function setupReadTracking() {
-  if (!window.IntersectionObserver) return;
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const card = entry.target;
-      const poemId = card?.dataset?.id;
-      if (!poemId) return;
-      if (entry.isIntersecting && entry.intersectionRatio >= VIEW_THRESHOLD) {
-        startTrackingPoem(poemId);
-      } else {
-        stopTrackingPoem(poemId);
-      }
+function showDeletionCountdown(userId, daysLeft) {
+    // Remove existing banner
+    const existingBanner = document.getElementById('deletionCountdownBanner');
+    if (existingBanner) existingBanner.remove();
+    
+    if (!daysLeft || daysLeft <= 0) {
+        // Check actual days left from Firestore
+        checkPendingDeletions(auth.currentUser);
+        return;
+    }
+    
+    // Create banner
+    const banner = document.createElement('div');
+    banner.id = 'deletionCountdownBanner';
+    
+    banner.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <strong>⚠️ Account Deletion Pending</strong>
+                <div style="font-size: 0.9rem; margin-top: 4px;">
+                    Your account will be permanently deleted in <strong>${daysLeft} days</strong>
+                    <span style="font-size: 0.8rem; color: rgba(255,255,255,0.8); display: block; margin-top: 2px;">
+                        You can cancel anytime during the ${DELETION_COOLDOWN_DAYS}-day cooldown period
+                    </span>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button id="cancelDeletionBtn" style="
+                    background: #fff;
+                    color: #ff6b6b;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 8px 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    font-family: 'Inter', sans-serif;
+                    transition: all 0.2s;
+                ">Cancel Deletion</button>
+                <button id="deleteNowBtn" style="
+                    background: #c0392b;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 8px 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    font-family: 'Inter', sans-serif;
+                    transition: all 0.2s;
+                ">Delete Now</button>
+            </div>
+        </div>
+    `;
+    
+    // Insert after profile title
+    const profileTitle = document.querySelector('.profile-title');
+    if (profileTitle) {
+        profileTitle.after(banner);
+    } else {
+        document.querySelector('.profile-container')?.prepend(banner);
+    }
+    
+    // Cancel deletion button
+    document.getElementById('cancelDeletionBtn')?.addEventListener('click', async () => {
+        if (confirm('Cancel account deletion? Your account will be restored.')) {
+            await cancelDeletion(userId);
+            banner.remove();
+            showStatus('✅ Account deletion cancelled.', 'success');
+        }
     });
-  }, {
-    threshold: [0, VIEW_THRESHOLD],
-    rootMargin: '0px'
-  });
-
-  function observePoemCards() {
-    document.querySelectorAll('.recent-poem-card:not([data-read-tracked])').forEach(card => {
-      card.dataset.readTracked = 'true';
-      observer.observe(card);
+    
+    // Delete now button (bypass cooldown)
+    document.getElementById('deleteNowBtn')?.addEventListener('click', async () => {
+        if (confirm('⚠️ Are you sure? This will delete your account immediately without cooldown.')) {
+            const user = auth.currentUser;
+            if (user) {
+                await executeDeletion(userId, user);
+            }
+        }
     });
-  }
-
-  observePoemCards();
-  const mutationObserver = new MutationObserver(() => observePoemCards());
-  mutationObserver.observe(document.body, { childList: true, subtree: true });
 }
 
-// ========== FOLLOW SYSTEM ==========
+// ============================================================
+// ====== CANCEL DELETION ======
+// ============================================================
+
+async function cancelDeletion(userId) {
+    try {
+        const userRef = doc(db, "users", userId);
+        await updateDoc(userRef, {
+            deletionRequested: false,
+            deletionRequestedAt: null,
+            deletionScheduledFor: null,
+            accountFrozen: false,
+            deletionReason: null
+        });
+        
+        // Remove from session
+        const pendingDeletions = JSON.parse(sessionStorage.getItem('pendingDeletions') || '{}');
+        delete pendingDeletions[userId];
+        sessionStorage.setItem('pendingDeletions', JSON.stringify(pendingDeletions));
+        
+        // Remove banner
+        const banner = document.getElementById('deletionCountdownBanner');
+        if (banner) banner.remove();
+        
+    } catch (err) {
+        console.error('Error cancelling deletion:', err);
+        alert('Failed to cancel deletion. Please try again.');
+    }
+}
+
+// ============================================================
+// ====== CHECK PENDING DELETIONS ======
+// ============================================================
+
+async function checkPendingDeletions(user) {
+    if (!user) return;
+    
+    try {
+        const userRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userRef);
+        
+        if (!userDoc.exists()) return;
+        
+        const userData = userDoc.data();
+        
+        // Check if deletion is pending
+        if (userData.deletionRequested === true) {
+            const requestedAt = userData.deletionRequestedAt?.toDate?.() || new Date();
+            const scheduledFor = userData.deletionScheduledFor?.toDate?.() || 
+                                new Date(requestedAt.getTime() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
+            
+            const daysLeft = Math.ceil((scheduledFor.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+            
+            if (daysLeft <= 0) {
+                // Cooldown period is over - execute deletion
+                await executeDeletion(user.uid, user);
+                return;
+            }
+            
+            // Show countdown banner
+            showDeletionCountdown(user.uid, daysLeft);
+            
+            // Show notification
+            showStatus(
+                `⚠️ Your account deletion is pending. ${daysLeft} days remaining. Cancel to keep your account.`,
+                'info'
+            );
+        }
+    } catch (err) {
+        console.error('Error checking pending deletions:', err);
+    }
+}
+
+// ============================================================
+// ====== EXECUTE DELETION (After Cooldown or Manual) ======
+// ============================================================
+
+async function executeDeletion(userId, user) {
+    try {
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
+        const userData = userDoc.exists() ? userDoc.data() : null;
+        const username = userData?.username || 'unknown';
+        
+        showStatus('🗑️ Deleting account from ALL Volant platforms...', 'info');
+        
+        // ============================================
+        // 1. DELETE POETRY DATA
+        // ============================================
+        
+        const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+        const poemsSnap = await getDocs(poemsQuery);
+        for (const poemDoc of poemsSnap.docs) {
+            const commentsSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments"));
+            for (const commentDoc of commentsSnap.docs) {
+                const repliesSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments", commentDoc.id, "replies"));
+                for (const replyDoc of repliesSnap.docs) {
+                    await deleteDoc(replyDoc.ref);
+                }
+                await deleteDoc(commentDoc.ref);
+            }
+            await deleteDoc(poemDoc.ref);
+        }
+        
+        // Delete drafts
+        const draftsQuery = query(collection(db, "drafts"), where("userId", "==", userId));
+        const draftsSnap = await getDocs(draftsQuery);
+        for (const draftDoc of draftsSnap.docs) {
+            await deleteDoc(draftDoc.ref);
+        }
+        
+        // Remove likes from poems
+        const allPoemsSnap = await getDocs(collection(db, "recentPoems"));
+        for (const poemDoc of allPoemsSnap.docs) {
+            const poemData = poemDoc.data();
+            if (Array.isArray(poemData.likedBy) && poemData.likedBy.includes(userId)) {
+                await updateDoc(poemDoc.ref, {
+                    likes: increment(-1),
+                    likedBy: poemData.likedBy.filter(uid => uid !== userId)
+                });
+            }
+        }
+        
+        // ============================================
+        // 2. DELETE STORE/READS DATA
+        // ============================================
+        
+        try {
+            const storeQuery = query(collection(db, "store_items"), where("userId", "==", userId));
+            const storeSnap = await getDocs(storeQuery);
+            for (const storeDoc of storeSnap.docs) {
+                await deleteDoc(storeDoc.ref);
+            }
+            
+            const ordersQuery = query(collection(db, "store_orders"), where("userId", "==", userId));
+            const ordersSnap = await getDocs(ordersQuery);
+            for (const orderDoc of ordersSnap.docs) {
+                await deleteDoc(orderDoc.ref);
+            }
+        } catch (err) {
+            console.log('No store data found');
+        }
+        
+        // ============================================
+        // 3. DELETE FOUNDRY DATA
+        // ============================================
+        
+        try {
+            const foundryQuery = query(collection(db, "foundry_items"), where("userId", "==", userId));
+            const foundrySnap = await getDocs(foundryQuery);
+            for (const foundryDoc of foundrySnap.docs) {
+                await deleteDoc(foundryDoc.ref);
+            }
+        } catch (err) {
+            console.log('No foundry data found');
+        }
+        
+        // ============================================
+        // 4. DELETE SOCIAL DATA
+        // ============================================
+        
+        const socialQuery = query(collection(db, "social"));
+        const socialSnap = await getDocs(socialQuery);
+        for (const socialDoc of socialSnap.docs) {
+            const data = socialDoc.data();
+            if (data.followedId === userId || data.followerId === userId) {
+                if (data.followedId === userId) {
+                    await updateDoc(doc(db, "users", data.followerId), { followingCount: increment(-1) });
+                }
+                if (data.followerId === userId) {
+                    await updateDoc(doc(db, "users", data.followedId), { followerCount: increment(-1) });
+                }
+                await deleteDoc(socialDoc.ref);
+            }
+        }
+        
+        // ============================================
+        // 5. DELETE CONVERSATIONS
+        // ============================================
+        
+        const convQuery = query(collection(db, "conversations"), where("participants", "array-contains", userId));
+        const convSnap = await getDocs(convQuery);
+        for (const convDoc of convSnap.docs) {
+            const messagesSnap = await getDocs(collection(db, "conversations", convDoc.id, "messages"));
+            for (const msgDoc of messagesSnap.docs) {
+                await deleteDoc(msgDoc.ref);
+            }
+            await deleteDoc(convDoc.ref);
+        }
+        
+        // ============================================
+        // 6. DELETE NOTIFICATIONS
+        // ============================================
+        
+        const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
+        const notifSnap = await getDocs(notifQuery);
+        for (const notifDoc of notifSnap.docs) {
+            await deleteDoc(notifDoc.ref);
+        }
+        const sentNotifQuery = query(collection(db, "notifications"), where("fromUser", "==", userId));
+        const sentNotifSnap = await getDocs(sentNotifQuery);
+        for (const notifDoc of sentNotifSnap.docs) {
+            await deleteDoc(notifDoc.ref);
+        }
+        
+        // ============================================
+        // 7. DELETE USER DOCUMENT (affects ALL platforms)
+        // ============================================
+        
+        await deleteDoc(userRef);
+        
+        // ============================================
+        // 8. DELETE FROM FIREBASE AUTH
+        // ============================================
+        
+        if (user) {
+            await deleteUser(user);
+        }
+        
+        showStatus('✅ Account permanently deleted from ALL Volant platforms. Redirecting...', 'success');
+        
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Error executing deletion:', error);
+        showStatus('❌ Failed to delete account: ' + error.message, 'error');
+        return false;
+    }
+}
+
+// ============================================================
+// ====== GDPR DATA EXPORT ======
+// ============================================================
+
+async function exportUserData(user) {
+    if (!user) {
+        alert('You must be signed in to export your data.');
+        return;
+    }
+    
+    try {
+        const userId = user.uid;
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
+        const userData = userDoc.exists() ? userDoc.data() : null;
+        const username = userData?.username || 'unknown';
+        
+        showStatus('📥 Gathering your data... This may take a moment.', 'info');
+        
+        const exportData = {
+            user: {
+                uid: userId,
+                ...userData
+            },
+            poems: [],
+            drafts: [],
+            comments: [],
+            followers: [],
+            following: [],
+            conversations: [],
+            notifications: [],
+            exportDate: new Date().toISOString(),
+            platform: PLATFORM
+        };
+        
+        // Get poems
+        const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+        const poemsSnap = await getDocs(poemsQuery);
+        for (const poemDoc of poemsSnap.docs) {
+            exportData.poems.push({ id: poemDoc.id, ...poemDoc.data() });
+        }
+        
+        // Get drafts
+        const draftsQuery = query(collection(db, "drafts"), where("userId", "==", userId));
+        const draftsSnap = await getDocs(draftsQuery);
+        for (const draftDoc of draftsSnap.docs) {
+            exportData.drafts.push({ id: draftDoc.id, ...draftDoc.data() });
+        }
+        
+        // Get notifications
+        const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
+        const notifSnap = await getDocs(notifQuery);
+        for (const notifDoc of notifSnap.docs) {
+            exportData.notifications.push({ id: notifDoc.id, ...notifDoc.data() });
+        }
+        
+        // Get social data
+        const socialQuery = query(collection(db, "social"));
+        const socialSnap = await getDocs(socialQuery);
+        for (const socialDoc of socialSnap.docs) {
+            const data = socialDoc.data();
+            if (data.followerId === userId) {
+                exportData.following.push(data);
+            }
+            if (data.followedId === userId) {
+                exportData.followers.push(data);
+            }
+        }
+        
+        // Get conversations
+        const convQuery = query(collection(db, "conversations"), where("participants", "array-contains", userId));
+        const convSnap = await getDocs(convQuery);
+        for (const convDoc of convSnap.docs) {
+            const messages = [];
+            const msgSnap = await getDocs(collection(db, "conversations", convDoc.id, "messages"));
+            for (const msgDoc of msgSnap.docs) {
+                messages.push({ id: msgDoc.id, ...msgDoc.data() });
+            }
+            exportData.conversations.push({ id: convDoc.id, ...convDoc.data(), messages });
+        }
+        
+        // Create and download JSON file
+        const jsonStr = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `volant_data_export_${username}_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showStatus('✅ Data export downloaded successfully!', 'success');
+        
+    } catch (error) {
+        console.error('Error exporting data:', error);
+        showStatus('❌ Failed to export data: ' + error.message, 'error');
+    }
+}
+
+// ============================================================
+// ====== CHECK FOR FIRST-TIME VISITOR TO POETRY ======
+// ============================================================
+
+async function checkAndSendPoetryWelcome(userId, username) {
+    if (!userId || !username) return;
+    
+    try {
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
+        
+        if (!userDoc.exists()) return;
+        
+        const userData = userDoc.data();
+        
+        if (userData.poetryWelcomeSent === true) {
+            console.log('✅ Poetry welcome already sent for this user');
+            return;
+        }
+        
+        const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+        const poemsSnap = await getDocs(poemsQuery);
+        const hasVisitedBefore = userData.hasVisitedPoetry === true;
+        
+        if (!poemsSnap.empty || hasVisitedBefore) {
+            await updateDoc(userRef, { 
+                poetryWelcomeSent: true,
+                hasVisitedPoetry: true
+            });
+            return;
+        }
+        
+        console.log('🎉 First-time visitor to Poetry! Sending welcome notification...');
+        
+        const welcomeMessage = `Welcome to Volant Poetry, ${username}! 🎉
+
+We noticed you're already part of the Volant ecosystem, and we're so excited to welcome you to our Poetry community!
+
+Here's what you can do:
+✍️ Share your poems with the world
+❤️ Discover and appreciate other poets' work
+💬 Engage in meaningful conversations through comments
+🏆 Earn achievements and level up your profile
+
+To get started:
+1. Complete your profile — you can change your username anytime in your profile settings!
+2. Write and submit your first poem
+3. Explore and connect with other poets
+4. Share your poems via email or on your social media to inspire even more readers!
+
+If you have any questions, feel free to reach out to us at reach.volant@gmail.com
+
+Happy writing!
+The Volant Team
+reach.volant@gmail.com`;
+
+        await addDoc(collection(db, "notifications"), {
+            forUser: userId,
+            type: 'welcome',
+            fromUser: userId,
+            fromUserName: username,
+            message: welcomeMessage,
+            timestamp: serverTimestamp(),
+            read: false
+        });
+        
+        await updateDoc(userRef, { 
+            poetryWelcomeSent: true,
+            hasVisitedPoetry: true
+        });
+        
+        console.log(`✅ Poetry welcome notification sent to ${username}`);
+        await updateUnreadNotificationCount();
+        
+        const statusEl = document.getElementById('signup-status');
+        if (statusEl) {
+            statusEl.textContent = '🎉 Welcome to Volant Poetry! Check your notifications for a special welcome message.';
+            statusEl.className = 'status show success';
+            setTimeout(() => {
+                statusEl.classList.remove('show');
+            }, 6000);
+        }
+        
+    } catch (err) {
+        console.error("❌ Error checking/sending Poetry welcome:", err);
+    }
+}
+
+// ============================================================
+// ====== FOLLOW SYSTEM ======
+// ============================================================
+
 async function handleFollow(followerId, followedId) {
   if (!followerId || !followedId || followerId === followedId) return;
   const docId = `${followerId}_${followedId}`;
@@ -4271,11 +5019,7 @@ async function refreshUserCounts(uid) {
   const userDoc = await getDoc(doc(db, "users", uid));
   if (userDoc.exists()) {
     const data = userDoc.data();
-    
-    // ✅ Show FOLLOWERS count (always public)
     document.getElementById("followersCount").innerText = data.followerCount || 0;
-    
-    // ✅ Show FOLLOWING count (always public - REMOVED the if condition!)
     document.getElementById("followingCount").innerText = data.followingCount || 0;
   }
 }
@@ -4447,22 +5191,21 @@ async function loadCommentList(card) {
   }
 }
 
-// ===== UPDATED: SEND MESSAGE MODAL FUNCTIONS =====
+// ============================================================
+// ====== SEND MESSAGE MODAL FUNCTIONS ======
+// ============================================================
 
 function showSendMessageModal(recipientName, recipientUid) {
   const modal = document.getElementById('sendMessageModal');
   if (!modal) return;
   
-  // Safely set elements with existence checks
   const titleEl = document.getElementById('sendMessageTitle');
   if (titleEl) titleEl.textContent = 'Send message to';
   
   const recipientEl = document.getElementById('sendMessageRecipient');
   if (recipientEl) {
     const span = recipientEl.querySelector('span');
-    if (span) {
-      span.textContent = recipientName;
-    }
+    if (span) span.textContent = recipientName;
   }
   
   const toNameEl = document.getElementById('sendMessageToName');
@@ -4486,7 +5229,6 @@ function showSendMessageModal(recipientName, recipientUid) {
   modal.classList.add('show');
   modal.style.display = 'flex';
   
-  // Focus with slight delay for animation
   setTimeout(() => {
     if (inputEl) inputEl.focus();
   }, 350);
@@ -4501,7 +5243,6 @@ function closeSendMessageModal() {
   }, 300);
 }
 
-// Character counter
 const messageInput = document.getElementById('sendMessageInput');
 if (messageInput) {
   messageInput.addEventListener('input', function() {
@@ -4534,7 +5275,6 @@ async function sendDirectMessage() {
     return;
   }
   
-  // Disable button and show sending state
   submitBtn.disabled = true;
   submitBtn.innerHTML = '<span style="display:inline-block; animation:spin 1s linear infinite;">⟳</span> Sending...';
   
@@ -4573,15 +5313,12 @@ async function sendDirectMessage() {
       lastMessageTime: serverTimestamp() 
     });
     
-    // Success state
     submitBtn.innerHTML = '✓ Sent!';
     submitBtn.classList.add('sent');
     submitBtn.style.background = '#2d7d46';
     
-    // Close after success
     setTimeout(() => {
       closeSendMessageModal();
-      // Reset button for next time
       setTimeout(() => {
         submitBtn.innerHTML = '<span class="send-icon">➤</span> Send Message';
         submitBtn.style.background = '';
@@ -4602,7 +5339,6 @@ async function sendDirectMessage() {
   }
 }
 
-// Add spin animation for the loading state
 const styleSheet = document.createElement("style");
 styleSheet.textContent = `
   @keyframes spin {
@@ -4612,34 +5348,28 @@ styleSheet.textContent = `
 `;
 document.head.appendChild(styleSheet);
 
-// ===== END SEND MESSAGE MODAL FUNCTIONS =====
+// ============================================================
+// ====== LOAD FOLLOW BUTTON AND COUNTS ======
+// ============================================================
 
-// ===== UPDATED: loadFollowButtonAndCounts - Shows Message button for others ONLY =====
 async function loadFollowButtonAndCounts(viewerUid, targetUid) {
   if (!targetUid) return;
-  
-  // ALWAYS show BOTH followers AND following counts
   await refreshUserCounts(targetUid);
   
   const followBtn = document.getElementById("followActionBtn");
   const messageBtn = document.getElementById("messageUserBtn");
   
-  // If no one is logged in (public view)
   if (!viewerUid) {
     if (followBtn) followBtn.style.display = "none";
     if (messageBtn) messageBtn.style.display = "none";
     return;
   }
   
-  // Logged in user viewing their OWN profile - HIDE both buttons
   if (viewerUid === targetUid) {
     if (followBtn) followBtn.style.display = "none";
     if (messageBtn) messageBtn.style.display = "none";
     await refreshUserCounts(viewerUid);
-  } 
-  // Logged in user viewing SOMEONE ELSE's profile - SHOW both buttons
-  else {
-    // Show Follow button
+  } else {
     if (followBtn) {
       followBtn.style.display = "inline-block";
       followBtn.onclick = () => handleFollow(viewerUid, targetUid);
@@ -4647,19 +5377,19 @@ async function loadFollowButtonAndCounts(viewerUid, targetUid) {
       followBtn.textContent = isFollowing ? "Unfollow" : "Follow";
       followBtn.classList.toggle("following", isFollowing);
     }
-    
-    // Show Message button - OPENS THE MODAL
     if (messageBtn) {
       messageBtn.style.display = "inline-block";
       messageBtn.onclick = () => {
-        // Get the recipient's name
         const recipientName = document.getElementById('username').textContent || 'Poet';
         showSendMessageModal(recipientName, targetUid);
       };
     }
   }
 }
-// ========== END FOLLOW SYSTEM ==========
+
+// ============================================================
+// ====== PROFILE FUNCTIONS ======
+// ============================================================
 
 const urlParams = new URLSearchParams(window.location.search);
 const profileUid = urlParams.get("uid");
@@ -4675,14 +5405,12 @@ const profilePic = document.getElementById("profilePic");
 const avatarDiv = document.getElementById("profileAvatar");
 const avatarText = document.getElementById("avatarInitials");
 
-// Email elements
 const emailRow = document.getElementById("emailRow");
 const emailSpan = document.getElementById("email");
 const emailPrivacyToggle = document.getElementById("emailPrivacyToggle");
 const privacyPublicBtn = document.getElementById("privacyPublicBtn");
 const privacyPrivateBtn = document.getElementById("privacyPrivateBtn");
 
-// Function to apply email visibility (HIDE completely when private AND not owner)
 function applyEmailVisibility(isPrivate, isOwner) {
   if (!emailRow) return;
   if (isPrivate && !isOwner) {
@@ -4692,7 +5420,6 @@ function applyEmailVisibility(isPrivate, isOwner) {
   }
 }
 
-// Save email privacy setting to Firestore
 async function saveEmailPrivacy(uid, privacy) {
   if (!uid) return;
   try {
@@ -4762,7 +5489,6 @@ function hideAllBadges() {
 
 document.getElementById('closeBadgesModal').addEventListener('click', hideAllBadges);
 document.getElementById('badgesModal').addEventListener('click', (e) => { if (e.target === document.getElementById('badgesModal')) hideAllBadges(); });
-
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideAllBadges(); });
 
 async function fetchTotalCommentsMade(username) {
@@ -4798,41 +5524,31 @@ function showDefaultCommentBadges(container, totalCommentsMade) {
   });
   if (!earnedAny) container.innerHTML = '<p style="color: #888; font-size: 0.9rem; margin: 0;">Make your first comment to earn badges!</p>';
 }
+
 async function calculateTotalViews(username) {
   if (!username) return 0;
   let totalViews = 0;
   const q = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
   const querySnap = await getDocs(q);
-  
   for (const docSnap of querySnap.docs) {
     const poem = docSnap.data();
-    // Use 'views' instead of 'viewCount' to match your index.html
     totalViews += poem.views || 0;
   }
   return totalViews;
 }
 
-// ============================================================
-// ====== UPDATED: VERIFICATION BADGE WITH GOOGLE INDICATOR ======
-// ============================================================
-
 async function updateVerificationBadge(userId, isOwnProfile = false) {
   if (!userId) return;
-  
   const verifiedBadge = document.getElementById("verifiedBadge");
   const unverifiedBadge = document.getElementById("unverifiedBadge");
   const googleBadge = document.getElementById("googleBadge");
-  
   if (!verifiedBadge || !unverifiedBadge) return;
-  
-  // Only show badges if viewing your OWN profile
   if (!isOwnProfile) {
     verifiedBadge.style.display = "none";
     unverifiedBadge.style.display = "none";
     if (googleBadge) googleBadge.style.display = "none";
     return;
   }
-  
   try {
     const userDoc = await getDoc(doc(db, "users", userId));
     if (userDoc.exists()) {
@@ -4840,13 +5556,10 @@ async function updateVerificationBadge(userId, isOwnProfile = false) {
       const isVerified = userData.isVerified === true || userData.emailVerified === true;
       const authProvider = userData.authProvider || 'email';
       const isGoogleUser = authProvider === 'google';
-      
       if (isVerified) {
         verifiedBadge.style.display = "inline-flex";
         unverifiedBadge.style.display = "none";
-        
         if (isGoogleUser) {
-          // Show Google badge
           verifiedBadge.style.display = "none";
           if (googleBadge) {
             googleBadge.style.display = "inline-flex";
@@ -4854,7 +5567,6 @@ async function updateVerificationBadge(userId, isOwnProfile = false) {
             googleBadge.setAttribute('data-tooltip', 'Verified with Google');
           }
         } else {
-          // Show regular verified badge
           if (googleBadge) googleBadge.style.display = "none";
           verifiedBadge.style.display = "inline-flex";
           verifiedBadge.textContent = "✓";
@@ -4871,9 +5583,7 @@ async function updateVerificationBadge(userId, isOwnProfile = false) {
         };
       }
     }
-  } catch (err) {
-    // Silent fail
-  }
+  } catch (err) {}
 }
 
 async function updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade) {
@@ -5207,7 +5917,6 @@ card.innerHTML = `
   } catch(e) { poemsContainer.innerHTML = `<p>Error loading poems.</p>`; }
 }
        
-
 function attachDeleteListeners() { document.querySelectorAll('.delete-btn').forEach(btn => { btn._del = async () => { if (confirm('Delete this poem?')) { await deleteDoc(doc(db, "recentPoems", btn.dataset.id)); fetchUserPoems(profileUsername); } }; btn.addEventListener('click', btn._del); }); }
 
 document.addEventListener('click', async (e) => {
@@ -5432,7 +6141,10 @@ async function fetchTopPoems(profileName) {
   topPoemContent.innerHTML = top3.length ? top3.map((p,i)=> `<div><span>${i+1}.</span> <a href="poem.html?slug=${encodeURIComponent(p.slug)}" class="top-poem-link">${escapeHtml(p.title)}</a></div>`).join("") : "No top poems yet.";
 }
 
-// Auth handling
+// ============================================================
+// ====== AUTH HANDLING ======
+// ============================================================
+
 onAuthStateChanged(auth, async (user) => {
   const loginBtn = document.getElementById("loginNavBtn");
   const logoutBtnNav = document.getElementById("logoutBtnNav");
@@ -5446,6 +6158,9 @@ onAuthStateChanged(auth, async (user) => {
     currentUserUid = user.uid;
     updateUnreadNotificationCount();
     updateUnreadMessageCount();
+    
+    // Check for pending deletion
+    await checkPendingDeletions(user);
   }
   
   if (!user && !profileUid) { 
@@ -5457,10 +6172,29 @@ onAuthStateChanged(auth, async (user) => {
     const actorRef = doc(db, "users", user.uid); 
     let actorDoc = await getDoc(actorRef); 
     if (!actorDoc.exists()) { 
-      await setDoc(actorRef, { username: user.displayName || user.email.split("@")[0], email: user.email, bio: "", realName: "", joined: new Date(), photoURL: user.photoURL || "", emailPrivacy: "public", followerCount: 0, followingCount: 0 }); 
+      await setDoc(actorRef, { 
+        username: user.displayName || user.email.split("@")[0], 
+        email: user.email, 
+        bio: "", 
+        realName: "", 
+        joined: new Date(), 
+        photoURL: user.photoURL || "", 
+        emailPrivacy: "public", 
+        followerCount: 0, 
+        followingCount: 0,
+        poetryWelcomeSent: false,
+        hasVisitedPoetry: false,
+        deletionRequested: false,
+        accountFrozen: false
+      }); 
       actorDoc = await getDoc(actorRef); 
     } 
-    actorUsername = actorDoc.data()?.username || user.email.split("@")[0]; 
+    actorUsername = actorDoc.data()?.username || user.email.split("@")[0];
+    
+    // Check for first-time Poetry visitor
+    if (user && actorUsername) {
+      await checkAndSendPoetryWelcome(user.uid, actorUsername);
+    }
   }
   
   viewingOwnProfile = (user && (!profileUid || profileUid === user.uid));
@@ -5497,28 +6231,23 @@ if (data.realName && data.realName.trim() !== "") {
   document.getElementById("bio").innerText = data.bio || "No bio yet";
   
   // Show joined 
-  // Check both joined (for old users) and createdAt (for new users)
-let joinDate = null;
-
-if (data.joined?.seconds) {
-  joinDate = new Date(data.joined.seconds * 1000);
-} else if (data.createdAt?.seconds) {
-  joinDate = new Date(data.createdAt.seconds * 1000);
-}
-
-// Also handle if it's a string or number (fallback)
-if (!joinDate && data.joined) {
-  const parsed = new Date(data.joined);
-  if (!isNaN(parsed.getTime())) joinDate = parsed;
-}
-if (!joinDate && data.createdAt) {
-  const parsed = new Date(data.createdAt);
-  if (!isNaN(parsed.getTime())) joinDate = parsed;
-}
-
-document.getElementById("joined").innerText = joinDate ? 
-  joinDate.toLocaleString('en-US', { month: 'long', year: 'numeric' }) : 
-  "Unknown";
+  let joinDate = null;
+  if (data.joined?.seconds) {
+    joinDate = new Date(data.joined.seconds * 1000);
+  } else if (data.createdAt?.seconds) {
+    joinDate = new Date(data.createdAt.seconds * 1000);
+  }
+  if (!joinDate && data.joined) {
+    const parsed = new Date(data.joined);
+    if (!isNaN(parsed.getTime())) joinDate = parsed;
+  }
+  if (!joinDate && data.createdAt) {
+    const parsed = new Date(data.createdAt);
+    if (!isNaN(parsed.getTime())) joinDate = parsed;
+  }
+  document.getElementById("joined").innerText = joinDate ? 
+    joinDate.toLocaleString('en-US', { month: 'long', year: 'numeric' }) : 
+    "Unknown";
  
   
   // Setup email privacy toggle (only for own profile)
@@ -5584,42 +6313,41 @@ document.getElementById("joined").innerText = joinDate ?
     }
   }
   
-  // LOAD FOLLOW BUTTON AND COUNTS - INTEGRATED HERE
+  // LOAD FOLLOW BUTTON AND COUNTS
   if (user) {
     await loadFollowButtonAndCounts(currentUserUid, targetProfileUid);
   } else {
-    // For non-logged in users viewing a profile
     await refreshUserCounts(targetProfileUid);
     const followBtn = document.getElementById("followActionBtn");
     if (followBtn) followBtn.style.display = "none";
   }
-  // Calculate and display total views
-// After you set profileUsername and have targetProfileUid
-const totalViews = await calculateTotalViews(profileUsername);
-document.getElementById("totalViewsCount").innerText = totalViews;
+  
+  const totalViews = await calculateTotalViews(profileUsername);
+  document.getElementById("totalViewsCount").innerText = totalViews;
 
-// Update verification badge (pass isOwnProfile as second parameter)
-await updateVerificationBadge(targetProfileUid, viewingOwnProfile);
+  await updateVerificationBadge(targetProfileUid, viewingOwnProfile);
 
   await fetchUserPoems(profileUsername);
   setupReadTracking();
   await fetchTopPoems(profileUsername);
 
-// ===== FLIGHT STAGE - SHOW REMAINING DETAILS ONLY TO OWNER =====
-// After viewingOwnProfile is determined
-const levelInfoEl = document.querySelector('.panel-item .level-info');
-if (levelInfoEl) {
-  if (viewingOwnProfile) {
-    levelInfoEl.classList.add('visible');
-    levelInfoEl.style.display = 'block';
-  } else {
-    levelInfoEl.classList.remove('visible');
-    levelInfoEl.style.display = 'none';
+  // FLIGHT STAGE - SHOW REMAINING DETAILS ONLY TO OWNER
+  const levelInfoEl = document.querySelector('.panel-item .level-info');
+  if (levelInfoEl) {
+    if (viewingOwnProfile) {
+      levelInfoEl.classList.add('visible');
+      levelInfoEl.style.display = 'block';
+    } else {
+      levelInfoEl.classList.remove('visible');
+      levelInfoEl.style.display = 'none';
+    }
   }
-}
 });
 
-// Image modal
+// ============================================================
+// ====== IMAGE MODAL ======
+// ============================================================
+
 const modal = document.getElementById("imageModal"), expandedImg = document.getElementById("expandedImg"), closeModal = document.querySelector(".close-modal");
 function showImageModal(imageSrc) { expandedImg.src = imageSrc; modal.style.display = "flex"; }
 if (profilePic) profilePic.addEventListener("click", () => { if (profilePic.src) showImageModal(profilePic.src); });
@@ -5627,45 +6355,40 @@ if (avatarDiv) avatarDiv.addEventListener("click", () => { if (profilePic && pro
 if (closeModal) closeModal.addEventListener("click", () => modal.style.display = "none");
 window.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
 
-// Menu and logout
+// ============================================================
+// ====== MENU AND LOGOUT ======
+// ============================================================
+
 document.getElementById("menu-toggle")?.addEventListener("click", () => document.getElementById("nav-links").classList.toggle("show"));
 document.getElementById("close-btn")?.addEventListener("click", () => document.getElementById("nav-links").classList.remove("show"));
 document.getElementById("logoutBtnNav")?.addEventListener("click", async () => { await signOut(auth); window.location.href = getReturnUrl(); });
 document.getElementById("loginNavBtn")?.addEventListener("click", () => { window.location.href = `universal-login.html?platform=poetry&redirect=${encodeURIComponent(window.location.href)}`; });
 
-// Search filter
+// ============================================================
+// ====== SEARCH FILTER ======
+// ============================================================
+
 const searchInput = document.getElementById("searchInput");
 let debounceTimeout;
 if (searchInput) { 
   console.log("✅ Search input found!");
-  
-  // Remove any existing listeners to prevent duplicates
   const newSearchInput = searchInput.cloneNode(true);
   searchInput.parentNode.replaceChild(newSearchInput, searchInput);
-  
   newSearchInput.addEventListener("input", function() { 
     clearTimeout(debounceTimeout); 
     debounceTimeout = setTimeout(() => { 
       const filter = this.value.trim().toLowerCase(); 
-      
-      // Get all poem cards from the container
       const container = document.getElementById("poemsContainer");
       if (!container) {
         console.error("❌ poemsContainer not found!");
         return;
       }
-      
-      // Get all cards and their comment lists
       const cards = container.querySelectorAll(".recent-poem-card");
-      
       if (filter === "") {
-        // Show all cards and their comment lists
         cards.forEach(card => {
           card.style.display = "";
-          // Show comment list if it was open
           const commentList = card.nextElementSibling;
           if (commentList && commentList.classList.contains("comment-list")) {
-            // Only show if it was previously visible
             if (commentList.dataset.wasVisible === "true") {
               commentList.style.display = "block";
             } else {
@@ -5675,21 +6398,14 @@ if (searchInput) {
         });
         return;
       }
-      
-      // Filter cards
       cards.forEach(card => {
         const titleEl = card.querySelector(".recent-poem-title");
         const title = titleEl ? titleEl.textContent.toLowerCase() : "";
-        
         const contentEl = card.querySelector(".poem-content");
         const content = contentEl ? contentEl.textContent.toLowerCase() : "";
-        
         const authorEl = card.querySelector(".author-link");
         const author = authorEl ? authorEl.textContent.toLowerCase() : "";
-        
         const matches = title.includes(filter) || content.includes(filter) || author.includes(filter);
-        
-        // Save comment list visibility state before hiding
         const commentList = card.nextElementSibling;
         if (commentList && commentList.classList.contains("comment-list")) {
           if (commentList.style.display === "block") {
@@ -5698,10 +6414,8 @@ if (searchInput) {
             commentList.dataset.wasVisible = "false";
           }
         }
-        
         if (matches) {
           card.style.display = "";
-          // Show comment list if it was previously visible
           if (commentList && commentList.classList.contains("comment-list")) {
             if (commentList.dataset.wasVisible === "true") {
               commentList.style.display = "block";
@@ -5711,7 +6425,6 @@ if (searchInput) {
           }
         } else {
           card.style.display = "none";
-          // Hide comment list for hidden cards
           if (commentList && commentList.classList.contains("comment-list")) {
             commentList.style.display = "none";
           }
@@ -5723,8 +6436,10 @@ if (searchInput) {
   console.error("❌ Search input not found!");
 }
 
-// ===== SEND MESSAGE MODAL EVENT LISTENERS =====
-// Modal event listeners - with existence checks
+// ============================================================
+// ====== SEND MESSAGE MODAL EVENT LISTENERS ======
+// ============================================================
+
 const closeModalBtn = document.getElementById('closeSendMessageModal');
 if (closeModalBtn) {
   closeModalBtn.addEventListener('click', closeSendMessageModal);
@@ -5749,7 +6464,6 @@ if (submitMsgBtn) {
   submitMsgBtn.addEventListener('click', sendDirectMessage);
 }
 
-// Enter key to send (Shift+Enter for new line)
 const sendMsgInput = document.getElementById('sendMessageInput');
 if (sendMsgInput) {
   sendMsgInput.addEventListener('keydown', (e) => {
@@ -5760,13 +6474,14 @@ if (sendMsgInput) {
   });
 }
 
-// ===== SHARE MODAL FUNCTIONS =====
+// ============================================================
+// ====== SHARE MODAL FUNCTIONS ======
+// ============================================================
 
 function showShareModal(poemId, poemTitle, poemAuthor, collection, slug) {
   const modal = document.getElementById('shareModal');
   if (!modal) return;
   
-  // Use collection and slug format like your poem links page
   const shareUrl = `${window.location.origin}/poem.html?collection=${encodeURIComponent(collection || 'recentPoems')}&slug=${encodeURIComponent(slug || poemTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}`;
   
   document.getElementById('shareLinkInput').value = shareUrl;
@@ -5786,7 +6501,6 @@ function closeShareModal() {
   }, 300);
 }
 
-// Copy link to clipboard
 async function copyShareLink() {
   const input = document.getElementById('shareLinkInput');
   if (!input) return;
@@ -5802,7 +6516,6 @@ async function copyShareLink() {
       copyBtn.classList.remove('copied');
     }, 2000);
   } catch (err) {
-    // Fallback
     input.select();
     document.execCommand('copy');
     copyBtn.textContent = '✅ Copied!';
@@ -5814,7 +6527,6 @@ async function copyShareLink() {
   }
 }
 
-// Share to social media
 function shareToPlatform(platform, url, poemTitle, poemAuthor) {
   const text = `📝 "${poemTitle}" by ${poemAuthor}\n\nRead this beautiful poem on Volant Poetry:`;
   
@@ -5839,8 +6551,10 @@ function shareToPlatform(platform, url, poemTitle, poemAuthor) {
   window.open(shareUrl, '_blank', 'width=600,height=500');
 }
 
-// ===== SHARE BUTTON EVENT LISTENERS =====
-// Handle share button clicks
+// ============================================================
+// ====== SHARE BUTTON EVENT LISTENERS ======
+// ============================================================
+
 document.addEventListener('click', function(e) {
   const shareBtn = e.target.closest('.share-btn');
   if (shareBtn) {
@@ -5856,7 +6570,6 @@ document.addEventListener('click', function(e) {
 
 // Share modal event listeners
 document.addEventListener('DOMContentLoaded', function() {
-  // Close modal
   const closeBtn = document.getElementById('closeShareModal');
   if (closeBtn) {
     closeBtn.addEventListener('click', closeShareModal);
@@ -5871,27 +6584,211 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
   
-  // Copy link
   const copyBtn = document.getElementById('copyLinkBtn');
   if (copyBtn) {
     copyBtn.addEventListener('click', copyShareLink);
   }
   
-// Social share buttons
-document.querySelectorAll('.share-option-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    const platform = this.dataset.platform;
-    const url = document.getElementById('shareLinkInput')?.value || '';
-    const poemTitle = document.getElementById('sharePoemTitle')?.textContent || 'Poem';
-    const poemAuthor = document.getElementById('sharePoemAuthor')?.textContent || 'Anonymous';
-    shareToPlatform(platform, url, poemTitle, poemAuthor);
+  document.querySelectorAll('.share-option-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const platform = this.dataset.platform;
+      const url = document.getElementById('shareLinkInput')?.value || '';
+      const poemTitle = document.getElementById('sharePoemTitle')?.textContent || 'Poem';
+      const poemAuthor = document.getElementById('sharePoemAuthor')?.textContent || 'Anonymous';
+      shareToPlatform(platform, url, poemTitle, poemAuthor);
+    });
   });
 });
+
+// ============================================================
+// ====== GDPR ACCOUNT DELETION BUTTON HANDLERS ======
+// ============================================================
+
+// Delete Account Button - Opens confirmation modal
+const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+if (deleteAccountBtn) {
+  deleteAccountBtn.addEventListener('click', function() {
+    const user = auth.currentUser;
+    if (!user) {
+      alert('Please sign in first.');
+      return;
+    }
+    
+    // Set deletion date display
+    const deletionDate = new Date(Date.now() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
+    const dateDisplay = document.getElementById('deletionDateDisplay');
+    if (dateDisplay) {
+      dateDisplay.textContent = deletionDate.toLocaleDateString() + ' at ' + deletionDate.toLocaleTimeString();
+    }
+    
+    // Open the delete confirmation modal
+    const modal = document.getElementById('deleteConfirmModal');
+    if (modal) {
+      // Reset form
+      document.getElementById('deleteConfirmCheckbox').checked = false;
+      document.getElementById('deleteTypeCheckbox').checked = false;
+      document.getElementById('gdprRightCheckbox').checked = false;
+      document.getElementById('deleteConfirmUsername').value = '';
+      document.getElementById('submitDeleteAccount').disabled = true;
+      modal.classList.add('show');
+      modal.style.display = 'flex';
+    }
+  });
+}
+
+// Close delete confirmation modal
+document.getElementById('closeDeleteConfirmModal')?.addEventListener('click', function() {
+  document.getElementById('deleteConfirmModal').classList.remove('show');
+  document.getElementById('deleteConfirmModal').style.display = 'none';
+});
+document.getElementById('cancelDeleteConfirm')?.addEventListener('click', function() {
+  document.getElementById('deleteConfirmModal').classList.remove('show');
+  document.getElementById('deleteConfirmModal').style.display = 'none';
+});
+document.getElementById('deleteConfirmModal')?.addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.remove('show');
+    this.style.display = 'none';
+  }
 });
 
-</script>
-<script>
-// Dynamic login/signup link setup for current page redirect
+// Enable/disable delete button based on checkbox and username
+document.getElementById('deleteConfirmCheckbox')?.addEventListener('change', checkDeleteForm);
+document.getElementById('deleteTypeCheckbox')?.addEventListener('change', checkDeleteForm);
+document.getElementById('gdprRightCheckbox')?.addEventListener('change', checkDeleteForm);
+document.getElementById('deleteConfirmUsername')?.addEventListener('input', checkDeleteForm);
+
+function checkDeleteForm() {
+  const username = document.getElementById('username')?.textContent || '';
+  const typedUsername = document.getElementById('deleteConfirmUsername')?.value || '';
+  const confirmCheck = document.getElementById('deleteConfirmCheckbox')?.checked || false;
+  const typeCheck = document.getElementById('deleteTypeCheckbox')?.checked || false;
+  const gdprCheck = document.getElementById('gdprRightCheckbox')?.checked || false;
+  
+  const submitBtn = document.getElementById('submitDeleteAccount');
+  if (submitBtn) {
+    submitBtn.disabled = !(confirmCheck && typeCheck && gdprCheck && typedUsername === username);
+  }
+}
+
+// Submit account deletion request (starts 30-day cooldown)
+document.getElementById('submitDeleteAccount')?.addEventListener('click', async function() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert('You must be signed in.');
+    return;
+  }
+  
+  // Double-check confirmation
+  const username = document.getElementById('username')?.textContent || '';
+  const typedUsername = document.getElementById('deleteConfirmUsername')?.value || '';
+  if (typedUsername !== username) {
+    alert('Username does not match. Please try again.');
+    return;
+  }
+  
+  // Close modal
+  document.getElementById('deleteConfirmModal').classList.remove('show');
+  document.getElementById('deleteConfirmModal').style.display = 'none';
+  
+  // Execute deletion request (starts cooldown)
+  await requestAccountDeletion(user);
+});
+
+// ============================================================
+// ====== GDPR DATA EXPORT BUTTON HANDLERS ======
+// ============================================================
+
+// Open export modal
+document.getElementById('exportDataBtn')?.addEventListener('click', function() {
+  const user = auth.currentUser;
+  if (!user) {
+    alert('Please sign in first.');
+    return;
+  }
+  const modal = document.getElementById('exportModal');
+  if (modal) {
+    document.getElementById('exportConfirmCheckbox').checked = false;
+    document.getElementById('submitExport').disabled = true;
+    modal.classList.add('show');
+    modal.style.display = 'flex';
+  }
+});
+
+// Close export modal
+document.getElementById('closeExportModal')?.addEventListener('click', function() {
+  document.getElementById('exportModal').classList.remove('show');
+  document.getElementById('exportModal').style.display = 'none';
+});
+document.getElementById('cancelExport')?.addEventListener('click', function() {
+  document.getElementById('exportModal').classList.remove('show');
+  document.getElementById('exportModal').style.display = 'none';
+});
+document.getElementById('exportModal')?.addEventListener('click', function(e) {
+  if (e.target === this) {
+    this.classList.remove('show');
+    this.style.display = 'none';
+  }
+});
+
+// Enable export button
+document.getElementById('exportConfirmCheckbox')?.addEventListener('change', function() {
+  const submitBtn = document.getElementById('submitExport');
+  if (submitBtn) {
+    submitBtn.disabled = !this.checked;
+  }
+});
+
+// Submit export
+document.getElementById('submitExport')?.addEventListener('click', async function() {
+  const user = auth.currentUser;
+  if (!user) return;
+  
+  // Close modal
+  document.getElementById('exportModal').classList.remove('show');
+  document.getElementById('exportModal').style.display = 'none';
+  
+  // Execute export
+  await exportUserData(user);
+});
+
+// ============================================================
+// ====== UTILITY FUNCTIONS ======
+// ============================================================
+
+function getReturnUrl() {
+  let returnUrl = urlParams.get('returnUrl');
+  if (!returnUrl) {
+    returnUrl = sessionStorage.getItem('returnUrl');
+  }
+  if (!returnUrl) {
+    returnUrl = sessionStorage.getItem('preLoginPage');
+  }
+  if (!returnUrl || returnUrl === 'null' || returnUrl === 'undefined') {
+    returnUrl = document.referrer;
+  }
+  if (returnUrl && returnUrl !== 'null' && returnUrl !== 'undefined') {
+    try {
+      returnUrl = decodeURIComponent(returnUrl);
+    } catch (e) {}
+    returnUrl = returnUrl.split('?')[0];
+    returnUrl = returnUrl.split('#')[0];
+    const excludePages = ['login', 'signup', 'verify', 'reset', 'check-verification'];
+    if (excludePages.some(page => returnUrl.includes(page))) {
+      returnUrl = null;
+    }
+  }
+  const redirect = urlParams.get('redirect');
+  if (redirect && !redirect.includes('login') && !redirect.includes('signup')) {
+    return redirect;
+  }
+  return returnUrl || '../index.html';
+}
+
+// ============================================================
+// ====== DYNAMIC AUTH LINKS ======
+// ============================================================
+
 (function() {
   function setupDynamicAuthLinks() {
     const currentPage = window.location.href;
@@ -5919,6 +6816,7 @@ document.querySelectorAll('.share-option-btn').forEach(btn => {
     setupDynamicAuthLinks();
   }
 })();
+
 </script>
 <script src="return-url-handler.js"></script>
 </body>
