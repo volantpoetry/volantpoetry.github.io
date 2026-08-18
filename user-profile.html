@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<DOCTYPE lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -3871,6 +3871,89 @@ body {
   50% { opacity: 0.9; }
 }
 
+/* ===== DELETE OPTIONS - COOLDOWN VS INSTANT ===== */
+.delete-option-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  border: 2px solid #ede8ff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.delete-option-card:hover {
+  border-color: #4b2aad;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(75, 42, 173, 0.1);
+}
+
+.delete-option-card.selected {
+  border-color: #dc3545;
+  background: #fff5f5;
+}
+
+.delete-option-card .option-icon {
+  font-size: 1.8rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.delete-option-card .option-icon.cooldown {
+  background: #e8f0fe;
+}
+
+.delete-option-card .option-icon.instant {
+  background: #ffebee;
+}
+
+.delete-option-card .option-content {
+  flex: 1;
+}
+
+.delete-option-card .option-content h4 {
+  margin: 0 0 2px 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.delete-option-card .option-content p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.delete-option-card .option-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.delete-option-card .option-radio.selected {
+  border-color: #dc3545;
+}
+
+.delete-option-card .option-radio.selected::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #dc3545;
+}
+
 </style>
 </head>
 <body>
@@ -4100,7 +4183,7 @@ body {
   </div>
 </div>
 
-<!-- ===== MANAGE ACCOUNT MODAL (Export Data + Delete Account) ===== -->
+<!-- ===== MANAGE ACCOUNT MODAL ===== -->
 <div id="manageAccountModal" class="send-message-modal" style="display: none;">
   <div class="send-message-content" style="max-width: 520px;">
     <div class="send-message-header">
@@ -4139,7 +4222,7 @@ body {
       <!-- Divider -->
       <hr style="border: none; border-top: 2px solid #f0edf7; margin: 8px 0;">
       
-      <!-- Export Data (GDPR) -->
+      <!-- Export Data -->
       <button id="manageExportBtn" style="
         display: flex;
         align-items: center;
@@ -4165,7 +4248,7 @@ body {
       <!-- Divider -->
       <hr style="border: none; border-top: 2px solid #f0edf7; margin: 8px 0;">
       
-      <!-- Delete Account (Danger) -->
+      <!-- Delete Account -->
       <button id="manageDeleteBtn" style="
         display: flex;
         align-items: center;
@@ -4183,7 +4266,7 @@ body {
         <span style="font-size: 1.4rem;">🗑️</span>
         <div style="flex: 1;">
           <div style="font-weight: 600; font-size: 0.95rem; color: #dc3545;">Delete Account</div>
-          <div style="font-size: 0.8rem; color: #dc3545;">Permanently delete your account with a 30-day cooldown period</div>
+          <div style="font-size: 0.8rem; color: #dc3545;">Permanently delete your account</div>
         </div>
         <span style="color: #dc3545; font-size: 1.1rem;">→</span>
       </button>
@@ -4242,7 +4325,7 @@ body {
   </div>
 </div>
 
-<!-- ===== GDPR DELETE CONFIRMATION MODAL (30-day cooldown) ===== -->
+<!-- ===== DELETE CONFIRMATION MODAL (With Cooldown + Instant Options) ===== -->
 <div id="deleteConfirmModal" class="send-message-modal" style="display: none;">
   <div class="send-message-content">
     <div class="send-message-header" style="border-bottom-color: #ff4d4d;">
@@ -4250,69 +4333,108 @@ body {
         <span class="send-message-icon" style="background: #ffebee;">⚠️</span>
         <div>
           <h3 style="color: #dc3545;">Delete Account</h3>
-          <p style="color: #dc3545;">30-day cooldown period before permanent deletion</p>
+          <p style="color: #dc3545;">Choose how you want to delete your account</p>
         </div>
       </div>
       <button class="send-message-close" id="closeDeleteConfirmModal">✕</button>
     </div>
     <div class="send-message-body">
       
-      <div style="background: #fff3cd; border-radius: 10px; padding: 15px; border: 1px solid #ffeaa7;">
-        <p style="color: #856404; font-size: 0.95rem; margin: 0;">
-          ⚠️ <strong>What happens when you request deletion:</strong>
-        </p>
-        <ul style="color: #856404; font-size: 0.85rem; margin-top: 8px; padding-left: 20px;">
-          <li>Your account will be <strong>frozen</strong> immediately</li>
-          <li>A <strong>30-day cooldown</strong> period will start</li>
-          <li>You can <strong>cancel</strong> anytime during cooldown</li>
-          <li>After 30 days, your account is <strong>permanently deleted</strong></li>
-          <li>This affects <strong>ALL Volant platforms</strong> (Poetry, Reads, Foundry)</li>
-        </ul>
+      <!-- Account Info Card -->
+      <div style="background: #f8f6ff; border-radius: 12px; padding: 15px; border: 2px solid #4b2aad;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: #4b2aad; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0;">
+            <span id="deleteModalInitials">JD</span>
+          </div>
+          <div>
+            <div style="font-weight: 600; font-size: 1.05rem; color: #4b2aad;" id="deleteModalUsername">username</div>
+            <div style="font-size: 0.85rem; color: #888;" id="deleteModalEmail">email@example.com</div>
+          </div>
+        </div>
       </div>
       
-      <div style="background: #f8f6ff; border-radius: 10px; padding: 15px; border: 1px solid #ede8ff;">
-        <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; cursor: pointer;">
+      <!-- Warning -->
+      <div style="background: #fff3cd; border-radius: 10px; padding: 12px 15px; border: 1px solid #ffeaa7;">
+        <p style="color: #856404; font-size: 0.9rem; margin: 0;">
+          ⚠️ <strong>You are about to delete your account:</strong> <span style="color: #dc3545; font-weight: 700;" id="deleteModalUsernameBold">username</span>
+        </p>
+      </div>
+      
+      <!-- Delete Options -->
+      <p style="font-size: 0.85rem; color: #555; margin: 4px 0 8px 0; font-weight: 500;">Choose deletion method:</p>
+      
+      <!-- Option 1: 30-Day Cooldown -->
+      <div class="delete-option-card selected" id="cooldownOption" style="border-color: #dc3545;">
+        <div class="option-icon cooldown">⏳</div>
+        <div class="option-content">
+          <h4>30-Day Cooldown <span style="font-size: 0.7rem; color: #888; font-weight: 400;">(Recommended)</span></h4>
+          <p>Account frozen immediately, 30 days to cancel, permanent deletion after</p>
+        </div>
+        <div class="option-radio selected" id="cooldownRadio"></div>
+      </div>
+      
+      <!-- Option 2: Instant Delete -->
+      <div class="delete-option-card" id="instantOption">
+        <div class="option-icon instant">⚡</div>
+        <div class="option-content">
+          <h4 style="color: #dc3545;">Instant Delete</h4>
+          <p style="color: #dc3545;">Permanently delete immediately — <strong>no recovery possible</strong></p>
+        </div>
+        <div class="option-radio" id="instantRadio"></div>
+      </div>
+      
+      <!-- Confirmation Checkboxes -->
+      <div style="background: #f8f6ff; border-radius: 10px; padding: 12px 15px; border: 1px solid #ede8ff; margin-top: 4px;">
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; cursor: pointer;">
           <input type="checkbox" id="deleteConfirmCheckbox" style="width: 18px; height: 18px; accent-color: #dc3545;">
-          I understand this is <strong>permanent and irreversible</strong> after 30 days
+          I understand this is <strong>permanent and irreversible</strong>
         </label>
       </div>
       
-      <div style="background: #f8f6ff; border-radius: 10px; padding: 15px; border: 1px solid #ede8ff;">
-        <label style="display: flex; align-items: center; gap: 10px; font-size: 0.9rem; cursor: pointer;">
+      <div style="background: #f8f6ff; border-radius: 10px; padding: 12px 15px; border: 1px solid #ede8ff;">
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; cursor: pointer;">
           <input type="checkbox" id="deleteTypeCheckbox" style="width: 18px; height: 18px; accent-color: #dc3545;">
           I want to <strong>permanently delete</strong> my account from ALL Volant platforms
         </label>
       </div>
       
+      <!-- Username Confirmation -->
       <div>
-        <label style="display: block; font-size: 0.9rem; font-weight: 600; color: #333; margin-bottom: 5px;">
-          Type your username to confirm:
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 5px;">
+          Type your username to confirm: <span style="color: #dc3545; font-weight: 700;" id="deleteConfirmUsernameLabel">username</span>
         </label>
         <input type="text" id="deleteConfirmUsername" placeholder="Enter your username" 
                style="width: 100%; padding: 10px 14px; border: 2px solid #ede8ff; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
       </div>
       
-      <div style="background: #e8f0fe; border-radius: 10px; padding: 12px 15px; border: 1px solid #d2e3fc;">
-        <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; color: #1a56db; cursor: pointer; line-height: 1.5;">
+      <!-- GDPR Rights -->
+      <div style="background: #e8f0fe; border-radius: 10px; padding: 10px 14px; border: 1px solid #d2e3fc;">
+        <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.8rem; color: #1a56db; cursor: pointer; line-height: 1.5;">
           <input type="checkbox" id="gdprRightCheckbox" style="width: 18px; height: 18px; margin-top: 2px; accent-color: #4b2aad;">
           I understand my GDPR rights and confirm I want to exercise my <strong>right to erasure</strong> (Article 17 GDPR)
         </label>
       </div>
       
-      <div style="background: #e8f0fe; border-radius: 10px; padding: 12px 15px; border: 1px solid #d2e3fc;">
-        <p style="color: #1a56db; font-size: 0.8rem; margin: 0; text-align: center;">
+      <!-- Cooldown Info (shown only when cooldown selected) -->
+      <div id="cooldownInfo" style="background: #e8f0fe; border-radius: 10px; padding: 10px 14px; border: 1px solid #d2e3fc;">
+        <p style="color: #1a56db; font-size: 0.75rem; margin: 0; text-align: center;">
           📅 Your account will be permanently deleted on: <strong id="deletionDateDisplay">30 days from now</strong>
-          <br><small>
-            During the 30-day cooldown, you can <strong>sign in</strong> and <strong>cancel</strong> to restore your account.<br>
-            After this date, <strong>no data can be recovered</strong>.
-          </small>
+          <br><small>During the 30-day cooldown, you can <strong>sign in</strong> and <strong>cancel</strong> to restore your account.</small>
+        </p>
+      </div>
+      
+      <!-- Instant Delete Warning (shown only when instant selected) -->
+      <div id="instantWarning" style="display: none; background: #ffebee; border-radius: 10px; padding: 10px 14px; border: 1px solid #ffcdd2;">
+        <p style="color: #c62828; font-size: 0.8rem; margin: 0; text-align: center; font-weight: 600;">
+          ⚡ <strong>INSTANT DELETION:</strong> This action is immediate and irreversible.
+          <br><small style="font-weight: 400;">No cooldown period. No recovery. All data will be permanently erased.</small>
         </p>
       </div>
       
       <div class="send-message-actions">
         <button id="cancelDeleteConfirm" class="cancel-btn">Cancel</button>
         <button id="submitDeleteAccount" class="submit-btn" style="background: #dc3545; box-shadow: 0 4px 14px rgba(220, 53, 69, 0.3);" disabled>
-          <span class="send-icon">🗑️</span> Request Deletion (30-day cooldown)
+          <span class="send-icon">🗑️</span> <span id="deleteButtonText">Request Deletion (30-day cooldown)</span>
         </button>
       </div>
     </div>
@@ -5040,7 +5162,6 @@ async function exportUserData(user) {
         const poemsSnap = await getDocs(poemsQuery);
         for (const poemDoc of poemsSnap.docs) {
             const poemData = poemDoc.data();
-            // Get comments for each poem
             const comments = [];
             const commentsSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments"));
             for (const commentDoc of commentsSnap.docs) {
@@ -5098,7 +5219,7 @@ async function exportUserData(user) {
             exportData.conversations.push({ id: convDoc.id, ...convDoc.data(), messages });
         }
         
-        // Get likes (poems user liked)
+        // Get likes
         const allPoemsSnap = await getDocs(collection(db, "recentPoems"));
         for (const poemDoc of allPoemsSnap.docs) {
             const poemData = poemDoc.data();
@@ -5132,10 +5253,49 @@ async function exportUserData(user) {
 }
 
 // ============================================================
-// ====== AMAZON-STYLE 30-DAY COOLDOWN DELETION ======
+// ====== DELETE FUNCTIONS ======
 // ============================================================
 
-async function requestAccountDeletion(user) {
+// Track which delete mode is selected: 'cooldown' or 'instant'
+let selectedDeleteMode = 'cooldown';
+
+// Switch between cooldown and instant delete
+function setDeleteMode(mode) {
+  selectedDeleteMode = mode;
+  
+  const cooldownOption = document.getElementById('cooldownOption');
+  const instantOption = document.getElementById('instantOption');
+  const cooldownRadio = document.getElementById('cooldownRadio');
+  const instantRadio = document.getElementById('instantRadio');
+  const cooldownInfo = document.getElementById('cooldownInfo');
+  const instantWarning = document.getElementById('instantWarning');
+  const deleteButtonText = document.getElementById('deleteButtonText');
+  
+  if (mode === 'cooldown') {
+    cooldownOption.classList.add('selected');
+    cooldownOption.style.borderColor = '#dc3545';
+    instantOption.classList.remove('selected');
+    instantOption.style.borderColor = '#ede8ff';
+    cooldownRadio.classList.add('selected');
+    instantRadio.classList.remove('selected');
+    cooldownInfo.style.display = 'block';
+    instantWarning.style.display = 'none';
+    deleteButtonText.textContent = 'Request Deletion (30-day cooldown)';
+  } else {
+    instantOption.classList.add('selected');
+    instantOption.style.borderColor = '#dc3545';
+    cooldownOption.classList.remove('selected');
+    cooldownOption.style.borderColor = '#ede8ff';
+    instantRadio.classList.add('selected');
+    cooldownRadio.classList.remove('selected');
+    cooldownInfo.style.display = 'none';
+    instantWarning.style.display = 'block';
+    deleteButtonText.textContent = 'Delete Immediately (No recovery)';
+  }
+}
+
+// Request deletion (cooldown or instant)
+async function requestAccountDeletion(user, mode) {
     if (!user) {
         alert('You must be signed in to delete your account.');
         return false;
@@ -5154,8 +5314,8 @@ async function requestAccountDeletion(user) {
         const userData = userDoc.data();
         const username = userData?.username || 'unknown';
         
-        // Check if deletion is already pending
-        if (userData.deletionRequested === true) {
+        // Check if deletion is already pending (only for cooldown mode)
+        if (mode === 'cooldown' && userData.deletionRequested === true) {
             const requestedAt = userData.deletionRequestedAt?.toDate?.() || new Date();
             const daysLeft = Math.ceil(
                 (requestedAt.getTime() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000 - Date.now()) / 
@@ -5168,52 +5328,67 @@ async function requestAccountDeletion(user) {
             }
         }
         
-        // Show confirmation with cooldown details
-        const confirmDelete = confirm(
-            `⚠️ ACCOUNT DELETION REQUEST (GDPR Article 17)\n\n` +
-            `You are requesting to delete your account: ${username}\n\n` +
-            `📋 What will happen:\n` +
-            `• A ${DELETION_COOLDOWN_DAYS}-day cooldown period will start\n` +
-            `• Your account will be frozen immediately\n` +
-            `• You can cancel deletion anytime during cooldown\n` +
-            `• After ${DELETION_COOLDOWN_DAYS} days, ALL data will be permanently deleted\n` +
-            `• This affects ALL Volant platforms (Poetry, Reads, Foundry)\n\n` +
-            `Do you want to proceed?`
-        );
+        // Show confirmation based on mode
+        let confirmMessage = '';
+        if (mode === 'cooldown') {
+            confirmMessage = 
+                `⚠️ ACCOUNT DELETION REQUEST (30-day cooldown)\n\n` +
+                `You are requesting to delete your account: ${username}\n\n` +
+                `📋 What will happen:\n` +
+                `• A ${DELETION_COOLDOWN_DAYS}-day cooldown period will start\n` +
+                `• Your account will be frozen immediately\n` +
+                `• You can cancel deletion anytime during cooldown\n` +
+                `• After ${DELETION_COOLDOWN_DAYS} days, ALL data will be permanently deleted\n` +
+                `• This affects ALL Volant platforms (Poetry, Reads, Foundry)\n\n` +
+                `Do you want to proceed?`;
+        } else {
+            confirmMessage = 
+                `⚡ INSTANT ACCOUNT DELETION\n\n` +
+                `You are about to INSTANTLY delete your account: ${username}\n\n` +
+                `⚠️ THIS ACTION IS IMMEDIATE AND IRREVERSIBLE:\n` +
+                `• No cooldown period\n` +
+                `• No recovery possible\n` +
+                `• All data permanently erased\n` +
+                `• Affects ALL Volant platforms (Poetry, Reads, Foundry)\n\n` +
+                `This is your FINAL WARNING. Do you want to continue?`;
+        }
         
-        if (!confirmDelete) return false;
+        if (!confirm(confirmMessage)) return false;
         
-        // Calculate deletion date
-        const deletionDate = new Date(Date.now() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
-        
-        // Request deletion (start cooldown)
-        await updateDoc(userRef, {
-            deletionRequested: true,
-            deletionRequestedAt: serverTimestamp(),
-            deletionScheduledFor: deletionDate,
-            accountFrozen: true,
-            deletionReason: 'User requested deletion (GDPR Article 17)'
-        });
-        
-        // Send notification about cooldown
-        await addDoc(collection(db, "notifications"), {
-            forUser: userId,
-            type: 'account_deletion_pending',
-            fromUser: userId,
-            fromUserName: username,
-            message: `⚠️ Your account deletion request has been received.\n\n` +
-                     `A ${DELETION_COOLDOWN_DAYS}-day cooldown period has started.\n` +
-                     `Your account is now frozen. You can cancel this request anytime.\n\n` +
-                     `If you do nothing, your account will be permanently deleted on:\n` +
-                     `${deletionDate.toLocaleDateString()} ${deletionDate.toLocaleTimeString()}`,
-            timestamp: serverTimestamp(),
-            read: false
-        });
-        
-        showStatus(`✅ Deletion request submitted! ${DELETION_COOLDOWN_DAYS}-day cooldown started. You can cancel anytime.`, 'info');
-        
-        // Show countdown banner
-        showDeletionCountdown(userId, DELETION_COOLDOWN_DAYS);
+        if (mode === 'cooldown') {
+            // Start 30-day cooldown
+            const deletionDate = new Date(Date.now() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
+            
+            await updateDoc(userRef, {
+                deletionRequested: true,
+                deletionRequestedAt: serverTimestamp(),
+                deletionScheduledFor: deletionDate,
+                accountFrozen: true,
+                deletionReason: 'User requested deletion (GDPR Article 17) - 30-day cooldown'
+            });
+            
+            await addDoc(collection(db, "notifications"), {
+                forUser: userId,
+                type: 'account_deletion_pending',
+                fromUser: userId,
+                fromUserName: username,
+                message: `⚠️ Your account deletion request has been received.\n\n` +
+                         `A ${DELETION_COOLDOWN_DAYS}-day cooldown period has started.\n` +
+                         `Your account is now frozen. You can cancel this request anytime.\n\n` +
+                         `If you do nothing, your account will be permanently deleted on:\n` +
+                         `${deletionDate.toLocaleDateString()} ${deletionDate.toLocaleTimeString()}`,
+                timestamp: serverTimestamp(),
+                read: false
+            });
+            
+            showStatus(`✅ Deletion request submitted! ${DELETION_COOLDOWN_DAYS}-day cooldown started. You can cancel anytime.`, 'info');
+            showDeletionCountdown(userId, DELETION_COOLDOWN_DAYS);
+            
+        } else {
+            // INSTANT DELETE - Execute immediately
+            showStatus('⚡ Deleting account instantly...', 'info');
+            await executeDeletion(userId, user);
+        }
         
         return true;
         
@@ -5229,7 +5404,6 @@ async function requestAccountDeletion(user) {
 // ============================================================
 
 function showDeletionCountdown(userId, daysLeft) {
-    // Remove existing banner
     const existingBanner = document.getElementById('deletionCountdownBanner');
     if (existingBanner) existingBanner.remove();
     
@@ -6858,10 +7032,25 @@ document.getElementById('manageExportBtn')?.addEventListener('click', function()
   }
 });
 
-// Manage Delete button - opens Delete confirmation modal
+// Manage Delete button - opens Delete confirmation modal with options
 document.getElementById('manageDeleteBtn')?.addEventListener('click', function() {
   document.getElementById('manageAccountModal').classList.remove('show');
   document.getElementById('manageAccountModal').style.display = 'none';
+  
+  // Get the username from the profile
+  const username = document.getElementById('username')?.textContent || 'User';
+  const email = document.getElementById('email')?.textContent || 'email@example.com';
+  const initials = username.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  
+  // Populate the delete modal with user info
+  document.getElementById('deleteModalUsername').textContent = username;
+  document.getElementById('deleteModalUsernameBold').textContent = username;
+  document.getElementById('deleteConfirmUsernameLabel').textContent = username;
+  document.getElementById('deleteModalEmail').textContent = email;
+  document.getElementById('deleteModalInitials').textContent = initials;
+  
+  // Reset to cooldown mode (default)
+  setDeleteMode('cooldown');
   
   // Set deletion date
   const deletionDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
@@ -6889,6 +7078,15 @@ document.getElementById('manageDeleteBtn')?.addEventListener('click', function()
     deleteModal.classList.add('show');
     deleteModal.style.display = 'flex';
   }
+});
+
+// Delete option click handlers
+document.getElementById('cooldownOption')?.addEventListener('click', function() {
+  setDeleteMode('cooldown');
+});
+
+document.getElementById('instantOption')?.addEventListener('click', function() {
+  setDeleteMode('instant');
 });
 
 // ============================================================
@@ -6985,7 +7183,8 @@ document.getElementById('submitDeleteAccount')?.addEventListener('click', async 
   document.getElementById('deleteConfirmModal').classList.remove('show');
   document.getElementById('deleteConfirmModal').style.display = 'none';
   
-  await requestAccountDeletion(user);
+  // Use the selected mode
+  await requestAccountDeletion(user, selectedDeleteMode);
 });
 
 // ============================================================
