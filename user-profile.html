@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<DOCTYPE lang="en">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profile | Volant Poetry</title>
+<title>Profile</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
@@ -3816,7 +3816,7 @@ body {
   outline: none !important;
 }
 
-/* ===== CO-WRITTEN WITH - PROFILE PAGE ===== */
+/* ===== CO-WRITTEN WITH - PROFILE PAGE (SIMPLE TEXT) ===== */
 .profile-poems .collaborator-line {
   margin-top: 4px !important;
   font-size: 0.95rem !important;
@@ -3853,29 +3853,112 @@ body {
   }
 }
 
-/* ===== DELETION COUNTDOWN BANNER ===== */
-#deletionCountdownBanner {
-  background: #ff6b6b;
+/* ===== CONFIRMATION MESSAGE ===== */
+.confirmation-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2d7d46;
   color: white;
-  padding: 15px 20px;
+  padding: 16px 24px;
   border-radius: 12px;
-  margin: 15px 0;
-  text-align: center;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
   font-family: 'Inter', sans-serif;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-  animation: pulseWarning 2s infinite;
+  font-size: 0.95rem;
+  font-weight: 500;
+  z-index: 99999;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  animation: slideDown 0.4s ease;
 }
 
-@keyframes pulseWarning {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.9; }
+.confirmation-message.show {
+  display: flex;
+}
+
+.confirmation-message .icon {
+  font-size: 1.4rem;
+}
+
+.confirmation-message .close-confirm {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.confirmation-message .close-confirm:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ===== TOAST MESSAGE (GREEN, 5 SECONDS) ===== */
+.toast-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2d7d46;
+  color: white;
+  padding: 14px 24px;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(45, 125, 70, 0.3);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  z-index: 99998;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  animation: slideDown 0.4s ease;
+  min-width: 280px;
+  justify-content: center;
+}
+
+.toast-message.show {
+  display: flex;
+}
+
+.toast-message .toast-icon {
+  font-size: 1.4rem;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 /* ===== DELETE OPTIONS - COOLDOWN VS INSTANT ===== */
 .delete-option-card {
   background: white;
   border-radius: 12px;
-  padding: 16px;
+  padding: 14px 16px;
   border: 2px solid #ede8ff;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -3896,9 +3979,9 @@ body {
 }
 
 .delete-option-card .option-icon {
-  font-size: 1.8rem;
-  width: 48px;
-  height: 48px;
+  font-size: 1.6rem;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -3920,13 +4003,13 @@ body {
 
 .delete-option-card .option-content h4 {
   margin: 0 0 2px 0;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
 .delete-option-card .option-content p {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #888;
 }
 
@@ -3953,7 +4036,18 @@ body {
   border-radius: 50%;
   background: #dc3545;
 }
+/* ===== PREVENT PAGE OWNER USERNAME FROM BEING CLICKABLE ===== */
+.recent-poem-card .author-link.owner-link {
+  pointer-events: none !important;
+  cursor: default !important;
+  color: inherit !important;
+  text-decoration: none !important;
+}
 
+.recent-poem-card .author-link.owner-link:hover {
+  color: inherit !important;
+  text-decoration: none !important;
+}
 </style>
 </head>
 <body>
@@ -4248,7 +4342,7 @@ body {
       <!-- Divider -->
       <hr style="border: none; border-top: 2px solid #f0edf7; margin: 8px 0;">
       
-      <!-- Delete Account -->
+      <!-- Request Account Deletion -->
       <button id="manageDeleteBtn" style="
         display: flex;
         align-items: center;
@@ -4265,8 +4359,8 @@ body {
       ">
         <span style="font-size: 1.4rem;">🗑️</span>
         <div style="flex: 1;">
-          <div style="font-weight: 600; font-size: 0.95rem; color: #dc3545;">Delete Account</div>
-          <div style="font-size: 0.8rem; color: #dc3545;">Permanently delete your account</div>
+          <div style="font-weight: 600; font-size: 0.95rem; color: #dc3545;">Request Account Deletion</div>
+          <div style="font-size: 0.8rem; color: #dc3545;">Send a deletion request to the Volant Team</div>
         </div>
         <span style="color: #dc3545; font-size: 1.1rem;">→</span>
       </button>
@@ -4325,15 +4419,28 @@ body {
   </div>
 </div>
 
-<!-- ===== DELETE CONFIRMATION MODAL (With Cooldown + Instant Options) ===== -->
+<!-- ===== CONFIRMATION MESSAGE (Data Export Success) ===== -->
+<div id="confirmationMessage" class="confirmation-message">
+  <span class="icon">✅</span>
+  <span id="confirmationMessageText">Data export downloaded successfully!</span>
+  <button class="close-confirm" id="closeConfirmation">✕</button>
+</div>
+
+<!-- ===== TOAST MESSAGE (Gathering Data) ===== -->
+<div id="toastMessage" class="toast-message">
+  <span class="toast-icon">⏳</span>
+  <span id="toastMessageText">Gathering your data... This may take a moment.</span>
+</div>
+
+<!-- ===== DELETE REQUEST CONFIRMATION MODAL ===== -->
 <div id="deleteConfirmModal" class="send-message-modal" style="display: none;">
   <div class="send-message-content">
     <div class="send-message-header" style="border-bottom-color: #ff4d4d;">
       <div class="send-message-header-left">
         <span class="send-message-icon" style="background: #ffebee;">⚠️</span>
         <div>
-          <h3 style="color: #dc3545;">Delete Account</h3>
-          <p style="color: #dc3545;">Choose how you want to delete your account</p>
+          <h3 style="color: #dc3545;">Request Account Deletion</h3>
+          <p style="color: #dc3545;">Send a deletion request to the Volant Team</p>
         </div>
       </div>
       <button class="send-message-close" id="closeDeleteConfirmModal">✕</button>
@@ -4343,7 +4450,7 @@ body {
       <!-- Account Info Card -->
       <div style="background: #f8f6ff; border-radius: 12px; padding: 15px; border: 2px solid #4b2aad;">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 48px; height: 48px; border-radius: 50%; background: #4b2aad; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0;">
+          <div id="deleteModalAvatar" style="width: 48px; height: 48px; border-radius: 50%; background: #4b2aad; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0;">
             <span id="deleteModalInitials">JD</span>
           </div>
           <div>
@@ -4356,31 +4463,18 @@ body {
       <!-- Warning -->
       <div style="background: #fff3cd; border-radius: 10px; padding: 12px 15px; border: 1px solid #ffeaa7;">
         <p style="color: #856404; font-size: 0.9rem; margin: 0;">
-          ⚠️ <strong>You are about to delete your account:</strong> <span style="color: #dc3545; font-weight: 700;" id="deleteModalUsernameBold">username</span>
+          ⚠️ <strong>You are requesting to delete your account:</strong> <span style="color: #dc3545; font-weight: 700;" id="deleteModalUsernameBold">username</span>
         </p>
       </div>
       
-      <!-- Delete Options -->
-      <p style="font-size: 0.85rem; color: #555; margin: 4px 0 8px 0; font-weight: 500;">Choose deletion method:</p>
-      
-      <!-- Option 1: 30-Day Cooldown -->
-      <div class="delete-option-card selected" id="cooldownOption" style="border-color: #dc3545;">
-        <div class="option-icon cooldown">⏳</div>
-        <div class="option-content">
-          <h4>30-Day Cooldown <span style="font-size: 0.7rem; color: #888; font-weight: 400;">(Recommended)</span></h4>
-          <p>Account frozen immediately, 30 days to cancel, permanent deletion after</p>
-        </div>
-        <div class="option-radio selected" id="cooldownRadio"></div>
-      </div>
-      
-      <!-- Option 2: Instant Delete -->
-      <div class="delete-option-card" id="instantOption">
-        <div class="option-icon instant">⚡</div>
-        <div class="option-content">
-          <h4 style="color: #dc3545;">Instant Delete</h4>
-          <p style="color: #dc3545;">Permanently delete immediately — <strong>no recovery possible</strong></p>
-        </div>
-        <div class="option-radio" id="instantRadio"></div>
+      <!-- Info about request process -->
+      <div style="background: #e8f0fe; border-radius: 10px; padding: 12px 15px; border: 1px solid #d2e3fc;">
+        <p style="color: #1a56db; font-size: 0.85rem; margin: 0; text-align: center; line-height: 1.6;">
+          📋 <strong>How it works:</strong><br>
+          Your deletion request will be sent to the Volant Team.<br>
+          They will review and process your request within <strong>7 days</strong>.<br>
+          You will receive a confirmation email once your account is deleted.
+        </p>
       </div>
       
       <!-- Confirmation Checkboxes -->
@@ -4415,26 +4509,10 @@ body {
         </label>
       </div>
       
-      <!-- Cooldown Info (shown only when cooldown selected) -->
-      <div id="cooldownInfo" style="background: #e8f0fe; border-radius: 10px; padding: 10px 14px; border: 1px solid #d2e3fc;">
-        <p style="color: #1a56db; font-size: 0.75rem; margin: 0; text-align: center;">
-          📅 Your account will be permanently deleted on: <strong id="deletionDateDisplay">30 days from now</strong>
-          <br><small>During the 30-day cooldown, you can <strong>sign in</strong> and <strong>cancel</strong> to restore your account.</small>
-        </p>
-      </div>
-      
-      <!-- Instant Delete Warning (shown only when instant selected) -->
-      <div id="instantWarning" style="display: none; background: #ffebee; border-radius: 10px; padding: 10px 14px; border: 1px solid #ffcdd2;">
-        <p style="color: #c62828; font-size: 0.8rem; margin: 0; text-align: center; font-weight: 600;">
-          ⚡ <strong>INSTANT DELETION:</strong> This action is immediate and irreversible.
-          <br><small style="font-weight: 400;">No cooldown period. No recovery. All data will be permanently erased.</small>
-        </p>
-      </div>
-      
       <div class="send-message-actions">
         <button id="cancelDeleteConfirm" class="cancel-btn">Cancel</button>
         <button id="submitDeleteAccount" class="submit-btn" style="background: #dc3545; box-shadow: 0 4px 14px rgba(220, 53, 69, 0.3);" disabled>
-          <span class="send-icon">🗑️</span> <span id="deleteButtonText">Request Deletion (30-day cooldown)</span>
+          <span class="send-icon">✉️</span> <span id="deleteButtonText">Send Deletion Request</span>
         </button>
       </div>
     </div>
@@ -4474,8 +4552,7 @@ import {
 import { 
   getAuth, 
   onAuthStateChanged, 
-  signOut, 
-  deleteUser 
+  signOut 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // ============================================================
@@ -4499,7 +4576,6 @@ const auth = getAuth(app);
 // ====== CONSTANTS ======
 // ============================================================
 
-const DELETION_COOLDOWN_DAYS = 30;
 const PLATFORM = 'poetry';
 const READ_TRACKING_KEY = 'poem_read_tracking';
 const READ_TIMEOUT_MINUTES = 30;
@@ -4507,6 +4583,63 @@ const READ_DELAY_SECONDS = 8;
 const VIEW_THRESHOLD = 0.6;
 const activeTimers = new Map();
 const viewStartTimes = new Map();
+
+// ============================================================
+// ====== SHOW CONFIRMATION MESSAGE ======
+// ============================================================
+
+function showConfirmationMessage(message, duration = 6000) {
+  const el = document.getElementById('confirmationMessage');
+  const textEl = document.getElementById('confirmationMessageText');
+  if (!el || !textEl) return;
+  
+  textEl.textContent = message;
+  el.classList.add('show');
+  
+  if (duration > 0) {
+    clearTimeout(el._hideTimeout);
+    el._hideTimeout = setTimeout(() => {
+      el.classList.remove('show');
+    }, duration);
+  }
+}
+
+// Close confirmation message manually
+document.getElementById('closeConfirmation')?.addEventListener('click', function() {
+  const el = document.getElementById('confirmationMessage');
+  if (el) {
+    el.classList.remove('show');
+    clearTimeout(el._hideTimeout);
+  }
+});
+
+// ============================================================
+// ====== SHOW TOAST MESSAGE (Green, 5 seconds) ======
+// ============================================================
+
+function showToastMessage(message, duration = 5000) {
+  const el = document.getElementById('toastMessage');
+  const textEl = document.getElementById('toastMessageText');
+  if (!el || !textEl) return;
+  
+  textEl.textContent = message;
+  el.classList.add('show');
+  
+  if (duration > 0) {
+    clearTimeout(el._hideTimeout);
+    el._hideTimeout = setTimeout(() => {
+      el.classList.remove('show');
+    }, duration);
+  }
+}
+
+function hideToastMessage() {
+  const el = document.getElementById('toastMessage');
+  if (el) {
+    el.classList.remove('show');
+    clearTimeout(el._hideTimeout);
+  }
+}
 
 // ============================================================
 // ====== HELPER FUNCTIONS ======
@@ -5111,7 +5244,7 @@ async function loadFollowButtonAndCounts(viewerUid, targetUid) {
 }
 
 // ============================================================
-// ====== GDPR DATA EXPORT ======
+// ====== GDPR DATA EXPORT (with Usernames) ======
 // ============================================================
 
 async function exportUserData(user) {
@@ -5127,7 +5260,41 @@ async function exportUserData(user) {
         const userData = userDoc.exists() ? userDoc.data() : null;
         const username = userData?.username || 'unknown';
         
+        // ✅ Show toast message for 5 seconds
+        showToastMessage('⏳ Gathering your data... This may take a moment.', 5000);
         showStatus('📥 Gathering your data... This may take a moment.', 'info');
+        
+        // Helper function to get username from UID
+        async function getUsernameFromUid(uid) {
+            if (!uid) return 'Unknown User';
+            try {
+                const userDoc = await getDoc(doc(db, "users", uid));
+                if (userDoc.exists()) {
+                    return userDoc.data().username || 'Unknown User';
+                }
+                return 'Unknown User';
+            } catch (err) {
+                return 'Unknown User';
+            }
+        }
+
+        // Helper function to get user data from UID
+        async function getUserDataFromUid(uid) {
+            if (!uid) return { username: 'Unknown User', photoURL: null };
+            try {
+                const userDoc = await getDoc(doc(db, "users", uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    return {
+                        username: data.username || 'Unknown User',
+                        photoURL: data.photoURL || null
+                    };
+                }
+                return { username: 'Unknown User', photoURL: null };
+            } catch (err) {
+                return { username: 'Unknown User', photoURL: null };
+            }
+        }
         
         const exportData = {
             user: {
@@ -5146,8 +5313,6 @@ async function exportUserData(user) {
             },
             poems: [],
             drafts: [],
-            comments: [],
-            replies: [],
             followers: [],
             following: [],
             conversations: [],
@@ -5157,82 +5322,192 @@ async function exportUserData(user) {
             platform: PLATFORM
         };
         
-        // Get poems
+        // ============================================
+        // 1. GET POEMS with commenter usernames
+        // ============================================
+        
         const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
         const poemsSnap = await getDocs(poemsQuery);
+        
         for (const poemDoc of poemsSnap.docs) {
             const poemData = poemDoc.data();
+            
+            // Get comments with usernames
             const comments = [];
             const commentsSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments"));
             for (const commentDoc of commentsSnap.docs) {
                 const commentData = commentDoc.data();
+                
+                // Get commenter username
+                const commenterUsername = commentData.username || 
+                    (commentData.userId ? await getUsernameFromUid(commentData.userId) : 'Anonymous');
+                
+                // Get replies with usernames
                 const replies = [];
                 const repliesSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments", commentDoc.id, "replies"));
                 for (const replyDoc of repliesSnap.docs) {
-                    replies.push({ id: replyDoc.id, ...replyDoc.data() });
+                    const replyData = replyDoc.data();
+                    const replierUsername = replyData.username || 
+                        (replyData.userId ? await getUsernameFromUid(replyData.userId) : 'Anonymous');
+                    replies.push({
+                        text: replyData.text || '',
+                        username: replierUsername,
+                        timestamp: replyData.timestamp || null
+                    });
                 }
-                comments.push({ id: commentDoc.id, ...commentData, replies });
+                
+                comments.push({
+                    text: commentData.text || '',
+                    username: commenterUsername,
+                    timestamp: commentData.timestamp || null,
+                    replies: replies
+                });
             }
-            exportData.poems.push({ 
-                id: poemDoc.id, 
-                ...poemData, 
-                comments: comments 
+            
+            // Get likedBy usernames
+            const likedByUsernames = [];
+            if (Array.isArray(poemData.likedBy)) {
+                for (const uid of poemData.likedBy) {
+                    const uname = await getUsernameFromUid(uid);
+                    likedByUsernames.push(uname);
+                }
+            }
+            
+            exportData.poems.push({
+                id: poemDoc.id,
+                title: poemData.title || 'Untitled',
+                content: poemData.content || '',
+                categories: poemData.categories || [],
+                likes: poemData.likes || 0,
+                likedBy: likedByUsernames,
+                views: poemData.views || 0,
+                timestamp: poemData.timestamp || null,
+                comments: comments
             });
         }
         
-        // Get drafts
+        // ============================================
+        // 2. GET DRAFTS
+        // ============================================
+        
         const draftsQuery = query(collection(db, "drafts"), where("userId", "==", userId));
         const draftsSnap = await getDocs(draftsQuery);
         for (const draftDoc of draftsSnap.docs) {
             exportData.drafts.push({ id: draftDoc.id, ...draftDoc.data() });
         }
         
-        // Get notifications
-        const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
-        const notifSnap = await getDocs(notifQuery);
-        for (const notifDoc of notifSnap.docs) {
-            exportData.notifications.push({ id: notifDoc.id, ...notifDoc.data() });
-        }
+        // ============================================
+        // 3. GET FOLLOWERS (with usernames)
+        // ============================================
         
-        // Get social data
         const socialQuery = query(collection(db, "social"));
         const socialSnap = await getDocs(socialQuery);
         for (const socialDoc of socialSnap.docs) {
             const data = socialDoc.data();
             if (data.followerId === userId) {
-                exportData.following.push(data);
+                const followedData = await getUserDataFromUid(data.followedId);
+                exportData.following.push({
+                    username: followedData.username,
+                    photoURL: followedData.photoURL,
+                    createdAt: data.createdAt || null
+                });
             }
             if (data.followedId === userId) {
-                exportData.followers.push(data);
+                const followerData = await getUserDataFromUid(data.followerId);
+                exportData.followers.push({
+                    username: followerData.username,
+                    photoURL: followerData.photoURL,
+                    createdAt: data.createdAt || null
+                });
             }
         }
         
-        // Get conversations
+        // ============================================
+        // 4. GET CONVERSATIONS (with usernames)
+        // ============================================
+        
         const convQuery = query(collection(db, "conversations"), where("participants", "array-contains", userId));
         const convSnap = await getDocs(convQuery);
         for (const convDoc of convSnap.docs) {
+            const convData = convDoc.data();
+            
             const messages = [];
             const msgSnap = await getDocs(collection(db, "conversations", convDoc.id, "messages"));
             for (const msgDoc of msgSnap.docs) {
-                messages.push({ id: msgDoc.id, ...msgDoc.data() });
+                const msgData = msgDoc.data();
+                const senderUsername = msgData.senderId ? 
+                    await getUsernameFromUid(msgData.senderId) : 'Unknown';
+                messages.push({
+                    text: msgData.text || '',
+                    senderUsername: senderUsername,
+                    timestamp: msgData.timestamp || null,
+                    read: msgData.read || false
+                });
             }
-            exportData.conversations.push({ id: convDoc.id, ...convDoc.data(), messages });
+            
+            const participantUsernames = [];
+            if (Array.isArray(convData.participants)) {
+                for (const uid of convData.participants) {
+                    if (uid !== userId) {
+                        const uname = await getUsernameFromUid(uid);
+                        participantUsernames.push(uname);
+                    }
+                }
+            }
+            
+            exportData.conversations.push({
+                with: participantUsernames.join(', '),
+                participants: participantUsernames,
+                messages: messages,
+                createdAt: convData.createdAt || null,
+                lastMessage: convData.lastMessage || null,
+                lastMessageTime: convData.lastMessageTime || null
+            });
         }
         
-        // Get likes
+        // ============================================
+        // 5. GET NOTIFICATIONS (with usernames)
+        // ============================================
+        
+        const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
+        const notifSnap = await getDocs(notifQuery);
+        for (const notifDoc of notifSnap.docs) {
+            const notifData = notifDoc.data();
+            const fromUsername = notifData.fromUserName || 
+                (notifData.fromUser ? await getUsernameFromUid(notifData.fromUser) : 'System');
+            
+            exportData.notifications.push({
+                type: notifData.type || 'general',
+                fromUsername: fromUsername,
+                message: notifData.message || '',
+                timestamp: notifData.timestamp || null,
+                read: notifData.read || false,
+                poemTitle: notifData.poemTitle || null
+            });
+        }
+        
+        // ============================================
+        // 6. GET LIKES (with poem author usernames)
+        // ============================================
+        
         const allPoemsSnap = await getDocs(collection(db, "recentPoems"));
         for (const poemDoc of allPoemsSnap.docs) {
             const poemData = poemDoc.data();
             if (Array.isArray(poemData.likedBy) && poemData.likedBy.includes(userId)) {
+                const authorUsername = poemData.submittedBy || 
+                    (poemData.authorId ? await getUsernameFromUid(poemData.authorId) : 'Unknown');
                 exportData.likes.push({
-                    poemId: poemDoc.id,
                     poemTitle: poemData.title || 'Untitled',
+                    authorUsername: authorUsername,
                     likedAt: poemData.likedAt || null
                 });
             }
         }
         
-        // Create and download JSON file
+        // ============================================
+        // 7. CREATE AND DOWNLOAD JSON FILE
+        // ============================================
+        
         const jsonStr = JSON.stringify(exportData, null, 2);
         const blob = new Blob([jsonStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -5244,60 +5519,27 @@ async function exportUserData(user) {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
+        // Hide toast if still showing
+        hideToastMessage();
+        
+        // ✅ Show confirmation message for 6 seconds
+        showConfirmationMessage('✅ Data export downloaded successfully! Your data is ready.', 6000);
         showStatus('✅ Data export downloaded successfully!', 'success');
         
     } catch (error) {
         console.error('Error exporting data:', error);
+        hideToastMessage();
         showStatus('❌ Failed to export data: ' + error.message, 'error');
     }
 }
 
 // ============================================================
-// ====== DELETE FUNCTIONS ======
+// ====== DELETE FUNCTIONS (Request to Admin) ======
 // ============================================================
 
-// Track which delete mode is selected: 'cooldown' or 'instant'
-let selectedDeleteMode = 'cooldown';
-
-// Switch between cooldown and instant delete
-function setDeleteMode(mode) {
-  selectedDeleteMode = mode;
-  
-  const cooldownOption = document.getElementById('cooldownOption');
-  const instantOption = document.getElementById('instantOption');
-  const cooldownRadio = document.getElementById('cooldownRadio');
-  const instantRadio = document.getElementById('instantRadio');
-  const cooldownInfo = document.getElementById('cooldownInfo');
-  const instantWarning = document.getElementById('instantWarning');
-  const deleteButtonText = document.getElementById('deleteButtonText');
-  
-  if (mode === 'cooldown') {
-    cooldownOption.classList.add('selected');
-    cooldownOption.style.borderColor = '#dc3545';
-    instantOption.classList.remove('selected');
-    instantOption.style.borderColor = '#ede8ff';
-    cooldownRadio.classList.add('selected');
-    instantRadio.classList.remove('selected');
-    cooldownInfo.style.display = 'block';
-    instantWarning.style.display = 'none';
-    deleteButtonText.textContent = 'Request Deletion (30-day cooldown)';
-  } else {
-    instantOption.classList.add('selected');
-    instantOption.style.borderColor = '#dc3545';
-    cooldownOption.classList.remove('selected');
-    cooldownOption.style.borderColor = '#ede8ff';
-    instantRadio.classList.add('selected');
-    cooldownRadio.classList.remove('selected');
-    cooldownInfo.style.display = 'none';
-    instantWarning.style.display = 'block';
-    deleteButtonText.textContent = 'Delete Immediately (No recovery)';
-  }
-}
-
-// Request deletion (cooldown or instant)
-async function requestAccountDeletion(user, mode) {
+async function requestAccountDeletion(user) {
     if (!user) {
-        alert('You must be signed in to delete your account.');
+        alert('You must be signed in to request account deletion.');
         return false;
     }
     
@@ -5313,369 +5555,74 @@ async function requestAccountDeletion(user, mode) {
         
         const userData = userDoc.data();
         const username = userData?.username || 'unknown';
+        const email = userData?.email || 'unknown';
         
-        // Check if deletion is already pending (only for cooldown mode)
-        if (mode === 'cooldown' && userData.deletionRequested === true) {
-            const requestedAt = userData.deletionRequestedAt?.toDate?.() || new Date();
-            const daysLeft = Math.ceil(
-                (requestedAt.getTime() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000 - Date.now()) / 
-                (24 * 60 * 60 * 1000)
-            );
-            
-            if (daysLeft > 0) {
-                alert(`⚠️ Account deletion already requested. ${daysLeft} days remaining before permanent deletion.`);
-                return false;
-            }
+        // Check if deletion request already exists
+        if (userData.deletionRequested === true) {
+            alert('⚠️ You have already requested account deletion. The Volant Team will process your request within 7 days.');
+            return false;
         }
         
-        // Show confirmation based on mode
-        let confirmMessage = '';
-        if (mode === 'cooldown') {
-            confirmMessage = 
-                `⚠️ ACCOUNT DELETION REQUEST (30-day cooldown)\n\n` +
-                `You are requesting to delete your account: ${username}\n\n` +
-                `📋 What will happen:\n` +
-                `• A ${DELETION_COOLDOWN_DAYS}-day cooldown period will start\n` +
-                `• Your account will be frozen immediately\n` +
-                `• You can cancel deletion anytime during cooldown\n` +
-                `• After ${DELETION_COOLDOWN_DAYS} days, ALL data will be permanently deleted\n` +
-                `• This affects ALL Volant platforms (Poetry, Reads, Foundry)\n\n` +
-                `Do you want to proceed?`;
-        } else {
-            confirmMessage = 
-                `⚡ INSTANT ACCOUNT DELETION\n\n` +
-                `You are about to INSTANTLY delete your account: ${username}\n\n` +
-                `⚠️ THIS ACTION IS IMMEDIATE AND IRREVERSIBLE:\n` +
-                `• No cooldown period\n` +
-                `• No recovery possible\n` +
-                `• All data permanently erased\n` +
-                `• Affects ALL Volant platforms (Poetry, Reads, Foundry)\n\n` +
-                `This is your FINAL WARNING. Do you want to continue?`;
-        }
+        // Show confirmation
+        const confirmMessage = 
+            `⚠️ ACCOUNT DELETION REQUEST\n\n` +
+            `You are requesting to delete your account: ${username}\n\n` +
+            `📋 What will happen:\n` +
+            `• Your deletion request will be sent to the Volant Team\n` +
+            `• The team will review and process your request within 7 days\n` +
+            `• You will receive a confirmation email once your account is deleted\n` +
+            `• This affects ALL Volant platforms (Poetry, Reads, Foundry)\n\n` +
+            `Do you want to proceed?`;
         
         if (!confirm(confirmMessage)) return false;
         
-        if (mode === 'cooldown') {
-            // Start 30-day cooldown
-            const deletionDate = new Date(Date.now() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
-            
-            await updateDoc(userRef, {
-                deletionRequested: true,
-                deletionRequestedAt: serverTimestamp(),
-                deletionScheduledFor: deletionDate,
-                accountFrozen: true,
-                deletionReason: 'User requested deletion (GDPR Article 17) - 30-day cooldown'
-            });
-            
-            await addDoc(collection(db, "notifications"), {
-                forUser: userId,
-                type: 'account_deletion_pending',
-                fromUser: userId,
-                fromUserName: username,
-                message: `⚠️ Your account deletion request has been received.\n\n` +
-                         `A ${DELETION_COOLDOWN_DAYS}-day cooldown period has started.\n` +
-                         `Your account is now frozen. You can cancel this request anytime.\n\n` +
-                         `If you do nothing, your account will be permanently deleted on:\n` +
-                         `${deletionDate.toLocaleDateString()} ${deletionDate.toLocaleTimeString()}`,
-                timestamp: serverTimestamp(),
-                read: false
-            });
-            
-            showStatus(`✅ Deletion request submitted! ${DELETION_COOLDOWN_DAYS}-day cooldown started. You can cancel anytime.`, 'info');
-            showDeletionCountdown(userId, DELETION_COOLDOWN_DAYS);
-            
-        } else {
-            // INSTANT DELETE - Execute immediately
-            showStatus('⚡ Deleting account instantly...', 'info');
-            await executeDeletion(userId, user);
-        }
+        // Create deletion request document for admins
+        await addDoc(collection(db, "deletion_requests"), {
+            userId: userId,
+            username: username,
+            email: email,
+            requestedAt: serverTimestamp(),
+            status: 'pending',
+            platform: PLATFORM,
+            reason: 'User requested deletion (GDPR Article 17)'
+        });
+        
+        // Mark user as deletion requested
+        await updateDoc(userRef, {
+            deletionRequested: true,
+            deletionRequestedAt: serverTimestamp(),
+            deletionReason: 'User requested deletion (GDPR Article 17)'
+        });
+        
+        // Send notification to user
+        await addDoc(collection(db, "notifications"), {
+            forUser: userId,
+            type: 'deletion_request_submitted',
+            fromUser: userId,
+            fromUserName: username,
+            message: `✅ Your account deletion request has been submitted successfully!\n\n` +
+                     `The Volant Team will review and process your request within 7 days.\n` +
+                     `You will receive a confirmation email once your account has been deleted.\n\n` +
+                     `If you have any questions, please contact us at reach.volant@gmail.com`,
+            timestamp: serverTimestamp(),
+            read: false
+        });
+        
+        showStatus('✅ Deletion request submitted! The Volant Team will process it within 7 days.', 'success');
+        
+        // Show confirmation message
+        showConfirmationMessage('✅ Deletion request submitted! You will receive a confirmation email once processed.', 6000);
+        
+        // Redirect after a moment
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 4000);
         
         return true;
         
     } catch (error) {
         console.error('Error requesting deletion:', error);
         showStatus('❌ Failed to request deletion: ' + error.message, 'error');
-        return false;
-    }
-}
-
-// ============================================================
-// ====== SHOW DELETION COUNTDOWN BANNER ======
-// ============================================================
-
-function showDeletionCountdown(userId, daysLeft) {
-    const existingBanner = document.getElementById('deletionCountdownBanner');
-    if (existingBanner) existingBanner.remove();
-    
-    if (!daysLeft || daysLeft <= 0) {
-        checkPendingDeletions(auth.currentUser);
-        return;
-    }
-    
-    const banner = document.createElement('div');
-    banner.id = 'deletionCountdownBanner';
-    
-    banner.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-            <div>
-                <strong>⚠️ Account Deletion Pending</strong>
-                <div style="font-size: 0.9rem; margin-top: 4px;">
-                    Your account will be permanently deleted in <strong>${daysLeft} days</strong>
-                    <span style="font-size: 0.8rem; color: rgba(255,255,255,0.8); display: block; margin-top: 2px;">
-                        You can cancel anytime during the ${DELETION_COOLDOWN_DAYS}-day cooldown period
-                    </span>
-                </div>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button id="cancelDeletionBtn" style="
-                    background: #fff;
-                    color: #ff6b6b;
-                    border: none;
-                    border-radius: 8px;
-                    padding: 8px 16px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    font-family: 'Inter', sans-serif;
-                    transition: all 0.2s;
-                ">Cancel Deletion</button>
-                <button id="deleteNowBtn" style="
-                    background: #c0392b;
-                    color: white;
-                    border: none;
-                    border-radius: 8px;
-                    padding: 8px 16px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    font-family: 'Inter', sans-serif;
-                    transition: all 0.2s;
-                ">Delete Now</button>
-            </div>
-        </div>
-    `;
-    
-    const profileTitle = document.querySelector('.profile-title');
-    if (profileTitle) {
-        profileTitle.after(banner);
-    } else {
-        document.querySelector('.profile-container')?.prepend(banner);
-    }
-    
-    document.getElementById('cancelDeletionBtn')?.addEventListener('click', async () => {
-        if (confirm('Cancel account deletion? Your account will be restored.')) {
-            await cancelDeletion(userId);
-            banner.remove();
-            showStatus('✅ Account deletion cancelled.', 'success');
-        }
-    });
-    
-    document.getElementById('deleteNowBtn')?.addEventListener('click', async () => {
-        if (confirm('⚠️ Are you sure? This will delete your account immediately without cooldown.')) {
-            const user = auth.currentUser;
-            if (user) {
-                await executeDeletion(userId, user);
-            }
-        }
-    });
-}
-
-// ============================================================
-// ====== CANCEL DELETION ======
-// ============================================================
-
-async function cancelDeletion(userId) {
-    try {
-        const userRef = doc(db, "users", userId);
-        await updateDoc(userRef, {
-            deletionRequested: false,
-            deletionRequestedAt: null,
-            deletionScheduledFor: null,
-            accountFrozen: false,
-            deletionReason: null
-        });
-        
-        const pendingDeletions = JSON.parse(sessionStorage.getItem('pendingDeletions') || '{}');
-        delete pendingDeletions[userId];
-        sessionStorage.setItem('pendingDeletions', JSON.stringify(pendingDeletions));
-        
-        const banner = document.getElementById('deletionCountdownBanner');
-        if (banner) banner.remove();
-        
-    } catch (err) {
-        console.error('Error cancelling deletion:', err);
-        alert('Failed to cancel deletion. Please try again.');
-    }
-}
-
-// ============================================================
-// ====== CHECK PENDING DELETIONS ======
-// ============================================================
-
-async function checkPendingDeletions(user) {
-    if (!user) return;
-    
-    try {
-        const userRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userRef);
-        
-        if (!userDoc.exists()) return;
-        
-        const userData = userDoc.data();
-        
-        if (userData.deletionRequested === true) {
-            const requestedAt = userData.deletionRequestedAt?.toDate?.() || new Date();
-            const scheduledFor = userData.deletionScheduledFor?.toDate?.() || 
-                                new Date(requestedAt.getTime() + DELETION_COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
-            
-            const daysLeft = Math.ceil((scheduledFor.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
-            
-            if (daysLeft <= 0) {
-                await executeDeletion(user.uid, user);
-                return;
-            }
-            
-            showDeletionCountdown(user.uid, daysLeft);
-            showStatus(
-                `⚠️ Your account deletion is pending. ${daysLeft} days remaining. Cancel to keep your account.`,
-                'info'
-            );
-        }
-    } catch (err) {
-        console.error('Error checking pending deletions:', err);
-    }
-}
-
-// ============================================================
-// ====== EXECUTE DELETION ======
-// ============================================================
-
-async function executeDeletion(userId, user) {
-    try {
-        const userRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userRef);
-        const userData = userDoc.exists() ? userDoc.data() : null;
-        const username = userData?.username || 'unknown';
-        
-        showStatus('🗑️ Deleting account from ALL Volant platforms...', 'info');
-        
-        // 1. DELETE POETRY DATA
-        const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
-        const poemsSnap = await getDocs(poemsQuery);
-        for (const poemDoc of poemsSnap.docs) {
-            const commentsSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments"));
-            for (const commentDoc of commentsSnap.docs) {
-                const repliesSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments", commentDoc.id, "replies"));
-                for (const replyDoc of repliesSnap.docs) {
-                    await deleteDoc(replyDoc.ref);
-                }
-                await deleteDoc(commentDoc.ref);
-            }
-            await deleteDoc(poemDoc.ref);
-        }
-        
-        // Delete drafts
-        const draftsQuery = query(collection(db, "drafts"), where("userId", "==", userId));
-        const draftsSnap = await getDocs(draftsQuery);
-        for (const draftDoc of draftsSnap.docs) {
-            await deleteDoc(draftDoc.ref);
-        }
-        
-        // Remove likes from poems
-        const allPoemsSnap = await getDocs(collection(db, "recentPoems"));
-        for (const poemDoc of allPoemsSnap.docs) {
-            const poemData = poemDoc.data();
-            if (Array.isArray(poemData.likedBy) && poemData.likedBy.includes(userId)) {
-                await updateDoc(poemDoc.ref, {
-                    likes: increment(-1),
-                    likedBy: poemData.likedBy.filter(uid => uid !== userId)
-                });
-            }
-        }
-        
-        // 2. DELETE STORE/READS DATA
-        try {
-            const storeQuery = query(collection(db, "store_items"), where("userId", "==", userId));
-            const storeSnap = await getDocs(storeQuery);
-            for (const storeDoc of storeSnap.docs) {
-                await deleteDoc(storeDoc.ref);
-            }
-            const ordersQuery = query(collection(db, "store_orders"), where("userId", "==", userId));
-            const ordersSnap = await getDocs(ordersQuery);
-            for (const orderDoc of ordersSnap.docs) {
-                await deleteDoc(orderDoc.ref);
-            }
-        } catch (err) {
-            console.log('No store data found');
-        }
-        
-        // 3. DELETE FOUNDRY DATA
-        try {
-            const foundryQuery = query(collection(db, "foundry_items"), where("userId", "==", userId));
-            const foundrySnap = await getDocs(foundryQuery);
-            for (const foundryDoc of foundrySnap.docs) {
-                await deleteDoc(foundryDoc.ref);
-            }
-        } catch (err) {
-            console.log('No foundry data found');
-        }
-        
-        // 4. DELETE SOCIAL DATA
-        const socialQuery = query(collection(db, "social"));
-        const socialSnap = await getDocs(socialQuery);
-        for (const socialDoc of socialSnap.docs) {
-            const data = socialDoc.data();
-            if (data.followedId === userId || data.followerId === userId) {
-                if (data.followedId === userId) {
-                    await updateDoc(doc(db, "users", data.followerId), { followingCount: increment(-1) });
-                }
-                if (data.followerId === userId) {
-                    await updateDoc(doc(db, "users", data.followedId), { followerCount: increment(-1) });
-                }
-                await deleteDoc(socialDoc.ref);
-            }
-        }
-        
-        // 5. DELETE CONVERSATIONS
-        const convQuery = query(collection(db, "conversations"), where("participants", "array-contains", userId));
-        const convSnap = await getDocs(convQuery);
-        for (const convDoc of convSnap.docs) {
-            const messagesSnap = await getDocs(collection(db, "conversations", convDoc.id, "messages"));
-            for (const msgDoc of messagesSnap.docs) {
-                await deleteDoc(msgDoc.ref);
-            }
-            await deleteDoc(convDoc.ref);
-        }
-        
-        // 6. DELETE NOTIFICATIONS
-        const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
-        const notifSnap = await getDocs(notifQuery);
-        for (const notifDoc of notifSnap.docs) {
-            await deleteDoc(notifDoc.ref);
-        }
-        const sentNotifQuery = query(collection(db, "notifications"), where("fromUser", "==", userId));
-        const sentNotifSnap = await getDocs(sentNotifQuery);
-        for (const notifDoc of sentNotifSnap.docs) {
-            await deleteDoc(notifDoc.ref);
-        }
-        
-        // 7. DELETE USER DOCUMENT
-        await deleteDoc(userRef);
-        
-        // 8. DELETE FROM FIREBASE AUTH
-        if (user) {
-            await deleteUser(user);
-        }
-        
-        showStatus('✅ Account permanently deleted from ALL Volant platforms. Redirecting...', 'success');
-        
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 2000);
-        
-        return true;
-        
-    } catch (error) {
-        console.error('Error executing deletion:', error);
-        showStatus('❌ Failed to delete account: ' + error.message, 'error');
         return false;
     }
 }
@@ -6203,7 +6150,7 @@ async function fetchUserPoems(usernameToFetch) {
         }catch(err){console.warn(err);}
       }
 
-      // ===== BUILD COLLABORATORS HTML =====
+      // ===== BUILD COLLABORATORS HTML (SIMPLE TEXT) =====
       let collaboratorsHTML = '';
       if (Array.isArray(poem.collaborators) && poem.collaborators.length > 0) {
         const collaboratorLinks = [];
@@ -6226,6 +6173,7 @@ async function fetchUserPoems(usernameToFetch) {
 
       // View count
       const viewCount = poem.views || 0;
+      
 card.innerHTML = `
   <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
     <div style="display:flex; align-items:center; gap:10px;">
@@ -6539,9 +6487,6 @@ onAuthStateChanged(auth, async (user) => {
     currentUserUid = user.uid;
     updateUnreadNotificationCount();
     updateUnreadMessageCount();
-    
-    // Check for pending deletion
-    await checkPendingDeletions(user);
   }
   
   if (!user && !profileUid) { 
@@ -6565,8 +6510,7 @@ onAuthStateChanged(auth, async (user) => {
         followingCount: 0,
         poetryWelcomeSent: false,
         hasVisitedPoetry: false,
-        deletionRequested: false,
-        accountFrozen: false
+        deletionRequested: false
       }); 
       actorDoc = await getDoc(actorRef); 
     } 
@@ -7032,7 +6976,7 @@ document.getElementById('manageExportBtn')?.addEventListener('click', function()
   }
 });
 
-// Manage Delete button - opens Delete confirmation modal with options
+// Manage Delete button - opens Delete confirmation modal
 document.getElementById('manageDeleteBtn')?.addEventListener('click', function() {
   document.getElementById('manageAccountModal').classList.remove('show');
   document.getElementById('manageAccountModal').style.display = 'none';
@@ -7048,16 +6992,6 @@ document.getElementById('manageDeleteBtn')?.addEventListener('click', function()
   document.getElementById('deleteConfirmUsernameLabel').textContent = username;
   document.getElementById('deleteModalEmail').textContent = email;
   document.getElementById('deleteModalInitials').textContent = initials;
-  
-  // Reset to cooldown mode (default)
-  setDeleteMode('cooldown');
-  
-  // Set deletion date
-  const deletionDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-  const dateDisplay = document.getElementById('deletionDateDisplay');
-  if (dateDisplay) {
-    dateDisplay.textContent = deletionDate.toLocaleDateString() + ' at ' + deletionDate.toLocaleTimeString();
-  }
   
   // Reset delete form
   const confirmCheckbox = document.getElementById('deleteConfirmCheckbox');
@@ -7078,15 +7012,6 @@ document.getElementById('manageDeleteBtn')?.addEventListener('click', function()
     deleteModal.classList.add('show');
     deleteModal.style.display = 'flex';
   }
-});
-
-// Delete option click handlers
-document.getElementById('cooldownOption')?.addEventListener('click', function() {
-  setDeleteMode('cooldown');
-});
-
-document.getElementById('instantOption')?.addEventListener('click', function() {
-  setDeleteMode('instant');
 });
 
 // ============================================================
@@ -7183,8 +7108,8 @@ document.getElementById('submitDeleteAccount')?.addEventListener('click', async 
   document.getElementById('deleteConfirmModal').classList.remove('show');
   document.getElementById('deleteConfirmModal').style.display = 'none';
   
-  // Use the selected mode
-  await requestAccountDeletion(user, selectedDeleteMode);
+  // Send deletion request to admin
+  await requestAccountDeletion(user);
 });
 
 // ============================================================
