@@ -713,7 +713,8 @@
     updateDoc, 
     setDoc, 
     serverTimestamp, 
-    writeBatch 
+    writeBatch,
+    limit 
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -733,8 +734,13 @@
   let currentUser = null, currentConversationId = null, currentOtherUserId = null;
   let conversationsUnsubscribe = null, messagesUnsubscribe = null;
   let allUsersCache = [];
+  let userCache = {};
   let usersLoaded = false;
   let sidebarCollapsed = false;
+  let conversationsRendered = false;
+
+  // ===== CACHE =====
+  let conversationsCache = [];
 
   function getInitials(name) { return name ? name.charAt(0).toUpperCase() : '?'; }
   function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m])); }
@@ -745,7 +751,57 @@
     textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
   }
 
-  // ===== LOAD ALL USERS WITH FOLLOWING STATUS - WITH CACHING =====
+  // ===== BATCH GET USERS - 50 AT A TIME (MAXIMUM SPEED) =====
+  async function getUsernamesBatched(userIds) {
+    const uniqueIds = [...new Set(userIds.filter(id => id && id !== currentUser?.uid))];
+    const results = {};
+    const uncachedIds = [];
+    
+    for (const id of uniqueIds) {
+      if (userCache[id]) {
+        results[id] = userCache[id];
+      } else {
+        uncachedIds.push(id);
+      }
+    }
+    
+    if (uncachedIds.length > 0) {
+      try {
+        const chunkSize = 50; // ✅ MAXIMUM - FEWEST ROUND TRIPS
+        for (let i = 0; i < uncachedIds.length; i += chunkSize) {
+          const chunk = uncachedIds.slice(i, i + chunkSize);
+          const promises = chunk.map(id => getDoc(doc(db, "users", id)));
+          const snapshots = await Promise.all(promises);
+          snapshots.forEach((snap, index) => {
+            const id = chunk[index];
+            if (snap.exists()) {
+              const data = snap.data();
+              userCache[id] = {
+                uid: id,
+                username: data.username || data.displayName || 'Anonymous Poet',
+                photoURL: data.photoURL || null,
+                email: data.email || ''
+              };
+              results[id] = userCache[id];
+            } else {
+              userCache[id] = { uid: id, username: 'Poet', photoURL: null };
+              results[id] = userCache[id];
+            }
+          });
+        }
+      } catch (err) {
+        console.warn('Error fetching users:', err);
+        uncachedIds.forEach(id => {
+          userCache[id] = { uid: id, username: 'Poet', photoURL: null };
+          results[id] = userCache[id];
+        });
+      }
+    }
+    
+    return results;
+  }
+
+  // ===== LOAD ALL USERS - CACHED =====
   async function loadAllUsers(forceRefresh = false) {
     if (!currentUser) return [];
     
@@ -753,9 +809,11 @@
       return allUsersCache;
     }
     
-    const followingSnapshot = await getDocs(
-      query(collection(db, "social"), where("followerId", "==", currentUser.uid))
-    );
+    // Fetch following and users in parallel
+    const [followingSnapshot, usersSnapshot] = await Promise.all([
+      getDocs(query(collection(db, "social"), where("followerId", "==", currentUser.uid))),
+      getDocs(collection(db, "users"))
+    ]);
     
     const followedIds = new Set();
     followingSnapshot.forEach(doc => {
@@ -763,19 +821,19 @@
       if (data.followedId) followedIds.add(data.followedId);
     });
     
-    const usersSnapshot = await getDocs(collection(db, "users"));
     const users = [];
-    
     usersSnapshot.forEach(docSnap => { 
       if (docSnap.id !== currentUser.uid) {
         const data = docSnap.data();
-        users.push({ 
+        const userObj = { 
           uid: docSnap.id, 
           username: data.username || data.displayName || 'Anonymous Poet',
           photoURL: data.photoURL || null,
           email: data.email || '',
           isFollowing: followedIds.has(docSnap.id)
-        });
+        };
+        users.push(userObj);
+        userCache[docSnap.id] = userObj;
       }
     });
     
@@ -792,16 +850,21 @@
 
   async function getUserDetails(uid) {
     if (uid === currentUser?.uid) return { username: 'You', uid, photoURL: currentUser.photoURL };
-    const cached = allUsersCache.find(u => u.uid === uid);
-    if (cached) return cached;
+    if (userCache[uid]) return userCache[uid];
+    
     try { 
       const userDoc = await getDoc(doc(db, "users", uid)); 
       if (userDoc.exists()) {
         const data = userDoc.data();
-        return { uid, username: data.username || data.displayName || 'Poet', photoURL: data.photoURL || null };
+        const userObj = { uid, username: data.username || data.displayName || 'Poet', photoURL: data.photoURL || null };
+        userCache[uid] = userObj;
+        return userObj;
       } 
     } catch(e) {}
-    return { uid, username: 'Poet', photoURL: null };
+    
+    const fallback = { uid, username: 'Poet', photoURL: null };
+    userCache[uid] = fallback;
+    return fallback;
   }
 
   function getAvatarHtml(photoURL, username, size = '48px') {
@@ -831,8 +894,10 @@
   async function getCurrentUserProfile() {
     const userDoc = await getDoc(doc(db, "users", currentUser.uid));
     if (userDoc.exists()) {
-      currentUser.photoURL = userDoc.data().photoURL || null;
-      currentUser.displayName = userDoc.data().username || userDoc.data().displayName || currentUser.email?.split('@')[0];
+      const data = userDoc.data();
+      currentUser.photoURL = data.photoURL || null;
+      currentUser.displayName = data.username || data.displayName || currentUser.email?.split('@')[0];
+      userCache[currentUser.uid] = { uid: currentUser.uid, username: currentUser.displayName, photoURL: currentUser.photoURL };
     } else {
       currentUser.displayName = currentUser.email?.split('@')[0] || 'Poet';
       currentUser.photoURL = null;
@@ -861,35 +926,86 @@
     return convId;
   }
 
+  // ===== GET UNREAD COUNT - CACHED =====
+  const unreadCache = {};
+  
   async function getUnreadCount(conversationId) {
+    if (unreadCache[conversationId] !== undefined) return unreadCache[conversationId];
     try {
       const messagesSnap = await getDocs(collection(db, `conversations/${conversationId}/messages`));
       let unread = 0;
       messagesSnap.forEach(doc => { const data = doc.data(); if (!data.read && data.senderId !== currentUser.uid) unread++; });
+      unreadCache[conversationId] = unread;
       return unread;
     } catch(e) { return 0; }
   }
 
+  // ===== LOAD CONVERSATIONS - OPTIMIZED =====
   function loadConversations() {
     if (!currentUser) return;
-    const conversationsQuery = query(collection(db, "conversations"), where("participants", "array-contains", currentUser.uid), orderBy("lastMessageTime", "desc"));
+    
+    // Show cached conversations immediately
+    if (conversationsCache.length > 0 && !conversationsRendered) {
+      renderConversations(conversationsCache);
+      conversationsRendered = true;
+    }
+    
+    const conversationsQuery = query(
+      collection(db, "conversations"), 
+      where("participants", "array-contains", currentUser.uid), 
+      orderBy("lastMessageTime", "desc"),
+      limit(30)
+    );
+    
     if (conversationsUnsubscribe) conversationsUnsubscribe();
+    
     conversationsUnsubscribe = onSnapshot(conversationsQuery, async (snapshot) => {
       const conversations = [];
-      for (const docSnap of snapshot.docs) {
+      const userIds = new Set();
+      
+      snapshot.forEach(docSnap => {
         const convData = docSnap.data();
         const otherId = convData.participants.find(p => p !== currentUser.uid);
-        const otherUser = await getUserDetails(otherId);
-        conversations.push({ id: docSnap.id, otherUser, lastMessage: convData.lastMessage || '', lastMessageTime: convData.lastMessageTime, unreadCount: await getUnreadCount(docSnap.id) });
+        if (otherId) userIds.add(otherId);
+        conversations.push({ id: docSnap.id, convData, otherId });
+      });
+      
+      // Batch fetch all user details at once - 50 per batch (MAX)
+      const userMap = await getUsernamesBatched([...userIds]);
+      
+      const result = [];
+      const unreadPromises = [];
+      
+      for (const conv of conversations) {
+        const otherUser = userMap[conv.otherId] || { uid: conv.otherId, username: 'Poet', photoURL: null };
+        result.push({
+          id: conv.id,
+          otherUser,
+          lastMessage: conv.convData.lastMessage || '',
+          lastMessageTime: conv.convData.lastMessageTime,
+        });
+        unreadPromises.push(getUnreadCount(conv.id));
       }
-      renderConversations(conversations);
+      
+      const unreadCounts = await Promise.all(unreadPromises);
+      result.forEach((conv, index) => {
+        conv.unreadCount = unreadCounts[index] || 0;
+      });
+      
+      conversationsCache = result;
+      conversationsRendered = true;
+      renderConversations(result);
     });
   }
 
   function renderConversations(conversations) {
     const container = document.getElementById('conversationsList');
     if (!container) return;
-    if (conversations.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">💔 No conversations yet. Start a new one!</div>'; return; }
+    if (conversations.length === 0) { 
+      container.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">💔 No conversations yet. Start a new one!</div>'; 
+      return; 
+    }
+    
     container.innerHTML = conversations.map(conv => `
       <div class="conversation-item ${currentConversationId === conv.id ? 'active' : ''}" data-conv-id="${conv.id}" data-other-uid="${conv.otherUser.uid}">
         ${getAvatarHtml(conv.otherUser.photoURL, conv.otherUser.username, '48px')}
@@ -902,14 +1018,21 @@
         </div>
       </div>
     `).join('');
-    document.querySelectorAll('.conversation-item').forEach(el => { el.addEventListener('click', () => { openConversation(el.dataset.convId, el.dataset.otherUid); }); });
+    
+    document.querySelectorAll('.conversation-item').forEach(el => { 
+      el.addEventListener('click', () => { 
+        openConversation(el.dataset.convId, el.dataset.otherUid); 
+      }); 
+    });
   }
 
   async function openConversation(conversationId, otherUserId) {
     currentConversationId = conversationId;
     currentOtherUserId = otherUserId;
+    
     document.querySelectorAll('.conversation-item').forEach(el => el.classList.remove('active'));
     document.querySelector(`.conversation-item[data-conv-id="${conversationId}"]`)?.classList.add('active');
+    
     const otherUser = await getUserDetails(otherUserId);
     document.getElementById('chatHeader').innerHTML = `
       <div class="chat-header-left" data-uid="${otherUser.uid}">
@@ -920,9 +1043,11 @@
         </div>
       </div>
     `;
+    
     document.querySelector('.chat-header-left')?.addEventListener('click', () => {
       window.location.href = `user-profile.html?uid=${otherUser.uid}`;
     });
+    
     document.getElementById('messageInputArea').style.display = 'flex';
     const textarea = document.getElementById('messageInput');
     textarea.value = '';
@@ -936,27 +1061,29 @@
     try {
       const messagesSnap = await getDocs(collection(db, `conversations/${conversationId}/messages`));
       const batch = writeBatch(db);
+      let hasUnread = false;
       messagesSnap.forEach(docSnap => { 
         const data = docSnap.data(); 
         if (!data.read && data.senderId !== currentUser.uid) {
           batch.update(doc(db, `conversations/${conversationId}/messages`, docSnap.id), { read: true });
+          hasUnread = true;
         }
       });
-      await batch.commit();
+      if (hasUnread) {
+        await batch.commit();
+        unreadCache[conversationId] = 0;
+        const badge = document.querySelector(`.conversation-item[data-conv-id="${conversationId}"] .unread-badge`);
+        if (badge) badge.remove();
+      }
     } catch(e) { console.warn("Error marking messages as read:", e); }
   }
 
   function loadMessages(conversationId) {
     if (messagesUnsubscribe) messagesUnsubscribe();
-    const messagesQuery = query(collection(db, `conversations/${conversationId}/messages`));
+    const messagesQuery = query(collection(db, `conversations/${conversationId}/messages`), orderBy("timestamp", "asc"));
     messagesUnsubscribe = onSnapshot(messagesQuery, (snapshot) => {
       const messages = [];
       snapshot.forEach(docSnap => messages.push({ id: docSnap.id, ...docSnap.data() }));
-      messages.sort((a, b) => {
-        const timeA = a.timestamp?.toDate ? a.timestamp.toDate() : new Date(a.timestamp || 0);
-        const timeB = b.timestamp?.toDate ? b.timestamp.toDate() : new Date(b.timestamp || 0);
-        return timeA - timeB;
-      });
       renderMessages(messages);
       if (currentConversationId === conversationId) {
         markMessagesAsRead(conversationId);
@@ -1022,7 +1149,7 @@
     textarea.focus();
   }
 
-  // ===== SHOW NEW CONVERSATION MODAL WITH FOLLOWING BADGE - LAZY LOAD =====
+  // ===== SHOW NEW CONVERSATION MODAL =====
   async function showNewConversationModal() {
     const modal = document.getElementById('newConversationModal');
     const usersListDiv = document.getElementById('usersListModal');
@@ -1102,7 +1229,6 @@
     });
   });
 </script>
-
 <script>
 (function() {
   function setupDynamicAuthLinks() {

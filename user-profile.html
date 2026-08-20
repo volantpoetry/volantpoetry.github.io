@@ -4637,7 +4637,8 @@ import {
   arrayUnion, 
   writeBatch, 
   serverTimestamp, 
-  orderBy 
+  orderBy,
+  onSnapshot 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { 
   getAuth, 
@@ -4678,6 +4679,11 @@ const viewStartTimes = new Map();
 let poemCache = {};
 let userCache = {};
 let commentCache = {};
+
+// ====== REAL-TIME LISTENER REFS ======
+let poemsUnsubscribe = null;
+let followerUnsubscribe = null;
+let viewsUnsubscribe = null;
 
 // ============================================================
 // ====== SHOW CONFIRMATION MESSAGE ======
@@ -4772,7 +4778,7 @@ function colorFromName(name) {
 }
 
 // ============================================================
-// ====== BATCH FUNCTIONS FOR FAST LOADING ======
+// ====== BATCH FUNCTIONS FOR FAST LOADING (50 AT A TIME) ======
 // ============================================================
 
 async function getUsernamesBatched(userIds) {
@@ -4790,7 +4796,7 @@ async function getUsernamesBatched(userIds) {
   
   if (uncachedIds.length > 0) {
     try {
-      const chunkSize = 10;
+      const chunkSize = 50; // ✅ 50 USERS AT A TIME
       for (let i = 0; i < uncachedIds.length; i += chunkSize) {
         const chunk = uncachedIds.slice(i, i + chunkSize);
         const promises = chunk.map(id => getDoc(doc(db, "users", id)));
@@ -4830,7 +4836,7 @@ async function getCommentsCountBatched(poemIds) {
   
   if (uncachedIds.length > 0) {
     try {
-      const chunkSize = 10;
+      const chunkSize = 50; // ✅ 50 POEMS AT A TIME
       for (let i = 0; i < uncachedIds.length; i += chunkSize) {
         const chunk = uncachedIds.slice(i, i + chunkSize);
         const promises = chunk.map(id => getDocs(collection(db, "recentPoems", id, "comments")));
@@ -4848,6 +4854,112 @@ async function getCommentsCountBatched(poemIds) {
   }
   
   return results;
+}
+
+// ============================================================
+// ====== REAL-TIME LISTENERS (Background updates, no refresh) ======
+// ============================================================
+
+function setupRealtimePoemsListener(username) {
+  if (poemsUnsubscribe) {
+    poemsUnsubscribe();
+    poemsUnsubscribe = null;
+  }
+  
+  if (!username) return;
+  
+  const q = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+  
+  poemsUnsubscribe = onSnapshot(q, async (snapshot) => {
+    const poemCount = snapshot.size;
+    document.getElementById("poemCount").innerText = poemCount;
+    
+    let totalLikes = 0;
+    let totalCommentsReceived = 0;
+    const poemIds = [];
+    
+    snapshot.forEach(docSnap => {
+      const poem = docSnap.data();
+      totalLikes += poem.likes || 0;
+      poemIds.push(docSnap.id);
+    });
+    
+    const commentCounts = await getCommentsCountBatched(poemIds);
+    for (const id of poemIds) {
+      totalCommentsReceived += commentCounts[id] || 0;
+    }
+    
+    document.getElementById("likeCount").innerText = totalLikes;
+    document.getElementById("commentCount").innerText = totalCommentsReceived;
+    
+    if (viewingOwnProfile) {
+      const totalCommentsMade = await fetchTotalCommentsMade(actorUsername);
+      updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
+    }
+    
+    const totalCommentsMade = viewingOwnProfile ? await fetchTotalCommentsMade(actorUsername) : 0;
+    updateLevel(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
+    
+  }, (error) => {
+    console.warn('Real-time poems listener error:', error);
+  });
+}
+
+function setupRealtimeFollowerListener(uid) {
+  if (followerUnsubscribe) {
+    followerUnsubscribe();
+    followerUnsubscribe = null;
+  }
+  
+  if (!uid) return;
+  
+  const userRef = doc(db, "users", uid);
+  followerUnsubscribe = onSnapshot(userRef, (docSnap) => {
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      document.getElementById("followersCount").innerText = data.followerCount || 0;
+      document.getElementById("followingCount").innerText = data.followingCount || 0;
+    }
+  }, (error) => {
+    console.warn('Follower listener error:', error);
+  });
+}
+
+function setupRealtimeViewsListener(username) {
+  if (viewsUnsubscribe) {
+    viewsUnsubscribe();
+    viewsUnsubscribe = null;
+  }
+  
+  if (!username) return;
+  
+  const q = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+  
+  viewsUnsubscribe = onSnapshot(q, (snapshot) => {
+    let totalViews = 0;
+    snapshot.forEach(docSnap => {
+      const poem = docSnap.data();
+      totalViews += poem.views || 0;
+    });
+    document.getElementById("totalViewsCount").innerText = totalViews;
+  }, (error) => {
+    console.warn('Views listener error:', error);
+  });
+}
+
+function cleanupListeners() {
+  if (poemsUnsubscribe) {
+    poemsUnsubscribe();
+    poemsUnsubscribe = null;
+  }
+  if (followerUnsubscribe) {
+    followerUnsubscribe();
+    followerUnsubscribe = null;
+  }
+  if (viewsUnsubscribe) {
+    viewsUnsubscribe();
+    viewsUnsubscribe = null;
+  }
 }
 
 // ============================================================
@@ -5439,10 +5551,13 @@ async function exportUserData(user) {
         
         async function getUsernameFromUid(uid) {
             if (!uid) return 'Unknown User';
+            if (userCache[uid]) return userCache[uid]?.username || 'Unknown User';
             try {
                 const userDoc = await getDoc(doc(db, "users", uid));
                 if (userDoc.exists()) {
-                    return userDoc.data().username || 'Unknown User';
+                    const data = userDoc.data();
+                    userCache[uid] = data;
+                    return data.username || 'Unknown User';
                 }
                 return 'Unknown User';
             } catch (err) {
@@ -5452,10 +5567,12 @@ async function exportUserData(user) {
 
         async function getUserDataFromUid(uid) {
             if (!uid) return { username: 'Unknown User', photoURL: null };
+            if (userCache[uid]) return userCache[uid];
             try {
                 const userDoc = await getDoc(doc(db, "users", uid));
                 if (userDoc.exists()) {
                     const data = userDoc.data();
+                    userCache[uid] = data;
                     return {
                         username: data.username || 'Unknown User',
                         photoURL: data.photoURL || null
@@ -5556,29 +5673,61 @@ async function exportUserData(user) {
         // GET FOLLOWERS
         const socialQuery = query(collection(db, "social"));
         const socialSnap = await getDocs(socialQuery);
-        for (const socialDoc of socialSnap.docs) {
+        
+        // Collect all UIDs for batch fetch
+        const followerUids = [];
+        const followedUids = [];
+        socialSnap.forEach(socialDoc => {
             const data = socialDoc.data();
             if (data.followerId === userId) {
-                const followedData = await getUserDataFromUid(data.followedId);
+                followedUids.push(data.followedId);
+            }
+            if (data.followedId === userId) {
+                followerUids.push(data.followerId);
+            }
+        });
+        
+        // Batch fetch all user data (50 at a time)
+        const allUids = [...new Set([...followerUids, ...followedUids].filter(id => id))];
+        await getUsernamesBatched(allUids);
+        
+        // Build followers and following lists from cache
+        socialSnap.forEach(socialDoc => {
+            const data = socialDoc.data();
+            if (data.followerId === userId && data.followedId) {
+                const followedData = userCache[data.followedId] || { username: 'Unknown User', photoURL: null };
                 exportData.following.push({
                     username: followedData.username,
                     photoURL: followedData.photoURL,
                     createdAt: data.createdAt || null
                 });
             }
-            if (data.followedId === userId) {
-                const followerData = await getUserDataFromUid(data.followerId);
+            if (data.followedId === userId && data.followerId) {
+                const followerData = userCache[data.followerId] || { username: 'Unknown User', photoURL: null };
                 exportData.followers.push({
                     username: followerData.username,
                     photoURL: followerData.photoURL,
                     createdAt: data.createdAt || null
                 });
             }
-        }
+        });
         
         // GET CONVERSATIONS
         const convQuery = query(collection(db, "conversations"), where("participants", "array-contains", userId));
         const convSnap = await getDocs(convQuery);
+        
+        // Collect all conversation participant UIDs for batch fetch
+        const convUserIds = [];
+        convSnap.forEach(convDoc => {
+            const convData = convDoc.data();
+            if (Array.isArray(convData.participants)) {
+                convData.participants.forEach(uid => {
+                    if (uid !== userId) convUserIds.push(uid);
+                });
+            }
+        });
+        await getUsernamesBatched([...new Set(convUserIds)]);
+        
         for (const convDoc of convSnap.docs) {
             const convData = convDoc.data();
             const messages = [];
@@ -5586,7 +5735,7 @@ async function exportUserData(user) {
             for (const msgDoc of msgSnap.docs) {
                 const msgData = msgDoc.data();
                 const senderUsername = msgData.senderId ? 
-                    await getUsernameFromUid(msgData.senderId) : 'Unknown';
+                    (userCache[msgData.senderId]?.username || 'Unknown') : 'Unknown';
                 messages.push({
                     text: msgData.text || '',
                     senderUsername: senderUsername,
@@ -5598,9 +5747,8 @@ async function exportUserData(user) {
             const participantUsernames = [];
             if (Array.isArray(convData.participants)) {
                 for (const uid of convData.participants) {
-                    if (uid !== userId) {
-                        const uname = await getUsernameFromUid(uid);
-                        participantUsernames.push(uname);
+                    if (uid !== userId && userCache[uid]) {
+                        participantUsernames.push(userCache[uid].username);
                     }
                 }
             }
@@ -5618,10 +5766,19 @@ async function exportUserData(user) {
         // GET NOTIFICATIONS
         const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
         const notifSnap = await getDocs(notifQuery);
+        
+        // Collect notification fromUser UIDs
+        const notifUserIds = [];
+        notifSnap.forEach(notifDoc => {
+            const notifData = notifDoc.data();
+            if (notifData.fromUser) notifUserIds.push(notifData.fromUser);
+        });
+        await getUsernamesBatched([...new Set(notifUserIds)]);
+        
         for (const notifDoc of notifSnap.docs) {
             const notifData = notifDoc.data();
             const fromUsername = notifData.fromUserName || 
-                (notifData.fromUser ? await getUsernameFromUid(notifData.fromUser) : 'System');
+                (notifData.fromUser ? (userCache[notifData.fromUser]?.username || 'System') : 'System');
             
             exportData.notifications.push({
                 type: notifData.type || 'general',
@@ -6087,10 +6244,8 @@ function setupAudioEventListeners() {
 
 async function fetchUserPoems(usernameToFetch) {
   try {
-    // Show loading state
     poemsContainer.innerHTML = '<div style="text-align:center; padding:40px; color:#666;">Loading poems...</div>';
     
-    // BATCH FETCH: Get all poems at once
     const q = query(collection(db, "recentPoems"), where("submittedBy", "==", usernameToFetch));
     const querySnap = await getDocs(q);
     
@@ -6100,7 +6255,6 @@ async function fetchUserPoems(usernameToFetch) {
       return;
     }
     
-    // Build poems array from snapshot
     const poemsArray = [];
     const poemIds = [];
     querySnap.forEach(docSnap => {
@@ -6110,13 +6264,10 @@ async function fetchUserPoems(usernameToFetch) {
       poemIds.push(docSnap.id);
     });
     
-    // Sort by timestamp
     poemsArray.sort((a,b) => (b.timestamp?.seconds||0) - (a.timestamp?.seconds||0));
     
-    // BATCH FETCH: Get all comment counts at once
     const commentCounts = await getCommentsCountBatched(poemIds);
     
-    // BATCH FETCH: Get all user data for collaborators
     const collaboratorUids = [];
     poemsArray.forEach(poem => {
       if (Array.isArray(poem.collaborators)) {
@@ -6127,12 +6278,10 @@ async function fetchUserPoems(usernameToFetch) {
     });
     const userDataMap = await getUsernamesBatched(collaboratorUids);
     
-    // Calculate totals
     let totalLikes = 0;
     let totalCommentsReceived = 0;
     const poemCount = poemsArray.length;
     
-    // Build HTML for each poem
     poemsContainer.innerHTML = '';
     let totalViews = 0;
     
@@ -6148,12 +6297,10 @@ async function fetchUserPoems(usernameToFetch) {
       const truncated = truncatePoemByLines(poem.content, 8);
       const dateStr = poem.timestamp ? new Date(poem.timestamp.seconds*1000).toLocaleDateString() + ' ' + new Date(poem.timestamp.seconds*1000).toLocaleTimeString() : "";
       
-      // Build poem card HTML
       const card = document.createElement("div");
       card.className = "recent-poem-card";
       card.dataset.id = docId;
       
-      // Get author info
       let displayName = usernameToFetch;
       let profileLink = "#";
       let profileImage = "/images/default-avatar.png";
@@ -6172,7 +6319,6 @@ async function fetchUserPoems(usernameToFetch) {
         }
       }
       
-      // Build collaborators HTML
       let collaboratorsHTML = '';
       if (Array.isArray(poem.collaborators) && poem.collaborators.length > 0) {
         const collaboratorLinks = [];
@@ -6192,7 +6338,6 @@ async function fetchUserPoems(usernameToFetch) {
       
       const viewCount = poem.views || 0;
       
-      // Audio section
       let audioSectionHTML = '';
       const hasAudio = poem.audioUrl && poem.audioUrl !== '';
       if (viewingOwnProfile) {
@@ -6224,7 +6369,6 @@ async function fetchUserPoems(usernameToFetch) {
   ${audioSectionHTML}
   ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${escapeHtml(cat)}</a>`).join(", ")}</em></p>` : ""}
   
-  <!-- POEM ACTIONS -->
   <div class="poem-actions">
     <div class="comment-section">
       <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
@@ -6244,7 +6388,6 @@ async function fetchUserPoems(usernameToFetch) {
     </button>
   </div>
   
-  <!-- MOBILE SHARE BUTTON -->
   <div class="mobile-share-wrapper">
     <button class="share-btn mobile-share-btn" 
             data-poem-id="${docId}" 
@@ -6267,18 +6410,23 @@ async function fetchUserPoems(usernameToFetch) {
       poemsContainer.appendChild(commentListDiv);
     }
     
-    // Update stats
     document.getElementById("poemCount").innerText = poemCount;
     document.getElementById("likeCount").innerText = totalLikes;
     document.getElementById("commentCount").innerText = totalCommentsReceived;
     document.getElementById("totalViewsCount").innerText = totalViews;
     
-    // Update achievements
     const totalCommentsMade = viewingOwnProfile ? await fetchTotalCommentsMade(actorUsername) : 0;
     updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
     
     if (viewingOwnProfile) setupAudioEventListeners();
     attachDeleteListeners();
+    
+    // ✅ Setup real-time listeners after initial load
+    if (viewingOwnProfile && targetProfileUid) {
+      setupRealtimeFollowerListener(targetProfileUid);
+      setupRealtimeViewsListener(profileUsername);
+      setupRealtimePoemsListener(profileUsername);
+    }
     
   } catch(e) {
     console.error('Error fetching poems:', e);
@@ -6287,7 +6435,7 @@ async function fetchUserPoems(usernameToFetch) {
 }
        
 // ============================================================
-// ====== DELETE LISTENERS (Background updates - no page refresh) ======
+// ====== DELETE LISTENERS ======
 // ============================================================
 
 function attachDeleteListeners() { 
@@ -6630,7 +6778,6 @@ onAuthStateChanged(auth, async (user) => {
   profileUsername = data.username || data.email.split("@")[0];
   profileEmailPrivacy = data.emailPrivacy || "public";
   
-  // Cache the user data for fast access
   userCache[targetProfileUid] = data;
   
   const realNameElement = document.getElementById("realName");
@@ -6745,7 +6892,6 @@ onAuthStateChanged(auth, async (user) => {
 
   await updateVerificationBadge(targetProfileUid, viewingOwnProfile);
 
-  // LOAD POEMS WITH OPTIMIZATION
   await fetchUserPoems(profileUsername);
   setupReadTracking();
   await fetchTopPoems(profileUsername);
@@ -6779,7 +6925,11 @@ window.addEventListener("click", (e) => { if (e.target === modal) modal.style.di
 
 document.getElementById("menu-toggle")?.addEventListener("click", () => document.getElementById("nav-links").classList.toggle("show"));
 document.getElementById("close-btn")?.addEventListener("click", () => document.getElementById("nav-links").classList.remove("show"));
-document.getElementById("logoutBtnNav")?.addEventListener("click", async () => { await signOut(auth); window.location.href = getReturnUrl(); });
+document.getElementById("logoutBtnNav")?.addEventListener("click", async () => {
+  cleanupListeners();
+  await signOut(auth);
+  window.location.href = getReturnUrl();
+});
 document.getElementById("loginNavBtn")?.addEventListener("click", () => { window.location.href = `universal-login.html?platform=poetry&redirect=${encodeURIComponent(window.location.href)}`; });
 
 // ============================================================

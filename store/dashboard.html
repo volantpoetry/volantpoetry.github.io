@@ -1546,6 +1546,605 @@ header .logo-header {
         font-size: 1.2rem !important;
     }
 }
+
+/* ===== GDPR/DATA MANAGEMENT SECTION IN SETTINGS ===== */
+.gdpr-section {
+  margin-top: 30px;
+  border-top: 2px solid #eee;
+  padding-top: 20px;
+}
+.gdpr-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  margin-bottom: 4px;
+}
+.gdpr-section .gdpr-sub {
+  color: #888;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+.gdpr-btn-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.gdpr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-family: 'Inter', sans-serif;
+}
+.gdpr-btn.export {
+  background: #6a34ff;
+  color: white;
+}
+.gdpr-btn.export:hover {
+  background: #5428d9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(106, 52, 255, 0.3);
+}
+.gdpr-btn.delete {
+  background: #fee;
+  color: #b33;
+  border: 2px solid #fcc;
+}
+.gdpr-btn.delete:hover {
+  background: #fdd;
+  border-color: #b33;
+  transform: translateY(-2px);
+}
+.gdpr-btn i {
+  font-size: 1rem;
+}
+
+/* ===== DELETE CONFIRMATION MODAL ===== */
+.delete-modal-content {
+  max-width: 520px !important;
+  padding: 28px 24px !important;
+}
+.delete-modal-content .send-message-header {
+  border-bottom-color: #ff4d4d;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+}
+.delete-modal-content .send-message-header-left h3 {
+  color: #dc3545;
+  font-size: 1.1rem;
+  margin: 0;
+}
+.delete-modal-content .send-message-header-left p {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin: 0;
+}
+.delete-modal-content .send-message-close {
+  width: 28px;
+  height: 28px;
+  font-size: 0.9rem;
+}
+.delete-modal-content .send-message-body {
+  gap: 10px;
+}
+.delete-modal-content .account-info-card {
+  background: #f8f6ff;
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 2px solid #4b2aad;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.delete-modal-content .account-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #4b2aad;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.delete-modal-content .account-info-text {
+  flex: 1;
+  min-width: 120px;
+}
+.delete-modal-content .account-info-text .name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #4b2aad;
+}
+.delete-modal-content .account-info-text .email {
+  font-size: 0.75rem;
+  color: #888;
+  word-break: break-all;
+}
+.delete-modal-content .warning-box {
+  background: #fff3cd;
+  border-radius: 8px;
+  padding: 10px 12px;
+  border: 1px solid #ffeaa7;
+}
+.delete-modal-content .warning-box p {
+  color: #856404;
+  font-size: 0.85rem;
+  margin: 0;
+  text-align: center;
+}
+.delete-modal-content .info-box {
+  background: #e8f0fe;
+  border-radius: 8px;
+  padding: 10px 12px;
+  border: 1px solid #d2e3fc;
+}
+.delete-modal-content .info-box p {
+  color: #1a56db;
+  font-size: 0.8rem;
+  margin: 0;
+  text-align: center;
+  line-height: 1.5;
+}
+.delete-modal-content .confirm-check {
+  background: #f8f6ff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  border: 1px solid #ede8ff;
+}
+.delete-modal-content .confirm-check label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.delete-modal-content .confirm-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  flex-shrink: 0;
+  accent-color: #dc3545;
+}
+.delete-modal-content .username-confirm label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+.delete-modal-content .username-confirm label .highlight {
+  color: #dc3545;
+  font-weight: 700;
+}
+.delete-modal-content .username-confirm input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #ede8ff;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.delete-modal-content .username-confirm input:focus {
+  border-color: #4b2aad;
+}
+.delete-modal-content .gdpr-check {
+  background: #e8f0fe;
+  border-radius: 8px;
+  padding: 10px 12px;
+  border: 1px solid #d2e3fc;
+}
+.delete-modal-content .gdpr-check label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.78rem;
+  color: #1a56db;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.delete-modal-content .gdpr-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  flex-shrink: 0;
+  accent-color: #4b2aad;
+}
+.delete-modal-content .modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.delete-modal-content .modal-actions .btn-cancel {
+  flex: 1;
+  min-width: 80px;
+  padding: 8px 16px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: #666;
+  transition: all 0.2s;
+}
+.delete-modal-content .modal-actions .btn-cancel:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+.delete-modal-content .modal-actions .btn-delete-submit {
+  flex: 2;
+  min-width: 120px;
+  padding: 8px 16px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  transition: all 0.3s;
+  box-shadow: 0 4px 14px rgba(220, 53, 69, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.delete-modal-content .modal-actions .btn-delete-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.delete-modal-content .modal-actions .btn-delete-submit:hover:not(:disabled) {
+  background: #c82333;
+  transform: translateY(-2px);
+}
+
+/* ===== SETTINGS NAVIGATION ===== */
+.settings-nav-wrapper {
+  margin-bottom: 24px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.settings-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  background: white;
+  padding: 8px 10px;
+  border-radius: 16px;
+  border: 1px solid #eee;
+  min-width: min-content;
+}
+.settings-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+}
+.settings-nav-item:hover {
+  background: #f5f0ff;
+  color: #4b2aad;
+}
+.settings-nav-item.active {
+  background: #4b2aad;
+  color: white;
+  box-shadow: 0 4px 12px rgba(75, 42, 173, 0.25);
+}
+.settings-nav-item i {
+  font-size: 1rem;
+}
+.settings-panel {
+  background: white;
+  padding: 28px 30px;
+  border-radius: 20px;
+  border: 1px solid #eee;
+}
+.settings-tab-content {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.settings-tab-content.active {
+  display: block;
+}
+@media (max-width: 600px) {
+  .settings-nav {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  .settings-nav-item {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+  .settings-nav-item i {
+    font-size: 0.85rem;
+  }
+  .settings-panel {
+    padding: 20px 16px;
+  }
+}
+@media (max-width: 480px) {
+  .settings-nav-item {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+  }
+  .settings-nav-item i {
+    font-size: 0.75rem;
+  }
+}/* ===== SETTINGS NAVIGATION - SCROLLABLE ON MOBILE ===== */
+.settings-nav-wrapper {
+  margin-bottom: 24px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+  -ms-overflow-style: none;
+}
+
+.settings-nav-wrapper::-webkit-scrollbar {
+  display: none;
+  height: 0;
+}
+
+.settings-nav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  background: white;
+  padding: 6px 10px;
+  border-radius: 14px;
+  border: 1px solid #eee;
+  min-width: max-content;
+}
+
+.settings-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+  flex-shrink: 0;
+}
+
+.settings-nav-item i {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.settings-nav-item:hover {
+  background: #f5f0ff;
+  color: #4b2aad;
+}
+
+.settings-nav-item.active {
+  background: #4b2aad;
+  color: white;
+  box-shadow: 0 4px 12px rgba(75, 42, 173, 0.25);
+}
+
+/* ===== MOBILE - 600PX AND BELOW ===== */
+@media (max-width: 600px) {
+  .settings-nav-wrapper {
+    margin: 0 -16px 16px -16px;
+    padding: 0 16px 4px 16px;
+  }
+  
+  .settings-nav {
+    padding: 5px 8px;
+    gap: 4px;
+    border-radius: 12px;
+  }
+  
+  .settings-nav-item {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    gap: 4px;
+  }
+  
+  .settings-nav-item i {
+    font-size: 0.75rem;
+  }
+}
+
+/* ===== SMALL PHONES - 400PX AND BELOW ===== */
+@media (max-width: 400px) {
+  .settings-nav-wrapper {
+    margin: 0 -12px 14px -12px;
+    padding: 0 12px 4px 12px;
+  }
+  
+  .settings-nav-item {
+    padding: 5px 8px;
+    font-size: 0.7rem;
+  }
+  
+  .settings-nav-item i {
+    font-size: 0.7rem;
+  }
+  
+  .settings-nav {
+    gap: 3px;
+    padding: 4px 6px;
+  }
+}
+
+/* ===== PREVENT SETTINGS OVERFLOW ===== */
+#page-settings {
+  overflow: hidden;
+  max-width: 100%;
+}
+
+#page-settings .panel {
+  overflow: hidden;
+  max-width: 100%;
+  padding: 28px 26px;
+}
+
+.settings-tab-content {
+  overflow: hidden;
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  #page-settings .panel {
+    padding: 18px 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  #page-settings .panel {
+    padding: 14px 10px;
+  }
+}
+
+/* ===== FIX SETTINGS CONTENT OVERFLOW ===== */
+#page-settings {
+  overflow: hidden !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+#page-settings .panel {
+  overflow: hidden !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 28px 26px !important;
+}
+
+.settings-tab-content {
+  overflow: hidden !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.settings-group {
+  overflow: hidden !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.settings-group input,
+.settings-group select,
+.settings-group textarea {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.settings-group .input-wrapper {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.settings-group .input-wrapper input {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ===== MOBILE FIXES ===== */
+@media (max-width: 768px) {
+  #page-settings .panel {
+    padding: 20px 16px !important;
+  }
+  
+  .settings-group input,
+  .settings-group select,
+  .settings-group textarea {
+    font-size: 0.9rem !important;
+    padding: 10px 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #page-settings .panel {
+    padding: 16px 12px !important;
+  }
+  
+  .settings-group input,
+  .settings-group select,
+  .settings-group textarea {
+    font-size: 0.85rem !important;
+    padding: 8px 10px !important;
+  }
+  
+  .settings-group .validation-message {
+    font-size: 0.7rem !important;
+  }
+  
+  .settings-group .hint {
+    font-size: 0.7rem !important;
+  }
+}
+
+/* ===== FIX CONTAINER OVERFLOW ===== */
+.page-section {
+  overflow: hidden !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.content {
+  overflow: hidden !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 34px 40px !important;
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 20px 16px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 16px 12px !important;
+  }
+}
+
+/* ===== SHOW TOPBAR ONLY ON DASHBOARD ===== */
+#page-dashboard .topbar {
+  display: flex !important;
+}
+
+.page-section:not(#page-dashboard) .topbar {
+  display: none !important;
+}
+
   </style>
 </head>
 <body>
@@ -1593,9 +2192,63 @@ header .logo-header {
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
-  <main class="content">
-    <!-- TOPBAR -->
+<!-- MAIN CONTENT -->
+<main class="content">
+  <!-- ===== SETUP ALERT BANNER ===== -->
+  <div id="setupAlertBanner" class="">
+    <div class="banner-content">
+      <div class="banner-icon">
+        <i class="fas fa-clipboard-list"></i>
+      </div>
+      <div class="banner-text">
+        <h4>📋 Complete Your Profile & Payout Setup</h4>
+        <p>
+          To publish books and receive payments, please complete your author profile and payout settings.
+          This only takes a few minutes!
+        </p>
+        <div style="margin: 8px 0;">
+          <div class="setup-check-item">
+            <i class="fas fa-check-circle check-done" id="checkAuthorName"></i>
+            <span id="checkAuthorNameText">Author Name</span>
+          </div>
+          <div class="setup-check-item">
+            <i class="fas fa-check-circle check-done" id="checkAuthorBio"></i>
+            <span id="checkAuthorBioText">Author Bio</span>
+          </div>
+          <div class="setup-check-item">
+            <i class="fas fa-check-circle check-done" id="checkGmail"></i>
+            <span id="checkGmailText">Gmail for Publishing</span>
+          </div>
+          <div class="setup-check-item">
+            <i class="fas fa-check-circle check-done" id="checkPhone"></i>
+            <span id="checkPhoneText">Phone Number</span>
+          </div>
+          <div class="setup-check-item">
+            <i class="fas fa-check-circle check-done" id="checkCountry"></i>
+            <span id="checkCountryText">Country</span>
+          </div>
+          <div class="setup-check-item">
+            <i class="fas fa-check-circle check-done" id="checkPayout"></i>
+            <span id="checkPayoutText">Payout Account</span>
+          </div>
+        </div>
+        <div class="banner-actions">
+          <a href="#" class="btn-go-settings" onclick="event.preventDefault(); showPage('settings');">
+            <i class="fas fa-cog"></i> Go to Settings
+          </a>
+          <span class="banner-time">
+            <i class="fas fa-clock"></i> Complete setup to start publishing
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE SECTIONS ===== -->
+
+  <!-- DASHBOARD PAGE -->
+  <div class="page-section active" id="page-dashboard">
+    <!-- TOPBAR inside dashboard only -->
     <div class="topbar">
       <div class="topbar-left">
         <h1 id="greeting">Welcome back 👋</h1>
@@ -1607,404 +2260,386 @@ header .logo-header {
       </div>
     </div>
 
-    <!-- ===== SETUP ALERT BANNER ===== -->
-    <div id="setupAlertBanner" class="">
-      <div class="banner-content">
-        <div class="banner-icon">
-          <i class="fas fa-clipboard-list"></i>
+    <div class="stats" id="statsContainer"></div>
+    <div class="grid">
+      <div>
+        <div class="panel">
+          <div class="section-title">
+            <h2>📚 My Books</h2>
+            <a id="manageBooksLink">Manage →</a>
+          </div>
+          <div class="table" id="myBooksTable"></div>
         </div>
-        <div class="banner-text">
-          <h4>📋 Complete Your Profile & Payout Setup</h4>
-          <p>
-            To publish books and receive payments, please complete your author profile and payout settings.
-            This only takes a few minutes!
-          </p>
-          <div style="margin: 8px 0;">
-            <div class="setup-check-item">
-              <i class="fas fa-check-circle check-done" id="checkAuthorName"></i>
-              <span id="checkAuthorNameText">Author Name</span>
-            </div>
-            <div class="setup-check-item">
-              <i class="fas fa-check-circle check-done" id="checkAuthorBio"></i>
-              <span id="checkAuthorBioText">Author Bio</span>
-            </div>
-            <div class="setup-check-item">
-              <i class="fas fa-check-circle check-done" id="checkGmail"></i>
-              <span id="checkGmailText">Gmail for Publishing</span>
-            </div>
-            <div class="setup-check-item">
-              <i class="fas fa-check-circle check-done" id="checkPhone"></i>
-              <span id="checkPhoneText">Phone Number</span>
-            </div>
-            <div class="setup-check-item">
-              <i class="fas fa-check-circle check-done" id="checkCountry"></i>
-              <span id="checkCountryText">Country</span>
-            </div>
-            <div class="setup-check-item">
-              <i class="fas fa-check-circle check-done" id="checkPayout"></i>
-              <span id="checkPayoutText">Payout Account</span>
+      </div>
+      <div>
+        <div class="panel">
+          <div class="section-title">
+            <h2>📊 Sales Overview</h2>
+            <span style="color:#777; font-size:0.85rem;" id="salesPeriod">Last 7 days</span>
+          </div>
+          <div class="chart-wrapper">
+            <div class="chart" id="salesChart"></div>
+            <div class="chart-days" id="chartDays">
+              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
             </div>
           </div>
-          <div class="banner-actions">
-            <a href="#" class="btn-go-settings" onclick="event.preventDefault(); showPage('settings');">
-              <i class="fas fa-cog"></i> Go to Settings
-            </a>
-            <span class="banner-time">
-              <i class="fas fa-clock"></i> Complete setup to start publishing
-            </span>
+        </div>
+      
+        <div class="panel" style="margin-top:24px;">
+          <div class="section-title">
+            <h2>⬇️ Recent Sales</h2>
+            <a id="salesLink">See all →</a>
           </div>
+          <div class="sales-list" id="recentSales"></div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ===== PAGE SECTIONS ===== -->
-
-    <!-- DASHBOARD PAGE -->
-    <div class="page-section active" id="page-dashboard">
-      <div class="stats" id="statsContainer"></div>
-      <div class="grid">
-        <div>
-          <div class="panel">
-            <div class="section-title">
-              <h2>📚 My Books</h2>
-              <a id="manageBooksLink">Manage →</a>
-            </div>
-            <div class="table" id="myBooksTable"></div>
-          </div>
-        </div>
-        <div>
-          <div class="panel">
-            <div class="section-title">
-              <h2>📊 Sales Overview</h2>
-              <span style="color:#777; font-size:0.85rem;" id="salesPeriod">Last 7 days</span>
-            </div>
-            <div class="chart-wrapper">
-              <div class="chart" id="salesChart"></div>
-              <div class="chart-days" id="chartDays">
-                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-              </div>
-            </div>
-          </div>
-        
-          <div class="panel" style="margin-top:24px;">
-            <div class="section-title">
-              <h2>⬇️ Recent Sales</h2>
-              <a id="salesLink">See all →</a>
-            </div>
-            <div class="sales-list" id="recentSales"></div>
-          </div>
-        </div>
-      </div>
+  <!-- MY BOOKS PAGE -->
+  <div class="page-section" id="page-mybooks">
+    <div class="page-header">
+      <h2>📚 My Books</h2>
+      <p>Manage all your published and draft books. Click <strong>"Update"</strong> to edit details or <strong>"Share"</strong> to copy the book link.</p>
     </div>
+    <div class="page-grid" id="myBooksGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
 
-    <!-- MY BOOKS PAGE -->
-    <div class="page-section" id="page-mybooks">
-      <div class="page-header">
-        <h2>📚 My Books</h2>
-        <p>Manage all your published and draft books. Click <strong>"Update"</strong> to edit details or <strong>"Share"</strong> to copy the book link.</p>
-      </div>
-      <div class="page-grid" id="myBooksGrid">
+  <!-- SALES PAGE -->
+  <div class="page-section" id="page-sales">
+    <div class="page-header">
+      <h2>📊 Sales</h2>
+      <p>Track your book sales and revenue.</p>
+    </div>
+    <div class="stats" id="salesStats"></div>
+    <div class="panel" style="margin-top:20px;">
+      <h3 style="margin-bottom:16px;">Sales History</h3>
+      <div id="salesHistory"></div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS PAGE -->
+  <div class="page-section" id="page-analytics">
+    <div class="page-header">
+      <h2>📈 Analytics</h2>
+      <p>Deep insights into your books' performance.</p>
+    </div>
+    <div class="page-grid" id="analyticsGrid">
+      <!-- populated by JS -->
+    </div>
+    <div class="panel" style="margin-top:20px;">
+      <h3 style="margin-bottom:16px;">Sales Performance</h3>
+      <div class="chart" id="analyticsChart" style="height:180px;"></div>
+    </div>
+  </div>
+
+  <!-- WISHLIST PAGE -->
+  <div class="page-section" id="page-wishlist">
+    <div class="page-header">
+      <h2>❤️ Wishlist</h2>
+      <p>Books readers have saved for later.</p>
+    </div>
+    <div class="page-grid" id="wishlistGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- MESSAGES PAGE -->
+  <div class="page-section" id="page-messages">
+    <div class="page-header">
+      <h2>💬 Messages</h2>
+      <p>Communicate with readers and other authors.</p>
+    </div>
+    <div class="panel">
+      <div id="messagesList">
         <!-- populated by JS -->
       </div>
     </div>
+  </div>
 
-    <!-- SALES PAGE -->
-    <div class="page-section" id="page-sales">
-      <div class="page-header">
-        <h2>📊 Sales</h2>
-        <p>Track your book sales and revenue.</p>
-      </div>
-      <div class="stats" id="salesStats"></div>
-      <div class="panel" style="margin-top:20px;">
-        <h3 style="margin-bottom:16px;">Sales History</h3>
-        <div id="salesHistory"></div>
-      </div>
+  <!-- SETTINGS PAGE -->
+  <div class="page-section" id="page-settings">
+    <div class="page-header">
+      <h2>⚙️ Settings</h2>
+      <p>Manage your account, author profile, and payment preferences.</p>
     </div>
 
-    <!-- ANALYTICS PAGE -->
-    <div class="page-section" id="page-analytics">
-      <div class="page-header">
-        <h2>📈 Analytics</h2>
-        <p>Deep insights into your books' performance.</p>
-      </div>
-      <div class="page-grid" id="analyticsGrid">
-        <!-- populated by JS -->
-      </div>
-      <div class="panel" style="margin-top:20px;">
-        <h3 style="margin-bottom:16px;">Sales Performance</h3>
-        <div class="chart" id="analyticsChart" style="height:180px;"></div>
-      </div>
-    </div>
-
-    <!-- WISHLIST PAGE -->
-    <div class="page-section" id="page-wishlist">
-      <div class="page-header">
-        <h2>❤️ Wishlist</h2>
-        <p>Books readers have saved for later.</p>
-      </div>
-      <div class="page-grid" id="wishlistGrid">
-        <!-- populated by JS -->
-      </div>
-    </div>
-
-    <!-- MESSAGES PAGE -->
-    <div class="page-section" id="page-messages">
-      <div class="page-header">
-        <h2>💬 Messages</h2>
-        <p>Communicate with readers and other authors.</p>
-      </div>
-      <div class="panel">
-        <div id="messagesList">
-          <!-- populated by JS -->
-        </div>
-      </div>
-    </div>
-
-    <!-- ============================================================ -->
-    <!-- ===== SETTINGS PAGE - WITH LIVE VALIDATION ===== -->
-    <!-- ============================================================ -->
-    <div class="page-section" id="page-settings">
-      <div class="page-header">
-        <h2>⚙️ Settings</h2>
-        <p>Manage your account, author profile, and payment preferences.</p>
-      </div>
-      <div class="panel">
-
-        <!-- ===== PAYOUT WARNING BANNER ===== -->
-        <div id="payoutWarningBanner" class="">
-          <div class="banner-content">
-            <div class="banner-icon">
-              <i class="fas fa-wallet"></i>
-            </div>
-            <div class="banner-text">
-              <h4>💳 Set Up Your Payout Account</h4>
-              <p>
-                To receive payments when your books sell, you need to add your bank or mobile money details below.
-                <strong>It takes less than 5 minutes!</strong>
-              </p>
-              <div class="banner-actions">
-                <span class="banner-time">
-                  <i class="fas fa-clock"></i> Complete your payout setup to start earning
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- ===== PROFILE SETTINGS ===== -->
-        <h3 style="margin-bottom:20px;">Profile Settings</h3>
-        
-        <!-- Username with Live Validation -->
-        <div class="settings-group">
-          <label>Username <span style="color:#b33;">*</span></label>
-          <div class="input-wrapper">
-            <input type="text" id="settingsName" placeholder="3-11 characters, any characters allowed" maxlength="11" />
-            <span class="validation-icon" id="usernameIcon"></span>
-          </div>
-          <div class="validation-message" id="usernameValidation"></div>
-          <div class="hint">3-11 characters, spaces and special characters allowed</div>
-        </div>
-        
-        <!-- Email with Live Validation -->
-        <div class="settings-group">
-          <label>Email Address <span style="color:#b33;">*</span></label>
-          <div class="input-wrapper">
-            <input type="email" id="settingsEmail" placeholder="your@email.com" />
-            <span class="validation-icon" id="emailIcon"></span>
-          </div>
-          <div class="validation-message" id="emailValidation"></div>
-          <div class="hint">We'll send notifications to this email</div>
-        </div>
-        
-        <div class="settings-group">
-          <label>Bio</label>
-          <input type="text" id="settingsBio" placeholder="Tell us about yourself..." />
-        </div>
-
-        <!-- ===== SAVE PROFILE BUTTON ===== -->
-        <button class="action-btn" id="saveSettingsBtn" style="width:100%;justify-content:center;margin-top:10px;" disabled>
-          <i class="fas fa-save"></i> Save Profile Settings
+    <!-- Settings Navigation -->
+    <div class="settings-nav-wrapper">
+      <div class="settings-nav">
+        <button class="settings-nav-item active" data-settings-tab="profile">
+          <i class="fas fa-user-circle"></i> Profile Settings
         </button>
+        <button class="settings-nav-item" data-settings-tab="author">
+          <i class="fas fa-feather-alt"></i> Author & Publishing
+        </button>
+        <button class="settings-nav-item" data-settings-tab="payout">
+          <i class="fas fa-wallet"></i> Payout Settings
+        </button>
+        <button class="settings-nav-item" data-settings-tab="earnings">
+          <i class="fas fa-coins"></i> Your Earnings
+        </button>
+        <button class="settings-nav-item" data-settings-tab="data">
+          <i class="fas fa-shield-alt"></i> Data Management
+        </button>
+      </div>
+    </div>
 
-        <!-- ===== AUTHOR & PUBLISHING SETTINGS ===== -->
-        <h3 style="margin-top:30px; margin-bottom:16px; border-top:2px solid #eee; padding-top:20px;">📝 Author & Publishing Settings</h3>
+    <!-- Settings Content -->
+    <div class="panel settings-panel">
 
-        <!-- Author Name -->
-        <div class="settings-group">
-          <label>Author Name <span style="color:#b33;">*</span></label>
-          <input type="text" id="settingsAuthorName" placeholder="Enter your author name (pen name or full name)" />
-          <div class="hint">This is the name that will appear as the author on your books.</div>
+    <!-- ===== PROFILE SETTINGS ===== -->
+    <div class="settings-tab-content active" id="settings-tab-profile">
+      <h3 style="margin-bottom:20px;">👤 Profile Settings</h3>
+      
+      <div class="settings-group">
+        <label>Username <span style="color:#b33;">*</span></label>
+        <div class="input-wrapper">
+          <input type="text" id="settingsName" placeholder="3-11 characters, any characters allowed" maxlength="11" />
+          <span class="validation-icon" id="usernameIcon"></span>
         </div>
-
-        <!-- Author Bio -->
-        <div class="settings-group">
-          <label>Author Bio <span style="color:#b33;">*</span></label>
-          <textarea id="settingsAuthorBio" rows="4" placeholder="Tell readers about yourself as an author..." style="resize:vertical; min-height:80px;"></textarea>
-          <div class="hint">This bio will appear on your author profile and book pages. Include your background, writing style, and previous works.</div>
+        <div class="validation-message" id="usernameValidation"></div>
+        <div class="hint">3-11 characters, spaces and special characters allowed</div>
+      </div>
+      
+      <div class="settings-group">
+        <label>Email Address <span style="color:#b33;">*</span></label>
+        <div class="input-wrapper">
+          <input type="email" id="settingsEmail" placeholder="your@email.com" />
+          <span class="validation-icon" id="emailIcon"></span>
         </div>
+        <div class="validation-message" id="emailValidation"></div>
+        <div class="hint">We'll send notifications to this email</div>
+      </div>
+      
+      <div class="settings-group">
+        <label>Bio</label>
+        <input type="text" id="settingsBio" placeholder="Tell us about yourself..." />
+      </div>
 
-        <!-- Gmail for Publishing -->
-        <div class="settings-group">
-          <label>Gmail for Publishing <span style="color:#b33;">*</span></label>
-          <input type="email" id="settingsGmail" placeholder="your-publishing-email@gmail.com" />
-          <div class="hint">This email will be used for buyer communications and publishing notifications.</div>
+      <button class="action-btn" id="saveSettingsBtn" style="width:100%;justify-content:center;margin-top:10px;" disabled>
+        <i class="fas fa-save"></i> Save Profile Settings
+      </button>
+    </div>
+
+    <!-- ===== AUTHOR & PUBLISHING SETTINGS ===== -->
+    <div class="settings-tab-content" id="settings-tab-author">
+      <h3 style="margin-bottom:20px;">📝 Author & Publishing Settings</h3>
+
+      <div class="settings-group">
+        <label>Author Name <span style="color:#b33;">*</span></label>
+        <input type="text" id="settingsAuthorName" placeholder="Enter your author name (pen name or full name)" />
+        <div class="hint">This is the name that will appear as the author on your books.</div>
+      </div>
+
+      <div class="settings-group">
+        <label>Author Bio <span style="color:#b33;">*</span></label>
+        <textarea id="settingsAuthorBio" rows="4" placeholder="Tell readers about yourself as an author..." style="resize:vertical; min-height:80px;"></textarea>
+        <div class="hint">This bio will appear on your author profile and book pages.</div>
+      </div>
+
+      <div class="settings-group">
+        <label>Gmail for Publishing <span style="color:#b33;">*</span></label>
+        <input type="email" id="settingsGmail" placeholder="your-publishing-email@gmail.com" />
+        <div class="hint">This email will be used for buyer communications.</div>
+      </div>
+
+      <div class="settings-group">
+        <label>Phone Number <span style="color:#b33;">*</span></label>
+        <input type="tel" id="settingsPhoneNumber" placeholder="+233 24 444 4444" />
+        <div class="hint">Include country code (e.g., +233 for Ghana).</div>
+      </div>
+
+      <div class="settings-group">
+        <label>Publisher Name <span style="font-weight:400;font-size:0.7rem;color:#888;">optional</span></label>
+        <input type="text" id="settingsPublisherName" placeholder="Publisher name (leave empty to use author name)" />
+        <div class="hint">If different from your author name.</div>
+      </div>
+
+      <div class="settings-group">
+        <label>Country <span style="color:#b33;">*</span></label>
+        <select id="settingsCountry">
+          <option value="">Select your country</option>
+          <option value="Ghana">Ghana</option>
+          <option value="Nigeria">Nigeria</option>
+          <option value="South Africa">South Africa</option>
+          <option value="Kenya">Kenya</option>
+          <option value="United States">United States</option>
+          <option value="United Kingdom">United Kingdom</option>
+          <option value="Canada">Canada</option>
+          <option value="Australia">Australia</option>
+          <option value="Germany">Germany</option>
+          <option value="France">France</option>
+          <option value="Spain">Spain</option>
+          <option value="Italy">Italy</option>
+          <option value="Portugal">Portugal</option>
+          <option value="Brazil">Brazil</option>
+          <option value="Mexico">Mexico</option>
+          <option value="India">India</option>
+          <option value="Other">Other</option>
+        </select>
+        <div class="hint">Your country of residence for tax and payment purposes.</div>
+      </div>
+
+      <button class="action-btn" id="saveAuthorSettingsBtn" style="width:100%;justify-content:center;margin-top:10px;background:#6a34ff;">
+        <i class="fas fa-save"></i> Save Author & Publishing Settings
+      </button>
+    </div>
+
+    <!-- ===== PAYOUT SETTINGS ===== -->
+    <div class="settings-tab-content" id="settings-tab-payout">
+      <h3 style="margin-bottom:20px;">💳 Payout Settings</h3>
+      <p style="color:#888; margin-bottom:16px;">Enter your payment details to receive earnings from book sales. You'll get <strong>90%</strong> of each sale (10% platform commission).</p>
+
+      <!-- Payout Warning Banner -->
+      <div id="payoutWarningBanner" class="" style="display:none; background:linear-gradient(135deg,#fef3e2 0%,#fcf7f0 100%); border-left:4px solid #e67e22; padding:14px 18px; border-radius:12px; margin-bottom:16px;">
+        <div style="display:flex; align-items:flex-start; gap:12px;">
+          <span style="font-size:1.2rem;">💳</span>
+          <div>
+            <h4 style="margin:0 0 4px 0; color:#a8640b; font-size:0.95rem;">Set Up Your Payout Account</h4>
+            <p style="margin:0; color:#7a4a2a; font-size:0.85rem;">To receive payments, add your bank or mobile money details below.</p>
+          </div>
         </div>
+      </div>
+      
+      <div class="settings-group">
+        <label>Payout Type</label>
+        <select id="payoutType">
+          <option value="bank">Bank Account</option>
+          <option value="momo">Mobile Money</option>
+        </select>
+      </div>
 
-        <!-- Phone Number -->
+      <!-- Bank Fields -->
+      <div id="bankFields">
         <div class="settings-group">
-          <label>Phone Number <span style="color:#b33;">*</span></label>
-          <input type="tel" id="settingsPhoneNumber" placeholder="+233 24 444 4444" />
-          <div class="hint">Include country code (e.g., +233 for Ghana, +44 for UK). This will be used for communication.</div>
-        </div>
-
-        <!-- Publisher Name -->
-        <div class="settings-group">
-          <label>Publisher Name <span class="optional-badge" style="font-weight:400;font-size:0.7rem;color:#888;">optional</span></label>
-          <input type="text" id="settingsPublisherName" placeholder="Publisher name (leave empty to use author name)" />
-          <div class="hint">If different from your author name. Leave empty to use your author name as publisher.</div>
-        </div>
-
-        <!-- Country (last) -->
-        <div class="settings-group">
-          <label>Country <span style="color:#b33;">*</span></label>
-          <select id="settingsCountry">
-            <option value="">Select your country</option>
-            <option value="Ghana">Ghana</option>
-            <option value="Nigeria">Nigeria</option>
-            <option value="South Africa">South Africa</option>
-            <option value="Kenya">Kenya</option>
-            <option value="United States">United States</option>
-            <option value="United Kingdom">United Kingdom</option>
-            <option value="Canada">Canada</option>
-            <option value="Australia">Australia</option>
-            <option value="Germany">Germany</option>
-            <option value="France">France</option>
-            <option value="Spain">Spain</option>
-            <option value="Italy">Italy</option>
-            <option value="Portugal">Portugal</option>
-            <option value="Brazil">Brazil</option>
-            <option value="Mexico">Mexico</option>
-            <option value="India">India</option>
-            <option value="China">China</option>
-            <option value="Japan">Japan</option>
-            <option value="Other">Other</option>
+          <label>Bank Name</label>
+          <select id="bankName">
+            <option value="">Select your bank</option>
+            <option value="gcb">GCB Bank</option>
+            <option value="ecobank">Ecobank Ghana</option>
+            <option value="standard chartered">Standard Chartered</option>
+            <option value="absa">ABSA Bank</option>
+            <option value="republic">Republic Bank</option>
+            <option value="fidelity">Fidelity Bank</option>
+            <option value="first atlantic">First Atlantic Bank</option>
+            <option value="access">Access Bank</option>
+            <option value="zenith">Zenith Bank</option>
+            <option value="uba">UBA Ghana</option>
+            <option value="gtbank">GTBank</option>
+            <option value="stanbic">Stanbic Bank</option>
+            <option value="prudential">Prudential Bank</option>
+            <option value="fbn">FBN Bank</option>
+            <option value="bank of africa">Bank of Africa</option>
           </select>
-          <div class="hint">Your country of residence. This will be used for tax and payment purposes.</div>
         </div>
+        <div class="settings-group">
+          <label>Account Number</label>
+          <input type="text" id="accountNumber" placeholder="0123456789" />
+        </div>
+        <div class="settings-group">
+          <label>Account Holder Name</label>
+          <input type="text" id="accountHolderName" placeholder="Full name on account" />
+        </div>
+      </div>
 
-        <!-- ===== SAVE AUTHOR SETTINGS BUTTON ===== -->
-        <button class="action-btn" id="saveAuthorSettingsBtn" style="width:100%;justify-content:center;margin-top:10px;background:#6a34ff;">
-          <i class="fas fa-save"></i> Save Author & Publishing Settings
-        </button>
+      <!-- MoMo Fields -->
+      <div id="momoFields" style="display:none;">
+        <div class="settings-group">
+          <label>Mobile Money Network</label>
+          <select id="momoNetwork">
+            <option value="mtn">MTN MoMo</option>
+            <option value="vodafone">Vodafone Cash</option>
+            <option value="tigo">AirtelTigo Money</option>
+          </select>
+        </div>
+        <div class="settings-group">
+          <label>Phone Number</label>
+          <input type="tel" id="momoNumber" placeholder="024XXXXXXX" maxlength="10" />
+          <div class="hint">Enter without spaces, e.g., 024XXXXXXX</div>
+        </div>
+        <div class="settings-group">
+          <label>Account Holder Name</label>
+          <input type="text" id="momoHolderName" placeholder="Full name on MoMo account" />
+          <div class="hint">Must match the name on the MoMo account</div>
+        </div>
+      </div>
 
-        <!-- ===== PAYOUT SETTINGS ===== -->
-        <div class="payout-settings-section">
-          <h3>💳 Payout Settings</h3>
-          <p class="payout-sub">Enter your payment details to receive earnings from book sales. You'll get <strong>90%</strong> of each sale (10% platform commission).</p>
-          
-          <div class="settings-group">
-            <label>Payout Type</label>
-            <select id="payoutType">
-              <option value="bank">Bank Account</option>
-              <option value="momo">Mobile Money</option>
-            </select>
+      <button class="action-btn" id="savePayoutBtn" style="width:100%;justify-content:center;margin-top:10px;background:#2d7d46;">
+        <i class="fas fa-check-circle"></i> Activate Payout Account
+      </button>
+      <div id="payoutStatus"></div>
+    </div>
+
+    <!-- ===== YOUR EARNINGS ===== -->
+    <div class="settings-tab-content" id="settings-tab-earnings">
+      <h3 style="margin-bottom:20px;">💰 Your Earnings</h3>
+      <p style="color:#888; margin-bottom:16px;">Track your book sales and revenue all in one place.</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:20px;">
+        <div style="background:#f8f6ff; padding:16px; border-radius:12px; text-align:center; border:1px solid #ede8ff;">
+          <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:0.5px;">Total Sales</div>
+          <div style="font-size:1.6rem; font-weight:700; color:#4b2aad;" id="totalSales">0</div>
+        </div>
+        <div style="background:#dff7e5; padding:16px; border-radius:12px; text-align:center; border:1px solid #a8d5b5;">
+          <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:0.5px;">Total Earnings</div>
+          <div style="font-size:1.6rem; font-weight:700; color:#15723d;" id="totalEarnings">GHS 0.00</div>
+        </div>
+        <div style="background:#fff8e6; padding:16px; border-radius:12px; text-align:center; border:1px solid #f0e0b5;">
+          <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:0.5px;">Pending Payout</div>
+          <div style="font-size:1.6rem; font-weight:700; color:#a8640b;" id="pendingPayout">GHS 0.00</div>
+        </div>
+        <div style="background:#f0f0f0; padding:16px; border-radius:12px; text-align:center; border:1px solid #ddd; display:none;" id="commissionCard">
+          <div style="font-size:0.75rem; color:#888; text-transform:uppercase; letter-spacing:0.5px;">Platform Commission</div>
+          <div style="font-size:1.6rem; font-weight:700; color:#888;" id="totalCommission">GHS 0.00</div>
+        </div>
+      </div>
+
+      <h4 style="margin-bottom:12px;">Recent Transactions</h4>
+      <div id="transactionHistory" style="background:#faf9fd; border-radius:12px; padding:8px 0;">
+        <p style="color:#888; padding:20px; text-align:center; margin:0;">No transactions yet.</p>
+      </div>
+    </div>
+
+    <!-- ===== DATA MANAGEMENT ===== -->
+    <div class="settings-tab-content" id="settings-tab-data">
+      <h3 style="margin-bottom:20px;">🔒 Data Management</h3>
+      <p style="color:#888; margin-bottom:16px;">Export your data or request account deletion (GDPR compliant).</p>
+
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="background:#f8f6ff; border-radius:12px; padding:18px 20px; border:1px solid #ede8ff; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="font-weight:600; color:#1d1833;"><i class="fas fa-download" style="color:#6a34ff; margin-right:8px;"></i> Export Data</div>
+            <div style="font-size:0.85rem; color:#888;">Download all your data as a JSON file</div>
           </div>
-
-          <!-- Bank Fields -->
-          <div id="bankFields">
-            <div class="settings-group">
-              <label>Bank Name</label>
-              <select id="bankName">
-                <option value="">Select your bank</option>
-                <option value="gcb">GCB Bank</option>
-                <option value="ecobank">Ecobank Ghana</option>
-                <option value="standard chartered">Standard Chartered</option>
-                <option value="absa">ABSA Bank</option>
-                <option value="republic">Republic Bank</option>
-                <option value="fidelity">Fidelity Bank</option>
-                <option value="first atlantic">First Atlantic Bank</option>
-                <option value="access">Access Bank</option>
-                <option value="zenith">Zenith Bank</option>
-                <option value="uba">UBA Ghana</option>
-                <option value="gtbank">GTBank</option>
-                <option value="stanbic">Stanbic Bank</option>
-                <option value="prudential">Prudential Bank</option>
-                <option value="fbn">FBN Bank</option>
-                <option value="bank of africa">Bank of Africa</option>
-              </select>
-            </div>
-            <div class="settings-group">
-              <label>Account Number</label>
-              <input type="text" id="accountNumber" placeholder="0123456789" />
-            </div>
-            <div class="settings-group">
-              <label>Account Holder Name</label>
-              <input type="text" id="accountHolderName" placeholder="Full name on account" />
-            </div>
-          </div>
-
-          <!-- MoMo Fields -->
-          <div id="momoFields" style="display:none;">
-            <div class="settings-group">
-              <label>Mobile Money Network</label>
-              <select id="momoNetwork">
-                <option value="mtn">MTN MoMo</option>
-                <option value="vodafone">Vodafone Cash</option>
-                <option value="tigo">AirtelTigo Money</option>
-              </select>
-            </div>
-            <div class="settings-group">
-              <label>Phone Number</label>
-              <input type="tel" id="momoNumber" placeholder="024XXXXXXX" maxlength="10" />
-              <div class="hint">Enter without spaces, e.g., 024XXXXXXX</div>
-            </div>
-            <div class="settings-group">
-              <label>Account Holder Name</label>
-              <input type="text" id="momoHolderName" placeholder="Full name on MoMo account" />
-              <div class="hint">Must match the name on the MoMo account</div>
-            </div>
-          </div>
-
-          <button class="action-btn" id="savePayoutBtn" style="width:100%;justify-content:center;margin-top:10px;background:#2d7d46;">
-            <i class="fas fa-check-circle"></i> Activate Payout Account
+          <button class="gdpr-btn export" id="exportDataBtn" style="background:#6a34ff; color:white; border:none; padding:10px 24px; border-radius:30px; font-weight:600; cursor:pointer; transition:0.2s; font-size:0.85rem;">
+            <i class="fas fa-download"></i> Export
           </button>
-          <div id="payoutStatus"></div>
         </div>
 
-        <!-- ===== EARNINGS OVERVIEW ===== -->
-        <div style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-            <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin:0;">💰 Your Earnings</h3>
-            <span style="color:#888; font-size:0.85rem;">All time</span>
+        <div style="background:#fdf2f2; border-radius:12px; padding:18px 20px; border:1px solid #fcc; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <div>
+            <div style="font-weight:600; color:#b33;"><i class="fas fa-trash" style="color:#b33; margin-right:8px;"></i> Request Account Deletion</div>
+            <div style="font-size:0.85rem; color:#b33;">Permanently delete your account and all associated data</div>
           </div>
-          <div class="stats" id="earningsStats">
-            <div class="stat">
-              <h4>Total Sales</h4>
-              <div class="value" id="totalSales">0</div>
-            </div>
-            <div class="stat">
-              <h4>Total Earnings</h4>
-              <div class="value" id="totalEarnings">GHS 0.00</div>
-            </div>
-            <div class="stat">
-              <h4>Pending Payout</h4>
-              <div class="value" id="pendingPayout">GHS 0.00</div>
-            </div>
-            <div class="stat">
-              <h4>Platform Commission (10%)</h4>
-              <div class="value" id="totalCommission">GHS 0.00</div>
-            </div>
-          </div>
-          
-          <div style="margin-top: 20px;">
-            <h4 style="margin-bottom:12px;">Recent Transactions</h4>
-            <div id="transactionHistory">
-              <p style="color: #888; padding: 10px 0;">No transactions yet.</p>
-            </div>
-          </div>
+          <button class="gdpr-btn delete" id="requestDeletionBtn" style="background:#fee; color:#b33; border:2px solid #fcc; padding:10px 24px; border-radius:30px; font-weight:600; cursor:pointer; transition:0.2s; font-size:0.85rem;">
+            <i class="fas fa-trash"></i> Request Deletion
+          </button>
+        </div>
+
+        <div style="background:#f0f4ff; border-radius:12px; padding:14px 16px; border:1px solid #d2e3fc; margin-top:4px;">
+          <p style="font-size:0.75rem; color:#1a56db; margin:0; text-align:center;">
+            🔒 GDPR compliant. You have the right to access, modify, and delete your data.
+            <br>Questions? Contact us at <a href="mailto:reach.volant@gmail.com" style="color:#4b2aad;">reach.volant@gmail.com</a>
+          </p>
         </div>
       </div>
     </div>
+
+  </div>
+</div>
 
   </main>
 </div>
@@ -2195,6 +2830,85 @@ header .logo-header {
   </div>
 </div>
 
+<!-- ===== DELETE CONFIRMATION MODAL ===== -->
+<div id="deleteConfirmModal" class="modal-overlay" style="display:none;">
+  <div class="modal delete-modal-content">
+    <div class="send-message-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; padding-bottom:12px; border-bottom:2px solid #ff4d4d;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="background:#ffebee; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1rem;">⚠️</span>
+        <div>
+          <h3 style="color:#dc3545; font-size:1.1rem; margin:0;">Request Account Deletion</h3>
+          <p style="color:#dc3545; font-size:0.8rem; margin:0;">Send a deletion request to the Volant Team</p>
+        </div>
+      </div>
+      <button class="send-message-close" id="closeDeleteConfirmModal" style="width:28px; height:28px; border-radius:50%; background:#f5f5f5; border:none; font-size:0.9rem; color:#666; cursor:pointer;">✕</button>
+    </div>
+    
+    <div class="send-message-body" style="display:flex; flex-direction:column; gap:10px;">
+      
+      <!-- Account Info Card -->
+      <div class="account-info-card">
+        <div class="account-avatar" id="deleteModalInitials">JD</div>
+        <div class="account-info-text">
+          <div class="name" id="deleteModalUsername">username</div>
+          <div class="email" id="deleteModalEmail">email@example.com</div>
+        </div>
+      </div>
+      
+      <!-- Warning -->
+      <div class="warning-box">
+        <p>⚠️ <strong>You are requesting to delete:</strong> <span style="color:#dc3545; font-weight:700;" id="deleteModalUsernameBold">username</span></p>
+      </div>
+      
+      <!-- Info about request process -->
+      <div class="info-box">
+        <p>📋 <strong>How it works:</strong><br>
+          Your deletion request will be sent to the Volant Team.<br>
+          They will review and process your request within <strong>7 days</strong>.<br>
+          You will receive a confirmation email once your account is deleted.
+        </p>
+      </div>
+      
+      <!-- Confirmation Checkboxes -->
+      <div class="confirm-check">
+        <label>
+          <input type="checkbox" id="deleteConfirmCheckbox">
+          <span>I understand this is <strong>permanent and irreversible</strong></span>
+        </label>
+      </div>
+      
+      <div class="confirm-check">
+        <label>
+          <input type="checkbox" id="deleteTypeCheckbox">
+          <span>I want to <strong>permanently delete</strong> my account from ALL Volant platforms</span>
+        </label>
+      </div>
+      
+      <!-- Username Confirmation -->
+      <div class="username-confirm">
+        <label>Type your username to confirm: <span class="highlight" id="deleteConfirmUsernameLabel">username</span></label>
+        <input type="text" id="deleteConfirmUsername" placeholder="Enter your username">
+      </div>
+      
+      <!-- GDPR Rights -->
+      <div class="gdpr-check">
+        <label>
+          <input type="checkbox" id="gdprRightCheckbox">
+          <span>I understand my GDPR rights and confirm I want to exercise my <strong>right to erasure</strong> (Article 17 GDPR)</span>
+        </label>
+      </div>
+      
+      <!-- Actions -->
+      <div class="modal-actions">
+        <button id="cancelDeleteConfirm" class="btn-cancel">Cancel</button>
+        <button id="submitDeleteAccount" class="btn-delete-submit" disabled>
+          <span class="send-icon">✉️</span> Send Deletion Request
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -2215,18 +2929,14 @@ header .logo-header {
     query, 
     where, 
     getDocs, 
-    doc, 
     getDoc, 
+    doc, 
     updateDoc,
     deleteDoc,
-    serverTimestamp
+    serverTimestamp,
+    addDoc
   } from "firebase/firestore";
   import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-
-  // Enable console logs for debugging
-  // console.log = function() {};
-  // console.error = function() {};
-  // console.warn = function() {};
 
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -2341,6 +3051,18 @@ header .logo-header {
   const savePayoutBtn = document.getElementById('savePayoutBtn');
   const payoutStatus = document.getElementById('payoutStatus');
 
+  // ===== GDPR / DELETE DOM REFS =====
+  const exportDataBtn = document.getElementById('exportDataBtn');
+  const requestDeletionBtn = document.getElementById('requestDeletionBtn');
+  const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+  const closeDeleteConfirmModalBtn = document.getElementById('closeDeleteConfirmModal');
+  const cancelDeleteConfirm = document.getElementById('cancelDeleteConfirm');
+  const submitDeleteAccount = document.getElementById('submitDeleteAccount');
+  const deleteConfirmCheckbox = document.getElementById('deleteConfirmCheckbox');
+  const deleteTypeCheckbox = document.getElementById('deleteTypeCheckbox');
+  const gdprRightCheckbox = document.getElementById('gdprRightCheckbox');
+  const deleteConfirmUsername = document.getElementById('deleteConfirmUsername');
+
   let currentUser = null;
   let authorBooks = [];
   let userDisplayName = '';
@@ -2354,6 +3076,71 @@ header .logo-header {
   let emailValid = false;
   let originalUsername = '';
   let originalEmail = '';
+
+  // ===== OPTIMIZED BATCH USER FETCHING (50 AT A TIME) =====
+  const userBatchCache = {};
+  let userBatchCacheTime = 0;
+  const CACHE_DURATION = 300000; // 5 minutes
+
+  async function getUsernamesBatched(userIds) {
+    const uniqueIds = [...new Set(userIds.filter(id => id && id !== currentUser?.uid))];
+    const results = {};
+    const uncachedIds = [];
+    
+    for (const id of uniqueIds) {
+      if (userBatchCache[id]) {
+        results[id] = userBatchCache[id];
+      } else {
+        uncachedIds.push(id);
+      }
+    }
+    
+    if (uncachedIds.length > 0) {
+      try {
+        const chunkSize = 50;
+        for (let i = 0; i < uncachedIds.length; i += chunkSize) {
+          const chunk = uncachedIds.slice(i, i + chunkSize);
+          const promises = chunk.map(id => getDoc(doc(db, "users", id)));
+          const snapshots = await Promise.all(promises);
+          snapshots.forEach((snap, index) => {
+            const id = chunk[index];
+            if (snap.exists()) {
+              const data = snap.data();
+              userBatchCache[id] = {
+                uid: id,
+                username: data.username || data.displayName || 'Anonymous Poet',
+                photoURL: data.photoURL || null,
+                email: data.email || '',
+                authorName: data.authorName || '',
+                authorBio: data.authorBio || '',
+                gmail: data.gmail || '',
+                phoneNumber: data.phoneNumber || '',
+                country: data.country || '',
+                publisherName: data.publisherName || '',
+                bio: data.bio || '',
+                hasPayoutAccount: data.hasPayoutAccount || false,
+                subaccountCode: data.subaccountCode || null,
+                payoutDetails: data.payoutDetails || null
+              };
+              results[id] = userBatchCache[id];
+            } else {
+              userBatchCache[id] = { uid: id, username: 'Poet', photoURL: null };
+              results[id] = userBatchCache[id];
+            }
+          });
+        }
+        userBatchCacheTime = Date.now();
+      } catch (err) {
+        console.warn('Error fetching users:', err);
+        uncachedIds.forEach(id => {
+          userBatchCache[id] = { uid: id, username: 'Poet', photoURL: null };
+          results[id] = userBatchCache[id];
+        });
+      }
+    }
+    
+    return results;
+  }
 
   // Toast
   function showToast(message, type = 'info') {
@@ -2383,7 +3170,6 @@ header .logo-header {
       payout: !!userData.subaccountCode && userData.hasPayoutAccount === true
     };
 
-    // Update check icons
     const iconMap = {
       authorName: checkAuthorName,
       authorBio: checkAuthorBio,
@@ -2496,7 +3282,6 @@ header .logo-header {
     }
   }
 
-  // ===== UPDATE VALIDATION UI =====
   function updateUsernameValidation(result) {
     const icon = usernameIcon;
     const message = usernameValidation;
@@ -2561,7 +3346,6 @@ header .logo-header {
     }
   }
 
-  // ===== SETUP VALIDATION HANDLERS =====
   let usernameTimeout = null;
   let emailTimeout = null;
 
@@ -2680,7 +3464,6 @@ header .logo-header {
     return url;
   }
 
-  // ===== DOWNLOADS HELPERS =====
   function toggleUpdateCustomDownloadInput() {
     const selected = updateDownloadsSelect.value;
     if (selected === 'custom') {
@@ -2780,7 +3563,6 @@ header .logo-header {
     }
   }
 
-  // ===== CHECK PAYOUT ACCOUNT STATUS =====
   async function checkPayoutAccount(userId) {
     try {
       const userDoc = await getDoc(doc(db, "users", userId));
@@ -2796,7 +3578,6 @@ header .logo-header {
     }
   }
 
-  // ===== UPDATE PAYOUT WARNING BANNER =====
   async function updatePayoutWarning(userId) {
     if (!payoutWarningBanner) return;
     const result = await checkPayoutAccount(userId);
@@ -2808,7 +3589,6 @@ header .logo-header {
     return result.hasAccount;
   }
 
-  // ===== HELPER: Get Paystack Bank Code from Bank Name =====
   function getBankCode(bankName) {
     const bankCodes = {
       'gcb': '058',
@@ -2831,7 +3611,6 @@ header .logo-header {
     return bankCodes[normalized] || null;
   }
 
-  // ===== SAVE PAYOUT SETTINGS =====
   async function savePayoutSettings() {
     if (!currentUser) {
       showToast('❌ Please sign in first.', 'error');
@@ -2841,7 +3620,6 @@ header .logo-header {
     const type = payoutType.value;
     let payoutData = { type: type };
     
-    // ===== BANK ACCOUNT =====
     if (type === 'bank') {
       const bankName = document.getElementById('bankName').value;
       const accountNumber = document.getElementById('accountNumber').value.trim();
@@ -2863,7 +3641,6 @@ header .logo-header {
       payoutData.accountHolderName = accountHolderName;
       payoutData.bankCode = bankCode;
     
-    // ===== MOBILE MONEY =====
     } else if (type === 'momo') {
       const network = document.getElementById('momoNetwork').value;
       const phoneNumber = document.getElementById('momoNumber').value.trim();
@@ -2888,7 +3665,6 @@ header .logo-header {
       return;
     }
     
-    // ===== SEND TO SERVER =====
     savePayoutBtn.disabled = true;
     savePayoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Activating...';
     payoutStatus.textContent = '⏳ Creating payout account...';
@@ -3109,83 +3885,116 @@ header .logo-header {
   }
 
   // ============================================================
-  // ===== REFRESH SETTINGS FUNCTION - FIXED =====
+  // ===== REFRESH SETTINGS FUNCTION - OPTIMIZED =====
   // ============================================================
   async function refreshSettings() {
     if (!currentUser) return;
     try {
-      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        console.log('🔄 Refreshing settings - Country from DB:', data.country);
+      if (userBatchCache[currentUser.uid] && Date.now() - userBatchCacheTime < CACHE_DURATION) {
+        const cached = userBatchCache[currentUser.uid];
+        settingsName.value = cached.username || currentUser.displayName || '';
+        settingsEmail.value = cached.email || currentUser.email || '';
+        settingsBio.value = cached.bio || '';
+        settingsAuthorName.value = cached.authorName || '';
+        settingsAuthorBio.value = cached.authorBio || '';
+        settingsGmail.value = cached.gmail || '';
+        settingsPhoneNumber.value = cached.phoneNumber || '';
+        settingsPublisherName.value = cached.publisherName || '';
         
-        // Update all settings fields with fresh data
-        settingsName.value = data.username || currentUser.displayName || '';
-        settingsEmail.value = data.email || currentUser.email || '';
-        settingsBio.value = data.bio || '';
-        
-        // ⭐ FIXED: Set the country dropdown with proper matching
-        if (data.country && typeof data.country === 'string') {
-          const savedCountry = data.country.trim();
-          console.log('📋 Setting country dropdown to:', savedCountry);
-          
-          // Try exact match first
+        if (cached.country) {
+          const savedCountry = cached.country.trim();
           let found = false;
           for (let i = 0; i < settingsCountry.options.length; i++) {
             if (settingsCountry.options[i].value === savedCountry) {
               settingsCountry.selectedIndex = i;
               found = true;
-              console.log('✅ Exact match found:', settingsCountry.options[i].value);
               break;
             }
           }
-          
-          // If not found, try case-insensitive match
           if (!found) {
             const countryLower = savedCountry.toLowerCase();
             for (let i = 0; i < settingsCountry.options.length; i++) {
               if (settingsCountry.options[i].value.toLowerCase() === countryLower) {
                 settingsCountry.selectedIndex = i;
                 found = true;
-                console.log('✅ Case-insensitive match found:', settingsCountry.options[i].value);
                 break;
               }
             }
           }
-          
-          // If still not found, add as new option
           if (!found) {
-            console.log('⚠️ Country not found in dropdown, adding as new option:', savedCountry);
             const newOption = document.createElement('option');
             newOption.value = savedCountry;
             newOption.textContent = savedCountry;
             settingsCountry.appendChild(newOption);
             settingsCountry.value = savedCountry;
-            console.log('✅ New option added and selected:', savedCountry);
           }
-          
-          // Force the dropdown to show the selected value
-          settingsCountry.dispatchEvent(new Event('change', { bubbles: true }));
-          console.log('✅ Final country value in dropdown:', settingsCountry.value);
-        } else {
-          settingsCountry.value = '';
-          console.log('⚠️ No country found in DB');
         }
         
+        updateSetupAlert(cached);
+        await updatePayoutWarning(currentUser.uid);
+        return;
+      }
+      
+      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        
+        userBatchCache[currentUser.uid] = {
+          uid: currentUser.uid,
+          username: data.username || currentUser.displayName || '',
+          email: data.email || currentUser.email || '',
+          bio: data.bio || '',
+          authorName: data.authorName || '',
+          authorBio: data.authorBio || '',
+          gmail: data.gmail || '',
+          phoneNumber: data.phoneNumber || '',
+          country: data.country || '',
+          publisherName: data.publisherName || '',
+          hasPayoutAccount: data.hasPayoutAccount || false,
+          subaccountCode: data.subaccountCode || null,
+          payoutDetails: data.payoutDetails || null
+        };
+        userBatchCacheTime = Date.now();
+        
+        settingsName.value = data.username || currentUser.displayName || '';
+        settingsEmail.value = data.email || currentUser.email || '';
+        settingsBio.value = data.bio || '';
         settingsAuthorName.value = data.authorName || '';
         settingsAuthorBio.value = data.authorBio || '';
         settingsGmail.value = data.gmail || '';
         settingsPhoneNumber.value = data.phoneNumber || '';
         settingsPublisherName.value = data.publisherName || '';
         
-        // Update validation states
-        originalUsername = settingsName.value;
-        originalEmail = settingsEmail.value;
+        if (data.country) {
+          const savedCountry = data.country.trim();
+          let found = false;
+          for (let i = 0; i < settingsCountry.options.length; i++) {
+            if (settingsCountry.options[i].value === savedCountry) {
+              settingsCountry.selectedIndex = i;
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            const countryLower = savedCountry.toLowerCase();
+            for (let i = 0; i < settingsCountry.options.length; i++) {
+              if (settingsCountry.options[i].value.toLowerCase() === countryLower) {
+                settingsCountry.selectedIndex = i;
+                found = true;
+                break;
+              }
+            }
+          }
+          if (!found) {
+            const newOption = document.createElement('option');
+            newOption.value = savedCountry;
+            newOption.textContent = savedCountry;
+            settingsCountry.appendChild(newOption);
+            settingsCountry.value = savedCountry;
+          }
+        }
         
-        // Update setup alert
         updateSetupAlert(data);
-        
-        // Check payout status
         await updatePayoutWarning(currentUser.uid);
       }
     } catch (err) {
@@ -3194,9 +4003,9 @@ header .logo-header {
   }
 
   // ============================================================
-  // ===== SHOW PAGE FUNCTION =====
+  // ===== SHOW PAGE FUNCTION - WITH TAB PERSISTENCE =====
   // ============================================================
-  function showPage(pageId) {
+  function showPage(pageId, updateHistory = true) {
     document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
     const target = document.getElementById('page-' + pageId);
     if (target) target.classList.add('active');
@@ -3204,7 +4013,10 @@ header .logo-header {
     const navLink = document.querySelector(`.nav a[data-page="${pageId}"]`);
     if (navLink) navLink.classList.add('active');
     
-    // 👇 Refresh settings when settings page is opened
+    if (updateHistory) {
+      sessionStorage.setItem('volant_reads_current_page', pageId);
+    }
+    
     if (pageId === 'settings') {
       refreshSettings();
     }
@@ -3697,6 +4509,289 @@ header .logo-header {
     renderWishlistPage();
   }
 
+  // ============================================================
+  // ====== EXPORT DATA (GDPR) ======
+  // ============================================================
+  async function exportUserData() {
+    if (!currentUser) {
+      showToast('❌ You must be signed in to export your data.', 'error');
+      return;
+    }
+    
+    try {
+      showToast('⏳ Gathering your data... This may take a moment.', 'info');
+      
+      const userId = currentUser.uid;
+      const userRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userRef);
+      const userData = userDoc.exists() ? userDoc.data() : null;
+      const username = userData?.username || 'unknown';
+      
+      const exportData = {
+        user: {
+          uid: userId,
+          username: username,
+          email: userData?.email || '',
+          realName: userData?.realName || '',
+          bio: userData?.bio || '',
+          joined: userData?.joined || userData?.createdAt || '',
+          photoURL: userData?.photoURL || '',
+          emailPrivacy: userData?.emailPrivacy || 'public',
+          followerCount: userData?.followerCount || 0,
+          followingCount: userData?.followingCount || 0,
+          isVerified: userData?.isVerified || false,
+          authProvider: userData?.authProvider || 'email'
+        },
+        books: authorBooks.map(book => ({
+          title: book.title || 'Untitled',
+          subtitle: book.subtitle || '',
+          authorName: book.authorName || 'Anonymous',
+          price: book.price || 0,
+          currency: book.currency || 'GHS',
+          status: book.status || 'draft',
+          downloads: book.downloads || 0,
+          views: book.views || 0,
+          rating: book.rating || 0,
+          downloadLimit: book.downloadLimit || '5'
+        })),
+        messages: userMessages,
+        wishlist: wishlistItems,
+        exportDate: new Date().toISOString(),
+        platform: 'reads'
+      };
+      
+      const jsonStr = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `volant_reads_export_${username}_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showToast('✅ Data exported successfully!', 'success');
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      showToast('❌ Failed to export data: ' + error.message, 'error');
+    }
+  }
+
+  // ============================================================
+  // ====== REQUEST ACCOUNT DELETION ======
+  // ============================================================
+  function openDeleteConfirmationModal() {
+    if (!currentUser) {
+      showToast('❌ Please sign in first.', 'error');
+      return;
+    }
+    
+    const username = document.getElementById('username')?.textContent || userDisplayName || 'User';
+    const email = currentUser.email || 'email@example.com';
+    const initials = getInitials(username);
+    
+    document.getElementById('deleteModalUsername').textContent = username;
+    document.getElementById('deleteModalUsernameBold').textContent = username;
+    document.getElementById('deleteConfirmUsernameLabel').textContent = username;
+    document.getElementById('deleteModalEmail').textContent = email;
+    document.getElementById('deleteModalInitials').textContent = initials;
+    
+    deleteConfirmCheckbox.checked = false;
+    deleteTypeCheckbox.checked = false;
+    gdprRightCheckbox.checked = false;
+    deleteConfirmUsername.value = '';
+    submitDeleteAccount.disabled = true;
+    
+    deleteConfirmModal.style.display = 'flex';
+    deleteConfirmModal.classList.add('show');
+  }
+
+  function closeDeleteModal() {
+    deleteConfirmModal.style.display = 'none';
+    deleteConfirmModal.classList.remove('show');
+  }
+
+  function checkDeleteForm() {
+    const username = document.getElementById('deleteModalUsername')?.textContent || '';
+    const typedUsername = deleteConfirmUsername?.value || '';
+    const confirmCheck = deleteConfirmCheckbox?.checked || false;
+    const typeCheck = deleteTypeCheckbox?.checked || false;
+    const gdprCheck = gdprRightCheckbox?.checked || false;
+    
+    submitDeleteAccount.disabled = !(confirmCheck && typeCheck && gdprCheck && typedUsername === username);
+  }
+
+  async function submitDeletionRequest() {
+    const user = currentUser;
+    if (!user) {
+      alert('You must be signed in.');
+      return;
+    }
+    
+    const username = document.getElementById('deleteModalUsername')?.textContent || '';
+    const typedUsername = deleteConfirmUsername?.value || '';
+    if (typedUsername !== username) {
+      alert('Username does not match. Please try again.');
+      return;
+    }
+    
+    try {
+      const userId = user.uid;
+      const userRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userRef);
+      
+      if (!userDoc.exists()) {
+        alert('User not found.');
+        return;
+      }
+      
+      const userData = userDoc.data();
+      const userEmail = userData?.email || user.email || 'unknown';
+      
+      if (userData.deletionRequested === true) {
+        alert('⚠️ You have already requested account deletion. The Volant Team will process your request within 7 days.');
+        closeDeleteModal();
+        return;
+      }
+      
+      // Create deletion request
+      await addDoc(collection(db, "deletion_requests"), {
+        userId: userId,
+        username: username,
+        email: userEmail,
+        platform: 'reads',
+        requestedAt: serverTimestamp(),
+        status: 'pending',
+        reason: 'User requested deletion (GDPR Article 17)'
+      });
+      
+      // Mark user
+      await updateDoc(userRef, {
+        deletionRequested: true,
+        deletionRequestedAt: serverTimestamp(),
+        deletionReason: 'User requested deletion (GDPR Article 17)'
+      });
+      
+      // Send notification
+      await addDoc(collection(db, "notifications"), {
+        forUser: userId,
+        type: 'deletion_request_submitted',
+        fromUser: userId,
+        fromUserName: username,
+        message: `✅ Your account deletion request has been submitted successfully!\n\nThe Volant Team will review and process your request within 7 days.\nYou will receive a confirmation email once your account has been deleted.\n\nIf you have any questions, please contact us at reach.volant@gmail.com`,
+        timestamp: serverTimestamp(),
+        read: false
+      });
+      
+      closeDeleteModal();
+      showToast('✅ Deletion request submitted! You will receive a confirmation email once processed.', 'success');
+      
+    } catch (error) {
+      console.error('Error requesting deletion:', error);
+      showToast('❌ Failed to request deletion: ' + error.message, 'error');
+    }
+  }
+
+  // ============================================================
+  // ====== LOAD AUTHOR DATA - OPTIMIZED ======
+  // ============================================================
+  async function loadAuthorData(user) {
+    try {
+      let allBooksData = [];
+      let userData = {};
+      
+      // Fetch user data and books in parallel
+      const [userDoc, booksSnapshot] = await Promise.all([
+        getDoc(doc(db, "users", user.uid)),
+        getDocs(query(collection(db, "books"), where("submittedBy", "==", user.uid)))
+      ]);
+      
+      if (userDoc.exists()) {
+        userData = userDoc.data();
+        if (userData.username) userDisplayName = userData.username;
+        if (userData.bio) settingsBio.value = userData.bio;
+        
+        if (userData.country) {
+          const savedCountry = userData.country.trim();
+          let found = false;
+          for (let i = 0; i < settingsCountry.options.length; i++) {
+            if (settingsCountry.options[i].value === savedCountry) {
+              settingsCountry.selectedIndex = i;
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            const countryLower = savedCountry.toLowerCase();
+            for (let i = 0; i < settingsCountry.options.length; i++) {
+              if (settingsCountry.options[i].value.toLowerCase() === countryLower) {
+                settingsCountry.selectedIndex = i;
+                found = true;
+                break;
+              }
+            }
+          }
+          if (!found) {
+            const newOption = document.createElement('option');
+            newOption.value = savedCountry;
+            newOption.textContent = savedCountry;
+            settingsCountry.appendChild(newOption);
+            settingsCountry.value = savedCountry;
+          }
+        }
+        
+        updateSetupAlert(userData);
+      }
+
+      console.log('📊 Books found:', booksSnapshot.size);
+      booksSnapshot.forEach(doc => {
+        allBooksData.push({ id: doc.id, ...doc.data() });
+      });
+
+      authorBooks = [];
+      allBooksData.forEach(data => {
+        authorBooks.push({
+          id: data.id,
+          title: data.title || 'Untitled',
+          subtitle: data.subtitle || '',
+          authorName: data.authorName || 'Anonymous',
+          imageUrl: data.imageUrl || '',
+          pdfUrl: data.pdfUrl || '',
+          price: data.pricing?.amount || 0,
+          currency: data.pricing?.currency || 'GHS',
+          status: data.status || 'draft',
+          downloads: data.downloads || 0,
+          downloadLimit: data.downloadLimit || data.downloads || 5,
+          views: data.views || 0,
+          rating: data.rating || 0,
+          approvedAt: data.approvedAt || data.createdAt || null,
+        });
+      });
+
+      authorBooks.sort((a, b) => {
+        const da = a.approvedAt?.toDate?.() || new Date(a.approvedAt) || new Date(0);
+        const db2 = b.approvedAt?.toDate?.() || new Date(b.approvedAt) || new Date(0);
+        return db2 - da;
+      });
+
+      console.log('✅ Final author books count:', authorBooks.length);
+
+      await Promise.all([
+        loadPayoutSettings(user.uid),
+        loadEarnings(user.uid),
+        loadWishlist(user.uid),
+        loadMessages(user.uid)
+      ]);
+      
+      await renderAll();
+      
+    } catch (err) {
+      console.error("❌ Error loading data:", err);
+      showToast('Error loading your books: ' + err.message, 'error');
+    }
+  }
+
   // ===== RENDER FUNCTIONS =====
   function renderStats(books) {
     const published = books.filter(b => b.status === 'approved');
@@ -3951,12 +5046,8 @@ header .logo-header {
       settingsEmail.value = email;
       settingsBio.value = bio || '';
       
-      // ⭐ FIXED: Set the country dropdown in updateUserUI
       if (country && typeof country === 'string') {
         const savedCountry = country.trim();
-        console.log('📋 Setting country in updateUserUI:', savedCountry);
-        
-        // Try exact match
         let found = false;
         for (let i = 0; i < settingsCountry.options.length; i++) {
           if (settingsCountry.options[i].value === savedCountry) {
@@ -3965,7 +5056,6 @@ header .logo-header {
             break;
           }
         }
-        // If not found, try case-insensitive
         if (!found) {
           const countryLower = savedCountry.toLowerCase();
           for (let i = 0; i < settingsCountry.options.length; i++) {
@@ -3976,7 +5066,6 @@ header .logo-header {
             }
           }
         }
-        // If still not found, add as new option
         if (!found) {
           const newOption = document.createElement('option');
           newOption.value = savedCountry;
@@ -3994,15 +5083,12 @@ header .logo-header {
       settingsPhoneNumber.value = phoneNumber || '';
       settingsPublisherName.value = publisherName || '';
       
-      // Update setup alert banner
       updateSetupAlert(userData);
       
-      // Initialize validation states
       usernameValid = true;
       emailValid = true;
       updateSaveButton();
       
-      // Clear validation messages
       usernameIcon.className = 'validation-icon valid';
       usernameIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
       usernameValidation.className = 'validation-message show success';
@@ -4013,7 +5099,6 @@ header .logo-header {
       emailValidation.className = 'validation-message show success';
       emailValidation.textContent = '✓ Current email';
       
-      // Check payout account status and update warning banner
       await updatePayoutWarning(user.uid);
       
       if (photoURL) {
@@ -4092,133 +5177,6 @@ header .logo-header {
     return null;
   }
 
-  // ===== LOAD DATA =====
-  async function loadAuthorData(user) {
-    try {
-      let allBooksData = [];
-      let userData = {};
-      
-      try {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          userData = userDoc.data();
-          if (userData.username) userDisplayName = userData.username;
-          if (userData.bio) settingsBio.value = userData.bio;
-          
-          // ⭐ Update the country from userData
-          if (userData.country) {
-            console.log('📋 loadAuthorData - Country from DB:', userData.country);
-            // Update the settings page with fresh data
-            const savedCountry = userData.country.trim();
-            let found = false;
-            for (let i = 0; i < settingsCountry.options.length; i++) {
-              if (settingsCountry.options[i].value === savedCountry) {
-                settingsCountry.selectedIndex = i;
-                found = true;
-                break;
-              }
-            }
-            if (!found) {
-              const countryLower = savedCountry.toLowerCase();
-              for (let i = 0; i < settingsCountry.options.length; i++) {
-                if (settingsCountry.options[i].value.toLowerCase() === countryLower) {
-                  settingsCountry.selectedIndex = i;
-                  found = true;
-                  break;
-                }
-              }
-            }
-            if (!found) {
-              const newOption = document.createElement('option');
-              newOption.value = savedCountry;
-              newOption.textContent = savedCountry;
-              settingsCountry.appendChild(newOption);
-              settingsCountry.value = savedCountry;
-            }
-          }
-          
-          // Update setup alert
-          updateSetupAlert(userData);
-        }
-      } catch (_) {}
-
-      console.log('🔍 Looking for books with submittedBy:', user.uid);
-      
-      try {
-        const q = query(collection(db, "books"), where("submittedBy", "==", user.uid));
-        const snapshot = await getDocs(q);
-        console.log('📊 Books found with submittedBy:', snapshot.size);
-        snapshot.forEach(doc => {
-          allBooksData.push({ id: doc.id, ...doc.data() });
-        });
-      } catch (e) {
-        console.log('⚠️ submittedBy query failed:', e.message);
-      }
-
-      if (allBooksData.length === 0) {
-        console.log('🔄 Trying submittedByUsername...');
-        try {
-          const q = query(collection(db, "books"), where("submittedByUsername", "==", userDisplayName || user.email?.split('@')[0]));
-          const snapshot = await getDocs(q);
-          console.log('📊 Books found with submittedByUsername:', snapshot.size);
-          snapshot.forEach(doc => {
-            if (!allBooksData.some(b => b.id === doc.id)) {
-              allBooksData.push({ id: doc.id, ...doc.data() });
-            }
-          });
-        } catch (e) {
-          console.log('⚠️ submittedByUsername query failed:', e.message);
-        }
-      }
-
-      console.log('📚 Total books found:', allBooksData.length);
-      
-      authorBooks = [];
-      allBooksData.forEach(data => {
-        console.log('📖 Processing book:', data.title, 'Status:', data.status);
-        authorBooks.push({
-          id: data.id,
-          title: data.title || 'Untitled',
-          subtitle: data.subtitle || '',
-          authorName: data.authorName || 'Anonymous',
-          imageUrl: data.imageUrl || '',
-          pdfUrl: data.pdfUrl || '',
-          price: data.pricing?.amount || 0,
-          currency: data.pricing?.currency || 'GHS',
-          status: data.status || 'draft',
-          downloads: data.downloads || 0,
-          downloadLimit: data.downloadLimit || data.downloads || 5,
-          views: data.views || 0,
-          rating: data.rating || 0,
-          approvedAt: data.approvedAt || data.createdAt || null,
-        });
-      });
-
-      authorBooks.sort((a, b) => {
-        const da = a.approvedAt?.toDate?.() || new Date(a.approvedAt) || new Date(0);
-        const db2 = b.approvedAt?.toDate?.() || new Date(b.approvedAt) || new Date(0);
-        return db2 - da;
-      });
-
-      console.log('✅ Final author books count:', authorBooks.length);
-      if (authorBooks.length > 0) {
-        console.log('📊 Book statuses:', authorBooks.map(b => `${b.title}: ${b.status}`).join(', '));
-      }
-
-      // ===== LOAD PAYOUT SETTINGS AND EARNINGS =====
-      await loadPayoutSettings(user.uid);
-      await loadEarnings(user.uid);
-      
-      await loadWishlist(user.uid);
-      await loadMessages(user.uid);
-      await renderAll();
-      
-    } catch (err) {
-      console.error("❌ Error loading data:", err);
-      showToast('Error loading your books: ' + err.message, 'error');
-    }
-  }
-
   // ===== SIDEBAR TOGGLE =====
   function toggleSidebar() {
     sidebar.classList.toggle('mobile-open');
@@ -4252,12 +5210,18 @@ header .logo-header {
       e.preventDefault();
       const page = this.dataset.page;
       if (page) {
-        showPage(page);
+        showPage(page, true);
         if (window.innerWidth <= 920) {
           toggleSidebar();
         }
       }
     });
+  });
+
+  // Restore last visited page on load
+  document.addEventListener('DOMContentLoaded', function() {
+    const lastPage = sessionStorage.getItem('volant_reads_current_page') || 'dashboard';
+    showPage(lastPage, false);
   });
 
   document.getElementById('manageBooksLink')?.addEventListener('click', (e) => {
@@ -4347,16 +5311,12 @@ header .logo-header {
     const publisherName = settingsPublisherName.value.trim();
     let country = settingsCountry.value;
     
-    // If the dropdown value is empty, try to get it from the selected option
     if (!country || country === '') {
       const selectedOption = settingsCountry.options[settingsCountry.selectedIndex];
       if (selectedOption && selectedOption.value) {
         country = selectedOption.value;
-        console.log('📋 Country from selected option:', country);
       }
     }
-    
-    console.log('📋 Final country value to save:', country);
     
     if (!authorName) {
       showToast('❌ Please enter your author name.', 'error');
@@ -4403,14 +5363,12 @@ header .logo-header {
       
       showToast('✅ Author & Publishing settings saved successfully!', 'success');
       
-      // Update setup alert
       const userDoc = await getDoc(doc(db, "users", currentUser.uid));
       if (userDoc.exists()) {
         updateSetupAlert(userDoc.data());
       }
       
       await updateUserUI(currentUser);
-      // Refresh settings to show updated values
       await refreshSettings();
       
     } catch (err) {
@@ -4421,6 +5379,24 @@ header .logo-header {
   // ===== PAYOUT EVENT LISTENERS =====
   payoutType.addEventListener('change', togglePayoutFields);
   savePayoutBtn.addEventListener('click', savePayoutSettings);
+
+  // ===== GDPR EVENT LISTENERS =====
+  exportDataBtn?.addEventListener('click', exportUserData);
+  requestDeletionBtn?.addEventListener('click', openDeleteConfirmationModal);
+  
+  closeDeleteConfirmModalBtn?.addEventListener('click', closeDeleteModal);
+  cancelDeleteConfirm?.addEventListener('click', closeDeleteModal);
+  
+  deleteConfirmModal?.addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteModal();
+  });
+  
+  deleteConfirmCheckbox?.addEventListener('change', checkDeleteForm);
+  deleteTypeCheckbox?.addEventListener('change', checkDeleteForm);
+  gdprRightCheckbox?.addEventListener('change', checkDeleteForm);
+  deleteConfirmUsername?.addEventListener('input', checkDeleteForm);
+  
+  submitDeleteAccount?.addEventListener('click', submitDeletionRequest);
 
   document.getElementById('signOutBtn')?.addEventListener('click', async () => {
     try {
@@ -4438,7 +5414,12 @@ header .logo-header {
     if (e.target === this) closeModal();
   });
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Escape') {
+      closeModal();
+      if (deleteConfirmModal.classList.contains('show')) {
+        closeDeleteModal();
+      }
+    }
   });
 
   updateForm?.addEventListener('submit', function(e) {
@@ -4459,7 +5440,11 @@ header .logo-header {
       currentUser = user;
       await updateUserUI(user);
       await loadAuthorData(user);
-      showPage('dashboard');
+      
+      // ✅ Restore last visited page
+      const lastPage = sessionStorage.getItem('volant_reads_current_page') || 'dashboard';
+      showPage(lastPage, false);
+      
       sessionStorage.removeItem('auth_redirect_attempted');
     } else {
       if (!window.location.pathname.includes('universal-login') && 
@@ -4471,7 +5456,24 @@ header .logo-header {
     }
   });
 
-  
+  // ===== SETTINGS TAB NAVIGATION =====
+document.querySelectorAll('.settings-nav-item').forEach(item => {
+  item.addEventListener('click', function() {
+    // Update active state
+    document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
+    this.classList.add('active');
+    
+    // Show corresponding tab content
+    const tabId = this.dataset.settingsTab;
+    document.querySelectorAll('.settings-tab-content').forEach(content => {
+      content.classList.remove('active');
+    });
+    const targetContent = document.getElementById('settings-tab-' + tabId);
+    if (targetContent) {
+      targetContent.classList.add('active');
+    }
+  });
+});
 </script>
 <script src="../shared/return-url-handler.js"></script>
 </body>
