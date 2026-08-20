@@ -4048,6 +4048,97 @@ body {
   color: inherit !important;
   text-decoration: none !important;
 }
+
+/* ===== DELETE MODAL - MOBILE FIXES ===== */
+@media (max-width: 480px) {
+  #deleteConfirmModal .send-message-content {
+    padding: 16px 12px !important;
+    max-width: 100% !important;
+    border-radius: 14px !important;
+  }
+  
+  #deleteConfirmModal .send-message-header-left h3 {
+    font-size: 0.95rem !important;
+  }
+  
+  #deleteConfirmModal .send-message-header-left p {
+    font-size: 0.7rem !important;
+  }
+  
+  #deleteConfirmModal .send-message-body {
+    gap: 8px !important;
+  }
+  
+  #deleteConfirmModal .send-message-actions {
+    flex-direction: column !important;
+  }
+  
+  #deleteConfirmModal .send-message-actions button {
+    width: 100% !important;
+    flex: none !important;
+    justify-content: center !important;
+  }
+  
+  #deleteConfirmModal label {
+    font-size: 0.75rem !important;
+  }
+  
+  #deleteConfirmModal input[type="checkbox"] {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+  }
+  
+  #deleteConfirmModal #deleteConfirmUsername {
+    font-size: 0.85rem !important;
+    padding: 8px 12px !important;
+  }
+  
+  #deleteConfirmModal .send-message-close {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.8rem !important;
+  }
+}
+
+@media (max-width: 380px) {
+  #deleteConfirmModal .send-message-content {
+    padding: 12px 10px !important;
+  }
+  
+  #deleteConfirmModal label {
+    font-size: 0.7rem !important;
+  }
+  
+  #deleteConfirmModal .send-message-header-left h3 {
+    font-size: 0.85rem !important;
+  }
+  
+  #deleteConfirmModal .send-message-header-left p {
+    font-size: 0.65rem !important;
+  }
+}
+/* ===== HIDE AUTHOR NAME AND PROFILE PICTURE ON POEM CARDS ===== */
+.recent-poem-card .author-line {
+  display: none !important;
+}
+
+/* Keep the co-written by line visible - explicitly show it */
+.recent-poem-card .collaborator-line {
+  display: block !important;
+}
+
+/* Hide empty collaborator lines */
+.recent-poem-card .collaborator-line:empty {
+  display: none !important;
+}
+
+/* If the author line is hidden, the collaborator line might need some spacing */
+.recent-poem-card .collaborator-line {
+  margin-top: 0 !important;
+  padding-top: 4px !important;
+}
+
 </style>
 </head>
 <body>
@@ -4434,42 +4525,41 @@ body {
 
 <!-- ===== DELETE REQUEST CONFIRMATION MODAL ===== -->
 <div id="deleteConfirmModal" class="send-message-modal" style="display: none;">
-  <div class="send-message-content">
-    <div class="send-message-header" style="border-bottom-color: #ff4d4d;">
+  <div class="send-message-content" style="max-width: 520px; padding: 28px 24px;">
+    <div class="send-message-header" style="border-bottom-color: #ff4d4d; margin-bottom: 16px; padding-bottom: 12px;">
       <div class="send-message-header-left">
-        <span class="send-message-icon" style="background: #ffebee;">⚠️</span>
+        <span class="send-message-icon" style="background: #ffebee; width: 36px; height: 36px; font-size: 1rem;">⚠️</span>
         <div>
-          <h3 style="color: #dc3545;">Request Account Deletion</h3>
-          <p style="color: #dc3545;">Send a deletion request to the Volant Team</p>
+          <h3 style="color: #dc3545; font-size: 1.1rem; margin: 0;">Request Account Deletion</h3>
+          <p style="color: #dc3545; font-size: 0.8rem; margin: 0;">Send a deletion request to the Volant Team</p>
         </div>
       </div>
-      <button class="send-message-close" id="closeDeleteConfirmModal">✕</button>
+      <button class="send-message-close" id="closeDeleteConfirmModal" style="width: 28px; height: 28px; font-size: 0.9rem;">✕</button>
     </div>
-    <div class="send-message-body">
+    
+    <div class="send-message-body" style="gap: 10px;">
       
       <!-- Account Info Card -->
-      <div style="background: #f8f6ff; border-radius: 12px; padding: 15px; border: 2px solid #4b2aad;">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div id="deleteModalAvatar" style="width: 48px; height: 48px; border-radius: 50%; background: #4b2aad; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0;">
-            <span id="deleteModalInitials">JD</span>
-          </div>
-          <div>
-            <div style="font-weight: 600; font-size: 1.05rem; color: #4b2aad;" id="deleteModalUsername">username</div>
-            <div style="font-size: 0.85rem; color: #888;" id="deleteModalEmail">email@example.com</div>
-          </div>
+      <div style="background: #f8f6ff; border-radius: 12px; padding: 12px 14px; border: 2px solid #4b2aad; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <div id="deleteModalAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: #4b2aad; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0;">
+          <span id="deleteModalInitials">JD</span>
+        </div>
+        <div style="flex: 1; min-width: 120px;">
+          <div style="font-weight: 600; font-size: 0.95rem; color: #4b2aad;" id="deleteModalUsername">username</div>
+          <div style="font-size: 0.75rem; color: #888; word-break: break-all;" id="deleteModalEmail">email@example.com</div>
         </div>
       </div>
       
       <!-- Warning -->
-      <div style="background: #fff3cd; border-radius: 10px; padding: 12px 15px; border: 1px solid #ffeaa7;">
-        <p style="color: #856404; font-size: 0.9rem; margin: 0;">
-          ⚠️ <strong>You are requesting to delete your account:</strong> <span style="color: #dc3545; font-weight: 700;" id="deleteModalUsernameBold">username</span>
+      <div style="background: #fff3cd; border-radius: 8px; padding: 10px 12px; border: 1px solid #ffeaa7;">
+        <p style="color: #856404; font-size: 0.85rem; margin: 0; text-align: center;">
+          ⚠️ <strong>You are requesting to delete:</strong> <span style="color: #dc3545; font-weight: 700;" id="deleteModalUsernameBold">username</span>
         </p>
       </div>
       
       <!-- Info about request process -->
-      <div style="background: #e8f0fe; border-radius: 10px; padding: 12px 15px; border: 1px solid #d2e3fc;">
-        <p style="color: #1a56db; font-size: 0.85rem; margin: 0; text-align: center; line-height: 1.6;">
+      <div style="background: #e8f0fe; border-radius: 8px; padding: 10px 12px; border: 1px solid #d2e3fc;">
+        <p style="color: #1a56db; font-size: 0.8rem; margin: 0; text-align: center; line-height: 1.5;">
           📋 <strong>How it works:</strong><br>
           Your deletion request will be sent to the Volant Team.<br>
           They will review and process your request within <strong>7 days</strong>.<br>
@@ -4477,41 +4567,42 @@ body {
         </p>
       </div>
       
-      <!-- Confirmation Checkboxes -->
-      <div style="background: #f8f6ff; border-radius: 10px; padding: 12px 15px; border: 1px solid #ede8ff; margin-top: 4px;">
-        <label style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; cursor: pointer;">
-          <input type="checkbox" id="deleteConfirmCheckbox" style="width: 18px; height: 18px; accent-color: #dc3545;">
-          I understand this is <strong>permanent and irreversible</strong>
+      <!-- Confirmation Checkboxes - Better formatted for mobile -->
+      <div style="background: #f8f6ff; border-radius: 8px; padding: 10px 12px; border: 1px solid #ede8ff;">
+        <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.82rem; cursor: pointer; line-height: 1.4;">
+          <input type="checkbox" id="deleteConfirmCheckbox" style="width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0; accent-color: #dc3545;">
+          <span>I understand this is <strong>permanent and irreversible</strong></span>
         </label>
       </div>
       
-      <div style="background: #f8f6ff; border-radius: 10px; padding: 12px 15px; border: 1px solid #ede8ff;">
-        <label style="display: flex; align-items: center; gap: 10px; font-size: 0.85rem; cursor: pointer;">
-          <input type="checkbox" id="deleteTypeCheckbox" style="width: 18px; height: 18px; accent-color: #dc3545;">
-          I want to <strong>permanently delete</strong> my account from ALL Volant platforms
+      <div style="background: #f8f6ff; border-radius: 8px; padding: 10px 12px; border: 1px solid #ede8ff;">
+        <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.82rem; cursor: pointer; line-height: 1.4;">
+          <input type="checkbox" id="deleteTypeCheckbox" style="width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0; accent-color: #dc3545;">
+          <span>I want to <strong>permanently delete</strong> my account from ALL Volant platforms</span>
         </label>
       </div>
       
       <!-- Username Confirmation -->
       <div>
-        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 5px;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 600; color: #333; margin-bottom: 4px;">
           Type your username to confirm: <span style="color: #dc3545; font-weight: 700;" id="deleteConfirmUsernameLabel">username</span>
         </label>
         <input type="text" id="deleteConfirmUsername" placeholder="Enter your username" 
-               style="width: 100%; padding: 10px 14px; border: 2px solid #ede8ff; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 0.95rem; outline: none; transition: border-color 0.2s;">
+               style="width: 100%; padding: 10px 14px; border: 2px solid #ede8ff; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s; box-sizing: border-box;">
       </div>
       
       <!-- GDPR Rights -->
-      <div style="background: #e8f0fe; border-radius: 10px; padding: 10px 14px; border: 1px solid #d2e3fc;">
-        <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.8rem; color: #1a56db; cursor: pointer; line-height: 1.5;">
-          <input type="checkbox" id="gdprRightCheckbox" style="width: 18px; height: 18px; margin-top: 2px; accent-color: #4b2aad;">
-          I understand my GDPR rights and confirm I want to exercise my <strong>right to erasure</strong> (Article 17 GDPR)
+      <div style="background: #e8f0fe; border-radius: 8px; padding: 10px 12px; border: 1px solid #d2e3fc;">
+        <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.78rem; color: #1a56db; cursor: pointer; line-height: 1.4;">
+          <input type="checkbox" id="gdprRightCheckbox" style="width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0; accent-color: #4b2aad;">
+          <span>I understand my GDPR rights and confirm I want to exercise my <strong>right to erasure</strong> (Article 17 GDPR)</span>
         </label>
       </div>
       
-      <div class="send-message-actions">
-        <button id="cancelDeleteConfirm" class="cancel-btn">Cancel</button>
-        <button id="submitDeleteAccount" class="submit-btn" style="background: #dc3545; box-shadow: 0 4px 14px rgba(220, 53, 69, 0.3);" disabled>
+      <!-- Actions -->
+      <div class="send-message-actions" style="display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap;">
+        <button id="cancelDeleteConfirm" class="cancel-btn" style="flex: 1; min-width: 80px; padding: 8px 16px; background: #f0f0f0; border: none; border-radius: 30px; cursor: pointer; font-weight: 500; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: #666; transition: all 0.2s;">Cancel</button>
+        <button id="submitDeleteAccount" class="submit-btn" style="flex: 2; min-width: 120px; padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 30px; cursor: pointer; font-weight: 600; font-family: 'Inter', sans-serif; font-size: 0.8rem; transition: all 0.3s; box-shadow: 0 4px 14px rgba(220, 53, 69, 0.3); display: flex; align-items: center; justify-content: center; gap: 6px;" disabled>
           <span class="send-icon">✉️</span> <span id="deleteButtonText">Send Deletion Request</span>
         </button>
       </div>
@@ -4524,7 +4615,6 @@ body {
   <div class="search-bar"><input type="text" id="searchInput" placeholder="Search poems..."></div>
   <div id="poemsContainer"></div>
 </div>
-
 <script type="module">
 // ============================================================
 // ====== FIREBASE IMPORTS ======
@@ -4583,6 +4673,11 @@ const READ_DELAY_SECONDS = 8;
 const VIEW_THRESHOLD = 0.6;
 const activeTimers = new Map();
 const viewStartTimes = new Map();
+
+// ====== CACHE FOR FAST LOADING ======
+let poemCache = {};
+let userCache = {};
+let commentCache = {};
 
 // ============================================================
 // ====== SHOW CONFIRMATION MESSAGE ======
@@ -4674,6 +4769,85 @@ function colorFromName(name) {
   } 
   const hue = Math.abs(hash) % 360; 
   return `hsl(${hue}, 60%, 45%)`; 
+}
+
+// ============================================================
+// ====== BATCH FUNCTIONS FOR FAST LOADING ======
+// ============================================================
+
+async function getUsernamesBatched(userIds) {
+  const uniqueIds = [...new Set(userIds.filter(id => id))];
+  const results = {};
+  const uncachedIds = [];
+  
+  for (const id of uniqueIds) {
+    if (userCache[id]) {
+      results[id] = userCache[id];
+    } else {
+      uncachedIds.push(id);
+    }
+  }
+  
+  if (uncachedIds.length > 0) {
+    try {
+      const chunkSize = 10;
+      for (let i = 0; i < uncachedIds.length; i += chunkSize) {
+        const chunk = uncachedIds.slice(i, i + chunkSize);
+        const promises = chunk.map(id => getDoc(doc(db, "users", id)));
+        const snapshots = await Promise.all(promises);
+        snapshots.forEach((snap, index) => {
+          const id = chunk[index];
+          if (snap.exists()) {
+            const data = snap.data();
+            userCache[id] = data;
+            results[id] = data;
+          } else {
+            userCache[id] = null;
+            results[id] = null;
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('Error fetching users:', err);
+    }
+  }
+  
+  return results;
+}
+
+async function getCommentsCountBatched(poemIds) {
+  const uniqueIds = [...new Set(poemIds.filter(id => id))];
+  const results = {};
+  const uncachedIds = [];
+  
+  for (const id of uniqueIds) {
+    if (commentCache[id] !== undefined) {
+      results[id] = commentCache[id];
+    } else {
+      uncachedIds.push(id);
+    }
+  }
+  
+  if (uncachedIds.length > 0) {
+    try {
+      const chunkSize = 10;
+      for (let i = 0; i < uncachedIds.length; i += chunkSize) {
+        const chunk = uncachedIds.slice(i, i + chunkSize);
+        const promises = chunk.map(id => getDocs(collection(db, "recentPoems", id, "comments")));
+        const snapshots = await Promise.all(promises);
+        snapshots.forEach((snap, index) => {
+          const id = chunk[index];
+          const count = snap.size;
+          commentCache[id] = count;
+          results[id] = count;
+        });
+      }
+    } catch (err) {
+      console.warn('Error fetching comment counts:', err);
+    }
+  }
+  
+  return results;
 }
 
 // ============================================================
@@ -5260,11 +5434,9 @@ async function exportUserData(user) {
         const userData = userDoc.exists() ? userDoc.data() : null;
         const username = userData?.username || 'unknown';
         
-        // ✅ Show toast message for 5 seconds
         showToastMessage('⏳ Gathering your data... This may take a moment.', 5000);
         showStatus('📥 Gathering your data... This may take a moment.', 'info');
         
-        // Helper function to get username from UID
         async function getUsernameFromUid(uid) {
             if (!uid) return 'Unknown User';
             try {
@@ -5278,7 +5450,6 @@ async function exportUserData(user) {
             }
         }
 
-        // Helper function to get user data from UID
         async function getUserDataFromUid(uid) {
             if (!uid) return { username: 'Unknown User', photoURL: null };
             try {
@@ -5322,27 +5493,18 @@ async function exportUserData(user) {
             platform: PLATFORM
         };
         
-        // ============================================
-        // 1. GET POEMS with commenter usernames
-        // ============================================
-        
+        // GET POEMS
         const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
         const poemsSnap = await getDocs(poemsQuery);
         
         for (const poemDoc of poemsSnap.docs) {
             const poemData = poemDoc.data();
-            
-            // Get comments with usernames
             const comments = [];
             const commentsSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments"));
             for (const commentDoc of commentsSnap.docs) {
                 const commentData = commentDoc.data();
-                
-                // Get commenter username
                 const commenterUsername = commentData.username || 
                     (commentData.userId ? await getUsernameFromUid(commentData.userId) : 'Anonymous');
-                
-                // Get replies with usernames
                 const replies = [];
                 const repliesSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments", commentDoc.id, "replies"));
                 for (const replyDoc of repliesSnap.docs) {
@@ -5355,7 +5517,6 @@ async function exportUserData(user) {
                         timestamp: replyData.timestamp || null
                     });
                 }
-                
                 comments.push({
                     text: commentData.text || '',
                     username: commenterUsername,
@@ -5364,7 +5525,6 @@ async function exportUserData(user) {
                 });
             }
             
-            // Get likedBy usernames
             const likedByUsernames = [];
             if (Array.isArray(poemData.likedBy)) {
                 for (const uid of poemData.likedBy) {
@@ -5386,20 +5546,14 @@ async function exportUserData(user) {
             });
         }
         
-        // ============================================
-        // 2. GET DRAFTS
-        // ============================================
-        
+        // GET DRAFTS
         const draftsQuery = query(collection(db, "drafts"), where("userId", "==", userId));
         const draftsSnap = await getDocs(draftsQuery);
         for (const draftDoc of draftsSnap.docs) {
             exportData.drafts.push({ id: draftDoc.id, ...draftDoc.data() });
         }
         
-        // ============================================
-        // 3. GET FOLLOWERS (with usernames)
-        // ============================================
-        
+        // GET FOLLOWERS
         const socialQuery = query(collection(db, "social"));
         const socialSnap = await getDocs(socialQuery);
         for (const socialDoc of socialSnap.docs) {
@@ -5422,15 +5576,11 @@ async function exportUserData(user) {
             }
         }
         
-        // ============================================
-        // 4. GET CONVERSATIONS (with usernames)
-        // ============================================
-        
+        // GET CONVERSATIONS
         const convQuery = query(collection(db, "conversations"), where("participants", "array-contains", userId));
         const convSnap = await getDocs(convQuery);
         for (const convDoc of convSnap.docs) {
             const convData = convDoc.data();
-            
             const messages = [];
             const msgSnap = await getDocs(collection(db, "conversations", convDoc.id, "messages"));
             for (const msgDoc of msgSnap.docs) {
@@ -5465,10 +5615,7 @@ async function exportUserData(user) {
             });
         }
         
-        // ============================================
-        // 5. GET NOTIFICATIONS (with usernames)
-        // ============================================
-        
+        // GET NOTIFICATIONS
         const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
         const notifSnap = await getDocs(notifQuery);
         for (const notifDoc of notifSnap.docs) {
@@ -5486,10 +5633,7 @@ async function exportUserData(user) {
             });
         }
         
-        // ============================================
-        // 6. GET LIKES (with poem author usernames)
-        // ============================================
-        
+        // GET LIKES
         const allPoemsSnap = await getDocs(collection(db, "recentPoems"));
         for (const poemDoc of allPoemsSnap.docs) {
             const poemData = poemDoc.data();
@@ -5504,10 +5648,7 @@ async function exportUserData(user) {
             }
         }
         
-        // ============================================
-        // 7. CREATE AND DOWNLOAD JSON FILE
-        // ============================================
-        
+        // CREATE AND DOWNLOAD JSON FILE
         const jsonStr = JSON.stringify(exportData, null, 2);
         const blob = new Blob([jsonStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -5519,10 +5660,7 @@ async function exportUserData(user) {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        // Hide toast if still showing
         hideToastMessage();
-        
-        // ✅ Show confirmation message for 6 seconds
         showConfirmationMessage('✅ Data export downloaded successfully! Your data is ready.', 6000);
         showStatus('✅ Data export downloaded successfully!', 'success');
         
@@ -5557,13 +5695,11 @@ async function requestAccountDeletion(user) {
         const username = userData?.username || 'unknown';
         const email = userData?.email || 'unknown';
         
-        // Check if deletion request already exists
         if (userData.deletionRequested === true) {
             alert('⚠️ You have already requested account deletion. The Volant Team will process your request within 7 days.');
             return false;
         }
         
-        // Show confirmation
         const confirmMessage = 
             `⚠️ ACCOUNT DELETION REQUEST\n\n` +
             `You are requesting to delete your account: ${username}\n\n` +
@@ -5600,23 +5736,13 @@ async function requestAccountDeletion(user) {
             type: 'deletion_request_submitted',
             fromUser: userId,
             fromUserName: username,
-            message: `✅ Your account deletion request has been submitted successfully!\n\n` +
-                     `The Volant Team will review and process your request within 7 days.\n` +
-                     `You will receive a confirmation email once your account has been deleted.\n\n` +
-                     `If you have any questions, please contact us at reach.volant@gmail.com`,
+            message: `✅ Your account deletion request has been submitted successfully!\n\nThe Volant Team will review and process your request within 7 days.\nYou will receive a confirmation email once your account has been deleted.\n\nIf you have any questions, please contact us at reach.volant@gmail.com`,
             timestamp: serverTimestamp(),
             read: false
         });
         
         showStatus('✅ Deletion request submitted! The Volant Team will process it within 7 days.', 'success');
-        
-        // Show confirmation message
         showConfirmationMessage('✅ Deletion request submitted! You will receive a confirmation email once processed.', 6000);
-        
-        // Redirect after a moment
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 4000);
         
         return true;
         
@@ -5624,94 +5750,6 @@ async function requestAccountDeletion(user) {
         console.error('Error requesting deletion:', error);
         showStatus('❌ Failed to request deletion: ' + error.message, 'error');
         return false;
-    }
-}
-
-// ============================================================
-// ====== CHECK FOR FIRST-TIME VISITOR TO POETRY ======
-// ============================================================
-
-async function checkAndSendPoetryWelcome(userId, username) {
-    if (!userId || !username) return;
-    
-    try {
-        const userRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userRef);
-        
-        if (!userDoc.exists()) return;
-        
-        const userData = userDoc.data();
-        
-        if (userData.poetryWelcomeSent === true) {
-            console.log('✅ Poetry welcome already sent for this user');
-            return;
-        }
-        
-        const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
-        const poemsSnap = await getDocs(poemsQuery);
-        const hasVisitedBefore = userData.hasVisitedPoetry === true;
-        
-        if (!poemsSnap.empty || hasVisitedBefore) {
-            await updateDoc(userRef, { 
-                poetryWelcomeSent: true,
-                hasVisitedPoetry: true
-            });
-            return;
-        }
-        
-        console.log('🎉 First-time visitor to Poetry! Sending welcome notification...');
-        
-        const welcomeMessage = `Welcome to Volant Poetry, ${username}! 🎉
-
-We noticed you're already part of the Volant ecosystem, and we're so excited to welcome you to our Poetry community!
-
-Here's what you can do:
-✍️ Share your poems with the world
-❤️ Discover and appreciate other poets' work
-💬 Engage in meaningful conversations through comments
-🏆 Earn achievements and level up your profile
-
-To get started:
-1. Complete your profile — you can change your username anytime in your profile settings!
-2. Write and submit your first poem
-3. Explore and connect with other poets
-4. Share your poems via email or on your social media to inspire even more readers!
-
-If you have any questions, feel free to reach out to us at reach.volant@gmail.com
-
-Happy writing!
-The Volant Team
-reach.volant@gmail.com`;
-
-        await addDoc(collection(db, "notifications"), {
-            forUser: userId,
-            type: 'welcome',
-            fromUser: userId,
-            fromUserName: username,
-            message: welcomeMessage,
-            timestamp: serverTimestamp(),
-            read: false
-        });
-        
-        await updateDoc(userRef, { 
-            poetryWelcomeSent: true,
-            hasVisitedPoetry: true
-        });
-        
-        console.log(`✅ Poetry welcome notification sent to ${username}`);
-        await updateUnreadNotificationCount();
-        
-        const statusEl = document.getElementById('signup-status');
-        if (statusEl) {
-            statusEl.textContent = '🎉 Welcome to Volant Poetry! Check your notifications for a special welcome message.';
-            statusEl.className = 'status show success';
-            setTimeout(() => {
-                statusEl.classList.remove('show');
-            }, 6000);
-        }
-        
-    } catch (err) {
-        console.error("❌ Error checking/sending Poetry welcome:", err);
     }
 }
 
@@ -6043,138 +6081,129 @@ function setupAudioEventListeners() {
   document.addEventListener('click', window._deleteAudioHandler);
 }
 
+// ============================================================
+// ====== FETCH USER POEMS (OPTIMIZED - 2-3 seconds) ======
+// ============================================================
+
 async function fetchUserPoems(usernameToFetch) {
   try {
+    // Show loading state
+    poemsContainer.innerHTML = '<div style="text-align:center; padding:40px; color:#666;">Loading poems...</div>';
+    
+    // BATCH FETCH: Get all poems at once
     const q = query(collection(db, "recentPoems"), where("submittedBy", "==", usernameToFetch));
     const querySnap = await getDocs(q);
-    poemsContainer.innerHTML = "";
-    let totalLikes = 0, totalCommentsReceived = 0, poemCount = querySnap.size, totalCommentsMade = 0;
-    if (viewingOwnProfile) totalCommentsMade = await fetchTotalCommentsMade(actorUsername);
-    if (querySnap.empty) { poemsContainer.innerHTML = `<p>No poems yet.</p>`; updateAchievements(0, 0, 0, totalCommentsMade); updateLevel(0, 0, 0, totalCommentsMade); return; }
+    
+    if (querySnap.empty) {
+      poemsContainer.innerHTML = `<p>No poems yet.</p>`;
+      updateAchievements(0, 0, 0, 0);
+      return;
+    }
+    
+    // Build poems array from snapshot
     const poemsArray = [];
-    querySnap.forEach(docSnap => { const p = docSnap.data(); p.id = docSnap.id; poemsArray.push(p); });
+    const poemIds = [];
+    querySnap.forEach(docSnap => {
+      const p = docSnap.data();
+      p.id = docSnap.id;
+      poemsArray.push(p);
+      poemIds.push(docSnap.id);
+    });
+    
+    // Sort by timestamp
     poemsArray.sort((a,b) => (b.timestamp?.seconds||0) - (a.timestamp?.seconds||0));
-    for (const poem of poemsArray) {
-      const docId = poem.id;
-      const card = document.createElement("div"); card.className = "recent-poem-card"; card.dataset.id = docId;
-      const truncated = truncatePoemByLines(poem.content, 8);
-      const likes = poem.likes || 0; totalLikes += likes;
-      let commentsSnapCount = 0;
-      try { const csnap = await getDocs(collection(db, "recentPoems", docId, "comments")); commentsSnapCount = csnap.size; } catch(e) { commentsSnapCount = 0; }
-      totalCommentsReceived += commentsSnapCount;
-      const dateStr = poem.timestamp ? new Date(poem.timestamp.seconds*1000).toLocaleDateString() + ' ' + new Date(poem.timestamp.seconds*1000).toLocaleTimeString() : "";
-      let audioSectionHTML = '';
-      const hasAudio = poem.audioUrl && poem.audioUrl !== '';
-      if (viewingOwnProfile) {
-        const existingAudioUrl = poem.audioUrl || '';
-        const hideButtons = hasAudio ? 'style="display:none;"' : '';
-        audioSectionHTML = `<div class="audio-section" style="margin: 15px 0 15px 0; padding: 8px 12px; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:5px;"><label>🎙️ Spoken Version</label>${existingAudioUrl ? `<button class="delete-audio-btn" data-poem-id="${docId}" style="background:#ff4d4d; padding:4px 12px;">🗑️ Remove Audio</button>` : ''}</div>${existingAudioUrl ? `<audio controls src="${existingAudioUrl}" data-audio-id="${docId}" style="width:100%; border-radius:8px; height:35px;"></audio>` : ''}<div class="audio-controls" ${hideButtons}><button class="record-audio-btn" data-poem-id="${docId}" style="background:#dc3545; padding:8px 16px;">🎙️ Record</button><button class="upload-audio-btn" data-poem-id="${docId}" style="background:#28a745; padding:8px 16px;">📁 Upload</button><input type="file" class="audio-file-input" data-poem-id="${docId}" accept="audio/mpeg,audio/mp4,audio/wav" style="display:none;"></div>${!hasAudio ? `<div class="recording-status" data-poem-id="${docId}"></div>` : ''}</div>`;
-      } else if (poem.audioUrl) { audioSectionHTML = `<div class="audio-section" style="margin: 15px 0 15px 0; padding: 8px 12px; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><label>🎙️ Listen to the poet's voice:</label><audio controls src="${poem.audioUrl}" style="width:100%; border-radius:8px; height:35px;"></audio></div>`; }
-
-      // Helper functions for avatar
-      function getInitials(name = "") {
-        const parts = name.trim().split(" ");
-        if (parts.length === 1) return parts[0][0]?.toUpperCase() || "?";
-        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-      }
-
-      function colorFromName(name = "") {
-        let hash = 0;
-        for (let i = 0; i < name.length; i++) {
-          hash = name.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        const hue = Math.abs(hash) % 360;
-        return `hsl(${hue}, 60%, 45%)`;
-      }
-
-      function generateAvatarImage(initials, bgColor, size = 180) {
-        const canvas = document.createElement("canvas");
-        canvas.width = canvas.height = size;
-        const ctx = canvas.getContext("2d");
-        ctx.fillStyle = bgColor;
-        ctx.fillRect(0, 0, size, size);
-        ctx.fillStyle = "#ffffff";
-        ctx.font = `${size * 0.5}px 'Playfair Display', serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(initials, size / 2, size / 2);
-        return new Promise(resolve => {
-          canvas.toBlob(blob => resolve(blob), "image/png");
+    
+    // BATCH FETCH: Get all comment counts at once
+    const commentCounts = await getCommentsCountBatched(poemIds);
+    
+    // BATCH FETCH: Get all user data for collaborators
+    const collaboratorUids = [];
+    poemsArray.forEach(poem => {
+      if (Array.isArray(poem.collaborators)) {
+        poem.collaborators.forEach(collab => {
+          if (collab.uid) collaboratorUids.push(collab.uid);
         });
       }
-
-      async function uploadAvatarToCloudinary(initials, bgColor, poetUid, publicId = null) {
-        const blob = await generateAvatarImage(initials, bgColor);
-        const formData = new FormData();
-        formData.append("file", blob);
-        formData.append("upload_preset", "profile_pics");
-        if (publicId) formData.append("public_id", publicId);
-        const cloudName = "dzoq4pgjn";
-        try {
-          const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-            method: "POST",
-            body: formData
-          });
-          const data = await res.json();
-          const imageUrl = data.secure_url;
-          await updateDoc(doc(db, "users", poetUid), { cachedAvatarURL: imageUrl });
-          return imageUrl;
-        } catch (err) {
-          console.error("Cloudinary upload failed:", err);
-          return null;
-        }
-      }
-
-      // Author info
+    });
+    const userDataMap = await getUsernamesBatched(collaboratorUids);
+    
+    // Calculate totals
+    let totalLikes = 0;
+    let totalCommentsReceived = 0;
+    const poemCount = poemsArray.length;
+    
+    // Build HTML for each poem
+    poemsContainer.innerHTML = '';
+    let totalViews = 0;
+    
+    for (const poem of poemsArray) {
+      const docId = poem.id;
+      const likes = poem.likes || 0;
+      totalLikes += likes;
+      totalViews += poem.views || 0;
+      
+      const commentsCount = commentCounts[docId] || 0;
+      totalCommentsReceived += commentsCount;
+      
+      const truncated = truncatePoemByLines(poem.content, 8);
+      const dateStr = poem.timestamp ? new Date(poem.timestamp.seconds*1000).toLocaleDateString() + ' ' + new Date(poem.timestamp.seconds*1000).toLocaleTimeString() : "";
+      
+      // Build poem card HTML
+      const card = document.createElement("div");
+      card.className = "recent-poem-card";
+      card.dataset.id = docId;
+      
+      // Get author info
       let displayName = usernameToFetch;
       let profileLink = "#";
       let profileImage = "/images/default-avatar.png";
       const poetUid = targetProfileUid;
-
-      if(poetUid){
-        try{
-          const userDoc = await getDoc(doc(db,"users",poetUid));
-          if(userDoc.exists()){
-            const userData = userDoc.data();
-            displayName = userData.username||displayName;
-            profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
-            if(userData.photoURL) profileImage=userData.photoURL;
-            else if(userData.cachedAvatarURL) profileImage=userData.cachedAvatarURL;
-            else {
-              const initials = getInitials(displayName);
-              const bgColor = colorFromName(displayName);
-              const url = await uploadAvatarToCloudinary(initials, bgColor, poetUid);
-              if (url) profileImage = url;
-            }
-          }
-        }catch(err){console.warn(err);}
+      
+      if (poetUid && userCache[poetUid]) {
+        const userData = userCache[poetUid];
+        displayName = userData.username || displayName;
+        profileLink = `/user-profile.html?uid=${encodeURIComponent(poetUid)}`;
+        profileImage = userData.photoURL || userData.cachedAvatarURL || profileImage;
+        if (!userData.photoURL && !userData.cachedAvatarURL) {
+          const initials = getInitials(displayName);
+          const bgColor = colorFromName(displayName);
+          const url = await uploadAvatarToCloudinary(initials, bgColor, poetUid);
+          if (url) profileImage = url;
+        }
       }
-
-      // ===== BUILD COLLABORATORS HTML (SIMPLE TEXT) =====
+      
+      // Build collaborators HTML
       let collaboratorsHTML = '';
       if (Array.isArray(poem.collaborators) && poem.collaborators.length > 0) {
         const collaboratorLinks = [];
         for (const collaborator of poem.collaborators) {
           if (!collaborator.uid) continue;
           let collabName = collaborator.username || "Unknown";
-          try {
-            const collabDoc = await getDoc(doc(db, "users", collaborator.uid));
-            if (collabDoc.exists()) {
-              const collabData = collabDoc.data();
-              collabName = collabData.username || collabName;
-            }
-          } catch (e) {}
+          const userData = userCache[collaborator.uid];
+          if (userData) {
+            collabName = userData.username || collabName;
+          }
           collaboratorLinks.push(`<a href="/user-profile.html?uid=${encodeURIComponent(collaborator.uid)}" class="collaborator-link">${escapeHtml(collabName)}</a>`);
         }
         if (collaboratorLinks.length) {
           collaboratorsHTML = `<div class="collaborator-line" style="margin-top:4px; font-size:0.95rem; color:#555; font-family:'Inter', sans-serif;"><em>Co-written with ${collaboratorLinks.join(", ")}</em></div>`;
         }
       }
-
-      // View count
+      
       const viewCount = poem.views || 0;
       
-card.innerHTML = `
+      // Audio section
+      let audioSectionHTML = '';
+      const hasAudio = poem.audioUrl && poem.audioUrl !== '';
+      if (viewingOwnProfile) {
+        const existingAudioUrl = poem.audioUrl || '';
+        const hideButtons = hasAudio ? 'style="display:none;"' : '';
+        audioSectionHTML = `<div class="audio-section" style="margin: 15px 0 15px 0; padding: 8px 12px; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:5px;"><label>🎙️ Spoken Version</label>${existingAudioUrl ? `<button class="delete-audio-btn" data-poem-id="${docId}" style="background:#ff4d4d; padding:4px 12px;">🗑️ Remove Audio</button>` : ''}</div>${existingAudioUrl ? `<audio controls src="${existingAudioUrl}" data-audio-id="${docId}" style="width:100%; border-radius:8px; height:35px;"></audio>` : ''}<div class="audio-controls" ${hideButtons}><button class="record-audio-btn" data-poem-id="${docId}" style="background:#dc3545; padding:8px 16px;">🎙️ Record</button><button class="upload-audio-btn" data-poem-id="${docId}" style="background:#28a745; padding:8px 16px;">📁 Upload</button><input type="file" class="audio-file-input" data-poem-id="${docId}" accept="audio/mpeg,audio/mp4,audio/wav" style="display:none;"></div>${!hasAudio ? `<div class="recording-status" data-poem-id="${docId}"></div>` : ''}</div>`;
+      } else if (poem.audioUrl) {
+        audioSectionHTML = `<div class="audio-section" style="margin: 15px 0 15px 0; padding: 8px 12px; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><label>🎙️ Listen to the poet's voice:</label><audio controls src="${poem.audioUrl}" style="width:100%; border-radius:8px; height:35px;"></audio></div>`;
+      }
+      
+      card.innerHTML = `
   <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
     <div style="display:flex; align-items:center; gap:10px;">
       <img id="author-img-${docId}" src="${profileImage}" alt="Author" class="author-img" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
@@ -6203,8 +6232,7 @@ card.innerHTML = `
     </div>
     <button class="like-btn">❤️</button>
     <span class="like-count">${likes}</span>
-    <span class="message-count">💬 ${commentsSnapCount}</span>
-    <!-- Desktop share button - hidden on mobile -->
+    <span class="message-count">💬 ${commentsCount}</span>
     <button class="share-btn desktop-share-btn" 
             data-poem-id="${docId}" 
             data-collection="recentPoems"
@@ -6216,7 +6244,7 @@ card.innerHTML = `
     </button>
   </div>
   
-  <!-- MOBILE SHARE BUTTON - separate row, hidden on desktop -->
+  <!-- MOBILE SHARE BUTTON -->
   <div class="mobile-share-wrapper">
     <button class="share-btn mobile-share-btn" 
             data-poem-id="${docId}" 
@@ -6229,24 +6257,95 @@ card.innerHTML = `
     </button>
   </div>
 `;
-       
+      
       if (!viewingOwnProfile) card.querySelector('.delete-btn')?.remove();
       poemsContainer.appendChild(card);
+      
       const commentListDiv = document.createElement('div');
       commentListDiv.className = 'comment-list';
       commentListDiv.style.display = 'none';
       poemsContainer.appendChild(commentListDiv);
     }
+    
+    // Update stats
     document.getElementById("poemCount").innerText = poemCount;
     document.getElementById("likeCount").innerText = totalLikes;
     document.getElementById("commentCount").innerText = totalCommentsReceived;
+    document.getElementById("totalViewsCount").innerText = totalViews;
+    
+    // Update achievements
+    const totalCommentsMade = viewingOwnProfile ? await fetchTotalCommentsMade(actorUsername) : 0;
     updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
+    
     if (viewingOwnProfile) setupAudioEventListeners();
     attachDeleteListeners();
-  } catch(e) { poemsContainer.innerHTML = `<p>Error loading poems.</p>`; }
+    
+  } catch(e) {
+    console.error('Error fetching poems:', e);
+    poemsContainer.innerHTML = `<p>Error loading poems. Please refresh.</p>`;
+  }
 }
        
-function attachDeleteListeners() { document.querySelectorAll('.delete-btn').forEach(btn => { btn._del = async () => { if (confirm('Delete this poem?')) { await deleteDoc(doc(db, "recentPoems", btn.dataset.id)); fetchUserPoems(profileUsername); } }; btn.addEventListener('click', btn._del); }); }
+// ============================================================
+// ====== DELETE LISTENERS (Background updates - no page refresh) ======
+// ============================================================
+
+function attachDeleteListeners() { 
+  document.querySelectorAll('.delete-btn').forEach(btn => { 
+    btn._del = async () => { 
+      if (confirm('Delete this poem?')) { 
+        try {
+          await deleteDoc(doc(db, "recentPoems", btn.dataset.id)); 
+          const card = btn.closest('.recent-poem-card');
+          if (card) {
+            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+              card.remove();
+              updateCountsAfterDeletion();
+            }, 300);
+          }
+          showConfirmationMessage('✅ Poem deleted successfully!', 3000);
+        } catch (err) {
+          console.error('Error deleting poem:', err);
+          showStatus('❌ Failed to delete poem: ' + err.message, 'error');
+        }
+      } 
+    }; 
+    btn.addEventListener('click', btn._del); 
+  }); 
+}
+
+async function updateCountsAfterDeletion() {
+  try {
+    const q = query(collection(db, "recentPoems"), where("submittedBy", "==", profileUsername));
+    const querySnap = await getDocs(q);
+    const poemCount = querySnap.size;
+    let totalLikes = 0, totalCommentsReceived = 0;
+    const poemIds = [];
+    querySnap.forEach(docSnap => {
+      const poem = docSnap.data();
+      totalLikes += poem.likes || 0;
+      poemIds.push(docSnap.id);
+    });
+    const commentCounts = await getCommentsCountBatched(poemIds);
+    for (const id of poemIds) {
+      totalCommentsReceived += commentCounts[id] || 0;
+    }
+    document.getElementById("poemCount").innerText = poemCount;
+    document.getElementById("likeCount").innerText = totalLikes;
+    document.getElementById("commentCount").innerText = totalCommentsReceived;
+    const totalCommentsMade = viewingOwnProfile ? await fetchTotalCommentsMade(actorUsername) : 0;
+    updateAchievements(poemCount, totalLikes, totalCommentsReceived, totalCommentsMade);
+  } catch (err) {
+    console.warn('Error updating counts:', err);
+  }
+}
+
+// ============================================================
+// ====== EVENT LISTENERS ======
+// ============================================================
 
 document.addEventListener('click', async (e) => {
   const user = auth.currentUser;
@@ -6288,6 +6387,7 @@ document.addEventListener('click', async (e) => {
           });
         }
       }
+      updateCountsAfterDeletion();
     } catch (err) {
       console.error('Error updating like:', err);
     }
@@ -6338,6 +6438,7 @@ document.addEventListener('click', async (e) => {
           });
         }
       }
+      updateCountsAfterDeletion();
     } catch (err) {
       console.error('Error posting comment:', err);
       alert('Failed to post comment. Please try again.');
@@ -6455,6 +6556,7 @@ document.addEventListener('click', async (e) => {
       tempMsg.textContent = '✓ Reply posted!';
       if (replySection) replySection.appendChild(tempMsg);
       setTimeout(() => tempMsg.remove(), 2000);
+      updateCountsAfterDeletion();
     } catch (err) {
       console.error('Error sending reply:', err);
       alert('Failed to send reply. Please try again.');
@@ -6508,18 +6610,11 @@ onAuthStateChanged(auth, async (user) => {
         emailPrivacy: "public", 
         followerCount: 0, 
         followingCount: 0,
-        poetryWelcomeSent: false,
-        hasVisitedPoetry: false,
         deletionRequested: false
       }); 
       actorDoc = await getDoc(actorRef); 
     } 
     actorUsername = actorDoc.data()?.username || user.email.split("@")[0];
-    
-    // Check for first-time Poetry visitor
-    if (user && actorUsername) {
-      await checkAndSendPoetryWelcome(user.uid, actorUsername);
-    }
   }
   
   viewingOwnProfile = (user && (!profileUid || profileUid === user.uid));
@@ -6535,17 +6630,19 @@ onAuthStateChanged(auth, async (user) => {
   profileUsername = data.username || data.email.split("@")[0];
   profileEmailPrivacy = data.emailPrivacy || "public";
   
+  // Cache the user data for fast access
+  userCache[targetProfileUid] = data;
+  
   const realNameElement = document.getElementById("realName");
-if (data.realName && data.realName.trim() !== "") {
-  realNameElement.innerText = data.realName;
-  realNameElement.style.display = "block";
-} else {
-  realNameElement.innerText = "";
-  realNameElement.style.display = "none";
-}
+  if (data.realName && data.realName.trim() !== "") {
+    realNameElement.innerText = data.realName;
+    realNameElement.style.display = "block";
+  } else {
+    realNameElement.innerText = "";
+    realNameElement.style.display = "none";
+  }
   document.getElementById("username").innerText = profileUsername;
   
-  // Apply email visibility
   applyEmailVisibility(profileEmailPrivacy === "private", viewingOwnProfile);
   if (viewingOwnProfile || profileEmailPrivacy === "public") {
     emailSpan.innerText = data.email || "";
@@ -6555,7 +6652,6 @@ if (data.realName && data.realName.trim() !== "") {
   
   document.getElementById("bio").innerText = data.bio || "No bio yet";
   
-  // Show joined 
   let joinDate = null;
   if (data.joined?.seconds) {
     joinDate = new Date(data.joined.seconds * 1000);
@@ -6574,8 +6670,6 @@ if (data.realName && data.realName.trim() !== "") {
     joinDate.toLocaleString('en-US', { month: 'long', year: 'numeric' }) : 
     "Unknown";
  
-  
-  // Setup email privacy toggle (only for own profile)
   if (viewingOwnProfile && user && user.uid === targetProfileUid) {
     emailPrivacyToggle.style.display = "block";
     if (profileEmailPrivacy === "public") {
@@ -6638,7 +6732,6 @@ if (data.realName && data.realName.trim() !== "") {
     }
   }
   
-  // LOAD FOLLOW BUTTON AND COUNTS
   if (user) {
     await loadFollowButtonAndCounts(currentUserUid, targetProfileUid);
   } else {
@@ -6652,11 +6745,11 @@ if (data.realName && data.realName.trim() !== "") {
 
   await updateVerificationBadge(targetProfileUid, viewingOwnProfile);
 
+  // LOAD POEMS WITH OPTIMIZATION
   await fetchUserPoems(profileUsername);
   setupReadTracking();
   await fetchTopPoems(profileUsername);
 
-  // FLIGHT STAGE - SHOW REMAINING DETAILS ONLY TO OWNER
   const levelInfoEl = document.querySelector('.panel-item .level-info');
   if (levelInfoEl) {
     if (viewingOwnProfile) {
@@ -6887,7 +6980,6 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// Share modal event listeners
 document.addEventListener('DOMContentLoaded', function() {
   const closeBtn = document.getElementById('closeShareModal');
   if (closeBtn) {
@@ -6923,11 +7015,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // ====== MANAGE ACCOUNT MODAL EVENT LISTENERS ======
 // ============================================================
 
-// Open Manage Account modal from sidebar link
 document.getElementById('manageAccountLink')?.addEventListener('click', function(e) {
   e.preventDefault();
   
-  // Only the profile owner can access
   if (!viewingOwnProfile) {
     showStatus('⚠️ You can only manage your own account.', 'error');
     return;
@@ -6935,7 +7025,6 @@ document.getElementById('manageAccountLink')?.addEventListener('click', function
   
   const modal = document.getElementById('manageAccountModal');
   if (modal) {
-    // Populate user info from the profile
     const username = document.getElementById('username')?.textContent || 'User';
     const email = document.getElementById('email')?.textContent || 'email@example.com';
     const initials = username.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
@@ -6949,7 +7038,6 @@ document.getElementById('manageAccountLink')?.addEventListener('click', function
   }
 });
 
-// Close Manage Account modal
 document.getElementById('closeManageAccountModal')?.addEventListener('click', function() {
   document.getElementById('manageAccountModal').classList.remove('show');
   document.getElementById('manageAccountModal').style.display = 'none';
@@ -6962,11 +7050,9 @@ document.getElementById('manageAccountModal')?.addEventListener('click', functio
   }
 });
 
-// Manage Export button - opens Export modal
 document.getElementById('manageExportBtn')?.addEventListener('click', function() {
   document.getElementById('manageAccountModal').classList.remove('show');
   document.getElementById('manageAccountModal').style.display = 'none';
-  // Open Export modal
   const exportModal = document.getElementById('exportModal');
   if (exportModal) {
     document.getElementById('exportConfirmCheckbox').checked = false;
@@ -6976,24 +7062,20 @@ document.getElementById('manageExportBtn')?.addEventListener('click', function()
   }
 });
 
-// Manage Delete button - opens Delete confirmation modal
 document.getElementById('manageDeleteBtn')?.addEventListener('click', function() {
   document.getElementById('manageAccountModal').classList.remove('show');
   document.getElementById('manageAccountModal').style.display = 'none';
   
-  // Get the username from the profile
   const username = document.getElementById('username')?.textContent || 'User';
   const email = document.getElementById('email')?.textContent || 'email@example.com';
   const initials = username.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
   
-  // Populate the delete modal with user info
   document.getElementById('deleteModalUsername').textContent = username;
   document.getElementById('deleteModalUsernameBold').textContent = username;
   document.getElementById('deleteConfirmUsernameLabel').textContent = username;
   document.getElementById('deleteModalEmail').textContent = email;
   document.getElementById('deleteModalInitials').textContent = initials;
   
-  // Reset delete form
   const confirmCheckbox = document.getElementById('deleteConfirmCheckbox');
   const typeCheckbox = document.getElementById('deleteTypeCheckbox');
   const gdprCheckbox = document.getElementById('gdprRightCheckbox');
@@ -7006,7 +7088,6 @@ document.getElementById('manageDeleteBtn')?.addEventListener('click', function()
   if (usernameInput) usernameInput.value = '';
   if (submitBtn) submitBtn.disabled = true;
   
-  // Open Delete confirmation modal
   const deleteModal = document.getElementById('deleteConfirmModal');
   if (deleteModal) {
     deleteModal.classList.add('show');
@@ -7108,7 +7189,6 @@ document.getElementById('submitDeleteAccount')?.addEventListener('click', async 
   document.getElementById('deleteConfirmModal').classList.remove('show');
   document.getElementById('deleteConfirmModal').style.display = 'none';
   
-  // Send deletion request to admin
   await requestAccountDeletion(user);
 });
 
