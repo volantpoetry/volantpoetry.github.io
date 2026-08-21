@@ -8,6 +8,7 @@
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="../images/volant-favicon.png">
 <link rel="apple-touch-icon" href="../images/volant-favicon.png">
+
     <style>
         * {
             margin: 0;
@@ -1921,6 +1922,84 @@
             }
         }
 
+        /* ===== DELETION REQUESTS ===== */
+        .deletion-request-item {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid #ede7df;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: 0.2s;
+        }
+        .deletion-request-item:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .deletion-request-item .request-info {
+            flex: 1;
+            min-width: 200px;
+        }
+        .deletion-request-item .request-info .request-user {
+            font-weight: 700;
+            color: #2d2a24;
+        }
+        .deletion-request-item .request-info .request-details {
+            font-size: 0.85rem;
+            color: #6f6252;
+        }
+        .deletion-request-item .request-status {
+            font-size: 0.7rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            font-weight: 600;
+        }
+        .deletion-request-item .request-status.pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .deletion-request-item .request-status.completed {
+            background: #e6f7e6;
+            color: #2e7d32;
+        }
+        .deletion-request-item .request-status.rejected {
+            background: #fde8e8;
+            color: #c62828;
+        }
+        .deletion-request-item .request-actions {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+        .deletion-request-item .request-actions button {
+            padding: 0.2rem 0.8rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .deletion-request-item .request-actions .btn-process-deletion {
+            background: #2d7d46;
+            color: white;
+        }
+        .deletion-request-item .request-actions .btn-process-deletion:hover {
+            background: #1d6b2c;
+            transform: scale(1.05);
+        }
+        .deletion-request-item .request-actions .btn-reject-deletion {
+            background: #c62828;
+            color: white;
+        }
+        .deletion-request-item .request-actions .btn-reject-deletion:hover {
+            background: #b71c1c;
+            transform: scale(1.05);
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             body { padding: 1rem; }
@@ -1968,6 +2047,13 @@
             }
             .template-modal-content {
                 padding: 1.5rem;
+            }
+            .deletion-request-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .deletion-request-item .request-actions {
+                justify-content: center;
             }
         }
 
@@ -2066,833 +2152,84 @@
             opacity: 1;
         }
 
-        /* ===== COMPLETE SMALL SCREEN OVERHAUL ===== */
-@media (max-width: 768px) {
-    body {
-        padding: 0.75rem;
-    }
+        /* ===== HEADER LINKS ===== */
+        .header-links {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
 
-    .container {
-        max-width: 100%;
-    }
+        .header-links a {
+            color: #6f6252;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            background: transparent;
+        }
 
-    /* ----- HEADER ----- */
-    .header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.75rem;
-        padding-bottom: 0.75rem;
-        margin-bottom: 1rem;
-    }
-    .header .left {
-        width: 100%;
-    }
-    .header h1 {
-        font-size: 1.1rem;
-        text-align: center;
-    }
-    .header .admin-info {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.4rem;
-        font-size: 0.75rem;
-    }
-    .header .admin-info .admin-badge {
-        font-size: 0.6rem;
-        padding: 0.1rem 0.6rem;
-    }
-    .sign-out-btn {
-        padding: 0.3rem 0.8rem;
-        font-size: 0.7rem;
-    }
+        .header-links a:hover {
+            color: #8b5cf6;
+            background: #f0ece6;
+            transform: translateY(-1px);
+        }
 
-    /* ----- TABS ----- */
-    .tabs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.3rem;
-        padding-bottom: 0.3rem;
-        margin-bottom: 0.75rem;
-        justify-content: center;
-    }
-    .tabs .tab-btn {
-        font-size: 0.65rem;
-        padding: 0.3rem 0.7rem;
-        gap: 3px;
-        flex: 1 0 auto;
-        min-width: 60px;
-        justify-content: center;
-    }
-    .tabs .tab-btn .badge {
-        font-size: 0.55rem;
-        padding: 0 0.4rem;
-    }
-    .tabs .tab-btn i {
-        font-size: 0.7rem;
-    }
+        .header-links a i {
+            color: #8b5cf6;
+            font-size: 0.8rem;
+        }
 
-    /* ----- POEM CARDS ----- */
-    .poem-card {
-        padding: 0.75rem;
-        border-radius: 14px;
-        margin-bottom: 0.8rem;
-    }
-    .poem-card .poem-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.3rem;
-        padding-right: 0;
-    }
-    .poem-card .poem-title {
-        font-size: 1rem;
-    }
-    .poem-card .poem-author {
-        font-size: 0.8rem;
-    }
-    .poem-card .poem-select {
-        position: static;
-        margin-top: 0.3rem;
-        align-self: flex-start;
-    }
-    .poem-card .poem-meta {
-        gap: 0.5rem;
-        font-size: 0.7rem;
-        flex-wrap: wrap;
-    }
-    .poem-card .poem-content {
-        font-size: 0.8rem;
-        padding: 0.5rem;
-        max-height: 200px;
-        line-height: 1.6;
-    }
-    .poem-card .poem-actions {
-        flex-wrap: wrap;
-        gap: 0.3rem;
-    }
-    .poem-card .poem-actions button {
-        font-size: 0.65rem;
-        padding: 4px 10px;
-        flex: 1 0 auto;
-        justify-content: center;
-        min-width: 70px;
-    }
-    .poem-card .poem-actions .notif-sent-badge {
-        font-size: 0.5rem;
-        margin-left: 0;
-        width: 100%;
-        text-align: center;
-    }
+        .header-links .link-divider {
+            color: #ede7df;
+            font-size: 1.2rem;
+            user-select: none;
+        }
 
-    /* ----- EDIT FORM ----- */
-    .edit-form {
-        padding: 0.75rem;
-    }
-    .edit-form .form-group input,
-    .edit-form .form-group textarea {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.7rem;
-    }
-    .edit-form .btn-save-edit,
-    .edit-form .btn-cancel-edit {
-        font-size: 0.75rem;
-        padding: 0.4rem 1rem;
-        width: 100%;
-        justify-content: center;
-        margin-left: 0 !important;
-        margin-top: 0.3rem;
-    }
+        /* ===== RESPONSIVE HEADER LINKS ===== */
+        @media (max-width: 768px) {
+            .header-links {
+                gap: 0.5rem;
+                justify-content: center;
+                width: 100%;
+                padding-top: 0.3rem;
+                border-top: 1px solid #ede7df;
+            }
+            
+            .header-links a {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.5rem;
+            }
+            
+            .header-links a i {
+                font-size: 0.7rem;
+            }
+            
+            .header-links .link-divider {
+                font-size: 0.8rem;
+            }
+        }
 
-    /* ----- COMMENTS ----- */
-    .comments-section {
-        margin-top: 0.5rem;
-        padding-top: 0.5rem;
-    }
-    .comment-item {
-        flex-direction: column;
-        padding: 0.5rem;
-        gap: 0.3rem;
-    }
-    .comment-item .comment-avatar {
-        width: 28px;
-        height: 28px;
-        font-size: 0.7rem;
-    }
-    .comment-item .comment-body {
-        padding-right: 0;
-        width: 100%;
-    }
-    .comment-item .comment-body .comment-user {
-        font-size: 0.75rem;
-    }
-    .comment-item .comment-body .comment-text {
-        font-size: 0.8rem;
-    }
-    .comment-item .comment-actions {
-        align-self: flex-end;
-        margin-top: 0.2rem;
-    }
-    .comment-item .comment-actions button {
-        font-size: 0.6rem;
-        padding: 1px 6px;
-    }
-    .comment-item .comment-select {
-        position: static;
-        margin-top: 0.2rem;
-        align-self: flex-start;
-    }
-    .comment-item .comment-replies {
-        padding-left: 0.5rem;
-    }
-    .comment-item .reply-form {
-        padding-left: 0;
-        flex-direction: column;
-    }
-    .comment-item .reply-form input {
-        min-width: 100%;
-        font-size: 0.7rem;
-        padding: 0.3rem 0.6rem;
-    }
-    .comment-item .reply-form button {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.8rem;
-        width: 100%;
-    }
-    .reply-item {
-        flex-direction: column;
-        padding: 0.3rem 0.5rem;
-        gap: 0.2rem;
-    }
-    .reply-item .reply-body {
-        padding-right: 0;
-        width: 100%;
-    }
-    .reply-item .reply-select {
-        position: static;
-        align-self: flex-start;
-        margin-top: 0.2rem;
-    }
-
-    /* ----- BULK ACTIONS ----- */
-    .bulk-actions {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.3rem;
-        padding: 0.3rem 0;
-    }
-    .bulk-actions .select-all-container {
-        font-size: 0.75rem;
-    }
-    .bulk-actions .btn-bulk-delete {
-        font-size: 0.7rem;
-        padding: 0.3rem 0.8rem;
-        justify-content: center;
-        width: 100%;
-    }
-    .bulk-actions #mailingEmailSelected,
-    .bulk-actions #mailingEmailAll {
-        width: 100%;
-        justify-content: center;
-    }
-
-    /* ----- SEARCH BOX ----- */
-    .search-box {
-        width: 100%;
-        font-size: 0.8rem;
-        padding: 0.4rem 0.8rem;
-    }
-
-    /* ----- WEEKLY POEM ----- */
-    .weekly-poem-section {
-        padding: 0.75rem;
-    }
-    .weekly-poem-section .weekly-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.3rem;
-    }
-    .weekly-poem-section .weekly-header h2 {
-        font-size: 1rem;
-    }
-    .weekly-poem-section .weekly-content {
-        padding: 0.6rem;
-    }
-    .weekly-poem-section .weekly-content .weekly-title {
-        font-size: 0.95rem;
-    }
-    .weekly-poem-section .weekly-content .weekly-body {
-        font-size: 0.8rem;
-        line-height: 1.6;
-    }
-    .weekly-poem-section .weekly-actions {
-        flex-direction: column;
-        gap: 0.3rem;
-    }
-    .weekly-poem-section .weekly-actions button {
-        width: 100%;
-        justify-content: center;
-        font-size: 0.7rem;
-        padding: 0.4rem 0.8rem;
-    }
-
-    /* ----- QUOTE SECTION ----- */
-    .quote-section {
-        padding: 0.75rem;
-    }
-    .quote-section .quote-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.3rem;
-    }
-    .quote-section .quote-header h2 {
-        font-size: 1rem;
-    }
-    .quote-section .quote-content {
-        padding: 0.6rem;
-    }
-    .quote-section .quote-content .quote-text {
-        font-size: 0.9rem;
-        line-height: 1.6;
-    }
-    .quote-section .quote-actions {
-        flex-direction: column;
-        gap: 0.3rem;
-    }
-    .quote-section .quote-actions button {
-        width: 100%;
-        justify-content: center;
-        font-size: 0.7rem;
-        padding: 0.4rem 0.8rem;
-    }
-
-    /* ----- SUBMIT FORM ----- */
-    .submit-form {
-        padding: 1rem;
-        border-radius: 14px;
-    }
-    .submit-form h2 {
-        font-size: 1.1rem;
-        flex-wrap: wrap;
-    }
-    .submit-form .form-group {
-        margin-bottom: 0.8rem;
-    }
-    .submit-form .form-group label {
-        font-size: 0.8rem;
-    }
-    .submit-form .form-group input,
-    .submit-form .form-group textarea {
-        font-size: 0.8rem;
-        padding: 0.5rem 0.7rem;
-        border-radius: 8px;
-    }
-    .submit-form .btn-submit {
-        width: 100%;
-        justify-content: center;
-        font-size: 0.85rem;
-        padding: 0.6rem 1rem;
-    }
-    .submit-form .success-msg,
-    .submit-form .error-msg {
-        font-size: 0.8rem;
-        padding: 0.5rem 0.8rem;
-    }
-
-    /* ----- TABLES (Users, Admins, Mailing) ----- */
-    .users-table-wrap,
-    .admin-table-wrap,
-    .mailing-table-wrap {
-        padding: 0.5rem;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-    .users-table,
-    .admin-table,
-    .mailing-table {
-        font-size: 0.65rem;
-        min-width: 500px;
-    }
-    .users-table th,
-    .users-table td,
-    .admin-table th,
-    .admin-table td,
-    .mailing-table th,
-    .mailing-table td {
-        padding: 0.3rem 0.3rem;
-        white-space: nowrap;
-    }
-    .users-table .user-avatar-img,
-    .admin-table .admin-avatar-img {
-        width: 24px;
-        height: 24px;
-        font-size: 0.6rem;
-    }
-    .users-table .user-link,
-    .admin-table .admin-link {
-        font-size: 0.65rem;
-    }
-    .users-table .btn-delete-user,
-    .admin-table .btn-promote,
-    .admin-table .btn-remove-admin,
-    .mailing-table .btn-delete-subscriber {
-        font-size: 0.55rem;
-        padding: 0.1rem 0.5rem;
-    }
-
-    /* ----- ACHIEVEMENTS ----- */
-    .achievement-form {
-        padding: 0.75rem;
-    }
-    .achievement-form h2 {
-        font-size: 1rem;
-    }
-    .achievement-form .form-group input,
-    .achievement-form .form-group textarea,
-    .achievement-form .form-group select {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.7rem;
-    }
-    .achievement-form .btn-submit,
-    .achievement-form .btn-cancel {
-        width: 100%;
-        justify-content: center;
-        font-size: 0.8rem;
-        padding: 0.5rem 1rem;
-        margin-left: 0 !important;
-        margin-top: 0.3rem;
-    }
-    .category-header {
-        flex-wrap: wrap;
-        gap: 0.3rem;
-    }
-    .category-header h3 {
-        font-size: 0.9rem;
-    }
-    .achievement-item {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 0.6rem;
-        gap: 0.4rem;
-    }
-    .achievement-item .ach-image {
-        width: 40px;
-        height: 40px;
-        align-self: center;
-    }
-    .achievement-item .ach-details .ach-title {
-        font-size: 0.85rem;
-    }
-    .achievement-item .ach-details .ach-desc {
-        font-size: 0.75rem;
-    }
-    .achievement-item .ach-actions {
-        justify-content: center;
-    }
-    .achievement-item .ach-actions button {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.6rem;
-    }
-    .achievement-item .ach-status {
-        font-size: 0.6rem;
-        align-self: flex-start;
-    }
-
-    /* ----- LEVELS ----- */
-    .levels-form {
-        padding: 0.75rem;
-    }
-    .levels-form h2 {
-        font-size: 1rem;
-    }
-    .levels-form .form-group input {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.7rem;
-    }
-    .levels-form .form-row {
-        grid-template-columns: 1fr 1fr;
-        gap: 0.5rem;
-    }
-    .levels-form .btn-submit,
-    .levels-form .btn-cancel {
-        width: 100%;
-        justify-content: center;
-        font-size: 0.8rem;
-        padding: 0.5rem 1rem;
-        margin-left: 0 !important;
-        margin-top: 0.3rem;
-    }
-    .level-item {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 0.6rem;
-        gap: 0.3rem;
-    }
-    .level-item .level-info .level-name {
-        font-size: 0.85rem;
-    }
-    .level-item .level-info .level-criteria {
-        font-size: 0.7rem;
-    }
-    .level-item .level-actions {
-        justify-content: center;
-    }
-    .level-item .level-actions button {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.6rem;
-    }
-
-    /* ----- MAILING LIST ----- */
-    .mailing-table-wrap {
-        padding: 0.5rem;
-    }
-    .mailing-table {
-        min-width: 420px;
-    }
-    .mailing-table th,
-    .mailing-table td {
-        padding: 0.3rem 0.3rem;
-    }
-    .mailing-table .status-badge {
-        font-size: 0.55rem;
-        padding: 0 0.4rem;
-    }
-
-    /* ----- EMAIL TEMPLATES ----- */
-    .email-templates-section {
-        padding: 0.75rem;
-    }
-    .email-templates-section h2 {
-        font-size: 1rem;
-    }
-    .template-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 0.5rem;
-    }
-    .template-card {
-        padding: 0.6rem;
-    }
-    .template-card .template-number {
-        font-size: 1rem;
-    }
-    .template-card .template-name {
-        font-size: 0.7rem;
-    }
-    .template-card .template-subject {
-        font-size: 0.6rem;
-    }
-
-    /* ----- MODALS (Mailto & Template) ----- */
-    .mailto-modal-content,
-    .template-modal-content {
-        padding: 1rem;
-        margin: 0.5rem;
-        border-radius: 14px;
-    }
-    .mailto-modal-content h2,
-    .template-modal-content h2 {
-        font-size: 1rem;
-        flex-wrap: wrap;
-    }
-    .mailto-modal-content input,
-    .mailto-modal-content textarea {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.7rem;
-    }
-    .mailto-modal-content .modal-actions {
-        flex-direction: column;
-        gap: 0.3rem;
-    }
-    .mailto-modal-content .modal-actions button {
-        width: 100%;
-        justify-content: center;
-        font-size: 0.8rem;
-        padding: 0.5rem 1rem;
-    }
-    .template-modal-content .template-subject-display {
-        font-size: 0.75rem;
-        padding: 0.3rem 0.6rem;
-    }
-    .template-modal-content .template-body-display {
-        font-size: 0.8rem;
-        padding: 0.6rem;
-        max-height: 250px;
-    }
-    .template-modal-content .template-actions {
-        flex-direction: column;
-        gap: 0.3rem;
-    }
-    .template-modal-content .template-actions button {
-        width: 100%;
-        justify-content: center;
-        font-size: 0.75rem;
-        padding: 0.4rem 1rem;
-    }
-
-    /* ----- TOASTS ----- */
-    .toast {
-        bottom: 0.5rem;
-        right: 0.5rem;
-        left: 0.5rem;
-        font-size: 0.75rem;
-        padding: 0.6rem 1rem;
-        border-radius: 10px;
-        text-align: center;
-    }
-    .copy-toast {
-        bottom: 4rem;
-        font-size: 0.7rem;
-        padding: 0.3rem 1rem;
-        width: 90%;
-    }
-
-    /* ----- ACCESS DENIED / SIGN IN ----- */
-    .access-denied {
-        padding: 2rem 1rem;
-        margin: 1rem 0.5rem;
-    }
-    .access-denied i {
-        font-size: 2.5rem;
-    }
-    .access-denied h2 {
-        font-size: 1.1rem;
-        margin: 0.5rem 0;
-    }
-    .access-denied p {
-        font-size: 0.85rem;
-        padding: 0 0.5rem;
-    }
-    .access-denied .btn {
-        font-size: 0.85rem;
-        padding: 0.5rem 1.5rem;
-        display: block;
-        margin: 0.3rem auto;
-        text-align: center;
-        width: 100%;
-        max-width: 280px;
-    }
-
-    /* ----- EMPTY STATE ----- */
-    .empty-state {
-        padding: 1.5rem 0.75rem;
-    }
-    .empty-state i {
-        font-size: 2rem;
-    }
-    .empty-state h3 {
-        font-size: 1rem;
-    }
-    .empty-state p {
-        font-size: 0.8rem;
-    }
-
-    /* ----- LOADING STATE ----- */
-    .loading-state .spinner {
-        width: 30px;
-        height: 30px;
-        border-width: 3px;
-    }
-    .loading-state p {
-        font-size: 0.8rem;
-    }
-}
-
-/* ===== EXTRA SMALL (phones under 400px) ===== */
-@media (max-width: 400px) {
-    body {
-        padding: 0.4rem;
-    }
-
-    .tabs .tab-btn {
-        font-size: 0.55rem;
-        padding: 0.2rem 0.4rem;
-        min-width: 45px;
-        flex: 1 0 auto;
-    }
-    .tabs .tab-btn i {
-        font-size: 0.6rem;
-    }
-    .tabs .tab-btn .badge {
-        font-size: 0.45rem;
-        padding: 0 0.3rem;
-    }
-
-    .header h1 {
-        font-size: 0.95rem;
-    }
-    .header .admin-info {
-        font-size: 0.65rem;
-    }
-
-    .poem-card {
-        padding: 0.5rem;
-        border-radius: 10px;
-    }
-    .poem-card .poem-title {
-        font-size: 0.85rem;
-    }
-    .poem-card .poem-author {
-        font-size: 0.7rem;
-    }
-    .poem-card .poem-meta {
-        font-size: 0.6rem;
-        gap: 0.3rem;
-    }
-    .poem-card .poem-content {
-        font-size: 0.7rem;
-        padding: 0.4rem;
-        max-height: 150px;
-    }
-    .poem-card .poem-actions button {
-        font-size: 0.55rem;
-        padding: 3px 6px;
-        min-width: 55px;
-    }
-
-    .submit-form {
-        padding: 0.6rem;
-    }
-    .submit-form h2 {
-        font-size: 0.95rem;
-    }
-    .submit-form .form-group input,
-    .submit-form .form-group textarea {
-        font-size: 0.75rem;
-        padding: 0.35rem 0.6rem;
-    }
-    .submit-form .btn-submit {
-        font-size: 0.75rem;
-        padding: 0.5rem 0.8rem;
-    }
-
-    .levels-form .form-row {
-        grid-template-columns: 1fr;
-    }
-
-    .template-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 0.3rem;
-    }
-
-    .users-table,
-    .admin-table,
-    .mailing-table {
-        min-width: 340px;
-        font-size: 0.55rem;
-    }
-    .users-table th,
-    .users-table td,
-    .admin-table th,
-    .admin-table td,
-    .mailing-table th,
-    .mailing-table td {
-        padding: 0.2rem 0.2rem;
-    }
-    .users-table .user-avatar-img,
-    .admin-table .admin-avatar-img {
-        width: 20px;
-        height: 20px;
-    }
-    .users-table .user-link,
-    .admin-table .admin-link {
-        font-size: 0.55rem;
-    }
-
-    .mailto-modal-content,
-    .template-modal-content {
-        padding: 0.6rem;
-        margin: 0.2rem;
-    }
-    .mailto-modal-content h2,
-    .template-modal-content h2 {
-        font-size: 0.9rem;
-    }
-
-    .access-denied {
-        padding: 1.5rem 0.5rem;
-    }
-    .access-denied i {
-        font-size: 2rem;
-    }
-}
-
-
-/* ===== HEADER LINKS ===== */
-.header-links {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.header-links a {
-    color: #6f6252;
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 0.3rem 0.6rem;
-    border-radius: 20px;
-    background: transparent;
-}
-
-.header-links a:hover {
-    color: #8b5cf6;
-    background: #f0ece6;
-    transform: translateY(-1px);
-}
-
-.header-links a i {
-    color: #8b5cf6;
-    font-size: 0.8rem;
-}
-
-.header-links .link-divider {
-    color: #ede7df;
-    font-size: 1.2rem;
-    user-select: none;
-}
-
-/* ===== RESPONSIVE HEADER LINKS ===== */
-@media (max-width: 768px) {
-    .header-links {
-        gap: 0.5rem;
-        justify-content: center;
-        width: 100%;
-        padding-top: 0.3rem;
-        border-top: 1px solid #ede7df;
-    }
-    
-    .header-links a {
-        font-size: 0.7rem;
-        padding: 0.2rem 0.5rem;
-    }
-    
-    .header-links a i {
-        font-size: 0.7rem;
-    }
-    
-    .header-links .link-divider {
-        font-size: 0.8rem;
-    }
-}
-
-@media (max-width: 400px) {
-    .header-links {
-        gap: 0.3rem;
-        flex-wrap: wrap;
-    }
-    
-    .header-links a {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.4rem;
-    }
-    
-    .header-links .link-divider {
-        display: none;
-    }
-}
+        @media (max-width: 400px) {
+            .header-links {
+                gap: 0.3rem;
+                flex-wrap: wrap;
+            }
+            
+            .header-links a {
+                font-size: 0.6rem;
+                padding: 0.15rem 0.4rem;
+            }
+            
+            .header-links .link-divider {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2964,6 +2301,11 @@
             <button class="tab-btn" data-tab="mailing">
                 <i class="fas fa-envelope"></i> Mailing List
                 <span class="badge" id="mailingBadge">0</span>
+            </button>
+            <!-- ✅ NEW: Deletion Requests Tab -->
+            <button class="tab-btn" data-tab="deletion-requests">
+                <i class="fas fa-trash-alt"></i> Deletion Requests
+                <span class="badge" id="deletionRequestsBadge">0</span>
             </button>
         </div>
 
@@ -3276,6 +2618,22 @@
                 <div class="template-grid" id="emailTemplatesGrid"></div>
             </div>
         </div>
+
+        <!-- ✅ NEW: Deletion Requests Tab -->
+        <div class="tab-content" id="tab-deletion-requests">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                <h3 style="font-weight:600; color:#2d2a24;"><i class="fas fa-trash-alt" style="color:#8b5cf6;"></i> Account Deletion Requests</h3>
+                <span style="font-size:0.8rem; color:#8a7b6a;">
+                    <i class="fas fa-info-circle"></i> Process deletion requests from users
+                </span>
+            </div>
+            <div id="deletionRequestsContainer">
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Loading deletion requests...</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="loadingState" class="loading-state">
@@ -3392,6 +2750,7 @@
     const usersBadge = document.getElementById('usersBadge');
     const adminsBadge = document.getElementById('adminsBadge');
     const mailingBadge = document.getElementById('mailingBadge');
+    const deletionRequestsBadge = document.getElementById('deletionRequestsBadge');
 
     // Containers
     const classicContainer = document.getElementById('classicPoemsContainer');
@@ -3405,6 +2764,7 @@
     const adminsContainer = document.getElementById('adminsContainer');
     const mailingContainer = document.getElementById('mailingContainer');
     const emailTemplatesGrid = document.getElementById('emailTemplatesGrid');
+    const deletionRequestsContainer = document.getElementById('deletionRequestsContainer');
 
     // Template Modal
     const templateModal = document.getElementById('templateModal');
@@ -3434,6 +2794,7 @@
     let allUsers = [];
     let allAdmins = [];
     let allSubscribers = [];
+    let allDeletionRequests = [];
     let userCache = {};
     let toastTimeout = null;
     let authTimeout = null;
@@ -3454,6 +2815,7 @@
     let unsubscribeUsers = null;
     let unsubscribeAdmins = null;
     let unsubscribeMailing = null;
+    let unsubscribeDeletionRequests = null;
 
     // ========== EMAIL TEMPLATES ==========
     const EMAIL_TEMPLATES = [
@@ -3692,6 +3054,124 @@
         }
     }
 
+    // ========== EXECUTE USER DELETION (Clears ALL data) ==========
+    async function executeUserDeletion(userId, username) {
+        try {
+            showToast(`🗑️ Deleting all data for ${username}...`, 'info');
+            
+            // 1. DELETE POETRY DATA
+            const poemsQuery = query(collection(db, "recentPoems"), where("submittedBy", "==", username));
+            const poemsSnap = await getDocs(poemsQuery);
+            for (const poemDoc of poemsSnap.docs) {
+                const commentsSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments"));
+                for (const commentDoc of commentsSnap.docs) {
+                    const repliesSnap = await getDocs(collection(db, "recentPoems", poemDoc.id, "comments", commentDoc.id, "replies"));
+                    for (const replyDoc of repliesSnap.docs) {
+                        await deleteDoc(replyDoc.ref);
+                    }
+                    await deleteDoc(commentDoc.ref);
+                }
+                await deleteDoc(poemDoc.ref);
+            }
+            
+            // Delete drafts
+            const draftsQuery = query(collection(db, "drafts"), where("userId", "==", userId));
+            const draftsSnap = await getDocs(draftsQuery);
+            for (const draftDoc of draftsSnap.docs) {
+                await deleteDoc(draftDoc.ref);
+            }
+            
+            // Remove likes from poems
+            const allPoemsSnap = await getDocs(collection(db, "recentPoems"));
+            for (const poemDoc of allPoemsSnap.docs) {
+                const poemData = poemDoc.data();
+                if (Array.isArray(poemData.likedBy) && poemData.likedBy.includes(userId)) {
+                    await updateDoc(poemDoc.ref, {
+                        likes: increment(-1),
+                        likedBy: poemData.likedBy.filter(uid => uid !== userId)
+                    });
+                }
+            }
+            
+            // 2. DELETE SOCIAL DATA
+            const socialQuery = query(collection(db, "social"));
+            const socialSnap = await getDocs(socialQuery);
+            for (const socialDoc of socialSnap.docs) {
+                const data = socialDoc.data();
+                if (data.followedId === userId || data.followerId === userId) {
+                    if (data.followedId === userId) {
+                        await updateDoc(doc(db, "users", data.followerId), { followingCount: increment(-1) });
+                    }
+                    if (data.followerId === userId) {
+                        await updateDoc(doc(db, "users", data.followedId), { followerCount: increment(-1) });
+                    }
+                    await deleteDoc(socialDoc.ref);
+                }
+            }
+            
+            // 3. DELETE CONVERSATIONS
+            const convQuery = query(collection(db, "conversations"), where("participants", "array-contains", userId));
+            const convSnap = await getDocs(convQuery);
+            for (const convDoc of convSnap.docs) {
+                const messagesSnap = await getDocs(collection(db, "conversations", convDoc.id, "messages"));
+                for (const msgDoc of messagesSnap.docs) {
+                    await deleteDoc(msgDoc.ref);
+                }
+                await deleteDoc(convDoc.ref);
+            }
+            
+            // 4. DELETE NOTIFICATIONS
+            const notifQuery = query(collection(db, "notifications"), where("forUser", "==", userId));
+            const notifSnap = await getDocs(notifQuery);
+            for (const notifDoc of notifSnap.docs) {
+                await deleteDoc(notifDoc.ref);
+            }
+            const sentNotifQuery = query(collection(db, "notifications"), where("fromUser", "==", userId));
+            const sentNotifSnap = await getDocs(sentNotifQuery);
+            for (const notifDoc of sentNotifSnap.docs) {
+                await deleteDoc(notifDoc.ref);
+            }
+            
+            // 5. DELETE CLASSIC POEMS (if any)
+            const classicQuery = query(collection(db, "classicPoems"), where("authorId", "==", userId));
+            const classicSnap = await getDocs(classicQuery);
+            for (const classicDoc of classicSnap.docs) {
+                await deleteDoc(classicDoc.ref);
+            }
+            
+            // 6. DELETE USER DOCUMENT
+            await deleteDoc(doc(db, "users", userId));
+            
+            // 7. DELETE FROM ADMINS (if they are an admin)
+            try {
+                const adminRef = doc(db, "admins", userId);
+                const adminSnap = await getDoc(adminRef);
+                if (adminSnap.exists()) {
+                    await deleteDoc(adminRef);
+                }
+            } catch (err) {
+                console.log('No admin document to delete');
+            }
+            
+            // 8. DELETE FROM MAILING LIST (if subscribed)
+            try {
+                const mailingQuery = query(collection(db, "mailing"), where("userId", "==", userId));
+                const mailingSnap = await getDocs(mailingQuery);
+                for (const mailingDoc of mailingSnap.docs) {
+                    await deleteDoc(mailingDoc.ref);
+                }
+            } catch (err) {
+                console.log('No mailing list entry to delete');
+            }
+            
+            showToast(`✅ ${username} fully deleted (all data removed).`, 'success');
+            
+        } catch (err) {
+            console.error('Error executing user deletion:', err);
+            showToast('❌ Error deleting user: ' + err.message, 'error');
+        }
+    }
+
     // ========== NOTIFICATION FUNCTIONS ==========
 
     // ===== POEM OF THE WEEK - PERSONALIZED TO AUTHOR =====
@@ -3777,59 +3257,46 @@ reach.volant@gmail.com`;
         }
     }
 
-   // ===== POEM OF THE WEEK - GENERAL ANNOUNCEMENT =====
-async function notifyAllUsersAboutPoemOfTheWeek(poemData, slug = null, skipUserId = null) {
-    try {
-        const usersSnapshot = await getDocs(collection(db, "users"));
-        if (usersSnapshot.empty) {
-            console.log("No users to notify");
-            return;
-        }
-        
-        const batch = writeBatch(db);
-        const notificationsRef = collection(db, "notifications");
-        const title = poemData.title || "Untitled";
-        
-        // ✅ FORCE: Get the author from poemData
-        let poemAuthor = poemData.author || poemData.authorName || null;
-        
-        // ✅ If author is missing, try to find from authorId
-        if (!poemAuthor && poemData.authorId) {
-            try {
-                const userData = await getUserData(poemData.authorId);
-                if (userData) {
-                    poemAuthor = userData.username || userData.displayName || null;
-                }
-            } catch (e) {}
-        }
-        
-        // ✅ If still no author, use fallback
-        if (!poemAuthor) {
-            poemAuthor = 'Anonymous';
-        }
-        
-        // ✅ CRITICAL DEBUG: Log the author being used
-        console.log('📢 NOTIFICATION AUTHOR (should be the poet):', poemAuthor);
-        console.log('📝 poemData received:', {
-            title: poemData.title,
-            author: poemData.author,
-            authorName: poemData.authorName,
-            authorId: poemData.authorId
-        });
-        
-        const poemId = poemData.id || null;
-        const poemCollection = poemData.source || 'recentPoems';
-        
-        if (!slug && title) {
-            slug = title.toString().toLowerCase().trim()
-                .replace(/[\s\_]+/g, "-")
-                .replace(/[^a-z0-9\-]/g, "")
-                .replace(/\-+/g, "-")
-                .replace(/^\-+|\-+$/g, "");
-        }
-        
-        // ✅ Build the message with the poet's name
-        const generalMessage = `We are excited to announce that "${title}" by ${poemAuthor} has been selected as our Poem of the Week.
+    // ===== POEM OF THE WEEK - GENERAL ANNOUNCEMENT =====
+    async function notifyAllUsersAboutPoemOfTheWeek(poemData, slug = null, skipUserId = null) {
+        try {
+            const usersSnapshot = await getDocs(collection(db, "users"));
+            if (usersSnapshot.empty) {
+                console.log("No users to notify");
+                return;
+            }
+            
+            const batch = writeBatch(db);
+            const notificationsRef = collection(db, "notifications");
+            const title = poemData.title || "Untitled";
+            
+            let poemAuthor = poemData.author || poemData.authorName || null;
+            
+            if (!poemAuthor && poemData.authorId) {
+                try {
+                    const userData = await getUserData(poemData.authorId);
+                    if (userData) {
+                        poemAuthor = userData.username || userData.displayName || null;
+                    }
+                } catch (e) {}
+            }
+            
+            if (!poemAuthor) {
+                poemAuthor = 'Anonymous';
+            }
+            
+            const poemId = poemData.id || null;
+            const poemCollection = poemData.source || 'recentPoems';
+            
+            if (!slug && title) {
+                slug = title.toString().toLowerCase().trim()
+                    .replace(/[\s\_]+/g, "-")
+                    .replace(/[^a-z0-9\-]/g, "")
+                    .replace(/\-+/g, "-")
+                    .replace(/^\-+|\-+$/g, "");
+            }
+            
+            const generalMessage = `We are excited to announce that "${title}" by ${poemAuthor} has been selected as our Poem of the Week.
 
 This beautiful piece will be featured on our homepage throughout the week. We invite you to read and celebrate this wonderful work with us.
 
@@ -3838,43 +3305,43 @@ Share your thoughts in the comments.
 Warm regards,
 The Volant Team
 reach.volant@gmail.com`;
-        
-        let count = 0;
-        for (const userDoc of usersSnapshot.docs) {
-            const userId = userDoc.id;
-            if (skipUserId && userId === skipUserId) continue;
             
-            const userData = userDoc.data();
-            const username = userData.username || 'User';
+            let count = 0;
+            for (const userDoc of usersSnapshot.docs) {
+                const userId = userDoc.id;
+                if (skipUserId && userId === skipUserId) continue;
+                
+                const userData = userDoc.data();
+                const username = userData.username || 'User';
+                
+                const newNotifRef = doc(notificationsRef);
+                batch.set(newNotifRef, {
+                    forUser: userId,
+                    type: 'announcement',
+                    fromUser: userId,
+                    fromUserName: username,
+                    message: generalMessage,
+                    poemTitle: title,
+                    poemId: poemId,
+                    poemSlug: slug,
+                    poemCollection: poemCollection,
+                    isPoemOfWeek: true,
+                    isAuthorNotification: false,
+                    timestamp: new Date(),
+                    read: false
+                });
+                count++;
+            }
             
-            const newNotifRef = doc(notificationsRef);
-            batch.set(newNotifRef, {
-                forUser: userId,
-                type: 'announcement',
-                fromUser: userId,
-                fromUserName: username,
-                message: generalMessage,
-                poemTitle: title,
-                poemId: poemId,
-                poemSlug: slug,
-                poemCollection: poemCollection,
-                isPoemOfWeek: true,
-                isAuthorNotification: false,
-                timestamp: new Date(),
-                read: false
-            });
-            count++;
+            await batch.commit();
+            console.log(`✅ Notified ${count} users about Poem of the Week by ${poemAuthor}`);
+            showToast(`✅ Notified ${count} users about Poem of the Week!`, 'success');
+            
+        } catch (err) {
+            console.error("❌ Error sending general Poem of the Week notifications:", err);
+            showToast('❌ Error: ' + err.message, 'error');
         }
-        
-        await batch.commit();
-        console.log(`✅ Notified ${count} users about Poem of the Week by ${poemAuthor}`);
-        showToast(`✅ Notified ${count} users about Poem of the Week!`, 'success');
-        
-    } catch (err) {
-        console.error("❌ Error sending general Poem of the Week notifications:", err);
-        showToast('❌ Error: ' + err.message, 'error');
     }
-}
 
     // ===== QUOTE OF THE WEEK - PERSONALIZED TO AUTHOR =====
     async function notifyQuoteAuthorAboutQuoteOfTheWeek(quoteData) {
@@ -4674,7 +4141,6 @@ reach.volant@gmail.com`;
             for (const docSnap of snapshot.docs) {
                 const poem = { id: docSnap.id, ...docSnap.data() };
                 
-                // ✅ Fetch author data if authorId exists
                 if (poem.authorId) {
                     try {
                         const userData = await getUser(poem.authorId);
@@ -5052,7 +4518,9 @@ reach.volant@gmail.com`;
                         <td>${joinedStr}</td>
                         <td><span style="display:inline-block; padding:0.1rem 0.6rem; border-radius:30px; font-size:0.7rem; font-weight:600; ${isAdmin ? 'background:#8b5cf6; color:white;' : 'background:#ede7df; color:#4d4238;'}">${isAdmin ? 'Admin' : role}</span></td>
                         <td><span style="display:inline-block; padding:0.1rem 0.6rem; border-radius:30px; font-size:0.7rem; font-weight:600; ${status === 'active' ? 'background:#e6f7e6; color:#2e7d32;' : 'background:#fde8e8; color:#c62828;'}">${status}</span></td>
-                        <td><button class="btn-delete-user" onclick="window.deleteUser('${user.id}')"><i class="fas fa-trash"></i> Delete</button></td>
+                        <td>
+                            <button class="btn-delete-user" onclick="window.deleteUser('${user.id}', '${escapeHtml(user.username || 'user')}')"><i class="fas fa-trash"></i> Delete</button>
+                        </td>
                     </tr>
                 `;
             });
@@ -5231,6 +4699,216 @@ reach.volant@gmail.com`;
             updateSelectedCount('mailing');
         });
     }
+
+    // ========== LOAD DELETION REQUESTS ==========
+    function loadDeletionRequests() {
+        if (unsubscribeDeletionRequests) unsubscribeDeletionRequests();
+        const q = query(collection(db, "deletion_requests"), orderBy("requestedAt", "desc"));
+        unsubscribeDeletionRequests = onSnapshot(q, async (snapshot) => {
+            allDeletionRequests = [];
+            for (const docSnap of snapshot.docs) {
+                const request = { id: docSnap.id, ...docSnap.data() };
+                // Get user data if available
+                if (request.userId) {
+                    try {
+                        const userData = await getUser(request.userId);
+                        if (userData && userData.username) {
+                            request.userName = userData.username;
+                        }
+                    } catch (e) {}
+                }
+                allDeletionRequests.push(request);
+            }
+            deletionRequestsBadge.textContent = allDeletionRequests.filter(r => r.status === 'pending').length;
+            renderDeletionRequests();
+        });
+    }
+
+function renderDeletionRequests() {
+    const pending = allDeletionRequests.filter(r => r.status === 'pending');
+    const completed = allDeletionRequests.filter(r => r.status === 'completed' || r.status === 'rejected');
+
+    if (allDeletionRequests.length === 0) {
+        deletionRequestsContainer.innerHTML = `<div class="empty-state"><i class="fas fa-trash-alt"></i><h3>No Deletion Requests</h3><p>Users can request account deletion from their profile page.</p></div>`;
+        return;
+    }
+
+    let html = `
+        <div style="margin-bottom:1rem;">
+            <span style="font-weight:600; color:#2d2a24;">⏳ Pending: ${pending.length}</span>
+            <span style="margin-left:1rem; font-weight:600; color:#2d7d46;">✅ Completed: ${completed.length}</span>
+        </div>
+    `;
+
+    if (pending.length > 0) {
+        html += `<h4 style="color:#e65100; margin-bottom:0.5rem;">⏳ Pending Requests</h4>`;
+        pending.forEach(request => {
+            html += renderDeletionRequestItem(request);
+        });
+    }
+
+    if (completed.length > 0) {
+        html += `<h4 style="color:#2d7d46; margin-top:1.5rem; margin-bottom:0.5rem;">✅ Processed Requests</h4>`;
+        completed.forEach(request => {
+            html += renderDeletionRequestItem(request);
+        });
+    }
+
+    deletionRequestsContainer.innerHTML = html;
+}
+
+ function renderDeletionRequestItem(request) {
+    const requestedAt = request.requestedAt?.toDate?.() || new Date();
+    const dateStr = requestedAt.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const status = request.status || 'pending';
+    const statusClass = status === 'pending' ? 'pending' : status === 'completed' ? 'completed' : 'rejected';
+    const statusDisplay = status.charAt(0).toUpperCase() + status.slice(1);
+
+    let actionsHtml = '';
+    if (status === 'pending') {
+        actionsHtml = `
+            <button class="btn-process-deletion" onclick="window.processDeletionRequest('${request.id}')">
+                <i class="fas fa-check"></i> Process Deletion
+            </button>
+            <button class="btn-reject-deletion" onclick="window.rejectDeletionRequest('${request.id}')">
+                <i class="fas fa-times"></i> Reject
+            </button>
+        `;
+    }
+
+    // ✅ Make email clickable - creates a mailto link
+    const emailHtml = request.email ? 
+        `<a href="mailto:${encodeURIComponent(request.email)}" class="email-link" style="color:#4b2aad; text-decoration:none; font-weight:500;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+            <i class="fas fa-envelope" style="font-size:0.75rem;"></i> ${escapeHtml(request.email)}
+        </a>` : 
+        '<span style="color:#999;">No email</span>';
+
+    return `
+        <div class="deletion-request-item">
+            <div class="request-info">
+                <div class="request-user">
+                    <i class="fas fa-user"></i> ${escapeHtml(request.userName || request.username || 'Unknown User')}
+                    ${request.userId ? `<span style="font-size:0.7rem; color:#999; margin-left:0.5rem;">(UID: ${request.userId.substring(0, 12)}...)</span>` : ''}
+                </div>
+                <div class="request-details">
+                    <i class="fas fa-envelope"></i> ${emailHtml} &nbsp;|&nbsp;
+                    <i class="fas fa-calendar-alt"></i> ${dateStr} &nbsp;|&nbsp;
+                    <i class="fas fa-platform"></i> ${escapeHtml(request.platform || 'poetry')}
+                    ${request.reason ? `&nbsp;|&nbsp; <i class="fas fa-info-circle"></i> ${escapeHtml(request.reason)}` : ''}
+                </div>
+            </div>
+            <span class="request-status ${statusClass}">${statusDisplay}</span>
+            <div class="request-actions">
+                ${actionsHtml}
+            </div>
+        </div>
+    `;
+}
+
+    // ========== PROCESS DELETION REQUEST ==========
+    window.processDeletionRequest = async function(requestId) {
+        if (!confirm('⚠️ Process this deletion request? This will permanently delete the user\'s account and ALL their data.')) return;
+        if (!confirm('⚠️ ARE YOU SURE? This action cannot be undone.')) return;
+
+        try {
+            const requestRef = doc(db, "deletion_requests", requestId);
+            const requestSnap = await getDoc(requestRef);
+            if (!requestSnap.exists()) {
+                showToast('❌ Request not found.', 'error');
+                return;
+            }
+
+            const request = requestSnap.data();
+            const userId = request.userId;
+            const username = request.username || request.userName || 'unknown';
+
+            if (!userId) {
+                showToast('❌ User ID not found in request.', 'error');
+                return;
+            }
+
+            // Execute full user deletion
+            await executeUserDeletion(userId, username);
+
+            // Mark request as completed
+            await updateDoc(requestRef, {
+                status: 'completed',
+                processedAt: new Date(),
+                processedBy: auth.currentUser?.uid || 'admin'
+            });
+
+            showToast(`✅ Deletion request processed for ${username}. All data removed.`, 'success');
+            loadDeletionRequests();
+            loadUsers();
+
+        } catch (err) {
+            console.error('Error processing deletion request:', err);
+            showToast('❌ Error: ' + err.message, 'error');
+        }
+    };
+
+    // ========== REJECT DELETION REQUEST ==========
+    window.rejectDeletionRequest = async function(requestId) {
+        if (!confirm('❌ Reject this deletion request? The user will be notified.')) return;
+
+        try {
+            const requestRef = doc(db, "deletion_requests", requestId);
+            const requestSnap = await getDoc(requestRef);
+            if (!requestSnap.exists()) {
+                showToast('❌ Request not found.', 'error');
+                return;
+            }
+
+            const request = requestSnap.data();
+            const userId = request.userId;
+            const username = request.username || request.userName || 'unknown';
+
+            // Mark request as rejected
+            await updateDoc(requestRef, {
+                status: 'rejected',
+                processedAt: new Date(),
+                processedBy: auth.currentUser?.uid || 'admin',
+                rejectionReason: 'Admin rejected deletion request'
+            });
+
+            // Remove deletion requested flag from user
+            if (userId) {
+                try {
+                    await updateDoc(doc(db, "users", userId), {
+                        deletionRequested: false,
+                        deletionRequestedAt: null,
+                        deletionReason: null
+                    });
+                } catch (e) {
+                    console.log('Could not update user deletion flag:', e);
+                }
+            }
+
+            // Send notification to user
+            if (userId) {
+                try {
+                    await addDoc(collection(db, "notifications"), {
+                        forUser: userId,
+                        type: 'deletion_rejected',
+                        fromUser: auth.currentUser?.uid || 'admin',
+                        fromUserName: 'Volant Team',
+                        message: `Hello ${username},\n\nYour account deletion request has been reviewed and rejected.\n\nIf you have any questions, please contact us at reach.volant@gmail.com`,
+                        timestamp: new Date(),
+                        read: false
+                    });
+                } catch (e) {
+                    console.log('Could not send rejection notification:', e);
+                }
+            }
+
+            showToast(`❌ Deletion request rejected for ${username}.`, 'info');
+            loadDeletionRequests();
+
+        } catch (err) {
+            console.error('Error rejecting deletion request:', err);
+            showToast('❌ Error: ' + err.message, 'error');
+        }
+    };
 
     // ========== UPDATE SELECT ALL STATE ==========
     function updateSelectAllState(container) {
@@ -5491,70 +5169,52 @@ reach.volant@gmail.com`;
     });
 
     // ========== SET WEEKLY POEM ==========
-  window.setWeeklyPoem = async function(poemId, type) {
-    try {
-        const collectionName = type === 'classic' ? 'classicPoems' : 'recentPoems';
-        const poemRef = doc(db, collectionName, poemId);
-        const poemSnap = await getDoc(poemRef);
-        if (!poemSnap.exists()) {
-            showToast('❌ Poem not found.', 'error');
-            return;
+    window.setWeeklyPoem = async function(poemId, type) {
+        try {
+            const collectionName = type === 'classic' ? 'classicPoems' : 'recentPoems';
+            const poemRef = doc(db, collectionName, poemId);
+            const poemSnap = await getDoc(poemRef);
+            if (!poemSnap.exists()) {
+                showToast('❌ Poem not found.', 'error');
+                return;
+            }
+            const poemData = poemSnap.data();
+            
+            const poemWithId = { 
+                ...poemData, 
+                id: poemId,
+                author: poemData.author || poemData.authorName || 'Anonymous',
+                authorName: poemData.authorName || poemData.author || 'Anonymous'
+            };
+            
+            await setDoc(doc(db, "weeklyHighlights", "weeklyPoem"), {
+                ...poemData,
+                id: poemId,
+                source: type,
+                setAt: new Date(),
+                setBy: auth.currentUser?.uid || 'admin'
+            });
+            
+            showToast('⭐ Poem set as Poem of the Week!', 'success');
+            
+            await notifyPoemAuthorAboutPoemOfTheWeek(poemWithId);
+            
+            await loadWeeklyPoemDisplay();
+            await loadWeeklyPoemsList();
+            await loadRecentPoems();
+            await loadClassicPoems();
+            
+            if (poemId) {
+                const poemRef2 = doc(db, "recentPoems", poemId);
+                await updateDoc(poemRef2, { notifSent: true, notifSentAt: new Date() });
+            }
+            
+        } catch (err) {
+            console.error('❌ Error setting weekly poem:', err);
+            showToast('❌ Error: ' + err.message, 'error');
         }
-        const poemData = poemSnap.data();
-        
-        // ✅ CRITICAL DEBUG: Log the poem data
-        console.log('📝 ORIGINAL POEM DATA FROM FIRESTORE:', {
-            title: poemData.title,
-            author: poemData.author,
-            authorName: poemData.authorName,
-            authorId: poemData.authorId,
-            userId: poemData.userId
-        });
-        
-        // ✅ FORCE the author to be what's in the poem
-        const poemWithId = { 
-            ...poemData, 
-            id: poemId,
-            author: poemData.author || poemData.authorName || 'Anonymous',
-            authorName: poemData.authorName || poemData.author || 'Anonymous'
-        };
-        
-        // ✅ LOG what we're sending to notifications
-        console.log('📝 SENDING TO NOTIFICATIONS:', {
-            title: poemWithId.title,
-            author: poemWithId.author,
-            authorName: poemWithId.authorName,
-            authorId: poemWithId.authorId
-        });
-        
-        await setDoc(doc(db, "weeklyHighlights", "weeklyPoem"), {
-            ...poemData,
-            id: poemId,
-            source: type,
-            setAt: new Date(),
-            setBy: auth.currentUser?.uid || 'admin'
-        });
-        
-        showToast('⭐ Poem set as Poem of the Week!', 'success');
-        
-        // ✅ Pass the FORCED poem data
-        await notifyPoemAuthorAboutPoemOfTheWeek(poemWithId);
-        
-        await loadWeeklyPoemDisplay();
-        await loadWeeklyPoemsList();
-        await loadRecentPoems();
-        await loadClassicPoems();
-        
-        if (poemId) {
-            const poemRef2 = doc(db, "recentPoems", poemId);
-            await updateDoc(poemRef2, { notifSent: true, notifSentAt: new Date() });
-        }
-        
-    } catch (err) {
-        console.error('❌ Error setting weekly poem:', err);
-        showToast('❌ Error: ' + err.message, 'error');
-    }
-};
+    };
+
     // ========== POEM FUNCTIONS ==========
     window.approvePoem = async function(poemId) {
         if (!confirm('✅ Approve this poem?')) return;
@@ -5730,10 +5390,16 @@ reach.volant@gmail.com`;
     };
 
     // ========== USER FUNCTIONS ==========
-    window.deleteUser = async function(userId) {
-        if (!confirm('⚠️ Delete this user permanently? This action cannot be undone.')) return;
-        try { await deleteDoc(doc(db, "users", userId)); showToast('🗑️ User deleted permanently.', 'info'); } 
-        catch (err) { showToast('❌ Error: ' + err.message, 'error'); }
+    window.deleteUser = async function(userId, username) {
+        if (!confirm(`⚠️ Delete "${username || 'this user'}" permanently? This will remove ALL their data (poems, comments, likes, etc.).`)) return;
+        if (!confirm(`⚠️ ARE YOU SURE? This action cannot be undone.`)) return;
+        
+        try {
+            await executeUserDeletion(userId, username || 'user');
+            loadUsers();
+        } catch (err) {
+            showToast('❌ Error: ' + err.message, 'error');
+        }
     };
 
     // ========== SUBSCRIBER FUNCTIONS ==========
@@ -5870,6 +5536,7 @@ reach.volant@gmail.com`;
                 loadMailingList();
                 renderEmailTemplates();
             }
+            if (tabName === 'deletion-requests') loadDeletionRequests();
         });
     });
 
@@ -5905,8 +5572,10 @@ reach.volant@gmail.com`;
                 loadUsers();
                 loadAdmins();
                 loadMailingList();
+                loadDeletionRequests();
                 await loadWeeklyPoemDisplay();
                 await loadWeeklyQuoteDisplay();
+                renderEmailTemplates();
             } else {
                 accessDenied.style.display = 'block';
             }
@@ -5928,7 +5597,7 @@ reach.volant@gmail.com`;
     }, 8000);
 
     console.log('🛡️ Volant Poetry Admin Dashboard loaded.');
-    console.log('📚 Tabs: Classic Poems | Submit Classic | Poem of the Week | Quote of the Week | Recent Poems | Achievements | Levels | Users | Admins | Mailing List');
+    console.log('📚 Tabs: Classic Poems | Submit Classic | Poem of the Week | Quote of the Week | Recent Poems | Achievements | Levels | Users | Admins | Mailing List | Deletion Requests');
     console.log('⚡ Real-time updates enabled for all tabs');
     console.log('🏆 Manage achievements and levels for gamification');
     console.log('📧 Mailing list with bulk email functionality and email templates');
@@ -5936,6 +5605,8 @@ reach.volant@gmail.com`;
     console.log('📢 When setting Poem of the Week → Notifies the AUTHOR personally, then ALL users');
     console.log('📝 When setting Quote of the Week → Notifies the AUTHOR personally, then ALL users');
     console.log('📋 Email templates: Click a template to copy it to your clipboard');
+    console.log('🗑️ Deletion Requests: Process user account deletion requests');
+    console.log('🧹 Deleting a user removes ALL their data (poems, comments, likes, conversations, notifications, etc.)');
 </script>
 </body>
 </html>
