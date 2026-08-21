@@ -2145,6 +2145,59 @@ header .logo-header {
   display: none !important;
 }
 
+/* ===== HIDE UPDATE BUTTON IN WISHLIST ===== */
+#page-wishlist .update-book-btn {
+  display: none !important;
+}
+
+/* ===== INCREASE SETTINGS NAVIGATION SIZE ON MOBILE ===== */
+@media (max-width: 768px) {
+  .settings-nav-item {
+    padding: 12px 18px !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .settings-nav-item i {
+    font-size: 1.1rem !important;
+    min-width: 22px !important;
+  }
+  
+  .settings-nav {
+    padding: 10px 14px !important;
+    gap: 10px !important;
+    border-radius: 14px !important;
+  }
+  
+  .settings-nav-wrapper {
+    padding-bottom: 8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-nav-item {
+    padding: 14px 20px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .settings-nav-item i {
+    font-size: 1.1rem !important;
+    min-width: 24px !important;
+  }
+  
+  .settings-nav {
+    padding: 12px 16px !important;
+    gap: 12px !important;
+    border-radius: 16px !important;
+  }
+}
+
+/* ===== MAKE TABS SCROLL EASIER ===== */
+.settings-nav-wrapper {
+  -webkit-overflow-scrolling: touch !important;
+  scroll-behavior: smooth !important;
+}
   </style>
 </head>
 <body>

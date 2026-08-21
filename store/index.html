@@ -3794,6 +3794,66 @@ header .logo-header {
         height: 22px !important;
     }
 }
+
+/* ===== INCREASE "NEW BOOKS" ON SMALLER SCREENS ONLY ===== */
+
+/* Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+    #new-books .section-title {
+        font-size: 2.3rem !important;      /* Increased from 1.3rem */
+        font-weight: 700 !important;
+        letter-spacing: 0.5px;
+    }
+    #new-books .section-subtitle {
+        font-size: 1.0rem !important;      /* Slightly increased from 0.9rem */
+    }
+}
+
+/* Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+    #new-books .section-title {
+        font-size: 1.9rem !important;      /* Increased from 1.1rem */
+        font-weight: 700 !important;
+        letter-spacing: 0.3px;
+    }
+    #new-books .section-subtitle {
+        font-size: 0.9rem !important;      /* Increased from 0.8rem */
+    }
+}
+
+/* Small Phones (max-width: 380px) */
+@media (max-width: 380px) {
+    #new-books .section-title {
+        font-size: 1.6rem !important;      /* Increased from ~1.1rem */
+        font-weight: 700 !important;
+    }
+    #new-books .section-subtitle {
+        font-size: 0.8rem !important;
+    }
+}
+
+/* ===== REDUCE GAP BETWEEN NEW BOOKS TITLE & SUBTITLE ===== */
+
+#new-books .section-title {
+    margin-bottom: 0.1rem !important;   /* Reduced from 0.25rem */
+}
+
+#new-books .section-subtitle {
+    margin-top: -0.2rem !important;     /* Pulls subtitle up slightly */
+    margin-bottom: 1.5rem !important;
+}
+
+/* ===== OR ALTERNATIVE: SIMPLY REDUCE MARGIN ===== */
+#new-books .section-title {
+    margin-bottom: 0 !important;        /* Removes gap completely */
+}
+
+#new-books .section-subtitle {
+    margin-top: -0.3rem !important;     /* Pulls closer to title */
+    margin-bottom: 1.5rem !important;
+}
+
+
                     </style>
 </head>
 <body>

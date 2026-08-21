@@ -35,15 +35,11 @@
   <link rel="sitemap" type="application/xml" title="Sitemap" href="https://volantpoetry.vercel.app/sitemap.xml">
 
   <!-- ===== SITE LINKS FOR GOOGLE ===== -->
-  <!-- Tell Google about your platforms -->
   <link rel="alternate" type="text/html" hreflang="en" href="https://volantpoetry.vercel.app/" title="Volant Poetry - Poetry Community" />
   <link rel="alternate" type="text/html" hreflang="en" href="https://volantpoetry.vercel.app/store/index.html" title="Volant Reads - Literary Marketplace" />
   <link rel="alternate" type="text/html" hreflang="en" href="https://volantpoetry.vercel.app/volant_foundry/index.html" title="Volant Foundry - Parent Platform" />
 
-  <!-- Tell Google this is the main about page -->
   <link rel="about" href="https://volantpoetry.vercel.app/shared/about.html" />
-
-  <!-- Link to your main pages for Google to crawl -->
   <link rel="contents" href="https://volantpoetry.vercel.app/" title="Volant Poetry Home" />
   <link rel="contents" href="https://volantpoetry.vercel.app/poems.html" title="All Poems" />
   <link rel="contents" href="https://volantpoetry.vercel.app/store/index.html" title="Volant Reads Bookstore" />
@@ -176,7 +172,7 @@
     /* Ranking Sections Styling */
     .ranking-info-section {
       max-width: 1000px;
-      margin: 60px auto;
+      margin: 40px auto 60px;
       padding: 0 20px;
     }
 
@@ -510,6 +506,170 @@
       margin-right: 6px;
     }
 
+    /* About / Introduction */
+    .about-section {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .about-container {
+      background: linear-gradient(145deg, #fdfcfb, #f7f5ff);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      border: 1px solid #ede7df;
+    }
+    .about-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: #4b2aad;
+      margin-bottom: 15px;
+    }
+    .about-text p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #333;
+      margin-bottom: 12px;
+    }
+    .about-text p strong {
+      color: #4b2aad;
+    }
+
+    /* Mission & Vision */
+    .mission-section {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .mission-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+    .mission-block {
+      background: linear-gradient(145deg, #fdfcfb, #f7f5ff);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      border: 1px solid #ede7df;
+    }
+    .mission-block h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: #4b2aad;
+      margin-bottom: 10px;
+    }
+    .mission-block p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #333;
+    }
+
+    /* Platform Section - Volant Poetry */
+    .platform-section {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .platform-container {
+      background: linear-gradient(145deg, #fdfcfb, #f7f5ff);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      border: 1px solid #ede7df;
+    }
+    .platform-container h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: #4b2aad;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .platform-container > p {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #333;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .platform-container .guidelines-box {
+      margin-top: 20px;
+      background: #fff3f3;
+      border-left: 5px solid #d32f2f;
+      padding: 15px 20px;
+      border-radius: 8px;
+    }
+    .platform-container .guidelines-box strong {
+      color: #d32f2f;
+    }
+    .platform-container .guidelines-box ol {
+      margin-top: 8px;
+      padding-left: 20px;
+      color: #333;
+      line-height: 1.8;
+    }
+    .platform-container .guidelines-box a {
+      color: #4b2aad;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    /* Dedication Section */
+    .dedication-section {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .dedication-container {
+      background: linear-gradient(135deg, #2a1a4a, #4b2aad);
+      color: white;
+      border-radius: 16px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(75, 42, 173, 0.3);
+    }
+    .dedication-container h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 10px;
+       color: white;
+    }
+    .dedication-container p {
+      font-size: 1.05rem;
+      opacity: 0.9;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.7;
+       color: white;
+
+    }
+
+    /* Author Section */
+    .author-section {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    .author-section img {
+      max-width: 250px;
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+    .author-section .author-info h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: #4b2aad;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+    .author-section .author-info p {
+      color: #666;
+      font-size: 1rem;
+    }
+
     @media (max-width: 768px) {
       .volant-reads-grid {
         grid-template-columns: 1fr;
@@ -528,14 +688,14 @@
       .brand-platforms {
         gap: 12px;
       }
+      .mission-container {
+        grid-template-columns: 1fr;
+      }
       
-      /* Left align text on mobile */
       .parent-brand-banner p {
         text-align: left !important;
         padding: 0 4px;
       }
-      
-      /* Keep platform tags in a row on mobile */
       .brand-platforms {
         display: flex !important;
         flex-wrap: wrap !important;
@@ -546,11 +706,11 @@
         font-size: 0.8rem !important;
         padding: 4px 12px !important;
       }
-      
-      /* Reduce heading sizes on mobile */
       .ranking-info-section h2,
-      .volant-reads-section h2 {
-        font-size: 1.4rem !important;
+      .volant-reads-section h2,
+      .about-text h2,
+      .platform-container h2 {
+        font-size: 1.5rem !important;
       }
     }
 
@@ -564,20 +724,22 @@
       .volant-reads-box .description p {
         font-size: 0.95rem;
       }
-      
-      /* Further reduce heading sizes on very small screens */
       .ranking-info-section h2,
-      .volant-reads-section h2 {
+      .volant-reads-section h2,
+      .about-text h2,
+      .platform-container h2 {
         font-size: 1.2rem !important;
       }
-      
-      /* Keep platform tags in a row on very small screens */
       .brand-platforms {
         gap: 6px !important;
       }
       .brand-platforms span {
         font-size: 0.7rem !important;
         padding: 3px 10px !important;
+      }
+      .about-text p,
+      .platform-container > p {
+        font-size: 0.95rem !important;
       }
     }
   </style>
@@ -595,9 +757,9 @@
         <span class="close-btn" id="close-btn">✕</span>
         <a href="../poems.html">Poems</a>
         <a href="contact.html">Contact Us</a>
-          <a href="../index.html">📖 Volant Poetry</a>
-          <a href="../store/index.html">📚 Bookstore</a>
-            <a href="../volant_foundry/index.html">🏛️ Volant Foundry</a>
+        <a href="../index.html">📖 Volant Poetry</a>
+        <a href="../store/index.html">📚 Bookstore</a>
+        <a href="../volant_foundry/index.html">🏛️ Volant Foundry</a>
     </div>
 
     <div class="nav-right">
@@ -611,66 +773,52 @@
   <div class="nav-container">
     <a href="#volant-foundry"><i class="fas fa-home"></i> Volant Foundry</a>
     <span class="divider">|</span>
-    <a href="#volant-poetry"><i class="fas fa-feather-alt"></i> Volant Poetry</a>
-    <span class="divider">|</span>
     <a href="#volant-reads"><i class="fas fa-book-open"></i> Volant Reads</a>
     <span class="divider">|</span>
-    <a href="#ranking-system"><i class="fas fa-trophy"></i> Ranking System</a>
+    <a href="#volant-poetry"><i class="fas fa-feather-alt"></i> Volant Poetry</a>
   </div>
 </div>
 
-<!-- ===== BRAND BANNER ===== -->
-<div class="parent-brand-banner" id="volant-foundry">
-  <h1><span>Volant Foundry</span></h1>
-  <p>
-    A creative technology platform building digital spaces for writers, readers, and creators. 
-    It began with <strong>Volant Poetry</strong>, a platform for sharing and discovering poetry, and has expanded into 
-    <strong>Volant Reads</strong>, a digital literary marketplace where users can discover, purchase, and access books, poetry, and other written content.
-  </p>
-  <div class="brand-platforms">
-    <span><i>📖</i> Volant Poetry</span>
-    <span><i>📚</i> Volant Reads</span>
-    <span><i></i> + more coming</span>
+<!-- ============================================================ -->
+<!-- ===== VOLANT FOUNDRY ===== -->
+<!-- ============================================================ -->
+<div id="volant-foundry">
+  <div class="parent-brand-banner">
+    <h1><span>Volant Foundry</span></h1>
+    <p>
+      A creative technology platform building digital spaces for writers, readers, and creators. 
+      It began with <strong>Volant Poetry</strong>, a platform for sharing and discovering poetry, and has expanded into 
+      <strong>Volant Reads</strong>, a digital literary marketplace where users can discover, purchase, and access books, poetry, and other written content.
+    </p>
+    <div class="brand-platforms">
+      <span><i>📖</i> Volant Poetry</span>
+      <span><i>📚</i> Volant Reads</span>
+      <span><i>⚡</i> + more coming</span>
+    </div>
   </div>
+
+  <!-- Mission & Vision -->
+  <section class="mission-section">
+    <div class="mission-container">
+      <div class="mission-block">
+        <h3>Our Mission</h3>
+        <p>
+          To foster a vibrant literary community that heals, inspires, and gives voice to every poet, writer, and reader through technology and creativity.
+        </p>
+      </div>
+      <div class="mission-block">
+        <h3>Our Vision</h3>
+        <p>
+          To create a thriving, collaborative digital ecosystem where literature enriches lives and builds meaningful connections.
+        </p>
+      </div>
+    </div>
+  </section>
 </div>
 
-<!-- About / Introduction -->
-<section class="about-section" id="volant-poetry">
-  <div class="about-container">
-    <div class="about-text">
-      <h2>Welcome to Volant Foundry</h2>
-      <p>
-        <strong>Volant Foundry</strong> is the parent platform behind a growing ecosystem of literary and creative spaces. 
-        Our flagship platform, <strong>Volant Poetry</strong>, is a <strong>community-driven space</strong> where poets, writers, and readers come together. 
-        This is not just a personal website — it is a <strong>shared space</strong> for anyone who loves poetry and creative expression.
-      </p>
-      <p>
-        Through <strong>Volant Reads</strong>, we empower independent authors by providing a marketplace to sell their works while retaining ownership and earning the majority of sales revenue.
-        Every voice matters, and every creator is welcome.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- Mission & Vision -->
-<section class="mission-section">
-  <div class="mission-container">
-    <div class="mission-block">
-      <h3>Our Mission</h3>
-      <p>
-        To foster a vibrant literary community that heals, inspires, and gives voice to every poet, writer, and reader through technology and creativity.
-      </p>
-    </div>
-    <div class="mission-block">
-      <h3>Our Vision</h3>
-      <p>
-        To create a thriving, collaborative digital ecosystem where literature enriches lives and builds meaningful connections.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ===== VOLANT READS SECTION ===== -->
+<!-- ============================================================ -->
+<!-- ===== VOLANT READS ===== -->
+<!-- ============================================================ -->
 <section class="volant-reads-section" id="volant-reads">
   <h2><i class="fas fa-book-open"></i> Volant Reads — A Platform of Volant Foundry</h2>
   
@@ -734,9 +882,36 @@
   </div>
 </section>
 
-<!-- ===== RANKING SYSTEM SECTION ===== -->
-<section class="ranking-info-section" id="ranking-system">
-  <h2>🏆 How Our Ranking System Works</h2>
+<!-- ============================================================ -->
+<!-- ===== VOLANT POETRY (with Ranking System) ===== -->
+<!-- ============================================================ -->
+<section class="platform-section" id="volant-poetry">
+  <div class="platform-container">
+    <h2><i class="fas fa-feather-alt" style="color: #4b2aad; margin-right: 10px;"></i> Volant Poetry</h2>
+    <p>
+      Volant Poetry is a creative home for poets and poetry lovers. 
+      Share your work, explore new voices, and immerse yourself in a community where every word matters.
+    </p>
+
+    <div class="guidelines-box">
+      <p style="font-weight: bold; color: #d32f2f;">
+        ❗ Volant Poetry is an <strong>open community</strong>. Poets can freely share their work without editorial approval. 
+        To maintain quality, please follow these simple standards:
+      </p>
+      <ol>
+        <li>All poems must be written by the author themselves.</li>
+        <li><strong>No AI-generated content</strong> is allowed.</li>
+        <li>Respect other poets and readers, no spam or plagiarism.</li>
+        <li>Use proper titles and basic formatting.</li>
+      </ol>
+      <a href="../submission-guidelines.html" style="color:#4b2aad; text-decoration:underline;">Read the full guidelines</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RANKING SYSTEM (Part of Volant Poetry) ===== -->
+<section class="ranking-info-section">
+  <h2>🏆 Volant Poetry — Ranking System</h2>
   <div class="ranking-grid">
     
     <div class="ranking-card">
@@ -809,30 +984,9 @@
   </div>
 </section>
 
-<!-- Platform Section -->
-<section class="platform-section">
-  <div class="platform-container">
-    <h2>Community Guidelines</h2>
-    <p>
-      Volant Poetry is a creative home for poets and poetry lovers. 
-      Share your work, explore new voices, and immerse yourself in a community where every word matters.
-    </p>
-
-    <p style="margin-top: 10px; font-weight: bold; background: #fff3f3; border-left: 5px solid #d32f2f; padding: 10px;">
-      ❗ Volant Poetry is an <strong>open community</strong>. Poets can freely share their work without editorial approval. 
-      To maintain quality, please follow these simple standards:
-      <ol style="margin-top:5px; padding-left: 20px;">
-        <li>All poems must be written by the author themselves.</li>
-        <li><strong>No AI-generated content</strong> is allowed.</li>
-        <li>Respect other poets and readers, no spam or plagiarism.</li>
-        <li>Use proper titles and basic formatting.</li>
-      </ol>
-      <a href="../submission-guidelines.html" style="color:#4b2aad; text-decoration:underline;">Read the full guidelines</a>
-    </p>
-  </div>
-</section>
-
-<!-- Dedication Section -->
+<!-- ============================================================ -->
+<!-- ===== DEDICATION ===== -->
+<!-- ============================================================ -->
 <section class="dedication-section">
   <div class="dedication-container">
     <h2>Dedication</h2>
@@ -844,14 +998,12 @@
   </div>
 </section>
 
-<!-- Author / Founder Section -->
+<!-- ===== AUTHOR / FOUNDER ===== -->
 <section class="author-section">
-  <div class="about-image" style="text-align: center; margin-top: 40px;">
-    <img src="../images/renceblunt.jpg" alt="Rence Blunt" style="max-width: 300px; width: 100%; border-radius: 8px;">
-    <div class="author-info" style="margin-top: 10px;">
-      <h3>Rence Blunt</h3>
-      <p>Founder of Volant Foundry</p>
-    </div>
+  <img src="../images/renceblunt.jpg" alt="Rence Blunt">
+  <div class="author-info">
+    <h3>Rence Blunt</h3>
+    <p>Founder of Volant Foundry</p>
   </div>
 </section>
 

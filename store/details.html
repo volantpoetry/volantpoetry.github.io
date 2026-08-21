@@ -2227,6 +2227,656 @@ header .logo-header {
         height: 22px !important;
     }
 }
+
+
+
+/* ===== OPTIMIZED ACTION BUTTONS - MOBILE ONLY ===== */
+/* Desktop: UNCHANGED - Cart & Wishlist side by side, Payment below */
+/* Mobile: Payment first (prominent), Cart & Wishlist below */
+
+@media (max-width: 768px) {
+  .book-actions {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.8rem !important;
+    width: 100% !important;
+  }
+  
+  /* Payment buttons come FIRST on mobile */
+  #paymentStatusContainer {
+    order: -1 !important;
+    width: 100% !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  
+  /* Cart and Wishlist come AFTER payment on mobile */
+  #addToCartBtn,
+  #wishlistBtn {
+    order: 1 !important;
+    flex: 1 !important;
+    min-width: 120px !important;
+    justify-content: center !important;
+    padding: 0.8rem 1.2rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  /* Make Cart and Wishlist side by side on tablet */
+  .book-actions {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+  }
+  
+  #paymentStatusContainer {
+    flex: 0 0 100% !important;
+  }
+  
+  #addToCartBtn,
+  #wishlistBtn {
+    flex: 1 !important;
+    min-width: 120px !important;
+  }
+}
+
+/* On small phones - Cart and Wishlist stacked */
+@media (max-width: 480px) {
+  .book-actions {
+    flex-direction: column !important;
+  }
+  
+  #addToCartBtn,
+  #wishlistBtn {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 0.8rem 1.2rem !important;
+    font-size: 0.95rem !important;
+  }
+}
+
+/* ===== FIX: MOVE DOWNLOAD REMINDER & PURCHASE STATUS BELOW PAY BUTTONS ===== */
+
+/* On mobile - reorder payment status container items */
+@media (max-width: 768px) {
+  #paymentStatusContainer {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+  
+  /* Pay/Download buttons come FIRST */
+  #payBtn,
+  #repurchaseBtn,
+  #downloadBtn {
+    order: 1 !important;
+  }
+  
+  /* Download reminder comes AFTER buttons */
+  #downloadReminder {
+    order: 2 !important;
+  }
+  
+  /* Purchase status comes AFTER reminder */
+  #purchaseStatus {
+    order: 3 !important;
+  }
+  
+  /* Login prompt comes last */
+  #loginPrompt {
+    order: 4 !important;
+  }
+  
+  /* Payment processing/success/error come after */
+  #paymentProcessing {
+    order: 5 !important;
+  }
+  #paymentSuccess {
+    order: 6 !important;
+  }
+  #paymentError {
+    order: 7 !important;
+  }
+}
+
+/* ===== BALANCED PAY & DOWNLOAD BUTTONS ON MOBILE ===== */
+@media (max-width: 768px) {
+  #payBtn,
+  #repurchaseBtn,
+  #downloadBtn {
+    padding: 0.7rem 1.5rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    min-height: 44px !important;
+    border-radius: 30px !important;
+    width: 100% !important;
+    box-shadow: 0 2px 12px rgba(75, 42, 173, 0.25) !important;
+    letter-spacing: 0px !important;
+  }
+  
+  #payBtn i,
+  #repurchaseBtn i,
+  #downloadBtn i {
+    font-size: 1rem !important;
+    margin-right: 6px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #payBtn,
+  #repurchaseBtn,
+  #downloadBtn {
+    padding: 0.7rem 1.2rem !important;
+    font-size: 0.95rem !important;
+    min-height: 44px !important;
+    border-radius: 30px !important;
+  }
+  
+  #payBtn i,
+  #repurchaseBtn i,
+  #downloadBtn i {
+    font-size: 1rem !important;
+    margin-right: 6px !important;
+  }
+}
+
+/* ===== REORDER: BUTTONS FIRST, TEXT BELOW ===== */
+@media (max-width: 768px) {
+  #paymentStatusContainer {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+  
+  #payBtn,
+  #repurchaseBtn,
+  #downloadBtn {
+    order: 1 !important;
+  }
+  
+  #downloadReminder,
+  #purchaseStatus,
+  #loginPrompt,
+  #paymentProcessing,
+  #paymentSuccess,
+  #paymentError {
+    order: 2 !important;
+  }
+}
+
+/* ===== SLIGHTLY INCREASE SEND MESSAGE BUTTON ON MOBILE ===== */
+@media (max-width: 768px) {
+  #authorContactText,
+  .contact-card a,
+  .contact-author-section .contact-card a {
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    padding: 0.2rem 0 !important;
+    display: inline-block !important;
+  }
+  
+  .contact-author-section .contact-card {
+    padding: 0.7rem 1rem !important;
+    border-radius: 10px !important;
+  }
+  
+  .contact-author-section .contact-card i {
+    font-size: 1rem !important;
+    margin-right: 4px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #authorContactText,
+  .contact-card a,
+  .contact-author-section .contact-card a {
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    padding: 0.2rem 0 !important;
+  }
+  
+  .contact-author-section .contact-card {
+    padding: 0.8rem 1.2rem !important;
+    border-radius: 12px !important;
+  }
+  
+  .contact-author-section .contact-card i {
+    font-size: 1rem !important;
+    margin-right: 6px !important;
+  }
+}
+
+/* ===== INCREASE MORE BY THE AUTHOR TITLE & PRICE ON MOBILE ===== */
+@media (max-width: 768px) {
+  .more-by-author .author-book-card .book-title {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+  }
+  
+  .more-by-author .author-book-card .book-price {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .more-by-author .section-title {
+    font-size: 1.2rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .more-by-author .author-book-card .book-title {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+  }
+  
+  .more-by-author .author-book-card .book-price {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .more-by-author .section-title {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* ===== INCREASE MORE BY THE AUTHOR TITLE & PRICE ON MOBILE ===== */
+@media (max-width: 768px) {
+  .more-by-author .author-book-card .book-title {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+  }
+  
+  .more-by-author .author-book-card .book-price {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .more-by-author .section-title {
+    font-size: 1.2rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .more-by-author .author-book-card .book-title {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+  }
+  
+  .more-by-author .author-book-card .book-price {
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .more-by-author .section-title {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* ===== INCREASE FONT SIZES ON MOBILE (EXCEPT LOGO) ===== */
+@media (max-width: 768px) {
+  /* Book Title */
+  .book-details .book-info .title {
+    font-size: 2rem !important;
+  }
+  
+  /* Book Subtitle */
+  .book-details .book-info .subtitle {
+    font-size: 1.1rem !important;
+  }
+  
+  /* Book Author */
+  .book-details .book-info .author {
+    font-size: 1.1rem !important;
+  }
+  
+  /* Book Publisher */
+  .book-details .book-info .publisher {
+    font-size: 1rem !important;
+  }
+  
+  /* Book Price */
+  #bookPrice {
+    font-size: 2rem !important;
+  }
+  
+  /* Synopsis */
+  .book-details .book-body .synopsis {
+    font-size: 1.1rem !important;
+    line-height: 1.8 !important;
+  }
+  
+  /* Section Titles */
+  .book-details .book-body .section-title {
+    font-size: 1.3rem !important;
+  }
+  
+  /* Author Bio */
+  .book-details .book-body .author-bio {
+    font-size: 1.05rem !important;
+    line-height: 1.8 !important;
+  }
+  
+  /* Sidebar labels */
+  .book-details .book-sidebar .sidebar-section .sidebar-item .label {
+    font-size: 0.85rem !important;
+  }
+  
+  .book-details .book-sidebar .sidebar-section .sidebar-item .value {
+    font-size: 0.95rem !important;
+  }
+  
+  /* Sidebar title */
+  .book-details .book-sidebar .sidebar-section .sidebar-title {
+    font-size: 0.85rem !important;
+  }
+  
+  /* Badges */
+  .book-details .book-info .badges .badge,
+  .popularity-badge,
+  .download-limit-badge {
+    font-size: 0.8rem !important;
+  }
+  
+  /* Back button */
+  .btn-back {
+    font-size: 1rem !important;
+    padding: 0.8rem 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Book Title */
+  .book-details .book-info .title {
+    font-size: 1.7rem !important;
+  }
+  
+  /* Book Subtitle */
+  .book-details .book-info .subtitle {
+    font-size: 1rem !important;
+  }
+  
+  /* Book Author */
+  .book-details .book-info .author {
+    font-size: 1rem !important;
+  }
+  
+  /* Book Publisher */
+  .book-details .book-info .publisher {
+    font-size: 0.95rem !important;
+  }
+  
+  /* Book Price */
+  #bookPrice {
+    font-size: 1.7rem !important;
+  }
+  
+  /* Synopsis */
+  .book-details .book-body .synopsis {
+    font-size: 1rem !important;
+    line-height: 1.7 !important;
+  }
+  
+  /* Section Titles */
+  .book-details .book-body .section-title {
+    font-size: 1.2rem !important;
+  }
+  
+  /* Author Bio */
+  .book-details .book-body .author-bio {
+    font-size: 0.95rem !important;
+    line-height: 1.7 !important;
+  }
+  
+  /* Sidebar labels */
+  .book-details .book-sidebar .sidebar-section .sidebar-item .label {
+    font-size: 0.8rem !important;
+  }
+  
+  .book-details .book-sidebar .sidebar-section .sidebar-item .value {
+    font-size: 0.9rem !important;
+  }
+  
+  /* Badges */
+  .book-details .book-info .badges .badge,
+  .popularity-badge,
+  .download-limit-badge {
+    font-size: 0.7rem !important;
+  }
+  
+  /* Back button */
+  .btn-back {
+    font-size: 0.95rem !important;
+    padding: 0.7rem 1.2rem !important;
+  }
+}
+
+/* ===== INCREASE WISHLIST BUTTON & ADJUST NAV ON MOBILE ===== */
+@media (max-width: 768px) {
+  /* Wishlist Button */
+  .btn-wishlist-header {
+    font-size: 0.85rem !important;
+    padding: 0.4rem 1rem !important;
+    border-radius: 8px !important;
+    min-height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+  
+  .btn-wishlist-header i {
+    font-size: 1.1rem !important;
+  }
+  
+  .btn-wishlist-header .wishlist-text {
+    display: inline !important;
+    font-weight: 500 !important;
+  }
+  
+  .wishlist-count {
+    font-size: 0.7rem !important;
+    padding: 1px 7px !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    top: -4px !important;
+    right: -4px !important;
+  }
+  
+  /* Cart Button */
+  .btn-cart-header {
+    font-size: 0.85rem !important;
+    padding: 0.4rem 1rem !important;
+    border-radius: 8px !important;
+    min-height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+  
+  .btn-cart-header i {
+    font-size: 1.1rem !important;
+  }
+  
+  .btn-cart-header .cart-text {
+    display: inline !important;
+    font-weight: 500 !important;
+  }
+  
+  .cart-count {
+    font-size: 0.7rem !important;
+    padding: 1px 7px !important;
+    min-width: 18px !important;
+    height: 18px !important;
+    top: -4px !important;
+    right: -4px !important;
+  }
+  
+  /* Sign In Button */
+  .btn-signin {
+    font-size: 0.85rem !important;
+    padding: 0.4rem 1rem !important;
+    border-radius: 8px !important;
+    min-height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+  
+  /* Profile */
+  .profile-avatar {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 1rem !important;
+  }
+  
+  .profile-name {
+    font-size: 0.85rem !important;
+    max-width: 60px !important;
+  }
+  
+  /* NAV RIGHT - adjust spacing */
+  .nav-right {
+    gap: 0.6rem !important;
+    padding-right: 0.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-wishlist-header {
+    font-size: 0.75rem !important;
+    padding: 0.3rem 0.8rem !important;
+    min-height: 32px !important;
+  }
+  
+  .btn-wishlist-header i {
+    font-size: 1rem !important;
+  }
+  
+  .btn-wishlist-header .wishlist-text {
+    font-size: 0.75rem !important;
+  }
+  
+  .btn-cart-header {
+    font-size: 0.75rem !important;
+    padding: 0.3rem 0.8rem !important;
+    min-height: 32px !important;
+  }
+  
+  .btn-cart-header i {
+    font-size: 1rem !important;
+  }
+  
+  .btn-cart-header .cart-text {
+    font-size: 0.75rem !important;
+  }
+  
+  .btn-signin {
+    font-size: 0.75rem !important;
+    padding: 0.3rem 0.8rem !important;
+    min-height: 32px !important;
+  }
+  
+  .profile-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .nav-right {
+    gap: 0.4rem !important;
+    padding-right: 0.3rem !important;
+  }
+}
+/* ===== HIDE TEXT IN WISHLIST & CART BUTTONS ON MOBILE ===== */
+@media (max-width: 768px) {
+  .btn-wishlist-header .wishlist-text {
+    display: none !important;
+  }
+  
+  .btn-cart-header .cart-text {
+    display: none !important;
+  }
+  
+  /* Make buttons icon-only with proper sizing */
+  .btn-wishlist-header {
+    padding: 0.4rem 0.7rem !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    justify-content: center !important;
+  }
+  
+  .btn-wishlist-header i {
+    font-size: 1.2rem !important;
+    margin: 0 !important;
+  }
+  
+  .btn-cart-header {
+    padding: 0.4rem 0.7rem !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    justify-content: center !important;
+  }
+  
+  .btn-cart-header i {
+    font-size: 1.2rem !important;
+    margin: 0 !important;
+  }
+  
+  /* Keep badges visible */
+  .wishlist-count {
+    font-size: 0.6rem !important;
+    padding: 1px 5px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    top: -4px !important;
+    right: -4px !important;
+  }
+  
+  .cart-count {
+    font-size: 0.6rem !important;
+    padding: 1px 5px !important;
+    min-width: 16px !important;
+    height: 16px !important;
+    top: -4px !important;
+    right: -4px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-wishlist-header {
+    padding: 0.3rem 0.5rem !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
+  
+  .btn-wishlist-header i {
+    font-size: 1rem !important;
+  }
+  
+  .btn-cart-header {
+    padding: 0.3rem 0.5rem !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+  }
+  
+  .btn-cart-header i {
+    font-size: 1rem !important;
+  }
+  
+  .wishlist-count {
+    font-size: 0.5rem !important;
+    padding: 1px 4px !important;
+    min-width: 14px !important;
+    height: 14px !important;
+  }
+  
+  .cart-count {
+    font-size: 0.5rem !important;
+    padding: 1px 4px !important;
+    min-width: 14px !important;
+    height: 14px !important;
+  }
+}
                     </style>
 
 <script>
