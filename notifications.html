@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Notifications | Volant Poetry</title>
+  <title>Notifications</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <!-- Favicons -->
   <link rel="icon" type="image/png" href="images/volant-favicon.png">
   <link rel="apple-touch-icon" href="images/volant-favicon.png">
   
@@ -267,6 +266,21 @@
       border-left-color: #27ae60;
     }
 
+    .notification-item.deletion {
+      border-left-color: #e74c3c;
+      background: linear-gradient(135deg, #fdf2f2, #fce4e4);
+    }
+
+    .notification-item.deletion.unread {
+      background: linear-gradient(135deg, #fde8e8, #fcd4d4);
+      border-left-color: #c0392b;
+    }
+
+    /* ===== HIDE SENDER ICON FOR DELETION NOTIFICATIONS ===== */
+    .notification-item.deletion .notification-icon {
+      display: none !important;
+    }
+
     .notification-icon {
       font-size: 20px;
       min-width: 36px;
@@ -308,6 +322,20 @@
     .notification-message .welcome-tag {
       display: inline-block;
       background: #2ecc71;
+      color: white;
+      padding: 1px 8px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    .notification-message .deletion-tag {
+      display: inline-block;
+      background: #e74c3c;
       color: white;
       padding: 1px 8px;
       border-radius: 10px;
@@ -684,7 +712,8 @@
     .notification-message .poem-of-week-tag,
     .notification-message .quote-of-week-tag,
     .notification-message .announcement-tag,
-    .notification-message .welcome-tag {
+    .notification-message .welcome-tag,
+    .notification-message .deletion-tag {
       font-size: 10px !important;
       padding: 2px 12px !important;
     }
@@ -849,7 +878,7 @@
     }
 
     .notification-item.personalized .read-link::after {
-      content: "Read Your Poem" !important;
+      content: "View Your Poem" !important;
       font-size: 13px !important;
     }
 
@@ -971,7 +1000,7 @@
 }
 
 .notification-item.personalized .read-link::after {
-  content: "Read Your Poem" !important;
+  content: "View Your Poem" !important;
   font-size: 13px !important;
 }
 
@@ -1985,6 +2014,57 @@ a:active {
     font-size: 12px;
   }
 }
+
+/* ============================================
+   FORCE READ LINK TEXTS - ULTIMATE OVERRIDE
+   ============================================ */
+
+/* Force all read links to show HTML text */
+.notification-content .read-link {
+  font-size: 13px !important;
+  padding: 5px 16px !important;
+  background: #f0ece6 !important;
+  border-radius: 16px !important;
+  font-weight: 500 !important;
+  color: #4b2aad !important;
+  text-decoration: none !important;
+  font-family: 'Inter', sans-serif !important;
+  pointer-events: auto !important;
+  display: inline-block !important;
+}
+
+/* Remove ALL ::after pseudo-elements on read links */
+.notification-content .read-link::after,
+.notification-item .read-link::after,
+.read-link::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Also remove any font-size: 0 */
+.notification-content .read-link,
+.notification-item .read-link,
+.read-link {
+  font-size: 13px !important;
+}
+
+.notification-content .read-link:hover,
+.notification-item .read-link:hover,
+.read-link:hover {
+  background: #e5e0d8 !important;
+  text-decoration: none !important;
+}
+
+/* ============================================
+   MAINTAIN TAB FONT SIZE - 480px AND BELOW
+   ============================================ */
+
+@media (max-width: 480px) {
+  .tab-btn {
+    font-size: 13px !important;
+    padding: 10px 20px !important;
+  }
+}
   </style>
 </head>
 <body>
@@ -2010,12 +2090,12 @@ a:active {
   <div class="tabs-wrapper">
     <div class="tabs" id="tabsContainer">
       <button class="tab-btn active" data-tab="all">All</button>
-      <button class="tab-btn" data-tab="likes">❤️ Likes</button>
-      <button class="tab-btn" data-tab="comments">💬 Comments</button>
-      <button class="tab-btn" data-tab="replies">↩️ Replies</button>
-      <button class="tab-btn" data-tab="follows">👥 Follows</button>
-      <button class="tab-btn" data-tab="announcements">📢 Announcements</button>
-      <button class="tab-btn" data-tab="collaborations">🤝 Collaborations</button>
+      <button class="tab-btn" data-tab="likes">Likes</button>
+      <button class="tab-btn" data-tab="comments">Comments</button>
+      <button class="tab-btn" data-tab="replies">Replies</button>
+      <button class="tab-btn" data-tab="follows">Follows</button>
+      <button class="tab-btn" data-tab="announcements">Announcements</button>
+      <button class="tab-btn" data-tab="collaborations">Collaborations</button>
     </div>
   </div>
 
@@ -2042,7 +2122,6 @@ a:active {
     <div id="collaborationsNotifications" class="notification-list"></div>
   </div>
 </div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { 
@@ -2080,6 +2159,7 @@ const auth = getAuth(app);
 
 let currentUser = null;
 let userCache = {};
+let poemCache = {};
 let followingCache = new Set();
 let cachedNotifications = [];
 
@@ -2135,6 +2215,7 @@ function getNotificationIcon(type) {
     case 'collaboration': return '🤝';
     case 'announcement': return '📢';
     case 'welcome': return '🎉';
+    case 'deletion': return '🗑️';
     default: return '🔔';
   }
 }
@@ -2147,6 +2228,105 @@ function escapeHtml(str) {
     if (m === '>') return '&gt;';
     return m;
   });
+}
+
+// Batch get multiple users at once
+async function getUsernamesBatched(userIds) {
+  const uniqueIds = [...new Set(userIds.filter(id => id && id !== 'system' && id !== 'Volant Team'))];
+  const results = {};
+  const uncachedIds = [];
+  
+  for (const id of uniqueIds) {
+    if (userCache[id]) {
+      results[id] = userCache[id];
+    } else {
+      uncachedIds.push(id);
+    }
+  }
+  
+  if (uncachedIds.length > 0) {
+    try {
+      const chunkSize = 10;
+      for (let i = 0; i < uncachedIds.length; i += chunkSize) {
+        const chunk = uncachedIds.slice(i, i + chunkSize);
+        const promises = chunk.map(id => getDoc(doc(db, "users", id)));
+        const snapshots = await Promise.all(promises);
+        snapshots.forEach((snap, index) => {
+          const id = chunk[index];
+          if (snap.exists()) {
+            const name = snap.data().username || 'Someone';
+            userCache[id] = name;
+            results[id] = name;
+          } else {
+            userCache[id] = 'Someone';
+            results[id] = 'Someone';
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('Error fetching users:', err);
+      uncachedIds.forEach(id => {
+        userCache[id] = 'Someone';
+        results[id] = 'Someone';
+      });
+    }
+  }
+  
+  return results;
+}
+
+// Batch get multiple poems at once
+async function getPoemDataBatched(poemIds) {
+  const uniqueIds = [...new Set(poemIds.filter(id => id))];
+  const results = {};
+  const uncachedIds = [];
+  
+  for (const id of uniqueIds) {
+    if (poemCache[id]) {
+      results[id] = poemCache[id];
+    } else {
+      uncachedIds.push(id);
+    }
+  }
+  
+  if (uncachedIds.length > 0) {
+    try {
+      const chunkSize = 10;
+      for (let i = 0; i < uncachedIds.length; i += chunkSize) {
+        const chunk = uncachedIds.slice(i, i + chunkSize);
+        const promises = chunk.map(id => getDoc(doc(db, "recentPoems", id)));
+        const snapshots = await Promise.all(promises);
+        snapshots.forEach((snap, index) => {
+          const id = chunk[index];
+          if (snap.exists()) {
+            const data = snap.data();
+            const title = data.title || "Untitled";
+            let slug = data.slug;
+            if (!slug && title) {
+              slug = title.toString().toLowerCase().trim()
+                .replace(/[\s\_]+/g, "-")
+                .replace(/[^a-z0-9\-]/g, "")
+                .replace(/\-+/g, "-")
+                .replace(/^\-+|\-+$/g, "");
+            }
+            poemCache[id] = { slug, title };
+            results[id] = { slug, title };
+          } else {
+            poemCache[id] = { slug: null, title: null };
+            results[id] = { slug: null, title: null };
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('Error fetching poems:', err);
+      uncachedIds.forEach(id => {
+        poemCache[id] = { slug: null, title: null };
+        results[id] = { slug: null, title: null };
+      });
+    }
+  }
+  
+  return results;
 }
 
 async function getUsername(uid) {
@@ -2271,6 +2451,7 @@ async function handleFollowBack(notificationId, followerId, button) {
 
 async function getPoemSlugAndTitle(poemId) {
   if (!poemId) return { slug: null, title: null };
+  if (poemCache[poemId]) return poemCache[poemId];
   try {
     const poemDoc = await getDoc(doc(db, "recentPoems", poemId));
     if (poemDoc.exists()) {
@@ -2284,13 +2465,14 @@ async function getPoemSlugAndTitle(poemId) {
           .replace(/\-+/g, "-")
           .replace(/^\-+|\-+$/g, "");
       }
+      poemCache[poemId] = { slug, title };
       return { slug, title };
     }
   } catch (err) { /* silent fail */ }
   return { slug: null, title: null };
 }
 
-// ===== BUILD NOTIFICATION HTML WITH CLICKABLE ELEMENTS =====
+// ===== BUILD NOTIFICATION HTML - OPTIMIZED =====
 async function buildNotificationHTML(notification, poemSlug, poemTitle) {
   const usernameRaw = notification.fromUserName || 'Someone';
   const safeUsername = escapeHtml(usernameRaw);
@@ -2301,40 +2483,7 @@ async function buildNotificationHTML(notification, poemSlug, poemTitle) {
   const commentExcerpt = notification.commentText ? escapeHtml(notification.commentText.substring(0, 80)) : '';
   const replyExcerpt = notification.replyText ? escapeHtml(notification.replyText.substring(0, 80)) : '';
   
-  // ✅ Helper function to find a user by username
-  async function findUserByUsername(username) {
-    if (!username) return null;
-    try {
-      const usersRef = collection(db, "users");
-      const q = query(usersRef, where("username", "==", username));
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        return { id: querySnapshot.docs[0].id, data: querySnapshot.docs[0].data() };
-      }
-      return null;
-    } catch (err) {
-      console.error("Error finding user:", err);
-      return null;
-    }
-  }
-  
-  // ✅ Helper function to get user data
-  async function getUserData(userId) {
-    if (!userId) return null;
-    try {
-      const userRef = doc(db, "users", userId);
-      const userSnap = await getDoc(userRef);
-      if (userSnap.exists()) {
-        return userSnap.data();
-      }
-      return null;
-    } catch (err) {
-      console.error("Error getting user data:", err);
-      return null;
-    }
-  }
-  
-  // ✅ Function to create a clickable username link (for GENERAL announcements)
+  // Function to create a clickable username link
   function createClickableLink(userId, userName) {
     if (userId && userId !== 'system' && userId !== 'Volant Team' && userId !== 'Volant Poetry') {
       const profileUrl = `/user-profile.html?uid=${userId}`;
@@ -2343,12 +2492,12 @@ async function buildNotificationHTML(notification, poemSlug, poemTitle) {
     return `<span style="font-weight:600; color:#B8860B;">${escapeHtml(userName)}</span>`;
   }
   
-  // ✅ Function to create a bold username (for PERSONALIZED notifications - NOT clickable)
+  // Function to create a bold username
   function createBoldUsername(userName) {
     return `<span style="font-weight:600; color:#B8860B;">${escapeHtml(userName)}</span>`;
   }
   
-  // ✅ Function to create a clickable poem title link with proper slug
+  // Function to create a clickable poem title link
   function createPoemLink(link, title) {
     if (link && link !== '#') {
       return `<a href="${link}" class="poem-title-link" data-href="${link}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">${escapeHtml(title)}</a>`;
@@ -2356,252 +2505,167 @@ async function buildNotificationHTML(notification, poemSlug, poemTitle) {
     return `<span style="font-weight:700; color:#4b2aad;">${escapeHtml(title)}</span>`;
   }
   
-  // ✅ Function to create a clickable email link
+  // Function to create a clickable email link - DIRECT HTML
   function createEmailLink(email) {
-    if (email) {
-      return `<a href="mailto:${email}" class="email-link" target="_blank">${escapeHtml(email)}</a>`;
-    }
-    return escapeHtml(email);
+    return `<a href="mailto:${email}" class="email-link" target="_blank">${escapeHtml(email)}</a>`;
   }
   
   if (type === 'announcement') {
     let tag = '';
-    
     // ===== POEM OF THE WEEK =====
-    if (notification.isPoemOfWeek) {
-      tag = '<span class="poem-of-week-tag">Poem of the Week</span>';
-      
-      const title = notification.poemTitle || 'Untitled';
-      const rawMessage = notification.message || '';
-      
-      // ✅ Build the poem link for the title - use actual slug if available
-      let poemLink = '#';
-      if (poemSlug && poemSlug !== 'null' && poemSlug !== 'undefined') {
+if (notification.isPoemOfWeek) {
+    tag = '<span class="poem-of-week-tag">Poem of the Week</span>';
+    
+    const title = notification.poemTitle || 'Untitled';
+    const rawMessage = notification.message || '';
+    
+    let poemLink = '#';
+    if (poemSlug && poemSlug !== 'null' && poemSlug !== 'undefined') {
         poemLink = `/poem.html?collection=recentPoems&slug=${encodeURIComponent(poemSlug)}`;
-      } else if (notification.poemId) {
+    } else if (notification.poemId) {
         poemLink = `/poem.html?id=${encodeURIComponent(notification.poemId)}`;
-      } else {
-        // Fallback to poem-of-the-week.html
+    } else {
         poemLink = '/poem-of-the-week.html';
-      }
-      
-      // ✅ Read Poem button always goes to poem-of-the-week.html
-      const readPoemLink = '/poem-of-the-week.html';
-      
-      const titleLink = createPoemLink(poemLink, title);
-      
-      // ✅ FIND THE POET'S NAME FOR GENERAL ANNOUNCEMENTS
-      let poetName = null;
-      let poetUserId = null;
-      
-      // Try to extract from message
-      const authorMatch = rawMessage.match(/by ([^h]+?)(?:\s+has been|\s+has\s+been|\s+has\s+selected)/);
-      if (authorMatch) {
+    }
+    
+    const readPoemLink = '/poem-of-the-week.html';
+    const titleLink = createPoemLink(poemLink, title);
+    
+    let poetName = safeUsername;
+    let poetUserId = fromUserId;
+    
+    const authorMatch = rawMessage.match(/by ([^h]+?)(?:\s+has been|\s+has\s+been|\s+has\s+selected)/);
+    if (authorMatch) {
         poetName = authorMatch[1].trim();
-      }
-      
-      if (!poetName || poetName === 'domaxiditte') {
-        const simpleMatch = rawMessage.match(/by ([^\n]+?)(?:\s+has\s+been|\s+has\s+selected)/);
-        if (simpleMatch) {
-          poetName = simpleMatch[1].trim();
-        }
-      }
-      
-      if (!poetName || poetName === 'domaxiditte' || poetName === 'Volant Team') {
-        if (fromUserId && fromUserId !== 'system') {
-          try {
-            const userData = await getUserData(fromUserId);
-            if (userData && userData.username && userData.username !== 'domaxiditte') {
-              poetName = userData.username;
-            }
-          } catch (e) {}
-        }
-      }
-      
-      if (!poetName || poetName === 'domaxiditte') {
-        if (notification.poemId) {
-          try {
-            const poemDoc = await getDoc(doc(db, "recentPoems", notification.poemId));
-            if (poemDoc.exists()) {
-              const poemData = poemDoc.data();
-              if (poemData.author && poemData.author !== 'domaxiditte') {
-                poetName = poemData.author || poemData.authorName;
-              }
-            }
-          } catch (e) {}
-        }
-      }
-      
-      if (!poetName || poetName === 'domaxiditte') {
-        if (safeUsername && safeUsername !== 'domaxiditte' && safeUsername !== 'Volant Team') {
-          poetName = safeUsername;
-        }
-      }
-      
-      if (!poetName || poetName === 'domaxiditte' || poetName === 'Volant Team') {
-        poetName = 'Anonymous';
-      }
-      
-      // ✅ Find the poet's user ID for GENERAL announcements (clickable)
-      if (poetName && poetName !== 'Anonymous' && poetName !== 'Volant Team' && poetName !== 'Volant Poetry') {
-        try {
-          const user = await findUserByUsername(poetName);
-          if (user) {
-            poetUserId = user.id;
-          }
-        } catch (e) {}
-      }
-      
-      const authorLink = createClickableLink(poetUserId, poetName);
-      
-      let displayHtml = '';
-      
-      if (notification.isAuthorNotification && fromUserId && fromUserId !== 'system') {
-        // ✅ PERSONALIZED NOTIFICATION - Username is BOLD but NOT clickable
-        let message = rawMessage;
-        
-        // Extract the username from the message
+    }
+    
+    if (!poetName || poetName === 'domaxiditte' || poetName === 'Volant Team') {
+        poetName = safeUsername;
+        poetUserId = fromUserId;
+    }
+    
+    const authorLink = createClickableLink(poetUserId, poetName);
+    const emailLink = createEmailLink('reach.volant@gmail.com');
+    
+    let displayHtml = '';
+    
+    if (notification.isAuthorNotification && fromUserId && fromUserId !== 'system') {
         let usernameInMsg = 'User';
-        const helloMatch = message.match(/Hello ([^,]+),/);
+        const helloMatch = rawMessage.match(/Hello ([^,]+),/);
         if (helloMatch) {
-          usernameInMsg = helloMatch[1].trim();
+            usernameInMsg = helloMatch[1].trim();
         }
         
-        // ✅ Create bold username (NOT clickable)
         const boldUsername = createBoldUsername(usernameInMsg);
-        
-        // Get the rest of the message after "Hello username,"
-        let restOfMessage = message;
+        let restOfMessage = rawMessage;
         if (helloMatch) {
-          restOfMessage = message.replace(/Hello [^,]+,/, '').trim();
+            restOfMessage = rawMessage.replace(/Hello [^,]+,/, '').trim();
         }
         
-        // ✅ Replace the poem title with a link (clickable)
         const titleMatch = restOfMessage.match(/"([^"]+)"/);
         if (titleMatch && poemLink) {
-          const titleInMsg = titleMatch[1];
-          const newTitleLink = createPoemLink(poemLink, titleInMsg);
-          restOfMessage = restOfMessage.replace(`"${titleInMsg}"`, `"${newTitleLink}"`);
+            const titleInMsg = titleMatch[1];
+            const newTitleLink = createPoemLink(poemLink, titleInMsg);
+            restOfMessage = restOfMessage.replace(`"${titleInMsg}"`, `"${newTitleLink}"`);
         }
         
-        // Replace email with clickable link
-        restOfMessage = restOfMessage.replace(/reach\.volant@gmail\.com/g, createEmailLink('reach.volant@gmail.com'));
+        restOfMessage = restOfMessage.replace(/reach\.volant@gmail\.com/g, emailLink);
         
-        // Build the final message
         displayHtml = `
-          <div class="notification-body">
-            <div class="msg-line" style="font-weight:500;">Hello ${boldUsername},</div>
-            <div class="msg-line">${restOfMessage.replace(/\n/g, '<br>')}</div>
-          </div>
+            <div class="notification-body">
+                <div class="msg-line" style="font-weight:500;">Hello ${boldUsername},</div>
+                <div class="msg-line">${restOfMessage.replace(/\n/g, '<br>')}</div>
+            </div>
         `;
+        // ✅ POEM - Author: "View Your Poem"
+        displayHtml += `<div style="margin-top:6px;"><a href="${readPoemLink}" class="read-link" data-href="${readPoemLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">View Your Poem</a></div>`;
         
-        // ✅ "Read Your Poem" goes to poem-of-the-week.html
-        displayHtml += `<div style="margin-top:6px;"><a href="${readPoemLink}" class="read-link" data-href="${readPoemLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">📖 Read Your Poem</a></div>`;
-        
-      } else {
-        // ✅ GENERAL ANNOUNCEMENT - Author name is clickable
+    } else {
         displayHtml = `
-          <div class="notification-body">
-            <div class="msg-line">We are excited to announce that "${titleLink}" by ${authorLink} has been selected as our Poem of the Week.</div>
-            <div class="msg-line">This beautiful piece will be featured on our homepage throughout the week. We invite you to read and celebrate this wonderful work with us.</div>
-            <div class="msg-line">Share your thoughts in the comments.</div>
-            <div class="msg-line" style="margin-top:4px; color:#666;">Warm regards,<br>The Volant Team<br>${createEmailLink('reach.volant@gmail.com')}</div>
-          </div>
+            <div class="notification-body">
+                <div class="msg-line">We are excited to announce that "${titleLink}" by ${authorLink} has been selected as our Poem of the Week.</div>
+                <div class="msg-line">This beautiful piece will be featured on our homepage throughout the week. We invite you to read and celebrate this wonderful work with us.</div>
+                <div class="msg-line">Share your thoughts in the comments.</div>
+                <div class="msg-line" style="margin-top:4px; color:#666;">Warm regards,<br>The Volant Team<br>${emailLink}</div>
+            </div>
         `;
-        
-        // ✅ "Read the Poem" goes to poem-of-the-week.html
-        displayHtml += `<div style="margin-top:6px;"><a href="${readPoemLink}" class="read-link" data-href="${readPoemLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">📖 Read the Poem</a></div>`;
-      }
-      
-      messageHtml = `${tag} ${displayHtml}`;
-      
-    // ===== QUOTE OF THE WEEK =====
-    } else if (notification.isQuoteOfWeek) {
-      tag = '<span class="quote-of-week-tag">Quote of the Week</span>';
-      
-      const quote = notification.quote || '';
-      let quoteAuthor = notification.quoteAuthor || 'Anonymous';
-      
-      // Try to find the quote author's user ID
-      let authorUserId = null;
-      let authorName = quoteAuthor;
-      
-      if (quoteAuthor === 'domaxiditte' || quoteAuthor === 'Volant Team') {
+        // ✅ POEM - General: "Read the Poem"
+        displayHtml += `<div style="margin-top:6px;"><a href="${readPoemLink}" class="read-link" data-href="${readPoemLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">Read the Poem</a></div>`;
+    }
+    
+    messageHtml = `${tag} ${displayHtml}`;
+    
+// ===== QUOTE OF THE WEEK =====
+} else if (notification.isQuoteOfWeek) {
+    tag = '<span class="quote-of-week-tag">Quote of the Week</span>';
+    
+    const quote = notification.quote || '';
+    let quoteAuthor = notification.quoteAuthor || safeUsername;
+    let authorUserId = fromUserId;
+    
+    if (quoteAuthor === 'domaxiditte' || quoteAuthor === 'Volant Team') {
         const rawMessage = notification.message || '';
         const authorMatch = rawMessage.match(/— ([^\n]+)/);
         if (authorMatch) {
-          const extracted = authorMatch[1].trim();
-          if (extracted !== 'domaxiditte' && extracted !== 'Volant Team') {
-            quoteAuthor = extracted;
-            authorName = extracted;
-          }
+            const extracted = authorMatch[1].trim();
+            if (extracted !== 'domaxiditte' && extracted !== 'Volant Team') {
+                quoteAuthor = extracted;
+            }
         }
-      }
-      
-      if (quoteAuthor && quoteAuthor !== 'Anonymous' && quoteAuthor !== 'Volant Team' && quoteAuthor !== 'Volant Poetry' && quoteAuthor !== 'domaxiditte') {
-        try {
-          const user = await findUserByUsername(quoteAuthor);
-          if (user) {
-            authorUserId = user.id;
-            authorName = user.data.username || quoteAuthor;
-          }
-        } catch (e) {}
-      }
-      
-      if (notification.isAuthorNotification && fromUserId && fromUserId !== 'system') {
+    }
+    
+    if (notification.isAuthorNotification && fromUserId && fromUserId !== 'system') {
         authorUserId = fromUserId;
-        authorName = safeUsername;
-      }
-      
-      const authorLink = createClickableLink(authorUserId, authorName);
-      const quoteLink = '/quote-of-the-week.html';
-      
-      let displayHtml = '';
-      
-      if (notification.isAuthorNotification && fromUserId && fromUserId !== 'system') {
-        // ✅ PERSONALIZED QUOTE NOTIFICATION
+        quoteAuthor = safeUsername;
+    }
+    
+    const authorLink = createClickableLink(authorUserId, quoteAuthor);
+    const quoteLink = '/quote-of-the-week.html';
+    const emailLink = createEmailLink('reach.volant@gmail.com');
+    
+    let displayHtml = '';
+    
+    if (notification.isAuthorNotification && fromUserId && fromUserId !== 'system') {
         let message = notification.message || '';
         let usernameInMsg = 'User';
         const helloMatch = message.match(/Hello ([^,]+),/);
         if (helloMatch) {
-          usernameInMsg = helloMatch[1].trim();
+            usernameInMsg = helloMatch[1].trim();
         }
         
         const boldUsername = createBoldUsername(usernameInMsg);
-        
         let restOfMessage = message;
         if (helloMatch) {
-          restOfMessage = message.replace(/Hello [^,]+,/, '').trim();
+            restOfMessage = message.replace(/Hello [^,]+,/, '').trim();
         }
-        
-        restOfMessage = restOfMessage.replace(/reach\.volant@gmail\.com/g, createEmailLink('reach.volant@gmail.com'));
+        restOfMessage = restOfMessage.replace(/reach\.volant@gmail\.com/g, emailLink);
         
         displayHtml = `
-          <div class="notification-body">
-            <div class="msg-line" style="font-weight:500;">Hello ${boldUsername},</div>
-            <div class="msg-line">${restOfMessage.replace(/\n/g, '<br>')}</div>
-          </div>
+            <div class="notification-body">
+                <div class="msg-line" style="font-weight:500;">Hello ${boldUsername},</div>
+                <div class="msg-line">${restOfMessage.replace(/\n/g, '<br>')}</div>
+            </div>
         `;
-        displayHtml += `<div style="margin-top:6px;"><a href="${quoteLink}" class="read-link" data-href="${quoteLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">📝 View Your Quote</a></div>`;
+        // ✅ QUOTE - Author: "View Your Quote"
+        displayHtml += `<div style="margin-top:6px;"><a href="${quoteLink}" class="read-link" data-href="${quoteLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">View Your Quote</a></div>`;
         
-      } else {
-        // ✅ GENERAL QUOTE ANNOUNCEMENT
+    } else {
         displayHtml = `
-          <div class="notification-body">
-            <div class="msg-line">We are pleased to share this week's inspiring quote with you:</div>
-            <div class="quote-display">${escapeHtml(quote)}</div>
-            <div class="msg-line">— ${authorLink}</div>
-            <div class="msg-line">This thought-provoking quote will be featured on our homepage throughout the week. We hope it brings you inspiration and reflection.</div>
-            <div class="msg-line" style="margin-top:4px; color:#666;">Warm regards,<br>The Volant Team<br>${createEmailLink('reach.volant@gmail.com')}</div>
-          </div>
+            <div class="notification-body">
+                <div class="msg-line">We are pleased to share this week's inspiring quote with you:</div>
+                <div class="quote-display">${escapeHtml(quote)}</div>
+                <div class="msg-line">— ${authorLink}</div>
+                <div class="msg-line">This thought-provoking quote will be featured on our homepage throughout the week. We hope it brings you inspiration and reflection.</div>
+                <div class="msg-line" style="margin-top:4px; color:#666;">Warm regards,<br>The Volant Team<br>${emailLink}</div>
+            </div>
         `;
-        displayHtml += `<div style="margin-top:6px;"><a href="${quoteLink}" class="read-link" data-href="${quoteLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">📝 View the Quote</a></div>`;
-      }
-      
-      messageHtml = `${tag} ${displayHtml}`;
+        // ✅ QUOTE - General: "View the Quote"
+        displayHtml += `<div style="margin-top:6px;"><a href="${quoteLink}" class="read-link" data-href="${quoteLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">View the Quote</a></div>`;
+    }
+    
+    messageHtml = `${tag} ${displayHtml}`;
       
     } else {
-      // ✅ OTHER ANNOUNCEMENTS
       tag = '<span class="announcement-tag">Announcement</span>';
       let message = notification.message || '';
       const userMatch = message.match(/Hello ([^,]+),/);
@@ -2624,7 +2688,65 @@ async function buildNotificationHTML(notification, poemSlug, poemTitle) {
       message = message.replace(`Welcome to Volant Poetry, ${usernameInMsg}!`, `Welcome to Volant Poetry, ${boldUsername}!`);
     }
     message = message.replace(/reach\.volant@gmail\.com/g, createEmailLink('reach.volant@gmail.com'));
-    messageHtml = `${tag} ${message.replace(/\n/g, '<br>')}`;
+    messageHtml = `${tag}<br>${message.replace(/\n/g, '<br>')}`;
+    
+} else if (type === 'deletion' || type === 'deletion_request_submitted' || type === 'deletion_rejected') {
+    console.log('========== DELETION NOTIFICATION DEBUG ==========');
+    console.log('1. Type:', type);
+    console.log('2. Full notification object:', notification);
+    console.log('3. fromUser:', notification.fromUser);
+    console.log('4. fromUserName:', notification.fromUserName);
+    console.log('5. Original message:', notification.message);
+    
+    // "Volant Team" tag with white text and purple background (like other tags)
+    const tag = '<span style="display:inline-block; background:#4b2aad; color:white; padding:2px 12px; border-radius:10px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; margin-right:4px; vertical-align:middle;">Volant Team</span>';
+    let message = notification.message || '';
+    
+    // Get the username from the message OR use fromUserName
+    let usernameInMsg = 'User';
+    
+    // First try to get from fromUserName (the user who triggered it)
+    if (notification.fromUserName && notification.fromUserName !== 'Volant Team' && notification.fromUserName !== 'domaxiditte') {
+        usernameInMsg = notification.fromUserName;
+        console.log('6. Using fromUserName as recipient:', usernameInMsg);
+    } else {
+        // If fromUserName is not available or is "domaxiditte"/"Volant Team", try to extract from message
+        const nameMatch = message.match(/Hello ([^,]+),/);
+        if (nameMatch) {
+            usernameInMsg = nameMatch[1].trim();
+            console.log('6. Extracted recipient username from "Hello":', usernameInMsg);
+        } else {
+            console.log('6. No "Hello" pattern found, using default "User"');
+        }
+    }
+    
+    const boldUsername = `<span style="font-weight:600; color:#B8860B;">${escapeHtml(usernameInMsg)}</span>`;
+    const isRejected = type === 'deletion_rejected' || message.includes('rejected');
+    console.log('7. Is rejected?', isRejected);
+    
+    const emailLink = `<a href="mailto:reach.volant@gmail.com" class="email-link" target="_blank">reach.volant@gmail.com</a>`;
+    
+    let formattedMessage = '';
+    
+    if (isRejected) {
+        formattedMessage = `Hello ${boldUsername},\nYour account deletion request has been reviewed and rejected.\n\nIf you have any questions, please contact us at ${emailLink}`;
+        console.log('9. Using REJECTED message template');
+    } else {
+        formattedMessage = `Hello ${boldUsername},\nYour account deletion request has been submitted successfully!\nThe Volant Team will review and process your request within 7 days.\nYou will receive a confirmation email once your account has been deleted.\n\nIf you have any questions, please contact us at ${emailLink}`;
+        console.log('9. Using SUCCESS message template');
+    }
+    
+    console.log('10. Final formatted message (before HTML):', formattedMessage);
+    console.log('11. Recipient username used:', usernameInMsg);
+    
+    // Convert newlines to <br> - tag on its own line with a gap, then the message
+    // Tag + 2 line breaks + message
+    messageHtml = `${tag}<br><br>${formattedMessage.replace(/\n/g, '<br>')}`;
+    
+    console.log('12. Final HTML output:', messageHtml);
+    console.log('========== END DELETION DEBUG ==========');
+  
+
     
   } else if (type === 'like') {
     let poemDisplay = 'a poem';
@@ -2634,14 +2756,7 @@ async function buildNotificationHTML(notification, poemSlug, poemTitle) {
       poemDisplay = `<span style="font-weight:700; color:#4b2aad;">“${escapeHtml(poemTitle)}”</span>`;
     }
     
-    let userLink;
-    if (fromUserId && fromUserId !== 'system') {
-      userLink = createClickableLink(fromUserId, safeUsername);
-    } else {
-      const user = await findUserByUsername(safeUsername);
-      userLink = createClickableLink(user?.id, safeUsername);
-    }
-    
+    let userLink = createClickableLink(fromUserId, safeUsername);
     messageHtml = `${userLink} liked ${poemDisplay}`;
     
   } else if (type === 'comment') {
@@ -2653,93 +2768,61 @@ async function buildNotificationHTML(notification, poemSlug, poemTitle) {
     }
     const snippet = commentExcerpt ? `: <em>"${commentExcerpt}${notification.commentText?.length > 80 ? '...' : ''}"</em>` : '';
     
-    let userLink;
-    if (fromUserId && fromUserId !== 'system') {
-      userLink = createClickableLink(fromUserId, safeUsername);
-    } else {
-      const user = await findUserByUsername(safeUsername);
-      userLink = createClickableLink(user?.id, safeUsername);
-    }
-    
+    let userLink = createClickableLink(fromUserId, safeUsername);
     messageHtml = `${userLink} commented on ${poemDisplay}${snippet}`;
     
   } else if (type === 'reply') {
     const snippet = replyExcerpt ? `: <em>"${replyExcerpt}${notification.replyText?.length > 80 ? '...' : ''}"</em>` : '';
-    
-    let userLink;
-    if (fromUserId && fromUserId !== 'system') {
-      userLink = createClickableLink(fromUserId, safeUsername);
-    } else {
-      const user = await findUserByUsername(safeUsername);
-      userLink = createClickableLink(user?.id, safeUsername);
-    }
-    
+    let userLink = createClickableLink(fromUserId, safeUsername);
     messageHtml = `${userLink} replied to your comment${snippet}`;
     
   } else if (type === 'follow') {
-    let userLink;
-    if (fromUserId && fromUserId !== 'system') {
-      userLink = createClickableLink(fromUserId, safeUsername);
-    } else {
-      const user = await findUserByUsername(safeUsername);
-      userLink = createClickableLink(user?.id, safeUsername);
-    }
+    let userLink = createClickableLink(fromUserId, safeUsername);
     messageHtml = `${userLink} followed you`;
     
   } else if (type === 'friends') {
-    let userLink;
-    if (fromUserId && fromUserId !== 'system') {
-      userLink = createClickableLink(fromUserId, safeUsername);
-    } else {
-      const user = await findUserByUsername(safeUsername);
-      userLink = createClickableLink(user?.id, safeUsername);
-    }
+    let userLink = createClickableLink(fromUserId, safeUsername);
     messageHtml = `You and ${userLink} are now friends! Start engaging with their poetry.`;
     
   } else if (type === 'follow_back') {
-    let userLink;
-    if (fromUserId && fromUserId !== 'system') {
-      userLink = createClickableLink(fromUserId, safeUsername);
-    } else {
-      const user = await findUserByUsername(safeUsername);
-      userLink = createClickableLink(user?.id, safeUsername);
-    }
-    messageHtml = `${userLink} followed you back! 🤝`;
+    let userLink = createClickableLink(fromUserId, safeUsername);
+    messageHtml = `${userLink} followed you back!`;
     
   } else if (type === 'collaboration') {
     let workDisplay = 'a work';
     if (notification.workTitle) {
+      let collabLink = '#';
       if (notification.poemSlug && notification.poemSlug !== 'null' && notification.poemSlug !== 'undefined') {
-        workDisplay = `<a href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(notification.poemSlug)}" class="poem-title-link" data-href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(notification.poemSlug)}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">“${escapeHtml(notification.workTitle)}”</a>`;
+        collabLink = `/poem.html?collection=recentPoems&slug=${encodeURIComponent(notification.poemSlug)}`;
+      } else if (notification.poemId) {
+        collabLink = `/poem.html?id=${encodeURIComponent(notification.poemId)}`;
+      }
+      
+      if (collabLink && collabLink !== '#') {
+        workDisplay = `<a href="${collabLink}" class="poem-title-link" data-href="${collabLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">“${escapeHtml(notification.workTitle)}”</a>`;
       } else {
         workDisplay = `<strong>“${escapeHtml(notification.workTitle)}”</strong>`;
       }
     } else if (poemTitle) {
+      let collabLink = '#';
       if (poemSlug && poemSlug !== 'null' && poemSlug !== 'undefined') {
-        workDisplay = `<a href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(poemSlug)}" class="poem-title-link" data-href="/poem.html?collection=recentPoems&slug=${encodeURIComponent(poemSlug)}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">“${escapeHtml(poemTitle)}”</a>`;
+        collabLink = `/poem.html?collection=recentPoems&slug=${encodeURIComponent(poemSlug)}`;
+      } else if (notification.poemId) {
+        collabLink = `/poem.html?id=${encodeURIComponent(notification.poemId)}`;
+      }
+      
+      if (collabLink && collabLink !== '#') {
+        workDisplay = `<a href="${collabLink}" class="poem-title-link" data-href="${collabLink}" data-id="${notification.id}" data-read="${notification.read}" target="_blank">“${escapeHtml(poemTitle)}”</a>`;
       } else {
         workDisplay = `<span style="font-weight:700; color:#4b2aad;">“${escapeHtml(poemTitle)}”</span>`;
       }
     }
     
-    let userLink;
-    if (fromUserId && fromUserId !== 'system') {
-      userLink = createClickableLink(fromUserId, safeUsername);
-    } else {
-      const user = await findUserByUsername(safeUsername);
-      userLink = createClickableLink(user?.id, safeUsername);
-    }
-    
+    let userLink = createClickableLink(fromUserId, safeUsername);
     messageHtml = `${userLink} added you as a collaborator on ${workDisplay}`;
     
   } else {
-    let userLink;
-    if (fromUserId && fromUserId !== 'system') {
-      userLink = createClickableLink(fromUserId, safeUsername);
-    } else {
-      const user = await findUserByUsername(safeUsername);
-      userLink = createClickableLink(user?.id, safeUsername);
-    }
+    let userLink = createClickableLink(fromUserId, safeUsername);
     let message = notification.message || '';
     message = message.replace(/reach\.volant@gmail\.com/g, createEmailLink('reach.volant@gmail.com'));
     messageHtml = message ? `${userLink} ${escapeHtml(message).replace(/\n/g, '<br>')}` : 'New notification';
@@ -2747,6 +2830,7 @@ async function buildNotificationHTML(notification, poemSlug, poemTitle) {
   
   return messageHtml;
 }
+
 async function loadNotifications() {
   if (!currentUser) {
     const container = document.getElementById("allNotifications");
@@ -2754,19 +2838,23 @@ async function loadNotifications() {
     return [];
   }
   
+  const container = document.getElementById("allNotifications");
+  container.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">Loading notifications...</div>';
+  
   try {
-    const container = document.getElementById("allNotifications");
-    
     const cachedData = getNotificationsFromCache();
     if (cachedData && cachedData.length > 0) {
       await renderNotifications(cachedData);
       container.innerHTML = container.innerHTML + '<div style="text-align:center; padding:8px; color:#999; font-size:12px;">⬆️ Refreshing...</div>';
-    } else {
-      container.innerHTML = '<div style="text-align:center; padding:40px; color:#999;">Loading notifications...</div>';
     }
     
     const notificationsRef = collection(db, "notifications");
-    const q = query(notificationsRef, where("forUser", "==", currentUser.uid), orderBy("timestamp", "desc"), limit(50));
+    const q = query(
+      notificationsRef, 
+      where("forUser", "==", currentUser.uid),
+      orderBy("timestamp", "desc"), 
+      limit(50)
+    );
     const snapshot = await getDocs(q);
     const notifications = [];
     
@@ -2774,24 +2862,29 @@ async function loadNotifications() {
       const notification = { id: docSnap.id, ...docSnap.data() };
       notification.timestamp = notification.timestamp || notification.createdAt || null;
       notification.fromUser = notification.fromUser || notification.userId || null;
-      
-      if (notification.fromUser && !notification.fromUserName) {
-        notification.fromUserName = await getUsername(notification.fromUser);
-      }
-      
-      if ((notification.type === 'like' || notification.type === 'comment' || notification.type === 'reply' || notification.type === 'collaboration') && notification.poemId) {
-        const { slug, title } = await getPoemSlugAndTitle(notification.poemId);
-        notification.poemTitle = title || notification.poemTitle;
-        notification.poemSlug = slug;
-      }
-      
-      if (notification.type === 'announcement' && notification.poemId && !notification.poemTitle) {
-        const { slug, title } = await getPoemSlugAndTitle(notification.poemId);
-        notification.poemTitle = title || notification.poemTitle;
-        notification.poemSlug = slug;
-      }
-      
       notifications.push(notification);
+    }
+    
+    const userIds = notifications
+      .map(n => n.fromUser)
+      .filter(id => id && id !== 'system' && id !== 'Volant Team');
+    const userNamesMap = await getUsernamesBatched(userIds);
+    
+    const poemIds = notifications
+      .map(n => n.poemId)
+      .filter(id => id);
+    const poemDataMap = await getPoemDataBatched(poemIds);
+    
+    for (const notification of notifications) {
+      if (notification.fromUser && userNamesMap[notification.fromUser]) {
+        notification.fromUserName = userNamesMap[notification.fromUser];
+      }
+      
+      const poemData = poemDataMap[notification.poemId];
+      if (poemData) {
+        notification.poemSlug = poemData.slug;
+        notification.poemTitle = poemData.title || notification.poemTitle;
+      }
     }
     
     cachedNotifications = notifications;
@@ -2803,8 +2896,7 @@ async function loadNotifications() {
     return notifications;
   } catch (err) {
     console.error(err);
-    const container = document.getElementById("allNotifications");
-    if(container) container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Unable to load notifications</h3><p>Please refresh</p></div>';
+    container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><h3>Unable to load notifications</h3><p>Please refresh</p></div>';
   }
 }
 
@@ -2828,6 +2920,22 @@ async function markAllAsRead() {
 }
 
 async function renderNotifications(notifications) {
+  console.log('===== RENDER NOTIFICATIONS CALLED =====');
+  console.log('Total notifications:', notifications.length);
+  
+  // Log all deletion notifications
+  const deletionNotifs = notifications.filter(n => n.type === 'deletion');
+  console.log('Deletion notifications found:', deletionNotifs.length);
+  deletionNotifs.forEach((n, i) => {
+    console.log(`Deletion ${i+1}:`, {
+      id: n.id,
+      fromUser: n.fromUser,
+      fromUserName: n.fromUserName,
+      message: n.message,
+      type: n.type
+    });
+  });
+  
   const containers = {
     all: document.getElementById("allNotifications"),
     likes: document.getElementById("likesNotifications"),
@@ -2846,13 +2954,37 @@ async function renderNotifications(notifications) {
     return;
   }
   
+  // Pre-fetch all user data before rendering
+  const userIds = notifications
+    .map(n => n.fromUser)
+    .filter(id => id && id !== 'system' && id !== 'Volant Team');
+  const userNamesMap = await getUsernamesBatched(userIds);
+  
+  // Pre-fetch all poem data before rendering
+  const poemIds = notifications
+    .map(n => n.poemId)
+    .filter(id => id);
+  const poemDataMap = await getPoemDataBatched(poemIds);
+  
+  // Apply fetched data to notifications
+  for (const notification of notifications) {
+    if (notification.fromUser && userNamesMap[notification.fromUser]) {
+      notification.fromUserName = userNamesMap[notification.fromUser];
+    }
+    const poemData = poemDataMap[notification.poemId];
+    if (poemData) {
+      notification.poemSlug = poemData.slug;
+      notification.poemTitle = poemData.title || notification.poemTitle;
+    }
+  }
+  
   const filtered = {
     all: notifications,
     likes: notifications.filter(n => n.type === 'like'),
     comments: notifications.filter(n => n.type === 'comment'),
     replies: notifications.filter(n => n.type === 'reply'),
     follows: notifications.filter(n => n.type === 'follow' || n.type === 'follow_back' || n.type === 'friends'),
-    announcements: notifications.filter(n => n.type === 'announcement' || n.type === 'welcome'),
+    announcements: notifications.filter(n => n.type === 'announcement' || n.type === 'welcome' || n.type === 'deletion'),
     collaborations: notifications.filter(n => n.type === 'collaboration')
   };
   
@@ -2867,23 +2999,34 @@ async function renderNotifications(notifications) {
     const fragment = document.createDocumentFragment();
     
     for (const notification of notifs) {
+      console.log('===== RENDERING NOTIFICATION =====');
+      console.log('Type:', notification.type);
+      console.log('fromUser:', notification.fromUser);
+      console.log('fromUserName:', notification.fromUserName);
+      console.log('Message before buildNotificationHTML:', notification.message);
+      
       const poemSlug = notification.poemSlug || null;
       const poemTitle = notification.poemTitle || null;
       const messageHtmlContent = await buildNotificationHTML(notification, poemSlug, poemTitle);
+      
+      console.log('Message HTML after buildNotificationHTML:', messageHtmlContent);
+      console.log('===================================');
+      
       const notificationDiv = document.createElement("div");
       
-    let itemClass = `notification-item ${notification.read ? 'read' : 'unread'}`;
+      let itemClass = `notification-item ${notification.read ? 'read' : 'unread'}`;
 
-if (notification.type === 'announcement') {
-  itemClass += ' announcement';
-} else if (notification.type === 'welcome') {
-  itemClass += ' welcome';
-}
+      if (notification.type === 'announcement') {
+        itemClass += ' announcement';
+      } else if (notification.type === 'welcome') {
+        itemClass += ' welcome';
+      } else if (notification.type === 'deletion') {
+        itemClass += ' deletion';
+      }
 
-// ✅ Add 'personalized' class for personalized notifications
-if (notification.isAuthorNotification && notification.type === 'announcement') {
-  itemClass += ' personalized';
-}
+      if (notification.isAuthorNotification && notification.type === 'announcement') {
+        itemClass += ' personalized';
+      }
       
       notificationDiv.className = itemClass;
       notificationDiv.dataset.id = notification.id;
@@ -2913,8 +3056,16 @@ if (notification.isAuthorNotification && notification.type === 'announcement') {
         }
       }
       
+      // For deletion notifications, hide the sender icon
+      let iconHtml = '';
+      if (notification.type === 'deletion') {
+        iconHtml = ''; // No icon for deletion notifications
+      } else {
+        iconHtml = `<div class="notification-icon">${getNotificationIcon(notification.type)}</div>`;
+      }
+      
       notificationDiv.innerHTML = `
-        <div class="notification-icon">${getNotificationIcon(notification.type)}</div>
+        ${iconHtml}
         <div class="notification-content">
           <div class="notification-message">${messageHtmlContent}</div>
           <div class="notification-time">${formatTime(notification.timestamp)}</div>
@@ -2934,7 +3085,6 @@ if (notification.isAuthorNotification && notification.type === 'announcement') {
         }
       });
       
-      // Attach click handlers to ALL clickable elements including read-link and email-link
       const clickableElements = notificationDiv.querySelectorAll('.clickable-user, .clickable-link, .poem-title-link, .read-link, .email-link');
       clickableElements.forEach(el => {
         el.addEventListener('click', async (e) => {
@@ -3015,35 +3165,5 @@ onAuthStateChanged(auth, async (user) => {
 });
 </script>
 
-<script>
-(function() {
-  function setupDynamicAuthLinks() {
-    const currentPage = window.location.href;
-    const currentFile = window.location.pathname.split('/').pop();
-    let platform = 'poetry';
-    if (currentFile.startsWith('store/')) platform = 'reads';
-    if (currentFile === 'parent-house.html') platform = 'foundry';
-    
-    const loginParams = new URLSearchParams();
-    loginParams.append('platform', platform);
-    loginParams.append('redirect', currentPage);
-    
-    document.querySelectorAll('a[href*="universal-login.html"]').forEach(link => {
-      link.href = `universal-login.html?${loginParams.toString()}`;
-    });
-    
-    document.querySelectorAll('a[href*="universal-signup.html"]').forEach(link => {
-      link.href = `universal-signup.html?${loginParams.toString()}`;
-    });
-  }
-  
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupDynamicAuthLinks);
-  } else {
-    setupDynamicAuthLinks();
-  }
-})();
-</script>
-<script src="return-url-handler.js"></script>
 </body>
 </html>
