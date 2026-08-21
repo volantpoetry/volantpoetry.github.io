@@ -937,25 +937,91 @@ async function handleReplyClick(e) {
     showLoginAlertAndRedirect("Please sign in to reply!");
     return;
   }
-  const replyText = prompt("Write your reply:");
-  if (!replyText || !replyText.trim()) return;
-  try {
-    const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-    const username = userDoc.exists() ? (userDoc.data().username || currentUser.email) : "Anonymous";
-    await addDoc(collection(db, "recentPoems", currentPoemId, "comments", commentId, "replies"), {
-      userId: currentUser.uid,
-      username: username,
-      text: replyText.trim(),
-      timestamp: new Date()
-    });
-    const wasVisible = commentsOuterWrapper.style.display === "block";
-    await renderCommentsExternal(currentPoemId);
-    if (wasVisible) commentsOuterWrapper.style.display = "block";
-    else commentsOuterWrapper.style.display = "none";
-  } catch(err) {
-    console.error(err);
-    alert("Failed to post reply.");
+  
+  // Check if reply input already exists
+  const existingReplyInput = commentDiv.querySelector(".reply-input-container");
+  if (existingReplyInput) {
+    // If it exists, remove it (toggle off)
+    existingReplyInput.remove();
+    return;
   }
+  
+  // Create inline reply input
+  const replyContainer = document.createElement("div");
+  replyContainer.className = "reply-input-container";
+  replyContainer.style.cssText = "margin-top: 8px; display: flex; flex-direction: column; gap: 6px;";
+  
+  replyContainer.innerHTML = `
+    <div style="display: flex; gap: 6px; align-items: center;">
+      <input type="text" class="reply-text-input" placeholder="Write a reply..." style="flex: 1; padding: 6px 10px; border-radius: 8px; border: 1px solid #ccc; font-family: 'Inter', sans-serif; font-size: 0.9rem;">
+      <button class="reply-submit-btn" style="background: #4b2aad; color: white; border: none; border-radius: 8px; padding: 6px 14px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 500;">Reply</button>
+      <button class="reply-cancel-btn" style="background: #ccc; color: #333; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-family: 'Inter', sans-serif;">Cancel</button>
+    </div>
+  `;
+  
+  // Find the reply section
+  const replySection = commentDiv.querySelector(".reply-section");
+  if (replySection) {
+    replySection.appendChild(replyContainer);
+    const input = replyContainer.querySelector(".reply-text-input");
+    if (input) {
+      setTimeout(() => input.focus(), 100);
+    }
+  }
+  
+  // Handle submit
+  const submitBtn = replyContainer.querySelector(".reply-submit-btn");
+  const cancelBtn = replyContainer.querySelector(".reply-cancel-btn");
+  const inputField = replyContainer.querySelector(".reply-text-input");
+  
+  submitBtn.addEventListener("click", async () => {
+    const replyText = inputField.value.trim();
+    if (!replyText) return;
+    
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Posting...";
+    
+    try {
+      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+      const username = userDoc.exists() ? (userDoc.data().username || currentUser.email) : "Anonymous";
+      
+      await addDoc(collection(db, "recentPoems", currentPoemId, "comments", commentId, "replies"), {
+        userId: currentUser.uid,
+        username: username,
+        text: replyText.trim(),
+        timestamp: new Date()
+      });
+      
+      // Remove the reply input
+      replyContainer.remove();
+      
+      // Refresh comments to show the new reply
+      const wasVisible = commentsOuterWrapper.style.display === "block";
+      await renderCommentsExternal(currentPoemId);
+      if (wasVisible) commentsOuterWrapper.style.display = "block";
+      else commentsOuterWrapper.style.display = "none";
+      
+    } catch(err) {
+      console.error(err);
+      alert("Failed to post reply.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Reply";
+    }
+  });
+  
+  cancelBtn.addEventListener("click", () => {
+    replyContainer.remove();
+  });
+  
+  inputField.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      submitBtn.click();
+    }
+    if (e.key === "Escape") {
+      replyContainer.remove();
+    }
+  });
 }
 
 // ============================================================
