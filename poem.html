@@ -7,6 +7,28 @@
 <!-- ===== DYNAMIC SEO TITLE (Updated by JavaScript) ===== -->
 <title id="dynamicTitle">Poem | Volant Poetry</title>
 
+<script>
+    // Simple console blocker - production only
+    (function() {
+        if (window.location.hostname.includes('localhost') || 
+            window.location.hostname.includes('127.0.0.1')) {
+            return; // Allow in development
+        }
+        
+        // Block all console methods
+        var methods = ['log', 'info', 'warn', 'error', 'debug', 'trace', 'table', 'group', 'groupEnd', 'dir'];
+        methods.forEach(function(m) {
+            console[m] = function() {};
+            try {
+                Object.defineProperty(console, m, { configurable: false, writable: false });
+            } catch(e) {}
+        });
+        
+        window.onerror = function() { return true; };
+        window.onunhandledrejection = function() { return true; };
+    })();
+</script>
+
 <!-- ===== SEO Meta Tags ===== -->
 <meta name="description" id="metaDescription" content="Read a beautiful poem on Volant Poetry. Discover inspiring poetry from talented poets around the world." />
 <meta name="keywords" content="poem, poetry, Volant Poetry, read poems, contemporary poetry, modern poems, poetry community, share poetry" />

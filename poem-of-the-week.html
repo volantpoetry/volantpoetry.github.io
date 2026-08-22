@@ -5,6 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>Poem of the Week</title>
 
+  <script>
+    // Simple console blocker - production only
+    (function() {
+        if (window.location.hostname.includes('localhost') || 
+            window.location.hostname.includes('127.0.0.1')) {
+            return; // Allow in development
+        }
+        
+        // Block all console methods
+        var methods = ['log', 'info', 'warn', 'error', 'debug', 'trace', 'table', 'group', 'groupEnd', 'dir'];
+        methods.forEach(function(m) {
+            console[m] = function() {};
+            try {
+                Object.defineProperty(console, m, { configurable: false, writable: false });
+            } catch(e) {}
+        });
+        
+        window.onerror = function() { return true; };
+        window.onunhandledrejection = function() { return true; };
+    })();
+</script>
+
   <meta name="description" content="Discover the Poem of the Week at Volant Poetry. Read featured poems from talented poets, share your thoughts, and connect with the poetry community.">
   <meta name="keywords" content="poem of the week, featured poem, poetry, Volant Poetry, poem, poet, weekly poem, poetry community">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -1203,7 +1225,7 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { 
     getFirestore, doc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, addDoc, 
-    increment, serverTimestamp, query, orderBy, getDocs, writeBatch 
+    increment, serverTimestamp, query, orderBy, getDocs, writeBatch, setDoc
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -1223,6 +1245,19 @@
   let currentUsername = '';
   let currentPoemTitle = '';
   let currentPoemAuthor = '';
+  let currentPoemId = '';
+  let currentPoemSource = 'recentPoems';
+
+  // ===== ESCAPE HTML FUNCTION =====
+  function escapeHtml(str) { 
+    if(!str) return ''; 
+    return str.replace(/[&<>]/g, function(m) { 
+      if(m === '&') return '&amp;'; 
+      if(m === '<') return '&lt;'; 
+      if(m === '>') return '&gt;'; 
+      return m;
+    }); 
+  }
 
   // ===== SAVED COMMENT KEY =====
   const SAVED_COMMENT_KEY = 'volant_weekly_saved_comment';
@@ -1253,7 +1288,7 @@
     if (!modal) return;
     
     const slug = generateSlugFromTitle(poemTitle);
-    const shareUrl = `${window.location.origin}/poem.html?collection=weeklyHighlights&slug=${slug}`;
+    const shareUrl = `${window.location.origin}/poem.html?collection=recentPoems&slug=${slug}`;
     
     document.getElementById('shareLinkInput').value = shareUrl;
     document.getElementById('sharePoemTitle').textContent = poemTitle || 'Poem of the Week';
@@ -1363,7 +1398,6 @@
     window.location.href = loginUrl;
   }
 
-  // ===== CUSTOM ALERT WITH REDIRECT =====
   function showLoginAlertAndRedirect(message) {
     if (confirm(message + "\n\nClick OK to sign in. Your comment will be saved.")) {
       const commentInput = document.querySelector('.comment-input');
@@ -1376,7 +1410,6 @@
     }
   }
 
-  // ===== CHECK FOR SAVED COMMENT =====
   function checkSavedComment() {
     const savedComment = localStorage.getItem(SAVED_COMMENT_KEY);
     const commentInput = document.querySelector('.comment-input');
@@ -1387,7 +1420,6 @@
     return false;
   }
 
-  // ===== CLEAR SAVED COMMENT =====
   function clearSavedComment() {
     localStorage.removeItem(SAVED_COMMENT_KEY);
   }
@@ -1425,7 +1457,6 @@
   let activeReadTimer = null;
   let viewStartTime = null;
   let isTracking = false;
-  let currentPoemId = 'weeklyPoem';
   
   function getReadTracking() {
     const stored = sessionStorage.getItem(READ_TRACKING_KEY);
@@ -1459,7 +1490,8 @@
     if (wasRecentlyRead(poemId)) return false;
     
     try {
-      const poemRef = doc(db, "weeklyHighlights", "weeklyPoem");
+      // Update views in the poem document (recentPoems)
+      const poemRef = doc(db, "recentPoems", poemId);
       await updateDoc(poemRef, { views: increment(1) });
       
       const tracking = getReadTracking();
@@ -1603,7 +1635,7 @@
     });
   }
 
-  // ---------- Load Poem ----------
+  // ===== LOAD POEM OF THE WEEK =====
   async function loadPoemOfTheWeek() {
     const cardContainer = document.getElementById("poemCard");
     const outsideComments = document.getElementById("commentsOutsideContainer");
@@ -1611,16 +1643,52 @@
     outsideComments.innerHTML = "";
 
     try {
-      const poemRef = doc(db, "weeklyHighlights", "weeklyPoem");
-      const snap = await getDoc(poemRef);
-      if (!snap.exists()) { cardContainer.innerHTML = `<div>No poem this week.</div>`; return; }
-      const data = snap.data();
-      const authorId = data.authorId || "";
-      let displayName = data.authorName || data.author || "Anonymous";
+      // 1. Get the weekly settings from weeklyHighlights/weeklyPoem
+      const weeklyRef = doc(db, "weeklyHighlights", "weeklyPoem");
+      const weeklySnap = await getDoc(weeklyRef);
+      
+      if (!weeklySnap.exists()) { 
+        cardContainer.innerHTML = `<div style="text-align:center; padding:40px; color:#7a6a5a;">No poem set for this week. Check back later!</div>`; 
+        return; 
+      }
+      
+      const weeklyData = weeklySnap.data();
+      
+      // 2. Get the actual poem ID and data from recentPoems
+      let actualPoemId = weeklyData.poemId || weeklyData.id || null;
+      let poemData = {};
+      
+      if (actualPoemId && actualPoemId !== 'weeklyPoem') {
+        try {
+          const recentPoemRef = doc(db, "recentPoems", actualPoemId);
+          const recentPoemSnap = await getDoc(recentPoemRef);
+          if (recentPoemSnap.exists()) {
+            poemData = recentPoemSnap.data();
+            currentPoemId = actualPoemId;
+          } else {
+            // Poem doesn't exist, use weekly data as fallback
+            poemData = weeklyData;
+            actualPoemId = 'weeklyPoem';
+          }
+        } catch (err) {
+          console.warn("Could not fetch from recentPoems:", err);
+          poemData = weeklyData;
+          actualPoemId = 'weeklyPoem';
+        }
+      } else {
+        poemData = weeklyData;
+        actualPoemId = 'weeklyPoem';
+      }
+      
+      currentPoemId = actualPoemId;
+      
+      // 3. Get author info
+      const authorId = poemData.authorId || poemData.userId || "";
+      let displayName = poemData.author || poemData.authorName || "Anonymous";
       let profileLink = "#";
       let profileImage = "/images/default-avatar.png";
 
-      currentPoemTitle = data.title || "Untitled";
+      currentPoemTitle = poemData.title || "Untitled";
       currentPoemAuthor = displayName;
 
       if (authorId) {
@@ -1636,17 +1704,43 @@
         } catch(e) {}
       }
 
-      const title = data.title || "Untitled";
-      const fullContent = data.content || "";
+      const title = poemData.title || "Untitled";
+      const fullContent = poemData.content || "";
       const lines = fullContent.split("\n");
       const previewLines = lines.slice(0, 18);
       const restLines = lines.slice(18);
       const previewHtml = previewLines.join("<br>");
       const fullHtml = fullContent.replace(/\n/g, "<br>");
-      const likesCount = data.likes || 0;
-      const viewsCount = data.views || 0;
-      const categories = data.categories || ["Poetry", "Reflection"];
-      const likedBy = data.likedBy || [];
+      const categories = poemData.categories || ["Poetry", "Reflection"];
+
+      // 4. GET LIKES AND VIEWS FROM recentPoems (where the poem lives)
+      let likesCount = 0;
+      let likedBy = [];
+      let viewsCount = 0;
+      
+      if (actualPoemId !== 'weeklyPoem') {
+        try {
+          const poemDocRef = doc(db, "recentPoems", actualPoemId);
+          const poemDocSnap = await getDoc(poemDocRef);
+          if (poemDocSnap.exists()) {
+            const poemDocData = poemDocSnap.data();
+            likesCount = poemDocData.likes || 0;
+            likedBy = poemDocData.likedBy || [];
+            viewsCount = poemDocData.views || 0;
+          }
+        } catch (err) {
+          console.warn("Could not get likes from recentPoems:", err);
+          // Fallback to weekly data
+          likesCount = weeklyData.likes || 0;
+          likedBy = weeklyData.likedBy || [];
+          viewsCount = weeklyData.views || 0;
+        }
+      } else {
+        // Fallback to weekly data
+        likesCount = weeklyData.likes || 0;
+        likedBy = weeklyData.likedBy || [];
+        viewsCount = weeklyData.views || 0;
+      }
 
       let followingStatus = false;
       if (currentUser && authorId && currentUser.uid !== authorId) followingStatus = await isFollowing(authorId, currentUser.uid);
@@ -1681,7 +1775,6 @@
           </div>
           <button class="like-btn ${likedBy.includes(currentUser?.uid) ? 'liked' : ''}">❤️ <span class="like-count-val">${likesCount}</span></button>
           <span class="message-count" id="toggleCommentsBtn">💬 <span id="commentCountBadge">0</span></span>
-          <!-- DESKTOP SHARE BUTTON - right after message count -->
           <button class="desktop-share-btn" 
                   data-poem-title="${escapeHtml(title)}"
                   data-poem-author="${escapeHtml(displayName)}"
@@ -1690,7 +1783,6 @@
             🔗 Share
           </button>
         </div>
-        <!-- MOBILE SHARE BUTTON - separate row below actions -->
         <div class="mobile-share-wrapper">
           <button class="mobile-share-btn" 
                   data-poem-title="${escapeHtml(title)}"
@@ -1727,31 +1819,53 @@
         });
       }
 
-      // LIKE with notification
+      // ===== LIKE - STORE AND READ FROM recentPoems =====
       const likeBtn = cardContainer.querySelector(".like-btn");
       const likeSpan = cardContainer.querySelector(".like-count-val");
+      
+      // Use recentPoems for likes
+      let likeDocRef;
+      let useRecentPoems = (actualPoemId !== 'weeklyPoem');
+      
+      if (useRecentPoems) {
+        likeDocRef = doc(db, "recentPoems", actualPoemId);
+      } else {
+        likeDocRef = doc(db, "weeklyHighlights", "weeklyPoem");
+      }
+      
       likeBtn.addEventListener("click", async () => {
         if (!currentUser) { 
           showLoginAlertAndRedirect("Please sign in to like!");
           return; 
         }
-        const poemDocRef = doc(db, "weeklyHighlights", "weeklyPoem");
-        const currSnap = await getDoc(poemDocRef);
-        const currData = currSnap.data();
-        const currLikedBy = currData.likedBy || [];
-        let newLikes = currData.likes || 0;
-        if (currLikedBy.includes(currentUser.uid)) {
-          await updateDoc(poemDocRef, { likes: Math.max(newLikes - 1, 0), likedBy: arrayRemove(currentUser.uid) });
-          likeSpan.textContent = Math.max(newLikes - 1, 0);
-          likeBtn.classList.remove("liked");
-        } else {
-          await updateDoc(poemDocRef, { likes: newLikes + 1, likedBy: arrayUnion(currentUser.uid) });
-          likeSpan.textContent = newLikes + 1;
-          likeBtn.classList.add("liked");
-          showToast('❤️ Liked!', 1000);
-          if (authorId && authorId !== currentUser.uid) {
-            await sendNotification(authorId, currentUser.uid, 'like', { poemId: "weeklyPoem", poemTitle: title });
+        try {
+          const currSnap = await getDoc(likeDocRef);
+          let currData = currSnap.data();
+          let currLikedBy = currData?.likedBy || [];
+          let newLikes = currData?.likes || 0;
+          
+          if (currLikedBy.includes(currentUser.uid)) {
+            await updateDoc(likeDocRef, { 
+              likes: Math.max(newLikes - 1, 0), 
+              likedBy: arrayRemove(currentUser.uid) 
+            });
+            likeSpan.textContent = Math.max(newLikes - 1, 0);
+            likeBtn.classList.remove("liked");
+          } else {
+            await updateDoc(likeDocRef, { 
+              likes: newLikes + 1, 
+              likedBy: arrayUnion(currentUser.uid) 
+            });
+            likeSpan.textContent = newLikes + 1;
+            likeBtn.classList.add("liked");
+            showToast('❤️ Liked!', 1000);
+            if (authorId && authorId !== currentUser.uid) {
+              await sendNotification(authorId, currentUser.uid, 'like', { poemId: actualPoemId, poemTitle: title });
+            }
           }
+        } catch (err) {
+          console.error("Error updating like:", err);
+          showToast('Error updating like. Please try again.', 'error');
         }
       });
 
@@ -1774,7 +1888,7 @@
         stopTrackingPoem();
       });
 
-      // COMMENT SECTION
+      // ===== COMMENT SECTION - STORE AND READ FROM recentPoems =====
       const outsideDiv = document.getElementById("commentsOutsideContainer");
       const commentListDiv = document.createElement("div");
       commentListDiv.className = "comment-list";
@@ -1783,8 +1897,20 @@
       outsideDiv.innerHTML = "";
       outsideDiv.appendChild(commentListDiv);
 
+      // Use recentPoems for comments
+      let commentsCollectionPath;
+      let repliesCollectionPath;
+      
+      if (useRecentPoems) {
+        commentsCollectionPath = collection(db, "recentPoems", actualPoemId, "comments");
+        repliesCollectionPath = (commentId) => collection(db, "recentPoems", actualPoemId, "comments", commentId, "replies");
+      } else {
+        commentsCollectionPath = collection(db, "weeklyHighlights", "weeklyPoem", "comments");
+        repliesCollectionPath = (commentId) => collection(db, "weeklyHighlights", "weeklyPoem", "comments", commentId, "replies");
+      }
+
       async function renderCommentsAndCount() {
-        const commentsRef = collection(db, "weeklyHighlights", "weeklyPoem", "comments");
+        const commentsRef = commentsCollectionPath;
         const q = query(commentsRef, orderBy("timestamp", "desc"));
         const snapComments = await getDocs(q);
         const badgeSpan = document.getElementById("commentCountBadge");
@@ -1807,7 +1933,7 @@
             <div><small class="reply-toggle" style="cursor:pointer;">Reply</small></div>
             <div class="reply-section"></div>
           `;
-          const repliesRef = collection(db, "weeklyHighlights", "weeklyPoem", "comments", commentId, "replies");
+          const repliesRef = repliesCollectionPath(commentId);
           const repliesSnap = await getDocs(query(repliesRef, orderBy("timestamp", "asc")));
           const replySectionDiv = commentDivElem.querySelector(".reply-section");
           repliesSnap.forEach(replyDoc => {
@@ -1840,7 +1966,7 @@
       });
 
       // ===== INITIAL COMMENT COUNT =====
-      const commentsRef = collection(db, "weeklyHighlights", "weeklyPoem", "comments");
+      const commentsRef = commentsCollectionPath;
       const initialSnap = await getDocs(commentsRef);
       document.getElementById("commentCountBadge").innerText = initialSnap.size;
 
@@ -1874,7 +2000,7 @@
         const userDoc = await getDoc(doc(db, "users", currentUser.uid));
         const username = userDoc.exists() ? userDoc.data().username : currentUser.email?.split('@')[0] || "Poet";
         
-        await addDoc(collection(db, "weeklyHighlights", "weeklyPoem", "comments"), {
+        await addDoc(commentsCollectionPath, {
           userId: currentUser.uid, 
           username: username, 
           text: text, 
@@ -1887,8 +2013,7 @@
         if (commentListDiv.style.display === "block") {
           await renderCommentsAndCount();
         } else {
-          const commentsRef2 = collection(db, "weeklyHighlights", "weeklyPoem", "comments");
-          const newSnap2 = await getDocs(commentsRef2);
+          const newSnap2 = await getDocs(commentsCollectionPath);
           const badge = document.getElementById("commentCountBadge");
           if (badge) badge.innerText = newSnap2.size;
         }
@@ -1897,7 +2022,7 @@
         
         if (authorId && authorId !== currentUser.uid) {
           await sendNotification(authorId, currentUser.uid, 'comment', { 
-            poemId: "weeklyPoem", 
+            poemId: actualPoemId, 
             poemTitle: title, 
             commentText: text 
           });
@@ -1911,7 +2036,7 @@
         }
       });
 
-      // REPLY HANDLER
+      // ===== REPLY HANDLER =====
       commentListDiv.addEventListener("click", async (e) => {
         if (e.target.classList.contains("reply-toggle")) {
           const commentDivElem = e.target.closest(".comment");
@@ -1941,17 +2066,17 @@
           const userDoc = await getDoc(doc(db, "users", currentUser.uid));
           const username = userDoc.exists() ? userDoc.data().username : currentUser.email?.split('@')[0] || "Reader";
           
-          await addDoc(collection(db, "weeklyHighlights", "weeklyPoem", "comments", commentId, "replies"), {
+          await addDoc(repliesCollectionPath(commentId), {
             userId: currentUser.uid, 
             username: username, 
             text: replyText, 
             timestamp: serverTimestamp()
           });
           
-          const commentSnap = await getDoc(doc(db, "weeklyHighlights", "weeklyPoem", "comments", commentId));
+          const commentSnap = await getDoc(doc(db, useRecentPoems ? "recentPoems" : "weeklyHighlights", actualPoemId, "comments", commentId));
           const commentOwner = commentSnap.exists() ? commentSnap.data().userId : null;
 
-          const repliesRef = collection(db, "weeklyHighlights", "weeklyPoem", "comments", commentId, "replies");
+          const repliesRef = repliesCollectionPath(commentId);
           const repliesSnap = await getDocs(query(repliesRef, orderBy("timestamp", "asc")));
           const replySectionDiv = commentDivElem.querySelector(".reply-section");
           const children = [...replySectionDiv.children];
@@ -1973,7 +2098,7 @@
 
           if (commentOwner && commentOwner !== currentUser.uid) {
             await sendNotification(commentOwner, currentUser.uid, 'reply', { 
-              poemId: "weeklyPoem", 
+              poemId: actualPoemId, 
               poemTitle: title, 
               commentId: commentId, 
               replyText: replyText 
@@ -1992,11 +2117,10 @@
       }
 
     } catch (err) {
-      document.getElementById("poemCard").innerHTML = `<div style="color:red;">Error loading poem.</div>`;
+      console.error("Error loading poem:", err);
+      document.getElementById("poemCard").innerHTML = `<div style="color:red; text-align:center; padding:40px;">Error loading poem. Please refresh the page.</div>`;
     }
   }
-
-  function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m) { if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m;}); }
 
   // ===== INIT =====
   loadPoemOfTheWeek();

@@ -6,6 +6,28 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Submit Your Poem · Volant Poetry</title>
 
+<script>
+    // Simple console blocker - production only
+    (function() {
+        if (window.location.hostname.includes('localhost') || 
+            window.location.hostname.includes('127.0.0.1')) {
+            return; // Allow in development
+        }
+        
+        // Block all console methods
+        var methods = ['log', 'info', 'warn', 'error', 'debug', 'trace', 'table', 'group', 'groupEnd', 'dir'];
+        methods.forEach(function(m) {
+            console[m] = function() {};
+            try {
+                Object.defineProperty(console, m, { configurable: false, writable: false });
+            } catch(e) {}
+        });
+        
+        window.onerror = function() { return true; };
+        window.onunhandledrejection = function() { return true; };
+    })();
+</script>
+
 <!-- SEO Meta Tags -->
 <meta name="description" content="Submit your poem to Volant Poetry. Share your emotions, inspire creativity, and connect with readers through the beauty of words.">
 <meta name="keywords" content="submit poem, poetry submission, share poetry, Volant Poetry, write poem, poetry platform">
