@@ -12,7 +12,7 @@ const domain = 'https://volantpoetry.vercel.app';
 const publicFolder = './';
 const MAX_POEMS = 5000;
 
-// ✅ STATIC PAGES TO INDEX (17 pages - removed duplicate)
+// ✅ STATIC PAGES TO INDEX (17 pages)
 const allowedPages = [
   'index.html',
   'poems.html',
@@ -49,15 +49,12 @@ async function fetchPoemsFromFirestore() {
   console.log('🔍 Starting fetchPoemsFromFirestore...');
   
   try {
-    // Use require instead of dynamic import
     console.log('📦 Loading firebase-admin with require...');
     const admin = require('firebase-admin');
     console.log('✅ firebase-admin loaded successfully');
     
-    // Check if Firebase is already initialized
     let serviceAccount;
     
-    // Try different secret names
     const secretKey = process.env.FIREBASE_KEY || 
                      process.env.FIREBASE_SERVICE_ACCOUNT || 
                      process.env.SERVICE_ACCOUNT_KEY;
@@ -99,7 +96,6 @@ async function fetchPoemsFromFirestore() {
       }
     }
     
-    // Initialize Firebase Admin SDK if not already initialized
     if (!admin.apps || admin.apps.length === 0) {
       console.log('🔧 Initializing Firebase Admin SDK...');
       admin.initializeApp({
@@ -139,7 +135,6 @@ async function fetchPoemsFromFirestore() {
                       docId;
           const author = data.author || data.submittedBy || data.authorName || 'Anonymous';
           
-          // Handle timestamp
           let timestamp = new Date().toISOString();
           if (data.createdAt) {
             if (typeof data.createdAt === 'object' && data.createdAt.toDate) {
@@ -339,18 +334,37 @@ async function generateSitemap() {
       const urlPath = getUrlWithHtml(page);
       const url = urlPath === '' ? domain : `${domain}/${urlPath}`;
       
+      // ============================================================
+      // 🎯 OPTIMIZED PRIORITIES FOR GOOGLE SITELINKS
+      // ============================================================
       let priority = '0.8';
+      
+      // PRIORITY 1.0 - Most Important (Homepage & Bookstore)
       if (page === 'index.html' || urlPath === '' || urlPath === 'store/') {
         priority = '1.0';
-      } else if (page === 'poems.html' || page === 'poem.html' || 
-                 page === 'submitpoems.html' || page === 'submission-guidelines.html' ||
-                 page === 'shared/about.html' || page === 'volant_foundry/index.html') {
+      } 
+      // PRIORITY 0.9 - Core Pages (Should appear as sitelinks)
+      else if (page === 'poems.html' || 
+               page === 'submitpoems.html' || 
+               page === 'shared/about.html' || 
+               page === 'volant_foundry/index.html' ||
+               page === 'poem-of-the-week.html' || 
+               page === 'quote-of-the-week.html') {
         priority = '0.9';
-      } else if (page.startsWith('store/')) {
+      } 
+      // PRIORITY 0.8 - Secondary Pages
+      else if (page === 'submission-guidelines.html' || 
+               page === 'all-categories.html' ||
+               page === 'poem.html' ||
+               page.startsWith('store/')) {
         priority = '0.8';
-      } else if (page.startsWith('shared/')) {
+      } 
+      // PRIORITY 0.6 - Legal/Contact Pages
+      else if (page.startsWith('shared/')) {
         priority = '0.6';
-      } else {
+      } 
+      // Default
+      else {
         priority = '0.7';
       }
       
@@ -363,12 +377,16 @@ async function generateSitemap() {
     }
     
     console.log(`✅ ${staticResults.length} static pages generated`);
+    console.log('\n📊 Static Page Priorities:');
+    staticResults.forEach(r => {
+      console.log(`   ${r.priority} → ${r.loc}`);
+    });
     
     // 2. Dynamic Poems from Firestore
     console.log("\n🔥 Fetching poems from Firestore using Admin SDK...");
     const poems = await fetchPoemsFromFirestore();
     const poemResults = generatePoemUrls(poems);
-    console.log(`✅ ${poemResults.length} poem URLs generated`);
+    console.log(`✅ ${poemResults.length} poem URLs generated (priority 0.8)`);
     
     // 3. Combine
     const allUrls = [...staticResults, ...poemResults];
@@ -396,7 +414,7 @@ async function generateSitemap() {
     console.log('\n📋 Sample URLs:');
     const sampleCount = Math.min(10, allUrls.length);
     for (let i = 0; i < sampleCount; i++) {
-      console.log(`   - ${allUrls[i].loc}`);
+      console.log(`   - ${allUrls[i].loc} (priority: ${allUrls[i].priority})`);
     }
     if (allUrls.length > sampleCount) {
       console.log(`   ... and ${allUrls.length - sampleCount} more`);
