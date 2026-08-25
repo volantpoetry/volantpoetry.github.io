@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Volant Codes · Admin Dashboard</title>
+
+    <script>
+    // Simple console blocker - production only
+    (function() {
+        if (window.location.hostname.includes('localhost') || 
+            window.location.hostname.includes('127.0.0.1')) {
+            return;
+        }
+        
+        var methods = ['log', 'info', 'warn', 'error', 'debug', 'trace', 'table', 'group', 'groupEnd', 'dir'];
+        methods.forEach(function(m) {
+            console[m] = function() {};
+            try {
+                Object.defineProperty(console, m, { configurable: false, writable: false });
+            } catch(e) {}
+        });
+        
+        window.onerror = function() { return true; };
+        window.onunhandledrejection = function() { return true; };
+    })();
+</script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="icon" type="image/png" href="../images/volant-codes-favicon.png" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+        }
+        body {
+            background: #faf9fe;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #ede7df;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .header .left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .header h1 {
+            font-weight: 600;
+            color: #2d2a24;
+            font-size: 1.5rem;
+        }
+        .header h1 i {
+            color: #4b2aad;
+        }
+        .header .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.85rem;
+            color: #6f6252;
+            flex-wrap: wrap;
+        }
+        .header .admin-info .admin-badge {
+            background: #4b2aad;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .header .admin-info .admin-role {
+            background: #B8860B;
+            color: white;
+            padding: 0.15rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 500;
+        }
+        .header .stats {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .header .stats span {
+            background: #fff;
+            padding: 0.4rem 1.2rem;
+            border-radius: 30px;
+            border: 1px solid #ede7df;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .header .stats .pending-count {
+            background: #B8860B;
+            color: white;
+            border-color: #B8860B;
+        }
+        .header .stats .all-count {
+            background: #4b2aad;
+            color: white;
+            border-color: #4b2aad;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #ede7df;
+            padding-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .tabs .tab-btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #8a7b6a;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tabs .tab-btn:hover {
+            background: #f0ece6;
+            color: #2d2a24;
+        }
+        .tabs .tab-btn.active {
+            background: #4b2aad;
+            color: white;
+        }
+        .tabs .tab-btn .badge {
+            background: #ede7df;
+            color: #2d2a24;
+            padding: 0.05rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .tabs .tab-btn.active .badge {
+            background: rgba(255,255,255,0.25);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ===== REQUEST CARD ===== */
+        .request-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
+            border: 1px solid #ede7df;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            transition: 0.2s;
+            position: relative;
+        }
+        .request-card:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        }
+        .request-card .info {
+            flex: 1;
+            min-width: 280px;
+        }
+        .request-card .info .title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2d2a24;
+        }
+        .request-card .info .title i {
+            color: #4b2aad;
+        }
+        .request-card .info .subtitle {
+            color: #6f6252;
+            font-size: 0.95rem;
+            margin: 4px 0;
+        }
+        .request-card .info .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 8px 0;
+            padding: 0.6rem 0.8rem;
+            background: #f8f5f0;
+            border-radius: 12px;
+            border: 1px solid #ede7df;
+        }
+        .request-card .info .contact-info .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #3e362e;
+        }
+        .request-card .info .contact-info .contact-item i {
+            color: #4b2aad;
+            width: 18px;
+            font-size: 1rem;
+        }
+        .request-card .info .contact-info .contact-item a {
+            color: #4b2aad;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .request-card .info .contact-info .contact-item a:hover {
+            text-decoration: underline;
+        }
+        .request-card .info .contact-info .contact-item .whatsapp-link {
+            color: #25D366;
+            font-weight: 600;
+        }
+        .request-card .info .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        .request-card .info .meta .tag {
+            background: #f0ece6;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            color: #4d4238;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .request-card .info .meta .tag i {
+            font-size: 0.6rem;
+            color: #4b2aad;
+        }
+        .request-card .info .meta .tag.status-pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .request-card .info .meta .tag.status-contacted {
+            background: #e6f7e6;
+            color: #2e7d32;
+        }
+        .request-card .info .meta .tag.status-closed {
+            background: #fde8e8;
+            color: #c62828;
+        }
+        .request-card .info .message-content {
+            font-size: 0.95rem;
+            color: #4d4238;
+            line-height: 1.6;
+            margin: 8px 0;
+            padding: 0.8rem;
+            background: #fcf9f6;
+            border-radius: 10px;
+            border-left: 3px solid #4b2aad;
+            max-height: 120px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .request-card .info .message-content .msg-label {
+            font-weight: 600;
+            color: #4b2aad;
+            font-size: 0.8rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .request-card .info .submitted-by {
+            font-size: 0.8rem;
+            color: #8a7b6a;
+            margin-top: 6px;
+        }
+        .request-card .info .submitted-by i {
+            color: #4b2aad;
+            width: 14px;
+        }
+        .request-card .info .budget-info {
+            font-size: 0.9rem;
+            color: #2d2a24;
+            margin-top: 6px;
+            font-weight: 600;
+            background: #f0ece6;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            display: inline-block;
+        }
+        .request-card .info .budget-info i {
+            color: #B8860B;
+        }
+        .request-card .actions {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .request-card .actions button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .request-card .actions .contacted {
+            background: #2d7d46;
+            color: white;
+        }
+        .request-card .actions .contacted:hover {
+            background: #1d6b2c;
+            transform: scale(1.02);
+        }
+        .request-card .actions .close-request {
+            background: #b76e4b;
+            color: white;
+        }
+        .request-card .actions .close-request:hover {
+            background: #9f5e3f;
+            transform: scale(1.02);
+        }
+        .request-card .actions .delete-btn {
+            background: #c62828;
+            color: white;
+        }
+        .request-card .actions .delete-btn:hover {
+            background: #b71c1c;
+            transform: scale(1.02);
+        }
+        .request-card .actions .copy-btn {
+            background: #4b2aad;
+            color: white;
+        }
+        .request-card .actions .copy-btn:hover {
+            background: #3a1f8a;
+            transform: scale(1.02);
+        }
+        .request-card .actions .btn-disabled {
+            background: #ccc !important;
+            color: #888 !important;
+            cursor: not-allowed !important;
+            opacity: 0.6;
+        }
+        .request-card .actions .btn-disabled:hover {
+            transform: none !important;
+            background: #ccc !important;
+        }
+
+        /* ===== MANAGEMENT TABLE ===== */
+        .manage-table-wrap {
+            overflow-x: auto;
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid #ede7df;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .manage-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .manage-table th {
+            text-align: left;
+            padding: 0.8rem 0.6rem;
+            background: #f8f5f0;
+            border-bottom: 2px solid #ede7df;
+            font-weight: 600;
+            color: #2d2a24;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        .manage-table td {
+            padding: 0.6rem 0.6rem;
+            border-bottom: 1px solid #f0ece6;
+            vertical-align: middle;
+        }
+        .manage-table tr:hover td {
+            background: #faf8f5;
+        }
+        .manage-table .name-cell {
+            font-weight: 600;
+            color: #2d2a24;
+            min-width: 120px;
+        }
+        .manage-table .email-cell {
+            color: #4b2aad;
+            min-width: 140px;
+        }
+        .manage-table .email-cell a {
+            color: #4b2aad;
+            text-decoration: none;
+        }
+        .manage-table .email-cell a:hover {
+            text-decoration: underline;
+        }
+        .manage-table select {
+            padding: 0.3rem 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            background: #fcf9f6;
+            cursor: pointer;
+        }
+        .manage-table select:focus {
+            border-color: #4b2aad;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(75,42,173,0.1);
+        }
+        .manage-table .btn-save {
+            background: #2d7d46;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .manage-table .btn-save:hover {
+            background: #1d6b2c;
+            transform: scale(1.05);
+        }
+        .manage-table .btn-save:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .manage-table .btn-delete {
+            background: #c62828;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .manage-table .btn-delete:hover {
+            background: #b71c1c;
+            transform: scale(1.05);
+        }
+        .manage-table .status-badge-small {
+            display: inline-block;
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .manage-table .status-badge-small.pending {
+            background: #fff3e0;
+            color: #e65100;
+        }
+        .manage-table .status-badge-small.contacted {
+            background: #e6f7e6;
+            color: #2e7d32;
+        }
+        .manage-table .status-badge-small.closed {
+            background: #fde8e8;
+            color: #c62828;
+        }
+        .manage-table .saved-indicator {
+            color: #2d7d46;
+            font-size: 0.65rem;
+            font-weight: 600;
+            display: none;
+        }
+        .manage-table .saved-indicator.show {
+            display: inline;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid #ede7df;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: #4b2aad;
+        }
+        .empty-state h3 {
+            margin: 1rem 0 0.5rem;
+            color: #2d2a24;
+        }
+        .empty-state p {
+            color: #8a7b6a;
+        }
+
+        .access-denied {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: #fff;
+            border-radius: 20px;
+            border: 2px solid #4b2aad;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+        .access-denied i {
+            font-size: 4rem;
+            color: #4b2aad;
+        }
+        .access-denied h2 {
+            margin: 1rem 0;
+            color: #2d2a24;
+        }
+        .access-denied p {
+            color: #6f6252;
+            max-width: 400px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.6;
+        }
+        .access-denied .btn {
+            display: inline-block;
+            background: #4b2aad;
+            color: white;
+            padding: 0.7rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .access-denied .btn:hover {
+            background: #3a1f8a;
+            transform: scale(1.02);
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        .loading-state .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #ede7df;
+            border-top: 4px solid #4b2aad;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-state p {
+            margin-top: 1rem;
+            color: #8a7b6a;
+        }
+
+        .sign-out-btn {
+            background: transparent;
+            border: 1px solid #ddd;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #6f6252;
+            transition: 0.2s;
+        }
+        .sign-out-btn:hover {
+            background: #fce8e8;
+            border-color: #4b2aad;
+            color: #4b2aad;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast.success {
+            background: #2d7d46;
+        }
+        .toast.error {
+            background: #b76e4b;
+        }
+        .toast.info {
+            background: #4b2aad;
+        }
+
+        .copy-toast {
+            position: fixed;
+            bottom: 6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d7d46;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            z-index: 3000;
+            opacity: 0;
+            transition: 0.3s;
+        }
+        .copy-toast.show {
+            opacity: 1;
+        }
+
+        .timeout-error {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: #fff;
+            border-radius: 20px;
+            border: 2px solid #4b2aad;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+        .timeout-error i {
+            font-size: 4rem;
+            color: #4b2aad;
+        }
+        .timeout-error h2 {
+            margin: 1rem 0;
+            color: #2d2a24;
+        }
+        .timeout-error p {
+            color: #6f6252;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .timeout-error .btn {
+            display: inline-block;
+            background: #4b2aad;
+            color: white;
+            padding: 0.7rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .timeout-error .btn:hover {
+            background: #3a1f8a;
+            transform: scale(1.02);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .summary-card {
+            background: #fff;
+            padding: 1.2rem 1.5rem;
+            border-radius: 16px;
+            border: 1px solid #ede7df;
+            text-align: center;
+        }
+        .summary-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d2a24;
+        }
+        .summary-card .label {
+            font-size: 0.75rem;
+            color: #8a7b6a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        .summary-card .number.green {
+            color: #2d7d46;
+        }
+        .summary-card .number.orange {
+            color: #B8860B;
+        }
+        .summary-card .number.purple {
+            color: #4b2aad;
+        }
+        .summary-card .number.red {
+            color: #c62828;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .request-card { flex-direction: column; }
+            .request-card .actions { width: 100%; justify-content: stretch; }
+            .request-card .actions button { flex: 1; justify-content: center; font-size: 0.8rem; padding: 8px 12px; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .header .stats { width: 100%; justify-content: flex-start; }
+            .header .stats span { font-size: 0.75rem; padding: 0.3rem 0.8rem; }
+            .toast { bottom: 1rem; right: 1rem; left: 1rem; text-align: center; font-size: 0.85rem; padding: 0.8rem 1rem; }
+            .request-card .info .contact-info { flex-direction: column; gap: 0.3rem; }
+            .tabs .tab-btn { padding: 0.4rem 1rem; font-size: 0.8rem; }
+            .manage-table-wrap { padding: 0.5rem; }
+            .manage-table th, .manage-table td { padding: 0.4rem 0.3rem; font-size: 0.75rem; }
+            .summary-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+            .summary-grid { grid-template-columns: 1fr; }
+            .manage-table { font-size: 0.7rem; }
+            .manage-table .btn-save, .manage-table .btn-delete { font-size: 0.6rem; padding: 0.2rem 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="adminContent" style="display: none;">
+        <div class="header">
+            <div class="left">
+                <h1><i class="fas fa-code"></i> Volant Codes · Admin Dashboard</h1>
+                <div class="admin-info">
+                    <span id="adminEmail"></span>
+                    <span class="admin-badge"><i class="fas fa-check-circle"></i> Admin</span>
+                    <span class="admin-role" id="adminRole">admin</span>
+                    <button class="sign-out-btn" onclick="window.adminSignOut()">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </button>
+                </div>
+            </div>
+            <div class="stats">
+                <span id="pendingCount" class="pending-count"><i class="fas fa-clock"></i> 0 Pending</span>
+                <span id="contactedCount" class="pending-count" style="background:#2d7d46; border-color:#2d7d46;"><i class="fas fa-check-circle"></i> 0 Contacted</span>
+                <span id="totalCount" class="all-count"><i class="fas fa-file-alt"></i> 0 Total</span>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="pending">
+                <i class="fas fa-clock"></i> Pending
+                <span class="badge" id="pendingBadge">0</span>
+            </button>
+            <button class="tab-btn" data-tab="allRequests">
+                <i class="fas fa-file-alt"></i> All Requests
+                <span class="badge" id="allRequestsBadge">0</span>
+            </button>
+            <button class="tab-btn" data-tab="manage">
+                <i class="fas fa-sliders-h"></i> Manage Requests
+                <span class="badge" id="manageBadge">0</span>
+            </button>
+        </div>
+
+        <!-- Pending Tab -->
+        <div class="tab-content active" id="tab-pending">
+            <div id="pendingRequests"></div>
+        </div>
+
+        <!-- All Requests Tab -->
+        <div class="tab-content" id="tab-allRequests">
+            <div id="allRequestsContainer"></div>
+        </div>
+
+        <!-- Manage Tab -->
+        <div class="tab-content" id="tab-manage">
+            <div class="summary-grid" id="manageSummary">
+                <div class="summary-card">
+                    <div class="number purple" id="manageTotal">0</div>
+                    <div class="label">Total Requests</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number orange" id="managePending">0</div>
+                    <div class="label">Pending</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number green" id="manageContacted">0</div>
+                    <div class="label">Contacted</div>
+                </div>
+                <div class="summary-card">
+                    <div class="number red" id="manageClosed">0</div>
+                    <div class="label">Closed</div>
+                </div>
+            </div>
+            <div class="manage-table-wrap">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                    <h3 style="font-weight:600; color:#2d2a24;">
+                        <i class="fas fa-sliders-h" style="color:#4b2aad;"></i> Manage Requests
+                    </h3>
+                    <span style="font-size:0.7rem; color:#8a7b6a; align-self:center;">
+                        <i class="fas fa-info-circle"></i> Click "Save" after editing
+                    </span>
+                </div>
+                <div id="manageContainer">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading requests...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadingState" class="loading-state">
+        <div class="spinner"></div>
+        <p>Verifying admin access...</p>
+    </div>
+
+    <div id="accessDenied" class="access-denied" style="display: none;">
+        <i class="fas fa-shield-alt"></i>
+        <h2>Access Denied</h2>
+        <p>You don't have admin permissions. Only users in the <strong>admins</strong> collection can access this panel.</p>
+        <p style="font-size: 0.9rem; color: #999;">
+            <i class="fas fa-info-circle"></i> 
+            Current user: <span id="currentUserEmail">Unknown</span>
+        </p>
+        <div>
+            <a href="https://volantpoetry.vercel.app/admin/admin-login.html?redirect=codes-dash.html" class="btn"><i class="fas fa-sign-in-alt"></i> Admin Login</a>
+            <a href="../index.html" class="btn" style="background: #6f6252;"><i class="fas fa-arrow-left"></i> Return Home</a>
+        </div>
+    </div>
+
+    <div id="signInRequired" class="access-denied" style="display: none;">
+        <i class="fas fa-lock"></i>
+        <h2>Sign In Required</h2>
+        <p>Please sign in to access the admin panel.</p>
+        <a href="https://volantpoetry.vercel.app/admin/admin-login.html?redirect=codes-dash.html" class="btn"><i class="fas fa-sign-in-alt"></i> Admin Login</a>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
+<div id="copyToast" class="copy-toast">✅ Copied to clipboard!</div>
+
+<script type="importmap">
+    {
+        "imports": {
+            "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+            "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+            "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
+        }
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "firebase/app";
+    import { 
+        getFirestore, collection, query, where, getDocs, 
+        doc, updateDoc, deleteDoc, orderBy, getDoc, writeBatch
+    } from "firebase/firestore";
+    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+
+    // Disable console logs in production
+    console.log = function() {};
+    console.error = function() {};
+    console.warn = function() {};
+    console.info = function() {};
+    console.debug = function() {};
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+        authDomain: "silent-depth.firebaseapp.com",
+        projectId: "silent-depth",
+        storageBucket: "silent-depth.appspot.com",
+        messagingSenderId: "78008755450",
+        appId: "1:78008755450:web:3fd0f0f298a08820935543"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const adminContent = document.getElementById('adminContent');
+    const pendingContainer = document.getElementById('pendingRequests');
+    const allRequestsContainer = document.getElementById('allRequestsContainer');
+    const manageContainer = document.getElementById('manageContainer');
+    const pendingCountEl = document.getElementById('pendingCount');
+    const contactedCountEl = document.getElementById('contactedCount');
+    const totalCountEl = document.getElementById('totalCount');
+    const pendingBadge = document.getElementById('pendingBadge');
+    const allRequestsBadge = document.getElementById('allRequestsBadge');
+    const manageBadge = document.getElementById('manageBadge');
+    const loadingState = document.getElementById('loadingState');
+    const accessDenied = document.getElementById('accessDenied');
+    const signInRequired = document.getElementById('signInRequired');
+    const adminEmail = document.getElementById('adminEmail');
+    const adminRole = document.getElementById('adminRole');
+    const currentUserEmail = document.getElementById('currentUserEmail');
+    const toast = document.getElementById('toast');
+    const copyToast = document.getElementById('copyToast');
+
+    // Management summary elements
+    const manageTotal = document.getElementById('manageTotal');
+    const managePending = document.getElementById('managePending');
+    const manageContacted = document.getElementById('manageContacted');
+    const manageClosed = document.getElementById('manageClosed');
+
+    let allRequests = [];
+    let toastTimeout = null;
+    let copyToastTimeout = null;
+    let authTimeout = null;
+    let isAlreadySignedIn = false;
+
+    // ========== GET REDIRECT URL ==========
+    function getRedirectUrl() {
+        const currentOrigin = window.location.origin;
+        return `${currentOrigin}/admin/codes-dash.html`;
+    }
+
+    // ========== REDIRECT TO LOGIN ==========
+    function redirectToLogin() {
+        // Only redirect if not already signed in
+        if (isAlreadySignedIn) {
+            return;
+        }
+        const redirectUrl = getRedirectUrl();
+        const loginUrl = `https://volantpoetry.vercel.app/admin/admin-login.html?redirect=${encodeURIComponent(redirectUrl)}`;
+        window.location.href = loginUrl;
+    }
+
+    // ========== TOAST FUNCTIONS ==========
+    function showToast(message, type = 'info') {
+        toast.textContent = message;
+        toast.className = `toast ${type}`;
+        void toast.offsetWidth;
+        toast.classList.add('show');
+        
+        if (toastTimeout) clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 4000);
+    }
+
+    function showCopyToast() {
+        copyToast.classList.add('show');
+        if (copyToastTimeout) clearTimeout(copyToastTimeout);
+        copyToastTimeout = setTimeout(() => {
+            copyToast.classList.remove('show');
+        }, 2500);
+    }
+
+    // ========== DELETE REQUEST ==========
+    window.deleteRequest = async function(requestId, requesterName) {
+        if (!requestId) return;
+        if (!confirm(`⚠️ Are you sure you want to permanently delete the request from "${requesterName || 'this user'}"? This action cannot be undone.`)) return;
+        
+        try {
+            await deleteDoc(doc(db, "volant-codes", requestId));
+            showToast(`🗑️ Request from "${requesterName || 'User'}" deleted.`, 'success');
+            await loadPendingRequests();
+            await loadAllRequests();
+            await loadManageTable();
+        } catch (err) {
+            showToast('❌ Failed to delete: ' + err.message, 'error');
+        }
+    };
+
+    // ========== COPY REQUEST DETAILS ==========
+    window.copyRequestDetails = function(requestId) {
+        const req = allRequests.find(r => r.id === requestId);
+        if (!req) {
+            showToast('❌ Request not found.', 'error');
+            return;
+        }
+
+        const content = `
+📋 VOLANT CODES - PROJECT REQUEST
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📌 REQUEST DETAILS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+👤 Name: ${req.name || 'Not provided'}
+📧 Email: ${req.email || 'Not provided'}
+🏢 Business: ${req.business || 'Not provided'}
+📅 Submitted: ${req.submittedAt?.toDate ? req.submittedAt.toDate().toLocaleString() : 'Unknown'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 PROJECT SPECIFICATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 Service: ${req.service || 'Not specified'}
+💰 Budget: ${req.budget || 'Not specified'}
+💱 Currency: ${req.currency || 'GHS'}
+📊 Status: ${req.status || 'Pending'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 MESSAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${req.message || 'No message provided'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📱 Contact: ${req.email || 'No email'} ${req.phone || ''}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        `.trim();
+
+        navigator.clipboard.writeText(content).then(() => {
+            showCopyToast();
+            showToast('✅ Request details copied to clipboard!', 'success');
+        }).catch(() => {
+            const textArea = document.createElement('textarea');
+            textArea.value = content;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showCopyToast();
+            showToast('✅ Request details copied to clipboard!', 'success');
+        });
+    };
+
+    // ========== UPDATE REQUEST STATUS ==========
+    window.updateRequestStatus = async function(requestId, newStatus) {
+        if (!requestId) return;
+        
+        try {
+            await updateDoc(doc(db, "volant-codes", requestId), {
+                status: newStatus,
+                updatedAt: new Date()
+            });
+            
+            const req = allRequests.find(r => r.id === requestId);
+            if (req) {
+                req.status = newStatus;
+            }
+            
+            showToast(`✅ Status updated to "${newStatus}".`, 'success');
+            await loadPendingRequests();
+            await loadAllRequests();
+            await loadManageTable();
+        } catch (err) {
+            showToast('❌ Failed to update status: ' + err.message, 'error');
+        }
+    };
+
+    // ========== LOAD STATS ==========
+    async function loadStats() {
+        try {
+            const snapshot = await getDocs(collection(db, "volant-codes"));
+            const docs = snapshot.docs;
+            
+            const pending = docs.filter(d => d.data().status === 'pending' || !d.data().status);
+            const contacted = docs.filter(d => d.data().status === 'contacted');
+            
+            pendingCountEl.textContent = `${pending.length} Pending`;
+            contactedCountEl.textContent = `${contacted.length} Contacted`;
+            totalCountEl.textContent = `${docs.length} Total`;
+            pendingBadge.textContent = pending.length;
+            allRequestsBadge.textContent = docs.length;
+            manageBadge.textContent = docs.length;
+        } catch (err) {
+            // Silent fail
+        }
+    }
+
+    // ========== RENDER REQUEST CARD ==========
+    function renderRequestCard(req) {
+        const status = req.status || 'pending';
+        const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+        const statusClass = status === 'pending' ? 'status-pending' : 
+                           status === 'contacted' ? 'status-contacted' : 'status-closed';
+        
+        const submittedDate = req.submittedAt?.toDate 
+            ? req.submittedAt.toDate().toLocaleString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+            : 'Unknown date';
+        
+        const serviceLabels = {
+            'basic': 'Basic Website (₵200 / $50)',
+            'business': 'Business Website (₵400 / $100)',
+            'custom': 'Custom Platform (₵800+ / $200+)',
+            'maintenance': 'Maintenance Plan (₵20/mo / $3/mo)',
+            'other': 'Other / Not Sure'
+        };
+        const serviceDisplay = serviceLabels[req.service] || req.service || 'Not specified';
+        
+        const budgetLabels = {
+            '200-400': '₵200 - ₵400 ($50 - $100)',
+            '400-800': '₵400 - ₵800 ($100 - $200)',
+            '800-1500': '₵800 - ₵1,500 ($200 - $400)',
+            '1500+': '₵1,500+ ($400+)'
+        };
+        const budgetDisplay = budgetLabels[req.budget] || req.budget || 'Not specified';
+        
+        const safeName = (req.name || 'Anonymous').replace(/[&<>"]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            if (m === '"') return '&quot;';
+            return m;
+        });
+
+        const phoneNumber = req.phone || req.phoneNumber || '';
+        const whatsappUrl = phoneNumber 
+            ? `https://wa.me/${phoneNumber.replace(/[^0-9+]/g, '')}`
+            : '#';
+
+        return `
+            <div class="request-card" data-id="${req.id}">
+                <div class="info">
+                    <div class="title">
+                        <i class="fas fa-user"></i> ${safeName}
+                    </div>
+                    <div class="subtitle">
+                        <i class="fas fa-envelope"></i> ${req.email || 'No email'}
+                        ${phoneNumber ? ` · <i class="fas fa-phone"></i> ${phoneNumber}` : ''}
+                    </div>
+                    
+                    <div class="contact-info">
+                        ${req.email ? `
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <a href="mailto:${req.email}">${req.email}</a>
+                            </div>
+                        ` : ''}
+                        ${phoneNumber ? `
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <a href="tel:${phoneNumber}">${phoneNumber}</a>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fab fa-whatsapp" style="color:#25D366;"></i>
+                                <a href="${whatsappUrl}" target="_blank" class="whatsapp-link">WhatsApp</a>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="meta">
+                        <span class="tag"><i class="fas fa-tag"></i> ${serviceDisplay}</span>
+                        <span class="tag"><i class="fas fa-money-bill"></i> ${budgetDisplay}</span>
+                        <span class="tag"><i class="fas fa-flag"></i> ${req.currency || 'GHS'}</span>
+                        <span class="tag ${statusClass}"><i class="fas fa-circle"></i> ${statusLabel}</span>
+                        ${req.business ? `<span class="tag"><i class="fas fa-building"></i> ${req.business}</span>` : ''}
+                    </div>
+                    
+                    ${req.message ? `
+                        <div class="message-content">
+                            <span class="msg-label"><i class="fas fa-comment"></i> Project Description</span>
+                            ${req.message}
+                        </div>
+                    ` : ''}
+                    
+                    <div class="submitted-by">
+                        <i class="fas fa-clock"></i> Submitted: ${submittedDate}
+                    </div>
+                    
+                    <div class="budget-info">
+                        <i class="fas fa-tag"></i> Budget: ${budgetDisplay} · ${req.currency || 'GHS'}
+                    </div>
+                </div>
+                <div class="actions">
+                    ${status === 'pending' ? `
+                        <button class="contacted" onclick="window.updateRequestStatus('${req.id}', 'contacted')">
+                            <i class="fas fa-check"></i> Mark Contacted
+                        </button>
+                        <button class="close-request" onclick="window.updateRequestStatus('${req.id}', 'closed')">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    ` : status === 'contacted' ? `
+                        <button class="contacted" style="background:#2d7d46; opacity:0.7;" disabled>
+                            <i class="fas fa-check-circle"></i> Contacted
+                        </button>
+                        <button class="close-request" onclick="window.updateRequestStatus('${req.id}', 'closed')">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    ` : `
+                        <span class="btn-disabled">
+                            <i class="fas fa-check-circle"></i> Closed
+                        </span>
+                    `}
+                    <button class="copy-btn" onclick="window.copyRequestDetails('${req.id}')">
+                        <i class="fas fa-copy"></i> Copy Details
+                    </button>
+                    <button class="delete-btn" onclick="window.deleteRequest('${req.id}', '${safeName}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // ========== LOAD PENDING REQUESTS ==========
+    async function loadPendingRequests() {
+        try {
+            let requests = [];
+            
+            try {
+                const q = query(
+                    collection(db, "volant-codes"),
+                    where("status", "==", "pending"),
+                    orderBy("submittedAt", "desc")
+                );
+                const snapshot = await getDocs(q);
+                snapshot.forEach(doc => {
+                    requests.push({ id: doc.id, ...doc.data() });
+                });
+            } catch (err) {
+                if (err.message.includes('index')) {
+                    const fallbackQ = query(
+                        collection(db, "volant-codes"),
+                        where("status", "==", "pending")
+                    );
+                    const fallbackSnapshot = await getDocs(fallbackQ);
+                    fallbackSnapshot.forEach(doc => {
+                        requests.push({ id: doc.id, ...doc.data() });
+                    });
+                    requests.sort((a, b) => {
+                        const dateA = a.submittedAt?.toDate?.() || new Date(0);
+                        const dateB = b.submittedAt?.toDate?.() || new Date(0);
+                        return dateB - dateA;
+                    });
+                } else {
+                    throw err;
+                }
+            }
+            
+            await loadStats();
+
+            if (requests.length === 0) {
+                pendingContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>All Caught Up!</h3>
+                        <p>No pending requests. Great job! 🎉</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            requests.forEach(req => {
+                html += renderRequestCard(req);
+            });
+            
+            pendingContainer.innerHTML = html;
+        } catch (err) {
+            pendingContainer.innerHTML = `<p style="color:red; padding:1rem;">Error loading pending requests: ${err.message}</p>`;
+        }
+    }
+
+    // ========== LOAD ALL REQUESTS ==========
+    async function loadAllRequests() {
+        try {
+            const snapshot = await getDocs(collection(db, "volant-codes"));
+            allRequests = [];
+            snapshot.forEach(doc => {
+                allRequests.push({ id: doc.id, ...doc.data() });
+            });
+            
+            allRequests.sort((a, b) => {
+                const dateA = a.submittedAt?.toDate?.() || new Date(0);
+                const dateB = b.submittedAt?.toDate?.() || new Date(0);
+                return dateB - dateA;
+            });
+
+            if (allRequests.length === 0) {
+                allRequestsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-file-alt"></i>
+                        <h3>No Requests Found</h3>
+                        <p>No project requests have been submitted yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            allRequests.forEach(req => {
+                html += renderRequestCard(req);
+            });
+            
+            allRequestsContainer.innerHTML = html;
+            await loadStats();
+        } catch (err) {
+            allRequestsContainer.innerHTML = `<p style="color:red; padding:1rem;">Error loading requests: ${err.message}</p>`;
+        }
+    }
+
+    // ========== LOAD MANAGEMENT TABLE ==========
+    async function loadManageTable() {
+        try {
+            const snapshot = await getDocs(collection(db, "volant-codes"));
+            allRequests = [];
+            snapshot.forEach(doc => {
+                allRequests.push({ id: doc.id, ...doc.data() });
+            });
+            
+            const pending = allRequests.filter(r => r.status === 'pending' || !r.status);
+            const contacted = allRequests.filter(r => r.status === 'contacted');
+            const closed = allRequests.filter(r => r.status === 'closed');
+            
+            manageTotal.textContent = allRequests.length;
+            managePending.textContent = pending.length;
+            manageContacted.textContent = contacted.length;
+            manageClosed.textContent = closed.length;
+            
+            if (allRequests.length === 0) {
+                manageContainer.innerHTML = `<div class="empty-state"><i class="fas fa-sliders-h"></i><h3>No Requests to Manage</h3></div>`;
+                return;
+            }
+
+            let html = `
+                <table class="manage-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Service</th>
+                            <th>Budget</th>
+                            <th>Currency</th>
+                            <th>Status</th>
+                            <th style="text-align:center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            allRequests.forEach((req) => {
+                const safeName = (req.name || 'Anonymous').replace(/[&<>"]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    if (m === '"') return '&quot;';
+                    return m;
+                });
+                
+                const serviceLabels = {
+                    'basic': 'Basic',
+                    'business': 'Business',
+                    'custom': 'Custom',
+                    'maintenance': 'Maintenance',
+                    'other': 'Other'
+                };
+                const serviceDisplay = serviceLabels[req.service] || req.service || 'N/A';
+                
+                const status = req.status || 'pending';
+                
+                html += `
+                    <tr data-id="${req.id}">
+                        <td class="name-cell">${safeName}</td>
+                        <td class="email-cell">
+                            ${req.email ? `<a href="mailto:${req.email}">${req.email}</a>` : 'N/A'}
+                        </td>
+                        <td>${serviceDisplay}</td>
+                        <td>${req.budget || 'N/A'}</td>
+                        <td>${req.currency || 'GHS'}</td>
+                        <td>
+                            <select class="input-status">
+                                <option value="pending" ${status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="contacted" ${status === 'contacted' ? 'selected' : ''}>Contacted</option>
+                                <option value="closed" ${status === 'closed' ? 'selected' : ''}>Closed</option>
+                            </select>
+                        </td>
+                        <td style="text-align:center;">
+                            <button class="btn-save" data-id="${req.id}">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                            <span class="saved-indicator" id="saved-${req.id}">✅ Saved</span>
+                            <br>
+                            <button class="btn-delete" data-id="${req.id}" style="margin-top:0.2rem;">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            manageContainer.innerHTML = html;
+
+            // Event listeners for management
+            document.querySelectorAll('.btn-save').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const row = this.closest('tr');
+                    const requestId = row.dataset.id;
+                    const status = row.querySelector('.input-status').value;
+
+                    const saveBtn = this;
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    try {
+                        await updateDoc(doc(db, "volant-codes", requestId), {
+                            status: status,
+                            updatedAt: new Date()
+                        });
+
+                        const req = allRequests.find(r => r.id === requestId);
+                        if (req) {
+                            req.status = status;
+                        }
+
+                        const indicator = document.getElementById(`saved-${requestId}`);
+                        if (indicator) {
+                            indicator.classList.add('show');
+                            setTimeout(() => indicator.classList.remove('show'), 3000);
+                        }
+
+                        await loadStats();
+                        showToast(`✅ Status updated successfully!`, 'success');
+                    } catch (err) {
+                        showToast('❌ Error updating: ' + err.message, 'error');
+                    } finally {
+                        saveBtn.disabled = false;
+                        saveBtn.innerHTML = '<i class="fas fa-save"></i> Save';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const requestId = this.dataset.id;
+                    const req = allRequests.find(r => r.id === requestId);
+                    if (!req) return;
+                    
+                    if (!confirm(`⚠️ Delete request from "${req.name || 'User'}" permanently?`)) return;
+                    
+                    try {
+                        await deleteDoc(doc(db, "volant-codes", requestId));
+                        allRequests = allRequests.filter(r => r.id !== requestId);
+                        await loadManageTable();
+                        await loadStats();
+                        await loadPendingRequests();
+                        await loadAllRequests();
+                        showToast(`🗑️ Request deleted.`, 'info');
+                    } catch (err) {
+                        showToast('❌ Error deleting: ' + err.message, 'error');
+                    }
+                });
+            });
+
+        } catch (err) {
+            manageContainer.innerHTML = `<p style="color:red; padding:1rem;">Error loading management: ${err.message}</p>`;
+        }
+    }
+
+    // ========== TAB SWITCHING ==========
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            const tabName = this.dataset.tab;
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            if (tabName === 'manage') {
+                loadManageTable();
+            }
+            if (tabName === 'allRequests') {
+                loadAllRequests();
+            }
+        });
+    });
+
+    // ========== SIGN OUT ==========
+    window.adminSignOut = async function() {
+        try {
+            await signOut(auth);
+            isAlreadySignedIn = false;
+            redirectToLogin();
+        } catch (err) {
+            // Silent fail
+        }
+    };
+
+    // ========== SHOW TIMEOUT ERROR ==========
+    function showTimeoutError() {
+        loadingState.style.display = 'none';
+        const timeoutError = document.createElement('div');
+        timeoutError.className = 'timeout-error';
+        timeoutError.innerHTML = `
+            <i class="fas fa-clock"></i>
+            <h2>Verification Timed Out</h2>
+            <p>We're having trouble verifying your admin access. This could be due to a slow network connection or Firestore issues.</p>
+            <button onclick="window.location.reload()" class="btn">
+                <i class="fas fa-sync"></i> Retry
+            </button>
+            <br><br>
+            <a href="https://volantpoetry.vercel.app/admin/admin-login.html?redirect=codes-dash.html" class="btn" style="background: #6f6252;">
+                <i class="fas fa-sign-in-alt"></i> Go to Login
+            </a>
+        `;
+        document.querySelector('.container').prepend(timeoutError);
+    }
+
+    // ========== AUTH CHECK ==========
+    onAuthStateChanged(auth, async (user) => {
+        if (authTimeout) {
+            clearTimeout(authTimeout);
+            authTimeout = null;
+        }
+
+        loadingState.style.display = 'none';
+        adminContent.style.display = 'none';
+        accessDenied.style.display = 'none';
+        signInRequired.style.display = 'none';
+
+        if (!user) {
+            // Not signed in - redirect to login
+            redirectToLogin();
+            return;
+        }
+
+        // User is signed in - set flag and proceed
+        isAlreadySignedIn = true;
+        currentUserEmail.textContent = user.email || user.uid;
+
+        try {
+            const adminRef = doc(db, "admins", user.uid);
+            const adminSnap = await getDoc(adminRef);
+            
+            if (adminSnap.exists()) {
+                const adminData = adminSnap.data();
+                adminContent.style.display = 'block';
+                adminEmail.textContent = user.email || adminData?.email || 'Admin';
+                adminRole.textContent = adminData?.role || 'admin';
+                await loadPendingRequests();
+                await loadAllRequests();
+                await loadManageTable();
+            } else {
+                accessDenied.style.display = 'block';
+            }
+        } catch (error) {
+            accessDenied.style.display = 'block';
+            const p = accessDenied.querySelector('p');
+            if (p) p.textContent = 'Error checking admin permissions: ' + error.message;
+        }
+    });
+
+    authTimeout = setTimeout(() => {
+        if (loadingState.style.display !== 'none') {
+            showTimeoutError();
+        }
+    }, 5000);
+
+    console.log('🛡️ Volant Codes Admin Dashboard loaded.');
+    console.log('📋 Tabs: Pending | All Requests | Manage Requests');
+    console.log('💬 Features: View, copy details, update status, delete requests');
+</script>
+
+<script src="../shared/return-url-handler.js"></script>
+</body>
+</html>
