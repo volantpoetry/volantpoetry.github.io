@@ -9,10 +9,9 @@
     (function() {
         if (window.location.hostname.includes('localhost') || 
             window.location.hostname.includes('127.0.0.1')) {
-            return; // Allow in development
+            return;
         }
         
-        // Block all console methods
         var methods = ['log', 'info', 'warn', 'error', 'debug', 'trace', 'table', 'group', 'groupEnd', 'dir'];
         methods.forEach(function(m) {
             console[m] = function() {};
@@ -27,6 +26,9 @@
 </script>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
     <!-- Favicons -->
     <link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png">
@@ -169,10 +171,29 @@
             display: none;
             background: transparent;
             border: none;
-            color: #2d2a24;
+            color: #4b2aad !important;
             font-size: 30px;
             cursor: pointer;
             padding: 0 10px;
+            font-weight: 700;
+            transition: color 0.3s ease;
+        }
+
+        #menu-btn:hover {
+            color: #3a1f8a !important;
+        }
+
+        #menu-btn #menuIcon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        #menu-btn #menuIcon.open {
+            transform: rotate(90deg);
+        }
+
+        #menu-btn:focus {
+            outline: none;
         }
 
         .hero {
@@ -947,16 +968,22 @@
                 padding: 15px 0;
                 margin-top: 10px;
                 border-top: 1px solid #ede7df;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                z-index: 99;
             }
             .nav-links.open {
                 display: flex;
             }
             .nav-links a {
                 margin: 0;
-                padding: 8px 0;
+                padding: 12px 20px;
                 text-align: center;
                 width: 100%;
-                color: #2d2a24;
+                color: #4b2aad !important;
+                border-bottom: 1px solid #f5f3f0;
             }
             .hero {
                 padding: 60px 30px !important;
@@ -1145,6 +1172,9 @@
             }
             .logo-text {
                 font-size: 1.0rem;
+            }
+            #menu-btn {
+                font-size: 24px;
             }
             .nav-links a {
                 font-size: 14px;
@@ -1727,280 +1757,242 @@
         .more-books-section {display: none;}
         .codes-grid {display: none;}
 
+        /* ===== BUY NOW BUTTON STYLES ===== */
+        .buy-now-link {
+            display: inline-block;
+            background: #4b2aad;
+            color: #fff;
+            padding: 4px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            width: fit-content;
+            margin-top: 4px;
+            margin-left: 19px;
+        }
+        .buy-now-link:hover {
+            background: #6a45d1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(75, 42, 173, 0.3);
+        }
+
+        /* Book title */
+        .book-title {
+            color: #111111;
+            font-size: 23px;
+            margin-left: 19px;
+            padding-top: 0px !important;
+            margin-bottom: 2px;
+            font-weight: bold;
+            font-family: "Cormorant Garamond", serif;
+        }
+
+        /* Book description */
+        .book-des {
+            font-size: 17px;
+            font-family: "Cormorant Garamond", serif;
+            margin-left: 19px;
+            margin-bottom: 2px;
+            margin-top: 0px;
+        }
+
+        /* Title container */
+        .title-des-eco {
+            display: grid;
+            margin-left: 0px;
+            line-height: 1.4;
+            font-weight: 400;
+        }
+
+        /* Book title */
+        .book-title {
+            color: #111111;
+            font-size: 23px;
+            margin-left: 19px;
+            padding-top: 0px !important;
+            margin-bottom: -5px;
+            font-family: "Cormorant Garamond", serif;
+           
+        }
+        @media (min-width: 381px) and (max-width: 768px) {
+            /* Main book covers */
+            .book-cover {
+                height: 100px !important;
+                width: 70px !important;
+                object-fit: cover;
+            }
+            
+            /* More books section covers */
+            .more-book-item img {
+                height: 85px !important;
+                width: 65px !important;
+                object-fit: cover;
+            }
+        }
+        @media (max-width: 380px) {
+            .book-cover {
+                height: 95px !important;
+                width: auto !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text {
+                font-size: 1.0rem !important;
+            }
+        }
+
+        /* ===== ECOSYSTEM CARDS - MOBILE FONT INCREASE ===== */
         @media (max-width: 768px) {
-    #menu-btn {
-        display: block;
-    }
-    
-    #navLinks {
-        display: none;
-        width: 100%;
-        flex-direction: column;
-        background: #ffffff;
-        padding: 15px 0;
-        margin-top: 10px;
-        border-top: 1px solid #ede7df;
-        position: absolute;
-        top: 70px;
-        left: 0;
-        right: 0;
-        z-index: 99;
-    }
-    
-    #navLinks.open {
-        display: flex;
-    }
-    
-    #navLinks a {
-        margin: 0;
-        padding: 12px 20px;
-        text-align: center;
-        width: 100%;
-        color: #2d2a24;
-        border-bottom: 1px solid #f5f3f0;
-    }
-}
+            .eco-card h4 {
+                font-size: 18px !important;
+                margin-top: 10px !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .eco-card p {
+                font-size: 15px !important;
+                line-height: 1.5 !important;
+                margin-bottom: 12px !important;
+            }
+            
+            .eco-card a {
+                font-size: 15px !important;
+                font-weight: 500 !important;
+            }
+            
+            .eco-card {
+                padding: 20px 16px !important;
+            }
+            
+            .build-image {
+                height: 42px !important;
+                margin-bottom: -14px !important;
+            }
+        }
 
-/* ===== BUY NOW BUTTON STYLES ===== */
-.buy-now-link {
-    display: inline-block;
-    background: #4b2aad;
-    color: #fff;
-    padding: 4px 16px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    width: fit-content;
-    margin-top: 4px;
-    margin-left: 19px;
-}
-.buy-now-link:hover {
-    background: #6a45d1;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(75, 42, 173, 0.3);
-}
+        @media (max-width: 480px) {
+            .eco-card h4 {
+                font-size: 17px !important;
+                margin-top: 8px !important;
+                margin-bottom: 8px !important;
+            }
+            
+            .eco-card p {
+                font-size: 14px !important;
+                line-height: 1.5 !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .eco-card a {
+                font-size: 14px !important;
+            }
+            
+            .eco-card {
+                padding: 16px 14px !important;
+                border-radius: 12px !important;
+            }
+            
+            .build-image {
+                height: 38px !important;
+                margin-bottom: -12px !important;
+            }
+        }
 
-/* Book title */
-.book-title {
-    color: #111111;
-    font-size: 23px;
-    margin-left: 19px;
-    padding-top: 0px !important;
-    margin-bottom: 2px;
-    font-weight: bold;
-    font-family: "Cormorant Garamond", serif;
-}
+        /* Increase font sizes for What We Do cards on mobile */
+        @media (max-width: 768px) {
+            .what-card h6,
+            .what-card1 h6 {
+                font-size: 20px !important;
+                margin-top: 12px !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .what-card p,
+            .what-card1 p {
+                font-size: 16px !important;
+                line-height: 1.6 !important;
+                max-width: 100% !important;
+                padding: 0 15px !important;
+            }
+            
+            .what-card .build-image,
+            .what-card1 .build-image {
+                height: 45px !important;
+                margin-bottom: -12px !important;
+            }
+            
+            .what-p {
+                font-size: 24px !important;
+                max-width: 100% !important;
+                padding: 0 15px !important;
+                line-height: 1.4 !important;
+            }
+        }
 
-/* Book description */
-.book-des {
-    font-size: 17px;
-    font-family: "Cormorant Garamond", serif;
-    margin-left: 19px;
-    margin-bottom: 2px;
-    margin-top: 0px;
-}
+        @media (max-width: 480px) {
+            .what-card h6,
+            .what-card1 h6 {
+                font-size: 18px !important;
+                margin-top: 10px !important;
+                margin-bottom: 8px !important;
+            }
+            
+            .what-card p,
+            .what-card1 p {
+                font-size: 15px !important;
+                line-height: 1.5 !important;
+                padding: 0 12px !important;
+            }
+            
+            .what-card .build-image,
+            .what-card1 .build-image {
+                height: 40px !important;
+                margin-bottom: -10px !important;
+            }
+            
+            .what-p {
+                font-size: 22px !important;
+                padding: 0 12px !important;
+            }
+        }
 
-/* Title container */
-.title-des-eco {
-    display: grid;
-    margin-left: 0px;
-    line-height: 1.4;
-    font-weight: 400;
-}
+        @media (max-width: 380px) {
+            .what-card h6,
+            .what-card1 h6 {
+                font-size: 16px !important;
+            }
+            
+            .what-card p,
+            .what-card1 p {
+                font-size: 14px !important;
+                padding: 0 10px !important;
+            }
+            
+            .what-card .build-image,
+            .what-card1 .build-image {
+                height: 36px !important;
+                margin-bottom: -8px !important;
+            }
+            
+            .what-p {
+                font-size: 20px !important;
+                padding: 0 10px !important;
+            }
+        }
 
-/* Book title */
-.book-title {
-    color: #111111;
-    font-size: 23px;
-    margin-left: 19px;
-    padding-top: 0px !important;
-    margin-bottom: -5px;  /* Increased from -4px to -12px */
-      font-family: "Cormorant Garamond", serif;
-   
-}
-@media (min-width: 381px) and (max-width: 768px) {
-    /* Main book covers */
-    .book-cover {
-        height: 100px !important;
-        width: 70px !important;  /* Increased from 65px */
-        object-fit: cover;
-    }
-    
-    /* More books section covers */
-    .more-book-item img {
-        height: 85px !important;
-        width: 65px !important;  /* Increased from 55px */
-        object-fit: cover;
-    }
-}
-@media (max-width: 380px) {
-    .book-cover {
-        height: 95px !important;  /* Increased from 75px */
-        width: auto !important;
-    }
-}
+        /* ===== DESKTOP NAV LINKS - PURPLE ===== */
+        .nav-links a {
+            color: #4b2aad !important;
+            font-weight: 700 !important;
+            transition: color 0.3s ease;
+        }
 
-@media (max-width: 480px) {
-    .logo-text {
-        font-size: 1.0rem !important;
-    }
-}
-
-.nav-links.open a {
-    color: #4b2aad !important;
-}
-
-/* Add these styles to your existing CSS - they target mobile screens */
-
-@media (max-width: 768px) {
-    /* Existing styles... */
-    
-    /* ===== ECOSYSTEM CARDS - MOBILE FONT INCREASE ===== */
-    .eco-card h4 {
-        font-size: 18px !important;  /* Increased from 15px */
-        margin-top: 10px !important;
-        margin-bottom: 10px !important;
-    }
-    
-    .eco-card p {
-        font-size: 15px !important;  /* Increased from 13px */
-        line-height: 1.5 !important;
-        margin-bottom: 12px !important;
-    }
-    
-    .eco-card a {
-        font-size: 15px !important;  /* Increased from 13px */
-        font-weight: 500 !important;
-    }
-    
-    .eco-card {
-        padding: 20px 16px !important;  /* Slightly more padding */
-    }
-    
-    .build-image {
-        height: 42px !important;  /* Slightly larger icons */
-        margin-bottom: -14px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    /* Existing styles... */
-    
-    /* ===== ECOSYSTEM CARDS - SMALL PHONE FONT INCREASE ===== */
-    .eco-card h4 {
-        font-size: 17px !important;  /* Increased from 13px */
-        margin-top: 8px !important;
-        margin-bottom: 8px !important;
-    }
-    
-    .eco-card p {
-        font-size: 14px !important;  /* Increased from 12px */
-        line-height: 1.5 !important;
-        margin-bottom: 10px !important;
-    }
-    
-    .eco-card a {
-        font-size: 14px !important;  /* Increased from 12px */
-    }
-    
-    .eco-card {
-        padding: 16px 14px !important;
-        border-radius: 12px !important;
-    }
-    
-    .build-image {
-        height: 38px !important;
-        margin-bottom: -12px !important;
-    }
-}
-
-/* Increase font sizes for What We Do cards on mobile */
-@media (max-width: 768px) {
-    /* Card titles - Create, Build, Empower */
-    .what-card h6,
-    .what-card1 h6 {
-        font-size: 20px !important;  /* Increased from 18px */
-        margin-top: 12px !important;
-        margin-bottom: 10px !important;
-    }
-    
-    /* Card descriptions */
-    .what-card p,
-    .what-card1 p {
-        font-size: 16px !important;  /* Increased from 14px */
-        line-height: 1.6 !important;
-        max-width: 100% !important;
-        padding: 0 15px !important;
-    }
-    
-    /* Icons */
-    .what-card .build-image,
-    .what-card1 .build-image {
-        height: 45px !important;
-        margin-bottom: -12px !important;
-    }
-    
-    /* Main heading "The intersection of creativity..." */
-    .what-p {
-        font-size: 24px !important;
-        max-width: 100% !important;
-        padding: 0 15px !important;
-        line-height: 1.4 !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .what-card h6,
-    .what-card1 h6 {
-        font-size: 18px !important;
-        margin-top: 10px !important;
-        margin-bottom: 8px !important;
-    }
-    
-    .what-card p,
-    .what-card1 p {
-        font-size: 15px !important;
-        line-height: 1.5 !important;
-        padding: 0 12px !important;
-    }
-    
-    .what-card .build-image,
-    .what-card1 .build-image {
-        height: 40px !important;
-        margin-bottom: -10px !important;
-    }
-    
-    .what-p {
-        font-size: 22px !important;
-        padding: 0 12px !important;
-    }
-}
-
-@media (max-width: 380px) {
-    .what-card h6,
-    .what-card1 h6 {
-        font-size: 16px !important;
-    }
-    
-    .what-card p,
-    .what-card1 p {
-        font-size: 14px !important;
-        padding: 0 10px !important;
-    }
-    
-    .what-card .build-image,
-    .what-card1 .build-image {
-        height: 36px !important;
-        margin-bottom: -8px !important;
-    }
-    
-    .what-p {
-        font-size: 20px !important;
-        padding: 0 10px !important;
-    }
-}
+        .nav-links a:hover {
+            color: #3a1f8a !important;
+        }
     </style>
 </head>
 
@@ -2012,7 +2004,9 @@
             <span class="logo-highlight">Volant</span> Foundry
         </span>
     </a>
-    <button id="menu-btn">☰</button>
+    <button id="menu-btn" aria-label="Toggle menu">
+        <span id="menuIcon">☰</span>
+    </button>
     
     <nav class="nav-links" id="navLinks">
         <a href="#" data-target="home">Home</a>
@@ -2379,15 +2373,35 @@
 
         // ===== HAMBURGER MENU TOGGLE =====
         const menuBtn = document.getElementById('menu-btn');
+        const menuIcon = document.getElementById('menuIcon');
         const navLinks = document.getElementById('navLinks');
+
+        // Set initial icon
+        if (menuIcon) {
+            menuIcon.textContent = '☰';
+        }
 
         menuBtn.addEventListener('click', function() {
             navLinks.classList.toggle('open');
+            
+            // Toggle between ☰ and ✕
+            if (navLinks.classList.contains('open')) {
+                menuIcon.textContent = '✕';
+                menuIcon.style.transform = 'rotate(90deg)';
+            } else {
+                menuIcon.textContent = '☰';
+                menuIcon.style.transform = 'rotate(0deg)';
+            }
         });
 
+        // Close menu when a link is clicked
         document.querySelectorAll('.nav-links a').forEach(function(link) {
             link.addEventListener('click', function() {
                 navLinks.classList.remove('open');
+                if (menuIcon) {
+                    menuIcon.textContent = '☰';
+                    menuIcon.style.transform = 'rotate(0deg)';
+                }
             });
         });
 
