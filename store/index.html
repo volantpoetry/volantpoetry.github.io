@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Volant Reads · Bookstore</title>
 
-   <script>
+    <script>
     // Simple console blocker - production only
     (function() {
         if (window.location.hostname.includes('localhost') || 
@@ -26,7 +26,7 @@
         window.onunhandledrejection = function() { return true; };
     })();
 </script>
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     
@@ -41,7 +41,7 @@
     <!-- Open Graph -->
     <meta property="og:title" content="Volant Reads · Bookstore">
     <meta property="og:description" content="Discover and purchase books, poetry, and literary works at Volant Reads — the digital marketplace for readers and writers.">
-    <meta property="og:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
+    <meta property="og:image" content="https://volantpoetry.vercel.app/images/volant-reads-og.jpg">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://volantpoetry.vercel.app/store/">
 
@@ -4113,6 +4113,7 @@ import {
     doc, getDoc, updateDoc, writeBatch, setDoc, serverTimestamp
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+
 
 const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",

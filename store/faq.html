@@ -104,41 +104,6 @@
       padding: 2.5rem 3rem;
     }
 
-    .search-box {
-      margin-bottom: 2rem;
-      display: flex;
-      align-items: center;
-      background: #faf9fe;
-      border: 1px solid var(--border-light);
-      padding: 0 1rem;
-      transition: all 0.3s ease;
-    }
-
-    .search-box:focus-within {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(75, 42, 173, 0.1);
-    }
-
-    .search-box i {
-      color: var(--text-muted);
-      font-size: 1rem;
-    }
-
-    .search-box input {
-      border: none;
-      padding: 0.8rem 1rem;
-      font-size: 0.95rem;
-      width: 100%;
-      background: transparent;
-      font-family: 'Inter', sans-serif;
-      color: var(--text-primary);
-      outline: none;
-    }
-
-    .search-box input::placeholder {
-      color: var(--text-muted);
-    }
-
     .category-tabs {
       display: flex;
       flex-wrap: wrap;
@@ -174,6 +139,11 @@
 
     .faq-section {
       margin-bottom: 2rem;
+      display: none;
+    }
+
+    .faq-section.active {
+      display: block;
     }
 
     .faq-section:last-child {
@@ -289,30 +259,6 @@
       text-decoration: underline;
     }
 
-    .no-results {
-      text-align: center;
-      padding: 2rem;
-      color: var(--text-muted);
-      display: none;
-    }
-
-    .no-results i {
-      font-size: 2rem;
-      color: var(--gold);
-      margin-bottom: 0.5rem;
-    }
-
-    .no-results h4 {
-      color: var(--text-primary);
-      font-family: 'Playfair Display', serif;
-      font-size: 1.2rem;
-      margin-bottom: 0.3rem;
-    }
-
-    .no-results p {
-      font-size: 0.9rem;
-    }
-
     .contact-cta {
       text-align: center;
       padding: 1.5rem 2rem;
@@ -346,6 +292,75 @@
 
     .contact-cta .btn i {
       margin-right: 0.5rem;
+    }
+
+    /* ===== ROLE BADGE ===== */
+    .role-badge {
+      display: inline-block;
+      padding: 0.15rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    .role-badge.author {
+      background: var(--primary);
+      color: white;
+    }
+
+    .role-badge.seller {
+      background: var(--accent);
+      color: white;
+    }
+
+    .role-badge.buyer {
+      background: var(--gold);
+      color: white;
+    }
+
+    /* ===== AUTHOR GUIDANCE BOX ===== */
+    .author-guidance {
+      background: #f0f4ff;
+      border-left: 4px solid var(--primary);
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .author-guidance h4 {
+      color: var(--primary-dark);
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .author-guidance p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .author-guidance ul {
+      list-style: none;
+      padding: 0;
+      margin: 0.3rem 0 0 0;
+    }
+
+    .author-guidance ul li {
+      padding: 0.2rem 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .author-guidance ul li i {
+      color: var(--primary);
+      margin-top: 0.15rem;
+      flex-shrink: 0;
     }
 
     @media (max-width: 768px) {
@@ -426,13 +441,24 @@
         padding: 0.15rem 0 0.15rem 1rem;
       }
 
-      .search-box input {
-        font-size: 0.85rem;
-        padding: 0.6rem 0.8rem;
-      }
-
       .contact-cta {
         padding: 1rem;
+      }
+
+      .author-guidance {
+        padding: 0.8rem 1rem;
+      }
+
+      .author-guidance ul li {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .role-badge {
+        font-size: 0.5rem;
+        padding: 0.1rem 0.5rem;
+        margin-left: 0.2rem;
       }
     }
 
@@ -450,12 +476,11 @@
         background: white;
       }
     }
-  
 
-                    .platform-badge.reads { 
-                        background: linear-gradient(135deg, #d4a574, #c9944d); 
-                    }
-                    </style>
+    .platform-badge.reads { 
+      background: linear-gradient(135deg, #d4a574, #c9944d); 
+    }
+  </style>
 </head>
 <body>
 
@@ -472,11 +497,6 @@
     <div class="faq-card">
       <div class="faq-content">
 
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input type="text" id="faqSearch" placeholder="Search for answers..." />
-        </div>
-
         <div class="category-tabs" id="categoryTabs">
           <button class="category-tab active" data-category="all">All</button>
           <button class="category-tab" data-category="publishing">Publishing</button>
@@ -485,14 +505,25 @@
           <button class="category-tab" data-category="account">Account</button>
         </div>
 
-        <div class="no-results" id="noResults">
-          <i class="fas fa-search"></i>
-          <h4>No Results Found</h4>
-          <p>Try adjusting your search terms or browse the categories above.</p>
-        </div>
+        <!-- ===== PUBLISHING SECTION ===== -->
+        <div class="faq-section active" data-category="publishing" id="section-publishing">
+          <h3 class="faq-section-title">
+            Publishing Your Book
+            <span class="role-badge author">For Authors</span>
+          </h3>
 
-        <div class="faq-section" data-category="publishing">
-          <h3 class="faq-section-title">Publishing Your Book</h3>
+          <!-- AUTHOR GUIDANCE BOX -->
+          <div class="author-guidance">
+            <h4><i class="fas fa-lightbulb"></i> Quick Publishing Tips</h4>
+            <ul>
+              <li><i class="fas fa-check-circle"></i> Complete your author profile before submitting</li>
+              <li><i class="fas fa-check-circle"></i> Use a professional cover image to attract readers</li>
+              <li><i class="fas fa-check-circle"></i> Write a compelling synopsis that hooks readers</li>
+              <li><i class="fas fa-check-circle"></i> Add 3-5 keywords to help readers discover your book</li>
+              <li><i class="fas fa-check-circle"></i> Set your price strategically — free books get more downloads</li>
+              <li><i class="fas fa-check-circle"></i> Share your book link everywhere to drive sales</li>
+            </ul>
+          </div>
 
           <div class="faq-item">
             <div class="faq-question" onclick="toggleFAQ(this)">
@@ -501,7 +532,11 @@
             </div>
             <div class="faq-answer">
               <p>
-                Anyone can publish on Volant Reads! Volant Reads is a literary marketplace that empowers independent authors by providing a platform to sell their works while retaining ownership and receiving the majority of sales revenue. You do not need to be a member of Volant Reads. Poets, novelists, non-fiction writers, and authors of all genres are welcome.
+                <strong>Anyone can publish on Volant Reads!</strong> Volant Reads is a literary marketplace that empowers independent authors by providing a platform to sell their works while retaining ownership and receiving the majority of sales revenue. You do not need to be a member of Volant Reads. Poets, novelists, non-fiction writers, and authors of all genres are welcome.
+              </p>
+              <p style="margin-top:0.5rem;">
+                <span class="role-badge author" style="font-size:0.6rem;">Author Tip</span>
+                <span style="color:var(--text-muted); font-size:0.85rem;">Make sure you have a completed manuscript and cover image ready before you start the submission process.</span>
               </p>
             </div>
           </div>
@@ -514,6 +549,10 @@
             <div class="faq-answer">
               <p>
                 Authors receive <strong>90% of net revenue</strong> from sales of their works. Net revenue is calculated after payment processing fees, taxes, refunds, and chargebacks. Volant Reads retains 10% to cover platform and processing costs.
+              </p>
+              <p style="margin-top:0.5rem;">
+                <span class="role-badge seller" style="font-size:0.6rem;">Seller Info</span>
+                <span style="color:var(--text-muted); font-size:0.85rem;">Track your earnings in real time through your <a href="dashboard.html" style="color:var(--primary);">author dashboard</a>.</span>
               </p>
             </div>
           </div>
@@ -539,6 +578,12 @@
               <p>
                 <strong>Authors are responsible for promoting their books.</strong> We provide you with a store link and book page link that you can share with your audience. Promote your book on social media, your website, email newsletters, and through your personal networks to drive sales.
               </p>
+              <div style="margin-top:0.5rem; background:#f0f4ff; padding:0.6rem 1rem; border-radius:8px;">
+                <p style="font-size:0.85rem; color:var(--text-secondary); margin:0;">
+                  <i class="fas fa-bullhorn" style="color:var(--primary);"></i>
+                  <strong>Promotion Tips:</strong> Share your book link on Facebook, Twitter, Instagram, LinkedIn, writing groups, and email newsletters. The more you share, the more sales you'll generate!
+                </p>
+              </div>
             </div>
           </div>
 
@@ -549,7 +594,11 @@
             </div>
             <div class="faq-answer">
               <p>
-                Sales are recorded in <strong>real time</strong>. You can track your earnings instantly through your <strong>author dashboard</strong>. Monitor your sales, view your earnings, and see your performance at a glance.
+                Sales are recorded in <strong>real time</strong>. You can track your earnings instantly through your <strong><a href="dashboard.html" style="color:var(--primary);">author dashboard</a></strong>. Monitor your sales, view your earnings, and see your performance at a glance.
+              </p>
+              <p style="margin-top:0.5rem;">
+                <span class="role-badge seller" style="font-size:0.6rem;">Seller Info</span>
+                <span style="color:var(--text-muted); font-size:0.85rem;">Your dashboard shows total sales, revenue, and daily performance charts.</span>
               </p>
             </div>
           </div>
@@ -593,6 +642,10 @@
                 <li>Your chosen price (free or paid)</li>
                 <li>3–5 keywords for discoverability</li>
               </ul>
+              <p style="margin-top:0.5rem;">
+                <span class="role-badge author" style="font-size:0.6rem;">Author Tip</span>
+                <span style="color:var(--text-muted); font-size:0.85rem;">Make sure your PDF is properly formatted and your cover image is high-quality before submitting.</span>
+              </p>
             </div>
           </div>
 
@@ -609,8 +662,22 @@
           </div>
         </div>
 
-        <div class="faq-section" data-category="payments">
-          <h3 class="faq-section-title">Payments &amp; Royalties</h3>
+        <!-- ===== PAYMENTS SECTION ===== -->
+        <div class="faq-section" data-category="payments" id="section-payments">
+          <h3 class="faq-section-title">
+            Payments &amp; Royalties
+            <span class="role-badge seller">For Sellers</span>
+          </h3>
+
+          <div class="author-guidance">
+            <h4><i class="fas fa-wallet"></i> Payment & Earnings Overview</h4>
+            <ul>
+              <li><i class="fas fa-check-circle"></i> <strong>90%</strong> of net revenue goes to you</li>
+              <li><i class="fas fa-check-circle"></i> <strong>Monthly payouts</strong> via Mobile Money or Bank Transfer</li>
+              <li><i class="fas fa-check-circle"></i> <strong>Real-time sales tracking</strong> in your dashboard</li>
+              <li><i class="fas fa-check-circle"></i> <strong>10%</strong> platform fee covers hosting and processing</li>
+            </ul>
+          </div>
 
           <div class="faq-item">
             <div class="faq-question" onclick="toggleFAQ(this)">
@@ -643,7 +710,7 @@
             </div>
             <div class="faq-answer">
               <p>
-                Sales are recorded in <strong>real time</strong>. You can track your earnings instantly through your <strong>author dashboard</strong>. Monitor your sales, view your earnings, and see your performance at a glance.
+                Sales are recorded in <strong>real time</strong>. You can track your earnings instantly through your <strong><a href="dashboard.html" style="color:var(--primary);">author dashboard</a></strong>. Monitor your sales, view your earnings, and see your performance at a glance.
               </p>
             </div>
           </div>
@@ -675,8 +742,12 @@
           </div>
         </div>
 
-        <div class="faq-section" data-category="buying">
-          <h3 class="faq-section-title">Buying &amp; Reading</h3>
+        <!-- ===== BUYING SECTION ===== -->
+        <div class="faq-section" data-category="buying" id="section-buying">
+          <h3 class="faq-section-title">
+            Buying &amp; Reading
+            <span class="role-badge buyer">For Readers</span>
+          </h3>
 
           <div class="faq-item">
             <div class="faq-question" onclick="toggleFAQ(this)">
@@ -685,7 +756,7 @@
             </div>
             <div class="faq-answer">
               <p>
-                To purchase a book, simply browse the <a href="store/index.html">bookstore</a>, select a book, and click the purchase button. You will be guided through the payment process. After payment, you will be able to download your book immediately.
+                To purchase a book, simply browse the <a href="index.html">bookstore</a>, select a book, and click the purchase button. You will be guided through the payment process. After payment, you will be able to download your book immediately.
               </p>
             </div>
           </div>
@@ -727,7 +798,8 @@
           </div>
         </div>
 
-        <div class="faq-section" data-category="account">
+        <!-- ===== ACCOUNT SECTION ===== -->
+        <div class="faq-section" data-category="account" id="section-account">
           <h3 class="faq-section-title">Account</h3>
 
           <div class="faq-item">
@@ -792,31 +864,27 @@
   <!-- ===== FOOTER ===== -->
   <footer class="page-footer" style="background:#1a1714; color:#e8e0d8; padding:2rem 1.5rem; text-align:center; margin-top:2rem; border-top:1px solid rgba(255,255,255,0.06);">
     <div style="max-width:920px; margin:0 auto;">
-      <!-- Footer Links Row - Preserved original links -->
       <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:8px 20px; margin-bottom:10px;">
         <a href="../shared/privacy.html" style="color:#c4b8aa; text-decoration:none; font-size:0.8rem;">Privacy Policy</a>
         <a href="../shared/terms.html" style="color:#c4b8aa; text-decoration:none; font-size:0.8rem;">Terms &amp; Conditions</a>
         <a href="refund.html" style="color:#c4b8aa; text-decoration:none; font-size:0.8rem;">Refund Policy</a>
-    <a href="../volant_foundry/index.html" style="color:#b76e4b; text-decoration:none; font-size:0.8rem; font-weight:600;">🏛️ Volant Foundry</a>
+        <a href="dashboard.html" style="color:#c4b8aa; text-decoration:none; font-size:0.8rem;">📊 Author Dashboard</a>
+        <a href="../volant_foundry/index.html" style="color:#b76e4b; text-decoration:none; font-size:0.8rem; font-weight:600;">🏛️ Volant Foundry</a>
       </div>
       
-      <!-- Platform Badge -->
       <div style="margin:6px 0;">
         <span style="background:rgba(183,110,75,0.12); padding:3px 16px; border-radius:20px; font-size:0.7rem; color:#b76e4b; font-weight:500; display:inline-block;">
-          Part of the Volant Reads Platform
+          Part of the Volant Foundry Platform
         </span>
       </div>
       
-      <!-- Copyright -->
       <div style="font-size:0.75rem; color:#6a5f55; margin-top:6px;">
         &copy; 2026 <strong style="color:#c4b8aa;">Volant Reads</strong>. All Rights Reserved.
       </div>
     </div>
   </footer>
 
-  <!-- ===== MOBILE RESPONSIVE STYLES ===== -->
   <style>
-    /* Mobile responsive for footer links */
     @media (max-width: 480px) {
       footer .footer-links-row {
         gap: 4px 10px !important;
@@ -872,97 +940,48 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      const searchInput = document.getElementById('faqSearch');
-      const faqItems = document.querySelectorAll('.faq-item');
-      const noResults = document.getElementById('noResults');
-      const sections = document.querySelectorAll('.faq-section');
       const tabs = document.querySelectorAll('.category-tab');
+      const sections = document.querySelectorAll('.faq-section');
+      const DEFAULT_CATEGORY = 'publishing';
 
-      searchInput.addEventListener('input', function() {
-        const query = this.value.toLowerCase().trim();
-        let visibleCount = 0;
+      // Load saved tab from localStorage
+      let savedCategory = localStorage.getItem('volant_reads_faq_tab');
+      if (!savedCategory || !document.querySelector(`.category-tab[data-category="${savedCategory}"]`)) {
+        savedCategory = DEFAULT_CATEGORY;
+      }
 
-        faqItems.forEach(item => {
-          const question = item.querySelector('.faq-question .q')?.textContent?.toLowerCase() || '';
-          const answer = item.querySelector('.faq-answer p')?.textContent?.toLowerCase() || '';
-          const match = question.includes(query) || answer.includes(query);
+      function showCategory(category) {
+        // Update tabs
+        tabs.forEach(tab => {
+          tab.classList.toggle('active', tab.dataset.category === category);
+        });
 
-          const section = item.closest('.faq-section');
-          const isSectionVisible = section && section.style.display !== 'none';
-
-          if (match && isSectionVisible) {
-            item.style.display = '';
-            visibleCount++;
-          } else if (!query) {
-            item.style.display = '';
-            visibleCount++;
+        // Update sections
+        let anyVisible = false;
+        sections.forEach(section => {
+          const sectionCategory = section.dataset.category;
+          if (category === 'all' || sectionCategory === category) {
+            section.classList.add('active');
+            anyVisible = true;
           } else {
-            item.style.display = 'none';
+            section.classList.remove('active');
           }
         });
 
-        if (query && visibleCount === 0) {
-          noResults.style.display = 'block';
-          noResults.style.gridColumn = '1 / -1';
-        } else {
-          noResults.style.display = 'none';
-        }
+        // Save to localStorage
+        localStorage.setItem('volant_reads_faq_tab', category);
+      }
 
-        sections.forEach(section => {
-          const items = section.querySelectorAll('.faq-item');
-          let hasVisible = false;
-          items.forEach(item => {
-            if (item.style.display !== 'none') {
-              hasVisible = true;
-            }
-          });
-          section.style.display = hasVisible ? '' : 'none';
-        });
-      });
-
+      // Tab click handlers
       tabs.forEach(tab => {
         tab.addEventListener('click', function() {
           const category = this.dataset.category;
-          tabs.forEach(t => t.classList.remove('active'));
-          this.classList.add('active');
-
-          sections.forEach(section => {
-            const sectionCategory = section.dataset.category;
-            if (category === 'all' || sectionCategory === category) {
-              section.style.display = '';
-              const query = searchInput.value.toLowerCase().trim();
-              if (query) {
-                const items = section.querySelectorAll('.faq-item');
-                let hasVisible = false;
-                items.forEach(item => {
-                  const question = item.querySelector('.faq-question .q')?.textContent?.toLowerCase() || '';
-                  const answer = item.querySelector('.faq-answer p')?.textContent?.toLowerCase() || '';
-                  const match = question.includes(query) || answer.includes(query);
-                  item.style.display = match ? '' : 'none';
-                  if (match) hasVisible = true;
-                });
-                section.style.display = hasVisible ? '' : 'none';
-              } else {
-                section.querySelectorAll('.faq-item').forEach(item => {
-                  item.style.display = '';
-                });
-              }
-            } else {
-              section.style.display = 'none';
-            }
-          });
-
-          let anyVisible = false;
-          sections.forEach(section => {
-            if (section.style.display !== 'none') anyVisible = true;
-          });
-          if (!anyVisible) {
-            noResults.style.display = 'block';
-          } else {
-            noResults.style.display = 'none';
-          }
+          showCategory(category);
         });
       });
+
+      // Show the saved tab on load
+      showCategory(savedCategory);
     });
   </script>
 
