@@ -2141,7 +2141,95 @@
     line-height: 1.4 !important;
   }
 }
+/* ===== ADD RIGHT GAP TO POEM CARDS ON 380px AND BELOW ===== */
+@media (max-width: 380px) {
+  /* Override the centering and force left alignment with right gap */
+  .recent-poem-card {
+    width: 99% !important;
+    margin-left: 0 !important;
+    margin-right: 1% !important;
+    margin-top: 0 !important;
+    margin-bottom: 15px !important;
+    padding: 20px 18px 20px 22px !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Also fix featured and ranking cards */
+  .featured-poem-card {
+    width: 99% !important;
+    margin-left: 0 !important;
+    margin-right: 1% !important;
+    padding: 20px 18px 20px 22px !important;
+    box-sizing: border-box !important;
+  }
+  
+  #ranking-list .recent-poem-card,
+  #ranking-poems-list li,
+  #ranking-poems-container .recent-poem-card {
+    width: 99% !important;
+    margin-left: 0 !important;
+    margin-right: 1% !important;
+    padding: 20px 18px 20px 22px !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Ensure container doesn't add padding */
+  .recent-poems-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+  }
+}
 
+/* ===== ADD RIGHT GAP TO POEM CARDS ON 380px AND BELOW ===== */
+@media (max-width: 380px) {
+  /* Override the centering and force left alignment with right gap */
+  .recent-poem-card {
+    width: 99% !important;
+    margin-left: 0 !important;
+    margin-right: 1% !important;
+    margin-top: 0 !important;
+    margin-bottom: 15px !important;
+    padding: 20px 18px 20px 28px !important;  /* Increased left padding from 22px to 28px */
+    box-sizing: border-box !important;
+  }
+  
+  /* Also fix featured and ranking cards */
+  .featured-poem-card {
+    width: 99% !important;
+    margin-left: 0 !important;
+    margin-right: 1% !important;
+    padding: 20px 18px 20px 28px !important;  /* Increased left padding */
+    box-sizing: border-box !important;
+  }
+  
+  #ranking-list .recent-poem-card,
+  #ranking-poems-list li,
+  #ranking-poems-container .recent-poem-card {
+    width: 99% !important;
+    margin-left: 0 !important;
+    margin-right: 1% !important;
+    padding: 20px 18px 20px 28px !important;  /* Increased left padding */
+    box-sizing: border-box !important;
+  }
+  
+  /* Add left padding to the poem content itself for more control */
+  .recent-poem-card .poem-content,
+  .recent-poem-card .poem-title,
+  .recent-poem-card .author,
+  .recent-poem-card .poem-category-line,
+  .recent-poem-card .poem-actions,
+  .recent-poem-card .comment-section {
+    padding-left: 8px !important;  /* Extra push for content */
+  }
+  
+  /* Ensure container doesn't add padding */
+  .recent-poems-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+  }
+}
 </style>
 
 </head>
