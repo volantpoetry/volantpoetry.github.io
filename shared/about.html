@@ -11,12 +11,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   
   <!-- SEO Meta Tags -->
-  <meta name="description" content="Volant Foundry is a creative technology platform behind Volant Poetry (poetry community) and Volant Reads (literary marketplace). Discover our ecosystem for writers, readers, and creators.">
-  <meta name="keywords" content="Volant Foundry, Volant Poetry, Volant Reads, literary marketplace, poetry community, creative platform, Rence Blunt">
+  <meta name="description" content="Volant Foundry is a creative technology platform behind Volant Poetry (poetry community), Volant Reads (literary marketplace), and Volant Codes (web development). Discover our ecosystem for writers, readers, and creators.">
+  <meta name="keywords" content="Volant Foundry, Volant Poetry, Volant Reads, Volant Codes, literary marketplace, poetry community, creative platform, web development, Rence Blunt">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="About | Volant Foundry — Volant Poetry & Volant Reads">
-  <meta property="og:description" content="Volant Foundry is a creative technology platform behind Volant Poetry and Volant Reads. Discover our literary ecosystem.">
+  <meta property="og:title" content="About | Volant Foundry — Volant Poetry, Volant Reads & Volant Codes">
+  <meta property="og:description" content="Volant Foundry is a creative technology platform behind Volant Poetry, Volant Reads, and Volant Codes. Discover our literary and tech ecosystem.">
   <meta property="og:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://volantpoetry.vercel.app/shared/about.html">
@@ -24,8 +24,8 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="About | Volant Foundry — Volant Poetry & Volant Reads">
-  <meta name="twitter:description" content="Volant Foundry is a creative technology platform behind Volant Poetry, Volant Reads, and more.">
+  <meta name="twitter:title" content="About | Volant Foundry — Volant Poetry, Volant Reads & Volant Codes">
+  <meta name="twitter:description" content="Volant Foundry is a creative technology platform behind Volant Poetry, Volant Reads, and Volant Codes.">
   <meta name="twitter:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
 
   <!-- ✅ Canonical -->
@@ -506,6 +506,155 @@
       margin-right: 6px;
     }
 
+    /* ===== VOLANT CODES SECTION ===== */
+    .volant-codes-section {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .volant-codes-box {
+      background: linear-gradient(135deg, #f7f5ff, #f0edff);
+      border-radius: 16px;
+      padding: 30px;
+      border: 2px solid #4b2aad;
+      box-shadow: 0 8px 25px rgba(75, 42, 173, 0.12);
+      transition: transform 0.3s ease;
+    }
+
+    .volant-codes-box:hover {
+      transform: translateY(-3px);
+    }
+
+    .volant-codes-box .codes-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .volant-codes-box .codes-header .icon {
+      font-size: 2.5rem;
+      background: #4b2aad;
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .volant-codes-box .codes-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: #4b2aad;
+      margin: 0;
+    }
+
+    .volant-codes-box .codes-header h2 span {
+      color: #B8860B;
+    }
+
+    .volant-codes-box .description {
+      color: #333;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin-bottom: 15px;
+    }
+
+    .volant-codes-box .description strong {
+      color: #4b2aad;
+    }
+
+    .volant-codes-box .codes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 15px 0;
+    }
+
+    .volant-codes-box .codes-col {
+      background: rgba(255,255,255,0.7);
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid #ede7df;
+    }
+
+    .volant-codes-box .codes-col h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: #4b2aad;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .volant-codes-box .codes-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .volant-codes-box .codes-col ul li {
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: #333;
+      border-bottom: 1px solid #f0ece6;
+    }
+
+    .volant-codes-box .codes-col ul li:last-child {
+      border-bottom: none;
+    }
+
+    .volant-codes-box .codes-col ul li i {
+      color: #4b2aad;
+      width: 18px;
+      font-size: 0.75rem;
+    }
+
+    .volant-codes-box .codes-cta {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 2px solid #ede7df;
+    }
+
+    .volant-codes-box .codes-cta .btn {
+      display: inline-block;
+      background: #4b2aad;
+      color: white;
+      padding: 10px 35px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(75, 42, 173, 0.3);
+    }
+
+    .volant-codes-box .codes-cta .btn:hover {
+      background: #3a1f8a;
+      transform: translateY(-3px);
+    }
+
+    .volant-codes-box .codes-cta .btn.gold {
+      background: #B8860B;
+      box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+    }
+
+    .volant-codes-box .codes-cta .btn.gold:hover {
+      background: #9a7200;
+    }
+
+    .volant-codes-box .codes-cta .btn i {
+      margin-right: 8px;
+    }
+
     /* About / Introduction */
     .about-section {
       max-width: 1000px;
@@ -691,6 +840,9 @@
       .mission-container {
         grid-template-columns: 1fr;
       }
+      .volant-codes-box .codes-grid {
+        grid-template-columns: 1fr;
+      }
       
       .parent-brand-banner p {
         text-align: left !important;
@@ -711,6 +863,13 @@
       .about-text h2,
       .platform-container h2 {
         font-size: 1.5rem !important;
+      }
+      .volant-codes-box .codes-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      .volant-codes-box .codes-header h2 {
+        font-size: 1.4rem;
       }
     }
 
@@ -741,7 +900,272 @@
       .platform-container > p {
         font-size: 0.95rem !important;
       }
+      .volant-codes-box .codes-header .icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.8rem;
+      }
+      .volant-codes-box .codes-header h2 {
+        font-size: 1.2rem;
+      }
     }
+
+    /* ===== VOLANT CODES SECTION ===== */
+.volant-codes-section {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.volant-codes-box {
+  background: linear-gradient(135deg, #f7f5ff, #f0edff);
+  border-radius: 16px;
+  padding: 30px;
+  border: 2px solid #4b2aad;
+  box-shadow: 0 8px 25px rgba(75, 42, 173, 0.12);
+  transition: transform 0.3s ease;
+}
+
+.volant-codes-box:hover {
+  transform: translateY(-3px);
+}
+
+.volant-codes-box .codes-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.volant-codes-box .codes-header .icon {
+  font-size: 2.5rem;
+  background: #4b2aad;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.volant-codes-box .codes-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: #4b2aad;
+  margin: 0;
+}
+
+.volant-codes-box .codes-header h2 span {
+  color: #B8860B;
+}
+
+.volant-codes-box .description {
+  color: #333;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin-bottom: 15px;
+}
+
+.volant-codes-box .description strong {
+  color: #4b2aad;
+}
+
+.volant-codes-box .codes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 15px 0;
+}
+
+.volant-codes-box .codes-col {
+  background: rgba(255,255,255,0.7);
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid #ede7df;
+}
+
+.volant-codes-box .codes-col h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: #4b2aad;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volant-codes-box .codes-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.volant-codes-box .codes-col ul li {
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #333;
+  border-bottom: 1px solid #f0ece6;
+}
+
+.volant-codes-box .codes-col ul li:last-child {
+  border-bottom: none;
+}
+
+.volant-codes-box .codes-col ul li i {
+  color: #4b2aad;
+  width: 18px;
+  font-size: 0.75rem;
+}
+
+.volant-codes-box .codes-cta {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 2px solid #ede7df;
+}
+
+.volant-codes-box .codes-cta .btn {
+  display: inline-block;
+  background: #4b2aad;
+  color: white;
+  padding: 10px 35px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(75, 42, 173, 0.3);
+  margin: 0 8px;
+}
+
+.volant-codes-box .codes-cta .btn:hover {
+  background: #3a1f8a;
+  transform: translateY(-3px);
+}
+
+.volant-codes-box .codes-cta .btn.gold {
+  background: #B8860B;
+  box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+}
+
+.volant-codes-box .codes-cta .btn.gold:hover {
+  background: #9a7200;
+}
+
+.volant-codes-box .codes-cta .btn i {
+  margin-right: 8px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .volant-codes-box .codes-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .volant-codes-box .codes-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .volant-codes-box .codes-header h2 {
+    font-size: 1.4rem;
+  }
+  
+  .volant-codes-box .codes-cta .btn {
+    display: block;
+    margin: 8px auto;
+    max-width: 220px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .volant-codes-box {
+    padding: 20px;
+  }
+  
+  .volant-codes-box .codes-header .icon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.8rem;
+  }
+  
+  .volant-codes-box .codes-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .volant-codes-box .codes-col {
+    padding: 14px;
+  }
+  
+  .volant-codes-box .codes-col ul li {
+    font-size: 0.82rem;
+  }
+  
+  .volant-codes-box .codes-cta {
+    margin-top: 15px;
+    padding-top: 12px;
+  }
+  
+  .volant-codes-box .codes-cta .btn {
+    padding: 8px 20px;
+    font-size: 0.85rem;
+    max-width: 180px;
+    margin: 5px auto;
+  }
+}
+
+/* ===== HEADER STYLES ===== */
+header {
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 0;
+  flex-wrap: wrap;
+}
+
+/* ===== LOGO ===== */
+.logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;  /* Reduced from 10px to 6px */
+  text-decoration: none !important;
+  flex-shrink: 0 !important;
+}
+
+.logo img {
+  height: 32px !important;  /* Slightly smaller for better proportion */
+  width: auto !important;
+  display: block;
+}
+
+.logo .logo-text {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  color: #4b2aad !important;
+  white-space: nowrap;
+}
+
+.logo .logo-text .logo-highlight {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+}
   </style>
 </head>
 <body>
@@ -755,11 +1179,12 @@
 
     <div class="nav-links" id="nav-links" style="display: flex; gap: 30px; margin-left: 40px;">
         <span class="close-btn" id="close-btn">✕</span>
-        <a href="../poems.html">Poems</a>
-        <a href="contact.html">Contact Us</a>
+       
+                        <a href="https://volantcodes.vercel.app"><i class="fas fa-code" style="margin-right: 6px;"></i>Volant Codes</a>
         <a href="../index.html">📖 Volant Poetry</a>
         <a href="../store/index.html">📚 Bookstore</a>
         <a href="../volant_foundry/index.html">🏛️ Volant Foundry</a>
+         <a href="contact.html">Contact Us</a>
     </div>
 
     <div class="nav-right">
@@ -772,6 +1197,8 @@
 <div class="quick-nav-links">
   <div class="nav-container">
     <a href="#volant-foundry"><i class="fas fa-home"></i> Volant Foundry</a>
+    <span class="divider">|</span>
+    <a href="#volant-codes"><i class="fas fa-code"></i> Volant Codes</a>
     <span class="divider">|</span>
     <a href="#volant-reads"><i class="fas fa-book-open"></i> Volant Reads</a>
     <span class="divider">|</span>
@@ -788,11 +1215,12 @@
     <p>
       A creative technology platform building digital spaces for writers, readers, and creators. 
       It began with <strong>Volant Poetry</strong>, a platform for sharing and discovering poetry, and has expanded into 
-      <strong>Volant Reads</strong>, a digital literary marketplace where users can discover, purchase, and access books, poetry, and other written content.
+      <strong>Volant Reads</strong>, a digital literary marketplace, and <strong>Volant Codes</strong>, a professional web development service.
     </p>
     <div class="brand-platforms">
       <span><i>📖</i> Volant Poetry</span>
       <span><i>📚</i> Volant Reads</span>
+      <span><i>💻</i> Volant Codes</span>
       <span><i>⚡</i> + more coming</span>
     </div>
   </div>
@@ -803,18 +1231,65 @@
       <div class="mission-block">
         <h3>Our Mission</h3>
         <p>
-          To foster a vibrant literary community that heals, inspires, and gives voice to every poet, writer, and reader through technology and creativity.
+          To foster a vibrant creative community that heals, inspires, and gives voice to every writer, reader, and creator through technology and innovation.
         </p>
       </div>
       <div class="mission-block">
         <h3>Our Vision</h3>
         <p>
-          To create a thriving, collaborative digital ecosystem where literature enriches lives and builds meaningful connections.
+          To create a thriving, collaborative digital ecosystem where creativity and technology enrich lives and build meaningful connections.
         </p>
       </div>
     </div>
   </section>
 </div>
+
+<!-- ============================================================ -->
+<!-- ===== VOLANT CODES ===== -->
+<!-- ============================================================ -->
+<section class="volant-codes-section" id="volant-codes">
+  <div class="volant-codes-box">
+    <div class="codes-header">
+      <div class="icon"><i class="fas fa-code"></i></div>
+      <h2>Volant <span>Codes</span></h2>
+    </div>
+    <p class="description">
+      <strong>Volant Codes</strong> is the professional web development arm of Volant Foundry. 
+      We build custom websites and platforms for businesses and startups using AI-assisted development — 
+      delivering fast, clean, and affordable solutions built to grow with you.
+    </p>
+
+    <div class="codes-grid">
+      <div class="codes-col">
+        <h4><i class="fas fa-laptop-code"></i> What We Build</h4>
+        <ul>
+          <li><i class="fas fa-globe"></i> Business Websites</li>
+          <li><i class="fas fa-shopping-cart"></i> E-Commerce Stores</li>
+          <li><i class="fas fa-newspaper"></i> Content Platforms</li>
+          <li><i class="fas fa-tachometer-alt"></i> Web Applications</li>
+          <li><i class="fas fa-users"></i> Community Platforms</li>
+          <li><i class="fas fa-graduation-cap"></i> Educational Sites</li>
+        </ul>
+      </div>
+      <div class="codes-col">
+        <h4><i class="fas fa-star"></i> Why Volant Codes</h4>
+        <ul>
+          <li><i class="fas fa-bolt"></i> AI-Assisted Development</li>
+          <li><i class="fas fa-clock"></i> Fast 2-4 Week Delivery</li>
+          <li><i class="fas fa-hand-holding-usd"></i> Affordable Pricing</li>
+          <li><i class="fas fa-code"></i> Clean, Custom Code</li>
+          <li><i class="fas fa-mobile-alt"></i> Mobile-Friendly Designs</li>
+          <li><i class="fas fa-rocket"></i> Built to Scale</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="codes-cta">
+      <a href="https://volantcodes.vercel.app" class="btn" target="_blank"><i class="fas fa-external-link-alt"></i> Visit Volant Codes</a>
+      <a href="https://volantcodes.vercel.app/#contact" class="btn gold" target="_blank"><i class="fas fa-paper-plane"></i> Hire Us</a>
+    </div>
+  </div>
+</section>
 
 <!-- ============================================================ -->
 <!-- ===== VOLANT READS ===== -->
@@ -883,7 +1358,7 @@
 </section>
 
 <!-- ============================================================ -->
-<!-- ===== VOLANT POETRY (with Ranking System) ===== -->
+<!-- ===== VOLANT POETRY ===== -->
 <!-- ============================================================ -->
 <section class="platform-section" id="volant-poetry">
   <div class="platform-container">
@@ -991,7 +1466,7 @@
   <div class="dedication-container">
     <h2>Dedication</h2>
     <p>
-      This platform is dedicated to all poets, writers, and readers. 
+      This platform is dedicated to all poets, writers, readers, and creators. 
       To every voice seeking connection, and every soul looking for inspiration.
       May Volant Foundry be your space to create and belong.
     </p>

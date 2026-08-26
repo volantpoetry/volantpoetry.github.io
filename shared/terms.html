@@ -97,6 +97,12 @@
   }
   .sub-platform-badge i { margin-right: 4px; color: #b76e4b; }
 
+  .sub-platform-badge.code {
+    background: #f0edff;
+    color: #4b2aad;
+  }
+  .sub-platform-badge.code i { color: #4b2aad; }
+
   .terms-container {
     max-width: 920px;
     margin: 2rem auto;
@@ -147,6 +153,48 @@
     color: var(--primary-dark);
     margin-bottom: 1rem;
     letter-spacing: -0.2px;
+  }
+
+  .terms-section h2 i {
+    color: var(--accent-gold);
+    margin-right: 8px;
+  }
+
+  .terms-section h2 .platform-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 12px;
+    border-radius: 20px;
+    margin-left: 10px;
+    letter-spacing: 0.3px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .terms-section h2 .platform-tag.foundry {
+    background: #2a1a4a;
+    color: white;
+  }
+
+  .terms-section h2 .platform-tag.poetry {
+    background: #4b2aad;
+    color: white;
+  }
+
+  .terms-section h2 .platform-tag.reads {
+    background: #b76e4b;
+    color: white;
+  }
+
+  .terms-section h2 .platform-tag.codes {
+    background: #B8860B;
+    color: white;
+  }
+
+  .terms-section h2 .platform-tag.general {
+    background: #6f6252;
+    color: white;
   }
 
   .terms-section p {
@@ -225,6 +273,48 @@
     text-decoration: none;
   }
 
+  .platform-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+  }
+
+  .platform-grid .platform-item {
+    background: #faf9fe;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .platform-grid .platform-item i {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+  }
+
+  .platform-grid .platform-item .name {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .platform-grid .platform-item .tag {
+    display: inline-block;
+    font-size: 0.55rem;
+    padding: 1px 8px;
+    border-radius: 12px;
+    color: white;
+    margin-top: 3px;
+  }
+
+  .platform-grid .platform-item .tag.poetry { background: #4b2aad; }
+  .platform-grid .platform-item .tag.reads { background: #b76e4b; }
+  .platform-grid .platform-item .tag.codes { background: #B8860B; }
+
   @media (max-width: 768px) {
     .page-header {
       padding: 1.8rem 1rem 1.2rem;
@@ -240,6 +330,28 @@
     }
     .terms-section li {
       font-size: 0.9rem;
+    }
+    .platform-grid {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .platform-grid .platform-item {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+    .platform-grid .platform-item i {
+      display: inline;
+      font-size: 1.2rem;
+      margin-bottom: 0;
+    }
+    .terms-section h2 .platform-tag {
+      display: inline-block;
+      font-size: 0.6rem;
+      margin-left: 6px;
+      margin-top: 4px;
     }
   }
 
@@ -260,6 +372,11 @@
     .terms-section li {
       font-size: 0.85rem;
       padding-left: 1.25rem;
+    }
+    .terms-section h2 .platform-tag {
+      font-size: 0.5rem;
+      padding: 1px 8px;
+      margin-left: 4px;
     }
   }
 
@@ -283,7 +400,7 @@
 
 <div class="page-header">
   <div style="text-align: center;">
-    <span class="parent-brand-tag"><i></i> Volant Foundry</span>
+    <span class="parent-brand-tag">Volant Foundry</span>
   </div>
   <h1>Terms & Conditions</h1>
   <div class="breadcrumb">
@@ -297,12 +414,14 @@
       <div class="terms-intro">
         Welcome to <strong>Volant Foundry</strong> — the parent platform behind 
         <span class="sub-platform-badge"><i>📖</i> Volant Poetry</span> 
-        <span class="sub-platform-badge"><i>📚</i> Volant Reads</span> 
-        and all our creative platforms. By accessing or using any of our platforms, including submitting poems, publishing books, commenting, or engaging with the community — you agree to be bound by these Terms &amp; Conditions. Please read them carefully.
+        <span class="sub-platform-badge"><i>📚</i> Volant Reads</span>
+        <span class="sub-platform-badge code"><i>💻</i> Volant Codes</span>
+        and all our creative platforms. By accessing or using any of our platforms, including submitting poems, publishing books, requesting web development services, commenting, or engaging with the community — you agree to be bound by these Terms &amp; Conditions. Please read them carefully.
       </div>
 
+      <!-- ===== SECTION 1: GENERAL ===== -->
       <div class="terms-section">
-        <h2>1. Account Registration & Responsibilities</h2>
+        <h2>1. Account Registration & Responsibilities <span class="platform-tag foundry">Volant Foundry</span></h2>
         <p>To participate fully in the Volant Foundry community across any platform, you must create an account with accurate and current information.</p>
         <ul>
           <li>You are responsible for maintaining the confidentiality of your login credentials.</li>
@@ -311,8 +430,50 @@
         </ul>
       </div>
 
+      <!-- ===== SECTION 2 ===== -->
       <div class="terms-section">
-        <h2>2. Poetry Submission Guidelines (Volant Poetry)</h2>
+        <h2>2. Our Platforms <span class="platform-tag foundry">Volant Foundry</span></h2>
+        <p>Volant Foundry operates multiple platforms, each with its own focus:</p>
+        <div class="platform-grid">
+          <div class="platform-item">
+            <i>📖</i>
+            <span class="name">Volant Poetry</span>
+            <span class="tag poetry">Poetry Community</span>
+            <span style="display:block; font-size:0.75rem; color:#888; margin-top:2px;">Share and discover poetry</span>
+          </div>
+          <div class="platform-item">
+            <i>📚</i>
+            <span class="name">Volant Reads</span>
+            <span class="tag reads">Literary Marketplace</span>
+            <span style="display:block; font-size:0.75rem; color:#888; margin-top:2px;">Buy and sell books</span>
+          </div>
+          <div class="platform-item">
+            <i>💻</i>
+            <span class="name">Volant Codes</span>
+            <span class="tag codes">Web Development</span>
+            <span style="display:block; font-size:0.75rem; color:#888; margin-top:2px;">Custom websites & platforms</span>
+          </div>
+        </div>
+        <p style="font-size:0.9rem; color:var(--text-muted); margin-top:6px;">
+          <i class="fas fa-info-circle" style="color:var(--primary);"></i>
+          Each platform has its own specific guidelines. Please review the relevant sections below for the platform you use.
+        </p>
+      </div>
+
+      <!-- ===== SECTION 3: VOLANT POETRY - COMMUNITY CONDUCT ===== -->
+      <div class="terms-section">
+        <h2>3. Community Conduct <span class="platform-tag poetry">Volant Poetry</span></h2>
+        <ul>
+          <li>Treat all members with respect. Harassment, threats, hate speech, or personal attacks will not be tolerated.</li>
+          <li>Provide constructive feedback. Encourage fellow creators rather than diminishing their work.</li>
+          <li>Do not manipulate engagement metrics including likes, comments, or poem rankings through artificial means.</li>
+          <li>Report violations to the Volant Foundry team rather than engaging in conflict.</li>
+        </ul>
+      </div>
+
+      <!-- ===== SECTION 4: VOLANT POETRY - SUBMISSION ===== -->
+      <div class="terms-section">
+        <h2>4. Poetry Submission Guidelines <span class="platform-tag poetry">Volant Poetry</span></h2>
         <p>Volant Poetry celebrates original human creativity. All submitted work must adhere to the following standards:</p>
         <ul>
           <li>All poems must be your <span class="highlight">original work</span>. Plagiarism is strictly forbidden.</li>
@@ -323,28 +484,20 @@
         </ul>
       </div>
 
+      <!-- ===== SECTION 5: GENERAL IP ===== -->
       <div class="terms-section">
-        <h2>3. Community Conduct</h2>
-        <ul>
-          <li>Treat all members with respect. Harassment, threats, hate speech, or personal attacks will not be tolerated.</li>
-          <li>Provide constructive feedback. Encourage fellow creators rather than diminishing their work.</li>
-          <li>Do not manipulate engagement metrics including likes, comments, or poem rankings through artificial means.</li>
-          <li>Report violations to the Volant Foundry team rather than engaging in conflict.</li>
-        </ul>
-      </div>
-
-      <div class="terms-section">
-        <h2>4. Platform Use & Intellectual Property</h2>
+        <h2>5. Platform Use & Intellectual Property <span class="platform-tag general">All Platforms</span></h2>
         <ul>
           <li>The Volant Foundry name, logo, and design are our intellectual property. You may not copy or reproduce them without permission.</li>
           <li>Automated scripts, bots, or any activity that disrupts platform performance is prohibited.</li>
           <li>We reserve the right to remove any content that violates these terms, with or without notice.</li>
-          <li>Volant Foundry is not responsible for the content of user submitted poems, books, or comments.</li>
+          <li>Volant Foundry is not responsible for the content of user submitted poems, books, comments, or project requests.</li>
         </ul>
       </div>
 
+      <!-- ===== SECTION 6: VOLANT READS ===== -->
       <div class="terms-section">
-        <h2>5. Volant Reads — Publishing & Sales</h2>
+        <h2>6. Publishing & Sales Guidelines <span class="platform-tag reads">Volant Reads</span></h2>
         <p><strong>Volant Reads</strong> is a literary marketplace that empowers independent authors by providing a platform to sell their works while retaining ownership and receiving the majority of sales revenue. The following terms apply to all authors and readers using the Volant Reads platform:</p>
         <ul>
           <li><span class="highlight">Authors who publish through Volant Reads receive 90% of net revenue</span> from sales of their works. Net revenue is calculated after payment processing fees, taxes, refunds, and chargebacks.</li>
@@ -360,8 +513,29 @@
         </p>
       </div>
 
+      <!-- ===== SECTION 7: VOLANT CODES ===== -->
       <div class="terms-section">
-        <h2>6. Violations & Enforcement</h2>
+        <h2>7. Web Development Services <span class="platform-tag codes">Volant Codes</span></h2>
+        <p><strong>Volant Codes</strong> is the professional web development arm of Volant Foundry. The following terms apply to all clients requesting development services:</p>
+        <ul>
+          <li><span class="highlight">All projects begin with a consultation</span> to understand your vision, scope, and requirements.</li>
+          <li><span class="accent-text">A 50% deposit is required</span> before work begins on all projects. The remaining 50% is due upon project completion and delivery.</li>
+          <li>Project timelines are estimates and may be adjusted based on scope changes, feedback, or unforeseen technical challenges.</li>
+          <li>You retain <span class="highlight">full ownership</span> of the final delivered code, website, or platform, unless otherwise agreed.</li>
+          <li>Volant Codes may use AI-assisted tools to accelerate development while maintaining code quality and standards.</li>
+          <li><span class="warning">Projects are billed at the agreed rate.</span> Additional features or changes beyond the original scope may incur additional fees.</li>
+          <li>Revisions are included as per the agreed package. Additional revisions beyond the agreed limit may incur extra charges.</li>
+          <li>Volant Codes is not responsible for third-party costs such as hosting, domain registration, or third-party software licenses unless explicitly included in the project scope.</li>
+        </ul>
+        <p style="margin-top: 0.75rem; font-size: 0.95rem; color: var(--text-muted);">
+          <i style="color: var(--accent-gold-dark);">📌</i> 
+          <em>For more details on web development services, pricing, and packages, please visit <a href="https://volantcodes.vercel.app" style="color: var(--primary); text-decoration: underline;" target="_blank">Volant Codes</a>.</em>
+        </p>
+      </div>
+
+      <!-- ===== SECTION 8: ENFORCEMENT ===== -->
+      <div class="terms-section">
+        <h2>8. Violations & Enforcement <span class="platform-tag foundry">Volant Foundry</span></h2>
         <ul>
           <li>First time violations typically result in a warning and content removal.</li>
           <li>Repeated violations, duplicate accounts, or severe offenses including harassment and plagiarism will lead to <span class="warning">immediate account termination</span> without prior notice.</li>
@@ -370,25 +544,27 @@
         </ul>
       </div>
 
+      <!-- ===== SECTION 9 ===== -->
       <div class="terms-section">
-        <h2>7. Limitation of Liability</h2>
+        <h2>9. Limitation of Liability <span class="platform-tag general">All Platforms</span></h2>
         <p>Volant Foundry and its platforms are provided "as is" without warranties of any kind. We are not liable for any damages arising from your use of the platform, including but not limited to data loss, service interruptions, or disputes between users.</p>
       </div>
 
+      <!-- ===== SECTION 10 ===== -->
       <div class="terms-section">
-        <h2>8. Changes to These Terms</h2>
+        <h2>10. Changes to These Terms <span class="platform-tag general">All Platforms</span></h2>
         <p>We may update these Terms periodically to reflect changes in our practices or legal requirements. Continued use of Volant Foundry platforms after changes are posted constitutes acceptance of the revised Terms. Material changes will be announced via email or platform notification.</p>
       </div>
 
       <div class="closing-note">
-        <p>By participating in Volant Foundry and its platforms — Volant Poetry and Volant Reads — you help sustain a respectful, authentic, and inspiring space for poets, authors, and readers alike. Thank you for being part of our creative community.</p>
+        <p>By participating in Volant Foundry and its platforms — Volant Poetry, Volant Reads, and Volant Codes — you help sustain a respectful, authentic, and inspiring space for poets, authors, readers, and creators alike. Thank you for being part of our creative community.</p>
       </div>
     </div>
   </div>
 </div>
 
 <footer class="page-footer">
-  <p>© 2026 Volant Foundry. All rights reserved. | <a href="privacy.html">Privacy Policy</a> | <a href="contact.html">Contact</a></p>
+  <p>© 2026 Volant Foundry. All rights reserved. | <a href="privacy.html">Privacy Policy</a> | <a href="contact.html">Contact Us</a></p>
 </footer>
 
 </body>
