@@ -1,4 +1,4 @@
-# Robots.txt for Volant Foundry
+# Robots.txt for Volant Foundry Ecosystem
 User-agent: *
 Allow: /
 
@@ -27,6 +27,10 @@ Allow: /store/refund.html
 
 # Volant Foundry
 Allow: /volant_foundry/index.html
+
+# External Platforms (Volant Codes, Volant Lyrics)
+# These are separate domains with their own robots.txt
+# Sitemap includes them for better SEO
 
 # Block admin and private
 Disallow: /admin
@@ -64,3 +68,7 @@ Disallow: /images/
 Disallow: /404.html
 
 Sitemap: https://volantpoetry.vercel.app/sitemap.xml
+
+# External sitemaps (for reference)
+# https://volantcodes.vercel.app/sitemap.xml
+# https://volantlyrics.vercel.app/sitemap.xml
