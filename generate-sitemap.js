@@ -1,5 +1,6 @@
 /**
- * 🔥 Auto Sitemap Generator for Volant Foundry
+ * 🔥 Auto Sitemap Generator for Volant Ecosystem
+ * Includes: Volant Poetry, Volant Reads, Volant Foundry, Volant Codes (external)
  * Uses Firebase Admin SDK with Service Account from GitHub Secrets
  * Runs on GitHub Actions
  */
@@ -12,8 +13,9 @@ const domain = 'https://volantpoetry.vercel.app';
 const publicFolder = './';
 const MAX_POEMS = 5000;
 
-// ✅ STATIC PAGES TO INDEX (17 pages)
+// ✅ STATIC PAGES TO INDEX
 const allowedPages = [
+  // Volant Poetry (Main)
   'index.html',
   'poems.html',
   'poem.html',
@@ -22,15 +24,84 @@ const allowedPages = [
   'all-categories.html',
   'poem-of-the-week.html',
   'quote-of-the-week.html',
+  
+  // Shared Pages
   'shared/about.html',
   'shared/contact.html',
   'shared/terms.html',
   'shared/privacy.html',
+  
+  // Volant Reads (Store)
   'store/index.html',
   'store/submit.html',
   'store/faq.html',
   'store/refund.html',
+  
+  // Volant Foundry
   'volant_foundry/index.html'
+];
+
+// ============================================================
+// 🚀 EXTERNAL PLATFORMS (Different Repos)
+// ============================================================
+const externalUrls = [
+  // Volant Codes (Separate Repo)
+  {
+    loc: 'https://volantcodes.vercel.app/',
+    lastmod: new Date().toISOString(),
+    changefreq: 'weekly',
+    priority: '0.9'
+  },
+  {
+    loc: 'https://volantcodes.vercel.app/index.html',
+    lastmod: new Date().toISOString(),
+    changefreq: 'weekly',
+    priority: '0.8'
+  },
+  {
+    loc: 'https://volantcodes.vercel.app/#services',
+    lastmod: new Date().toISOString(),
+    changefreq: 'weekly',
+    priority: '0.7'
+  },
+  {
+    loc: 'https://volantcodes.vercel.app/#portfolio',
+    lastmod: new Date().toISOString(),
+    changefreq: 'weekly',
+    priority: '0.7'
+  },
+  {
+    loc: 'https://volantcodes.vercel.app/#pricing',
+    lastmod: new Date().toISOString(),
+    changefreq: 'monthly',
+    priority: '0.6'
+  },
+  {
+    loc: 'https://volantcodes.vercel.app/#testimonials',
+    lastmod: new Date().toISOString(),
+    changefreq: 'monthly',
+    priority: '0.5'
+  },
+  {
+    loc: 'https://volantcodes.vercel.app/#faq',
+    lastmod: new Date().toISOString(),
+    changefreq: 'monthly',
+    priority: '0.5'
+  },
+  
+  // Volant Lyrics (Future - coming soon)
+  {
+    loc: 'https://volantlyrics.vercel.app/',
+    lastmod: new Date().toISOString(),
+    changefreq: 'weekly',
+    priority: '0.8'
+  },
+  {
+    loc: 'https://volantlyrics.vercel.app/index.html',
+    lastmod: new Date().toISOString(),
+    changefreq: 'weekly',
+    priority: '0.7'
+  },
 ];
 
 // ---- XML ESCAPE FUNCTION ----
@@ -243,7 +314,7 @@ ${urls.map(u => `
 
 // ---- Generate robots.txt ----
 function generateRobotsTxt() {
-  const robots = `# Robots.txt for Volant Foundry
+  const robots = `# Robots.txt for Volant Foundry Ecosystem
 User-agent: *
 Allow: /
 
@@ -272,6 +343,10 @@ Allow: /store/refund.html
 
 # Volant Foundry
 Allow: /volant_foundry/index.html
+
+# External Platforms (Volant Codes, Volant Lyrics)
+# These are separate domains with their own robots.txt
+# Sitemap includes them for better SEO
 
 # Block admin and private
 Disallow: /admin
@@ -308,7 +383,11 @@ Disallow: /images/
 # Block 404
 Disallow: /404.html
 
-Sitemap: ${domain}/sitemap.xml`;
+Sitemap: ${domain}/sitemap.xml
+
+# External sitemaps (for reference)
+# https://volantcodes.vercel.app/sitemap.xml
+# https://volantlyrics.vercel.app/sitemap.xml`;
 
   fs.writeFileSync(path.join(publicFolder, 'robots.txt'), robots, 'utf8');
   console.log('✅ robots.txt generated');
@@ -317,9 +396,10 @@ Sitemap: ${domain}/sitemap.xml`;
 // ---- MAIN ----
 async function generateSitemap() {
   try {
-    console.log("🧠 Generating SEO sitemap...");
+    console.log("🧠 Generating SEO sitemap for Volant Ecosystem...");
     console.log(`📁 Domain: ${domain}`);
     console.log(`📄 Targeting ${allowedPages.length} static pages...`);
+    console.log(`🚀 Including ${externalUrls.length} external platform URLs...`);
     
     // 1. Static Pages
     const staticResults = [];
@@ -388,12 +468,13 @@ async function generateSitemap() {
     const poemResults = generatePoemUrls(poems);
     console.log(`✅ ${poemResults.length} poem URLs generated (priority 0.8)`);
     
-    // 3. Combine
-    const allUrls = [...staticResults, ...poemResults];
+    // 3. Combine all URLs
+    const allUrls = [...staticResults, ...poemResults, ...externalUrls];
     
     console.log(`\n📊 Total: ${allUrls.length} URLs`);
     console.log(`   Static: ${staticResults.length}`);
     console.log(`   Dynamic Poems: ${poemResults.length}`);
+    console.log(`   External Platforms: ${externalUrls.length}`);
     
     if (poemResults.length === 0) {
       console.log("\n⚠️ WARNING: No poem URLs generated!");
@@ -428,6 +509,7 @@ async function generateSitemap() {
     console.log(`   Total URLs: ${allUrls.length}`);
     console.log(`   Static: ${staticResults.length}`);
     console.log(`   Dynamic Poems: ${poemResults.length}`);
+    console.log(`   External Platforms: ${externalUrls.length}`);
     console.log(`   All pages: weekly`);
 
   } catch (err) {
