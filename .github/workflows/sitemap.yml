@@ -2,8 +2,8 @@ name: Generate Sitemap
 
 on:
   schedule:
-    - cron: '0 2 * * *'
-  workflow_dispatch:
+    - cron: '0 2 * * *'  # Runs daily at 2:00 AM UTC
+  workflow_dispatch:      # Allows manual trigger from GitHub UI
   push:
     branches:
       - main
@@ -11,7 +11,7 @@ on:
     paths:
       - '**/*.html'
       - '**/*.js'
-      - 'generate-sitemap.js'
+      - '.github/scripts/generate-sitemap.js'
       - 'package.json'
 
 jobs:
@@ -32,27 +32,96 @@ jobs:
         
       - name: 🗺️ Generate sitemap
         env:
+          # Firebase service account (JSON string or base64 encoded)
           FIREBASE_KEY: ${{ secrets.FIREBASE_KEY }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
         run: npm run generate-sitemap
         
       - name: ✅ Verify sitemap
         run: |
+          echo "🔍 Verifying generated files..."
+          
+          # Check if sitemap.xml exists
           if [ ! -f sitemap.xml ]; then
             echo "❌ sitemap.xml not generated!"
             exit 1
           fi
+          
+          # Check if robots.txt exists
+          if [ ! -f robots.txt ]; then
+            echo "⚠️ robots.txt not generated"
+          else
+            echo "✅ robots.txt generated"
+          fi
+          
+          # Count URLs
           URL_COUNT=$(grep -c "<loc>" sitemap.xml || echo "0")
-          echo "✅ sitemap.xml generated successfully"
-          echo "📊 Total URLs in sitemap: $URL_COUNT"
           echo ""
-          echo "📄 First 15 lines:"
+          echo "📊 Sitemap Statistics:"
+          echo "   Total URLs: $URL_COUNT"
+          
+          # Check for external platforms
+          EXTERNAL_COUNT=$(grep -c "volantcodes.vercel.app" sitemap.xml || echo "0")
+          if [ "$EXTERNAL_COUNT" -gt 0 ]; then
+            echo "   Volant Codes URLs: $EXTERNAL_COUNT ✅"
+          fi
+          
+          EXTERNAL_COUNT=$(grep -c "volantlyrics.vercel.app" sitemap.xml || echo "0")
+          if [ "$EXTERNAL_COUNT" -gt 0 ]; then
+            echo "   Volant Lyrics URLs: $EXTERNAL_COUNT ✅"
+          fi
+          
+          echo ""
+          echo "📄 First 15 lines of sitemap.xml:"
           head -15 sitemap.xml
+          
+          # Validate XML
+          echo ""
+          echo "🔍 Validating XML..."
+          if command -v xmllint &> /dev/null; then
+            if xmllint --noout sitemap.xml 2>/dev/null; then
+              echo "✅ sitemap.xml is valid XML"
+            else
+              echo "⚠️ sitemap.xml may have XML issues"
+            fi
+          fi
           
       - name: 📤 Commit and push if changed
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          
+          # Check if there are changes to commit
           git add sitemap.xml robots.txt
-          git diff --staged --quiet || git commit -m "🤖 Auto-update sitemap and robots.txt [skip ci]"
-          git push
+          
+          if git diff --staged --quiet; then
+            echo "📝 No changes to commit"
+          else
+            git commit -m "🤖 Auto-update sitemap and robots.txt [skip ci]"
+            git push
+            echo "✅ Changes pushed successfully"
+          fi
+          
+      - name: 📊 Sitemap Summary
+        run: |
+          echo ""
+          echo "═══════════════════════════════════════════════"
+          echo "✅ Sitemap Generation Complete!"
+          echo "═══════════════════════════════════════════════"
+          echo ""
+          echo "📁 Files generated:"
+          echo "   - sitemap.xml"
+          echo "   - robots.txt"
+          echo ""
+          echo "🌐 Sitemap URL:"
+          echo "   https://volantpoetry.vercel.app/sitemap.xml"
+          echo ""
+          echo "📋 robots.txt URL:"
+          echo "   https://volantpoetry.vercel.app/robots.txt"
+          echo ""
+          echo "🚀 External platforms indexed:"
+          echo "   - Volant Codes: https://volantcodes.vercel.app"
+          echo "   - Volant Lyrics: https://volantlyrics.vercel.app"
+          echo ""
+          echo "═══════════════════════════════════════════════"
