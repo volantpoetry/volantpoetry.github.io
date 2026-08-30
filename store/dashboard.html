@@ -2995,8 +2995,7 @@ header .logo-header {
       "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
     }
   }
-</script>
-<script type="module">
+</script><script type="module">
   import { initializeApp } from "firebase/app";
   import { 
     getFirestore, 
@@ -3009,7 +3008,8 @@ header .logo-header {
     updateDoc,
     deleteDoc,
     serverTimestamp,
-    addDoc
+    addDoc,
+    increment
   } from "firebase/firestore";
   import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
@@ -3818,6 +3818,8 @@ header .logo-header {
   // ===== EARNINGS FUNCTIONS =====
   async function loadEarnings(userId) {
     try {
+      console.log('🔍 Loading earnings for user:', userId);
+      
       const userDoc = await getDoc(doc(db, "users", userId));
       const userData = userDoc.data();
       const commissionRate = userData?.commissionRate || 10;
@@ -3827,6 +3829,8 @@ header .logo-header {
         where("authorId", "==", userId)
       );
       const snapshot = await getDocs(q);
+      
+      console.log('📊 Found purchases:', snapshot.size);
       
       let totalSales = 0;
       let totalEarnings = 0;
@@ -3956,7 +3960,7 @@ header .logo-header {
   }
 
   function formatCurrency(amount) {
-    return 'GHS ' + Number(amount).toFixed(0);
+    return 'GHS ' + Number(amount).toFixed(2);
   }
 
   // ============================================================
@@ -4226,10 +4230,16 @@ header .logo-header {
       body.appendChild(statusBadge);
     }
 
-    if (showSales && book.downloads > 0) {
+    if (showSales && (book.sales > 0 || book.downloads > 0)) {
       const salesInfo = document.createElement('span');
       salesInfo.className = 'revenue-badge';
-      salesInfo.innerHTML = `<i class="fas fa-shopping-cart"></i> ${book.downloads} sales · ${formatCurrency((book.downloads || 0) * (book.price || 0))}`;
+      const sales = book.sales || 0;
+      const downloads = book.downloads || 0;
+      salesInfo.innerHTML = `
+        <i class="fas fa-shopping-cart"></i> ${sales} sales · 
+        <i class="fas fa-download"></i> ${downloads} downloads · 
+        💰 ${formatCurrency(sales * (book.price || 0))}
+      `;
       body.appendChild(salesInfo);
     }
 
@@ -4624,6 +4634,7 @@ header .logo-header {
           price: book.price || 0,
           currency: book.currency || 'GHS',
           status: book.status || 'draft',
+          sales: book.sales || 0,
           downloads: book.downloads || 0,
           views: book.views || 0,
           rating: book.rating || 0,
@@ -4836,7 +4847,8 @@ header .logo-header {
           price: data.pricing?.amount || 0,
           currency: data.pricing?.currency || 'GHS',
           status: data.status || 'draft',
-          downloads: data.downloads || 0,
+          sales: data.sales || 0,           // 👈 Sales = purchases
+          downloads: data.downloads || 0,    // 👈 Downloads = actual downloads
           downloadLimit: data.downloadLimit || data.downloads || 5,
           views: data.views || 0,
           rating: data.rating || 0,
@@ -4871,14 +4883,16 @@ header .logo-header {
   function renderStats(books) {
     const published = books.filter(b => b.status === 'approved');
     const totalBooks = books.length;
-    const totalSales = published.reduce((sum, b) => sum + (b.downloads || 0), 0);
-    const totalRevenue = published.reduce((sum, b) => sum + ((b.downloads || 0) * (b.price || 0)), 0);
+    const totalSales = published.reduce((sum, b) => sum + (b.sales || 0), 0);
+    const totalDownloads = published.reduce((sum, b) => sum + (b.downloads || 0), 0);
+    const totalRevenue = published.reduce((sum, b) => sum + ((b.sales || 0) * (b.price || 0)), 0);
     const avgPrice = published.length > 0 ? (published.reduce((sum, b) => sum + (b.price || 0), 0) / published.length).toFixed(0) : 0;
     const totalViews = books.reduce((sum, b) => sum + (b.views || 0), 0);
 
     statsContainer.innerHTML = `
       <div class="stat"><h4>Total Books</h4><div class="value">${totalBooks}</div></div>
       <div class="stat"><h4>Total Sales</h4><div class="value">${totalSales}</div></div>
+      <div class="stat"><h4>Total Downloads</h4><div class="value">${totalDownloads}</div></div>
       <div class="stat"><h4>Total Revenue</h4><div class="value">${formatCurrency(totalRevenue)}</div></div>
       <div class="stat"><h4>Avg. Price</h4><div class="value">${formatCurrency(avgPrice)}</div></div>
       <div class="stat"><h4>Total Views</h4><div class="value">${totalViews}</div></div>
@@ -4892,7 +4906,9 @@ header .logo-header {
     }
     myBooksTable.innerHTML = books.slice(0, 5).map(b => {
       const limitDisplay = b.downloadLimit === 'unlimited' ? '♾️ Unlimited' : (b.downloadLimit || 5);
-      const revenue = (b.downloads || 0) * (b.price || 0);
+      const sales = b.sales || 0;
+      const downloads = b.downloads || 0;
+      const revenue = sales * (b.price || 0);
       const statusLabels = {
         'pending': '⏳ Pending',
         'approved': '✅ Published',
@@ -4903,7 +4919,14 @@ header .logo-header {
       const statusClass = b.status || 'draft';
       return `
         <div class="row" style="cursor:pointer;" data-id="${b.id}">
-          <span>${b.title || 'Untitled'} <span style="font-size:0.7rem;color:#888;margin-left:8px;">📥 Limit: ${limitDisplay} · ${formatCurrency(revenue)}</span></span>
+          <span>${b.title || 'Untitled'} 
+            <span style="font-size:0.7rem;color:#888;margin-left:8px;">
+              📥 Limit: ${limitDisplay} · 
+              🛒 ${sales} sales · 
+              📄 ${downloads} downloads · 
+              💰 ${formatCurrency(revenue)}
+            </span>
+          </span>
           <span class="badge ${statusClass}">${statusLabel}</span>
         </div>
       `;
@@ -4917,7 +4940,7 @@ header .logo-header {
   }
 
   function renderRecentSales(books) {
-    const sold = books.filter(b => b.downloads > 0).sort((a,b) => b.downloads - a.downloads);
+    const sold = books.filter(b => (b.sales || 0) > 0).sort((a,b) => (b.sales || 0) - (a.sales || 0));
     if (sold.length === 0) {
       recentSales.innerHTML = `<p style="color:#888; padding:10px 0;">No sales yet.</p>`;
       return;
@@ -4925,7 +4948,11 @@ header .logo-header {
     recentSales.innerHTML = sold.slice(0, 4).map(b => `
       <div class="sale-item" data-id="${b.id}">
         <i class="fas fa-shopping-cart"></i> ${b.title || 'Untitled'} 
-        <span style="font-size:0.7rem;color:#888;margin-left:auto;">${b.downloads} sales · ${formatCurrency((b.downloads || 0) * (b.price || 0))}</span>
+        <span style="font-size:0.7rem;color:#888;margin-left:auto;">
+          🛒 ${b.sales || 0} sales · 
+          📄 ${b.downloads || 0} downloads · 
+          💰 ${formatCurrency((b.sales || 0) * (b.price || 0))}
+        </span>
       </div>
     `).join('');
     recentSales.querySelectorAll('.sale-item').forEach(el => {
@@ -4950,15 +4977,16 @@ header .logo-header {
 
   function renderSalesPage(books) {
     const published = books.filter(b => b.status === 'approved');
-    const totalSales = published.reduce((sum, b) => sum + (b.downloads || 0), 0);
-    const totalRevenue = published.reduce((sum, b) => sum + ((b.downloads || 0) * (b.price || 0)), 0);
+    const totalSales = published.reduce((sum, b) => sum + (b.sales || 0), 0);
+    const totalDownloads = published.reduce((sum, b) => sum + (b.downloads || 0), 0);
+    const totalRevenue = published.reduce((sum, b) => sum + ((b.sales || 0) * (b.price || 0)), 0);
     const totalViews = published.reduce((sum, b) => sum + (b.views || 0), 0);
     const conversion = totalViews > 0 ? ((totalSales / totalViews) * 100).toFixed(1) : 0;
     
     document.getElementById('salesStats').innerHTML = `
       <div class="stat"><h4>Total Sales</h4><div class="value">${totalSales}</div></div>
+      <div class="stat"><h4>Total Downloads</h4><div class="value">${totalDownloads}</div></div>
       <div class="stat"><h4>Total Revenue</h4><div class="value">${formatCurrency(totalRevenue)}</div></div>
-      <div class="stat"><h4>Total Views</h4><div class="value">${totalViews}</div></div>
       <div class="stat"><h4>Conversion Rate</h4><div class="value">${conversion}%</div></div>
     `;
 
@@ -4969,10 +4997,19 @@ header .logo-header {
     }
     history.innerHTML = published.map(b => {
       const limitDisplay = b.downloadLimit === 'unlimited' ? '♾️ Unlimited' : (b.downloadLimit || 5);
+      const sales = b.sales || 0;
+      const downloads = b.downloads || 0;
       return `
         <div class="row">
-          <span><strong>${b.title || 'Untitled'}</strong> <span style="font-size:0.7rem;color:#888;">(📥 Limit: ${limitDisplay} · ${b.downloads || 0} downloads)</span></span>
-          <span>${formatCurrency((b.downloads || 0) * (b.price || 0))}</span>
+          <span>
+            <strong>${b.title || 'Untitled'}</strong> 
+            <span style="font-size:0.7rem;color:#888;">
+              (📥 Limit: ${limitDisplay} · 
+              🛒 ${sales} sales · 
+              📄 ${downloads} downloads)
+            </span>
+          </span>
+          <span>${formatCurrency(sales * (b.price || 0))}</span>
         </div>
       `;
     }).join('');
@@ -4981,8 +5018,9 @@ header .logo-header {
   function renderAnalyticsPage(books) {
     const published = books.filter(b => b.status === 'approved');
     const totalViews = books.reduce((sum, b) => sum + (b.views || 0), 0);
-    const totalSales = published.reduce((sum, b) => sum + (b.downloads || 0), 0);
-    const totalRevenue = published.reduce((sum, b) => sum + ((b.downloads || 0) * (b.price || 0)), 0);
+    const totalSales = published.reduce((sum, b) => sum + (b.sales || 0), 0);
+    const totalDownloads = published.reduce((sum, b) => sum + (b.downloads || 0), 0);
+    const totalRevenue = published.reduce((sum, b) => sum + ((b.sales || 0) * (b.price || 0)), 0);
     const avgPrice = published.length > 0 ? (published.reduce((sum, b) => sum + (b.price || 0), 0) / published.length).toFixed(0) : 0;
     const conversion = totalViews > 0 ? ((totalSales / totalViews) * 100).toFixed(1) : 0;
 
@@ -4998,6 +5036,11 @@ header .logo-header {
         <p style="font-size:1.8rem;font-weight:700;">${totalSales}</p>
       </div>
       <div class="page-card" style="background:white;padding:24px;border-radius:20px;border:1px solid #eee;">
+        <div style="font-size:2rem;color:#6a34ff;margin-bottom:12px;"><i class="fas fa-download"></i></div>
+        <h3>Total Downloads</h3>
+        <p style="font-size:1.8rem;font-weight:700;">${totalDownloads}</p>
+      </div>
+      <div class="page-card" style="background:white;padding:24px;border-radius:20px;border:1px solid #eee;">
         <div style="font-size:2rem;color:#6a34ff;margin-bottom:12px;"><i class="fas fa-coins"></i></div>
         <h3>Total Revenue</h3>
         <p style="font-size:1.8rem;font-weight:700;">${formatCurrency(totalRevenue)}</p>
@@ -5010,7 +5053,7 @@ header .logo-header {
     `;
 
     const chart = document.getElementById('analyticsChart');
-    const salesData = published.map(b => b.downloads || 0);
+    const salesData = published.map(b => b.sales || 0);
     const maxSales = Math.max(...salesData, 1);
     
     chart.innerHTML = '';
@@ -5548,6 +5591,13 @@ document.querySelectorAll('.settings-nav-item').forEach(item => {
       targetContent.classList.add('active');
     }
   });
+});
+
+// ===== STORAGE EVENT LISTENER FOR REAL-TIME EARNINGS UPDATES =====
+window.addEventListener('storage', function(e) {
+  if (e.key === 'volant_purchase_completed' && currentUser) {
+    loadEarnings(currentUser.uid);
+  }
 });
 </script>
 <script src="../shared/return-url-handler.js"></script>

@@ -2538,6 +2538,17 @@
             font-size: 0.9rem;
             margin-top: 0.2rem;
         }
+        /* ===== CURRENCY CONVERSION IN CART - HIDE DISCLAIMER TEXTS ===== */
+        .cart-total .total-conversion-info,
+        .cart-total .currency-disclaimer {
+            display: none !important;
+        }
+        .cart-item .item-info .item-price .conversion-info {
+            display: inline !important;
+            font-size: 0.7rem;
+            color: var(--text-light, #8a7b6a);
+            font-weight: 400;
+        }
         .cart-item .item-actions {
             display: flex;
             flex-direction: column;
@@ -4092,12 +4103,11 @@ header .logo-header {
     }
 </script>
 
-
 <script type="module">
 import { initializeApp } from "firebase/app";
 import { 
     getFirestore, collection, query, where, getDocs, 
-    doc, getDoc, updateDoc, writeBatch, setDoc, serverTimestamp
+    doc, getDoc, updateDoc, writeBatch, setDoc, serverTimestamp, increment
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 
@@ -4169,7 +4179,121 @@ function getCartCount() {
 
 let cartCount = getCartCount();
 
-// ===== PAYMENT FUNCTIONS - UPDATED WITH SUBACCOUNT SUPPORT =====
+// ===== CURRENCY CONVERSION FUNCTION =====
+async function convertToGHS(amount, fromCurrency) {
+    if (!amount || amount <= 0) return 0;
+    if (!fromCurrency || fromCurrency.toUpperCase() === 'GHS') return amount;
+    
+    try {
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const data = await response.json();
+        if (data && data.rates) {
+            const rates = data.rates;
+            const currencyCode = fromCurrency.toUpperCase();
+            if (rates[currencyCode]) {
+                let usdAmount = currencyCode !== 'USD' ? amount / rates[currencyCode] : amount;
+                const ghsAmount = usdAmount * rates['GHS'];
+                return Math.round(ghsAmount * 100) / 100;
+            }
+        }
+        // Fallback rates
+        const fallbackRates = { GHS: 15.5, USD: 1, EUR: 0.92, GBP: 0.79, NGN: 1550, KES: 130, ZAR: 18.5 };
+        const currencyCode = fromCurrency.toUpperCase();
+        if (fallbackRates[currencyCode]) {
+            let usdAmount = currencyCode !== 'USD' ? amount / fallbackRates[currencyCode] : amount;
+            const ghsAmount = usdAmount * fallbackRates['GHS'];
+            return Math.round(ghsAmount * 100) / 100;
+        }
+        return amount;
+    } catch (error) {
+        console.error('Error converting currency:', error);
+        return amount;
+    }
+}
+
+// ===== LOAD EARNINGS FUNCTION =====
+async function loadEarnings(userId) {
+    try {
+        console.log('🔍 Loading earnings for user:', userId);
+        
+        const userDoc = await getDoc(doc(db, "users", userId));
+        const userData = userDoc.data();
+        const commissionRate = userData?.commissionRate || 10;
+        
+        const q = query(
+            collection(db, "purchases"),
+            where("authorId", "==", userId)
+        );
+        const snapshot = await getDocs(q);
+        
+        console.log('📊 Found purchases:', snapshot.size);
+        
+        let totalSales = 0;
+        let totalEarnings = 0;
+        let totalCommission = 0;
+        let pendingPayout = 0;
+        const transactions = [];
+        
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            const amount = data.amount || 0;
+            const fee = data.fee || 0;
+            const netAmount = amount - fee;
+            const commission = netAmount * (commissionRate / 100);
+            const earnings = netAmount - commission;
+            
+            totalSales++;
+            totalEarnings += earnings;
+            totalCommission += commission;
+            pendingPayout += earnings;
+            
+            transactions.push({
+                bookTitle: data.bookTitle || 'Unknown Book',
+                amount: amount,
+                fee: fee,
+                commission: commission,
+                earnings: earnings,
+                date: data.purchasedAt?.toDate?.() || new Date(data.purchasedAt) || new Date(),
+                status: data.status || 'completed'
+            });
+        });
+        
+        const totalSalesEl = document.getElementById('totalSales');
+        const totalEarningsEl = document.getElementById('totalEarnings');
+        const totalCommissionEl = document.getElementById('totalCommission');
+        const pendingPayoutEl = document.getElementById('pendingPayout');
+        const transactionHistoryEl = document.getElementById('transactionHistory');
+        
+        if (totalSalesEl) totalSalesEl.textContent = totalSales;
+        if (totalEarningsEl) totalEarningsEl.textContent = `GHS ${totalEarnings.toFixed(2)}`;
+        if (totalCommissionEl) totalCommissionEl.textContent = `GHS ${totalCommission.toFixed(2)}`;
+        if (pendingPayoutEl) pendingPayoutEl.textContent = `GHS ${pendingPayout.toFixed(2)}`;
+        
+        if (transactionHistoryEl) {
+            if (transactions.length === 0) {
+                transactionHistoryEl.innerHTML = `<p style="color: #888; padding: 10px 0;">No transactions yet. Sales will appear here when readers purchase your books.</p>`;
+            } else {
+                transactionHistoryEl.innerHTML = transactions.sort((a, b) => b.date - a.date).slice(0, 10).map(t => `
+                    <div class="row">
+                        <span>
+                            <strong>${t.bookTitle}</strong>
+                            <span style="font-size:0.75rem;color:#888;margin-left:8px;">${t.date.toLocaleDateString()}</span>
+                        </span>
+                        <span style="color:#15723d;">+GHS ${t.earnings.toFixed(2)}</span>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        return { totalSales, totalEarnings, totalCommission, pendingPayout, transactions };
+        
+    } catch (err) {
+        console.warn('Error loading earnings:', err);
+        return null;
+    }
+}
+
+// ===== PAYMENT FUNCTIONS =====
 async function checkPurchaseStatus(userId, bookId) {
     try {
         const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
@@ -4185,9 +4309,15 @@ async function checkPurchaseStatus(userId, bookId) {
 
 async function recordPurchase(userId, bookId, transactionRef, paymentData = {}) {
     try {
-        const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
+        console.log('📝 Recording purchase:', {
+            userId,
+            bookId,
+            transactionRef,
+            authorId: paymentData.authorId,
+            bookTitle: paymentData.bookTitle
+        });
         
-        // Check if purchase already exists
+        const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
         const purchaseSnap = await getDoc(purchaseRef);
         if (purchaseSnap.exists()) {
             await updateDoc(purchaseRef, {
@@ -4224,16 +4354,14 @@ async function recordPurchase(userId, bookId, transactionRef, paymentData = {}) 
                 bookTitle: paymentData.bookTitle || null
             });
         }
+        console.log('✅ Purchase recorded successfully');
         return true;
     } catch (err) {
-        console.error('Error recording purchase:', err);
+        console.error('❌ Error recording purchase:', err);
         return false;
     }
 }
 
-// ================================================================
-// ===== UPDATED: CART PAYMENT WITH PROPER SUBACCOUNT SUPPORT =====
-// ================================================================
 async function initiateCartPayment(amount, email, items) {
     if (isProcessingPayment) return;
     
@@ -4247,6 +4375,37 @@ async function initiateCartPayment(amount, email, items) {
         return;
     }
 
+    // ===== CONVERT ALL ITEMS TO GHS =====
+    let totalGHS = 0;
+    const convertedItems = [];
+    
+    for (const item of items) {
+        const originalCurrency = item.currency || 'GHS';
+        let itemAmount = item.price || 0;
+        
+        if (originalCurrency.toUpperCase() !== 'GHS') {
+            try {
+                const convertedAmount = await convertToGHS(itemAmount, originalCurrency);
+                itemAmount = convertedAmount;
+            } catch (error) {
+                console.warn(`Currency conversion failed for ${item.title}:`, error);
+            }
+        }
+        
+        totalGHS += itemAmount;
+        convertedItems.push({
+            ...item,
+            priceInGHS: itemAmount,
+            originalCurrency: originalCurrency,
+            originalAmount: item.price || 0
+        });
+    }
+
+    if (totalGHS <= 0) {
+        showToast('⚠️ Invalid total amount. Please try again.', 'error');
+        return;
+    }
+
     // ===== GET AUTHOR SUBACCOUNTS FOR EACH ITEM =====
     const authorGroups = {};
     let hasAllSubaccounts = true;
@@ -4257,16 +4416,14 @@ async function initiateCartPayment(amount, email, items) {
     checkoutBtn.disabled = true;
     checkoutBtn.textContent = 'Verifying authors...';
 
-    for (const item of items) {
+    for (const item of convertedItems) {
         try {
-            // Get book data to find author
             const bookRef = doc(db, "books", item.id);
             const bookSnap = await getDoc(bookRef);
             
             if (!bookSnap.exists()) {
                 showToast(`⚠️ Book "${item.title}" not found.`, 'error');
                 isProcessingPayment = false;
-                isCartCheckout = false;
                 cartPaymentProcessing.classList.remove('active');
                 checkoutBtn.disabled = false;
                 checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
@@ -4282,7 +4439,6 @@ async function initiateCartPayment(amount, email, items) {
                 continue;
             }
             
-            // Get author's subaccount
             const authorDoc = await getDoc(doc(db, "users", authorId));
             if (!authorDoc.exists()) {
                 missingAuthors.push(item.title);
@@ -4307,14 +4463,13 @@ async function initiateCartPayment(amount, email, items) {
                     authorName: bookData.authorName || 'Unknown Author'
                 };
             }
-            authorGroups[authorId].total += (item.price || 0);
+            authorGroups[authorId].total += (item.priceInGHS || 0);
             authorGroups[authorId].items.push(item.title);
             
         } catch (error) {
             console.error('Error fetching author subaccount:', error);
             showToast('⚠️ Error processing payment. Please try again.', 'error');
             isProcessingPayment = false;
-            isCartCheckout = false;
             cartPaymentProcessing.classList.remove('active');
             checkoutBtn.disabled = false;
             checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
@@ -4322,11 +4477,9 @@ async function initiateCartPayment(amount, email, items) {
         }
     }
 
-    // Check if any authors are missing subaccounts
     if (!hasAllSubaccounts && missingAuthors.length > 0) {
         showToast(`⚠️ Some authors haven't set up payout accounts: ${missingAuthors.join(', ')}. Please contact support.`, 'error');
         isProcessingPayment = false;
-        isCartCheckout = false;
         cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
@@ -4335,13 +4488,11 @@ async function initiateCartPayment(amount, email, items) {
 
     // ===== CREATE SPLIT CONFIGURATION =====
     let splitConfig = null;
-    const totalAmount = items.reduce((sum, item) => sum + (item.price || 0), 0);
     
     if (Object.keys(authorGroups).length > 1) {
-        // Multiple authors - use Paystack Split
         const shares = [];
         for (const [authorId, data] of Object.entries(authorGroups)) {
-            const sharePercentage = (data.total / totalAmount) * 100;
+            const sharePercentage = (data.total / totalGHS) * 100;
             shares.push({
                 subaccount: data.subaccount,
                 share: Math.round(sharePercentage * 100) / 100
@@ -4350,16 +4501,15 @@ async function initiateCartPayment(amount, email, items) {
         
         splitConfig = {
             type: 'percentage',
-            bearer: 'account',  // 👈 Fees deducted BEFORE split (platform gets 10%)
+            bearer: 'account',
             subaccounts: shares
         };
         console.log('📊 Multi-author split:', shares);
     } else {
-        // Single author - use subaccount directly
         const authorId = Object.keys(authorGroups)[0];
         splitConfig = {
             subaccount: authorGroups[authorId].subaccount,
-            bearer: 'account'  // 👈 Fees deducted BEFORE split (platform gets 10%)
+            bearer: 'account'
         };
         console.log('📊 Single author subaccount:', authorGroups[authorId].subaccount);
     }
@@ -4367,11 +4517,10 @@ async function initiateCartPayment(amount, email, items) {
     const bookTitles = items.map(item => item.title).join(', ');
 
     try {
-        // Build the payment config
         const paymentConfig = {
             key: PAYSTACK_PUBLIC_KEY,
             email: email,
-            amount: totalAmount * 100,
+            amount: Math.round(totalGHS * 100),
             currency: 'GHS',
             bearer: 'account',
             metadata: {
@@ -4387,7 +4536,6 @@ async function initiateCartPayment(amount, email, items) {
             },
             onClose: function() {
                 isProcessingPayment = false;
-                isCartCheckout = false;
                 cartPaymentProcessing.classList.remove('active');
                 checkoutBtn.disabled = false;
                 checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
@@ -4395,9 +4543,7 @@ async function initiateCartPayment(amount, email, items) {
             }
         };
 
-        // Apply split configuration
         if (splitConfig.type === 'percentage' && splitConfig.subaccounts) {
-            // Multiple authors - use split
             paymentConfig.split = {
                 type: 'percentage',
                 bearer: 'account',
@@ -4405,7 +4551,6 @@ async function initiateCartPayment(amount, email, items) {
             };
             console.log('✅ Using split for multiple authors');
         } else if (splitConfig.subaccount) {
-            // Single author - use subaccount
             paymentConfig.subaccount = splitConfig.subaccount;
             console.log('✅ Using subaccount for single author');
         }
@@ -4417,33 +4562,27 @@ async function initiateCartPayment(amount, email, items) {
         console.error('Payment error:', error);
         showToast('⚠️ Payment error. Please try again.', 'error');
         isProcessingPayment = false;
-        isCartCheckout = false;
         cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
     }
 }
 
-// ================================================================
-// ===== UPDATED: CART PAYMENT CALLBACK WITH AUTHOR IDs =====
-// ================================================================
 async function handleCartPaymentCallback(response, items) {
     if (!currentUser) {
         showToast('⚠️ User not found. Please try again.', 'error');
         isProcessingPayment = false;
-        isCartCheckout = false;
         cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
         return;
     }
 
-    // ===== VERIFY EACH ITEM WITH AUTHOR ID =====
     let allValid = true;
     const invalidItems = [];
     const authorIds = {};
+    const bookTitles = {};
     
-    // First, get all author IDs for each item
     for (const item of items) {
         try {
             const bookRef = doc(db, "books", item.id);
@@ -4457,6 +4596,7 @@ async function handleCartPaymentCallback(response, items) {
             
             const bookData = bookSnap.data();
             authorIds[item.id] = bookData.submittedBy;
+            bookTitles[item.id] = bookData.title || item.title || 'Unknown';
             
         } catch (error) {
             console.error('Error getting book data:', error);
@@ -4468,14 +4608,12 @@ async function handleCartPaymentCallback(response, items) {
     if (!allValid) {
         showToast(`⚠️ Some books not found: ${invalidItems.join(', ')}`, 'error');
         isProcessingPayment = false;
-        isCartCheckout = false;
         cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
         return;
     }
 
-    // Now verify each item with its author ID
     for (const item of items) {
         try {
             const bookRef = doc(db, "books", item.id);
@@ -4499,7 +4637,7 @@ async function handleCartPaymentCallback(response, items) {
                     amount: bookData.pricing?.amount || 0,
                     email: currentUser.email,
                     bookId: item.id,
-                    authorId: bookData.submittedBy  // 👈 Include author ID
+                    authorId: bookData.submittedBy
                 })
             });
 
@@ -4519,14 +4657,12 @@ async function handleCartPaymentCallback(response, items) {
     if (!allValid) {
         showToast(`⚠️ Payment verification failed for: ${invalidItems.join(', ')}. Please contact support.`, 'error');
         isProcessingPayment = false;
-        isCartCheckout = false;
         cartPaymentProcessing.classList.remove('active');
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
         return;
     }
 
-    // ===== ALL VERIFICATIONS PASSED - Record purchases =====
     const transactionRef = response.reference || 'paystack_' + Date.now();
     let allSuccess = true;
     const successfulItems = [];
@@ -4534,6 +4670,7 @@ async function handleCartPaymentCallback(response, items) {
     for (const item of items) {
         try {
             const authorId = authorIds[item.id] || null;
+            const bookTitle = bookTitles[item.id] || item.title || 'Unknown';
             
             const success = await recordPurchase(
                 currentUser.uid, 
@@ -4544,12 +4681,12 @@ async function handleCartPaymentCallback(response, items) {
                     currency: item.currency || 'GHS',
                     customerEmail: response.customer?.email || currentUser.email,
                     verifiedBy: 'serverless-api',
-                    authorId: authorId,  // 👈 Store author ID for earnings
-                    bookTitle: item.title
+                    authorId: authorId,
+                    bookTitle: bookTitle
                 }
             );
             if (success) {
-                successfulItems.push(item.title);
+                successfulItems.push(bookTitle);
             } else {
                 allSuccess = false;
             }
@@ -4561,18 +4698,21 @@ async function handleCartPaymentCallback(response, items) {
     
     if (allSuccess) {
         showToast(`✅ Payment verified! ${successfulItems.length} book(s) added to your library. 🎉`, 'success');
-        // Clear cart
         saveCartItems([]);
         cartCount = 0;
         updateCartBadge();
         await renderCart();
         closeCart();
+        
+        // 👈 REFRESH EARNINGS AFTER PURCHASE
+        if (currentUser) {
+            await loadEarnings(currentUser.uid);
+        }
     } else {
         showToast('⚠️ Some purchases failed to save. Please contact support.', 'error');
     }
     
     isProcessingPayment = false;
-    isCartCheckout = false;
     cartPaymentProcessing.classList.remove('active');
     checkoutBtn.disabled = false;
     checkoutBtn.innerHTML = '<i class="fas fa-credit-card"></i> Checkout with Paystack';
@@ -4621,14 +4761,35 @@ async function renderCart() {
     }
 
     let html = '';
-    let total = 0;
+    let totalGHS = 0;
     let hasUnpurchasedItems = false;
     
     for (let index = 0; index < items.length; index++) {
         const item = items[index];
-        const price = item.price || 0;
-        total += price;
         const currency = item.currency || 'GHS';
+        const amount = item.price || 0;
+        
+        // Convert to GHS for display
+        let ghsAmount = amount;
+        let priceDisplay = '';
+        
+        if (currency.toUpperCase() === 'GHS') {
+            priceDisplay = `GHS ${amount.toFixed(2)}`;
+            totalGHS += amount;
+        } else {
+            try {
+                ghsAmount = await convertToGHS(amount, currency);
+                totalGHS += ghsAmount;
+                priceDisplay = `
+                    ${currency} ${amount.toFixed(2)}
+                    <span class="conversion-info">(≈ GHS ${ghsAmount.toFixed(2)})</span>
+                `;
+            } catch (error) {
+                console.warn('Conversion failed:', error);
+                priceDisplay = `${currency} ${amount.toFixed(2)}`;
+                totalGHS += amount;
+            }
+        }
         
         let isOwned = false;
         if (currentUser) {
@@ -4646,7 +4807,7 @@ async function renderCart() {
                 <div class="item-info">
                     <div class="item-title">${item.title || 'Untitled'}</div>
                     <div class="item-author">${item.author || 'Anonymous'}</div>
-                    <div class="item-price">${currency} ${price.toFixed(2)}</div>
+                    <div class="item-price">${priceDisplay}</div>
                     ${isOwned ? `<div class="item-owned"><i class="fas fa-check-circle"></i> Already Owned</div>` : ''}
                 </div>
                 <div class="item-actions">
@@ -4657,7 +4818,7 @@ async function renderCart() {
     }
 
     cartBody.innerHTML = html;
-    cartTotalAmount.textContent = `GHS ${total.toFixed(2)}`;
+    cartTotalAmount.textContent = `GHS ${totalGHS.toFixed(2)}`;
     checkoutBtn.disabled = !hasUnpurchasedItems || items.length === 0 || isProcessingPayment;
 
     document.querySelectorAll('.btn-remove').forEach(btn => {
@@ -4694,7 +4855,7 @@ function closeCart() {
 cartCloseBtn.addEventListener('click', closeCart);
 cartBackdrop.addEventListener('click', closeCart);
 
-// ===== CHECKOUT BUTTON - UPDATED =====
+// ===== CHECKOUT BUTTON =====
 checkoutBtn.addEventListener('click', async function() {
     if (!currentUser) {
         showToast('🔐 Please sign in to checkout.', 'error');
@@ -4713,23 +4874,11 @@ checkoutBtn.addEventListener('click', async function() {
         const purchased = await checkPurchaseStatus(currentUser.uid, item.id);
         if (!purchased) {
             purchasableItems.push(item);
-        } else {
-            // Check if limit is reached (can buy again)
-            const bookRef = doc(db, "books", item.id);
-            const bookSnap = await getDoc(bookRef);
-            if (bookSnap.exists()) {
-                const bookData = bookSnap.data();
-                const limit = bookData.downloadLimit || bookData.downloads || 5;
-                const canDownload = await canUserDownload(currentUser.uid, item.id, limit);
-                if (!canDownload) {
-                    purchasableItems.push(item);
-                }
-            }
         }
     }
 
     if (purchasableItems.length === 0) {
-        showToast('✅ All books in your cart are already purchased and have downloads remaining!', 'success');
+        showToast('✅ All books in your cart are already purchased!', 'success');
         closeCart();
         return;
     }
@@ -5237,7 +5386,6 @@ async function loadBooks() {
 // ========== LOAD NEW BOOKS ==========
 async function loadNewBooks() {
     try {
-        // Get approved books and sort by date (newest first)
         const approvedBooks = allBooks
             .filter(book => book.status === 'approved')
             .sort((a, b) => {
@@ -5246,7 +5394,6 @@ async function loadNewBooks() {
                 return dateB - dateA;
             });
         
-        // Take the 12 newest books
         const newBooks = approvedBooks.slice(0, 12);
         
         if (newBooks.length === 0) {

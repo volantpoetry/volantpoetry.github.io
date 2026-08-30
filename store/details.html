@@ -2913,6 +2913,11 @@ header .logo-header {
     height: 14px !important;
   }
 }
+
+/* ===== HIDE "converted from multiple currencies" TEXT IN CART ===== */
+.cart-total .total-conversion-info {
+    display: none !important;
+}
                     </style>
 
 <script>
@@ -3171,8 +3176,7 @@ function goToLogin() {
         "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
       }
     }
-  </script>
-<script type="module">
+  </script><script type="module">
     import { initializeApp } from "firebase/app";
     import { 
       getFirestore, 
@@ -3882,6 +3886,88 @@ function goToLogin() {
       }
     }
 
+    // ===== LOAD EARNINGS FUNCTION =====
+    async function loadEarnings(userId) {
+      try {
+        console.log('🔍 Loading earnings for user:', userId);
+        
+        const userDoc = await getDoc(doc(db, "users", userId));
+        const userData = userDoc.data();
+        const commissionRate = userData?.commissionRate || 10;
+        
+        const q = query(
+          collection(db, "purchases"),
+          where("authorId", "==", userId)
+        );
+        const snapshot = await getDocs(q);
+        
+        console.log('📊 Found purchases:', snapshot.size);
+        
+        let totalSales = 0;
+        let totalEarnings = 0;
+        let totalCommission = 0;
+        let pendingPayout = 0;
+        const transactions = [];
+        
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          const amount = data.amount || 0;
+          const fee = data.fee || 0;
+          const netAmount = amount - fee;
+          const commission = netAmount * (commissionRate / 100);
+          const earnings = netAmount - commission;
+          
+          totalSales++;
+          totalEarnings += earnings;
+          totalCommission += commission;
+          pendingPayout += earnings;
+          
+          transactions.push({
+            bookTitle: data.bookTitle || 'Unknown Book',
+            amount: amount,
+            fee: fee,
+            commission: commission,
+            earnings: earnings,
+            date: data.purchasedAt?.toDate?.() || new Date(data.purchasedAt) || new Date(),
+            status: data.status || 'completed'
+          });
+        });
+        
+        const totalSalesEl = document.getElementById('totalSales');
+        const totalEarningsEl = document.getElementById('totalEarnings');
+        const totalCommissionEl = document.getElementById('totalCommission');
+        const pendingPayoutEl = document.getElementById('pendingPayout');
+        const transactionHistoryEl = document.getElementById('transactionHistory');
+        
+        if (totalSalesEl) totalSalesEl.textContent = totalSales;
+        if (totalEarningsEl) totalEarningsEl.textContent = `GHS ${totalEarnings.toFixed(2)}`;
+        if (totalCommissionEl) totalCommissionEl.textContent = `GHS ${totalCommission.toFixed(2)}`;
+        if (pendingPayoutEl) pendingPayoutEl.textContent = `GHS ${pendingPayout.toFixed(2)}`;
+        
+        if (transactionHistoryEl) {
+          if (transactions.length === 0) {
+            transactionHistoryEl.innerHTML = `<p style="color: #888; padding: 10px 0;">No transactions yet. Sales will appear here when readers purchase your books.</p>`;
+          } else {
+            transactionHistoryEl.innerHTML = transactions.sort((a, b) => b.date - a.date).slice(0, 10).map(t => `
+              <div class="row">
+                <span>
+                  <strong>${t.bookTitle}</strong>
+                  <span style="font-size:0.75rem;color:#888;margin-left:8px;">${t.date.toLocaleDateString()}</span>
+                </span>
+                <span style="color:#15723d;">+GHS ${t.earnings.toFixed(2)}</span>
+              </div>
+            `).join('');
+          }
+        }
+        
+        return { totalSales, totalEarnings, totalCommission, pendingPayout, transactions };
+        
+      } catch (err) {
+        console.warn('Error loading earnings:', err);
+        return null;
+      }
+    }
+
     // ===== UPDATE UI FOR CURRENT BOOK =====
     async function updateUIForBook() {
       if (!currentBook) return;
@@ -4072,7 +4158,7 @@ function goToLogin() {
         // Add disclaimer
         const disclaimer = document.createElement('div');
         disclaimer.style.cssText = 'font-size:0.7rem;color:var(--text-light);margin-top:4px;padding:4px 8px;background:#f8f5f0;border-radius:4px;text-align:center;';
-        disclaimer.textContent = '💱 All payments processed in GHS. Your bank will convert from your currency at checkout.';
+        disclaimer.textContent = '💱 All payments processed in GHS.';
         const totalElement = document.querySelector('.cart-total');
         const existingDisclaimer = totalElement?.querySelector('.currency-disclaimer');
         if (existingDisclaimer) existingDisclaimer.remove();
@@ -4185,6 +4271,14 @@ function goToLogin() {
 
     async function recordPurchase(userId, bookId, transactionRef, paymentData = {}) {
       try {
+        console.log('📝 Recording purchase:', {
+          userId,
+          bookId,
+          transactionRef,
+          authorId: paymentData.authorId,
+          bookTitle: paymentData.bookTitle
+        });
+        
         const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
         const purchaseSnap = await getDoc(purchaseRef);
         if (purchaseSnap.exists()) {
@@ -4199,7 +4293,9 @@ function goToLogin() {
             paymentMethod: 'paystack',
             downloadCount: 0,
             lastDownloadedAt: null,
-            purchaseCount: increment(1)
+            purchaseCount: increment(1),
+            authorId: paymentData.authorId || null,
+            bookTitle: paymentData.bookTitle || null
           });
         } else {
           await setDoc(purchaseRef, {
@@ -4215,12 +4311,15 @@ function goToLogin() {
             paymentMethod: 'paystack',
             downloadCount: 0,
             lastDownloadedAt: null,
-            purchaseCount: 1
+            purchaseCount: 1,
+            authorId: paymentData.authorId || null,
+            bookTitle: paymentData.bookTitle || null
           });
         }
+        console.log('✅ Purchase recorded successfully');
         return true;
       } catch (err) {
-        console.error('Error recording purchase:', err);
+        console.error('❌ Error recording purchase:', err);
         return false;
       }
     }
@@ -4410,7 +4509,8 @@ function goToLogin() {
             currency: response.currency || currentBook.pricing?.currency || 'GHS',
             customerEmail: response.customer?.email || currentUser.email,
             verifiedBy: 'serverless-api',
-            authorId: currentBook.submittedBy
+            authorId: currentBook.submittedBy,
+            bookTitle: currentBook.title || 'Unknown'
           }
         );
         
@@ -4467,6 +4567,11 @@ function goToLogin() {
           showToast(`✅ Payment verified! "${currentBook.title}" is now in your library. 🎉`, 'success');
           
           await trackDailyDownload(currentBook.id);
+          
+          // 👈 REFRESH EARNINGS AFTER PURCHASE
+          if (currentUser) {
+            await loadEarnings(currentUser.uid);
+          }
           
           setTimeout(() => { 
             downloadBook(); 
@@ -4732,6 +4837,7 @@ function goToLogin() {
       let allValid = true;
       const invalidItems = [];
       const authorIds = {};
+      const bookTitles = {};
       
       for (const item of items) {
         try {
@@ -4746,6 +4852,7 @@ function goToLogin() {
           
           const bookData = bookSnap.data();
           authorIds[item.id] = bookData.submittedBy;
+          bookTitles[item.id] = bookData.title || item.title || 'Unknown';
           
         } catch (error) {
           console.error('Error getting book data:', error);
@@ -4821,6 +4928,7 @@ function goToLogin() {
       for (const item of items) {
         try {
           const authorId = authorIds[item.id] || null;
+          const bookTitle = bookTitles[item.id] || item.title || 'Unknown';
           
           const success = await recordPurchase(
             currentUser.uid, 
@@ -4832,11 +4940,11 @@ function goToLogin() {
               customerEmail: response.customer?.email || currentUser.email,
               verifiedBy: 'serverless-api',
               authorId: authorId,
-              bookTitle: item.title
+              bookTitle: bookTitle
             }
           );
           if (success) {
-            successfulItems.push(item.title);
+            successfulItems.push(bookTitle);
           } else {
             allSuccess = false;
           }
@@ -4853,6 +4961,11 @@ function goToLogin() {
         updateCartBadge();
         await renderCart();
         closeCart();
+        
+        // 👈 REFRESH EARNINGS AFTER PURCHASE
+        if (currentUser) {
+          await loadEarnings(currentUser.uid);
+        }
       } else {
         showToast('⚠️ Some purchases failed to save. Please contact support.', 'error');
       }
@@ -5302,7 +5415,6 @@ function goToLogin() {
     // ===== INIT =====
     loadBook();
   </script>
-  
   <script>
     (function() {
       function setupDynamicAuthLinks() {
