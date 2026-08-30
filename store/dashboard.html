@@ -5117,6 +5117,16 @@ header .logo-header {
     renderMessages();
   }
 
+
+// ===== STORAGE EVENT LISTENER FOR REAL-TIME UPDATES =====
+window.addEventListener('storage', function(e) {
+    if (e.key === 'volant_purchase_completed' && currentUser) {
+        console.log('🔄 Purchase detected! Refreshing earnings...');
+        loadEarnings(currentUser.uid);
+        loadAuthorData(currentUser);
+    }
+});
+
   // ===== USER UI =====
   async function updateUserUI(user) {
     try {
