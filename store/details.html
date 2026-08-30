@@ -379,6 +379,13 @@ header {
       color: var(--primary);
       margin: 0.2rem 0;
     }
+    .book-details .book-info .price .currency-conversion {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      font-weight: 400;
+      display: block;
+      margin-top: 2px;
+    }
     .book-details .book-info .badges {
       display: flex;
       gap: 0.5rem;
@@ -556,6 +563,22 @@ header {
     }
     .download-reminder.reached .limit-value {
       color: #721c24;
+    }
+
+    /* Exchange rate widget */
+    .exchange-rate-widget {
+      display: none;
+      background: #f8f5f0;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: var(--text-light);
+      border: 1px solid var(--border-light);
+    }
+    .exchange-rate-widget i {
+      color: var(--secondary);
+      margin-right: 4px;
     }
 
     .book-actions {
@@ -1261,6 +1284,11 @@ header {
       font-size: 0.9rem;
       margin-top: 0.2rem;
     }
+    .cart-item .item-info .item-price .conversion-info {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      font-weight: 400;
+    }
     .cart-item .item-info .item-owned {
       font-size: 0.7rem;
       color: #2d7d46;
@@ -1308,6 +1336,11 @@ header {
     }
     .cart-overlay .cart-footer .cart-total span:last-child {
       color: #4b2aad;
+    }
+    .cart-overlay .cart-footer .cart-total .total-conversion-info {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      font-weight: 400;
     }
     .cart-overlay .cart-footer .btn-checkout {
       width: 100%;
@@ -3008,6 +3041,11 @@ function goToLogin() {
               <span class="publisher-name" id="bookPublisherName"></span>
             </div>
             <div class="price" id="bookPrice">GHS 0.00</div>
+            <div class="exchange-rate-widget" id="exchangeRateWidget">
+              <i class="fas fa-info-circle"></i>
+              <span id="exchangeRateText">Exchange rate: 1 USD = 15.50 GHS</span>
+              <span style="margin-left:8px;font-size:0.65rem;color:#999;">(Updated hourly)</span>
+            </div>
             <div class="badges" id="bookBadges"></div>
           </div>
 
@@ -3203,6 +3241,8 @@ function goToLogin() {
     const downloadLimitDisplay = document.getElementById('downloadLimitDisplay');
     const purchaseStatus = document.getElementById('purchaseStatus');
     const purchaseStatusText = document.getElementById('purchaseStatusText');
+    const exchangeRateWidget = document.getElementById('exchangeRateWidget');
+    const exchangeRateText = document.getElementById('exchangeRateText');
     
     const payBtn = document.getElementById('payBtn');
     const payBtnText = document.getElementById('payBtnText');
@@ -3298,7 +3338,6 @@ function goToLogin() {
 
     function getLoginRedirectLink() {
         const currentPage = window.location.pathname + window.location.search;
-        // Always go to shared login with redirect back to current page
         return '../shared/universal-login.html?platform=reads&redirect=' + encodeURIComponent(currentPage);
     }
 
@@ -3308,6 +3347,56 @@ function goToLogin() {
         if (newCount !== cartCount) { cartCount = newCount; updateCartBadge(); }
       }
     });
+
+    // ===== CURRENCY CONVERSION =====
+    let cachedRates = null;
+    let ratesLastFetched = null;
+    const RATES_CACHE_DURATION = 3600000; // 1 hour
+
+    async function getExchangeRates() {
+      if (cachedRates && ratesLastFetched && (Date.now() - ratesLastFetched < RATES_CACHE_DURATION)) {
+        return cachedRates;
+      }
+      
+      try {
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const data = await response.json();
+        if (data && data.rates) {
+          cachedRates = data.rates;
+          ratesLastFetched = Date.now();
+          return cachedRates;
+        }
+        throw new Error('Invalid response');
+      } catch (error) {
+        console.warn('Error fetching exchange rates, using fallback rates:', error);
+        cachedRates = {
+          GHS: 15.5, NGN: 1550, KES: 130, ZAR: 18.5,
+          EUR: 0.92, GBP: 0.79, CAD: 1.36, AUD: 1.55,
+          USD: 1
+        };
+        ratesLastFetched = Date.now();
+        return cachedRates;
+      }
+    }
+
+    async function convertToGHS(amount, fromCurrency) {
+      if (!amount || amount <= 0) return 0;
+      if (!fromCurrency || fromCurrency.toUpperCase() === 'GHS') return amount;
+      
+      try {
+        const rates = await getExchangeRates();
+        const currencyCode = fromCurrency.toUpperCase();
+        if (rates[currencyCode]) {
+          let usdAmount = currencyCode !== 'USD' ? amount / rates[currencyCode] : amount;
+          const ghsAmount = usdAmount * rates['GHS'];
+          return Math.round(ghsAmount * 100) / 100;
+        }
+        return amount;
+      } catch (error) {
+        console.error('Error converting currency:', error);
+        return amount;
+      }
+    }
 
     // ===== HELPER: GET FORMATTED DOWNLOAD LIMIT DISPLAY =====
     function getDownloadLimitDisplay(limit) {
@@ -3797,19 +3886,16 @@ function goToLogin() {
     async function updateUIForBook() {
       if (!currentBook) return;
       
-      // Use downloadLimit field, fallback to downloads for backward compatibility
       const limit = currentBook.downloadLimit || currentBook.downloads || 5;
       downloadLimit = limit;
       const limitDisplay = getDownloadLimitDisplay(limit);
       
-      // Update sidebar
       sidebarDownloadLimitValue.textContent = limitDisplay.isUnlimited ? '♾️ Unlimited downloads' : `${limitDisplay.text} downloads`;
       sidebarDownloadLimit.className = 'sidebar-item download-limit';
       if (limitDisplay.isUnlimited) {
         sidebarDownloadLimit.classList.add('unlimited');
       }
       
-      // Update download reminder
       downloadReminder.className = 'download-reminder';
       if (limitDisplay.isUnlimited) {
         downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>Unlimited downloads available! ♾️</span>`;
@@ -3819,7 +3905,6 @@ function goToLogin() {
       }
       downloadReminder.style.display = 'flex';
       
-      // Check if user has purchased and download status
       if (currentUser) {
         const amount = currentBook.pricing?.amount || 0;
         let purchased = false;
@@ -3840,7 +3925,6 @@ function goToLogin() {
             downloadReminder.className = 'download-reminder unlimited';
             downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>Unlimited downloads available! ♾️</span>`;
             downloadReminder.style.display = 'flex';
-            // Hide re-purchase button, show download
             repurchaseBtn.style.display = 'none';
             downloadBtn.style.display = 'inline-flex';
             payBtn.style.display = 'none';
@@ -3851,37 +3935,30 @@ function goToLogin() {
             downloadReminder.className = 'download-reminder';
             downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>You have <strong class="limit-value">${remaining}</strong> downloads remaining.</span>`;
             downloadReminder.style.display = 'flex';
-            // Hide re-purchase button, show download
             repurchaseBtn.style.display = 'none';
             downloadBtn.style.display = 'inline-flex';
             payBtn.style.display = 'none';
           } else {
-            // LIMIT REACHED - Show re-purchase button AND contact author alert
             purchaseStatusText.textContent = '⚠️ You\'ve reached the download limit. You can buy again or contact the author.';
             purchaseStatus.className = 'purchase-status limit-reached';
             sidebarDownloadLimit.classList.add('limit-reached');
             downloadReminder.className = 'download-reminder reached';
             downloadReminder.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <span>You've reached the download limit. <strong class="limit-value">${limitDisplay.text}</strong> downloads used. <a href="#" style="color:#6a34ff;text-decoration:underline;font-weight:600;" onclick="document.getElementById('contactAuthorCard').click(); return false;">Contact Author</a> if you're having trouble, or Buy Again.</span>`;
             downloadReminder.style.display = 'flex';
-            
-            // SHOW RE-PURCHASE BUTTON (Pay with Paystack)
             repurchaseBtn.style.display = 'inline-flex';
             downloadBtn.style.display = 'none';
             payBtn.style.display = 'none';
           }
         } else {
-          // Not purchased - show purchase reminder
           downloadReminder.className = 'download-reminder';
           downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>You will get <strong class="limit-value">${limitDisplay.text}</strong> downloads after purchase.</span>`;
           downloadReminder.style.display = 'flex';
           purchaseStatus.style.display = 'none';
-          // Show pay button
           payBtn.style.display = 'inline-flex';
           repurchaseBtn.style.display = 'none';
           downloadBtn.style.display = 'none';
         }
       } else {
-        // Not signed in
         downloadReminder.className = 'download-reminder';
         downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>Sign in to purchase and get <strong class="limit-value">${limitDisplay.text}</strong> downloads.</span>`;
         downloadReminder.style.display = 'flex';
@@ -3911,13 +3988,36 @@ function goToLogin() {
       }
 
       let html = '';
-      let total = 0;
+      let totalGHS = 0;
+      let hasNonGHSCurrency = false;
       
       for (let index = 0; index < items.length; index++) {
         const item = items[index];
-        const price = item.price || 0;
-        total += price;
         const currency = item.currency || 'GHS';
+        const amount = item.price || 0;
+        
+        // Convert to GHS for display and total
+        let ghsAmount = amount;
+        let priceDisplay = '';
+        
+        if (currency.toUpperCase() === 'GHS') {
+          priceDisplay = `GHS ${amount.toFixed(2)}`;
+          totalGHS += amount;
+        } else {
+          hasNonGHSCurrency = true;
+          try {
+            ghsAmount = await convertToGHS(amount, currency);
+            totalGHS += ghsAmount;
+            priceDisplay = `
+              ${currency} ${amount.toFixed(2)}
+              <span class="conversion-info">(≈ GHS ${ghsAmount.toFixed(2)})</span>
+            `;
+          } catch (error) {
+            console.warn('Conversion failed:', error);
+            priceDisplay = `${currency} ${amount.toFixed(2)}`;
+            totalGHS += amount;
+          }
+        }
         
         let isOwned = false;
         let limitReached = false;
@@ -3925,7 +4025,6 @@ function goToLogin() {
           const purchased = await checkPurchaseStatus(currentUser.uid, item.id);
           isOwned = purchased;
           if (purchased) {
-            // Get book data to check download limit
             const bookRef = doc(db, "books", item.id);
             const bookSnap = await getDoc(bookRef);
             if (bookSnap.exists()) {
@@ -3937,7 +4036,6 @@ function goToLogin() {
           }
         }
         
-        // If limit reached, show "Limit Reached - Buy Again" instead of "Already Owned"
         let ownedText = '';
         let ownedClass = '';
         if (isOwned && limitReached) {
@@ -3956,7 +4054,7 @@ function goToLogin() {
             <div class="item-info">
               <div class="item-title">${item.title || 'Untitled'}</div>
               <div class="item-author">${item.author || 'Anonymous'}</div>
-              <div class="item-price">${currency} ${price.toFixed(2)}</div>
+              <div class="item-price">${priceDisplay}</div>
               ${ownedText ? `<div class="${ownedClass}"><i class="fas fa-check-circle"></i> ${ownedText}</div>` : ''}
             </div>
             <div class="item-actions">
@@ -3967,9 +4065,21 @@ function goToLogin() {
       }
 
       cartBody.innerHTML = html;
-      cartTotalAmount.textContent = `GHS ${total.toFixed(2)}`;
       
-      // Check for purchasable items (not purchased OR limit reached)
+      let totalDisplay = `GHS ${totalGHS.toFixed(2)}`;
+      if (hasNonGHSCurrency) {
+        totalDisplay += ` <span class="total-conversion-info">(converted from multiple currencies)</span>`;
+        // Add disclaimer
+        const disclaimer = document.createElement('div');
+        disclaimer.style.cssText = 'font-size:0.7rem;color:var(--text-light);margin-top:4px;padding:4px 8px;background:#f8f5f0;border-radius:4px;text-align:center;';
+        disclaimer.textContent = '💱 All payments processed in GHS. Your bank will convert from your currency at checkout.';
+        const totalElement = document.querySelector('.cart-total');
+        const existingDisclaimer = totalElement?.querySelector('.currency-disclaimer');
+        if (existingDisclaimer) existingDisclaimer.remove();
+        if (totalElement) totalElement.appendChild(disclaimer);
+      }
+      cartTotalAmount.innerHTML = totalDisplay;
+      
       const hasPurchasableItems = await checkCartHasPurchasableItems(items);
       checkoutBtn.disabled = !hasPurchasableItems || items.length === 0 || isProcessingPayment;
 
@@ -3996,8 +4106,6 @@ function goToLogin() {
       for (const item of items) {
         const purchased = await checkPurchaseStatus(currentUser.uid, item.id);
         if (!purchased) return true;
-        
-        // If purchased, check if limit is reached (then they can buy again)
         if (purchased) {
           const bookRef = doc(db, "books", item.id);
           const bookSnap = await getDoc(bookRef);
@@ -4006,7 +4114,7 @@ function goToLogin() {
             const limit = bookData.downloadLimit || bookData.downloads || 5;
             const canDownload = await canUserDownload(currentUser.uid, item.id, limit);
             if (!canDownload) {
-              return true; // Limit reached, can buy again
+              return true;
             }
           }
         }
@@ -4078,11 +4186,8 @@ function goToLogin() {
     async function recordPurchase(userId, bookId, transactionRef, paymentData = {}) {
       try {
         const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
-        
-        // Check if purchase already exists
         const purchaseSnap = await getDoc(purchaseRef);
         if (purchaseSnap.exists()) {
-          // For re-purchase, reset download count
           await updateDoc(purchaseRef, {
             status: 'completed',
             verified: true,
@@ -4092,12 +4197,11 @@ function goToLogin() {
             currency: paymentData.currency || 'GHS',
             customerEmail: paymentData.customerEmail || currentUser?.email || '',
             paymentMethod: 'paystack',
-            downloadCount: 0, // Reset for new purchase
+            downloadCount: 0,
             lastDownloadedAt: null,
             purchaseCount: increment(1)
           });
         } else {
-          // First time purchase
           await setDoc(purchaseRef, {
             userId: userId,
             bookId: bookId,
@@ -4137,7 +4241,7 @@ function goToLogin() {
     }
 
     // ================================================================
-    // ===== SINGLE BOOK PAYMENT WITH SUBACCOUNT SUPPORT =====
+    // ===== SINGLE BOOK PAYMENT WITH CURRENCY CONVERSION =====
     // ================================================================
     async function initiateSingleBookPayment(amount, email, bookTitle, bookId, isRepurchase = false) {
       if (isProcessingPayment) return;
@@ -4145,6 +4249,35 @@ function goToLogin() {
       if (!PAYSTACK_PUBLIC_KEY || PAYSTACK_PUBLIC_KEY.includes('xxxxxxxx')) {
         showToast('⚠️ Paystack is not properly configured. Please contact support.', 'error');
         return;
+      }
+
+      // ===== CONVERT CURRENCY TO GHS =====
+      const originalCurrency = currentBook.pricing?.currency || 'GHS';
+      const originalAmount = amount;
+      let ghsAmount = amount;
+      let conversionRate = 1;
+      let showConversionInfo = false;
+
+      if (originalCurrency.toUpperCase() !== 'GHS') {
+        try {
+          const rates = await getExchangeRates();
+          conversionRate = rates['GHS'] / rates[originalCurrency.toUpperCase()];
+          ghsAmount = await convertToGHS(amount, originalCurrency);
+          showConversionInfo = true;
+          console.log(`💱 Converting ${originalAmount} ${originalCurrency} to ${ghsAmount} GHS at rate ${conversionRate.toFixed(2)}`);
+        } catch (error) {
+          console.warn('Currency conversion failed, using original amount:', error);
+          ghsAmount = amount;
+        }
+      }
+
+      if (ghsAmount <= 0) {
+        showToast('⚠️ Invalid amount for payment. Please try again.', 'error');
+        return;
+      }
+
+      if (showConversionInfo) {
+        showToast(`💱 ${originalAmount} ${originalCurrency} ≈ GHS ${ghsAmount.toFixed(2)}`, 'info');
       }
 
       // ===== GET AUTHOR'S SUBACCOUNT CODE =====
@@ -4188,17 +4321,21 @@ function goToLogin() {
         const handler = PaystackPop.setup({
           key: PAYSTACK_PUBLIC_KEY,
           email: email,
-          amount: amount * 100,
+          amount: Math.round(ghsAmount * 100),
           currency: 'GHS',
-          subaccount: subaccountCode,  // 👈 Funds go to author's subaccount
-          bearer: 'account',           // 👈 Fees deducted BEFORE split
+          subaccount: subaccountCode,
+          bearer: 'account',
           metadata: {
             custom_fields: [
               { display_name: "Book Title", variable_name: "book_title", value: bookTitle },
               { display_name: "Book ID", variable_name: "book_id", value: bookId },
               { display_name: "Author ID", variable_name: "author_id", value: authorId },
               { display_name: "Customer ID", variable_name: "customer_id", value: currentUser?.uid || 'guest' },
-              { display_name: "Payment Type", variable_name: "payment_type", value: isRepurchase ? "repurchase" : "single_book" }
+              { display_name: "Payment Type", variable_name: "payment_type", value: isRepurchase ? "repurchase" : "single_book" },
+              { display_name: "Original Currency", variable_name: "original_currency", value: originalCurrency },
+              { display_name: "Original Amount", variable_name: "original_amount", value: String(originalAmount) },
+              { display_name: "Conversion Rate", variable_name: "conversion_rate", value: String(conversionRate) },
+              { display_name: "GHS Amount", variable_name: "ghs_amount", value: String(ghsAmount) }
             ]
           },
           callback: function(response) {
@@ -4221,149 +4358,135 @@ function goToLogin() {
       }
     }
 
-   async function handleSingleBookPaymentCallback(response) {
-  if (!currentUser || !currentBook) {
-    showToast('⚠️ User or book not found. Please try again.', 'error');
-    isProcessingPayment = false;
-    paymentProcessing.classList.remove('active');
-    updatePaymentUIState();
-    return;
-  }
+    async function handleSingleBookPaymentCallback(response) {
+      if (!currentUser || !currentBook) {
+        showToast('⚠️ User or book not found. Please try again.', 'error');
+        isProcessingPayment = false;
+        paymentProcessing.classList.remove('active');
+        updatePaymentUIState();
+        return;
+      }
 
-  try {
-    paymentProcessing.classList.add('active');
-    
-    console.log('Verifying payment...');
-    console.log('Reference:', response.reference);
+      try {
+        paymentProcessing.classList.add('active');
+        
+        console.log('Verifying payment...');
+        console.log('Reference:', response.reference);
 
-    const verificationResponse = await fetch('/api/verify-paystack-transaction', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        reference: response.reference,
-        amount: currentBook.pricing?.amount || 0,
-        email: currentUser.email,
-        bookId: currentBook.id,
-        authorId: currentBook.submittedBy
-      })
-    });
+        const verificationResponse = await fetch('/api/verify-paystack-transaction', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            reference: response.reference,
+            amount: currentBook.pricing?.amount || 0,
+            email: currentUser.email,
+            bookId: currentBook.id,
+            authorId: currentBook.submittedBy
+          })
+        });
 
-    const verificationResult = await verificationResponse.json();
-    console.log('Verification result:', verificationResult);
+        const verificationResult = await verificationResponse.json();
+        console.log('Verification result:', verificationResult);
 
-    if (!verificationResult.success) {
-      showToast(`⚠️ ${verificationResult.message || 'Payment verification failed'}`, 'error');
-      isProcessingPayment = false;
-      paymentProcessing.classList.remove('active');
-      updatePaymentUIState();
-      return;
+        if (!verificationResult.success) {
+          showToast(`⚠️ ${verificationResult.message || 'Payment verification failed'}`, 'error');
+          isProcessingPayment = false;
+          paymentProcessing.classList.remove('active');
+          updatePaymentUIState();
+          return;
+        }
+
+        console.log('✅ Payment verified successfully!');
+        
+        const transactionRef = response.reference || 'paystack_' + Date.now();
+        const success = await recordPurchase(
+          currentUser.uid, 
+          currentBook.id, 
+          transactionRef,
+          {
+            amount: response.amount || currentBook.pricing?.amount,
+            currency: response.currency || currentBook.pricing?.currency || 'GHS',
+            customerEmail: response.customer?.email || currentUser.email,
+            verifiedBy: 'serverless-api',
+            authorId: currentBook.submittedBy
+          }
+        );
+        
+        if (success) {
+          hasPaidForBook = true;
+          isProcessingPayment = false;
+          paymentProcessing.classList.remove('active');
+          
+          // ===== INSTANT UI UPDATE - NO PAGE REFRESH =====
+          paymentSuccess.classList.add('active');
+          setTimeout(() => {
+            paymentSuccess.classList.remove('active');
+          }, 3000);
+          
+          payBtn.style.display = 'none';
+          repurchaseBtn.style.display = 'none';
+          downloadBtn.style.display = 'inline-flex';
+          downloadBtnText.textContent = 'Download';
+          
+          purchaseStatus.style.display = 'flex';
+          purchaseStatus.className = 'purchase-status owned';
+          
+          const limit = currentBook.downloadLimit || currentBook.downloads || 5;
+          const limitDisplay = getDownloadLimitDisplay(limit);
+          
+          if (limitDisplay.isUnlimited) {
+            purchaseStatusText.textContent = '✅ You own this book! Unlimited downloads. ♾️';
+          } else {
+            const remaining = await getRemainingDownloads(currentUser.uid, currentBook.id, limit);
+            purchaseStatusText.textContent = `✅ You own this book! ${remaining} download${remaining > 1 ? 's' : ''} remaining.`;
+          }
+          
+          downloadReminder.style.display = 'flex';
+          if (limitDisplay.isUnlimited) {
+            downloadReminder.className = 'download-reminder unlimited';
+            downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>Unlimited downloads available! ♾️</span>`;
+          } else {
+            const remaining = await getRemainingDownloads(currentUser.uid, currentBook.id, limit);
+            downloadReminder.className = 'download-reminder';
+            downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>You have <strong class="limit-value">${remaining}</strong> downloads remaining.</span>`;
+          }
+          
+          sidebarDownloadLimitValue.textContent = limitDisplay.isUnlimited ? '♾️ Unlimited downloads' : `${limitDisplay.text} downloads`;
+          sidebarDownloadLimit.className = 'sidebar-item download-limit';
+          if (limitDisplay.isUnlimited) {
+            sidebarDownloadLimit.classList.add('unlimited');
+          } else {
+            sidebarDownloadLimit.classList.remove('unlimited');
+          }
+          sidebarDownloadLimit.classList.remove('limit-reached');
+          
+          loginPrompt.style.display = 'none';
+          
+          showToast(`✅ Payment verified! "${currentBook.title}" is now in your library. 🎉`, 'success');
+          
+          await trackDailyDownload(currentBook.id);
+          
+          setTimeout(() => { 
+            downloadBook(); 
+          }, 1000);
+          
+        } else {
+          showToast('⚠️ Payment verified but failed to save. Please contact support.', 'error');
+          isProcessingPayment = false;
+          paymentProcessing.classList.remove('active');
+          updatePaymentUIState();
+        }
+
+      } catch (error) {
+        console.error('Verification error:', error);
+        showToast('⚠️ Verification failed. Please contact support.', 'error');
+        isProcessingPayment = false;
+        paymentProcessing.classList.remove('active');
+        updatePaymentUIState();
+      }
     }
-
-    console.log('✅ Payment verified successfully!');
-    
-    const transactionRef = response.reference || 'paystack_' + Date.now();
-    const success = await recordPurchase(
-      currentUser.uid, 
-      currentBook.id, 
-      transactionRef,
-      {
-        amount: response.amount || currentBook.pricing?.amount,
-        currency: response.currency || currentBook.pricing?.currency || 'GHS',
-        customerEmail: response.customer?.email || currentUser.email,
-        verifiedBy: 'serverless-api',
-        authorId: currentBook.submittedBy
-      }
-    );
-    
-    if (success) {
-      hasPaidForBook = true;
-      isProcessingPayment = false;
-      paymentProcessing.classList.remove('active');
-      
-      // ===== INSTANT UI UPDATE - NO PAGE REFRESH =====
-      
-      // 1. Hide payment processing
-      paymentProcessing.classList.remove('active');
-      
-      // 2. Show success message briefly
-      paymentSuccess.classList.add('active');
-      setTimeout(() => {
-        paymentSuccess.classList.remove('active');
-      }, 3000);
-      
-      // 3. IMMEDIATELY show download button
-      payBtn.style.display = 'none';
-      repurchaseBtn.style.display = 'none';
-      downloadBtn.style.display = 'inline-flex';
-      downloadBtnText.textContent = 'Download';
-      
-      // 4. Show purchase status
-      purchaseStatus.style.display = 'flex';
-      purchaseStatus.className = 'purchase-status owned';
-      
-      // Get remaining downloads
-      const limit = currentBook.downloadLimit || currentBook.downloads || 5;
-      const limitDisplay = getDownloadLimitDisplay(limit);
-      
-      if (limitDisplay.isUnlimited) {
-        purchaseStatusText.textContent = '✅ You own this book! Unlimited downloads. ♾️';
-      } else {
-        const remaining = await getRemainingDownloads(currentUser.uid, currentBook.id, limit);
-        purchaseStatusText.textContent = `✅ You own this book! ${remaining} download${remaining > 1 ? 's' : ''} remaining.`;
-      }
-      
-      // 5. Update download reminder instantly
-      downloadReminder.style.display = 'flex';
-      if (limitDisplay.isUnlimited) {
-        downloadReminder.className = 'download-reminder unlimited';
-        downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>Unlimited downloads available! ♾️</span>`;
-      } else {
-        const remaining = await getRemainingDownloads(currentUser.uid, currentBook.id, limit);
-        downloadReminder.className = 'download-reminder';
-        downloadReminder.innerHTML = `<i class="fas fa-download"></i> <span>You have <strong class="limit-value">${remaining}</strong> downloads remaining.</span>`;
-      }
-      
-      // 6. Update sidebar download limit instantly
-      sidebarDownloadLimitValue.textContent = limitDisplay.isUnlimited ? '♾️ Unlimited downloads' : `${limitDisplay.text} downloads`;
-      sidebarDownloadLimit.className = 'sidebar-item download-limit';
-      if (limitDisplay.isUnlimited) {
-        sidebarDownloadLimit.classList.add('unlimited');
-      } else {
-        sidebarDownloadLimit.classList.remove('unlimited');
-      }
-      sidebarDownloadLimit.classList.remove('limit-reached');
-      
-      // 7. Hide login prompt
-      loginPrompt.style.display = 'none';
-      
-      // 8. Show toast notification
-      showToast(`✅ Payment verified! "${currentBook.title}" is now in your library. 🎉`, 'success');
-      
-      // 9. Track daily download
-      await trackDailyDownload(currentBook.id);
-      
-      // 10. Auto-download after a short delay
-      setTimeout(() => { 
-        downloadBook(); 
-      }, 1000);
-      
-    } else {
-      showToast('⚠️ Payment verified but failed to save. Please contact support.', 'error');
-      isProcessingPayment = false;
-      paymentProcessing.classList.remove('active');
-      updatePaymentUIState();
-    }
-
-  } catch (error) {
-    console.error('Verification error:', error);
-    showToast('⚠️ Verification failed. Please contact support.', 'error');
-    isProcessingPayment = false;
-    paymentProcessing.classList.remove('active');
-    updatePaymentUIState();
-  }
-}
 
     // ===== DAILY DOWNLOAD TRACKING =====
     async function trackDailyDownload(bookId) {
@@ -4384,13 +4507,45 @@ function goToLogin() {
     }
 
     // ================================================================
-    // ===== CART PAYMENT WITH PROPER SUBACCOUNT SUPPORT =====
+    // ===== CART PAYMENT WITH CURRENCY CONVERSION =====
     // ================================================================
     async function initiateCartPayment(amount, email, items) {
       if (isProcessingPayment) return;
       if (!checkPaystackReady()) return;
       if (!PAYSTACK_PUBLIC_KEY || PAYSTACK_PUBLIC_KEY.includes('xxxxxxxx')) {
         showToast('⚠️ Paystack is not properly configured. Please contact support.', 'error');
+        return;
+      }
+
+      // ===== CONVERT ALL ITEMS TO GHS =====
+      let totalGHS = 0;
+      const convertedItems = [];
+      
+      for (const item of items) {
+        const originalCurrency = item.currency || 'GHS';
+        let itemAmount = item.price || 0;
+        
+        if (originalCurrency.toUpperCase() !== 'GHS') {
+          try {
+            const convertedAmount = await convertToGHS(itemAmount, originalCurrency);
+            console.log(`💰 Converted ${itemAmount} ${originalCurrency} to ${convertedAmount} GHS for "${item.title}"`);
+            itemAmount = convertedAmount;
+          } catch (error) {
+            console.warn(`Currency conversion failed for ${item.title}, using original amount:`, error);
+          }
+        }
+        
+        totalGHS += itemAmount;
+        convertedItems.push({
+          ...item,
+          priceInGHS: itemAmount,
+          originalCurrency: originalCurrency,
+          originalAmount: item.price || 0
+        });
+      }
+
+      if (totalGHS <= 0) {
+        showToast('⚠️ Invalid total amount. Please try again.', 'error');
         return;
       }
 
@@ -4405,7 +4560,7 @@ function goToLogin() {
       checkoutBtn.disabled = true;
       checkoutBtn.textContent = 'Verifying authors...';
 
-      for (const item of items) {
+      for (const item of convertedItems) {
         try {
           const bookRef = doc(db, "books", item.id);
           const bookSnap = await getDoc(bookRef);
@@ -4453,7 +4608,7 @@ function goToLogin() {
               authorName: bookData.authorName || 'Unknown Author'
             };
           }
-          authorGroups[authorId].total += (item.price || 0);
+          authorGroups[authorId].total += (item.priceInGHS || 0);
           authorGroups[authorId].items.push(item.title);
           
         } catch (error) {
@@ -4480,12 +4635,11 @@ function goToLogin() {
 
       // ===== CREATE SPLIT CONFIGURATION =====
       let splitConfig = null;
-      const totalAmount = items.reduce((sum, item) => sum + (item.price || 0), 0);
       
       if (Object.keys(authorGroups).length > 1) {
         const shares = [];
         for (const [authorId, data] of Object.entries(authorGroups)) {
-          const sharePercentage = (data.total / totalAmount) * 100;
+          const sharePercentage = (data.total / totalGHS) * 100;
           shares.push({
             subaccount: data.subaccount,
             share: Math.round(sharePercentage * 100) / 100
@@ -4513,7 +4667,7 @@ function goToLogin() {
         const paymentConfig = {
           key: PAYSTACK_PUBLIC_KEY,
           email: email,
-          amount: totalAmount * 100,
+          amount: Math.round(totalGHS * 100),
           currency: 'GHS',
           bearer: 'account',
           metadata: {
@@ -4563,7 +4717,7 @@ function goToLogin() {
       }
     }
 
-    // ===== CART PAYMENT CALLBACK WITH AUTHOR IDs =====
+    // ===== CART PAYMENT CALLBACK =====
     async function handleCartPaymentCallback(response, items) {
       if (!currentUser) {
         showToast('⚠️ User not found. Please try again.', 'error');
@@ -4839,7 +4993,7 @@ function goToLogin() {
         showToast(`📄 Downloaded "${currentBook.title}"! (${remainingText})`, 'success');
       } catch (err) {
         console.error('Download error:', err);
-        showToast('⚠ Unable to download PDF. Please try again.', 'error');
+        showToast('⚠️ Unable to download PDF. Please try again.', 'error');
       } finally {
         downloadBtn.disabled = false;
         downloadBtnText.textContent = 'Download';
@@ -5020,7 +5174,6 @@ function goToLogin() {
       if (book.subtitle && book.subtitle.trim() !== '') { bookSubtitle.textContent = book.subtitle; bookSubtitle.style.display = 'block'; } else { bookSubtitle.style.display = 'none'; }
       bookAuthor.textContent = book.authorName || 'Anonymous';
       
-      // ===== DISPLAY PUBLISHER (ONLY IF EXISTS AND DIFFERENT FROM AUTHOR) =====
       const publisherName = book.publisherName || '';
       const authorName = book.authorName || '';
       if (publisherName && publisherName.trim() !== '' && publisherName.trim() !== authorName.trim()) {
@@ -5032,7 +5185,36 @@ function goToLogin() {
 
       const currency = book.pricing?.currency || 'GHS';
       const amount = book.pricing?.amount || 0;
-      bookPrice.innerHTML = `${currency} ${amount.toFixed(2)}`;
+      
+      // ===== DISPLAY PRICE WITH CURRENCY CONVERSION =====
+      if (currency.toUpperCase() === 'GHS') {
+        bookPrice.innerHTML = `GHS ${amount.toFixed(2)}`;
+        exchangeRateWidget.style.display = 'none';
+      } else {
+        bookPrice.innerHTML = `
+          ${currency} ${amount.toFixed(2)}
+          <span class="currency-conversion">≈ GHS <span id="ghsEquivalent">...</span></span>
+        `;
+        // Show exchange rate widget
+        exchangeRateWidget.style.display = 'block';
+        
+        // Calculate and display GHS equivalent
+        convertToGHS(amount, currency).then(ghsAmount => {
+          if (ghsAmount && ghsAmount > 0) {
+            document.getElementById('ghsEquivalent').textContent = ghsAmount.toFixed(2);
+          }
+        });
+        
+        // Show exchange rate
+        getExchangeRates().then(rates => {
+          const rate = rates['GHS'] / rates[currency.toUpperCase()];
+          if (rate) {
+            exchangeRateText.textContent = `Exchange rate: 1 ${currency.toUpperCase()} = ${rate.toFixed(2)} GHS`;
+          }
+        }).catch(() => {
+          exchangeRateText.textContent = `Exchange rate: 1 ${currency.toUpperCase()} = ? GHS`;
+        });
+      }
 
       const totalDownloads = book.downloads || 0;
       const popularity = getPopularityBadge(totalDownloads);
