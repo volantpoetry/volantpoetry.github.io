@@ -43,10 +43,38 @@ const allowedPages = [
 ];
 
 // ============================================================
-// 🚀 EXTERNAL PLATFORMS (Different Repos)
+// 🚀 EXTERNAL PLATFORMS (Different Repos/Domains)
 // ============================================================
 const externalUrls = [
-  // Volant Codes (Separate Repo)
+  // 🌐 Volant Reads (Redirect Domain)
+  {
+    loc: 'https://volantreads.vercel.app/',
+    lastmod: new Date().toISOString(),
+    changefreq: 'weekly',
+    priority: '0.9'
+  },
+  {
+    loc: 'https://volantreads.vercel.app/store/',
+    lastmod: new Date().toISOString(),
+    changefreq: 'weekly',
+    priority: '0.8'
+  },
+  
+  // 🌐 Volant Foundry (Redirect Domain)
+  {
+    loc: 'https://volantfoundry.vercel.app/',
+    lastmod: new Date().toISOString(),
+    changefreq: 'weekly',
+    priority: '0.9'
+  },
+  {
+    loc: 'https://volantfoundry.vercel.app/volant_foundry/',
+    lastmod: new Date().toISOString(),
+    changefreq: 'weekly',
+    priority: '0.8'
+  },
+  
+  // 🌐 Volant Codes (Separate Repo)
   {
     loc: 'https://volantcodes.vercel.app/',
     lastmod: new Date().toISOString(),
@@ -90,7 +118,7 @@ const externalUrls = [
     priority: '0.5'
   },
   
-  // Volant Lyrics (Future - coming soon)
+  // 🌐 Volant Lyrics (Future - coming soon)
   {
     loc: 'https://volantlyrics.vercel.app/',
     lastmod: new Date().toISOString(),
