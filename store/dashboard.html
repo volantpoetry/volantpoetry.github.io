@@ -2995,7 +2995,9 @@ header .logo-header {
       "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
     }
   }
-</script><script type="module">
+</script>
+
+<script type="module">
   import { initializeApp } from "firebase/app";
   import { 
     getFirestore, 
@@ -3793,12 +3795,18 @@ header .logo-header {
           payoutWarningBanner.classList.remove('show');
         }
         
+        // ✅ Invalidate cache and force refresh
+        delete userBatchCache[currentUser.uid];
+        userBatchCacheTime = 0;
+        
         const userDoc = await getDoc(doc(db, "users", currentUser.uid));
         if (userDoc.exists()) {
           updateSetupAlert(userDoc.data());
         }
         
-        loadEarnings(currentUser.uid);
+        await loadEarnings(currentUser.uid);
+        await refreshSettings();
+        
       } else {
         payoutStatus.innerHTML = '❌ ' + (result.message || 'Failed to activate payout account.');
         payoutStatus.className = 'error';
@@ -3969,55 +3977,12 @@ header .logo-header {
   async function refreshSettings() {
     if (!currentUser) return;
     try {
-      if (userBatchCache[currentUser.uid] && Date.now() - userBatchCacheTime < CACHE_DURATION) {
-        const cached = userBatchCache[currentUser.uid];
-        settingsName.value = cached.username || currentUser.displayName || '';
-        settingsEmail.value = cached.email || currentUser.email || '';
-        settingsBio.value = cached.bio || '';
-        settingsAuthorName.value = cached.authorName || '';
-        settingsAuthorBio.value = cached.authorBio || '';
-        settingsGmail.value = cached.gmail || '';
-        settingsPhoneNumber.value = cached.phoneNumber || '';
-        settingsPublisherName.value = cached.publisherName || '';
-        
-        if (cached.country) {
-          const savedCountry = cached.country.trim();
-          let found = false;
-          for (let i = 0; i < settingsCountry.options.length; i++) {
-            if (settingsCountry.options[i].value === savedCountry) {
-              settingsCountry.selectedIndex = i;
-              found = true;
-              break;
-            }
-          }
-          if (!found) {
-            const countryLower = savedCountry.toLowerCase();
-            for (let i = 0; i < settingsCountry.options.length; i++) {
-              if (settingsCountry.options[i].value.toLowerCase() === countryLower) {
-                settingsCountry.selectedIndex = i;
-                found = true;
-                break;
-              }
-            }
-          }
-          if (!found) {
-            const newOption = document.createElement('option');
-            newOption.value = savedCountry;
-            newOption.textContent = savedCountry;
-            settingsCountry.appendChild(newOption);
-            settingsCountry.value = savedCountry;
-          }
-        }
-        
-        updateSetupAlert(cached);
-        await updatePayoutWarning(currentUser.uid);
-        return;
-      }
-      
+      // Force fresh fetch - don't use cache for settings
       const userDoc = await getDoc(doc(db, "users", currentUser.uid));
       if (userDoc.exists()) {
         const data = userDoc.data();
         
+        // Update cache with fresh data
         userBatchCache[currentUser.uid] = {
           uid: currentUser.uid,
           username: data.username || currentUser.displayName || '',
@@ -4075,6 +4040,25 @@ header .logo-header {
         
         updateSetupAlert(data);
         await updatePayoutWarning(currentUser.uid);
+        
+        // Update original values to match new data
+        originalUsername = data.username || currentUser.displayName || '';
+        originalEmail = data.email || currentUser.email || '';
+        
+        // Re-validate
+        usernameValid = true;
+        emailValid = true;
+        updateSaveButton();
+        
+        usernameIcon.className = 'validation-icon valid';
+        usernameIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        usernameValidation.className = 'validation-message show success';
+        usernameValidation.textContent = '✓ Current username';
+        
+        emailIcon.className = 'validation-icon valid';
+        emailIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        emailValidation.className = 'validation-message show success';
+        emailValidation.textContent = '✓ Current email';
       }
     } catch (err) {
       console.warn('Error refreshing settings:', err);
@@ -4330,121 +4314,131 @@ header .logo-header {
     updatingBookId = null;
   }
 
-  // ===== UPDATE BOOK =====
-  async function updateBook() {
-    const bookId = updateBookId.value;
-    if (!bookId) {
-      showToast('❌ No book selected', 'error');
-      return;
-    }
-
-    const authorName = updateAuthorName.value.trim();
-    const title = updateBookTitle.value.trim();
-    const authorBio = updateAuthorBio.value.trim();
-    const synopsis = updateBookSynopsis.value.trim();
-    const publishDate = updatePublishDate.value;
-    const genre = updateGenre.value;
-    const language = updateLanguage.value;
-    const pageCount = parseInt(updatePageCount.value);
-    const email = updateEmail.value.trim();
-    const price = parseFloat(updatePrice.value);
-    const currency = updateCurrency.value;
-    const keywordsStr = updateKeywords.value.trim();
-
-    if (!authorName) { showToast('❌ Author name is required', 'error'); return; }
-    if (!title) { showToast('❌ Book title is required', 'error'); return; }
-    if (!authorBio) { showToast('❌ Author bio is required', 'error'); return; }
-    if (!synopsis) { showToast('❌ Synopsis is required', 'error'); return; }
-    if (!publishDate) { showToast('❌ Publishing date is required', 'error'); return; }
-    if (!genre) { showToast('❌ Genre is required', 'error'); return; }
-    if (!language) { showToast('❌ Language is required', 'error'); return; }
-    if (!pageCount || pageCount < 1) { showToast('❌ Valid page count is required', 'error'); return; }
-    if (!email || !email.includes('@')) { showToast('❌ Valid email is required', 'error'); return; }
-    if (isNaN(price) || price < 0) { showToast('❌ Valid price is required', 'error'); return; }
-
-    const downloadLimitValue = getUpdateDownloadsValue();
-    if (downloadLimitValue === null) {
-      showToast('❌ Please enter a valid number of downloads (minimum 3).', 'error');
-      updateCustomDownloadsInput.focus();
-      return;
-    }
-
-    const keywords = keywordsStr.split(',').map(k => k.trim()).filter(k => k.length > 0);
-    if (keywords.length < 3) {
-      showToast('❌ Please enter at least 3 keywords separated by commas', 'error');
-      return;
-    }
-
-    updateBookBtn.disabled = true;
-    updateBookBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
-
-    try {
-      let imageUrl = null;
-      let pdfUrl = null;
-
-      if (updateCoverImage.files.length > 0) {
-        const file = updateCoverImage.files[0];
-        if (file.size > 5 * 1024 * 1024) {
-          showToast('❌ Cover image must be less than 5MB', 'error');
-          updateBookBtn.disabled = false;
-          updateBookBtn.innerHTML = '<i class="fas fa-save"></i> Update Book';
-          return;
-        }
-        imageUrl = await uploadFile(file, 'image');
-      }
-
-      if (updatePdfFile.files.length > 0) {
-        const file = updatePdfFile.files[0];
-        if (file.size > 15 * 1024 * 1024) {
-          showToast('❌ PDF must be less than 15MB', 'error');
-          updateBookBtn.disabled = false;
-          updateBookBtn.innerHTML = '<i class="fas fa-save"></i> Update Book';
-          return;
-        }
-        pdfUrl = await uploadFile(file, 'raw');
-      }
-
-      const updateData = {
-        authorName,
-        title,
-        subtitle: updateBookSubtitle.value.trim() || '',
-        authorBio,
-        synopsis,
-        isbn: updateIsbn.value.trim() || '',
-        publishDate,
-        genre,
-        language,
-        pageCount,
-        email,
-        pricing: { currency, amount: price },
-        keywords,
-        downloadLimit: downloadLimitValue,
-        updatedAt: serverTimestamp()
-      };
-
-      if (imageUrl) updateData.imageUrl = imageUrl;
-      if (pdfUrl) updateData.pdfUrl = pdfUrl;
-
-      await updateDoc(doc(db, "books", bookId), updateData);
-
-      const bookIndex = authorBooks.findIndex(b => b.id === bookId);
-      if (bookIndex !== -1) {
-        authorBooks[bookIndex] = { ...authorBooks[bookIndex], ...updateData };
-        if (imageUrl) authorBooks[bookIndex].imageUrl = imageUrl;
-        if (pdfUrl) authorBooks[bookIndex].pdfUrl = pdfUrl;
-      }
-
-      closeModal();
-      renderAll();
-      showToast('✅ Book updated successfully!', 'success');
-
-    } catch (err) {
-      showToast('❌ Error updating book: ' + err.message, 'error');
-    } finally {
-      updateBookBtn.disabled = false;
-      updateBookBtn.innerHTML = '<i class="fas fa-save"></i> Update Book';
-    }
+ // ===== UPDATE BOOK =====
+async function updateBook() {
+  const bookId = updateBookId.value;
+  if (!bookId) {
+    showToast('❌ No book selected', 'error');
+    return;
   }
+
+  const authorName = updateAuthorName.value.trim();
+  const title = updateBookTitle.value.trim();
+  const authorBio = updateAuthorBio.value.trim();
+  const synopsis = updateBookSynopsis.value.trim();
+  const publishDate = updatePublishDate.value;
+  const genre = updateGenre.value;
+  const language = updateLanguage.value;
+  const pageCount = parseInt(updatePageCount.value);
+  const email = updateEmail.value.trim();
+  const price = parseFloat(updatePrice.value);
+  const currency = updateCurrency.value;
+  const keywordsStr = updateKeywords.value.trim();
+
+  if (!authorName) { showToast('❌ Author name is required', 'error'); return; }
+  if (!title) { showToast('❌ Book title is required', 'error'); return; }
+  if (!authorBio) { showToast('❌ Author bio is required', 'error'); return; }
+  if (!synopsis) { showToast('❌ Synopsis is required', 'error'); return; }
+  if (!publishDate) { showToast('❌ Publishing date is required', 'error'); return; }
+  if (!genre) { showToast('❌ Genre is required', 'error'); return; }
+  if (!language) { showToast('❌ Language is required', 'error'); return; }
+  if (!pageCount || pageCount < 1) { showToast('❌ Valid page count is required', 'error'); return; }
+  if (!email || !email.includes('@')) { showToast('❌ Valid email is required', 'error'); return; }
+  if (isNaN(price) || price < 0) { showToast('❌ Valid price is required', 'error'); return; }
+
+  const downloadLimitValue = getUpdateDownloadsValue();
+  if (downloadLimitValue === null) {
+    showToast('❌ Please enter a valid number of downloads (minimum 3).', 'error');
+    updateCustomDownloadsInput.focus();
+    return;
+  }
+
+  const keywords = keywordsStr.split(',').map(k => k.trim()).filter(k => k.length > 0);
+  if (keywords.length < 3) {
+    showToast('❌ Please enter at least 3 keywords separated by commas', 'error');
+    return;
+  }
+
+  updateBookBtn.disabled = true;
+  updateBookBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+
+  try {
+    let imageUrl = null;
+    let pdfUrl = null;
+
+    if (updateCoverImage.files.length > 0) {
+      const file = updateCoverImage.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        showToast('❌ Cover image must be less than 5MB', 'error');
+        updateBookBtn.disabled = false;
+        updateBookBtn.innerHTML = '<i class="fas fa-save"></i> Update Book';
+        return;
+      }
+      imageUrl = await uploadFile(file, 'image');
+    }
+
+    if (updatePdfFile.files.length > 0) {
+      const file = updatePdfFile.files[0];
+      if (file.size > 15 * 1024 * 1024) {
+        showToast('❌ PDF must be less than 15MB', 'error');
+        updateBookBtn.disabled = false;
+        updateBookBtn.innerHTML = '<i class="fas fa-save"></i> Update Book';
+        return;
+      }
+      pdfUrl = await uploadFile(file, 'raw');
+    }
+
+    const updateData = {
+      authorName,
+      title,
+      subtitle: updateBookSubtitle.value.trim() || '',
+      authorBio,
+      synopsis,
+      isbn: updateIsbn.value.trim() || '',
+      publishDate,
+      genre,
+      language,
+      pageCount,
+      email,
+      pricing: { currency, amount: price },
+      keywords,
+      downloadLimit: downloadLimitValue,
+      updatedAt: serverTimestamp()
+    };
+
+    if (imageUrl) updateData.imageUrl = imageUrl;
+    if (pdfUrl) updateData.pdfUrl = pdfUrl;
+
+    await updateDoc(doc(db, "books", bookId), updateData);
+
+    // ✅ FIX: Update local array with ALL data including price
+    const bookIndex = authorBooks.findIndex(b => b.id === bookId);
+    if (bookIndex !== -1) {
+      authorBooks[bookIndex] = {
+        ...authorBooks[bookIndex],
+        ...updateData,
+        price: price,                         // ✅ Explicitly set price
+        currency: currency,                   // ✅ Explicitly set currency
+        pricing: { currency, amount: price }, // ✅ Explicitly set pricing
+        title: title,
+        authorName: authorName,
+        subtitle: updateBookSubtitle.value.trim() || '',
+        imageUrl: imageUrl || authorBooks[bookIndex].imageUrl,
+        pdfUrl: pdfUrl || authorBooks[bookIndex].pdfUrl,
+      };
+    }
+
+    closeModal();
+    renderAll(); // ✅ This will now show updated stats
+    showToast('✅ Book updated successfully!', 'success');
+
+  } catch (err) {
+    showToast('❌ Error updating book: ' + err.message, 'error');
+  } finally {
+    updateBookBtn.disabled = false;
+    updateBookBtn.innerHTML = '<i class="fas fa-save"></i> Update Book';
+  }
+}
 
   // ===== DELETE BOOK =====
   async function deleteBook() {
@@ -4836,25 +4830,37 @@ header .logo-header {
       });
 
       authorBooks = [];
-      allBooksData.forEach(data => {
-        authorBooks.push({
-          id: data.id,
-          title: data.title || 'Untitled',
-          subtitle: data.subtitle || '',
-          authorName: data.authorName || 'Anonymous',
-          imageUrl: data.imageUrl || '',
-          pdfUrl: data.pdfUrl || '',
-          price: data.pricing?.amount || 0,
-          currency: data.pricing?.currency || 'GHS',
-          status: data.status || 'draft',
-          sales: data.sales || 0,           // 👈 Sales = purchases
-          downloads: data.downloads || 0,    // 👈 Downloads = actual downloads
-          downloadLimit: data.downloadLimit || data.downloads || 5,
-          views: data.views || 0,
-          rating: data.rating || 0,
-          approvedAt: data.approvedAt || data.createdAt || null,
-        });
-      });
+allBooksData.forEach(data => {
+  // ✅ FIX: Get price from pricing.amount OR direct price
+  let bookPrice = 0;
+  let bookCurrency = 'GHS';
+  if (data.pricing) {
+    bookPrice = data.pricing.amount || 0;
+    bookCurrency = data.pricing.currency || 'GHS';
+  } else {
+    bookPrice = data.price || 0;
+    bookCurrency = data.currency || 'GHS';
+  }
+  
+  authorBooks.push({
+    id: data.id,
+    title: data.title || 'Untitled',
+    subtitle: data.subtitle || '',
+    authorName: data.authorName || 'Anonymous',
+    imageUrl: data.imageUrl || '',
+    pdfUrl: data.pdfUrl || '',
+    price: bookPrice,                       // ✅ Set price
+    currency: bookCurrency,                 // ✅ Set currency
+    pricing: data.pricing || { currency: bookCurrency, amount: bookPrice }, // ✅ Set pricing
+    status: data.status || 'draft',
+    sales: data.sales || 0,
+    downloads: data.downloads || 0,
+    downloadLimit: data.downloadLimit || data.downloads || 5,
+    views: data.views || 0,
+    rating: data.rating || 0,
+    approvedAt: data.approvedAt || data.createdAt || null,
+  });
+});
 
       authorBooks.sort((a, b) => {
         const da = a.approvedAt?.toDate?.() || new Date(a.approvedAt) || new Date(0);
@@ -4879,25 +4885,40 @@ header .logo-header {
     }
   }
 
-  // ===== RENDER FUNCTIONS =====
-  function renderStats(books) {
-    const published = books.filter(b => b.status === 'approved');
-    const totalBooks = books.length;
-    const totalSales = published.reduce((sum, b) => sum + (b.sales || 0), 0);
-    const totalDownloads = published.reduce((sum, b) => sum + (b.downloads || 0), 0);
-    const totalRevenue = published.reduce((sum, b) => sum + ((b.sales || 0) * (b.price || 0)), 0);
-    const avgPrice = published.length > 0 ? (published.reduce((sum, b) => sum + (b.price || 0), 0) / published.length).toFixed(0) : 0;
-    const totalViews = books.reduce((sum, b) => sum + (b.views || 0), 0);
+ // ===== RENDER FUNCTIONS =====
+function renderStats(books) {
+  const published = books.filter(b => b.status === 'approved');
+  const totalBooks = books.length;
+  const totalSales = published.reduce((sum, b) => sum + (b.sales || 0), 0);
+  const totalDownloads = published.reduce((sum, b) => sum + (b.downloads || 0), 0);
+  
+  // ✅ Helper to get price from pricing.amount OR direct price
+  const getPrice = (book) => {
+    if (book.pricing && book.pricing.amount !== undefined) {
+      return book.pricing.amount;
+    }
+    return book.price || 0;
+  };
+  
+  const totalRevenue = published.reduce((sum, b) => {
+    const price = getPrice(b);
+    return sum + ((b.sales || 0) * price);
+  }, 0);
+  
+  const avgPrice = published.length > 0 
+    ? (published.reduce((sum, b) => sum + getPrice(b), 0) / published.length) 
+    : 0;
+  const totalViews = books.reduce((sum, b) => sum + (b.views || 0), 0);
 
-    statsContainer.innerHTML = `
-      <div class="stat"><h4>Total Books</h4><div class="value">${totalBooks}</div></div>
-      <div class="stat"><h4>Total Sales</h4><div class="value">${totalSales}</div></div>
-      <div class="stat"><h4>Total Downloads</h4><div class="value">${totalDownloads}</div></div>
-      <div class="stat"><h4>Total Revenue</h4><div class="value">${formatCurrency(totalRevenue)}</div></div>
-      <div class="stat"><h4>Avg. Price</h4><div class="value">${formatCurrency(avgPrice)}</div></div>
-      <div class="stat"><h4>Total Views</h4><div class="value">${totalViews}</div></div>
-    `;
-  }
+  statsContainer.innerHTML = `
+    <div class="stat"><h4>Total Books</h4><div class="value">${totalBooks}</div></div>
+    <div class="stat"><h4>Total Sales</h4><div class="value">${totalSales}</div></div>
+    <div class="stat"><h4>Total Downloads</h4><div class="value">${totalDownloads}</div></div>
+    <div class="stat"><h4>Total Revenue</h4><div class="value">${formatCurrency(totalRevenue)}</div></div>
+    <div class="stat"><h4>Avg. Price</h4><div class="value">${formatCurrency(avgPrice)}</div></div>
+    <div class="stat"><h4>Total Views</h4><div class="value">${totalViews}</div></div>
+  `;
+}
 
   function renderMyBooks(books) {
     if (books.length === 0) {
@@ -5418,7 +5439,14 @@ window.addEventListener('storage', function(e) {
       emailValid = true;
       updateSaveButton();
       
+      // ✅ Invalidate cache and force refresh
+      delete userBatchCache[currentUser.uid];
+      userBatchCacheTime = 0;
+      
+      // ✅ Force fresh data load
       await updateUserUI(currentUser);
+      await refreshSettings();
+      await loadAuthorData(currentUser);
       
     } catch (err) {
       showToast('❌ Error saving settings: ' + err.message, 'error');
@@ -5491,6 +5519,11 @@ window.addEventListener('storage', function(e) {
       
       showToast('✅ Author & Publishing settings saved successfully!', 'success');
       
+      // ✅ Invalidate cache and force refresh
+      delete userBatchCache[currentUser.uid];
+      userBatchCacheTime = 0;
+      
+      // ✅ Force fresh data load
       const userDoc = await getDoc(doc(db, "users", currentUser.uid));
       if (userDoc.exists()) {
         updateSetupAlert(userDoc.data());
