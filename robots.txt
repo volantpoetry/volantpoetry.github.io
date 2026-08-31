@@ -24,6 +24,7 @@ Allow: /store/index.html
 Allow: /store/submit.html
 Allow: /store/faq.html
 Allow: /store/refund.html
+Allow: /store/details.html
 
 # Volant Foundry
 Allow: /volant_foundry/index.html
