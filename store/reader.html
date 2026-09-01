@@ -1828,21 +1828,14 @@
     const content = document.getElementById('readerContent');
     
     if (currentBook.pdfUrl) {
-        // ✅ FIX: Use the raw PDF URL without any extra parameters
-        // Cloudinary raw URLs work better with this format
-        let pdfUrl = currentBook.pdfUrl;
-        
-        // If it's a Cloudinary raw URL, make sure it's properly formatted
-        if (pdfUrl.includes('cloudinary.com') && pdfUrl.includes('/raw/upload/')) {
-            // Extract the base URL without any # fragments
-            pdfUrl = pdfUrl.split('#')[0];
-            // Add proper parameters for viewer
-            pdfUrl = pdfUrl + '#toolbar=0&navpanes=0&scrollbar=1';
-        }
+        // ✅ Use Google PDF Viewer as fallback for mobile
+        const pdfUrl = currentBook.pdfUrl.split('#')[0];
+        const encodedUrl = encodeURIComponent(pdfUrl);
+        const viewerUrl = `https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`;
         
         content.innerHTML = `
             <div class="pdf-viewer-wrapper" style="width:100%;height:85vh;min-height:500px;">
-                <iframe src="${pdfUrl}" 
+                <iframe src="${viewerUrl}" 
                         style="width:100%;height:100%;border:none;background:#fff;"
                         allow="autoplay"
                         id="pdfViewer"
@@ -1851,12 +1844,10 @@
             </div>
         `;
         
-        // ✅ FIX: Handle mobile viewport
+        // Handle mobile height
         setTimeout(() => {
             const wrapper = document.querySelector('.pdf-viewer-wrapper');
-            const iframe = document.getElementById('pdfViewer');
-            if (wrapper && iframe) {
-                // Adjust height for mobile
+            if (wrapper) {
                 const height = window.innerHeight - 120;
                 wrapper.style.height = Math.max(400, height) + 'px';
             }
