@@ -686,6 +686,37 @@ header {
       box-shadow: none;
     }
 
+    /* ===== READ ONLINE BUTTON ===== */
+    .btn-read-online {
+      background: #4b2aad;
+      color: white;
+      border: none;
+      padding: 0.9rem 2.5rem;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex: 1;
+      justify-content: center;
+      min-width: 200px;
+    }
+    .btn-read-online:hover {
+      background: #3a1f8a;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(75, 42, 173, 0.3);
+    }
+    .btn-read-online:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
     .btn-download {
       background: var(--primary);
       color: white;
@@ -3104,6 +3135,11 @@ function goToLogin() {
                     <i class="fas fa-sync-alt"></i> <span>Buy Again (Pay with Paystack)</span>
                   </button>
 
+                  <!-- ===== READ ONLINE BUTTON ===== -->
+                  <button class="btn-read-online" id="readOnlineBtn" style="display:none;">
+                    <i class="fas fa-book-open"></i> Read Online
+                  </button>
+
                   <button class="btn-download owned" id="downloadBtn" style="display:none;">
                     <i class="fas fa-download"></i> <span id="downloadBtnText">Download</span>
                   </button>
@@ -3176,7 +3212,8 @@ function goToLogin() {
         "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
       }
     }
-  </script><script type="module">
+  </script>
+  <script type="module">
     import { initializeApp } from "firebase/app";
     import { 
       getFirestore, 
@@ -3251,6 +3288,7 @@ function goToLogin() {
     const payBtn = document.getElementById('payBtn');
     const payBtnText = document.getElementById('payBtnText');
     const repurchaseBtn = document.getElementById('repurchaseBtn');
+    const readOnlineBtn = document.getElementById('readOnlineBtn');
     const paymentProcessing = document.getElementById('paymentProcessing');
     const paymentSuccess = document.getElementById('paymentSuccess');
     const paymentError = document.getElementById('paymentError');
@@ -4014,6 +4052,7 @@ function goToLogin() {
             repurchaseBtn.style.display = 'none';
             downloadBtn.style.display = 'inline-flex';
             payBtn.style.display = 'none';
+            readOnlineBtn.style.display = 'inline-flex';
           } else if (canDownload) {
             purchaseStatusText.textContent = `✅ You own this book! ${remaining} downloads remaining.`;
             purchaseStatus.className = 'purchase-status owned';
@@ -4024,6 +4063,7 @@ function goToLogin() {
             repurchaseBtn.style.display = 'none';
             downloadBtn.style.display = 'inline-flex';
             payBtn.style.display = 'none';
+            readOnlineBtn.style.display = 'inline-flex';
           } else {
             purchaseStatusText.textContent = '⚠️ You\'ve reached the download limit. You can buy again or contact the author.';
             purchaseStatus.className = 'purchase-status limit-reached';
@@ -4034,6 +4074,7 @@ function goToLogin() {
             repurchaseBtn.style.display = 'inline-flex';
             downloadBtn.style.display = 'none';
             payBtn.style.display = 'none';
+            readOnlineBtn.style.display = 'inline-flex';
           }
         } else {
           downloadReminder.className = 'download-reminder';
@@ -4043,6 +4084,7 @@ function goToLogin() {
           payBtn.style.display = 'inline-flex';
           repurchaseBtn.style.display = 'none';
           downloadBtn.style.display = 'none';
+          readOnlineBtn.style.display = 'none';
         }
       } else {
         downloadReminder.className = 'download-reminder';
@@ -4052,6 +4094,7 @@ function goToLogin() {
         payBtn.style.display = 'none';
         repurchaseBtn.style.display = 'none';
         downloadBtn.style.display = 'none';
+        readOnlineBtn.style.display = 'none';
       }
       
       updatePaymentUIState();
@@ -4530,6 +4573,9 @@ function goToLogin() {
           downloadBtn.style.display = 'inline-flex';
           downloadBtnText.textContent = 'Download';
           
+          // ===== SHOW READ ONLINE BUTTON =====
+          readOnlineBtn.style.display = 'inline-flex';
+          
           purchaseStatus.style.display = 'flex';
           purchaseStatus.className = 'purchase-status owned';
           
@@ -4985,6 +5031,7 @@ function goToLogin() {
       payBtn.style.display = 'none';
       repurchaseBtn.style.display = 'none';
       downloadBtn.style.display = 'none';
+      readOnlineBtn.style.display = 'none';
       loginPrompt.style.display = 'none';
       
       switch(status) {
@@ -4995,6 +5042,7 @@ function goToLogin() {
           paymentSuccess.classList.add('active');
           downloadBtn.style.display = 'inline-flex';
           downloadBtnText.textContent = 'Download';
+          readOnlineBtn.style.display = 'inline-flex';
           purchaseStatus.style.display = 'flex';
           break;
         case 'error':
@@ -5006,6 +5054,7 @@ function goToLogin() {
           purchaseStatus.style.display = 'flex';
           downloadBtn.style.display = 'inline-flex';
           downloadBtnText.textContent = 'Download';
+          readOnlineBtn.style.display = 'inline-flex';
           break;
         case 'not_owned':
           payBtn.style.display = 'inline-flex';
@@ -5040,6 +5089,7 @@ function goToLogin() {
           repurchaseBtn.style.display = 'inline-flex';
           downloadBtn.style.display = 'none';
           payBtn.style.display = 'none';
+          readOnlineBtn.style.display = 'inline-flex';
         }
       } else {
         updatePaymentUI('not_owned');
@@ -5112,6 +5162,22 @@ function goToLogin() {
         downloadBtnText.textContent = 'Download';
       }
     }
+
+    // ===== READ ONLINE BUTTON HANDLER =====
+    readOnlineBtn.addEventListener('click', function() {
+      if (!currentUser) {
+        showToast('🔐 Please sign in to read.', 'error');
+        return;
+      }
+      if (!currentBook) {
+        showToast('❌ Book not loaded.', 'error');
+        return;
+      }
+      
+      // Open the reader in a new tab
+      const readerUrl = `reader.html?id=${currentBook.id}`;
+      window.open(readerUrl, '_blank');
+    });
 
     // ===== PAY BUTTON =====
     payBtn.addEventListener('click', function() {

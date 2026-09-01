@@ -4053,7 +4053,12 @@ header .logo-header {
         <div class="volant-footer-col">
             <h4 class="volant-footer-heading">Volant Reads</h4>
             <ul class="volant-footer-links">
-                <li><a href="dashboard.html">Dashboard</a></li>
+               <li> <a href="dashboard.html#library">
+    <i class="fas fa-book-open"></i> My Library
+</a></li>
+      <li><a href="javascript:void(0)" onclick="sessionStorage.setItem('volant_reads_current_page','dashboard'); location.href='dashboard.html';">
+    <i class="fas fa-th-large"></i> Dashboard
+</a></li> 
                 <li><a href="../shared/about.html">About Us</a></li>
                 <li><a href="index.html">Bookstore</a></li>
                 <li><a href="submit.html">Submit Book</a></li>

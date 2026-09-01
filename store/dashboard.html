@@ -2220,6 +2220,131 @@ header .logo-header {
   -webkit-overflow-scrolling: touch !important;
   scroll-behavior: smooth !important;
 }
+
+/* ===== MY LIBRARY SPECIFIC STYLES ===== */
+.library-filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.library-filter-bar input,
+.library-filter-bar select {
+  padding: 10px 16px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: white;
+  font-family: 'Inter', sans-serif;
+  transition: 0.3s;
+}
+
+.library-filter-bar input:focus,
+.library-filter-bar select:focus {
+  outline: none;
+  border-color: #6a34ff;
+  box-shadow: 0 0 0 3px rgba(106,52,255,0.1);
+}
+
+.library-filter-bar input {
+  flex: 1;
+  min-width: 150px;
+}
+
+.library-filter-bar select {
+  min-width: 130px;
+}
+
+.library-count-badge {
+  background: #f0eaff;
+  color: #4b2aad;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.library-empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: 24px;
+  border: 1px solid #eee;
+}
+
+.library-empty-state i {
+  font-size: 3.5rem;
+  color: #cbb9a8;
+  margin-bottom: 16px;
+}
+
+.library-empty-state h3 {
+  font-size: 1.4rem;
+  color: #2d2a24;
+  margin-bottom: 8px;
+}
+
+.library-empty-state p {
+  color: #6f6252;
+  max-width: 400px;
+  margin: 0 auto 20px;
+}
+
+.library-empty-state .btn-browse {
+  display: inline-block;
+  padding: 12px 32px;
+  background: #6a34ff;
+  color: white;
+  text-decoration: none;
+  border-radius: 40px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.library-empty-state .btn-browse:hover {
+  background: #5428d9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(106,52,255,0.3);
+}
+
+/* ===== MOBILE LIBRARY FIXES ===== */
+@media (max-width: 480px) {
+  .library-filter-bar {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .library-filter-bar input,
+  .library-filter-bar select {
+    width: 100%;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+  }
+  
+  .library-count-badge {
+    font-size: 0.75rem;
+    padding: 3px 10px;
+  }
+}
+
+/* ===== HIDE SETUP ALERT BANNER ON MY LIBRARY PAGE ===== */
+#page-mylibrary.active + #setupAlertBanner {
+    display: none !important;
+}
+
+/* Alternative - hide when mylibrary page is active */
+#page-mylibrary.active ~ #setupAlertBanner {
+    display: none !important;
+}
+
+/* Most reliable - hide by checking if mylibrary is active */
+body:has(#page-mylibrary.active) #setupAlertBanner {
+    display: none !important;
+}
   </style>
 </head>
 <body>
@@ -2253,8 +2378,10 @@ header .logo-header {
       <h2>VOLANT</h2>
     </div>
     <nav class="nav">
-      <a class="active" data-page="dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
-      <a data-page="mybooks"><i class="fas fa-book-open"></i> My Books</a>
+      <!-- MY LIBRARY - NOW FIRST -->
+      <a class="active" data-page="mylibrary"><i class="fas fa-book-open"></i> My Library</a>
+      <a data-page="dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+      <a data-page="mybooks"><i class="fas fa-edit"></i> My Books</a>
       <a data-page="sales"><i class="fas fa-chart-simple"></i> Sales</a>
       <a data-page="analytics"><i class="fas fa-chart-line"></i> Analytics</a>
       <a data-page="wishlist"><i class="fas fa-heart"></i> Wishlist <span class="wishlist-badge" id="wishlistNavBadge">0</span></a>
@@ -2308,7 +2435,7 @@ header .logo-header {
           </div>
         </div>
         <div class="banner-actions">
-          <a href="#" class="btn-go-settings" onclick="event.preventDefault(); showPage('settings');">
+          <a class="btn-go-settings" onclick="event.preventDefault(); showPage('settings');">
             <i class="fas fa-cog"></i> Go to Settings
           </a>
           <span class="banner-time">
@@ -2321,8 +2448,32 @@ header .logo-header {
 
   <!-- ===== PAGE SECTIONS ===== -->
 
+  <!-- ===== MY LIBRARY PAGE (NEW - FIRST) ===== -->
+  <div class="page-section active" id="page-mylibrary">
+    <div class="page-header">
+      <h2>📚 My Library</h2>
+      <p>All the books you've purchased and own. Read, download, and manage your collection.</p>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="library-filter-bar">
+      <input type="text" id="librarySearchInput" placeholder="🔍 Search your library..." />
+      <select id="librarySortSelect">
+        <option value="recent">Most Recent</option>
+        <option value="title">Alphabetical (A-Z)</option>
+        <option value="title-desc">Alphabetical (Z-A)</option>
+        <option value="author">By Author</option>
+      </select>
+      <span class="library-count-badge" id="libraryCountBadge">0 books</span>
+    </div>
+
+    <div class="page-grid" id="libraryGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
   <!-- DASHBOARD PAGE -->
-  <div class="page-section active" id="page-dashboard">
+  <div class="page-section" id="page-dashboard">
     <!-- TOPBAR inside dashboard only -->
     <div class="topbar">
       <div class="topbar-left">
@@ -2996,7 +3147,6 @@ header .logo-header {
     }
   }
 </script>
-
 <script type="module">
   import { initializeApp } from "firebase/app";
   import { 
@@ -3154,6 +3304,9 @@ header .logo-header {
   let originalUsername = '';
   let originalEmail = '';
 
+  // ===== LIBRARY DATA =====
+  let purchasedBooks = [];
+  
   // ===== OPTIMIZED BATCH USER FETCHING (50 AT A TIME) =====
   const userBatchCache = {};
   let userBatchCacheTime = 0;
@@ -4084,6 +4237,11 @@ header .logo-header {
       refreshSettings();
     }
     
+    // Load library when switching to library page
+    if (pageId === 'mylibrary') {
+      loadLibrary();
+    }
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -4417,9 +4575,9 @@ async function updateBook() {
       authorBooks[bookIndex] = {
         ...authorBooks[bookIndex],
         ...updateData,
-        price: price,                         // ✅ Explicitly set price
-        currency: currency,                   // ✅ Explicitly set currency
-        pricing: { currency, amount: price }, // ✅ Explicitly set pricing
+        price: price,
+        currency: currency,
+        pricing: { currency, amount: price },
         title: title,
         authorName: authorName,
         subtitle: updateBookSubtitle.value.trim() || '',
@@ -4429,7 +4587,7 @@ async function updateBook() {
     }
 
     closeModal();
-    renderAll(); // ✅ This will now show updated stats
+    renderAll();
     showToast('✅ Book updated successfully!', 'success');
 
   } catch (err) {
@@ -4589,6 +4747,234 @@ async function updateBook() {
   }
 
   // ============================================================
+  // ====== LIBRARY FUNCTIONS - INCLUDES READS ======
+  // ============================================================
+
+  async function loadLibrary() {
+    if (!currentUser) return;
+    
+    try {
+        // Get all purchases for this user
+        const purchasesRef = collection(db, "purchases");
+        const purchasesQuery = query(purchasesRef, where("userId", "==", currentUser.uid));
+        const purchasesSnapshot = await getDocs(purchasesQuery);
+        
+        // Get all reads for this user (from reader.html tracking)
+        const readsRef = collection(db, "bookReads");
+        const readsQuery = query(readsRef, where("userId", "==", currentUser.uid));
+        const readsSnapshot = await getDocs(readsQuery);
+        
+        // Use Map to deduplicate by bookId (purchases take priority)
+        const bookMap = new Map();
+        
+        // Add purchases first (these take priority)
+        purchasesSnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.status === 'completed' && data.verified === true) {
+                bookMap.set(data.bookId, {
+                    bookId: data.bookId,
+                    source: 'purchase',
+                    purchaseData: data
+                });
+            }
+        });
+        
+        // Add reads (only if not already purchased)
+        readsSnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (!bookMap.has(data.bookId)) {
+                bookMap.set(data.bookId, {
+                    bookId: data.bookId,
+                    source: 'read',
+                    readData: data
+                });
+            }
+        });
+        
+        // Fetch book details for each entry
+        const bookPromises = Array.from(bookMap.entries()).map(async ([bookId, entry]) => {
+            try {
+                const bookRef = doc(db, "books", bookId);
+                const bookSnap = await getDoc(bookRef);
+                
+                if (bookSnap.exists()) {
+                    const bookData = bookSnap.data();
+                    const isPurchased = entry.source === 'purchase';
+                    const purchaseData = entry.purchaseData || {};
+                    const readData = entry.readData || {};
+                    
+                    return {
+                        id: bookId,
+                        title: bookData.title || 'Untitled',
+                        subtitle: bookData.subtitle || '',
+                        authorName: bookData.authorName || 'Anonymous',
+                        imageUrl: bookData.imageUrl || '',
+                        price: bookData.pricing?.amount || 0,
+                        currency: bookData.pricing?.currency || 'GHS',
+                        downloadLimit: bookData.downloadLimit || bookData.downloads || 5,
+                        addedAt: isPurchased 
+                            ? (purchaseData.purchasedAt?.toDate?.() || new Date(purchaseData.purchasedAt) || new Date())
+                            : (readData.firstReadAt?.toDate?.() || new Date(readData.firstReadAt) || new Date()),
+                        downloadCount: purchaseData.downloadCount || 0,
+                        pdfUrl: bookData.pdfUrl || '',
+                        status: isPurchased ? 'owned' : 'read',
+                        readCount: readData.readCount || 0,
+                        lastReadAt: readData.lastReadAt?.toDate?.() || null
+                    };
+                }
+                return null;
+            } catch (err) {
+                console.warn('Error fetching book:', bookId, err);
+                return null;
+            }
+        });
+        
+        const results = await Promise.all(bookPromises);
+        purchasedBooks = results.filter(book => book !== null);
+        
+        // Sort: Purchased first, then by date added
+        purchasedBooks.sort((a, b) => {
+            if (a.status === 'owned' && b.status !== 'owned') return -1;
+            if (a.status !== 'owned' && b.status === 'owned') return 1;
+            return b.addedAt - a.addedAt;
+        });
+        
+        renderLibrary();
+        
+    } catch (err) {
+        console.warn('Error loading library:', err);
+        showToast('Error loading your library', 'error');
+    }
+  }
+
+  function renderLibrary() {
+    const grid = document.getElementById('libraryGrid');
+    const countBadge = document.getElementById('libraryCountBadge');
+    
+    countBadge.textContent = `${purchasedBooks.length} book${purchasedBooks.length !== 1 ? 's' : ''}`;
+    
+    if (purchasedBooks.length === 0) {
+      grid.innerHTML = `
+        <div class="library-empty-state">
+          <i class="fas fa-book-open"></i>
+          <h3>Your library is empty</h3>
+          <p>Start building your collection by purchasing books from the store.</p>
+          <a href="index.html" class="btn-browse"><i class="fas fa-store"></i> Browse Store</a>
+        </div>
+      `;
+      return;
+    }
+    
+    grid.innerHTML = '';
+    purchasedBooks.forEach(book => {
+      const card = createLibraryBookCard(book);
+      grid.appendChild(card);
+    });
+  }
+
+  function createLibraryBookCard(book) {
+    const card = document.createElement('div');
+    card.className = 'page-card';
+
+    const coverWrapper = document.createElement('div');
+    coverWrapper.className = 'cover-wrapper';
+    coverWrapper.onclick = () => {
+      window.location.href = `details.html?id=${book.id}`;
+    };
+    
+    if (book.imageUrl) {
+      const img = document.createElement('img');
+      img.src = book.imageUrl;
+      img.alt = book.title || 'Book cover';
+      img.loading = 'lazy';
+      img.onerror = function() {
+        this.style.display = 'none';
+        this.parentElement.innerHTML = `<div class="no-image"><i class="fas fa-book-open"></i></div>`;
+      };
+      coverWrapper.appendChild(img);
+    } else {
+      coverWrapper.innerHTML = `<div class="no-image"><i class="fas fa-book-open"></i></div>`;
+    }
+    card.appendChild(coverWrapper);
+
+    const body = document.createElement('div');
+    body.className = 'book-body';
+
+    const title = document.createElement('div');
+    title.className = 'book-title';
+    title.textContent = book.title || 'Untitled';
+    body.appendChild(title);
+
+    if (book.subtitle && book.subtitle.trim() !== '') {
+      const subtitle = document.createElement('div');
+      subtitle.className = 'book-subtitle';
+      subtitle.textContent = book.subtitle;
+      body.appendChild(subtitle);
+    }
+
+    const author = document.createElement('div');
+    author.className = 'book-author';
+    author.textContent = book.authorName || 'Anonymous';
+    body.appendChild(author);
+
+    // Show status badge
+    const statusBadge = document.createElement('span');
+    if (book.status === 'owned') {
+      statusBadge.className = 'badge-status approved';
+      statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> Owned';
+    } else if (book.status === 'read') {
+      statusBadge.className = 'badge-status pending';
+      statusBadge.innerHTML = `<i class="fas fa-book-open"></i> Read ${book.readCount || 1}x`;
+    }
+    body.appendChild(statusBadge);
+
+    // Show download info (only if owned)
+    if (book.status === 'owned') {
+      const limitDisplay = book.downloadLimit === 'unlimited' ? '♾️ Unlimited' : `${book.downloadLimit}`;
+      const used = book.downloadCount || 0;
+      const remaining = book.downloadLimit === 'unlimited' ? '♾️' : Math.max(0, book.downloadLimit - used);
+      
+      const infoBadge = document.createElement('span');
+      infoBadge.className = 'sales-badge';
+      infoBadge.innerHTML = `
+        <i class="fas fa-download"></i> ${used}/${limitDisplay} · 
+        <i class="fas fa-clock"></i> ${remaining} remaining
+      `;
+      body.appendChild(infoBadge);
+    }
+
+    // Action buttons for library
+    const btnGroup = document.createElement('div');
+    btnGroup.className = 'btn-group';
+
+    if (book.pdfUrl) {
+      const readBtn = document.createElement('button');
+      readBtn.className = 'update-book-btn';
+      readBtn.innerHTML = '<i class="fas fa-book-open"></i> Read Online';
+      readBtn.style.background = '#4b2aad';
+      readBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        window.open(`reader.html?id=${book.id}`, '_blank');
+      });
+      btnGroup.appendChild(readBtn);
+    }
+
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'share-book-btn';
+    shareBtn.innerHTML = '<i class="fas fa-link"></i> Share';
+    shareBtn.title = 'Copy book link to share';
+    shareBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      shareBook(book.id, book.title || 'Untitled');
+    });
+    btnGroup.appendChild(shareBtn);
+
+    body.appendChild(btnGroup);
+    card.appendChild(body);
+    return card;
+  }
+
+  // ============================================================
   // ====== EXPORT DATA (GDPR) ======
   // ============================================================
   async function exportUserData() {
@@ -4636,6 +5022,14 @@ async function updateBook() {
         })),
         messages: userMessages,
         wishlist: wishlistItems,
+        library: purchasedBooks.map(book => ({
+          title: book.title || 'Untitled',
+          author: book.authorName || 'Anonymous',
+          status: book.status || 'read',
+          addedAt: book.addedAt,
+          downloadCount: book.downloadCount || 0,
+          readCount: book.readCount || 0
+        })),
         exportDate: new Date().toISOString(),
         platform: 'reads'
       };
@@ -4831,7 +5225,6 @@ async function updateBook() {
 
       authorBooks = [];
 allBooksData.forEach(data => {
-  // ✅ FIX: Get price from pricing.amount OR direct price
   let bookPrice = 0;
   let bookCurrency = 'GHS';
   if (data.pricing) {
@@ -4849,9 +5242,9 @@ allBooksData.forEach(data => {
     authorName: data.authorName || 'Anonymous',
     imageUrl: data.imageUrl || '',
     pdfUrl: data.pdfUrl || '',
-    price: bookPrice,                       // ✅ Set price
-    currency: bookCurrency,                 // ✅ Set currency
-    pricing: data.pricing || { currency: bookCurrency, amount: bookPrice }, // ✅ Set pricing
+    price: bookPrice,
+    currency: bookCurrency,
+    pricing: data.pricing || { currency: bookCurrency, amount: bookPrice },
     status: data.status || 'draft',
     sales: data.sales || 0,
     downloads: data.downloads || 0,
@@ -4892,7 +5285,6 @@ function renderStats(books) {
   const totalSales = published.reduce((sum, b) => sum + (b.sales || 0), 0);
   const totalDownloads = published.reduce((sum, b) => sum + (b.downloads || 0), 0);
   
-  // ✅ Helper to get price from pricing.amount OR direct price
   const getPrice = (book) => {
     if (book.pricing && book.pricing.amount !== undefined) {
       return book.pricing.amount;
@@ -5136,6 +5528,10 @@ function renderStats(books) {
     renderAnalyticsPage(authorBooks);
     renderWishlistPage();
     renderMessages();
+    // Load library if on library page
+    if (document.getElementById('page-mylibrary').classList.contains('active')) {
+      await loadLibrary();
+    }
   }
 
 
@@ -5369,7 +5765,7 @@ window.addEventListener('storage', function(e) {
 
   // Restore last visited page on load
   document.addEventListener('DOMContentLoaded', function() {
-    const lastPage = sessionStorage.getItem('volant_reads_current_page') || 'dashboard';
+    const lastPage = sessionStorage.getItem('volant_reads_current_page') || 'mylibrary';
     showPage(lastPage, false);
   });
 
@@ -5384,6 +5780,51 @@ window.addEventListener('storage', function(e) {
   document.getElementById('exploreBtn')?.addEventListener('click', () => {
     window.location.href = 'dashboard.html';
   });
+
+  // ===== LIBRARY FILTER & SEARCH =====
+  document.getElementById('librarySearchInput')?.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase().trim();
+    filterLibrary(searchTerm);
+  });
+
+  document.getElementById('librarySortSelect')?.addEventListener('change', function() {
+    sortLibrary(this.value);
+  });
+
+  function filterLibrary(searchTerm) {
+    const cards = document.querySelectorAll('#libraryGrid .page-card');
+    cards.forEach(card => {
+      const title = card.querySelector('.book-title')?.textContent?.toLowerCase() || '';
+      const author = card.querySelector('.book-author')?.textContent?.toLowerCase() || '';
+      const match = title.includes(searchTerm) || author.includes(searchTerm);
+      card.style.display = match ? '' : 'none';
+    });
+  }
+
+  function sortLibrary(sortBy) {
+    const grid = document.getElementById('libraryGrid');
+    const cards = Array.from(grid.querySelectorAll('.page-card'));
+    
+    cards.sort((a, b) => {
+      const titleA = a.querySelector('.book-title')?.textContent || '';
+      const titleB = b.querySelector('.book-title')?.textContent || '';
+      const authorA = a.querySelector('.book-author')?.textContent || '';
+      const authorB = b.querySelector('.book-author')?.textContent || '';
+      
+      switch(sortBy) {
+        case 'title':
+          return titleA.localeCompare(titleB);
+        case 'title-desc':
+          return titleB.localeCompare(titleA);
+        case 'author':
+          return authorA.localeCompare(authorB);
+        default: // 'recent'
+          return 0;
+      }
+    });
+    
+    cards.forEach(card => grid.appendChild(card));
+  }
 
   // ===== SAVE PROFILE SETTINGS =====
   document.getElementById('saveSettingsBtn')?.addEventListener('click', async () => {
@@ -5603,7 +6044,7 @@ window.addEventListener('storage', function(e) {
       await loadAuthorData(user);
       
       // ✅ Restore last visited page
-      const lastPage = sessionStorage.getItem('volant_reads_current_page') || 'dashboard';
+      const lastPage = sessionStorage.getItem('volant_reads_current_page') || 'mylibrary';
       showPage(lastPage, false);
       
       sessionStorage.removeItem('auth_redirect_attempted');
