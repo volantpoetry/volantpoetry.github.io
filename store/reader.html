@@ -1824,39 +1824,63 @@
     isLoading = false;
 }
         
-        function displayBook() {
-            const content = document.getElementById('readerContent');
-            
-            if (currentBook.pdfUrl) {
-                content.innerHTML = `
-                    <div class="pdf-viewer-wrapper">
-                        <iframe src="${currentBook.pdfUrl}#toolbar=0&navpanes=0&scrollbar=1" 
-                                class="pdf-viewer" 
-                                allow="autoplay"
-                                id="pdfViewer"
-                                loading="lazy">
-                        </iframe>
-                    </div>
-                `;
-            } else if (currentBook.content) {
-                content.innerHTML = `
-                    <div class="text-content-wrapper">
-                        <div class="text-content">${currentBook.content}</div>
-                    </div>
-                `;
-            } else {
-                content.innerHTML = `
-                    <div style="text-align:center;padding:4rem 2rem;">
-                        <i class="fas fa-book-open" style="font-size:3rem;color:#cbb9a8;margin-bottom:1rem;"></i>
-                        <h3>No content available</h3>
-                        <p style="color:#6f6252;margin-top:0.5rem;">This book doesn't have readable content.</p>
-                        <a href="index.html" class="btn-back" style="display:inline-block;margin-top:1.5rem;">
-                            <i class="fas fa-arrow-left"></i> Back to Store
-                        </a>
-                    </div>
-                `;
-            }
+      function displayBook() {
+    const content = document.getElementById('readerContent');
+    
+    if (currentBook.pdfUrl) {
+        // ✅ FIX: Use the raw PDF URL without any extra parameters
+        // Cloudinary raw URLs work better with this format
+        let pdfUrl = currentBook.pdfUrl;
+        
+        // If it's a Cloudinary raw URL, make sure it's properly formatted
+        if (pdfUrl.includes('cloudinary.com') && pdfUrl.includes('/raw/upload/')) {
+            // Extract the base URL without any # fragments
+            pdfUrl = pdfUrl.split('#')[0];
+            // Add proper parameters for viewer
+            pdfUrl = pdfUrl + '#toolbar=0&navpanes=0&scrollbar=1';
         }
+        
+        content.innerHTML = `
+            <div class="pdf-viewer-wrapper" style="width:100%;height:85vh;min-height:500px;">
+                <iframe src="${pdfUrl}" 
+                        style="width:100%;height:100%;border:none;background:#fff;"
+                        allow="autoplay"
+                        id="pdfViewer"
+                        loading="lazy">
+                </iframe>
+            </div>
+        `;
+        
+        // ✅ FIX: Handle mobile viewport
+        setTimeout(() => {
+            const wrapper = document.querySelector('.pdf-viewer-wrapper');
+            const iframe = document.getElementById('pdfViewer');
+            if (wrapper && iframe) {
+                // Adjust height for mobile
+                const height = window.innerHeight - 120;
+                wrapper.style.height = Math.max(400, height) + 'px';
+            }
+        }, 200);
+        
+    } else if (currentBook.content) {
+        content.innerHTML = `
+            <div class="text-content-wrapper">
+                <div class="text-content">${currentBook.content}</div>
+            </div>
+        `;
+    } else {
+        content.innerHTML = `
+            <div style="text-align:center;padding:4rem 2rem;">
+                <i class="fas fa-book-open" style="font-size:3rem;color:#cbb9a8;margin-bottom:1rem;"></i>
+                <h3>No content available</h3>
+                <p style="color:#6f6252;margin-top:0.5rem;">This book doesn't have readable content.</p>
+                <a href="index.html" class="btn-back" style="display:inline-block;margin-top:1.5rem;">
+                    <i class="fas fa-arrow-left"></i> Back to Store
+                </a>
+            </div>
+        `;
+    }
+}
         
         // ================================================================
         // ===== INIT =====
