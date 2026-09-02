@@ -6,33 +6,8 @@
     <title>Volant Reads · Reader</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    
     <link rel="icon" type="image/png" href="../images/volant-reads-favicon.png" />
     <link rel="apple-touch-icon" href="../images/volant-reads-favicon.png" />
-    
-    <!-- PDF.js CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    
-    <script>
-    // Simple console blocker - production only
-    (function() {
-        if (window.location.hostname.includes('localhost') || 
-            window.location.hostname.includes('127.0.0.1')) {
-            return;
-        }
-        
-        var methods = ['log', 'info', 'warn', 'error', 'debug', 'trace', 'table', 'group', 'groupEnd', 'dir'];
-        methods.forEach(function(m) {
-            console[m] = function() {};
-            try {
-                Object.defineProperty(console, m, { configurable: false, writable: false });
-            } catch(e) {}
-        });
-        
-        window.onerror = function() { return true; };
-        window.onunhandledrejection = function() { return true; };
-    })();
-</script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -136,12 +111,10 @@
             background: #128C7E;
         }
         
-        /* ===== HIDE ALL STATUS MESSAGES EXCEPT OFFLINE AVAILABLE ===== */
         #readerStatus {
             display: none !important;
         }
         
-        /* Show ONLY offline available status */
         #readerStatus.offline-available {
             display: inline-flex !important;
             background: #e8f0fe !important;
@@ -191,7 +164,6 @@
         .btn-save-offline.saved { background: #2d7d46 !important; }
         .btn-save-offline.saved:hover { background: #1f5f33 !important; }
         
-        /* ===== DOWNLOAD BUTTON DISABLED STYLES ===== */
         #readerDownloadBtn.btn-download-disabled {
             opacity: 0.5 !important;
             cursor: not-allowed !important;
@@ -205,7 +177,6 @@
             background: #ccc !important;
         }
         
-        /* ===== SHARE DROPDOWN ===== */
         .share-dropdown {
             position: relative;
             display: inline-block;
@@ -264,7 +235,6 @@
         .share-dropdown-content .share-item .fa-copy { color: #4b2aad; }
         .share-dropdown-content .share-item .fa-link { color: #6f6252; }
         
-        /* ===== FIX: Share dropdown on mobile ===== */
         @media (max-width: 480px) {
             .share-dropdown-content {
                 right: auto;
@@ -272,61 +242,13 @@
                 transform: translateX(-50%);
                 min-width: 180px;
             }
-            
             .share-dropdown-content .share-item {
                 padding: 8px 12px;
                 font-size: 0.8rem;
             }
-            
             .share-dropdown-content .share-item i {
                 font-size: 1rem;
                 width: 18px;
-            }
-        }
-        
-        @media (max-width: 380px) {
-            .share-dropdown-content {
-                right: 0;
-                left: auto;
-                transform: none;
-                min-width: 160px;
-            }
-            
-            .share-dropdown-content .share-item {
-                padding: 6px 10px;
-                font-size: 0.75rem;
-                gap: 8px;
-            }
-            
-            .share-dropdown-content .share-item i {
-                font-size: 0.9rem;
-                width: 16px;
-            }
-        }
-        
-        /* For very small screens, keep dropdown aligned to right */
-        @media (max-width: 337px) {
-            .share-dropdown-content {
-                right: 0;
-                left: auto;
-                transform: none;
-                min-width: 150px;
-            }
-            
-            .share-dropdown-content .share-item {
-                padding: 5px 8px;
-                font-size: 0.7rem;
-                gap: 6px;
-            }
-            
-            .share-dropdown-content .share-item i {
-                font-size: 0.8rem;
-                width: 14px;
-            }
-            
-            .reader-header .controls button {
-                padding: 0.25rem 0.6rem;
-                font-size: 0.7rem;
             }
         }
         
@@ -337,7 +259,7 @@
             text-align: center;
             font-size: 0.75rem;
             color: #6f6252;
-            display: none;
+            display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
@@ -357,14 +279,8 @@
             font-size: 0.75rem;
         }
         .reader-zoom-hint .hint-icon i { font-size: 0.75rem; color: #4b2aad; }
-        .reader-zoom-hint .desktop-hint { display: none !important; }
+        .reader-zoom-hint .desktop-hint { display: inline-flex !important; }
         .reader-zoom-hint .mobile-hint { display: none !important; }
-        
-        @media (min-width: 1025px) {
-            .reader-zoom-hint { display: flex !important; }
-            .reader-zoom-hint .desktop-hint { display: inline-flex !important; }
-            .reader-zoom-hint .mobile-hint { display: none !important; }
-        }
         
         @media (max-width: 1024px) {
             .reader-zoom-hint { display: flex !important; }
@@ -374,7 +290,7 @@
         
         .reader-content {
             flex: 1;
-            padding: 1.5rem 2rem;
+            padding: 1rem 1.5rem;
             max-width: 1100px;
             margin: 0 auto;
             width: 100%;
@@ -383,7 +299,7 @@
             box-shadow: 0 2px 20px rgba(0,0,0,0.04);
         }
         
-        .reader-content .pdf-viewer-wrapper {
+        .pdf-viewer-wrapper {
             position: relative;
             width: 100%;
             height: 85vh;
@@ -394,25 +310,11 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
         
-        .reader-content .pdf-viewer-wrapper iframe {
+        .pdf-viewer-wrapper iframe {
             width: 100%;
             height: 100%;
             border: none;
             background: #fff;
-        }
-        
-        .reader-content .text-content-wrapper {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0.5rem 0;
-        }
-        
-        .reader-content .text-content {
-            font-size: 1.15rem;
-            line-height: 2;
-            color: #2d2a24;
-            white-space: pre-wrap;
-            font-family: 'Georgia', serif;
         }
         
         .loading-state {
@@ -455,14 +357,14 @@
             z-index: 1000;
             background: #4b2aad;
             font-size: 0.9rem;
+            max-width: 90%;
         }
         .toast.show { transform: translateY(0); opacity: 1; }
         .toast.success { background: #2d7d46; }
         .toast.error { background: #b76e4b; }
         .toast.info { background: #4b2aad; }
         
-        .not-owned-state,
-        .signin-state {
+        .not-owned-state {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -472,22 +374,19 @@
             padding: 2rem;
         }
         
-        .not-owned-state i,
-        .signin-state i {
+        .not-owned-state i {
             font-size: 4rem;
             color: #cbb9a8;
             margin-bottom: 1rem;
         }
         
-        .not-owned-state h3,
-        .signin-state h3 {
+        .not-owned-state h3 {
             font-size: 1.5rem;
             color: #2d2a24;
             margin-bottom: 0.5rem;
         }
         
-        .not-owned-state p,
-        .signin-state p {
+        .not-owned-state p {
             color: #6f6252;
             max-width: 400px;
             margin-bottom: 1.5rem;
@@ -512,23 +411,14 @@
         
         .btn-back i { margin-right: 8px; }
         
-        @keyframes fa-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @media (max-width: 768px) {
+            .reader-content { padding: 0.5rem 0.5rem; }
+            .pdf-viewer-wrapper { height: 78vh; min-height: 380px; border-radius: 4px; }
         }
         
-        @media (max-width: 1024px) {
-
-                .reader-header .book-info {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        width: 100%;
-    }
-            .reader-content { padding: 1.2rem 1.5rem; max-width: 98%; }
-            .reader-content .pdf-viewer-wrapper { height: 78vh; min-height: 420px; }
-            .reader-zoom-hint { font-size: 0.78rem; padding: 0.35rem 0.8rem; gap: 6px; }
-            .reader-zoom-hint .hint-icon { font-size: 0.75rem; padding: 0.12rem 0.5rem; }
+        @media (max-width: 480px) {
+            .reader-content { padding: 0.3rem 0.3rem; }
+            .pdf-viewer-wrapper { height: 75vh; min-height: 350px; border-radius: 4px; }
         }
         
         @media (max-width: 765px) {
@@ -539,13 +429,12 @@
                 gap: 0.5rem;
                 min-height: auto;
             }
-            
-             .reader-header .book-info {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        width: 100%;
-    }
+            .reader-header .book-info {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                width: 100%;
+            }
             .reader-header .book-info h2 {
                 font-size: 1.2rem;
                 max-width: 100%;
@@ -553,376 +442,72 @@
                 overflow: visible;
                 text-overflow: unset;
             }
-
             .reader-header .book-info p { font-size: 1.01rem; }
             .reader-header .controls { justify-content: flex-start; gap: 0.4rem; flex-wrap: wrap; }
             .reader-header .controls button { padding: 0.35rem 0.8rem; font-size: 0.75rem; }
-            .reader-header .controls #readerStatus { font-size: 0.7rem; padding: 0.15rem 0.6rem; }
             .reader-content { padding: 0.8rem 0.8rem; max-width: 100%; min-height: calc(100vh - 130px); }
-            .reader-content .pdf-viewer-wrapper { height: 75vh; min-height: 380px; border-radius: 4px; }
-            .reader-zoom-hint { font-size: 0.65rem; padding: 0.3rem 0.8rem; gap: 4px; }
-            .reader-zoom-hint .hint-icon { font-size: 0.6rem; padding: 0.1rem 0.4rem; }
-            .not-owned-state, .signin-state { height: 55vh; padding: 1.5rem; }
-            .not-owned-state i, .signin-state i { font-size: 3rem; }
-            .not-owned-state h3, .signin-state h3 { font-size: 1.2rem; }
-            .btn-back { padding: 0.6rem 1.5rem; font-size: 0.9rem; }
-            .toast { bottom: 1rem; right: 1rem; padding: 0.6rem 1rem; font-size: 0.8rem; max-width: 90%; }
         }
         
-     @media (max-width: 480px) {
-    .reader-header { 
-        padding: 0.5rem 0.8rem;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.5rem;
-        min-height: auto;
-    }
-    
-    .reader-header .book-info {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        width: 100%;
-    }
-    
-    .reader-header .book-info h2 { 
-        font-size: 1.2rem;
-        max-width: 200px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    .reader-header .book-info p {
-        font-size: 1rem;
-        color: #6f6252;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    .reader-header .controls {
-        display: flex;
-        gap: 0.4rem;
-        align-items: center;
-        flex-wrap: wrap;
-        width: 100%;
-        justify-content: flex-start;
-    }
-    
-    .reader-header .controls button { 
-        padding: 0.3rem 0.6rem; 
-        font-size: 0.7rem; 
-        border-radius: 6px;
-        flex-shrink: 0;
-    }
-    
-    .reader-header .controls .offline-status {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.5rem;
-    }
-    
-    .reader-header .controls #readerStatus {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.5rem;
-    }
-    
-    .reader-content { 
-        padding: 0.5rem 0.4rem; 
-        min-height: calc(100vh - 120px); 
-    }
-    
-    .reader-content .pdf-viewer-wrapper { 
-        height: 82vh; 
-        min-height: 400px; 
-        border-radius: 4px; 
-    }
-    
-    .reader-zoom-hint { 
-        font-size: 0.75rem; 
-        padding: 0.25rem 0.6rem; 
-        gap: 4px; 
-    }
-    
-    .reader-zoom-hint .hint-icon { 
-        font-size: 0.75rem; 
-        padding: 0.08rem 0.35rem; 
-    }
-    
-    .reader-zoom-hint .hint-icon i { 
-        font-size: 0.75rem; 
-    }
-    
-    .not-owned-state, .signin-state { 
-        height: 50vh; 
-        padding: 1.5rem 1rem; 
-    }
-    
-    .not-owned-state i, .signin-state i { 
-        font-size: 2.5rem; 
-    }
-    
-    .not-owned-state h3, .signin-state h3 { 
-        font-size: 1.1rem; 
-    }
-    
-    .not-owned-state p, .signin-state p { 
-        font-size: 0.85rem; 
-    }
-    
-    .btn-back { 
-        padding: 0.5rem 1.2rem; 
-        font-size: 0.8rem; 
-        border-radius: 30px; 
-    }
-    
-    .loading-state .spinner { 
-        width: 35px; 
-        height: 35px; 
-        border-width: 3px; 
-    }
-    
-    .loading-state p { 
-        font-size: 0.85rem; 
-    }
-    
-    /* Share dropdown fix for mobile */
-    .share-dropdown-content {
-        right: auto;
-        left: 50%;
-        transform: translateX(-50%);
-        min-width: 180px;
-    }
-}
-
-@media (max-width: 380px) {
-    .reader-header { 
-        padding: 0.4rem 0.6rem; 
-        gap: 0.4rem;
-    }
-    
-    .reader-header .book-info h2 { 
-        font-size: 1rem;
-        max-width: 150px;
-    }
-    
-    .reader-header .book-info p {
-        font-size: 0.8rem;
-    }
-    
-    .reader-header .controls button { 
-        padding: 0.25rem 0.5rem; 
-        font-size: 0.8rem; 
-    }
-    
-    .reader-header .controls .offline-status {
-        font-size: 0.65rem;
-        padding: 0.1rem 0.4rem;
-    }
-    
-    .reader-header .controls #readerStatus {
-        font-size: 0.55rem;
-        padding: 0.1rem 0.4rem;
-    }
-    
-    .reader-content { 
-        padding: 0.3rem 0.2rem; 
-        min-height: calc(100vh - 110px); 
-    }
-    
-    .reader-content .pdf-viewer-wrapper { 
-        height: 85vh; 
-        min-height: 350px; 
-    }
-    
-    .reader-zoom-hint { 
-        font-size: 0.65rem; 
-        padding: 0.2rem 0.4rem; 
-    }
-    
-    .reader-zoom-hint .hint-icon { 
-        font-size: 0.65rem; 
-        padding: 0.05rem 0.3rem; 
-    }
-    
-    .not-owned-state i, .signin-state i { 
-        font-size: 2rem; 
-    }
-    
-    .not-owned-state h3, .signin-state h3 { 
-        font-size: 1rem; 
-    }
-    
-    .btn-back { 
-        padding: 0.4rem 1rem; 
-        font-size: 0.75rem; 
-    }
-    
-    .share-dropdown-content {
-        right: 0;
-        left: auto;
-        transform: none;
-        min-width: 180px;
-    }
-}
-
-/* Fix for 337px and below */
-@media (max-width: 337px) {
-    .reader-header .book-info h2 {
-        max-width: 120px;
-        font-size: 0.9rem;
-    }
-    
-    .reader-header .book-info p {
-        font-size: 0.75rem;
-        max-width: 80px;
-    }
-    
-    .reader-header .controls button {
-        padding: 0.2rem 0.4rem;
-        font-size: 0.75rem;
-    }
-    
-    .reader-header .controls button i {
-        font-size: 0.60rem;
-    }
-    
-    .reader-header .controls .offline-status {
-        font-size: 0.5rem;
-        padding: 0.1rem 0.3rem;
-    }
-    
-    .reader-header .controls #readerStatus {
-        font-size: 0.5rem;
-        padding: 0.1rem 0.3rem;
-    }
-    
-    .share-dropdown-content {
-        right: 0;
-        left: auto;
-        transform: none;
-        min-width: 140px;
-    }
-    
-    .share-dropdown-content .share-item {
-        padding: 4px 8px;
-        font-size: 0.65rem;
-        gap: 6px;
-    }
-    
-    .share-dropdown-content .share-item i {
-        font-size: 0.7rem;
-        width: 14px;
-    }
-}
-
-
-/* ===== REDUCE OFFLINE AVAILABLE FONT SIZE ON MOBILE ===== */
-@media (max-width: 480px) {
-    #readerStatus.offline-available {
-        font-size: 0.65rem !important;
-        padding: 0.1rem 0.4rem !important;
-        gap: 2px !important;
-    }
-    
-    #readerStatus.offline-available i {
-        font-size: 0.60rem !important;
-    }
-}
-
-/* Even smaller for very small screens */
-@media (max-width: 380px) {
-    #readerStatus.offline-available {
-        font-size: 0.55rem !important;
-        padding: 0.05rem 0.3rem !important;
-        gap: 2px !important;
-    }
-    
-    #readerStatus.offline-available i {
-        font-size: 0.50rem !important;
-    }
-}
-
-/* ===== SPACE BETWEEN PINCH AND MY LIBRARY ===== */
-.reader-zoom-hint a[href="dashboard.html#library"] {
-    margin-left: 16px;
-}
-
-/* ===== PDF.js Viewer Styles ===== */
-#pdfContainer {
-    width: 100%;
-    height: 85vh;
-    min-height: 500px;
-    overflow: auto;
-    background: #f0ebe4;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-#pdfViewer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
-
-#pdfViewer canvas {
-    max-width: 100%;
-    height: auto;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    background: white;
-    border-radius: 4px;
-}
-
-.pdf-controls {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 10px;
-    flex-wrap: wrap;
-}
-
-.pdf-controls button {
-    padding: 6px 18px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 0.8rem;
-    background: #4b2aad;
-    color: white;
-    transition: 0.3s;
-}
-
-.pdf-controls button:hover {
-    background: #3a1f8a;
-    transform: translateY(-2px);
-}
-
-.pdf-controls button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}
-
-#pageNumInfo {
-    display: flex;
-    align-items: center;
-    font-size: 0.9rem;
-    color: #6f6252;
-}
-
-@media (max-width: 480px) {
-    #pdfContainer {
-        height: 80vh;
-        padding: 10px;
-    }
-    
-    .pdf-controls button {
-        padding: 4px 12px;
-        font-size: 0.7rem;
-    }
-}
+        @media (max-width: 480px) {
+            #readerStatus.offline-available {
+                font-size: 0.65rem !important;
+                padding: 0.1rem 0.4rem !important;
+                gap: 2px !important;
+            }
+            #readerStatus.offline-available i {
+                font-size: 0.60rem !important;
+            }
+        }
+        
+        @media (max-width: 380px) {
+            #readerStatus.offline-available {
+                font-size: 0.55rem !important;
+                padding: 0.05rem 0.3rem !important;
+                gap: 2px !important;
+            }
+            #readerStatus.offline-available i {
+                font-size: 0.50rem !important;
+            }
+        }
+        
+        .reader-zoom-hint a[href="dashboard.html#library"] {
+            margin-left: 16px;
+        }
+        
+        /* Mobile: Show a button to open PDF in external viewer */
+        .mobile-pdf-btn {
+            display: none;
+            width: 100%;
+            padding: 16px;
+            background: #4b2aad;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+            text-align: center;
+        }
+        
+        .mobile-pdf-btn:hover {
+            background: #3a1f8a;
+            transform: scale(1.02);
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-pdf-btn {
+                display: block;
+            }
+            .pdf-viewer-wrapper {
+                display: none;
+            }
+        }
+        
+        .pdf-viewer-wrapper.mobile-visible {
+            display: block !important;
+        }
     </style>
 </head>
 <body>
@@ -942,7 +527,6 @@
                 <i class="fas fa-sync-alt"></i>
             </button>
             
-            <!-- Share Dropdown -->
             <div class="share-dropdown">
                 <button onclick="toggleShareDropdown()" class="share-btn" id="shareBtn" title="Share this book">
                     <i class="fas fa-share-alt"></i>
@@ -981,19 +565,19 @@
         </div>
     </div>
     
-   <div class="reader-zoom-hint">
-    <i class="fas fa-search-plus"></i>
-    <span>Zoom:</span>
-    <span class="hint-icon desktop-hint">
-        <i class="fas fa-mouse"></i> Ctrl + Scroll
-    </span>
-    <span class="hint-icon mobile-hint">
-        <i class="fas fa-hand-pinch"></i> Pinch
-    </span>
-    <a href="dashboard.html#library" style="color:#4b2aad; text-decoration:none; font-weight:500; font-size:0.75rem;">
-        <i class="fas fa-book-open"></i> My Library
-    </a>
-</div>
+    <div class="reader-zoom-hint">
+        <i class="fas fa-search-plus"></i>
+        <span>Zoom:</span>
+        <span class="hint-icon desktop-hint">
+            <i class="fas fa-mouse"></i> Ctrl + Scroll
+        </span>
+        <span class="hint-icon mobile-hint">
+            <i class="fas fa-hand-pinch"></i> Pinch
+        </span>
+        <a href="dashboard.html#library" style="color:#4b2aad; text-decoration:none; font-weight:500; font-size:0.75rem;">
+            <i class="fas fa-book-open"></i> My Library
+        </a>
+    </div>
     
     <div class="reader-content" id="readerContent">
         <div class="loading-state">
@@ -1044,20 +628,19 @@
         let downloadLimit = 5;
         let isOffline = false;
         let isLoading = false;
-        let userDownloadCount = 0;
-        
-        // PDF.js variables
-        let pdfDoc = null;
-        let currentPage = 1;
-        let totalPages = 0;
-        let pdfScale = 1.5;
         
         const urlParams = new URLSearchParams(window.location.search);
         const bookId = urlParams.get('id');
         
-        // ================================================================
-        // ===== DOWNLOAD COUNTING & LIMIT FUNCTIONS =====
-        // ================================================================
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            void toast.offsetWidth;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
         
         async function getUserDownloadCount(userId, bookId) {
             try {
@@ -1068,7 +651,6 @@
                 }
                 return 0;
             } catch (err) {
-                console.error('Error getting user download count:', err);
                 return 0;
             }
         }
@@ -1101,7 +683,6 @@
                 }
                 return true;
             } catch (err) {
-                console.error('Error recording user download:', err);
                 return false;
             }
         }
@@ -1126,20 +707,118 @@
                     downloads: increment(1),
                     lastUpdated: serverTimestamp()
                 }, { merge: true });
+            } catch (err) {}
+        }
+        
+        async function checkPurchaseStatus(userId, bookId) {
+            const offlinePurchases = JSON.parse(localStorage.getItem('volant_offline_purchases') || '{}');
+            if (offlinePurchases[bookId] === true) {
+                return true;
+            }
+            
+            if (navigator.onLine) {
+                try {
+                    const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
+                    const purchaseSnap = await getDoc(purchaseRef);
+                    if (purchaseSnap.exists()) {
+                        const isPurchased = purchaseSnap.data().status === 'completed' && purchaseSnap.data().verified === true;
+                        if (isPurchased) {
+                            offlinePurchases[bookId] = true;
+                            localStorage.setItem('volant_offline_purchases', JSON.stringify(offlinePurchases));
+                        }
+                        return isPurchased;
+                    }
+                } catch (err) {}
+            }
+            return false;
+        }
+        
+        function saveBookToLocalStorage(bookData) {
+            try {
+                const offlineBooks = JSON.parse(localStorage.getItem('volant_offline_books_data') || '{}');
+                offlineBooks[bookData.id] = {
+                    title: bookData.title,
+                    authorName: bookData.authorName,
+                    pdfUrl: bookData.pdfUrl,
+                    content: bookData.content || '',
+                    downloadLimit: bookData.downloadLimit,
+                    savedAt: new Date().toISOString()
+                };
+                localStorage.setItem('volant_offline_books_data', JSON.stringify(offlineBooks));
+                return true;
             } catch (err) {
-                console.error('Error tracking daily download:', err);
+                return false;
             }
         }
+        
+        function getBookFromLocalStorage(bookId) {
+            try {
+                const offlineBooks = JSON.parse(localStorage.getItem('volant_offline_books_data') || '{}');
+                return offlineBooks[bookId] || null;
+            } catch {
+                return null;
+            }
+        }
+        
+        function clearBookFromLocalStorage(bookId) {
+            try {
+                const offlineBooks = JSON.parse(localStorage.getItem('volant_offline_books_data') || '{}');
+                delete offlineBooks[bookId];
+                localStorage.setItem('volant_offline_books_data', JSON.stringify(offlineBooks));
+                return true;
+            } catch (err) {
+                return false;
+            }
+        }
+        
+        function isBookInLocalStorage(bookId) {
+            return getBookFromLocalStorage(bookId) !== null;
+        }
+        
+        function updateConnectionStatus() {
+            const statusEl = document.getElementById('offlineStatus');
+            if (navigator.onLine) {
+                isOffline = false;
+                statusEl.className = 'offline-status online';
+                statusEl.innerHTML = '<i class="fas fa-wifi"></i> Online';
+            } else {
+                isOffline = true;
+                statusEl.className = 'offline-status offline';
+                statusEl.innerHTML = '<i class="fas fa-wifi-slash"></i> Offline';
+            }
+            
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) {
+                refreshBtn.disabled = isOffline;
+                refreshBtn.title = isOffline ? 'Cannot refresh while offline' : 'Refresh book data from server';
+            }
+        }
+        
+        window.addEventListener('online', () => {
+            updateConnectionStatus();
+            showToast('📶 Back online!', 'success');
+            if (currentUser && currentBook) {
+                updateDownloadButton();
+            }
+        });
+        
+        window.addEventListener('offline', () => {
+            updateConnectionStatus();
+            showToast('📶 You are offline. Reading cached content.', 'info');
+        });
         
         async function updateDownloadButton() {
             if (!currentUser || !currentBook) {
                 const downloadBtn = document.getElementById('readerDownloadBtn');
-                downloadBtn.disabled = true;
-                downloadBtn.classList.add('btn-download-disabled');
+                if (downloadBtn) {
+                    downloadBtn.disabled = true;
+                    downloadBtn.classList.add('btn-download-disabled');
+                }
                 return;
             }
             
             const downloadBtn = document.getElementById('readerDownloadBtn');
+            if (!downloadBtn) return;
             
             const purchased = await checkPurchaseStatus(currentUser.uid, bookId);
             if (!purchased) {
@@ -1166,64 +845,108 @@
             }
         }
         
-        // ================================================================
-        // ===== PDF.js RENDER FUNCTIONS =====
-        // ================================================================
-        
-        function renderPDFPage(pageNum) {
-            if (!pdfDoc) return;
+        async function checkOfflineAvailability() {
+            const statusEl = document.getElementById('readerStatus');
+            if (!statusEl) return;
             
-            const container = document.getElementById('pdfViewer');
-            if (!container) return;
+            if (isBookInLocalStorage(bookId)) {
+                const btn = document.getElementById('saveOfflineBtn');
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i>';
+                    btn.className = 'btn-save-offline saved';
+                    btn.disabled = true;
+                }
+                
+                statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Offline Available';
+                statusEl.className = 'offline-available';
+                statusEl.style.color = '#1a56db';
+                statusEl.style.background = '#e8f0fe';
+                statusEl.style.borderColor = '#d2e3fc';
+                
+                return true;
+            }
             
-            pdfDoc.getPage(pageNum).then(function(page) {
-                const viewport = page.getViewport({ scale: pdfScale });
-                
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                canvas.style.maxWidth = '100%';
-                canvas.style.height = 'auto';
-                canvas.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
-                canvas.style.background = 'white';
-                
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-                
-                page.render(renderContext).promise.then(function() {
-                    container.innerHTML = '';
-                    container.appendChild(canvas);
-                    
-                    document.getElementById('pageNum').textContent = pageNum;
-                    document.getElementById('pageCount').textContent = totalPages;
-                    
-                    // Update button states
-                    document.getElementById('prevPageBtn').disabled = (pageNum <= 1);
-                    document.getElementById('nextPageBtn').disabled = (pageNum >= totalPages);
-                    
-                    // Scroll to top
-                    document.getElementById('pdfContainer').scrollTop = 0;
-                });
-            }).catch(function(err) {
-                console.error('Error rendering page:', err);
-                showToast('❌ Error rendering PDF page. Trying fallback...', 'error');
-                fallbackDisplayPDF(currentBook.pdfUrl);
-            });
+            statusEl.className = '';
+            statusEl.style.display = 'none';
+            
+            return false;
         }
         
-        function goToPrevPage() {
-            if (currentPage <= 1) return;
-            currentPage--;
-            renderPDFPage(currentPage);
-        }
+        // ================================================================
+        // ===== DISPLAY BOOK - SIMPLE APPROACH =====
+        // ================================================================
         
-        function goToNextPage() {
-            if (currentPage >= totalPages) return;
-            currentPage++;
-            renderPDFPage(currentPage);
+        function displayBook() {
+            const content = document.getElementById('readerContent');
+            if (!content) return;
+            
+            if (currentBook.pdfUrl) {
+                let pdfUrl = currentBook.pdfUrl.split('#')[0];
+                const isMobile = window.innerWidth < 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+                
+                // Add fl_attachment:false for Cloudinary (works on desktop)
+                if (pdfUrl.includes('cloudinary.com') && pdfUrl.includes('/raw/upload/')) {
+                    pdfUrl = pdfUrl.replace('/raw/upload/', '/raw/upload/fl_attachment:false/');
+                }
+                
+                // ===== MOBILE: Open in new tab/window (Google will handle it) =====
+                if (isMobile) {
+                    // Show a button to open the PDF
+                    content.innerHTML = `
+                        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:70vh;text-align:center;padding:2rem;">
+                            <i class="fas fa-file-pdf" style="font-size:4rem;color:#b76e4b;margin-bottom:1rem;"></i>
+                            <h3 style="color:#2d2a24;margin-bottom:0.5rem;">${currentBook.title || 'Book'}</h3>
+                            <p style="color:#6f6252;margin-bottom:1.5rem;">Tap the button below to open the PDF in your browser.</p>
+                            <button onclick="window.open('${pdfUrl}', '_blank')" 
+                                    style="padding:16px 40px;background:#4b2aad;color:white;border:none;border-radius:40px;font-size:1.1rem;font-weight:600;cursor:pointer;transition:0.3s;box-shadow:0 4px 15px rgba(75,42,173,0.3);">
+                                <i class="fas fa-book-open"></i> Read Book
+                            </button>
+                            <p style="color:#b0a496;font-size:0.8rem;margin-top:1rem;">
+                                <i class="fas fa-info-circle"></i> Opens in your browser's PDF viewer
+                            </p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // ===== DESKTOP: Show in iframe =====
+                content.innerHTML = `
+                    <div class="pdf-viewer-wrapper" id="pdfWrapper">
+                        <iframe src="${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1" 
+                                style="width:100%;height:100%;border:none;background:#fff;"
+                                allow="autoplay"
+                                id="pdfViewer"
+                                loading="lazy">
+                        </iframe>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    const wrapper = document.getElementById('pdfWrapper');
+                    if (wrapper) {
+                        const height = window.innerHeight - 160;
+                        wrapper.style.height = Math.max(400, height) + 'px';
+                    }
+                }, 300);
+                
+            } else if (currentBook.content) {
+                content.innerHTML = `
+                    <div style="max-width:900px;margin:0 auto;padding:0.5rem 0;">
+                        <div style="font-size:1.15rem;line-height:2;color:#2d2a24;white-space:pre-wrap;font-family:'Georgia',serif;">${currentBook.content}</div>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `
+                    <div style="text-align:center;padding:4rem 2rem;">
+                        <i class="fas fa-book-open" style="font-size:3rem;color:#cbb9a8;margin-bottom:1rem;"></i>
+                        <h3>No content available</h3>
+                        <p style="color:#6f6252;margin-top:0.5rem;">This book doesn't have readable content.</p>
+                        <a href="index.html" class="btn-back" style="display:inline-block;margin-top:1.5rem;">
+                            <i class="fas fa-arrow-left"></i> Back to Store
+                        </a>
+                    </div>
+                `;
+            }
         }
         
         // ================================================================
@@ -1243,13 +966,13 @@
         
         window.toggleShareDropdown = function() {
             const dropdown = document.getElementById('shareDropdown');
-            dropdown.classList.toggle('show');
+            if (dropdown) dropdown.classList.toggle('show');
         };
         
         document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('shareDropdown');
             const shareBtn = document.getElementById('shareBtn');
-            if (!dropdown.contains(e.target) && !shareBtn.contains(e.target)) {
+            if (dropdown && shareBtn && !dropdown.contains(e.target) && !shareBtn.contains(e.target)) {
                 dropdown.classList.remove('show');
             }
         });
@@ -1285,7 +1008,8 @@
                     } else {
                         fallbackCopy(url);
                     }
-                    document.getElementById('shareDropdown').classList.remove('show');
+                    const dropdown = document.getElementById('shareDropdown');
+                    if (dropdown) dropdown.classList.remove('show');
                     return;
                 case 'native':
                     if (navigator.share) {
@@ -1304,7 +1028,8 @@
                         showToast('📱 Native sharing not supported on this device. Try copying the link.', 'info');
                         fallbackCopy(url);
                     }
-                    document.getElementById('shareDropdown').classList.remove('show');
+                    const dropdown = document.getElementById('shareDropdown');
+                    if (dropdown) dropdown.classList.remove('show');
                     return;
                 default:
                     showToast('❌ Invalid share option', 'error');
@@ -1315,7 +1040,8 @@
                 window.open(shareUrl, '_blank', 'width=600,height=500');
             }
             
-            document.getElementById('shareDropdown').classList.remove('show');
+            const dropdown = document.getElementById('shareDropdown');
+            if (dropdown) dropdown.classList.remove('show');
         };
         
         function fallbackCopy(text) {
@@ -1336,127 +1062,6 @@
         }
         
         // ================================================================
-        // ===== OFFLINE STORAGE FUNCTIONS =====
-        // ================================================================
-        
-        function saveBookToLocalStorage(bookData) {
-            try {
-                const offlineBooks = JSON.parse(localStorage.getItem('volant_offline_books_data') || '{}');
-                offlineBooks[bookData.id] = {
-                    title: bookData.title,
-                    authorName: bookData.authorName,
-                    pdfUrl: bookData.pdfUrl,
-                    content: bookData.content || '',
-                    downloadLimit: bookData.downloadLimit,
-                    savedAt: new Date().toISOString()
-                };
-                localStorage.setItem('volant_offline_books_data', JSON.stringify(offlineBooks));
-                console.log('✅ Book saved to localStorage');
-                return true;
-            } catch (err) {
-                console.warn('Could not save to localStorage:', err);
-                return false;
-            }
-        }
-        
-        function getBookFromLocalStorage(bookId) {
-            try {
-                const offlineBooks = JSON.parse(localStorage.getItem('volant_offline_books_data') || '{}');
-                return offlineBooks[bookId] || null;
-            } catch {
-                return null;
-            }
-        }
-        
-        function clearBookFromLocalStorage(bookId) {
-            try {
-                const offlineBooks = JSON.parse(localStorage.getItem('volant_offline_books_data') || '{}');
-                delete offlineBooks[bookId];
-                localStorage.setItem('volant_offline_books_data', JSON.stringify(offlineBooks));
-                console.log('🗑️ Book removed from localStorage cache');
-                return true;
-            } catch (err) {
-                console.warn('Could not clear localStorage:', err);
-                return false;
-            }
-        }
-        
-        function isBookInLocalStorage(bookId) {
-            return getBookFromLocalStorage(bookId) !== null;
-        }
-        
-        function showToast(message, type = 'info') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = `toast ${type}`;
-            void toast.offsetWidth;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 4000);
-        }
-        
-        async function checkPurchaseStatus(userId, bookId) {
-            const offlinePurchases = JSON.parse(localStorage.getItem('volant_offline_purchases') || '{}');
-            if (offlinePurchases[bookId] === true) {
-                return true;
-            }
-            
-            if (navigator.onLine) {
-                try {
-                    const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
-                    const purchaseSnap = await getDoc(purchaseRef);
-                    if (purchaseSnap.exists()) {
-                        const isPurchased = purchaseSnap.data().status === 'completed' && purchaseSnap.data().verified === true;
-                        if (isPurchased) {
-                            offlinePurchases[bookId] = true;
-                            localStorage.setItem('volant_offline_purchases', JSON.stringify(offlinePurchases));
-                        }
-                        return isPurchased;
-                    }
-                } catch (err) {
-                    console.warn('Error checking purchase status:', err);
-                }
-            }
-            
-            return false;
-        }
-        
-        function updateConnectionStatus() {
-            const statusEl = document.getElementById('offlineStatus');
-            if (navigator.onLine) {
-                isOffline = false;
-                statusEl.className = 'offline-status online';
-                statusEl.innerHTML = '<i class="fas fa-wifi"></i> Online';
-            } else {
-                isOffline = true;
-                statusEl.className = 'offline-status offline';
-                statusEl.innerHTML = '<i class="fas fa-wifi-slash"></i> Offline';
-            }
-            
-            const refreshBtn = document.getElementById('refreshBtn');
-            if (refreshBtn) {
-                refreshBtn.disabled = isOffline;
-                refreshBtn.title = isOffline ? 'Cannot refresh while offline' : 'Refresh book data from server';
-            }
-        }
-        
-        window.addEventListener('online', () => {
-            updateConnectionStatus();
-            showToast('📶 Back online!', 'success');
-            if (currentUser && currentBook) {
-                updateDownloadButton();
-                // Reload PDF if needed
-                if (currentBook.pdfUrl) {
-                    displayBook();
-                }
-            }
-        });
-        
-        window.addEventListener('offline', () => {
-            updateConnectionStatus();
-            showToast('📶 You are offline. Reading cached content.', 'info');
-        });
-        
-        // ================================================================
         // ===== REFRESH BOOK =====
         // ================================================================
         
@@ -1468,8 +1073,10 @@
             }
             
             const refreshBtn = document.getElementById('refreshBtn');
-            refreshBtn.disabled = true;
-            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            if (refreshBtn) {
+                refreshBtn.disabled = true;
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
             
             showToast('🔄 Refreshing book data...', 'info');
             
@@ -1481,8 +1088,10 @@
                 
                 if (!bookSnap.exists()) {
                     showToast('❌ Book not found on server.', 'error');
-                    refreshBtn.disabled = false;
-                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                    if (refreshBtn) {
+                        refreshBtn.disabled = false;
+                        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                    }
                     return;
                 }
                 
@@ -1506,21 +1115,24 @@
                     downloadLimit: freshData.downloadLimit || 5
                 };
                 
-                document.getElementById('readerBookTitle').textContent = currentBook.title || 'Untitled';
-                document.getElementById('readerBookAuthor').textContent = currentBook.authorName || 'Anonymous';
+                const titleEl = document.getElementById('readerBookTitle');
+                const authorEl = document.getElementById('readerBookAuthor');
+                if (titleEl) titleEl.textContent = currentBook.title || 'Untitled';
+                if (authorEl) authorEl.textContent = currentBook.authorName || 'Anonymous';
                 
                 displayBook();
-                await checkOfflineAvailability(currentBook.pdfUrl);
+                await checkOfflineAvailability();
                 await updateDownloadButton();
                 
                 showToast('✅ Book data refreshed!', 'success');
                 
             } catch (err) {
-                console.error('Refresh error:', err);
                 showToast('❌ Error refreshing book data', 'error');
             } finally {
-                refreshBtn.disabled = false;
-                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                if (refreshBtn) {
+                    refreshBtn.disabled = false;
+                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
+                }
             }
         };
         
@@ -1535,8 +1147,10 @@
             }
             
             const btn = document.getElementById('saveOfflineBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
             
             try {
                 saveBookToLocalStorage({
@@ -1548,43 +1162,43 @@
                     downloadLimit: currentBook.downloadLimit || 5
                 });
                 
-                // Cache PDF
                 if (currentBook.pdfUrl && 'caches' in window) {
                     try {
-                        const pdfUrl = currentBook.pdfUrl.split('#')[0];
-                        const response = await fetch(pdfUrl);
+                        const response = await fetch(currentBook.pdfUrl);
                         if (response.ok) {
                             const cache = await caches.open('volant-reads-pdfs');
-                            await cache.put(pdfUrl, response.clone());
-                            console.log('✅ PDF cached');
+                            await cache.put(currentBook.pdfUrl, response.clone());
                         }
-                    } catch (cacheErr) {
-                        console.warn('Could not cache PDF:', cacheErr);
-                    }
+                    } catch (cacheErr) {}
                 }
                 
                 showToast('✅ Book saved for offline reading! 📖', 'success');
-                btn.innerHTML = '<i class="fas fa-check-circle"></i>';
-                btn.className = 'btn-save-offline saved';
-                btn.disabled = true;
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-check-circle"></i>';
+                    btn.className = 'btn-save-offline saved';
+                    btn.disabled = true;
+                }
                 
                 const statusEl = document.getElementById('readerStatus');
-                statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Offline Available';
-                statusEl.className = 'offline-available';
-                statusEl.style.color = '#1a56db';
-                statusEl.style.background = '#e8f0fe';
-                statusEl.style.borderColor = '#d2e3fc';
+                if (statusEl) {
+                    statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Offline Available';
+                    statusEl.className = 'offline-available';
+                    statusEl.style.color = '#1a56db';
+                    statusEl.style.background = '#e8f0fe';
+                    statusEl.style.borderColor = '#d2e3fc';
+                }
                 
             } catch (err) {
-                console.error('Error saving for offline:', err);
                 showToast('❌ Error saving for offline', 'error');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-download"></i>';
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-download"></i>';
+                }
             }
         };
         
         // ================================================================
-        // ===== DOWNLOAD BOOK WITH LIMIT ENFORCEMENT =====
+        // ===== DOWNLOAD BOOK =====
         // ================================================================
         
         window.downloadBook = async function() {
@@ -1611,8 +1225,10 @@
             }
             
             const btn = document.getElementById('readerDownloadBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
             
             let fileName = '';
             const title = currentBook.title ? currentBook.title.trim() : 'Untitled';
@@ -1655,256 +1271,21 @@
                 showToast(`📄 Downloaded "${currentBook.title}"!`, 'success');
                 
             } catch (err) {
-                console.error('Download error:', err);
                 showToast('⚠️ Unable to download PDF. Please try again.', 'error');
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-download"></i>';
-            }
-        };
-        
-        // ================================================================
-        // ===== CHECK OFFLINE AVAILABILITY =====
-        // ================================================================
-        
-        async function checkOfflineAvailability(pdfUrl) {
-            const statusEl = document.getElementById('readerStatus');
-            
-            if (isBookInLocalStorage(bookId)) {
-                const btn = document.getElementById('saveOfflineBtn');
-                btn.innerHTML = '<i class="fas fa-check-circle"></i>';
-                btn.className = 'btn-save-offline saved';
-                btn.disabled = true;
-                
-                statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Offline Available';
-                statusEl.className = 'offline-available';
-                statusEl.style.color = '#1a56db';
-                statusEl.style.background = '#e8f0fe';
-                statusEl.style.borderColor = '#d2e3fc';
-                
-                return true;
-            }
-            
-            if (pdfUrl && 'caches' in window) {
-                try {
-                    const cache = await caches.open('volant-reads-pdfs');
-                    const response = await cache.match(pdfUrl);
-                    if (response) {
-                        const btn = document.getElementById('saveOfflineBtn');
-                        btn.innerHTML = '<i class="fas fa-check-circle"></i>';
-                        btn.className = 'btn-save-offline saved';
-                        btn.disabled = true;
-                        
-                        statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Offline Available';
-                        statusEl.className = 'offline-available';
-                        statusEl.style.color = '#1a56db';
-                        statusEl.style.background = '#e8f0fe';
-                        statusEl.style.borderColor = '#d2e3fc';
-                        
-                        return true;
-                    }
-                } catch (err) {
-                    console.warn('Error checking cache:', err);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-download"></i>';
                 }
             }
-            
-            statusEl.className = '';
-            statusEl.style.display = 'none';
-            
-            return false;
-        }
+        };
         
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/store/sw.js')
-                    .then(registration => {
-                        console.log('✅ Service Worker registered successfully');
-                    })
-                    .catch(err => {
-                        console.warn('⚠️ Service Worker registration failed:', err);
-                    });
+                    .then(registration => {})
+                    .catch(err => {});
             }
-        }
-        
-        // ================================================================
-        // ===== FALLBACK PDF DISPLAY =====
-        // ================================================================
-        
-        function fallbackDisplayPDF(pdfUrl) {
-            const isMobile = window.innerWidth < 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            const isOffline = !navigator.onLine;
-            const content = document.getElementById('readerContent');
-            
-            if (isOffline) {
-                content.innerHTML = `
-                    <div class="not-owned-state">
-                        <i class="fas fa-wifi-slash"></i>
-                        <h3>Offline - PDF Viewer Unavailable</h3>
-                        <p>The PDF viewer couldn't load offline. Please connect to the internet and refresh.</p>
-                        <button onclick="location.reload()" class="btn-back" style="margin-top:1rem;">
-                            <i class="fas fa-sync"></i> Retry
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-            
-            let cleanUrl = pdfUrl.split('#')[0];
-            if (cleanUrl.includes('cloudinary.com') && cleanUrl.includes('/raw/upload/')) {
-                cleanUrl = cleanUrl.replace('/raw/upload/', '/raw/upload/fl_attachment:false/');
-            }
-            
-            if (isMobile) {
-                const encodedUrl = encodeURIComponent(cleanUrl);
-                const viewerUrl = `https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`;
-                content.innerHTML = `
-                    <div class="pdf-viewer-wrapper" style="width:100%;height:85vh;min-height:500px;background:#f5f2ed;border-radius:8px;overflow:hidden;">
-                        <iframe src="${viewerUrl}" 
-                                style="width:100%;height:100%;border:none;background:#fff;"
-                                allow="autoplay"
-                                id="pdfViewer"
-                                loading="lazy">
-                        </iframe>
-                    </div>
-                `;
-            } else {
-                content.innerHTML = `
-                    <div class="pdf-viewer-wrapper" style="width:100%;height:85vh;min-height:500px;background:#f5f2ed;border-radius:8px;overflow:hidden;">
-                        <iframe src="${cleanUrl}#toolbar=0&navpanes=0&scrollbar=1" 
-                                style="width:100%;height:100%;border:none;background:#fff;"
-                                allow="autoplay"
-                                id="pdfViewer"
-                                loading="lazy">
-                        </iframe>
-                    </div>
-                `;
-            }
-        }
-        
-        // ================================================================
-        // ===== DISPLAY BOOK WITH PDF.js =====
-        // ================================================================
-        
-        function displayBook() {
-            const content = document.getElementById('readerContent');
-            
-            if (currentBook.pdfUrl) {
-                let pdfUrl = currentBook.pdfUrl.split('#')[0];
-                const isOffline = !navigator.onLine;
-                
-                // Set PDF.js worker
-                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-                
-                // ===== OFFLINE: Try direct embed from cache =====
-                if (isOffline) {
-                    // Check if PDF is in cache
-                    if ('caches' in window) {
-                        caches.match(pdfUrl).then(cached => {
-                            if (cached) {
-                                // Use cached PDF with PDF.js
-                                cached.arrayBuffer().then(buffer => {
-                                    loadPDFFromBuffer(buffer);
-                                });
-                            } else {
-                                // Fallback to iframe
-                                fallbackDisplayPDF(pdfUrl);
-                            }
-                        }).catch(() => {
-                            fallbackDisplayPDF(pdfUrl);
-                        });
-                    } else {
-                        fallbackDisplayPDF(pdfUrl);
-                    }
-                    return;
-                }
-                
-                // ===== ONLINE: Load with PDF.js =====
-                content.innerHTML = `
-                    <div id="pdfContainer">
-                        <div id="pdfViewer" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-                            <div style="text-align:center;padding:40px;color:#6f6252;">
-                                <div class="spinner" style="width:40px;height:40px;margin:0 auto 20px;"></div>
-                                <p>Loading PDF...</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pdf-controls">
-                        <button id="prevPageBtn" onclick="goToPrevPage()">◀ Previous</button>
-                        <span id="pageNumInfo">Page <span id="pageNum">1</span> of <span id="pageCount">...</span></span>
-                        <button id="nextPageBtn" onclick="goToNextPage()">Next ▶</button>
-                    </div>
-                `;
-                
-                // Load PDF with PDF.js
-                pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
-                    pdfDoc = pdf;
-                    totalPages = pdf.numPages;
-                    currentPage = 1;
-                    document.getElementById('pageCount').textContent = totalPages;
-                    renderPDFPage(currentPage);
-                }).catch(function(err) {
-                    console.error('Error loading PDF:', err);
-                    showToast('❌ Error loading PDF. Trying fallback...', 'error');
-                    fallbackDisplayPDF(pdfUrl);
-                });
-                
-                // Make functions global for onclick
-                window.goToPrevPage = goToPrevPage;
-                window.goToNextPage = goToNextPage;
-                
-            } else if (currentBook.content) {
-                content.innerHTML = `
-                    <div class="text-content-wrapper">
-                        <div class="text-content">${currentBook.content}</div>
-                    </div>
-                `;
-            } else {
-                content.innerHTML = `
-                    <div style="text-align:center;padding:4rem 2rem;">
-                        <i class="fas fa-book-open" style="font-size:3rem;color:#cbb9a8;margin-bottom:1rem;"></i>
-                        <h3>No content available</h3>
-                        <p style="color:#6f6252;margin-top:0.5rem;">This book doesn't have readable content.</p>
-                        <a href="index.html" class="btn-back" style="display:inline-block;margin-top:1.5rem;">
-                            <i class="fas fa-arrow-left"></i> Back to Store
-                        </a>
-                    </div>
-                `;
-            }
-        }
-        
-        function loadPDFFromBuffer(arrayBuffer) {
-            const content = document.getElementById('readerContent');
-            
-            content.innerHTML = `
-                <div id="pdfContainer">
-                    <div id="pdfViewer" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-                        <div style="text-align:center;padding:40px;color:#6f6252;">
-                            <div class="spinner" style="width:40px;height:40px;margin:0 auto 20px;"></div>
-                            <p>Loading offline PDF...</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="pdf-controls">
-                    <button id="prevPageBtn" onclick="goToPrevPage()">◀ Previous</button>
-                    <span id="pageNumInfo">Page <span id="pageNum">1</span> of <span id="pageCount">...</span></span>
-                    <button id="nextPageBtn" onclick="goToNextPage()">Next ▶</button>
-                </div>
-            `;
-            
-            pdfjsLib.getDocument({ data: arrayBuffer }).promise.then(function(pdf) {
-                pdfDoc = pdf;
-                totalPages = pdf.numPages;
-                currentPage = 1;
-                document.getElementById('pageCount').textContent = totalPages;
-                renderPDFPage(currentPage);
-            }).catch(function(err) {
-                console.error('Error loading offline PDF:', err);
-                showToast('❌ Error loading offline PDF.', 'error');
-                fallbackDisplayPDF(currentBook.pdfUrl);
-            });
-            
-            window.goToPrevPage = goToPrevPage;
-            window.goToNextPage = goToNextPage;
         }
         
         // ================================================================
@@ -1913,91 +1294,59 @@
         
         async function loadBook() {
             if (!bookId) {
-                document.getElementById('readerContent').innerHTML = '<p style="padding:2rem;text-align:center;">No book specified.</p>';
+                const content = document.getElementById('readerContent');
+                if (content) {
+                    content.innerHTML = '<p style="padding:2rem;text-align:center;">No book specified.</p>';
+                }
                 return;
             }
             
             if (isLoading) return;
             isLoading = true;
             
-            const isOffline = !navigator.onLine;
             const cachedBook = getBookFromLocalStorage(bookId);
             let bookData = null;
             let fromCache = false;
             
-            if (isOffline) {
-                if (cachedBook) {
-                    bookData = {
-                        id: bookId,
-                        title: cachedBook.title || 'Untitled',
-                        authorName: cachedBook.authorName || 'Anonymous',
-                        subtitle: cachedBook.subtitle || '',
-                        pdfUrl: cachedBook.pdfUrl || '',
-                        content: cachedBook.content || '',
-                        downloadLimit: cachedBook.downloadLimit || 5,
-                        price: cachedBook.price || 0,
-                        currency: cachedBook.currency || 'GHS'
-                    };
-                    fromCache = true;
-                    console.log('📖 OFFLINE: Using cached book data');
-                    showToast('📶 Offline mode - reading from cache', 'info');
-                } else {
-                    document.getElementById('readerContent').innerHTML = `
-                        <div class="not-owned-state">
-                            <i class="fas fa-wifi-slash"></i>
-                            <h3>You are offline</h3>
-                            <p>This book has not been saved for offline reading. Please connect to the internet and refresh.</p>
-                            <button onclick="location.reload()" class="btn-back" style="margin-top:1rem;">
-                                <i class="fas fa-sync"></i> Retry
-                            </button>
-                        </div>
-                    `;
-                    isLoading = false;
-                    return;
-                }
-            } else {
-                const forceRefresh = urlParams.get('refresh') === 'true';
-                
-                if (navigator.onLine && !forceRefresh) {
-                    let shouldRefresh = false;
-                    if (cachedBook && cachedBook.savedAt) {
-                        const savedTime = new Date(cachedBook.savedAt).getTime();
-                        const now = Date.now();
-                        const oneHour = 60 * 60 * 1000;
-                        if (now - savedTime > oneHour) {
-                            shouldRefresh = true;
-                            console.log('⏰ Cached data is older than 1 hour, refreshing...');
-                        }
-                    } else if (!cachedBook) {
+            const forceRefresh = urlParams.get('refresh') === 'true';
+            
+            if (navigator.onLine && !forceRefresh) {
+                let shouldRefresh = false;
+                if (cachedBook && cachedBook.savedAt) {
+                    const savedTime = new Date(cachedBook.savedAt).getTime();
+                    const now = Date.now();
+                    const oneHour = 60 * 60 * 1000;
+                    if (now - savedTime > oneHour) {
                         shouldRefresh = true;
                     }
-                    
-                    if (shouldRefresh) {
-                        try {
-                            const bookRef = doc(db, "books", bookId);
-                            const bookSnap = await getDoc(bookRef);
+                } else if (!cachedBook) {
+                    shouldRefresh = true;
+                }
+                
+                if (shouldRefresh) {
+                    try {
+                        const bookRef = doc(db, "books", bookId);
+                        const bookSnap = await getDoc(bookRef);
+                        
+                        if (bookSnap.exists()) {
+                            const freshData = { id: bookSnap.id, ...bookSnap.data() };
+                            bookData = {
+                                id: freshData.id,
+                                title: freshData.title || 'Untitled',
+                                authorName: freshData.authorName || 'Anonymous',
+                                subtitle: freshData.subtitle || '',
+                                pdfUrl: freshData.pdfUrl || '',
+                                content: freshData.content || '',
+                                downloadLimit: freshData.downloadLimit || 5,
+                                price: freshData.pricing?.amount || 0,
+                                currency: freshData.pricing?.currency || 'GHS'
+                            };
                             
-                            if (bookSnap.exists()) {
-                                const freshData = { id: bookSnap.id, ...bookSnap.data() };
-                                bookData = {
-                                    id: freshData.id,
-                                    title: freshData.title || 'Untitled',
-                                    authorName: freshData.authorName || 'Anonymous',
-                                    subtitle: freshData.subtitle || '',
-                                    pdfUrl: freshData.pdfUrl || '',
-                                    content: freshData.content || '',
-                                    downloadLimit: freshData.downloadLimit || 5,
-                                    price: freshData.pricing?.amount || 0,
-                                    currency: freshData.pricing?.currency || 'GHS'
-                                };
-                                
-                                saveBookToLocalStorage(bookData);
-                                console.log('✅ Fresh data fetched and cached');
-                                fromCache = false;
-                            }
-                        } catch (err) {
-                            console.warn('Could not fetch fresh data, using cache:', err);
+                            saveBookToLocalStorage(bookData);
+                            fromCache = false;
                         }
+                    } catch (err) {
+                        console.warn('Could not fetch fresh data, using cache:', err);
                     }
                 }
             }
@@ -2015,7 +1364,6 @@
                     currency: cachedBook.currency || 'GHS'
                 };
                 fromCache = true;
-                console.log('📖 Using cached book data from localStorage');
             }
             
             if (!bookData && navigator.onLine) {
@@ -2038,7 +1386,6 @@
                         };
                         
                         saveBookToLocalStorage(bookData);
-                        console.log('✅ Book fetched from Firestore and cached');
                         fromCache = false;
                     }
                 } catch (err) {
@@ -2047,18 +1394,17 @@
             }
             
             if (!bookData) {
-                document.getElementById('readerContent').innerHTML = `
-                    <div class="not-owned-state">
-                        <i class="fas fa-book-open"></i>
-                        <h3>Book Not Available</h3>
-                        <p>${isOffline ? 'You are offline. This book has not been saved for offline reading.' : 'The book you\'re looking for doesn\'t exist.'}</p>
-                        <p style="font-size:0.85rem;color:#b0a496;margin-top:0.5rem;">
-                            <i class="fas fa-info-circle"></i> 
-                            ${isOffline ? 'Connect to the internet and refresh to download this book.' : 'Please check the book ID or go back to the store.'}
-                        </p>
-                        <a href="index.html" class="btn-back" style="margin-top:1rem;"><i class="fas fa-arrow-left"></i> Back to Store</a>
-                    </div>
-                `;
+                const content = document.getElementById('readerContent');
+                if (content) {
+                    content.innerHTML = `
+                        <div class="not-owned-state">
+                            <i class="fas fa-book-open"></i>
+                            <h3>Book Not Available</h3>
+                            <p>${isOffline ? 'You are offline. This book has not been saved for offline reading.' : 'The book you\'re looking for doesn\'t exist.'}</p>
+                            <a href="index.html" class="btn-back" style="margin-top:1rem;"><i class="fas fa-arrow-left"></i> Back to Store</a>
+                        </div>
+                    `;
+                }
                 isLoading = false;
                 return;
             }
@@ -2067,15 +1413,16 @@
             downloadLimit = currentBook.downloadLimit || currentBook.downloads || 5;
             const bookPrice = currentBook.price || 0;
             
-            document.getElementById('readerBookTitle').textContent = currentBook.title || 'Untitled';
-            document.getElementById('readerBookAuthor').textContent = currentBook.authorName || 'Anonymous';
+            const titleEl = document.getElementById('readerBookTitle');
+            const authorEl = document.getElementById('readerBookAuthor');
+            if (titleEl) titleEl.textContent = currentBook.title || 'Untitled';
+            if (authorEl) authorEl.textContent = currentBook.authorName || 'Anonymous';
             
             const isFreeBook = bookPrice <= 0;
             let purchased = false;
             
             if (isFreeBook) {
                 purchased = true;
-                console.log('📖 Free book detected - allowing immediate access');
                 
                 if (currentUser) {
                     try {
@@ -2099,11 +1446,8 @@
                                 authorId: currentBook.submittedBy || null,
                                 bookTitle: currentBook.title || null
                             });
-                            console.log('✅ Free book purchase recorded');
                         }
-                    } catch (err) {
-                        console.warn('Could not record free book purchase:', err);
-                    }
+                    } catch (err) {}
                 }
             } else {
                 if (!purchased && currentUser) {
@@ -2117,29 +1461,36 @@
             }
             
             if (purchased) {
-                await checkOfflineAvailability(currentBook.pdfUrl);
+                await checkOfflineAvailability();
                 await updateDownloadButton();
                 displayBook();
                 
             } else {
-                document.getElementById('readerContent').innerHTML = `
-                    <div class="not-owned-state">
-                        <i class="fas fa-lock"></i>
-                        <h3>You don't own this book</h3>
-                        <p>Please purchase the book to read it online.</p>
-                        <a href="details.html?id=${bookId}" class="btn-back">
-                            <i class="fas fa-shopping-cart"></i> Buy Now
-                        </a>
-                    </div>
-                `;
+                const content = document.getElementById('readerContent');
+                if (content) {
+                    content.innerHTML = `
+                        <div class="not-owned-state">
+                            <i class="fas fa-lock"></i>
+                            <h3>You don't own this book</h3>
+                            <p>Please purchase the book to read it online.</p>
+                            <a href="details.html?id=${bookId}" class="btn-back">
+                                <i class="fas fa-shopping-cart"></i> Buy Now
+                            </a>
+                        </div>
+                    `;
+                }
                 
                 const downloadBtn = document.getElementById('readerDownloadBtn');
-                downloadBtn.disabled = true;
-                downloadBtn.classList.add('btn-download-disabled');
+                if (downloadBtn) {
+                    downloadBtn.disabled = true;
+                    downloadBtn.classList.add('btn-download-disabled');
+                }
                 
                 const statusEl = document.getElementById('readerStatus');
-                statusEl.className = '';
-                statusEl.style.display = 'none';
+                if (statusEl) {
+                    statusEl.className = '';
+                    statusEl.style.display = 'none';
+                }
             }
             
             isLoading = false;
