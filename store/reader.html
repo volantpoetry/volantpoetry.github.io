@@ -474,39 +474,77 @@
             margin-left: 16px;
         }
         
-        /* Mobile: Show a button to open PDF in external viewer */
-        .mobile-pdf-btn {
+        /* Mobile Read Button */
+        .mobile-read-btn {
             display: none;
             width: 100%;
-            padding: 16px;
+            padding: 18px 24px;
             background: #4b2aad;
             color: white;
             border: none;
-            border-radius: 12px;
+            border-radius: 40px;
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 20px;
             transition: 0.3s;
             text-align: center;
+            box-shadow: 0 4px 20px rgba(75,42,173,0.3);
+            margin-top: 10px;
         }
         
-        .mobile-pdf-btn:hover {
+        .mobile-read-btn:hover {
             background: #3a1f8a;
-            transform: scale(1.02);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(75,42,173,0.4);
+        }
+        
+        .mobile-read-btn i {
+            margin-right: 10px;
         }
         
         @media (max-width: 768px) {
-            .mobile-pdf-btn {
+            .mobile-read-btn {
                 display: block;
             }
             .pdf-viewer-wrapper {
                 display: none;
             }
+            .reader-content .pdf-viewer-wrapper {
+                display: none !important;
+            }
         }
         
-        .pdf-viewer-wrapper.mobile-visible {
-            display: block !important;
+        .mobile-pdf-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70vh;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .mobile-pdf-container i {
+            font-size: 4rem;
+            color: #b76e4b;
+            margin-bottom: 1rem;
+        }
+        
+        .mobile-pdf-container h3 {
+            color: #2d2a24;
+            margin-bottom: 0.5rem;
+        }
+        
+        .mobile-pdf-container p {
+            color: #6f6252;
+            margin-bottom: 1.5rem;
+            max-width: 400px;
+        }
+        
+        .mobile-pdf-container .hint {
+            color: #b0a496;
+            font-size: 0.8rem;
+            margin-top: 1rem;
         }
     </style>
 </head>
@@ -883,26 +921,40 @@
             if (currentBook.pdfUrl) {
                 let pdfUrl = currentBook.pdfUrl.split('#')[0];
                 const isMobile = window.innerWidth < 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+                const isOffline = !navigator.onLine;
                 
                 // Add fl_attachment:false for Cloudinary (works on desktop)
                 if (pdfUrl.includes('cloudinary.com') && pdfUrl.includes('/raw/upload/')) {
                     pdfUrl = pdfUrl.replace('/raw/upload/', '/raw/upload/fl_attachment:false/');
                 }
                 
-                // ===== MOBILE: Open in new tab/window (Google will handle it) =====
-                if (isMobile) {
-                    // Show a button to open the PDF
+                // ===== OFFLINE: Show message =====
+                if (isOffline) {
                     content.innerHTML = `
                         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:70vh;text-align:center;padding:2rem;">
-                            <i class="fas fa-file-pdf" style="font-size:4rem;color:#b76e4b;margin-bottom:1rem;"></i>
-                            <h3 style="color:#2d2a24;margin-bottom:0.5rem;">${currentBook.title || 'Book'}</h3>
-                            <p style="color:#6f6252;margin-bottom:1.5rem;">Tap the button below to open the PDF in your browser.</p>
-                            <button onclick="window.open('${pdfUrl}', '_blank')" 
-                                    style="padding:16px 40px;background:#4b2aad;color:white;border:none;border-radius:40px;font-size:1.1rem;font-weight:600;cursor:pointer;transition:0.3s;box-shadow:0 4px 15px rgba(75,42,173,0.3);">
+                            <i class="fas fa-wifi-slash" style="font-size:4rem;color:#b76e4b;margin-bottom:1rem;"></i>
+                            <h3 style="color:#2d2a24;margin-bottom:0.5rem;">You are offline</h3>
+                            <p style="color:#6f6252;margin-bottom:1.5rem;">This book is not available offline. Please connect to the internet.</p>
+                            <button onclick="location.reload()" style="padding:16px 40px;background:#4b2aad;color:white;border:none;border-radius:40px;font-size:1.1rem;font-weight:600;cursor:pointer;">
+                                <i class="fas fa-sync"></i> Retry
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // ===== MOBILE: Show "Read Book" button (opens in new tab) =====
+                if (isMobile) {
+                    content.innerHTML = `
+                        <div class="mobile-pdf-container">
+                            <i class="fas fa-file-pdf"></i>
+                            <h3>${currentBook.title || 'Book'}</h3>
+                            <p>Tap the button below to open the PDF in your browser's PDF viewer.</p>
+                            <button class="mobile-read-btn" onclick="window.open('${pdfUrl}', '_blank')">
                                 <i class="fas fa-book-open"></i> Read Book
                             </button>
-                            <p style="color:#b0a496;font-size:0.8rem;margin-top:1rem;">
-                                <i class="fas fa-info-circle"></i> Opens in your browser's PDF viewer
+                            <p class="hint">
+                                <i class="fas fa-info-circle"></i> Opens in a new tab
                             </p>
                         </div>
                     `;
@@ -950,7 +1002,7 @@
         }
         
         // ================================================================
-        // ===== SHARE FUNCTIONS =====
+        // ===== SHARE FUNCTIONS - FIXED =====
         // ================================================================
         
         function getBookUrl() {
@@ -965,15 +1017,15 @@
         }
         
         window.toggleShareDropdown = function() {
-            const dropdown = document.getElementById('shareDropdown');
-            if (dropdown) dropdown.classList.toggle('show');
+            const dropdownElement = document.getElementById('shareDropdown');
+            if (dropdownElement) dropdownElement.classList.toggle('show');
         };
         
         document.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('shareDropdown');
+            const dropdownElement = document.getElementById('shareDropdown');
             const shareBtn = document.getElementById('shareBtn');
-            if (dropdown && shareBtn && !dropdown.contains(e.target) && !shareBtn.contains(e.target)) {
-                dropdown.classList.remove('show');
+            if (dropdownElement && shareBtn && !dropdownElement.contains(e.target) && !shareBtn.contains(e.target)) {
+                dropdownElement.classList.remove('show');
             }
         });
         
@@ -1008,8 +1060,8 @@
                     } else {
                         fallbackCopy(url);
                     }
-                    const dropdown = document.getElementById('shareDropdown');
-                    if (dropdown) dropdown.classList.remove('show');
+                    const dropdownElement = document.getElementById('shareDropdown');
+                    if (dropdownElement) dropdownElement.classList.remove('show');
                     return;
                 case 'native':
                     if (navigator.share) {
@@ -1028,8 +1080,8 @@
                         showToast('📱 Native sharing not supported on this device. Try copying the link.', 'info');
                         fallbackCopy(url);
                     }
-                    const dropdown = document.getElementById('shareDropdown');
-                    if (dropdown) dropdown.classList.remove('show');
+                    const dropdownElement2 = document.getElementById('shareDropdown');
+                    if (dropdownElement2) dropdownElement2.classList.remove('show');
                     return;
                 default:
                     showToast('❌ Invalid share option', 'error');
@@ -1040,8 +1092,8 @@
                 window.open(shareUrl, '_blank', 'width=600,height=500');
             }
             
-            const dropdown = document.getElementById('shareDropdown');
-            if (dropdown) dropdown.classList.remove('show');
+            const dropdownElement3 = document.getElementById('shareDropdown');
+            if (dropdownElement3) dropdownElement3.classList.remove('show');
         };
         
         function fallbackCopy(text) {
