@@ -1,15 +1,5 @@
 // store/sw.js
-
-const CACHE_NAME = 'volant-reads-v5';
-
-const APP_SHELL = [
-    './reader.html',
-    './pdfjs/web/viewer.html',
-    './pdfjs/web/viewer.css',
-    './pdfjs/web/viewer.mjs',
-    './pdfjs/build/pdf.mjs',
-    './pdfjs/build/pdf.worker.mjs'
-];
+const CACHE_NAME = 'volant-reads-v4';
 
 const NO_CACHE_PAGES = [
     'index.html',
@@ -23,292 +13,93 @@ self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('📦 Installing Volant Reads offline shell');
-
-                return cache.addAll(APP_SHELL);
+                // ✅ FIX: Use relative path './reader.html'
+                // Since sw.js and reader.html are in the same folder
+                console.log('📦 Caching reader.html');
+                return cache.addAll([
+                    './reader.html'
+                    // OR use the full path that matches your structure
+                    // '/store/reader.html'
+                ]);
             })
-            .catch(error => {
-                console.error(
-                    '❌ Offline shell installation failed:',
-                    error
-                );
+            .catch(err => {
+                console.warn('⚠️ Cache install failed:', err);
             })
     );
-
     self.skipWaiting();
 });
 
-
 self.addEventListener('activate', event => {
-
     event.waitUntil(
-        caches.keys()
-            .then(cacheNames => {
-
-                return Promise.all(
-                    cacheNames
-                        .filter(name => name !== CACHE_NAME)
-                        .map(name => {
-                            console.log(
-                                '🗑️ Removing old cache:',
-                                name
-                            );
-
-                            return caches.delete(name);
-                        })
-                );
-
-            })
-            .then(() => self.clients.claim())
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.filter(name => name !== CACHE_NAME)
+                    .map(name => {
+                        console.log('🗑️ Deleting old cache:', name);
+                        return caches.delete(name);
+                    })
+            );
+        })
     );
-
+    self.clients.claim();
 });
 
-
 self.addEventListener('fetch', event => {
-
-    const request = event.request;
-
-    if (request.method !== 'GET') {
+    if (event.request.method !== 'GET') {
+        event.respondWith(fetch(event.request));
         return;
     }
-
-    const url = new URL(request.url);
+    
+    const url = new URL(event.request.url);
     const pathname = url.pathname;
-
-
-    /*
-     * ==========================================
-     * 1. OFFLINE PAGE NAVIGATION
-     * ==========================================
-     */
-
-    if (request.mode === 'navigate') {
-
+    
+    // Pages that should NEVER be cached
+    const isNoCachePage = NO_CACHE_PAGES.some(page => pathname.endsWith(page));
+    const isRoot = pathname === '/store/' || pathname === '/';
+    
+    if (isNoCachePage || isRoot) {
+        event.respondWith(fetch(event.request));
+        return;
+    }
+    
+    // PDF files - cache for offline
+    if (event.request.url.includes('.pdf')) {
         event.respondWith(
-
-            fetch(request)
-                .then(response => {
-
-                    /*
-                     * Don't automatically cache your
-                     * dynamic pages here.
-                     */
-
+            caches.match(event.request)
+                .then(cached => cached || fetch(event.request).then(response => {
+                    const clone = response.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
                     return response;
-
-                })
-                .catch(() => {
-
-                    /*
-                     * If offline, use cached reader.html
-                     */
-
-                    return caches.match('./reader.html')
-                        .then(cached => {
-
-                            if (cached) {
-                                return cached;
-                            }
-
-                            return new Response(
-                                'Reader is not available offline.',
-                                {
-                                    status: 503,
-                                    headers: {
-                                        'Content-Type': 'text/plain'
-                                    }
-                                }
-                            );
-
-                        });
-
-                })
+                }))
+                .catch(() => new Response('Book not available offline.', { status: 503 }))
         );
-
         return;
     }
-
-
-    /*
-     * ==========================================
-     * 2. PDF FILES
-     * ==========================================
-     */
-
-    if (
-        pathname.toLowerCase().endsWith('.pdf') ||
-        url.searchParams.get('download') === 'pdf'
-    ) {
-
-        event.respondWith(
-
-            caches.match(request)
-                .then(cached => {
-
-                    if (cached) {
-                        console.log(
-                            '📖 Serving cached PDF:',
-                            url.href
-                        );
-
-                        return cached;
-                    }
-
-                    return fetch(request)
-                        .then(response => {
-
-                            if (
-                                response &&
-                                response.ok
-                            ) {
-
-                                const copy =
-                                    response.clone();
-
-                                caches.open(CACHE_NAME)
-                                    .then(cache => {
-                                        cache.put(
-                                            request,
-                                            copy
-                                        );
-                                    });
-
-                            }
-
-                            return response;
-
-                        });
-
-                })
-                .catch(() => {
-
-                    return new Response(
-                        'Book not available offline.',
-                        {
-                            status: 503,
-                            headers: {
-                                'Content-Type':
-                                    'text/plain'
-                            }
-                        }
-                    );
-
-                })
-        );
-
-        return;
-    }
-
-
-    /*
-     * ==========================================
-     * 3. PDF.JS + STATIC FILES
-     * ==========================================
-     */
-
-    const isStaticAsset =
-        pathname.endsWith('.css') ||
-        pathname.endsWith('.js') ||
-        pathname.endsWith('.mjs') ||
-        pathname.endsWith('.png') ||
-        pathname.endsWith('.jpg') ||
-        pathname.endsWith('.jpeg') ||
-        pathname.endsWith('.svg') ||
-        pathname.endsWith('.webp') ||
-        pathname.endsWith('.woff') ||
-        pathname.endsWith('.woff2');
-
-
+    
+    // Static assets - cache first
+    const isStaticAsset = pathname.includes('.css') || 
+                          pathname.includes('.js') || 
+                          pathname.includes('.png') || 
+                          pathname.includes('.jpg') || 
+                          pathname.includes('.svg') ||
+                          pathname.includes('.webp');
+    
     if (isStaticAsset) {
-
         event.respondWith(
-
-            caches.match(request)
-                .then(cached => {
-
-                    if (cached) {
-                        return cached;
-                    }
-
-                    return fetch(request)
-                        .then(response => {
-
-                            if (
-                                response &&
-                                response.ok
-                            ) {
-
-                                const copy =
-                                    response.clone();
-
-                                caches.open(CACHE_NAME)
-                                    .then(cache => {
-                                        cache.put(
-                                            request,
-                                            copy
-                                        );
-                                    });
-                            }
-
-                            return response;
-
-                        });
-
-                })
-                .catch(() => {
-
-                    return new Response(
-                        'Resource not available offline.',
-                        {
-                            status: 503,
-                            headers: {
-                                'Content-Type':
-                                    'text/plain'
-                            }
-                        }
-                    );
-
-                })
+            caches.match(event.request)
+                .then(cached => cached || fetch(event.request).then(response => {
+                    const clone = response.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+                    return response;
+                }))
+                .catch(() => new Response('Resource not available.', { status: 503 }))
         );
-
         return;
     }
-
-
-    /*
-     * ==========================================
-     * 4. EVERYTHING ELSE
-     * ==========================================
-     */
-
+    
+    // Everything else - network first
     event.respondWith(
-
-        caches.match(request)
-            .then(cached => {
-
-                if (cached) {
-                    return cached;
-                }
-
-                return fetch(request);
-
-            })
-            .catch(() => {
-
-                return new Response(
-                    'Content not available offline.',
-                    {
-                        status: 503,
-                        headers: {
-                            'Content-Type':
-                                'text/plain'
-                        }
-                    }
-                );
-
-            })
-
+        fetch(event.request).catch(() => caches.match(event.request))
+            .catch(() => new Response('Content not available.', { status: 503 }))
     );
-
 });

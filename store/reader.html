@@ -7,18 +7,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     
-        <link rel="icon" type="image/png" href="../images/volant-reads-favicon.png" />
+    <link rel="icon" type="image/png" href="../images/volant-reads-favicon.png" />
     <link rel="apple-touch-icon" href="../images/volant-reads-favicon.png" />
+    
+    <!-- PDF.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     
     <script>
     // Simple console blocker - production only
     (function() {
         if (window.location.hostname.includes('localhost') || 
             window.location.hostname.includes('127.0.0.1')) {
-            return; // Allow in development
+            return;
         }
         
-        // Block all console methods
         var methods = ['log', 'info', 'warn', 'error', 'debug', 'trace', 'table', 'group', 'groupEnd', 'dir'];
         methods.forEach(function(m) {
             console[m] = function() {};
@@ -845,6 +847,82 @@
 .reader-zoom-hint a[href="dashboard.html#library"] {
     margin-left: 16px;
 }
+
+/* ===== PDF.js Viewer Styles ===== */
+#pdfContainer {
+    width: 100%;
+    height: 85vh;
+    min-height: 500px;
+    overflow: auto;
+    background: #f0ebe4;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+#pdfViewer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#pdfViewer canvas {
+    max-width: 100%;
+    height: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    background: white;
+    border-radius: 4px;
+}
+
+.pdf-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.pdf-controls button {
+    padding: 6px 18px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.8rem;
+    background: #4b2aad;
+    color: white;
+    transition: 0.3s;
+}
+
+.pdf-controls button:hover {
+    background: #3a1f8a;
+    transform: translateY(-2px);
+}
+
+.pdf-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#pageNumInfo {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #6f6252;
+}
+
+@media (max-width: 480px) {
+    #pdfContainer {
+        height: 80vh;
+        padding: 10px;
+    }
+    
+    .pdf-controls button {
+        padding: 4px 12px;
+        font-size: 0.7rem;
+    }
+}
     </style>
 </head>
 <body>
@@ -968,6 +1046,12 @@
         let isLoading = false;
         let userDownloadCount = 0;
         
+        // PDF.js variables
+        let pdfDoc = null;
+        let currentPage = 1;
+        let totalPages = 0;
+        let pdfScale = 1.5;
+        
         const urlParams = new URLSearchParams(window.location.search);
         const bookId = urlParams.get('id');
         
@@ -975,9 +1059,6 @@
         // ===== DOWNLOAD COUNTING & LIMIT FUNCTIONS =====
         // ================================================================
         
-        /**
-         * Get user's download count from purchase record
-         */
         async function getUserDownloadCount(userId, bookId) {
             try {
                 const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
@@ -992,9 +1073,6 @@
             }
         }
         
-        /**
-         * Record user download in purchase record
-         */
         async function recordUserDownload(userId, bookId) {
             try {
                 const purchaseRef = doc(db, "purchases", `${userId}_${bookId}`);
@@ -1028,9 +1106,6 @@
             }
         }
         
-        /**
-         * Check if user can download based on limit
-         */
         async function canUserDownload(userId, bookId, limit) {
             if (limit === 'unlimited' || limit === 'Unlimited') return true;
             const maxLimit = parseInt(limit);
@@ -1039,9 +1114,6 @@
             return count < maxLimit;
         }
         
-        /**
-         * Track daily download for analytics
-         */
         async function trackDailyDownload(bookId) {
             if (!bookId) return;
             try {
@@ -1059,9 +1131,6 @@
             }
         }
         
-        /**
-         * Update the download button based on user's download limit (NO STATUS SHOWN)
-         */
         async function updateDownloadButton() {
             if (!currentUser || !currentBook) {
                 const downloadBtn = document.getElementById('readerDownloadBtn');
@@ -1072,7 +1141,6 @@
             
             const downloadBtn = document.getElementById('readerDownloadBtn');
             
-            // Check if user owns the book
             const purchased = await checkPurchaseStatus(currentUser.uid, bookId);
             if (!purchased) {
                 downloadBtn.disabled = true;
@@ -1080,11 +1148,9 @@
                 return;
             }
             
-            // Get download limit from book
             const limit = currentBook.downloadLimit || currentBook.downloads || 5;
             downloadLimit = limit;
             
-            // Check if user can download
             const canDownload = await canUserDownload(currentUser.uid, bookId, limit);
             
             if (canDownload || limit === 'unlimited' || limit === 'Unlimited') {
@@ -1098,6 +1164,66 @@
                 downloadBtn.title = 'Download limit reached';
                 downloadBtn.innerHTML = '<i class="fas fa-download"></i>';
             }
+        }
+        
+        // ================================================================
+        // ===== PDF.js RENDER FUNCTIONS =====
+        // ================================================================
+        
+        function renderPDFPage(pageNum) {
+            if (!pdfDoc) return;
+            
+            const container = document.getElementById('pdfViewer');
+            if (!container) return;
+            
+            pdfDoc.getPage(pageNum).then(function(page) {
+                const viewport = page.getViewport({ scale: pdfScale });
+                
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                canvas.style.maxWidth = '100%';
+                canvas.style.height = 'auto';
+                canvas.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
+                canvas.style.background = 'white';
+                
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                
+                page.render(renderContext).promise.then(function() {
+                    container.innerHTML = '';
+                    container.appendChild(canvas);
+                    
+                    document.getElementById('pageNum').textContent = pageNum;
+                    document.getElementById('pageCount').textContent = totalPages;
+                    
+                    // Update button states
+                    document.getElementById('prevPageBtn').disabled = (pageNum <= 1);
+                    document.getElementById('nextPageBtn').disabled = (pageNum >= totalPages);
+                    
+                    // Scroll to top
+                    document.getElementById('pdfContainer').scrollTop = 0;
+                });
+            }).catch(function(err) {
+                console.error('Error rendering page:', err);
+                showToast('❌ Error rendering PDF page. Trying fallback...', 'error');
+                fallbackDisplayPDF(currentBook.pdfUrl);
+            });
+        }
+        
+        function goToPrevPage() {
+            if (currentPage <= 1) return;
+            currentPage--;
+            renderPDFPage(currentPage);
+        }
+        
+        function goToNextPage() {
+            if (currentPage >= totalPages) return;
+            currentPage++;
+            renderPDFPage(currentPage);
         }
         
         // ================================================================
@@ -1318,6 +1444,10 @@
             showToast('📶 Back online!', 'success');
             if (currentUser && currentBook) {
                 updateDownloadButton();
+                // Reload PDF if needed
+                if (currentBook.pdfUrl) {
+                    displayBook();
+                }
             }
         });
         
@@ -1418,12 +1548,14 @@
                     downloadLimit: currentBook.downloadLimit || 5
                 });
                 
+                // Cache PDF
                 if (currentBook.pdfUrl && 'caches' in window) {
                     try {
-                        const response = await fetch(currentBook.pdfUrl);
+                        const pdfUrl = currentBook.pdfUrl.split('#')[0];
+                        const response = await fetch(pdfUrl);
                         if (response.ok) {
                             const cache = await caches.open('volant-reads-pdfs');
-                            await cache.put(currentBook.pdfUrl, response.clone());
+                            await cache.put(pdfUrl, response.clone());
                             console.log('✅ PDF cached');
                         }
                     } catch (cacheErr) {
@@ -1436,7 +1568,6 @@
                 btn.className = 'btn-save-offline saved';
                 btn.disabled = true;
                 
-                // Show Offline Available status (only visible status)
                 const statusEl = document.getElementById('readerStatus');
                 statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Offline Available';
                 statusEl.className = 'offline-available';
@@ -1467,14 +1598,12 @@
                 return;
             }
             
-            // Check if user owns the book
             const purchased = await checkPurchaseStatus(currentUser.uid, bookId);
             if (!purchased) {
                 showToast('❌ You don\'t own this book. Please purchase it first.', 'error');
                 return;
             }
             
-            // Check download limit
             const canDownload = await canUserDownload(currentUser.uid, bookId, downloadLimit);
             if (!canDownload) {
                 showToast('❌ Download limit reached. Please contact the author for more downloads.', 'error');
@@ -1485,7 +1614,6 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             
-            // Build filename
             let fileName = '';
             const title = currentBook.title ? currentBook.title.trim() : 'Untitled';
             const subtitle = currentBook.subtitle ? currentBook.subtitle.trim() : '';
@@ -1500,19 +1628,15 @@
             fileName = fileName.replace(/[^a-z0-9 _\-,\.]/gi, '_').replace(/\s+/g, ' ').trim() + '.pdf';
             
             try {
-                // ===== RECORD DOWNLOAD IN PURCHASE RECORD =====
                 await recordUserDownload(currentUser.uid, bookId);
                 
-                // ===== INCREMENT BOOK DOWNLOADS COUNTER =====
                 const bookRef = doc(db, "books", bookId);
                 await updateDoc(bookRef, {
                     downloads: increment(1)
                 });
                 
-                // ===== TRACK DAILY DOWNLOAD =====
                 await trackDailyDownload(bookId);
                 
-                // ===== FETCH AND DOWNLOAD PDF =====
                 const response = await fetch(currentBook.pdfUrl);
                 if (!response.ok) throw new Error(`Download failed with status ${response.status}`);
                 const blob = await response.blob();
@@ -1526,7 +1650,6 @@
                 document.body.removeChild(link);
                 URL.revokeObjectURL(downloadUrl);
                 
-                // ===== UPDATE BUTTON (silently) =====
                 await updateDownloadButton();
                 
                 showToast(`📄 Downloaded "${currentBook.title}"!`, 'success');
@@ -1553,7 +1676,6 @@
                 btn.className = 'btn-save-offline saved';
                 btn.disabled = true;
                 
-                // Show Offline Available status
                 statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Offline Available';
                 statusEl.className = 'offline-available';
                 statusEl.style.color = '#1a56db';
@@ -1573,7 +1695,6 @@
                         btn.className = 'btn-save-offline saved';
                         btn.disabled = true;
                         
-                        // Show Offline Available status
                         statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Offline Available';
                         statusEl.className = 'offline-available';
                         statusEl.style.color = '#1a56db';
@@ -1587,7 +1708,6 @@
                 }
             }
             
-            // Hide status if not offline available
             statusEl.className = '';
             statusEl.style.display = 'none';
             
@@ -1607,97 +1727,423 @@
         }
         
         // ================================================================
+        // ===== FALLBACK PDF DISPLAY =====
+        // ================================================================
+        
+        function fallbackDisplayPDF(pdfUrl) {
+            const isMobile = window.innerWidth < 768 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const isOffline = !navigator.onLine;
+            const content = document.getElementById('readerContent');
+            
+            if (isOffline) {
+                content.innerHTML = `
+                    <div class="not-owned-state">
+                        <i class="fas fa-wifi-slash"></i>
+                        <h3>Offline - PDF Viewer Unavailable</h3>
+                        <p>The PDF viewer couldn't load offline. Please connect to the internet and refresh.</p>
+                        <button onclick="location.reload()" class="btn-back" style="margin-top:1rem;">
+                            <i class="fas fa-sync"></i> Retry
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            let cleanUrl = pdfUrl.split('#')[0];
+            if (cleanUrl.includes('cloudinary.com') && cleanUrl.includes('/raw/upload/')) {
+                cleanUrl = cleanUrl.replace('/raw/upload/', '/raw/upload/fl_attachment:false/');
+            }
+            
+            if (isMobile) {
+                const encodedUrl = encodeURIComponent(cleanUrl);
+                const viewerUrl = `https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`;
+                content.innerHTML = `
+                    <div class="pdf-viewer-wrapper" style="width:100%;height:85vh;min-height:500px;background:#f5f2ed;border-radius:8px;overflow:hidden;">
+                        <iframe src="${viewerUrl}" 
+                                style="width:100%;height:100%;border:none;background:#fff;"
+                                allow="autoplay"
+                                id="pdfViewer"
+                                loading="lazy">
+                        </iframe>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `
+                    <div class="pdf-viewer-wrapper" style="width:100%;height:85vh;min-height:500px;background:#f5f2ed;border-radius:8px;overflow:hidden;">
+                        <iframe src="${cleanUrl}#toolbar=0&navpanes=0&scrollbar=1" 
+                                style="width:100%;height:100%;border:none;background:#fff;"
+                                allow="autoplay"
+                                id="pdfViewer"
+                                loading="lazy">
+                        </iframe>
+                    </div>
+                `;
+            }
+        }
+        
+        // ================================================================
+        // ===== DISPLAY BOOK WITH PDF.js =====
+        // ================================================================
+        
+        function displayBook() {
+            const content = document.getElementById('readerContent');
+            
+            if (currentBook.pdfUrl) {
+                let pdfUrl = currentBook.pdfUrl.split('#')[0];
+                const isOffline = !navigator.onLine;
+                
+                // Set PDF.js worker
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                
+                // ===== OFFLINE: Try direct embed from cache =====
+                if (isOffline) {
+                    // Check if PDF is in cache
+                    if ('caches' in window) {
+                        caches.match(pdfUrl).then(cached => {
+                            if (cached) {
+                                // Use cached PDF with PDF.js
+                                cached.arrayBuffer().then(buffer => {
+                                    loadPDFFromBuffer(buffer);
+                                });
+                            } else {
+                                // Fallback to iframe
+                                fallbackDisplayPDF(pdfUrl);
+                            }
+                        }).catch(() => {
+                            fallbackDisplayPDF(pdfUrl);
+                        });
+                    } else {
+                        fallbackDisplayPDF(pdfUrl);
+                    }
+                    return;
+                }
+                
+                // ===== ONLINE: Load with PDF.js =====
+                content.innerHTML = `
+                    <div id="pdfContainer">
+                        <div id="pdfViewer" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+                            <div style="text-align:center;padding:40px;color:#6f6252;">
+                                <div class="spinner" style="width:40px;height:40px;margin:0 auto 20px;"></div>
+                                <p>Loading PDF...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pdf-controls">
+                        <button id="prevPageBtn" onclick="goToPrevPage()">◀ Previous</button>
+                        <span id="pageNumInfo">Page <span id="pageNum">1</span> of <span id="pageCount">...</span></span>
+                        <button id="nextPageBtn" onclick="goToNextPage()">Next ▶</button>
+                    </div>
+                `;
+                
+                // Load PDF with PDF.js
+                pdfjsLib.getDocument(pdfUrl).promise.then(function(pdf) {
+                    pdfDoc = pdf;
+                    totalPages = pdf.numPages;
+                    currentPage = 1;
+                    document.getElementById('pageCount').textContent = totalPages;
+                    renderPDFPage(currentPage);
+                }).catch(function(err) {
+                    console.error('Error loading PDF:', err);
+                    showToast('❌ Error loading PDF. Trying fallback...', 'error');
+                    fallbackDisplayPDF(pdfUrl);
+                });
+                
+                // Make functions global for onclick
+                window.goToPrevPage = goToPrevPage;
+                window.goToNextPage = goToNextPage;
+                
+            } else if (currentBook.content) {
+                content.innerHTML = `
+                    <div class="text-content-wrapper">
+                        <div class="text-content">${currentBook.content}</div>
+                    </div>
+                `;
+            } else {
+                content.innerHTML = `
+                    <div style="text-align:center;padding:4rem 2rem;">
+                        <i class="fas fa-book-open" style="font-size:3rem;color:#cbb9a8;margin-bottom:1rem;"></i>
+                        <h3>No content available</h3>
+                        <p style="color:#6f6252;margin-top:0.5rem;">This book doesn't have readable content.</p>
+                        <a href="index.html" class="btn-back" style="display:inline-block;margin-top:1.5rem;">
+                            <i class="fas fa-arrow-left"></i> Back to Store
+                        </a>
+                    </div>
+                `;
+            }
+        }
+        
+        function loadPDFFromBuffer(arrayBuffer) {
+            const content = document.getElementById('readerContent');
+            
+            content.innerHTML = `
+                <div id="pdfContainer">
+                    <div id="pdfViewer" style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+                        <div style="text-align:center;padding:40px;color:#6f6252;">
+                            <div class="spinner" style="width:40px;height:40px;margin:0 auto 20px;"></div>
+                            <p>Loading offline PDF...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="pdf-controls">
+                    <button id="prevPageBtn" onclick="goToPrevPage()">◀ Previous</button>
+                    <span id="pageNumInfo">Page <span id="pageNum">1</span> of <span id="pageCount">...</span></span>
+                    <button id="nextPageBtn" onclick="goToNextPage()">Next ▶</button>
+                </div>
+            `;
+            
+            pdfjsLib.getDocument({ data: arrayBuffer }).promise.then(function(pdf) {
+                pdfDoc = pdf;
+                totalPages = pdf.numPages;
+                currentPage = 1;
+                document.getElementById('pageCount').textContent = totalPages;
+                renderPDFPage(currentPage);
+            }).catch(function(err) {
+                console.error('Error loading offline PDF:', err);
+                showToast('❌ Error loading offline PDF.', 'error');
+                fallbackDisplayPDF(currentBook.pdfUrl);
+            });
+            
+            window.goToPrevPage = goToPrevPage;
+            window.goToNextPage = goToNextPage;
+        }
+        
+        // ================================================================
         // ===== LOAD BOOK =====
         // ================================================================
         
-      function displayBook() {
-    const content = document.getElementById('readerContent');
-
-    if (currentBook.pdfUrl) {
-        const pdfUrl = currentBook.pdfUrl.split('#')[0];
-
-        content.innerHTML = `
-            <div class="pdf-viewer-wrapper"
-                 id="pdfWrapper"
-                 style="
-                    width:100%;
-                    height:85vh;
-                    min-height:500px;
-                    background:#f5f2ed;
-                    border-radius:8px;
-                    overflow:hidden;
-                    position:relative;
-                 ">
-
-                <iframe
-                    id="pdfViewer"
-                    src="./pdfjs/web/viewer.html?file=${encodeURIComponent(pdfUrl)}"
-                    style="
-                        width:100%;
-                        height:100%;
-                        border:none;
-                        display:block;
-                    "
-                    loading="eager">
-                </iframe>
-
-            </div>
-        `;
-
-        setTimeout(() => {
-            const wrapper = document.getElementById('pdfWrapper');
-
-            if (wrapper) {
-                const height = window.innerHeight - 160;
-                wrapper.style.height = Math.max(400, height) + 'px';
+        async function loadBook() {
+            if (!bookId) {
+                document.getElementById('readerContent').innerHTML = '<p style="padding:2rem;text-align:center;">No book specified.</p>';
+                return;
             }
-        }, 300);
-
-        // Offline information
-        if (!navigator.onLine && !isBookInLocalStorage(bookId)) {
-            showToast(
-                '📶 Offline: This PDF may not be available. Save it for offline reading.',
-                'info'
-            );
+            
+            if (isLoading) return;
+            isLoading = true;
+            
+            const isOffline = !navigator.onLine;
+            const cachedBook = getBookFromLocalStorage(bookId);
+            let bookData = null;
+            let fromCache = false;
+            
+            if (isOffline) {
+                if (cachedBook) {
+                    bookData = {
+                        id: bookId,
+                        title: cachedBook.title || 'Untitled',
+                        authorName: cachedBook.authorName || 'Anonymous',
+                        subtitle: cachedBook.subtitle || '',
+                        pdfUrl: cachedBook.pdfUrl || '',
+                        content: cachedBook.content || '',
+                        downloadLimit: cachedBook.downloadLimit || 5,
+                        price: cachedBook.price || 0,
+                        currency: cachedBook.currency || 'GHS'
+                    };
+                    fromCache = true;
+                    console.log('📖 OFFLINE: Using cached book data');
+                    showToast('📶 Offline mode - reading from cache', 'info');
+                } else {
+                    document.getElementById('readerContent').innerHTML = `
+                        <div class="not-owned-state">
+                            <i class="fas fa-wifi-slash"></i>
+                            <h3>You are offline</h3>
+                            <p>This book has not been saved for offline reading. Please connect to the internet and refresh.</p>
+                            <button onclick="location.reload()" class="btn-back" style="margin-top:1rem;">
+                                <i class="fas fa-sync"></i> Retry
+                            </button>
+                        </div>
+                    `;
+                    isLoading = false;
+                    return;
+                }
+            } else {
+                const forceRefresh = urlParams.get('refresh') === 'true';
+                
+                if (navigator.onLine && !forceRefresh) {
+                    let shouldRefresh = false;
+                    if (cachedBook && cachedBook.savedAt) {
+                        const savedTime = new Date(cachedBook.savedAt).getTime();
+                        const now = Date.now();
+                        const oneHour = 60 * 60 * 1000;
+                        if (now - savedTime > oneHour) {
+                            shouldRefresh = true;
+                            console.log('⏰ Cached data is older than 1 hour, refreshing...');
+                        }
+                    } else if (!cachedBook) {
+                        shouldRefresh = true;
+                    }
+                    
+                    if (shouldRefresh) {
+                        try {
+                            const bookRef = doc(db, "books", bookId);
+                            const bookSnap = await getDoc(bookRef);
+                            
+                            if (bookSnap.exists()) {
+                                const freshData = { id: bookSnap.id, ...bookSnap.data() };
+                                bookData = {
+                                    id: freshData.id,
+                                    title: freshData.title || 'Untitled',
+                                    authorName: freshData.authorName || 'Anonymous',
+                                    subtitle: freshData.subtitle || '',
+                                    pdfUrl: freshData.pdfUrl || '',
+                                    content: freshData.content || '',
+                                    downloadLimit: freshData.downloadLimit || 5,
+                                    price: freshData.pricing?.amount || 0,
+                                    currency: freshData.pricing?.currency || 'GHS'
+                                };
+                                
+                                saveBookToLocalStorage(bookData);
+                                console.log('✅ Fresh data fetched and cached');
+                                fromCache = false;
+                            }
+                        } catch (err) {
+                            console.warn('Could not fetch fresh data, using cache:', err);
+                        }
+                    }
+                }
+            }
+            
+            if (!bookData && cachedBook) {
+                bookData = {
+                    id: bookId,
+                    title: cachedBook.title || 'Untitled',
+                    authorName: cachedBook.authorName || 'Anonymous',
+                    subtitle: cachedBook.subtitle || '',
+                    pdfUrl: cachedBook.pdfUrl || '',
+                    content: cachedBook.content || '',
+                    downloadLimit: cachedBook.downloadLimit || 5,
+                    price: cachedBook.price || 0,
+                    currency: cachedBook.currency || 'GHS'
+                };
+                fromCache = true;
+                console.log('📖 Using cached book data from localStorage');
+            }
+            
+            if (!bookData && navigator.onLine) {
+                try {
+                    const bookRef = doc(db, "books", bookId);
+                    const bookSnap = await getDoc(bookRef);
+                    
+                    if (bookSnap.exists()) {
+                        const freshData = { id: bookSnap.id, ...bookSnap.data() };
+                        bookData = {
+                            id: freshData.id,
+                            title: freshData.title || 'Untitled',
+                            authorName: freshData.authorName || 'Anonymous',
+                            subtitle: freshData.subtitle || '',
+                            pdfUrl: freshData.pdfUrl || '',
+                            content: freshData.content || '',
+                            downloadLimit: freshData.downloadLimit || 5,
+                            price: freshData.pricing?.amount || 0,
+                            currency: freshData.pricing?.currency || 'GHS'
+                        };
+                        
+                        saveBookToLocalStorage(bookData);
+                        console.log('✅ Book fetched from Firestore and cached');
+                        fromCache = false;
+                    }
+                } catch (err) {
+                    console.warn('Could not fetch from Firestore:', err);
+                }
+            }
+            
+            if (!bookData) {
+                document.getElementById('readerContent').innerHTML = `
+                    <div class="not-owned-state">
+                        <i class="fas fa-book-open"></i>
+                        <h3>Book Not Available</h3>
+                        <p>${isOffline ? 'You are offline. This book has not been saved for offline reading.' : 'The book you\'re looking for doesn\'t exist.'}</p>
+                        <p style="font-size:0.85rem;color:#b0a496;margin-top:0.5rem;">
+                            <i class="fas fa-info-circle"></i> 
+                            ${isOffline ? 'Connect to the internet and refresh to download this book.' : 'Please check the book ID or go back to the store.'}
+                        </p>
+                        <a href="index.html" class="btn-back" style="margin-top:1rem;"><i class="fas fa-arrow-left"></i> Back to Store</a>
+                    </div>
+                `;
+                isLoading = false;
+                return;
+            }
+            
+            currentBook = bookData;
+            downloadLimit = currentBook.downloadLimit || currentBook.downloads || 5;
+            const bookPrice = currentBook.price || 0;
+            
+            document.getElementById('readerBookTitle').textContent = currentBook.title || 'Untitled';
+            document.getElementById('readerBookAuthor').textContent = currentBook.authorName || 'Anonymous';
+            
+            const isFreeBook = bookPrice <= 0;
+            let purchased = false;
+            
+            if (isFreeBook) {
+                purchased = true;
+                console.log('📖 Free book detected - allowing immediate access');
+                
+                if (currentUser) {
+                    try {
+                        const purchaseRef = doc(db, "purchases", `${currentUser.uid}_${bookId}`);
+                        const purchaseSnap = await getDoc(purchaseRef);
+                        
+                        if (!purchaseSnap.exists()) {
+                            await setDoc(purchaseRef, {
+                                userId: currentUser.uid,
+                                bookId: bookId,
+                                status: 'completed',
+                                verified: true,
+                                purchasedAt: serverTimestamp(),
+                                transactionRef: 'free_book',
+                                amount: 0,
+                                currency: currentBook.currency || 'GHS',
+                                customerEmail: currentUser.email || '',
+                                paymentMethod: 'free',
+                                downloadCount: 0,
+                                lastDownloadedAt: null,
+                                authorId: currentBook.submittedBy || null,
+                                bookTitle: currentBook.title || null
+                            });
+                            console.log('✅ Free book purchase recorded');
+                        }
+                    } catch (err) {
+                        console.warn('Could not record free book purchase:', err);
+                    }
+                }
+            } else {
+                if (!purchased && currentUser) {
+                    purchased = await checkPurchaseStatus(currentUser.uid, bookId);
+                }
+                
+                if (!purchased) {
+                    const offlinePurchases = JSON.parse(localStorage.getItem('volant_offline_purchases') || '{}');
+                    purchased = offlinePurchases[bookId] === true;
+                }
+            }
+            
+            if (purchased) {
+                await checkOfflineAvailability(currentBook.pdfUrl);
+                await updateDownloadButton();
+                displayBook();
+                
+            } else {
+                document.getElementById('readerContent').innerHTML = `
+                    <div class="not-owned-state">
+                        <i class="fas fa-lock"></i>
+                        <h3>You don't own this book</h3>
+                        <p>Please purchase the book to read it online.</p>
+                        <a href="details.html?id=${bookId}" class="btn-back">
+                            <i class="fas fa-shopping-cart"></i> Buy Now
+                        </a>
+                    </div>
+                `;
+                
+                const downloadBtn = document.getElementById('readerDownloadBtn');
+                downloadBtn.disabled = true;
+                downloadBtn.classList.add('btn-download-disabled');
+                
+                const statusEl = document.getElementById('readerStatus');
+                statusEl.className = '';
+                statusEl.style.display = 'none';
+            }
+            
+            isLoading = false;
         }
-
-    } else if (currentBook.content) {
-
-        content.innerHTML = `
-            <div class="text-content-wrapper">
-                <div class="text-content">
-                    ${currentBook.content}
-                </div>
-            </div>
-        `;
-
-    } else {
-
-        content.innerHTML = `
-            <div style="text-align:center;padding:4rem 2rem;">
-                <i class="fas fa-book-open"
-                   style="font-size:3rem;color:#cbb9a8;margin-bottom:1rem;">
-                </i>
-
-                <h3>No content available</h3>
-
-                <p style="color:#6f6252;margin-top:0.5rem;">
-                    This book doesn't have readable content.
-                </p>
-
-                <a href="index.html"
-                   class="btn-back"
-                   style="display:inline-block;margin-top:1.5rem;">
-                    <i class="fas fa-arrow-left"></i>
-                    Back to Store
-                </a>
-            </div>
-        `;
-    }
-}
-
-        
-        
         
         // ================================================================
         // ===== INIT =====
