@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Volant Reads · Reader</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -376,9 +376,9 @@
             max-width: 1100px;
             margin: 0 auto;
             width: 100%;
-            background: white;
+            background: #f5f2ed;
             min-height: calc(100vh - 110px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.04);
+            box-shadow: none;
         }
         
         .reader-content .pdf-viewer-wrapper {
@@ -387,9 +387,9 @@
             height: 85vh;
             min-height: 500px;
             background: #f5f2ed;
-            border-radius: 8px;
+            border-radius: 0;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            box-shadow: none;
         }
         
         .reader-content .pdf-viewer-wrapper iframe {
@@ -397,6 +397,9 @@
             height: 100%;
             border: none;
             background: #fff;
+            image-rendering: auto;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
         }
 
         .reader-content .text-content-wrapper {
@@ -569,22 +572,22 @@
         
      @media (max-width: 480px) {
     .reader-header { 
-        padding: 0.5rem 0.8rem;
+        padding: 0.35rem 0.65rem;
         flex-direction: column;
         align-items: stretch;
-        gap: 0.5rem;
+        gap: 0.35rem;
         min-height: auto;
     }
     
     .reader-header .book-info {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.45rem;
         width: 100%;
     }
     
     .reader-header .book-info h2 { 
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         max-width: 200px;
         white-space: nowrap;
         overflow: hidden;
@@ -592,7 +595,7 @@
     }
     
     .reader-header .book-info p {
-        font-size: 1rem;
+        font-size: 0.85rem;
         color: #6f6252;
         white-space: nowrap;
         overflow: hidden;
@@ -601,7 +604,7 @@
     
     .reader-header .controls {
         display: flex;
-        gap: 0.4rem;
+        gap: 0.3rem;
         align-items: center;
         flex-wrap: wrap;
         width: 100%;
@@ -609,30 +612,30 @@
     }
     
     .reader-header .controls button { 
-        padding: 0.3rem 0.6rem; 
-        font-size: 0.7rem; 
+        padding: 0.25rem 0.5rem; 
+        font-size: 0.66rem; 
         border-radius: 6px;
         flex-shrink: 0;
     }
     
     .reader-header .controls .offline-status {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.5rem;
+        font-size: 0.56rem;
+        padding: 0.1rem 0.4rem;
     }
     
     .reader-header .controls #readerStatus {
-        font-size: 0.6rem;
-        padding: 0.15rem 0.5rem;
+        font-size: 0.56rem;
+        padding: 0.1rem 0.4rem;
     }
     
     .reader-content { 
-        padding: 0.5rem 0.4rem; 
-        min-height: calc(100vh - 120px); 
+        padding: 0.2rem 0.15rem; 
+        min-height: calc(100vh - 106px); 
     }
     
     .reader-content .pdf-viewer-wrapper { 
-        height: 82vh; 
-        min-height: 400px; 
+        height: 94vh; 
+        min-height: 340px; 
         border-radius: 4px; 
     }
     
@@ -694,123 +697,111 @@
 }
 
 @media (max-width: 380px) {
-    .reader-header { 
-        padding: 0.4rem 0.6rem; 
-        gap: 0.4rem;
+    .reader-header {
+        padding: 0.3rem 0.45rem;
+        gap: 0.3rem;
     }
-    
-    .reader-header .book-info h2 { 
-        font-size: 1rem;
-        max-width: 150px;
+
+    .reader-header .book-info h2 {
+        font-size: 0.9rem;
+        max-width: 145px;
     }
-    
+
     .reader-header .book-info p {
-        font-size: 0.8rem;
+        font-size: 0.72rem;
     }
-    
-    .reader-header .controls button { 
-        padding: 0.25rem 0.5rem; 
-        font-size: 0.8rem; 
+
+    .reader-header .controls button {
+        padding: 0.2rem 0.38rem;
+        font-size: 0.7rem;
     }
-    
+
     .reader-header .controls .offline-status {
-        font-size: 0.65rem;
-        padding: 0.1rem 0.4rem;
-    }
-    
-    .reader-header .controls #readerStatus {
         font-size: 0.55rem;
-        padding: 0.1rem 0.4rem;
+        padding: 0.08rem 0.3rem;
     }
-    
-    .reader-content { 
-        padding: 0.3rem 0.2rem; 
-        min-height: calc(100vh - 110px); 
+
+    .reader-header .controls #readerStatus {
+        font-size: 0.52rem;
+        padding: 0.08rem 0.3rem;
     }
-    
-    .reader-content .pdf-viewer-wrapper { 
-        height: 85vh; 
-        min-height: 350px; 
+
+    .reader-content {
+        padding: 0;
+        min-height: calc(100vh - 92px);
     }
-    
-    .reader-zoom-hint { 
-        font-size: 0.65rem; 
-        padding: 0.2rem 0.4rem; 
-    }
-    
-    .reader-zoom-hint .hint-icon { 
-        font-size: 0.65rem; 
-        padding: 0.05rem 0.3rem; 
-    }
-    
-    .not-owned-state i, .signin-state i { 
-        font-size: 2rem; 
-    }
-    
-    .not-owned-state h3, .signin-state h3 { 
-        font-size: 1rem; 
-    }
-    
-    .btn-back { 
-        padding: 0.4rem 1rem; 
-        font-size: 0.75rem; 
-    }
-    
-    .share-dropdown-content {
-        right: 0;
-        left: auto;
-        transform: none;
-        min-width: 180px;
+
+    .reader-content .pdf-viewer-wrapper {
+        height: 96vh;
+        min-height: 420px;
+        max-height: 96vh;
+        width: 100%;
+        border-radius: 0;
     }
 }
 
 /* Fix for 337px and below */
 @media (max-width: 337px) {
     .reader-header .book-info h2 {
-        max-width: 120px;
-        font-size: 0.9rem;
+        max-width: 110px;
+        font-size: 0.82rem;
     }
     
     .reader-header .book-info p {
-        font-size: 0.75rem;
-        max-width: 80px;
+        font-size: 0.68rem;
+        max-width: 72px;
     }
     
+    .reader-header .controls {
+        gap: 0.25rem;
+    }
+
     .reader-header .controls button {
-        padding: 0.2rem 0.4rem;
-        font-size: 0.75rem;
+        padding: 0.18rem 0.32rem;
+        font-size: 0.66rem;
     }
     
     .reader-header .controls button i {
-        font-size: 0.60rem;
+        font-size: 0.55rem;
     }
     
     .reader-header .controls .offline-status {
-        font-size: 0.5rem;
-        padding: 0.1rem 0.3rem;
+        font-size: 0.48rem;
+        padding: 0.08rem 0.25rem;
     }
     
     .reader-header .controls #readerStatus {
-        font-size: 0.5rem;
-        padding: 0.1rem 0.3rem;
+        font-size: 0.46rem;
+        padding: 0.08rem 0.25rem;
+    }
+    
+    .reader-content { 
+        padding: 0.08rem; 
+        min-height: calc(100vh - 88px); 
+    }
+
+    .reader-content .pdf-viewer-wrapper { 
+        height: 73vh; 
+        min-height: 270px; 
+        max-height: 73vh;
     }
     
     .share-dropdown-content {
         right: 0;
         left: auto;
         transform: none;
-        min-width: 140px;
+        min-width: 130px;
     }
     
     .share-dropdown-content .share-item {
-        padding: 4px 8px;
-        font-size: 0.65rem;
-        gap: 6px;
+        padding: 4px 7px;
+        font-size: 0.62rem;
+        gap: 5px;
     }
     
     .share-dropdown-content .share-item i {
-        font-size: 0.7rem;
-        width: 14px;
+        font-size: 0.65rem;
+        width: 12px;
     }
 }
 
@@ -845,6 +836,168 @@
 .reader-zoom-hint a[href="dashboard.html#library"] {
     margin-left: 16px;
 }
+
+.share-dropdown-content {
+    width: min(240px, calc(100vw - 16px));
+    min-width: 0;
+}
+
+.share-dropdown-content .share-item {
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    gap: 12px;
+}
+
+.share-dropdown-content .share-item i {
+    width: 20px;
+    font-size: 1rem;
+}
+
+.share-dropdown-content {
+    background: #f0ebe4;
+    border-color: #f0ebe4;
+}
+
+.share-dropdown-content .share-item {
+    background: #f0ebe4;
+}
+
+#readerStatus,
+#saveOfflineBtn,
+#readerDownloadBtn {
+    display: none !important;
+}
+
+#readerStatus.offline-available {
+    display: none !important;
+}
+
+.reader-mobile-hint {
+    display: none;
+}
+
+@media (max-width: 1024px) {
+    .reader-zoom-hint {
+        display: none !important;
+    }
+
+    .reader-mobile-hint {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-right: 8px;
+        color: #6f6252;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+
+    .reader-mobile-hint + .offline-status {
+        margin-left: auto;
+    }
+
+    .reader-mobile-hint .mobile-pinch-label {
+        display: none;
+    }
+
+    .reader-mobile-hint a {
+        margin-left: 8px;
+        color: #4b2aad;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .share-dropdown-content {
+        left: auto;
+        right: 0;
+        transform: none;
+        width: min(240px, calc(100vw - 16px));
+    }
+}
+
+@media (min-width: 338px) and (max-width: 380px) {
+    .reader-header .book-info h2 {
+        font-size: 1.1rem;
+    }
+
+    .reader-header .book-info p,
+    .reader-mobile-hint a {
+        font-size: 0.85rem;
+    }
+
+    #refreshBtn,
+    #shareBtn,
+    .reader-header .controls button.primary {
+        font-size: 0.8rem;
+    }
+}
+
+@media (min-width: 1025px) {
+    .reader-zoom-hint {
+        display: none !important;
+    }
+}
+
+.reader-header .book-info h2 {
+    color: #2d3130;
+}
+
+.reader-header .book-info p {
+    color: #68706d;
+}
+
+.reader-main-nav {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin: 0 auto;
+}
+
+.reader-main-nav button,
+.reader-main-nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: 0.35rem 0.65rem;
+    border: 0;
+    border-radius: 7px;
+    background: #f0ebe4;
+    color: #2d3130;
+    font: 600 0.8rem 'Inter', sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.reader-main-nav button:hover,
+.reader-main-nav a:hover {
+    background: #e6dfd6;
+}
+
+.reader-main-nav a {
+    color: #4b2aad;
+}
+
+.reader-main-nav .reader-main-status {
+    min-width: 88px;
+    color: #68706d;
+    background: transparent;
+    cursor: default;
+}
+
+@media (min-width: 1025px) {
+    .reader-main-nav {
+        display: flex;
+    }
+}
+
+@media (max-width: 1024px) {
+    .reader-main-nav {
+        display: none !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -853,7 +1006,21 @@
             <h2 id="readerBookTitle">Loading book...</h2>
             <p id="readerBookAuthor">Author</p>
         </div>
+        <nav class="reader-main-nav" aria-label="Reader navigation">
+            <button type="button" id="mainZoomOut" aria-label="Zoom out">−</button>
+            <button type="button" id="mainZoomIn" aria-label="Zoom in">+</button>
+            <button type="button" id="mainPrevPage">Prev</button>
+            <span class="reader-main-status" id="mainPageStatus">Page 1 / 1</span>
+            <button type="button" id="mainNextPage">Next</button>
+            <a href="dashboard.html#library">My Library</a>
+        </nav>
         <div class="controls">
+            <span class="reader-mobile-hint">
+                <span class="mobile-pinch-label"><i class="fas fa-hand-pinch"></i> Pinch</span>
+                <a href="dashboard.html#library">
+                    <i class="fas fa-book-open"></i> My Library
+                </a>
+            </span>
             <span class="offline-status online" id="offlineStatus">
                 <i class="fas fa-wifi"></i> Online
             </span>
@@ -1831,83 +1998,56 @@
             return mobileRegex.test(userAgent) || smallScreen;
         }
 
-        function getGoogleViewerUrl(pdfUrl) {
+        function getDirectPdfUrl(pdfUrl) {
             if (!pdfUrl) return '';
-            return `https://docs.google.com/viewer?embedded=true&url=${encodeURIComponent(pdfUrl)}`;
+            return `${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`;
         }
 
-        function getPdfJsViewerUrl(pdfUrl) {
+        function getPdfJsViewerUrl(pdfUrl, embedded) {
             if (!pdfUrl) return '';
-            return `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(pdfUrl)}`;
+            // Use a local PDF.js viewer so the toolbar can be fully controlled and
+            // the Print/Save overflow items can be removed intentionally.
+            return `/store/pdfjs/local-viewer.html?embedded=${embedded ? '1' : '0'}&file=${encodeURIComponent(pdfUrl)}`;
         }
 
-        function openPdfFallback(pdfUrl) {
-            if (!pdfUrl) return;
-            const googleUrl = getGoogleViewerUrl(pdfUrl);
-            try {
-                const fallbackWindow = window.open(googleUrl, '_blank', 'noopener,noreferrer');
-                if (!fallbackWindow) {
-                    window.location.href = googleUrl;
-                }
-            } catch (err) {
-                window.location.href = googleUrl;
-            }
+        function clickEmbeddedReaderControl(controlId) {
+            const iframe = document.getElementById('pdfViewer');
+            const control = iframe?.contentDocument?.getElementById(controlId);
+            if (control) control.click();
         }
+
+        document.getElementById('mainZoomOut').addEventListener('click', () => clickEmbeddedReaderControl('zoomOut'));
+        document.getElementById('mainZoomIn').addEventListener('click', () => clickEmbeddedReaderControl('zoomIn'));
+        document.getElementById('mainPrevPage').addEventListener('click', () => clickEmbeddedReaderControl('prevPage'));
+        document.getElementById('mainNextPage').addEventListener('click', () => clickEmbeddedReaderControl('nextPage'));
+
+        window.addEventListener('message', (event) => {
+            const iframe = document.getElementById('pdfViewer');
+            if (event.source !== iframe?.contentWindow || event.data?.type !== 'pdf-page-status') return;
+            document.getElementById('mainPageStatus').textContent =
+                'Page ' + event.data.pageNum + ' / ' + event.data.pageCount;
+        });
 
         function displayBook() {
             const content = document.getElementById('readerContent');
             
             if (currentBook.pdfUrl) {
                 const isMobile = isPhoneDevice();
-
-                if (isMobile) {
-                    const mobilePdfViewerUrl = getPdfJsViewerUrl(currentBook.pdfUrl);
-                    const fallbackUrl = getGoogleViewerUrl(currentBook.pdfUrl);
-
-                    content.innerHTML = `
-                        <div class="pdf-viewer-wrapper">
-                            <iframe src="${mobilePdfViewerUrl}" 
-                                    class="pdf-viewer" 
-                                    allow="autoplay; fullscreen"
-                                    allowfullscreen="true"
-                                    id="pdfViewer"
-                                    loading="eager"
-                                    title="Mobile PDF reader"
-                                    onerror="window.location.href='${fallbackUrl}'">
-                            </iframe>
-                        </div>
-                    `;
-
-                    const pdfFrame = document.getElementById('pdfViewer');
-                    if (pdfFrame) {
-                        pdfFrame.addEventListener('load', () => {
-                            setTimeout(() => {
-                                if (!pdfFrame.contentWindow || !pdfFrame.contentWindow.document || !pdfFrame.contentWindow.document.body || !pdfFrame.contentWindow.document.body.innerHTML) {
-                                    openPdfFallback(currentBook.pdfUrl);
-                                }
-                            }, 2500);
-                        });
-
-                        pdfFrame.addEventListener('error', () => {
-                            openPdfFallback(currentBook.pdfUrl);
-                        });
-                    }
-                    return;
-                }
-
-                const embeddedUrl = `${currentBook.pdfUrl}#toolbar=0&navpanes=0&scrollbar=1`;
+                const embeddedUrl = getPdfJsViewerUrl(currentBook.pdfUrl, !isMobile);
 
                 content.innerHTML = `
-                    <div class="pdf-viewer-wrapper">
+                    <div class="pdf-viewer-wrapper" style="${isMobile ? 'height:96vh; min-height:420px;' : ''}">
                         <iframe src="${embeddedUrl}" 
                                 class="pdf-viewer" 
                                 allow="autoplay; fullscreen"
-                                allowfullscreen="true"
                                 id="pdfViewer"
-                                loading="lazy">
+                                loading="${isMobile ? 'eager' : 'lazy'}"
+                                title="${isMobile ? 'Mobile PDF reader' : 'PDF reader'}"
+                                referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
                     </div>
                 `;
+                return;
             } else if (currentBook.content) {
                 content.innerHTML = `
                     <div class="text-content-wrapper">
