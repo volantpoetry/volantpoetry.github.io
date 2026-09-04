@@ -156,6 +156,10 @@
     }
 
     @media (max-width: 600px) {
+      .toolbar {
+        display: none;
+      }
+
       .viewer-shell {
         padding: 0.25rem;
       }
@@ -218,6 +222,8 @@
     var pageStatus = document.getElementById('pageStatus');
     var params = new URLSearchParams(window.location.search);
     var pdfUrl = params.get('file');
+    var isPreviewMode = params.get('preview') === '1';
+    var previewLimitPercent = Number(params.get('previewLimit')) || 10;
     if (params.get('embedded') === '1') {
       document.body.classList.add('embedded');
     }
@@ -308,7 +314,13 @@
       }
 
       try {
-        for (var index = 1; index <= pageCount; index++) {
+        var renderedPageLimit = pageCount;
+        if (isPreviewMode) {
+          renderedPageLimit = Math.max(1, Math.ceil(pageCount * (previewLimitPercent / 100)));
+          renderedPageLimit = Math.min(renderedPageLimit, pageCount);
+        }
+
+        for (var index = 1; index <= renderedPageLimit; index++) {
           var pageCanvas = document.createElement('canvas');
           pageCanvas.className = 'pdf-page';
           pdfPages.appendChild(pageCanvas);
@@ -458,6 +470,9 @@
         var pdf = await pdfjsLib.getDocument(pdfUrl).promise;
         pdfDoc = pdf;
         pageCount = pdf.numPages;
+        if (isPreviewMode) {
+          pageCount = Math.max(1, Math.ceil(pdf.numPages * (previewLimitPercent / 100)));
+        }
         updatePageStatus();
         await renderDocument();
       } catch (error) {
