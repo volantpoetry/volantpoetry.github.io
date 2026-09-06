@@ -171,6 +171,7 @@
         }
 
         @media (max-width: 768px) {
+            header { height: 60px; }
             .menu-toggle { display: block; }
             .nav-links {
                 display: none;
@@ -179,7 +180,7 @@
                 padding: 20px;
                 background: white;
                 position: absolute;
-                top: 66px;
+                top: 60px;
                 left: 0;
                 right: 0;
                 border-bottom: 1px solid #eee;
@@ -188,23 +189,25 @@
             .nav-links.open { display: flex; }
             .nav-links a { padding: 10px 0; border-bottom: 1px solid #f5f5f5; width: 100%; color: #4b2aad; }
             .nav-links .nav-cta { display: none !important; }
-            .logo .logo-text { font-size: 1.2rem; }
-            .logo img { width: 30px; height: 30px; }
+            .logo .logo-text { font-size: 1.1rem; }
+            .logo img { width: 28px; height: 28px; border-radius: 0; object-fit: contain; }
         }
         @media (max-width: 480px) {
             nav { padding: 0 16px; }
-            .logo .logo-text { font-size: 1.2rem; }
-            .logo img { width: 28px; height: 28px; }
+            header { height: 44px; }
+            .logo .logo-text { font-size: 1.1rem; }
+            .logo img { width: 22px; height: 22px; border-radius: 0; object-fit: contain; }
             .logo { gap: 0.4rem; }
+            .nav-links { top: 44px; }
         }
         @media (max-width: 380px) {
-            .logo .logo-text { font-size: 1.2rem; }
-            .logo img { width: 25px; height: 25px; }
+            .logo .logo-text { font-size: 1.1rem; }
+            .logo img { width: 22px; height: 22px; border-radius: 0; object-fit: contain; }
         }
 
         /* ===== HERO ===== */
         .hero {
-            padding: 60px 0 50px;
+            padding: 70px 0 56px;
             background: linear-gradient(135deg, #0f0a1a, #1a0f2e);
             color: white;
             position: relative;
@@ -217,26 +220,80 @@
             position: relative;
             z-index: 1;
         }
+
+        /* ===== HERO MAGIC — GLOWS & FLOATING ICONS ===== */
+        .hero-glow {
+            position: absolute;
+            width: 460px;
+            height: 460px;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.42;
+            pointer-events: none;
+        }
+        .hero-glow--1 { top: -170px; left: -130px; background: #7a5cff; animation: heroDrift 16s ease-in-out infinite alternate; }
+        .hero-glow--2 { bottom: -200px; right: -140px; background: #B8860B; opacity: 0.22; animation: heroDrift 21s ease-in-out infinite alternate-reverse; }
+
+        .hero-icon {
+            position: absolute;
+            color: #a88aff;
+            opacity: 0.14;
+            font-size: 2.2rem;
+            pointer-events: none;
+            animation: heroFloat 7s ease-in-out infinite;
+        }
+        .hero-icon--a { top: 14%; left: 4%; }
+        .hero-icon--b { top: 26%; right: 6%; font-size: 1.6rem; animation-delay: 1.6s; }
+        .hero-icon--c { bottom: 18%; left: 16%; font-size: 1.7rem; animation-delay: 3.1s; }
+        .hero-icon--d { bottom: 26%; right: 11%; font-size: 1.3rem; animation-delay: 2.2s; }
+
+        @keyframes heroDrift {
+            from { transform: translate3d(0, 0, 0) scale(1); }
+            to { transform: translate3d(28px, 22px, 0) scale(1.08); }
+        }
+        @keyframes heroFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-14px); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .hero-glow, .hero-icon { animation: none !important; }
+        }
+
         .hero-content { flex: 1; }
         .hero-content .badge {
-            display: inline-block;
-            background: rgba(75,42,173,0.3);
-            color: #a88aff;
-            padding: 4px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.07);
+            color: #d9ccff;
+            padding: 7px 18px;
             border-radius: 50px;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 600;
-            margin-bottom: 16px;
-            border: 1px solid rgba(75,42,173,0.3);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            border: 1px solid rgba(168,138,255,0.35);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            box-shadow: 0 4px 18px rgba(0,0,0,0.2);
         }
+        .hero-content .badge i { color: #B8860B; }
         .hero-content h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 3rem;
+            font-size: clamp(2rem, 4.4vw, 3.2rem);
             line-height: 1.1;
             margin-bottom: 16px;
         }
-        .hero-content h1 .highlight { color: #a88aff; }
-        .hero-content h1 .gold { color: #B8860B; }
+        .hero-content h1 .highlight {
+            color: #a88aff;
+            background: linear-gradient(transparent 66%, rgba(168,138,255,0.22) 66%);
+            padding: 0 3px;
+        }
+        .hero-content h1 .gold {
+            color: #B8860B;
+            text-shadow: 0 0 18px rgba(184,134,11,0.35);
+        }
         .hero-content p {
             font-size: 1.05rem;
             color: rgba(255,255,255,0.8);
@@ -245,7 +302,6 @@
             line-height: 1.7;
         }
 
-          
         /* ===== HERO BUTTONS - ALWAYS SIDE BY SIDE ===== */
         .hero-buttons {
             display: flex;
@@ -253,33 +309,70 @@
             flex-wrap: nowrap;
         }
         .hero-buttons .btn-primary {
-            background: #B8860B;
+            background: linear-gradient(135deg, #c9930d, #B8860B);
             flex: 1;
+            box-shadow: 0 10px 30px rgba(184,134,11,0.35);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
         }
-        .hero-buttons .btn-primary:hover { background: #a0740a; }
+        .hero-buttons .btn-primary:hover {
+            background: linear-gradient(135deg, #a0740a, #8f6809);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 36px rgba(184,134,11,0.45);
+        }
         .hero-buttons .btn-secondary {
-            border-color: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.35);
             color: white;
             flex: 1;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            background: rgba(255,255,255,0.04);
+            transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
         }
         .hero-buttons .btn-secondary:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.12);
             border-color: white;
+            transform: translateY(-2px);
         }
 
         .hero-stats {
             display: flex;
-            gap: 30px;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0;
+            margin-top: 34px;
+            width: 100%;
+            max-width: 660px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 14px 40px rgba(0,0,0,0.25);
+            padding: 14px 6px;
         }
+        .hero-stats .stat {
+            text-align: center;
+            flex: 1 1 0;
+            min-width: 150px;
+            padding: 4px 14px;
+        }
+        .hero-stats .stat + .stat { border-left: 1px solid rgba(255,255,255,0.12); }
         .hero-stats .stat h3 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
-            color: #a88aff;
+            font-size: clamp(1.5rem, 3vw, 1.9rem);
+            color: #ffffff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
         }
-        .hero-stats .stat p { font-size: 0.8rem; color: rgba(255,255,255,0.6); margin: 0; }
+        .hero-stats .stat p {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.65);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-top: 3px;
+            margin-bottom: 0;
+        }
 
         .hero-visual {
             flex: 1;
@@ -1740,6 +1833,58 @@ gap: 80px;
 }
 
 
+   /* ===== HERO POLISH — UNIFORM ACROSS BREAKPOINTS ===== */
+    .hero-stats {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 0 !important;
+        margin-top: 34px !important;
+        padding: 14px 6px !important;
+        width: 100% !important;
+        max-width: 660px !important;
+        background: rgba(255,255,255,0.06) !important;
+        border: 1px solid rgba(255,255,255,0.14) !important;
+        border-radius: 20px !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.25) !important;
+    }
+    .hero-stats .stat + .stat {
+        border-left: 1px solid rgba(255,255,255,0.12) !important;
+    }
+    .hero-stats .stat h3 {
+        font-size: clamp(1.4rem, 3vw, 1.9rem) !important;
+        color: #ffffff !important;
+    }
+    .hero-stats .stat h3 .gold { color: #B8860B; }
+    .hero-stats .stat p {
+        font-size: 0.7rem !important;
+        color: rgba(255,255,255,0.65) !important;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .hero-glow, .hero-icon { animation: none !important; }
+    }
+
+    /* ===== PROJECT COVERS — FILL FULL HEIGHT ON PHONE ===== */
+    @media (max-width: 480px) {
+        .project-item .cover-wrapper img {
+            height: 100% !important;
+        }
+    }
+
+    /* ===== HERO HEADLINE — SINGLE LINE ON PHONE ===== */
+    @media (max-width: 480px) {
+        .hero-br { display: none; }
+        .hero-content h1 {
+            font-size: clamp(0.9rem, 4.4vw, 1.25rem) !important;
+            letter-spacing: -0.01em;
+            line-height: 1.25;
+            margin-bottom: 10px !important;
+        }
+    }
+
+
    </style>
 </head>
 <body>
@@ -1765,18 +1910,25 @@ gap: 80px;
 
 <!-- HERO -->
 <section class="hero">
+    <div class="hero-glow hero-glow--1" aria-hidden="true"></div>
+    <div class="hero-glow hero-glow--2" aria-hidden="true"></div>
+    <i class="hero-icon hero-icon--a fas fa-feather-alt" aria-hidden="true"></i>
+    <i class="hero-icon hero-icon--b fas fa-code" aria-hidden="true"></i>
+    <i class="hero-icon hero-icon--c fas fa-music" aria-hidden="true"></i>
+    <i class="hero-icon hero-icon--d fas fa-book" aria-hidden="true"></i>
     <div class="container">
         <div class="hero-content">
             <div class="badge"><i class="fas fa-bolt"></i> Creative Technology</div>
-            <h1>Simply Volant, <br><span class="highlight">forever</span> in the <span class="gold">horizon</span></h1>
+            <h1>Simply Volant, <br class="hero-br"><span class="highlight">forever</span> in the <span class="gold">horizon</span></h1>
             <p>Volant Foundry is a creative technology platform building digital spaces for writers, readers, and creators.</p>
             <div class="hero-buttons">
                 <a href="#ecosystem" class="btn-primary"><i class="fas fa-rocket"></i> Explore Platforms</a>
                 <a href="../shared/contact.html" class="btn-secondary">Contact Us</a>
             </div>
             <div class="hero-stats">
-                <div class="stat"><h3>3+</h3><p>Platforms</p></div>
-                <div class="stat"><h3>100%</h3><p>Passion</p></div>
+                <div class="stat"><h3>4</h3><p>Live Platforms</p></div>
+                <div class="stat"><h3>1</h3><p>Unified Vision</p></div>
+                <div class="stat"><h3>100%</h3><p>Creative Passion</p></div>
             </div>
         </div>
         <div class="hero-visual">
@@ -1823,7 +1975,7 @@ gap: 80px;
                 <span class="icon"><img src="../images/volant-lyrics.png" alt="Volant Lyrics"></span>
                 <h3>Volant Lyrics</h3>
                 <p>A place to buy and sell original lyrics with full copyright.</p>
-                <a href="#" class="learn-more">Coming Soon <i class="fas fa-arrow-right"></i></a>
+                <a href="https://volantlyrics.vercel.app" class="learn-more">Explore Lyrics <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </div>
@@ -1939,6 +2091,28 @@ gap: 80px;
     <div class="container">
         <span class="label">Volant Codes Projects</span>
         <div class="projects-grid">
+            
+            <!-- Volant Lyrics -->
+            <div class="project-item" onclick="window.open('https://volantlyrics.vercel.app', '_blank')">
+                <div class="cover-wrapper">
+                    <img src="https://volantpoetry.vercel.app/images/lyrics-site.png" alt="Volant Lyrics">
+                    <span class="live-badge" style="background:#4b2aad;">Live</span>
+                </div>
+                <div class="book-body">
+                    <div class="book-title">Volant Lyrics</div>
+                    <div class="book-author">
+                        <i class="fas fa-user-edit"></i> Lyrics Marketplace
+                    </div>
+                    <div class="book-price">
+                        <i class="fas fa-music" style="color:#4b2aad;"></i> Buy &amp; Sell Original Lyrics
+                    </div>
+                    <div class="tags">
+                        <span class="tag">HTML</span>
+                        <span class="tag">CSS</span>
+                        <span class="tag">Firebase</span>
+                    </div>
+                </div>
+            </div>
             
             <!-- Kindady's E-tail -->
             <div class="project-item" onclick="window.open('https://kindadyetail.github.io/', '_blank')">
