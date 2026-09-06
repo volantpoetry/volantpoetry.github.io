@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Volant Poetry — a community-driven platform where poets, writers, and readers share and discover poetry. Share your work, get feedback, enter contests, and discover Poem of the Week. A platform of Volant Foundry.">
+<meta name="keywords" content="Volant Poetry, poetry community, share poems, poem of the week, quote of the week, Volant Foundry, Rence Blunt, Ghana poetry, African poetry">
+<title>Volant Poetry | Volant Foundry</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png">
+<link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Volant Poetry | Volant Foundry">
+<meta property="og:description" content="A community-driven platform where poets, writers, and readers share and discover poetry. A platform of Volant Foundry.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://volantpoetry.vercel.app/shared/poetry.html">
+<meta property="og:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
+<meta property="og:site_name" content="Volant Poetry">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Volant Poetry | Volant Foundry">
+<meta name="twitter:description" content="A community-driven platform where poets, writers, and readers share and discover poetry.">
+<meta name="twitter:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
+
+<link rel="canonical" href="https://volantpoetry.vercel.app/shared/poetry.html">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="https://volantpoetry.vercel.app/sitemap.xml">
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Volant Poetry",
+  "url": "https://volantpoetry.vercel.app/",
+  "description": "A community-driven platform where poets, writers, and readers share and discover poetry.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Volant Foundry",
+    "url": "https://volantpoetry.vercel.app/shared/about.html"
+  }
+}
+</script>
+
+<style>
+  :root {
+    --primary: #4b2aad;
+    --primary-dark: #3a1f8a;
+    --primary-light: #6c3ddd;
+    --accent-gold: #b89b5e;
+    --accent-gold-dark: #9b7e48;
+    --bg-main: #f5f3ff;
+    --bg-card: #ffffff;
+    --text-primary: #1a1a1a;
+    --text-secondary: #4a4a4a;
+    --text-muted: #6b6b6b;
+    --border-light: #e8e4f0;
+    --border-gold: #d4c5a0;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.02);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  .page-header {
+    background: var(--bg-card);
+    border-bottom: 2px solid var(--border-gold);
+    padding: 2.5rem 2rem 1.5rem;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-header h1 i {
+    color: var(--accent-gold);
+    margin-right: 8px;
+  }
+
+  .page-header .breadcrumb {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+  }
+
+  .page-header .breadcrumb a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .page-header .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .parent-brand-tag {
+    background: linear-gradient(135deg, #2a1a4a, #4b2aad);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(75, 42, 173, 0.25);
+  }
+  .parent-brand-tag i { margin-right: 6px; color: #f5c542; }
+
+  .sub-platform-badge {
+    display: inline-block;
+    background: #f0ece6;
+    padding: 2px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #4b2aad;
+    margin: 0 3px;
+    letter-spacing: 0.3px;
+  }
+  .sub-platform-badge i { margin-right: 4px; color: #b76e4b; }
+  .sub-platform-badge.poetry { background: #ede9ff; }
+  .sub-platform-badge.poetry i { color: #4b2aad; }
+  .sub-platform-badge.code { background: #f0edff; }
+  .sub-platform-badge.code i { color: #4b2aad; }
+
+  .poetry-container {
+    max-width: 920px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .poetry-card {
+    background: var(--bg-card);
+    border-radius: 0;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+  }
+
+  .poetry-content {
+    padding: 2.5rem 3rem;
+  }
+
+  .poetry-intro {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .poetry-intro strong {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .poetry-intro .tagline {
+    display: block;
+    margin-top: 0.75rem;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--accent-gold-dark);
+  }
+
+  .poetry-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .poetry-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .poetry-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.45rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.2px;
+  }
+
+  .poetry-section h2 i {
+    color: var(--accent-gold);
+    margin-right: 8px;
+  }
+
+  .poetry-section h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--primary);
+    margin-top: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .poetry-section p {
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+  }
+
+  .poetry-section ul {
+    margin: 0.75rem 0 0.5rem 0;
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .poetry-section li {
+    margin-bottom: 0.6rem;
+    padding-left: 1.5rem;
+    position: relative;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .poetry-section li::before {
+    content: "●";
+    color: var(--accent-gold);
+    font-size: 0.75rem;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .highlight {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .accent-text {
+    color: var(--accent-gold-dark);
+    font-weight: 500;
+  }
+
+  .warning {
+    color: #b33a3a;
+    font-weight: 500;
+  }
+
+  .platform-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin: 12px 0;
+  }
+
+  .platform-grid .platform-item {
+    background: #faf9fe;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .platform-grid .platform-item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+
+  .platform-grid .platform-item i {
+    display: block;
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+  }
+
+  .platform-grid .platform-item .name {
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .platform-grid .platform-item .tag {
+    display: inline-block;
+    font-size: 0.55rem;
+    padding: 1px 8px;
+    border-radius: 12px;
+    color: white;
+    margin-top: 3px;
+  }
+
+  .platform-grid .platform-item .tag.ready {
+    background: #4b2aad;
+  }
+
+  .platform-grid .platform-item .tag.soon {
+    background: #b89b5e;
+  }
+
+  /* Ranking cards */
+  .ranking-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 12px 0;
+  }
+
+  .ranking-card {
+    background: #faf9fe;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .ranking-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    color: var(--primary);
+    margin-top: 0;
+  }
+
+  .formula-box {
+    background: rgba(75, 42, 173, 0.08);
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin: 10px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    text-align: center;
+    color: var(--primary-dark);
+    font-weight: 500;
+  }
+
+  .example-box {
+    background: #fff8e7;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-top: 10px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    border-left: 3px solid #ff9800;
+  }
+
+  .note-text {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  .guidance-box {
+    background: #fef5f5;
+    border-left: 4px solid #c0392b;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    border-radius: 6px;
+  }
+
+  .guidance-box strong {
+    color: #c0392b;
+    font-weight: 600;
+  }
+
+  .guidance-box ul {
+    margin: 0.5rem 0 0 0;
+  }
+
+  /* CTA */
+  .cta-box {
+    text-align: center;
+    background: linear-gradient(135deg, #faf9fe, #f0edff);
+    border: 1px solid var(--border-light);
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .cta-box h3 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0 0 0.5rem;
+    font-size: 1.3rem;
+  }
+
+  .cta-box p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .btn {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 10px 26px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(75, 42, 173, 0.3);
+  }
+
+  .btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+
+  .btn.gold {
+    background: #B8860B;
+    box-shadow: 0 4px 15px rgba(184, 134, 11, 0.3);
+  }
+
+  .btn.gold:hover {
+    background: #9a7200;
+  }
+
+  .btn.ghost {
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    box-shadow: none;
+  }
+
+  .btn.ghost:hover {
+    background: #f0edff;
+  }
+
+  .closing-note {
+    background: #faf9fe;
+    border-left: 3px solid var(--accent-gold);
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+  }
+
+  .page-footer {
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-light);
+    padding: 1.5rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .page-footer p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin: 0;
+  }
+
+  .page-footer a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .page-footer a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      padding: 1.8rem 1rem 1.2rem;
+    }
+    .page-header h1 {
+      font-size: 2rem;
+    }
+    .poetry-content {
+      padding: 1.5rem;
+    }
+    .poetry-section h2 {
+      font-size: 1.3rem;
+    }
+    .poetry-section li {
+      font-size: 0.9rem;
+    }
+    .platform-grid {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .platform-grid .platform-item {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+    .platform-grid .platform-item i {
+      display: inline;
+      font-size: 1.2rem;
+      margin-bottom: 0;
+    }
+    .ranking-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 550px) {
+    .poetry-container {
+      padding: 0 1rem;
+      margin: 1.5rem auto;
+    }
+    .poetry-content {
+      padding: 1.25rem;
+    }
+    .page-header h1 {
+      font-size: 1.75rem;
+    }
+    .poetry-section h2 {
+      font-size: 1.2rem;
+    }
+    .poetry-section li {
+      font-size: 0.85rem;
+      padding-left: 1.25rem;
+    }
+    .btn {
+      padding: 8px 20px;
+      font-size: 0.85rem;
+    }
+  }
+
+  @media print {
+    .page-header,
+    .page-footer {
+      background: none;
+      border: none;
+    }
+    .poetry-card {
+      box-shadow: none;
+      border: 1px solid #ccc;
+    }
+    body {
+      background: white;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div style="text-align: center;">
+    <span class="parent-brand-tag"><i>🏛️</i> A Platform of Volant Foundry</span>
+  </div>
+  <h1><i class="fas fa-feather-alt"></i>Volant Poetry</h1>
+  <div class="breadcrumb">
+    <a href="about.html">About Us</a> / Volant Poetry
+  </div>
+</div>
+
+<div class="poetry-container">
+  <div class="poetry-card">
+    <div class="poetry-content">
+
+      <div class="poetry-intro">
+        <p>
+          <strong>Volant Poetry</strong> is a community-driven platform of 
+          <span class="sub-platform-badge poetry"><i>📖</i> Volant Poetry</span> 
+          <span class="sub-platform-badge"><i>📚</i> Volant Reads</span>
+          <span class="sub-platform-badge code"><i>💻</i> Volant Codes</span>
+          where poets, writers, and readers come together to share words, discover new voices, and watch poetry take flight.
+        </p>
+        <p>
+          Whether you are an established poet or someone writing for the very first time, this is a space where every line matters and every voice belongs.
+        </p>
+        <span class="tagline">"A place where words take breath."</span>
+      </div>
+
+      <!-- ===== WHAT YOU CAN DO ===== -->
+      <div class="poetry-section">
+        <h2><i class="fas fa-star"></i> What You Can Do On Volant Poetry</h2>
+        <div class="platform-grid">
+          <div class="platform-item">
+            <i>✍️</i>
+            <span class="name">Share Poems</span>
+            <span class="tag ready">Live</span>
+          </div>
+          <div class="platform-item">
+            <i>❤️</i>
+            <span class="name">Like &amp; Comment</span>
+            <span class="tag ready">Live</span>
+          </div>
+          <div class="platform-item">
+            <i>🏆</i>
+            <span class="name">Poem &amp; Poet Rankings</span>
+            <span class="tag ready">Live</span>
+          </div>
+          <div class="platform-item">
+            <i>🌟</i>
+            <span class="name">Poem of the Week</span>
+            <span class="tag ready">Live</span>
+          </div>
+          <div class="platform-item">
+            <i>💬</i>
+            <span class="name">Quotes Weekly</span>
+            <span class="tag ready">Live</span>
+          </div>
+          <div class="platform-item">
+            <i>🎉</i>
+            <span class="name">Poetry Gallery</span>
+            <span class="tag ready">Live</span>
+          </div>
+          <div class="platform-item">
+            <i>⚔️</i>
+            <span class="name">Competitions</span>
+            <span class="tag soon">Coming Soon</span>
+          </div>
+          <div class="platform-item">
+            <i>👥</i>
+            <span class="name">Groups</span>
+            <span class="tag soon">Coming Soon</span>
+          </div>
+          <div class="platform-item">
+            <i>🔗</i>
+            <span class="name">Shareable Poem Links</span>
+            <span class="tag ready">Live</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== COMMUNITY STANDARDS ===== -->
+      <div class="poetry-section">
+        <h2><i class="fas fa-handshake"></i> Community Standards</h2>
+        <p>
+          Volant Poetry is an <span class="highlight">open community</span> — poets can freely share their work without editorial approval. To keep the community respectful and inspiring, we ask every member to follow these simple standards:
+        </p>
+        <div class="guidance-box">
+          <strong>Simple Standards:</strong>
+          <ul>
+            <li>All poems must be written by the author themselves.</li>
+            <li><span class="warning">No AI-generated content</span> is allowed.</li>
+            <li>Respect other poets and readers — no spam or plagiarism.</li>
+            <li>Use proper titles and basic formatting.</li>
+          </ul>
+        </div>
+        <p>
+          <a href="../submission-guidelines.html" style="color: var(--primary); text-decoration: underline;">Read the full submission guidelines</a>
+          before publishing your work.
+        </p>
+      </div>
+
+      <!-- ===== RANKING SYSTEM ===== -->
+      <div class="poetry-section">
+        <h2><i class="fas fa-trophy"></i> The Ranking System</h2>
+        <p>
+          Volant Poetry ranks poems and poets based on <span class="highlight">genuine community engagement</span> — not just popularity. Commenting thoughtfully on others' work is valued even more than receiving likes, which creates a supportive environment where every poet can thrive.
+        </p>
+
+        <div class="ranking-grid">
+          <div class="ranking-card">
+            <h3>🏆 Poem Ranking</h3>
+            <p style="font-size: 0.9rem;">
+              Poems are ranked on engagement from the <strong>last 7 days</strong>. Old poems can still win if they receive recent activity!
+            </p>
+            <div class="formula-box">
+              Score = (Views × 1) + (Likes × 3) + (Comments × 4)
+            </div>
+            <div class="example-box">
+              <strong>Example:</strong> 100 views + 20 likes + 5 comments<br>
+              = (100×1) + (20×3) + (5×4) = <strong>180 points</strong>
+            </div>
+            <p class="note-text">
+              <strong>Rolling 7 Days:</strong> only activity from the last 7 days counts. Poems fall off after 7 days of no activity.
+            </p>
+          </div>
+
+          <div class="ranking-card">
+            <h3>👤 Poet Ranking</h3>
+            <p style="font-size: 0.9rem;">
+              Poets are ranked weekly (Monday to Sunday). Winners are announced every Monday!
+            </p>
+            <div class="formula-box">
+              Score = (Poems × 2) + (Likes Received × 1.5) + (Comments Received × 1.5) + (Likes Given × 3) + (Comments Given × 4)
+            </div>
+            <div class="example-box">
+              <strong>Key insight:</strong> Giving feedback (likes/comments) is worth <strong>MORE</strong> than receiving it!
+            </div>
+            <p class="note-text">
+              <strong>Weekly Reset:</strong> rankings reset every Monday. The previous week's champion is saved in our Hall of Fame.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== WEEKLY FEATURES ===== -->
+      <div class="poetry-section">
+        <h2><i class="fas fa-calendar-week"></i> Weekly Highlights</h2>
+        <ul>
+          <li><span class="highlight">Poem of the Week</span> — a standout poem hand-picked each week for the community to enjoy.</li>
+          <li><span class="highlight">Quote of the Week</span> — an inspiring quote selected weekly to spark reflection.</li>
+          <li><span class="highlight">Hall of Fame</span> — previous weekly champions are remembered on the platform.</li>
+          <li><span class="highlight">Poetry in Motion</span> — a gallery celebrating poetry through visual art and display.</li>
+        </ul>
+      </div>
+
+      <!-- ===== HOW TO JOIN ===== -->
+      <div class="poetry-section">
+        <h2><i class="fas fa-user-plus"></i> How To Get Started</h2>
+        <ol style="margin: 0.5rem 0 0.5rem 0; padding-left: 1.5rem; color: var(--text-secondary);">
+          <li style="margin-bottom: 0.5rem;">Create a free account — it takes less than a minute.</li>
+          <li style="margin-bottom: 0.5rem;">Explore poems, follow poets, and enjoy daily new voices.</li>
+          <li style="margin-bottom: 0.5rem;">Submit your own work and share it with the world.</li>
+          <li style="margin-bottom: 0.5rem;">Like and comment to support fellow poets and climb the rankings.</li>
+        </ol>
+
+        <div class="cta-box">
+          <h3>Ready to let your words take flight?</h3>
+          <p>Join the community, explore the collection, or share your first poem today.</p>
+          <div class="cta-buttons">
+            <a href="universal-signup.html?platform=poetry&redirect=index.html&returnUrl=encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)" class="btn">✍️ Join the Community</a>
+            <a href="../poems.html" class="btn">📖 Explore Poems</a>
+            <a href="../submitpoems.html" class="btn gold">🌅 Submit a Poem</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="closing-note">
+        <p>
+          <strong>Volant Poetry</strong> is the heart of the <strong>Volant Foundry</strong> ecosystem — where the journey began. Thank you for being part of a community where every word matters.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <p>© 2026 Volant Poetry — A Platform of Volant Foundry. All rights reserved. | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms & Conditions</a> | <a href="contact.html">Contact Us</a></p>
+</footer>
+
+</body>
+</html>

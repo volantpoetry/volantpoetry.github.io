@@ -11,12 +11,12 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   
   <!-- SEO Meta Tags -->
-  <meta name="description" content="Volant Foundry is a creative technology platform behind Volant Poetry (poetry community), Volant Reads (literary marketplace), and Volant Codes (web development). Discover our ecosystem for writers, readers, and creators.">
-  <meta name="keywords" content="Volant Foundry, Volant Poetry, Volant Reads, Volant Codes, literary marketplace, poetry community, creative platform, web development, Rence Blunt">
+  <meta name="description" content="Volant Foundry is a creative technology platform behind Volant Poetry (poetry community), Volant Reads (literary marketplace), Volant Codes (web development), and Volant Lyrics (song lyrics marketplace). Discover our ecosystem for writers, readers, and creators.">
+  <meta name="keywords" content="Volant Foundry, Volant Poetry, Volant Reads, Volant Codes, Volant Lyrics, literary marketplace, lyrics marketplace, poetry community, song lyrics, creative platform, web development, Rence Blunt">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="About | Volant Foundry — Volant Poetry, Volant Reads & Volant Codes">
-  <meta property="og:description" content="Volant Foundry is a creative technology platform behind Volant Poetry, Volant Reads, and Volant Codes. Discover our literary and tech ecosystem.">
+  <meta property="og:title" content="About | Volant Foundry — Volant Poetry, Volant Reads, Volant Codes & Volant Lyrics">
+  <meta property="og:description" content="Volant Foundry is a creative technology platform behind Volant Poetry, Volant Reads, Volant Codes, and Volant Lyrics. Discover our literary and tech ecosystem.">
   <meta property="og:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://volantpoetry.vercel.app/shared/about.html">
@@ -25,7 +25,7 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="About | Volant Foundry — Volant Poetry, Volant Reads & Volant Codes">
-  <meta name="twitter:description" content="Volant Foundry is a creative technology platform behind Volant Poetry, Volant Reads, and Volant Codes.">
+  <meta name="twitter:description" content="Volant Foundry is a creative technology platform behind Volant Poetry, Volant Reads, Volant Codes, and Volant Lyrics.">
   <meta name="twitter:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
 
   <!-- ✅ Canonical -->
@@ -38,6 +38,7 @@
   <link rel="alternate" type="text/html" hreflang="en" href="https://volantpoetry.vercel.app/" title="Volant Poetry - Poetry Community" />
   <link rel="alternate" type="text/html" hreflang="en" href="https://volantpoetry.vercel.app/store/index.html" title="Volant Reads - Literary Marketplace" />
   <link rel="alternate" type="text/html" hreflang="en" href="https://volantpoetry.vercel.app/volant_foundry/index.html" title="Volant Foundry - Parent Platform" />
+  <link rel="alternate" type="text/html" hreflang="en" href="https://volantlyrics.vercel.app/" title="Volant Lyrics - Lyrics Marketplace" />
 
   <link rel="about" href="https://volantpoetry.vercel.app/shared/about.html" />
   <link rel="contents" href="https://volantpoetry.vercel.app/" title="Volant Poetry Home" />
@@ -88,6 +89,21 @@
     "name": "Volant Poetry",
     "url": "https://volantpoetry.vercel.app/",
     "description": "A community-driven platform where poets, writers, and readers share and discover poetry.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Volant Foundry"
+    }
+  }
+  </script>
+
+  <!-- ✅ Structured Data - Volant Lyrics -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Volant Lyrics",
+    "url": "https://volantlyrics.vercel.app/",
+    "description": "A marketplace for original song lyrics where songwriters sell their work to artists, producers, and music lovers.",
     "publisher": {
       "@type": "Organization",
       "name": "Volant Foundry"
@@ -402,6 +418,10 @@
 
     .volant-reads-col .badge.gold {
       background: #f5a623;
+    }
+
+    .volant-reads-col .badge.red {
+      background: #c0392b;
     }
 
     .volant-reads-cta {
@@ -1183,6 +1203,7 @@ header nav {
                         <a href="https://volantcodes.vercel.app"><i class="fas fa-code" style="margin-right: 6px;"></i>Volant Codes</a>
         <a href="../index.html">📖 Volant Poetry</a>
         <a href="../store/index.html">📚 Bookstore</a>
+        <a href="https://volantlyrics.vercel.app">🎵 Volant Lyrics</a>
         <a href="../volant_foundry/index.html">🏛️ Volant Foundry</a>
          <a href="contact.html">Contact Us</a>
     </div>
@@ -1202,6 +1223,8 @@ header nav {
     <span class="divider">|</span>
     <a href="#volant-reads"><i class="fas fa-book-open"></i> Volant Reads</a>
     <span class="divider">|</span>
+    <a href="#volant-lyrics"><i class="fas fa-music"></i> Volant Lyrics</a>
+    <span class="divider">|</span>
     <a href="#volant-poetry"><i class="fas fa-feather-alt"></i> Volant Poetry</a>
   </div>
 </div>
@@ -1215,12 +1238,14 @@ header nav {
     <p>
       A creative technology platform building digital spaces for writers, readers, and creators. 
       It began with <strong>Volant Poetry</strong>, a platform for sharing and discovering poetry, and has expanded into 
-      <strong>Volant Reads</strong>, a digital literary marketplace, and <strong>Volant Codes</strong>, a professional web development service.
+      <strong>Volant Reads</strong>, a digital literary marketplace, <strong>Volant Codes</strong>, a professional web development service, and 
+      <strong>Volant Lyrics</strong>, a marketplace for original song lyrics.
     </p>
     <div class="brand-platforms">
       <span><i>📖</i> Volant Poetry</span>
       <span><i>📚</i> Volant Reads</span>
       <span><i>💻</i> Volant Codes</span>
+      <span><i>🎵</i> Volant Lyrics</span>
       <span><i>⚡</i> + more coming</span>
     </div>
   </div>
@@ -1317,7 +1342,7 @@ header nav {
           <li><i class="fas fa-file-alt"></i> Submit title, synopsis, author bio</li>
           <li><i class="fas fa-file-pdf"></i> Upload PDF manuscript</li>
           <li><i class="fas fa-image"></i> Add cover image</li>
-          <li><i class="fas fa-tag"></i> Set your own price <span class="badge">free or paid</span></li>
+          <li><i class="fas fa-tag"></i> Set your own price <span class="badge">paid</span></li>
           <li><i class="fas fa-percent"></i> Earn <strong>90%</strong> of net sales <span class="badge gold">90%</span></li>
           <li><i class="fas fa-coins"></i> Paid via Momo, Bank, or others</li>
           <li><i class="fas fa-file-alt"></i> Number of pages <span class="badge orange">required</span></li>
@@ -1326,7 +1351,7 @@ header nav {
             <em>Share your store link or book page link to promote sales</em>
           </li>
         </ul>
-      </div>
+      </div> 
 
       <div class="volant-reads-col">
         <h3><i class="fas fa-book-open"></i> For Readers</h3>
@@ -1353,6 +1378,91 @@ header nav {
     <div class="volant-reads-cta">
       <a href="../store/index.html" class="btn"><i class="fas fa-store"></i> Browse Bookstore</a>
       <a href="../store/submit.html" class="btn orange"><i class="fas fa-upload"></i> Submit Your Book</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- ===== VOLANT LYRICS ===== -->
+<!-- ============================================================ -->
+<section class="volant-reads-section" id="volant-lyrics">
+  <h2><i class="fas fa-music"></i> Volant Lyrics — A Platform of Volant Foundry</h2>
+
+  <div class="volant-reads-box">
+    <div class="description">
+      <p>
+        <strong>Volant Lyrics</strong> is a marketplace for original song lyrics. 
+        Songwriters set their own prices and sell their work to artists, producers, and music lovers — 
+        while retaining full ownership of their creative output.
+      </p>
+      <p style="font-size: 0.95rem; color: #6b6b6b; margin-top: 5px;">
+        <i class="fas fa-arrow-right" style="color: #b76e4b;"></i> 
+        Songwriters keep full copyright. Get paid at the price you set.
+      </p>
+    </div>
+
+    <div class="volant-reads-grid">
+      <div class="volant-reads-col">
+        <h3><i class="fas fa-pen-nib"></i> For Songwriters</h3>
+        <ul>
+          <li><i class="fas fa-globe"></i> Open to everyone — no membership</li>
+          <li><i class="fas fa-file-alt"></i> Submit original lyrics</li>
+          <li><i class="fas fa-tag"></i> Set your own price <span class="badge">paid</span></li>
+          <li><i class="fas fa-coins"></i> Paid for each sale at your set price</li>
+          <li><i class="fas fa-shield-alt"></i> Keep full ownership & copyright</li>
+          <li><i class="fas fa-share-alt"></i> Share your lyric page to promote sales</li>
+        </ul>
+      </div>
+
+      <div class="volant-reads-col">
+        <h3><i class="fas fa-headphones"></i> For Artists & Buyers</h3>
+        <ul>
+          <li><i class="fas fa-search"></i> Browse lyrics across genres</li>
+          <li><i class="fas fa-book-open"></i> Preview lyrics before buying</li>
+          <li><i class="fas fa-shopping-cart"></i> Purchase paid lyrics</li>
+          <li><i class="fas fa-download"></i> Download free lyrics <span class="badge green">free</span></li>
+          <li><i class="fas fa-star"></i> Discover new songwriters daily</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="volant-reads-grid">
+      <div class="volant-reads-col">
+        <h3><i class="fas fa-check-circle" style="color: #2d7d46;"></i> What Buyers CAN Do <span class="badge green">Personal Use License</span></h3>
+        <ul>
+          <li><i class="fas fa-microphone"></i> Perform the song live <span class="badge green">Yes</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">That's the whole point!</em></li>
+          <li><i class="fas fa-microphone-alt"></i> Record it in a studio <span class="badge green">Yes</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">Make your own version</em></li>
+          <li><i class="fas fa-video"></i> Post a cover on YouTube/Instagram <span class="badge green">Yes</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">Share your art</em></li>
+          <li><i class="fas fa-music"></i> Put it on Spotify/Apple Music <span class="badge green">Yes</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">Release your song</em></li>
+          <li><i class="fas fa-play-circle"></i> Use it in a demo <span class="badge green">Yes</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">Showcase your talent</em></li>
+          <li><i class="fas fa-dollar-sign"></i> Make money from streams <span class="badge green">Yes</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">You keep your streaming revenue</em></li>
+          <li><i class="fas fa-trophy"></i> Make money from performances <span class="badge green">Yes</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">You keep performance fees</em></li>
+          <li><i class="fas fa-print"></i> Print it, copy it, save it <span class="badge green">Yes</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">Your personal library</em></li>
+        </ul>
+      </div>
+
+      <div class="volant-reads-col">
+        <h3><i class="fas fa-times-circle" style="color: #c0392b;"></i> What Buyers CANNOT Do</h3>
+        <ul>
+          <li><i class="fas fa-user-slash"></i> Claim they wrote it <span class="badge red">No</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">That's plagiarism</em></li>
+          <li><i class="fas fa-ban"></i> Sell the lyrics to someone else <span class="badge red">No</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">You bought a license, not the copyright</em></li>
+          <li><i class="fas fa-comment-slash"></i> Post the raw lyrics for free <span class="badge red">No</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">That hurts the songwriter's ability to sell</em></li>
+          <li><i class="fas fa-film"></i> Use it in a commercial (ad, TV, movie) <span class="badge red">No</span> <em style="display:block; font-size:0.8rem; color:#888; font-style:normal;">This requires a separate sync license</em></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="volant-reads-footer-note">
+      <p>
+        <i class="fas fa-info-circle"></i> 
+        <strong>Buying lyrics gives you a personal-use license, not the copyright.</strong> 
+        The songwriter keeps full ownership of the work.
+      </p>
+    </div>
+
+    <div class="volant-reads-cta">
+      <a href="https://volantlyrics.vercel.app" class="btn" target="_blank"><i class="fas fa-store"></i> Visit Marketplace</a>
+      <a href="https://volantlyrics.vercel.app/submit.html" class="btn orange" target="_blank"><i class="fas fa-upload"></i> Sell Your Lyrics</a>
     </div>
   </div>
 </section>
