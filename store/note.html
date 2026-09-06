@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volant Reads - Customer and Owner Guide</title>
+    <style>
+        :root {
+            --bg: #f5f2ed;
+            --surface: #ffffff;
+            --text: #2d3130;
+            --muted: #68706d;
+            --accent: #4b2aad;
+            --line: #ded8cf;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        main {
+            width: min(100% - 2rem, 980px);
+            margin: 2rem auto;
+        }
+        header, section {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+        }
+        h1, h2 { margin-top: 0; }
+        h1 { font-size: 1.8rem; }
+        h2 { color: var(--accent); font-size: 1.25rem; }
+        h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+        p { margin: 0.5rem 0; }
+        ul { margin-top: 0.5rem; padding-left: 1.25rem; }
+        li { margin: 0.35rem 0; }
+        .notice {
+            border-left: 4px solid var(--accent);
+            background: #f4f0ff;
+            padding: 0.75rem 1rem;
+        }
+        code { color: var(--accent); }
+        @media (max-width: 600px) {
+            main { width: min(100% - 1rem, 980px); margin: 1rem auto; }
+            header, section { padding: 1rem; }
+            h1 { font-size: 1.45rem; }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <header>
+            <h1>Volant Reads: Customer and Owner Guide</h1>
+            <p>This note explains the main store workflows, what each user should do, and what owners must verify before production.</p>
+            <p class="notice"><strong>Important:</strong> This is an operational guide, not a replacement for security rules, payment verification, privacy terms, or legal advice.</p>
+        </header>
+
+        <section>
+            <h2>Customers and Readers</h2>
+            <ul>
+                <li>Create an account and keep your email and password secure.</li>
+                <li>Browse approved books from the store and open a book's details page before purchasing.</li>
+                <li>Check the book title, author, price, currency, and available reading information before payment.</li>
+                <li>After a successful purchase, open your dashboard library and select the book to read.</li>
+                <li>Use the reader controls to move between pages, zoom, and scroll through the fetched PDF.</li>
+                <li>On phones, the reader is designed for vertical scrolling and touch gestures. Keep the browser at normal zoom.</li>
+                <li>Use Share to share the book link. Do not share purchased files or private account information.</li>
+                <li>Save a book for offline reading only when you understand that cached access depends on the browser and device.</li>
+                <li>Use the account deletion request form when you want the owner to review deletion of your account and related data.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Buyers and Payments</h2>
+            <ul>
+                <li>Sign in before checkout so the purchase can be associated with your account.</li>
+                <li>Use the cart or single-book checkout in <code>details.html</code>.</li>
+                <li>Complete payment through Paystack and wait for verification to finish.</li>
+                <li>Do not close or refresh during the payment callback unless the payment provider has finished.</li>
+                <li>Keep the transaction reference and payment receipt until the book appears in your library.</li>
+                <li>Contact the store owner with the book ID, account email, transaction reference, and receipt if access is missing.</li>
+                <li>Do not pay through unofficial links or send payment credentials to an author.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Authors and Book Owners</h2>
+            <ul>
+                <li>Submit books through <code>submit.html</code> with accurate title, author, category, description, pricing, currency, and download limits.</li>
+                <li>Upload a readable PDF and a suitable cover image. Confirm that you own or are licensed to distribute every uploaded work.</li>
+                <li>Configure Paystack payout information and verify the returned subaccount details before selling.</li>
+                <li>Track books, sales, earnings, downloads, analytics, messages, and wishlist activity from the dashboard.</li>
+                <li>Do not assume that submission means publication. Books normally remain pending until an administrator approves them.</li>
+                <li>Review book metadata and pricing before asking customers to purchase.</li>
+                <li>Respond to customer issues and deletion or rights requests promptly.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Administrators</h2>
+            <ul>
+                <li>Review pending books in <code>approvals.html</code> or the admin panel before approval.</li>
+                <li>Check PDF quality, cover quality, metadata, ownership claims, pricing, and policy compliance.</li>
+                <li>Approve only legitimate works. Record why a work is rejected or removed.</li>
+                <li>Review account deletion requests from <code>deletion_requests</code>.</li>
+                <li>Confirm the requester identity before processing deletion.</li>
+                <li>Keep an auditable record of approval, rejection, deletion, and support actions.</li>
+                <li>Protect administrator accounts and never expose service credentials or Firebase configuration secrets.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Account Deletion</h2>
+            <ul>
+                <li>The user submits a request with a reason from the store dashboard or profile page.</li>
+                <li>The request is stored in <code>deletion_requests</code> and the user record is marked as requesting deletion.</li>
+                <li>An administrator reviews, approves, or rejects the request from the admin interface.</li>
+                <li>Processing currently targets user-related poetry, drafts, social records, conversations, notifications, classic poems, admin records, and mailing entries.</li>
+                <li>Before production, confirm whether Firebase Authentication accounts, books, purchases, book reads, Cloudinary files, and the deletion request record must also be removed or retained.</li>
+                <li>Deletion should follow the site's privacy policy and applicable data-protection requirements.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Reading and Offline Behavior</h2>
+            <ul>
+                <li>The reader checks book ownership before displaying protected book content.</li>
+                <li>The local PDF.js reader renders fetched PDF pages in a vertical scroll area.</li>
+                <li>Desktop uses a centered reader navigation bar. Smaller screens keep their own mobile reader layout.</li>
+                <li>Zoom applies to the PDF pages, while reader controls remain fixed.</li>
+                <li>PDFs and book metadata may be cached locally for offline reading.</li>
+                <li>Readers should clear local data or sign out on shared devices.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Production Checklist</h2>
+            <ul>
+                <li>Add and verify Firestore security rules. No rules file was found during this review.</li>
+                <li>Move privileged operations to trusted server-side code or Cloud Functions where appropriate.</li>
+                <li>Server-side payment verification must validate the authenticated user, book, author, amount, currency, and transaction reference.</li>
+                <li>Reconcile Paystack webhooks with purchases instead of relying only on client-side writes.</li>
+                <li>Test multi-item carts, non-default currencies, failed payments, retries, duplicate callbacks, and refunds.</li>
+                <li>Restrict Cloudinary upload presets and validate uploaded file types and sizes.</li>
+                <li>Define complete deletion and retention behavior for every data store and uploaded asset.</li>
+                <li>Test the reader on desktop, Android, iPhone, and narrow phone widths, including scrolling, zooming, sharing, and refresh.</li>
+                <li>Remove unused or duplicate payment and reader implementations where possible.</li>
+                <li>Never commit service-account keys or other credentials to the public deployment.</li>
+            </ul>
+        </section>
+    </main>
+</body>
+</html>

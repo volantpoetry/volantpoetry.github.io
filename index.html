@@ -2421,11 +2421,13 @@ Just voices, words, and connection.</p>
 <!-- ====== UPDATED FOOTER ====== -->
 <footer style="padding:30px 20px; text-align:center; border-top:1px solid #eee; background:#faf9fe;">
   <div class="footer-links" style="margin-bottom:10px; display:flex; flex-wrap:wrap; justify-content:center; gap:8px 16px;">
-    <div class="footer-row">
-      <a href="shared/terms.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Terms</a>
+    <div class="footer-row footer-actions">
       <a href="shared/contact.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Contact Us</a>
+      <a href="shared/terms.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Terms</a>
+      <a href="all-categories.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">All Categories</a>
       <a href="store/index.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">📚 Bookstore</a>
       <a href="https://volantlyrics.vercel.app" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">🎵 Volant Lyrics</a>
+      <a href="https://volantcodes.vercel.app" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">💻 Volant Codes</a>
     </div>
     <div class="footer-row">
       <a href="submission-guidelines.html" style="color:#4b2aad; text-decoration:none; font-size:0.85rem;">Submission Guidelines</a>
@@ -2475,38 +2477,48 @@ Just voices, words, and connection.</p>
     .footer-links {
       display: flex !important;
       flex-direction: column !important;
-      align-items: center !important;
-      gap: 4px 0 !important;
+      align-items: stretch !important;
+      gap: 8px 0 !important;
     }
     
     .footer-row {
-      display: flex !important;
-      flex-wrap: wrap !important;
-      justify-content: center !important;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      justify-items: start !important;
       align-items: center !important;
-      gap: 6px 12px !important;
+      row-gap: 6px !important;
+      column-gap: 8px !important;
       width: 100% !important;
     }
     
     .footer-row a {
       font-size: 0.85rem !important;
-      padding: 3px 0;
-      white-space: nowrap;
+      padding: 0 !important;
+      white-space: normal !important;
+      text-align: left !important;
+      justify-self: start !important;
     }
+
+    .footer-actions a:nth-child(1) { grid-column: 1; grid-row: 1; }
+    .footer-actions a:nth-child(2) { grid-column: 1; grid-row: 2; }
+    .footer-actions a:nth-child(3) { grid-column: 1; grid-row: 3; }
+    .footer-actions a:nth-child(4) { grid-column: 2; grid-row: 1; }
+    .footer-actions a:nth-child(5) { grid-column: 2; grid-row: 2; }
+    .footer-actions a:nth-child(6) { grid-column: 2; grid-row: 3; }
     
     footer {
-      padding: 20px 10px !important;
+      padding: 18px 10px 14px !important;
     }
   }
 
   /* For very small screens 380px and below */
   @media (max-width: 380px) {
     .footer-row {
-      gap: 4px 8px !important;
+      row-gap: 4px !important;
     }
     
     .footer-row a {
-      font-size: 0.8rem !important;
+      font-size: 0.78rem !important;
       padding: 2px 0;
     }
     
@@ -2515,7 +2527,7 @@ Just voices, words, and connection.</p>
     }
     
     footer {
-      padding: 15px 6px !important;
+      padding: 14px 6px 12px !important;
     }
   }
 </style>
@@ -3059,6 +3071,27 @@ document.addEventListener("DOMContentLoaded", () => {
     box-shadow: none;
     margin-left: 20px;
     width: calc(100% - 40px);
+  }
+}
+
+/* ===== MOBILE HEADER HEIGHT MATCH ===== */
+@media (max-width: 768px) {
+  header {
+    height: 60px;
+  }
+  nav {
+    height: 60px;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    height: 44px;
+  }
+  nav {
+    height: 44px;
   }
 }
 </style>
