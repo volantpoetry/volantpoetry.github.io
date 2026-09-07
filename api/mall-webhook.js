@@ -4,12 +4,19 @@
 // Vercel Serverless Function - Paystack webhook for Volant Mall.
 // Verifies signatures with the Volant Mall Paystack secret key,
 // so events from the Mall business never collide with Volant
-// Reads or Volant Lyrics. Also confirms a charge was successful
-// before an order is marked as paid.
+// Reads or Volant Lyrics.
+//
+// On charge.success it replays order finalisation (same core as
+// /api/mall-finalize-order) so an order is recorded + stock is
+// decremented even if the buyer closed the tab before the callback.
+// Idempotent: already-finalised references are skipped.
 // ============================================================
-import crypto from 'crypto';
 
-export default async function handler(req, res) {
+const crypto = require('crypto');
+const { db } = require('./mall-admin');
+const { finaliseOrder } = require('./mall-finalize-order');
+
+module.exports = async (req, res) => {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -32,19 +39,39 @@ export default async function handler(req, res) {
         }
 
         const event = req.body;
-        console.log(`Mall webhook: ${event.event}`);
+        console.log('Mall webhook: ' + event.event);
 
         if (event.event === 'charge.success') {
             const txn = event.data;
-            console.log(`Mall payment successful: ${txn.reference} (${txn.amount / 100} ${txn.currency})`);
-            // Future: mark the matching mall-orders document as paid here
-            // via firebase-admin, using txn.reference as the order ref.
+            const reference = txn && txn.reference;
+
+            if (reference) {
+                const adminDb = db();
+
+                // Load the checkout session created client-side before payment.
+                const checkoutSnap = await adminDb.collection('mall-checkouts').doc(reference).get();
+                if (checkoutSnap.exists) {
+                    const c = checkoutSnap.data();
+                    const result = await finaliseOrder(adminDb, {
+                        reference,
+                        checkout: {
+                            items: c.items || [],
+                            shipping: c.shipping || null,
+                            email: c.email || '',
+                            phone: c.phone || '',
+                            uid: c.userId || ''
+                        }
+                    });
+                    console.log('Webhook finalise: ' + JSON.stringify({ ok: result.ok, already: result.alreadyFinalized, orderIds: (result.orderIds || []).length }));
+                } else {
+                    console.warn('Mall webhook: no checkout session found for ' + reference + ' (may be pre-rollout payment)');
+                }
+            }
         }
 
         return res.status(200).json({ status: 'success' });
-
     } catch (error) {
         console.error('Mall webhook error:', error);
         return res.status(200).json({ status: 'error' });
     }
-}
+};

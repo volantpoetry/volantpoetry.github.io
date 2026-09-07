@@ -9,6 +9,8 @@
 // api/lyrics-create-subaccount.js - each platform keeps its own.)
 // ============================================================
 
+const { verifyToken } = require('./mall-admin');
+
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -26,7 +28,21 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { userId, email, payoutData, username } = req.body;
+        const { userId, email, payoutData, username, idToken } = req.body;
+
+        // ===== REQUIRE A VALID FIREBASE SESSION =====
+        // Anyone could fire this endpoint and mint Paystack
+        // subaccounts - refuse unless the payload matches a real
+        // signed-in user.
+        let decoded = null;
+        try {
+            decoded = await verifyToken(idToken);
+        } catch (e) {
+            return res.status(401).json({ success: false, message: 'Authentication failed. Sign in again.' });
+        }
+        if (!userId || decoded.uid !== userId) {
+            return res.status(403).json({ success: false, message: 'Account mismatch. Sign in again.' });
+        }
 
         if (!userId || !email || !payoutData) {
             return res.status(400).json({
