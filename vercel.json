@@ -11,16 +11,13 @@
       "destination": "/api/$1"
     }
   ],
-  "redirects": [
-    {
-      "source": "/about.html",
-      "destination": "/shared/about.html",
-      "permanent": true
-    },
-    {
-      "source": "/about",
-      "destination": "/shared/about.html",
-      "permanent": true
-    }
-  ]
+  "env": {
+    "PAYSTACK_PUBLIC_KEY": "@paystack_public_key",
+    "PAYSTACK_SECRET_KEY": "@paystack_secret_key",
+    "PAYSTACK_COMMISSION": "10",
+    "PAYSTACK_FEE_BEARER": "account",
+    "MALL_PAYSTACK_PUBLIC_KEY": "@mall_paystack_public_key",
+    "MALL_PAYSTACK_SECRET_KEY": "@mall_paystack_secret_key",
+    "MALL_PAYSTACK_COMMISSION": "10"
+  }
 }

@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "paystack": "^1.0.0",
-    "firebase-admin": "^11.11.0"
+    "pdfjs-dist": "^6.3.289"
   },
   "devDependencies": {
-    "vercel": "^34.2.5",
+    "vercel": "^34.2.5"
+  },
+  "optionalDependencies": {
+    "firebase-admin": "^11.11.1",
     "glob": "^10.3.10"
   }
 }
