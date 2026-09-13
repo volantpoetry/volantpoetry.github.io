@@ -3094,7 +3094,10 @@ body:has(#page-mylibrary.active) #setupAlertBanner {
 }
 
 
-  </style>
+
+    /* Hide email notification settings until a verified sending domain is configured (remove this block once live) */
+    #emailNotifGroup { display: none; }
+    </style>
 </head>
 <body>
 
@@ -3518,7 +3521,7 @@ body:has(#page-mylibrary.active) #setupAlertBanner {
         <input type="text" id="settingsBio" placeholder="Tell us about yourself..." />
       </div>
 
-      <div class="settings-group">
+      <div class="settings-group" id="emailNotifGroup">
         <label>Email Notifications</label>
         <div style="margin:8px 0;">
           <label style="display:flex;align-items:center;gap:8px;font-size:0.95rem;cursor:pointer;">
