@@ -19,5 +19,15 @@
     "MALL_PAYSTACK_PUBLIC_KEY": "@mall_paystack_public_key",
     "MALL_PAYSTACK_SECRET_KEY": "@mall_paystack_secret_key",
     "MALL_PAYSTACK_COMMISSION": "10"
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/verify-settlements",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cleanup-notifications",
+      "schedule": "0 2 * * *"
+    }
+  ]
 }
