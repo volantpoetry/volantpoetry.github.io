@@ -2023,22 +2023,6 @@ gap: 80px;
                     </div>
                 </div>
                 <div class="latest-books" id="latestBooks">
-                    <div class="book-item">
-                        <img src="../images/Black and Blue Fiction Book Cover (2).png" alt="Scentless Roses" onclick="openLightbox(this.src)">
-                        <div class="book-info">
-                            <h4>Scentless Roses</h4>
-                            <p>A collection of poems by Rence Blunt</p>
-                            <a href="https://volantreads.vercel.app/details.html?id=MRsRtDKLmjNsPqXxmpnN" target="_blank" class="buy-link">Buy Now</a>
-                        </div>
-                    </div>
-                    <div class="book-item">
-                        <img src="../images/Black and Blue Fiction Book Cover (8).jpg" alt="The Fall Of Twilight" onclick="openLightbox(this.src)">
-                        <div class="book-info">
-                            <h4>The Fall Of Twilight</h4>
-                            <p>A collection of poems by Rence Blunt</p>
-                            <a href="https://volantreads.vercel.app/details.html?id=SSrzOZttEVBQL8NGhguy" target="_blank" class="buy-link">Buy Now</a>
-                        </div>
-                    </div>
                 </div>
                 <div class="latest-right">
                     <span class="label">Subscribe</span>
@@ -2298,15 +2282,20 @@ gap: 80px;
                     [books[i], books[j]] = [books[j], books[i]];
                 }
                 const picks = books.slice(0, 3);
-                latestBooksEl.innerHTML = picks.map(b => `
+                latestBooksEl.innerHTML = picks.map(b => {
+                    const sub = b.genre
+                        ? (b.authorName ? `${b.genre} · ${b.authorName}` : b.genre)
+                        : (b.authorName ? `by ${b.authorName}` : 'Volant Reads');
+                    return `
                     <div class="book-item">
                         <img src="${b.imageUrl || '../images/Black and Blue Fiction Book Cover (2).png'}" alt="${(b.title || 'Book').replace(/"/g, '&quot;')}" onclick="openLightbox(this.src)">
                         <div class="book-info">
                             <h4>${b.title || 'Untitled'}</h4>
-                            <p>A collection of poems by ${b.authorName || 'Volant Reads'}</p>
+                            <p>${sub}</p>
                             <a href="https://volantreads.vercel.app/details.html?id=${b.id}" target="_blank" class="buy-link">Buy Now</a>
                         </div>
-                    </div>`).join('');
+                    </div>`;
+                }).join('');
             })
             .catch(() => {});
     }
