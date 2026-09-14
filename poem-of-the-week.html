@@ -1188,7 +1188,10 @@
 
 <section class="weekly-container">
   <h2 class="weekly-title">Poem of the Week</h2>
-  <div class="weekly-card" id="poemCard"></div>
+  <div class="weekly-card" id="poemCard">
+    <h3 class="weekly-static-title">"Still Waters Run Deep"</h3>
+    <p class="weekly-static-content"><em>Still waters run deep — the calmest poets carry the loudest storms.</em></p>
+  </div>
   <div class="comment-list-outside" id="commentsOutsideContainer"></div>
 </section>
 
@@ -1563,6 +1566,25 @@
         ...data 
       };
       await addDoc(collection(db, "notifications"), notification);
+      if (type === 'comment' || type === 'reply') {
+        notifyActivityEmail(type, forUserId, fromUserId, {
+          fromUserName,
+          poemTitle: data.poemTitle || '',
+          poemId: data.poemId || '',
+          text: data.commentText || data.replyText || ''
+        });
+      }
+    } catch(e) {}
+  }
+
+  async function notifyActivityEmail(type, toUid, fromUid, data) {
+    if (!toUid || !fromUid || toUid === fromUid) return;
+    try {
+      await fetch('/api/notify-activity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ toUid, type, fromUid, data: data || {} })
+      });
     } catch(e) {}
   }
 

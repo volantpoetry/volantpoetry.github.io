@@ -354,6 +354,27 @@
       vertical-align: middle;
     }
 
+    .notification-message .platform-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f0ecff;
+      color: #4b2aad;
+      border: 1px solid #ddd2ff;
+      padding: 1px 10px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+    .notification-message .platform-badge.platform-reads { background:#e8f4ff; color:#0b57d0; border-color:#c7e3ff; }
+    .notification-message .platform-badge.platform-lyrics { background:#fdecf4; color:#a21caf; border-color:#f5c6e0; }
+    .notification-message .platform-badge.platform-mall { background:#eafaf0; color:#157347; border-color:#bfeccd; }
+    .notification-message .platform-badge.platform-poetry { background:#fef3e2; color:#b04a00; border-color:#ffd9a3; }
+
     .notification-message .deletion-tag {
       display: inline-block;
       background: #e74c3c;
@@ -2237,8 +2258,46 @@ function getNotificationIcon(type) {
     case 'announcement': return '📢';
     case 'welcome': return '🎉';
     case 'deletion': return '🗑️';
+    case 'book_approved': return '✅';
+    case 'book_rejected': return '❌';
+    case 'preorder_reminder': return '⏰';
+    case 'preorder_released': return '🎉';
+    case 'preorder_sale': return '💰';
+    case 'release': return '📢';
+    case 'new_order': return '🛒';
+    case 'order_status': return '📦';
+    case 'product_approved': return '✅';
+    case 'product_rejected': return '❌';
+    case 'nudge': return '⏰';
+    case 'referral': return '🎁';
+    case 'wishlist': return '💜';
+    case 'commission': return '✍️';
+    case 'custom_lyrics': return '✍️';
+    case 'collab': return '🤝';
     default: return '🔔';
   }
+}
+
+function inferPlatform(type) {
+  if (type === 'book_approved' || type === 'book_rejected' || type === 'preorder_reminder' || type === 'preorder_released' || type === 'preorder_sale' || type === 'release') return 'reads';
+  if (type === 'new_order' || type === 'order_status' || type === 'product_approved' || type === 'product_rejected' || type === 'nudge' || type === 'referral' || type === 'wishlist') return 'mall';
+  if (type === 'commission' || type === 'commission_accepted' || type === 'commission_declined' || type === 'custom_lyrics' || type === 'collab_request' || type === 'play') return 'lyrics';
+  return '';
+}
+
+function platformLabelFn(p) {
+  if (p === 'reads') return 'Volant Reads';
+  if (p === 'lyrics') return 'Volant Lyrics';
+  if (p === 'mall') return 'Volant Mall';
+  if (p === 'poetry') return 'Volant Poetry';
+  return '';
+}
+
+function platformBadgeHTML(n) {
+  const p = n.platform || inferPlatform(n.type);
+  const label = platformLabelFn(p);
+  if (!label) return '';
+  return `<span class="platform-badge platform-${p}"><i class="fas fa-globe"></i> ${label}</span>`;
 }
 
 function escapeHtml(str) {
@@ -2438,6 +2497,7 @@ async function handleFollowBack(notificationId, followerId, button) {
           forUser: currentUser.uid,
           fromUser: followerId,
           fromUserName: followerName,
+          platform: "poetry",
           type: 'friends',
           message: `You and ${followerName} are now friends! Start engaging with their poetry.`,
           timestamp: serverTimestamp(),
@@ -2448,6 +2508,7 @@ async function handleFollowBack(notificationId, followerId, button) {
           forUser: followerId,
           fromUser: currentUser.uid,
           fromUserName: currentUserName,
+          platform: "poetry",
           type: 'friends',
           message: `You and ${currentUserName} are now friends! Start engaging with their poetry.`,
           timestamp: serverTimestamp(),
@@ -2843,10 +2904,12 @@ if (notification.isPoemOfWeek) {
     messageHtml = `${userLink} added you as a collaborator on ${workDisplay}`;
     
   } else {
-    let userLink = createClickableLink(fromUserId, safeUsername);
-    let message = notification.message || '';
-    message = message.replace(/reach\.volant@gmail\.com/g, createEmailLink('reach.volant@gmail.com'));
-    messageHtml = message ? `${userLink} ${escapeHtml(message).replace(/\n/g, '<br>')}` : 'New notification';
+    const titleText = notification.title || notification.bookTitle || notification.subject || '';
+    let message = notification.message || notification.body || '';
+    message = String(message).replace(/reach\.volant@gmail\.com/g, createEmailLink('reach.volant@gmail.com'));
+    const titleHtml = titleText ? `<div style="font-weight:600; color:#2d2a24; margin:2px 0 2px;">${escapeHtml(titleText)}</div>` : '';
+    const bodyHtml = message ? `<div>${escapeHtml(message).replace(/\n/g, '<br>')}</div>` : '';
+    messageHtml = (titleHtml || bodyHtml) ? titleHtml + bodyHtml : '<span>New notification</span>';
   }
   
   return messageHtml;
@@ -2870,17 +2933,30 @@ async function loadNotifications() {
     }
     
     const notificationsRef = collection(db, "notifications");
-    const q = query(
-      notificationsRef, 
-      where("forUser", "==", currentUser.uid),
-      orderBy("timestamp", "desc"), 
-      limit(50)
-    );
-    const snapshot = await getDocs(q);
+
+    async function fetchNotifs(whereField) {
+      try {
+        const snap = await getDocs(query(notificationsRef, where(whereField, "==", currentUser.uid), limit(80)));
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (e) {
+        console.warn("Notification query failed (" + whereField + "):", e);
+        return [];
+      }
+    }
+
+    const [byUser, byFor] = await Promise.all([fetchNotifs('userId'), fetchNotifs('forUser')]);
+    const merged = {};
+    [...byFor, ...byUser].forEach(n => { if (!merged[n.id]) merged[n.id] = n; });
+    const ordered = Object.values(merged).sort((a, b) => {
+      const ta = (a.timestamp && (a.timestamp.toMillis ? a.timestamp.toMillis() : Date.parse(String(a.timestamp)))) || (a.createdAt && (a.createdAt.toMillis ? a.createdAt.toMillis() : Date.parse(String(a.createdAt)))) || 0;
+      const tb = (b.timestamp && (b.timestamp.toMillis ? b.timestamp.toMillis() : Date.parse(String(b.timestamp)))) || (b.createdAt && (b.createdAt.toMillis ? b.createdAt.toMillis() : Date.parse(String(b.createdAt)))) || 0;
+      return tb - ta;
+    }).slice(0, 50);
+
     const notifications = [];
-    
-    for (const docSnap of snapshot.docs) {
-      const notification = { id: docSnap.id, ...docSnap.data() };
+
+    for (const notifItem of ordered) {
+      const notification = { id: notifItem.id, ...notifItem };
       notification.timestamp = notification.timestamp || notification.createdAt || null;
       notification.fromUser = notification.fromUser || notification.userId || null;
       notifications.push(notification);
@@ -2931,10 +3007,18 @@ async function markAsRead(notificationId) {
 async function markAllAsRead() {
   if (!currentUser) return;
   try {
-    const q = query(collection(db, "notifications"), where("forUser", "==", currentUser.uid), where("read", "==", false));
-    const snapshot = await getDocs(q);
+    const uniq = {};
+    async function collect(field) {
+      try {
+        const q = query(collection(db, "notifications"), where(field, "==", currentUser.uid), where("read", "==", false));
+        const snapshot = await getDocs(q);
+        const batch = writeBatch(db);
+        snapshot.docs.forEach(docSnap => { uniq[docSnap.id] = docSnap.ref; });
+      } catch (e) { console.warn("markAll read query failed:", field, e); }
+    }
+    await Promise.all([collect("userId"), collect("forUser")]);
     const batch = writeBatch(db);
-    snapshot.docs.forEach(docSnap => batch.update(doc(db, "notifications", docSnap.id), { read: true }));
+    Object.values(uniq).forEach(ref => batch.update(ref, { read: true }));
     await batch.commit();
     await loadNotifications();
   } catch (err) { console.error(err); }
@@ -3085,10 +3169,12 @@ async function renderNotifications(notifications) {
         iconHtml = `<div class="notification-icon">${getNotificationIcon(notification.type)}</div>`;
       }
       
+      const platformBadgeHtml = platformBadgeHTML(notification);
+      
       notificationDiv.innerHTML = `
         ${iconHtml}
         <div class="notification-content">
-          <div class="notification-message">${messageHtmlContent}</div>
+          <div class="notification-message">${platformBadgeHtml}${messageHtmlContent}</div>
           <div class="notification-time">${formatTime(notification.timestamp)}</div>
           ${followButtonHtml}
         </div>

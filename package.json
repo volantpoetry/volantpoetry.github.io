@@ -5,6 +5,7 @@
   "main": "index.html",
   "scripts": {
     "dev": "vercel dev",
+    "local": "node local-server.js",
     "deploy": "vercel --prod",
     "generate-sitemap": "node generate-sitemap.js"
   },

@@ -1016,6 +1016,16 @@
       conversationsCache = result;
       conversationsRendered = true;
       renderConversations(result);
+      
+      // Deep-link support: open the conversation requested by the bell.
+      try {
+        const openConvId = sessionStorage.getItem('volant_open_conv');
+        if (openConvId) {
+          sessionStorage.removeItem('volant_open_conv');
+          const target = result.find(c => c.id === openConvId);
+          if (target) openConversation(target.id, target.otherUser.uid);
+        }
+      } catch (e) {}
     });
   }
 
@@ -1165,9 +1175,26 @@
       read: false 
     });
     await updateDoc(convRef, { lastMessage: text, lastMessageTime: serverTimestamp() });
+    if (currentOtherUserId && currentOtherUserId !== currentUser.uid) {
+      notifyActivityEmail('dm', currentOtherUserId, currentUser.uid, {
+        fromUserName: currentUser.displayName || currentUser.email?.split('@')[0] || 'Someone',
+        text
+      });
+    }
     textarea.value = '';
     textarea.style.height = 'auto';
     textarea.focus();
+  }
+
+  async function notifyActivityEmail(type, toUid, fromUid, data) {
+    if (!toUid || !fromUid || toUid === fromUid) return;
+    try {
+      await fetch('/api/notify-activity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ toUid, type, fromUid, data: data || {} })
+      });
+    } catch (err) { /* best effort */ }
   }
 
   // ===== SHOW NEW CONVERSATION MODAL =====

@@ -4372,6 +4372,7 @@ header .logo-header {
     <i class="fas fa-th-large"></i> Dashboard
 </a></li> 
                 <li><a href="../shared/about.html">About Us</a></li>
+                <li><a href="../personal/">Creator's Site</a></li>
                 <li><a href="index.html">Bookstore</a></li>
                 <li><a href="submit.html">Submit Book</a></li>
                 <li><a href="pwu.html">Publish With Us</a></li>
@@ -5773,9 +5774,12 @@ async function renderHeader(user) {
 // ========== NOTIFICATIONS (BELL + PANEL) ==========
 let notifUnsubs = [];
 let msgNotifUnsubs = [];
+let convNotifUnsubs = [];
 const msgSeen = new Map();
+const convSeen = new Map();
 let notifUnreadCount = 0;
 let msgUnreadCount = 0;
+let convUnreadCount = 0;
 
 function closeNotifPanel() {
     const panel = document.getElementById('notifPanel');
@@ -5790,15 +5794,19 @@ function stopNotifWatcher() {
     notifUnsubs = [];
     msgNotifUnsubs.forEach(u => { try { u(); } catch (e) {} });
     msgNotifUnsubs = [];
+    convNotifUnsubs.forEach(u => { try { u(); } catch (e) {} });
+    convNotifUnsubs = [];
     msgSeen.clear();
+    convSeen.clear();
     notifUnreadCount = 0;
     msgUnreadCount = 0;
+    convUnreadCount = 0;
 }
 
 function updateNotifBadge() {
     const badge = document.getElementById('notifBadge');
     if (!badge) return;
-    const n = notifUnreadCount + msgUnreadCount;
+    const n = notifUnreadCount + msgUnreadCount + convUnreadCount;
     badge.textContent = n > 9 ? '9+' : String(n);
     badge.classList.toggle('visible', n > 0);
 }
@@ -5850,6 +5858,26 @@ function startNotifWatcher(uid) {
         }, () => { /* ignore */ });
         msgNotifUnsubs.push(attach(query(collection(db, "messages"), where("toUserId", "==", uid))));
         msgNotifUnsubs.push(attach(query(collection(db, "messages"), where("authorId", "==", uid))));
+    } catch (e) { /* ignore */ }
+    try {
+        const uc = onSnapshot(query(collection(db, "conversations"), where("participants", "array-contains", uid)), async (snap) => {
+            snap.docChanges().forEach(ch => {
+                const id = ch.doc.id;
+                if (ch.type === 'removed') convSeen.delete(id);
+                else convSeen.set(id, ch.doc);
+            });
+            convUnreadCount = 0;
+            for (const [id] of convSeen) {
+                try {
+                    const ss = await getDocs(query(collection(db, "conversations/" + id + "/messages"), where("read", "==", false)));
+                    ss.forEach(m => { if (m.data().senderId !== uid) convUnreadCount++; });
+                } catch (e) { /* ignore */ }
+            }
+            updateNotifBadge();
+            const panel = document.getElementById('notifPanel');
+            if (panel && panel.classList.contains('open')) loadNotifList(uid);
+        }, () => { /* ignore */ });
+        convNotifUnsubs.push(uc);
     } catch (e) { /* ignore */ }
 }
 
@@ -6050,6 +6078,27 @@ function notifPlatformValue(d) {
             </div>`;
         }
     } catch (e) { /* ignore */ }
+    let dmHtml = '';
+    try {
+        const dmList = [...convSeen.values()].sort((a, b) => {
+            const tsOfConv = (t) => t ? (t.toMillis ? t.toMillis() : (t.seconds ? t.seconds * 1000 : new Date(t).getTime())) : 0;
+            return tsOfConv(b.data().lastMessageTime) - tsOfConv(a.data().lastMessageTime);
+        });
+        dmList.slice(0, 5).forEach(ds => {
+            const d = ds.data() || {};
+            const participants = Array.isArray(d.participants) ? d.participants : [];
+            const otherUid = participants.find(p => p !== uid) || '';
+            const pd = d.participantDetails || {};
+            const other = pd[otherUid] || {};
+            const sender = other.username || other.displayName || 'Poet';
+            const last = d.lastMessage || '';
+            if (!last) return;
+            dmHtml += `<div class="notif-item unread msg-item" data-conv-dm="${ds.id}">
+                <div class="notif-msg">💬 <strong>${escHtml(sender)}</strong> — ${escHtml(String(last).slice(0, 60))}</div>
+                <div class="notif-time">${fmtNotifTime(d.lastMessageTime)}</div>
+            </div>`;
+        });
+    } catch (e) { /* ignore */ }
     const msgList = [...msgSeen.values()]
         .sort((a, b) => {
             const ta = a.data().createdAt;
@@ -6069,7 +6118,7 @@ function notifPlatformValue(d) {
             <div class="notif-time">${fmtNotifTime(d.createdAt)}</div>
         </div>`;
     });
-    const combined = msgHtml + html;
+    const combined = dmHtml + msgHtml + html;
     if (!combined) {
         list.innerHTML = '<div class="notif-empty">No notifications yet 🎉</div>';
         return;
@@ -6077,6 +6126,12 @@ function notifPlatformValue(d) {
     list.innerHTML = combined;
     list.querySelectorAll('.msg-item').forEach(el => {
         el.addEventListener('click', () => {
+            const convId = el.getAttribute('data-conv-dm');
+            if (convId) {
+                try { sessionStorage.setItem('volant_open_conv', convId); } catch (e) {}
+                window.location.href = '../messages.html';
+                return;
+            }
             sessionStorage.setItem('volant_reads_current_page', 'messages');
             window.location.href = 'dashboard.html';
         });

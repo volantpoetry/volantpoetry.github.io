@@ -838,6 +838,24 @@
       color: #666;
       font-size: 1rem;
     }
+    .author-link {
+      display: inline-block;
+      text-decoration: none;
+      color: inherit;
+      transition: opacity 0.2s ease;
+    }
+    .author-link:hover { opacity: 0.85; }
+    .author-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      color: #4b2aad;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .author-cta i { font-size: 0.75rem; transition: transform 0.2s ease; }
+    .author-link:hover .author-cta i { transform: translateX(4px); }
 
     @media (max-width: 768px) {
       .volant-reads-grid {
@@ -1185,6 +1203,49 @@ header nav {
 .logo .logo-text .logo-highlight {
   color: #ffffff !important;
   text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+}
+
+/* ===== MOBILE NAV UNIFORM ===== */
+@media (max-width: 768px) {
+  header nav {
+    height: 60px !important;
+    padding: 0 !important;
+  }
+  header .logo {
+    gap: 0.5rem !important;
+    margin-left: 0 !important;
+  }
+  header .logo img {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 0 !important;
+    object-fit: contain !important;
+    margin-right: 5px !important;
+  }
+  header .logo {
+    font-size: 1.1rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  header nav {
+    height: 44px !important;
+    padding: 0 !important;
+  }
+  header .logo {
+    gap: 0.4rem !important;
+    margin-left: 0 !important;
+  }
+  header .logo img {
+    width: 22px !important;
+    height: 22px !important;
+    border-radius: 0 !important;
+    object-fit: contain !important;
+    margin-right: 4px !important;
+  }
+  header .logo {
+    font-size: 1.1rem !important;
+  }
 }
   </style>
 </head>
@@ -1585,11 +1646,14 @@ header nav {
 
 <!-- ===== AUTHOR / FOUNDER ===== -->
 <section class="author-section">
-  <img src="../images/renceblunt.jpg" alt="Rence Blunt">
-  <div class="author-info">
-    <h3>Rence Blunt</h3>
-    <p>Founder of Volant Foundry</p>
-  </div>
+  <a href="../personal/" target="_blank" rel="noopener" class="author-link">
+    <img src="../images/renceblunt.jpg" alt="Rence Blunt">
+    <div class="author-info">
+      <h3>Rence Blunt</h3>
+      <p>Founder of Volant Foundry</p>
+      <span class="author-cta">Visit creator's site <i class="fas fa-arrow-right"></i></span>
+    </div>
+  </a>
 </section>
 
 <!-- Footer -->

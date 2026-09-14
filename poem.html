@@ -94,6 +94,9 @@
 <!-- Google Fonts: Garamond (EB Garamond) -->
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
 
+<!-- jsPDF for PDF export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135deg,#fdf6f0,#e2e9f0,#f7f0e5,#e8e0d8); background-size:400% 400%; animation:gradientShift 15s ease infinite; color:#4b3f2f; }
 @keyframes gradientShift { 0% { background-position:0% 50%; } 50% { background-position:100% 50%; } 100% { background-position:0% 50%; } }
@@ -226,8 +229,50 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
   transform: scale(1.01) !important;
 }
 
+.pdf-export-btn {
+  background: none !important;
+  border: none !important;
+  color: #B8860B !important;
+  cursor: pointer !important;
+  font-size: 0.85rem !important;
+  padding: 4px 8px !important;
+  transition: all 0.2s ease !important;
+  font-family: 'Inter', sans-serif !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+.pdf-export-btn:hover {
+  background: #f6f1e3 !important;
+  transform: scale(1.05) !important;
+}
+.mobile-pdf-export-btn {
+  width: 100% !important;
+  justify-content: center !important;
+  padding: 8px 12px !important;
+  background: #faf5e8 !important;
+  border: 1px solid #e0d6b0 !important;
+  border-radius: 8px !important;
+  font-size: 0.85rem !important;
+  color: #B8860B !important;
+  cursor: pointer !important;
+  font-family: 'Inter', sans-serif !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+.mobile-pdf-export-btn:hover {
+  background: #f0e8d5 !important;
+  transform: scale(1.01) !important;
+}
+
 @media (max-width: 600px) {
   .desktop-share-btn {
+    display: none !important;
+  }
+  .pdf-export-btn:not(.mobile-pdf-export-btn) {
     display: none !important;
   }
   .mobile-share-wrapper {
@@ -564,6 +609,12 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
     </div>
 
     <h2 id="poem-title"></h2>
+    <div id="audio-player-container" style="display:none; margin: 8px 0; padding: 10px 14px; background: #f0ede8; border-radius: 12px;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+        <span style="font-size: 0.8rem; color: #4b2aad; font-weight: 600;">🎙️ Spoken Word</span>
+      </div>
+      <audio id="poem-audio-player" controls style="width: 100%; border-radius: 8px; height: 36px;" preload="metadata"></audio>
+    </div>
     <p id="poem-content" class="poem-content"></p>
 
     <!-- Categories -->
@@ -584,10 +635,13 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
         <span class="message-count" id="messageCountTrigger">💬</span>
         <!-- DESKTOP SHARE BUTTON -->
         <button class="desktop-share-btn" id="desktopShareBtn">🔗 Share</button>
+        <!-- DESKTOP PDF EXPORT -->
+        <button class="pdf-export-btn" id="pdfExportBtn" title="Export as PDF">⬇️ PDF</button>
       </div>
       <!-- MOBILE SHARE BUTTON -->
       <div class="mobile-share-wrapper">
         <button class="mobile-share-btn" id="mobileShareBtn">🔗 Share This Poem</button>
+        <button class="pdf-export-btn mobile-pdf-export-btn" id="pdfExportBtnMobile">⬇️ Export as PDF</button>
       </div>
     </div>
   </div>
@@ -628,7 +682,7 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, addDoc, getDoc, updateDoc, increment, arrayUnion, arrayRemove, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, addDoc, getDoc, updateDoc, increment, arrayUnion, arrayRemove, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = { apiKey:"AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU", authDomain:"silent-depth.firebaseapp.com", projectId:"silent-depth", storageBucket:"silent-depth.appspot.com", messagingSenderId:"78008755450", appId:"1:78008755450:web:3fd0f0f298a08820935543" };
@@ -647,6 +701,43 @@ let commentsLoadedForPoem = false;
 let isFirstLoad = true;
 
 const SAVED_COMMENT_KEY = 'volant_saved_comment';
+
+async function sendNotification(forUserId, fromUserId, type, data = {}) {
+  if (!forUserId || !fromUserId || forUserId === fromUserId) return;
+  try {
+    const userDoc = await getDoc(doc(db, "users", fromUserId));
+    const fromUserName = userDoc.exists() ? userDoc.data().username : "Someone";
+    const notification = {
+      forUser: forUserId,
+      fromUser: fromUserId,
+      fromUserName,
+      type,
+      timestamp: serverTimestamp(),
+      read: false,
+      ...data
+    };
+    await addDoc(collection(db, "notifications"), notification);
+    if (type === 'comment' || type === 'reply') {
+      notifyActivityEmail(type, forUserId, fromUserId, {
+        fromUserName,
+        poemTitle: data.poemTitle || '',
+        poemId: data.poemId || '',
+        text: data.commentText || data.replyText || ''
+      });
+    }
+  } catch(e) {}
+}
+
+async function notifyActivityEmail(type, toUid, fromUid, data) {
+  if (!toUid || !fromUid || toUid === fromUid) return;
+  try {
+    await fetch('/api/notify-activity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ toUid, type, fromUid, data: data || {} })
+    });
+  } catch(e) {}
+}
 
 const titleEl = document.getElementById("poem-title");
 const contentEl = document.getElementById("poem-content");
@@ -1014,6 +1105,21 @@ async function handleReplyClick(e) {
         timestamp: new Date()
       });
       
+      try {
+        const commentDoc = await getDoc(doc(db, "recentPoems", currentPoemId, "comments", commentId));
+        const poemDoc = await getDoc(doc(db, "recentPoems", currentPoemId));
+        const commentOwnerId = commentDoc.exists() ? (commentDoc.data().userId || "") : "";
+        const poemTitle = poemDoc.exists() ? (poemDoc.data().title || "Untitled") : "Untitled";
+        if (commentOwnerId && commentOwnerId !== currentUser.uid) {
+          await sendNotification(commentOwnerId, currentUser.uid, 'reply', {
+            poemId: currentPoemId,
+            poemTitle,
+            commentId,
+            replyText: replyText.trim()
+          });
+        }
+      } catch(e) {}
+      
       // Remove the reply input
       replyContainer.remove();
       
@@ -1047,6 +1153,101 @@ async function handleReplyClick(e) {
 }
 
 // ============================================================
+// ====== READING STREAK ======
+// ============================================================
+
+async function updateReadingStreak() {
+  if (!currentUser) return;
+  try {
+    const todayStr = new Date().toLocaleDateString('en-CA');
+    const ref = doc(db, "users", currentUser.uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return;
+    const data = snap.data();
+    const last = data.lastReadDate || '';
+    if (last === todayStr) return;
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toLocaleDateString('en-CA');
+    const prevStreak = typeof data.streak === 'number' ? data.streak : 0;
+    const newStreak = (last === yesterdayStr) ? prevStreak + 1 : 1;
+    await updateDoc(ref, { lastReadDate: todayStr, streak: newStreak });
+  } catch (err) {
+    console.error("Error updating reading streak:", err);
+  }
+}
+
+// ============================================================
+// ====== EXPORT AS PDF ======
+// ============================================================
+
+function downloadPoemPdf() {
+  const poem = currentPoemData;
+  if (!poem) return;
+  const title = poem.title || 'Untitled Poem';
+  const author = poem.author || 'Anonymous';
+  const slug = poem.slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const pdfUrl = `${window.location.origin}/poem.html?collection=${encodeURIComponent(collectionName)}&slug=${encodeURIComponent(slug)}`;
+  try {
+    if (typeof jspdf === 'undefined') throw new Error('jsPDF unavailable');
+    const pdf = new jspdf.jsPDF({ unit: 'pt', format: 'a4' });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const M = 50;
+    let y = M;
+    pdf.setFont('times', 'bold');
+    pdf.setFontSize(14);
+    pdf.setTextColor(75, 42, 173);
+    pdf.text('VOLANT POETRY', pageWidth / 2, y, { align: 'center' });
+    y += 8;
+    pdf.setDrawColor(110, 60, 170);
+    pdf.setLineWidth(1);
+    pdf.line(M, y, pageWidth - M, y);
+    y += 26;
+    pdf.setFontSize(22);
+    pdf.setTextColor(20, 20, 20);
+    const titleLines = pdf.splitTextToSize(title, pageWidth - M * 2);
+    pdf.text(titleLines, M, y);
+    y += titleLines.length * 24 + 6;
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(11);
+    pdf.setTextColor(110, 102, 90);
+    pdf.text(`by ${author}`, M, y);
+    y += 24;
+    pdf.setFont('times', 'normal');
+    pdf.setFontSize(13);
+    pdf.setTextColor(50, 45, 40);
+    const bodyLines = pdf.splitTextToSize(poem.content || '', pageWidth - M * 2);
+    const lineH = 17;
+    for (const line of bodyLines) {
+      if (y > pageHeight - M - 20) {
+        pdf.addPage();
+        y = M;
+      }
+      pdf.text(line, M, y);
+      y += lineH;
+    }
+    y += 20;
+    if (y > pageHeight - M - 10) {
+      pdf.addPage();
+      y = M;
+    }
+    pdf.setFontSize(9);
+    pdf.setTextColor(140, 130, 120);
+    pdf.text(`Read more: ${pdfUrl}`, M, y);
+    const safeTitle = title.replace(/[^\w\- ]/g, '').replace(/\s+/g, '_').slice(0, 40) || 'poem';
+    const safeAuthor = author.replace(/[^\w\- ]/g, '').replace(/\s+/g, '_').slice(0, 20);
+    pdf.save(`${safeTitle}_by_${safeAuthor}.pdf`);
+  } catch (err) {
+    console.error('PDF export failed:', err);
+    window.print();
+  }
+}
+
+document.getElementById('pdfExportBtn')?.addEventListener('click', downloadPoemPdf);
+document.getElementById('pdfExportBtnMobile')?.addEventListener('click', downloadPoemPdf);
+
+// ============================================================
 // ====== LOAD POEM ======
 // ============================================================
 
@@ -1065,6 +1266,19 @@ async function loadPoem(slug, justSignedIn = false){
       titleEl.textContent = data.title;
       contentEl.innerHTML = data.content.replace(/\n/g,"<br>");
 
+      // Audio (Spoken Word)
+      const audioPlayerContainer = document.getElementById("audio-player-container");
+      const audioPlayer = document.getElementById("poem-audio-player");
+      if (audioPlayerContainer && audioPlayer) {
+        if (data.audioUrl) {
+          audioPlayer.src = data.audioUrl;
+          audioPlayerContainer.style.display = "block";
+        } else {
+          audioPlayer.removeAttribute("src");
+          audioPlayerContainer.style.display = "none";
+        }
+      }
+
       // Views
       const views = data.views || 0;
       viewCountEl.textContent = `${views} reads`;
@@ -1072,9 +1286,14 @@ async function loadPoem(slug, justSignedIn = false){
       // Categories
       if (data.categories && data.categories.length > 0) {
         categoriesContainer.style.display = "block";
-        categoriesContainer.innerHTML = `<em>${data.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${escapeHtml(cat)}</a>`).join(", ")}</em>`;
+        const cats = data.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${escapeHtml(cat)}</a>`);
+        if (data.audioUrl) {
+          cats.unshift(`<a href="poems.html?spoken=1" class="category-link">Spoken Word</a>`);
+        }
+        categoriesContainer.innerHTML = `<em>${cats.join(", ")}</em>`;
       } else {
-        categoriesContainer.style.display = "none";
+        categoriesContainer.style.display = data.audioUrl ? "block" : "none";
+        categoriesContainer.innerHTML = data.audioUrl ? `<em><a href="poems.html?spoken=1" class="category-link">Spoken Word</a></em>` : "";
       }
 
       // Collaborators
@@ -1134,6 +1353,8 @@ async function loadPoem(slug, justSignedIn = false){
         
         await renderCommentsExternal(snap.id);
         commentsOuterWrapper.style.display = "none";
+
+        updateReadingStreak();
         
         const hasSavedComment = checkSavedComment();
         
@@ -1247,9 +1468,13 @@ document.addEventListener("click", async e=>{
 
         if(likedBy.includes(user.uid)){
             const newLikes = Math.max(likes - 1, 0);
+            const idx = likedBy.indexOf(user.uid);
+            const timestamps = Array.isArray(data.likedByTimestamps) ? data.likedByTimestamps.slice() : [];
+            timestamps.splice(idx, 1);
             await updateDoc(poemRef,{
                 likes: newLikes,
-                likedBy: likedBy.filter(uid => uid !== user.uid)
+                likedBy: likedBy.filter(uid => uid !== user.uid),
+                likedByTimestamps: timestamps
             });
             likeBtn.classList.remove("liked");
             countSpan.textContent = newLikes;
@@ -1257,7 +1482,8 @@ document.addEventListener("click", async e=>{
             const newLikes = likes + 1;
             await updateDoc(poemRef,{
                 likes: newLikes,
-                likedBy: arrayUnion(user.uid)
+                likedBy: arrayUnion(user.uid),
+                likedByTimestamps: arrayUnion(serverTimestamp())
             });
             likeBtn.classList.add("liked");
             countSpan.textContent = newLikes;
@@ -1302,6 +1528,21 @@ document.addEventListener("click", async e=>{
         text, 
         timestamp: new Date() 
       });
+
+      try {
+        const poemSnap = await getDoc(doc(db, "recentPoems", docId));
+        if (poemSnap.exists()) {
+          const poemData = poemSnap.data();
+          const poemOwnerId = poemData.userId || poemData.authorId || null;
+          if (poemOwnerId && poemOwnerId !== user.uid) {
+            await sendNotification(poemOwnerId, user.uid, 'comment', {
+              poemId: docId,
+              poemTitle: poemData.title || "Untitled",
+              commentText: text
+            });
+          }
+        }
+      } catch(e) {}
 
       clearSavedComment();
       

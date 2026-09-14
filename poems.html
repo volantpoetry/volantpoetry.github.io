@@ -1963,6 +1963,141 @@
     font-size: 1.1rem !important;
   }
 }
+/* ===== POETS TO FOLLOW RAIL ===== */
+  .poets-to-follow-section { max-width: 750px; margin: 0 auto 18px auto; padding: 0 16px; }
+  .poets-to-follow-title { font-family: 'Playfair Display', serif; color: #4b2aad; font-size: 1.15rem; margin: 0 0 10px 0; }
+  .poets-to-follow-rail {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 8px 2px 12px 2px;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+  .poets-to-follow-rail::-webkit-scrollbar { height: 6px; }
+  .poets-to-follow-rail::-webkit-scrollbar-thumb { background: #ddd2c2; border-radius: 6px; }
+  .poet-chip {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #e0d6b0;
+    border-radius: 30px;
+    padding: 6px 6px 6px 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+  .poet-chip a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+    padding-left: 6px;
+  }
+  .poet-chip-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #4b2aad;
+    flex-shrink: 0;
+  }
+  .poet-chip-avatar-fallback {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6a34ff, #4b2aad);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: 2px solid #4b2aad;
+    flex-shrink: 0;
+  }
+  .poet-chip-info { min-width: 0; }
+  .poet-chip-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 110px;
+    font-family: 'Inter', sans-serif;
+  }
+  .poet-chip-count { font-size: 0.72rem; color: #8a7a6a; font-family: 'Inter', sans-serif; }
+  .poet-chip .follow-btn-on-card {
+    margin-left: 2px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    flex-shrink: 0;
+  }
+  .poet-chip .follow-btn-on-card.following { background: #f44336; }
+
+  /* ===== DAILY POEM PANEL ===== */
+  .daily-poem-section { max-width: 750px; margin: 0 auto 22px auto; padding: 0 16px; }
+  .daily-poem-card {
+    background: linear-gradient(160deg, #fdf6f0, #eef0fb);
+    border: 1px solid #e0d6b0;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+  }
+  .daily-poem-label {
+    font-family: 'Playfair Display', serif;
+    color: #4b2aad;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .daily-poem-content { font-family: 'EB Garamond', 'Georgia', serif; line-height: 1.7; color: #4b3f2f; }
+  .daily-poem-content a.daily-poem-link {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #4b2aad;
+    text-decoration: none;
+    margin-bottom: 4px;
+  }
+  .daily-poem-content a.daily-poem-link:hover { text-decoration: underline; }
+  .daily-poem-content .daily-poem-author { font-size: 0.9rem; color: #8a7a6a; margin-bottom: 8px; display: block; }
+  @media (max-width: 560px) {
+    .daily-poem-card { padding: 16px 18px; }
+  }
+
+  /* ===== STREAK BANNER ===== */
+  .streak-banner {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #ff8c42, #ff5e3a);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 2px 8px rgba(255, 94, 58, 0.35);
+    white-space: nowrap;
+  }
+  .streak-banner.off { background: linear-gradient(135deg, #c9c0b4, #a89f92); box-shadow: none; }
+  @media (max-width: 767px) {
+    .streak-banner { display: none !important; }
+  }
+
 </style>
 </head>
 <body>
@@ -2031,6 +2166,26 @@
     <span id="search-term-display"></span>
     <button id="clear-search" class="clear-search">Clear Search</button>
   </div>
+  
+  <div id="poem-filter-bar" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0 auto 20px auto; padding: 0 16px; max-width: 750px;">
+    <button class="filter-chip" data-filter="all" style="background:#4b2aad; color:#fff; border:none; border-radius:20px; padding:8px 16px; cursor:pointer; font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:600;">All Poems</button>
+    <button class="filter-chip" data-filter="spoken" style="background:#f0ede8; color:#4b2aad; border:1px solid #d8d0c4; border-radius:20px; padding:8px 16px; cursor:pointer; font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:600;">🎙️ Spoken Word</button>
+    <button id="streakBanner" class="streak-banner" style="display:none;">🔥 0-day streak</button>
+  </div>
+
+  <!-- ===== POETS TO FOLLOW RAIL ===== -->
+  <section class="poets-to-follow-section">
+    <h2 class="poets-to-follow-title">Poets to Follow</h2>
+    <div id="poetsToFollow" class="poets-to-follow-rail"></div>
+  </section>
+
+  <!-- ===== DAILY POEM ===== -->
+  <section class="daily-poem-section">
+    <div class="daily-poem-card" id="dailyPoemCard">
+      <div class="daily-poem-label">📖 Daily Poem</div>
+      <div id="dailyPoemContent" class="daily-poem-content"></div>
+    </div>
+  </section>
   
   <div id="poems-container" class="recent-poems-container"></div>
   
@@ -2143,6 +2298,9 @@
     if (domReady && authReady && !initialLoadStarted) {
       initialLoadStarted = true;
       loadPoems(true);
+      loadDailyPoem();
+      loadPoetsToFollow();
+      updateStreakBanner();
     }
   }
 
@@ -2151,6 +2309,7 @@
     currentUserId = user ? user.uid : null;
     authReady = true;
     maybeStartInitialLoad();
+    updateStreakBanner();
     refreshFollowButtons();
   });
 
@@ -2219,8 +2378,29 @@
       }
       
       await addDoc(collection(db, "notifications"), notification);
+      if (type === 'comment' || type === 'reply') {
+        notifyActivityEmail(type, forUserId, fromUserId, {
+          fromUserName: fromUserName,
+          poemTitle: data.poemTitle || '',
+          poemId: data.poemId || '',
+          text: data.commentText || data.replyText || ''
+        });
+      }
     } catch (err) {
       console.warn("Error sending notification:", err);
+    }
+  }
+
+  async function notifyActivityEmail(type, toUid, fromUid, data) {
+    if (!toUid || !fromUid || toUid === fromUid) return;
+    try {
+      await fetch('/api/notify-activity', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ toUid, type, fromUid, data: data || {} })
+      });
+    } catch (err) {
+      console.warn('Activity email skipped:', err);
     }
   }
 
@@ -2257,6 +2437,117 @@
       }
     } catch (err) {
       console.error("Error handling follow:", err);
+    }
+  }
+
+  async function loadPoetsToFollow() {
+    const container = document.getElementById('poetsToFollow');
+    if (!container) return;
+    try {
+      const snap = await getDocs(query(collection(db, "recentPoems"), limit(300)));
+      const counts = new Map();
+      snap.forEach(d => {
+        const pid = d.data().authorId;
+        if (pid && pid !== currentUserId) counts.set(pid, (counts.get(pid) || 0) + 1);
+      });
+      const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+      if (ranked.length === 0) {
+        container.innerHTML = '<span style="color:#8a7a6a; font-size:0.85rem;">More poets drop soon. Follow your favourites to get their new work.</span>';
+        return;
+      }
+      for (let i = ranked.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [ranked[i], ranked[j]] = [ranked[j], ranked[i]];
+      }
+      const picks = ranked.slice(0, 2);
+      container.innerHTML = '';
+      for (const [pid, count] of picks) {
+        let userData = null;
+        try {
+          const userDoc = await getDoc(doc(db, "users", pid));
+          if (userDoc.exists()) userData = userDoc.data();
+        } catch (err) { console.warn('Failed to fetch poet:', err); }
+        const name = userData?.username || userData?.displayName || 'Volant Poet';
+        const chip = document.createElement('div');
+        chip.className = 'poet-chip';
+        const isFollowing = (currentUserId && currentUserId !== pid) ? await checkFollowStatus(pid, currentUserId) : false;
+        const avatarHTML = (userData?.photoURL || userData?.cachedAvatarURL)
+          ? `<img class="poet-chip-avatar" src="${escapeHtml(userData.photoURL || userData.cachedAvatarURL)}" alt="${escapeHtml(name)}" loading="lazy">`
+          : `<div class="poet-chip-avatar-fallback">${escapeHtml(getInitials(name))}</div>`;
+        const followHTML = (currentUserId && currentUserId !== pid)
+          ? `<button class="follow-btn-on-card ${isFollowing ? 'following' : ''}" data-poet-id="${pid}" style="background: ${isFollowing ? '#f44336' : '#4CAF50'};">${isFollowing ? 'Following' : 'Follow'}</button>`
+          : '';
+        chip.innerHTML = `
+          <a href="/user-profile.html?uid=${encodeURIComponent(pid)}">
+            ${avatarHTML}
+            <div class="poet-chip-info">
+              <div class="poet-chip-name">${escapeHtml(name)}</div>
+              <div class="poet-chip-count">${count} poem${count === 1 ? '' : 's'}</div>
+            </div>
+          </a>
+          ${followHTML}
+        `;
+        const btn = chip.querySelector('.follow-btn-on-card');
+        if (btn) {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (!currentUserId) { showLoginAlertAndRedirect('Please sign in to follow poets!'); return; }
+            handleFollowFromPoem(pid, btn);
+          });
+        }
+        container.appendChild(chip);
+      }
+    } catch (err) {
+      console.error('Error loading poets to follow:', err);
+      container.innerHTML = '<span style="color:#8a7a6a; font-size:0.85rem;">Could not load poets right now.</span>';
+    }
+  }
+
+  async function loadDailyPoem() {
+    const container = document.getElementById('dailyPoemContent');
+    if (!container) return;
+    container.innerHTML = 'Loading the daily poem...';
+    try {
+      const snap = await getDocs(query(collection(db, "recentPoems"), orderBy("timestamp", "desc"), limit(60)));
+      if (snap.empty) { container.innerHTML = 'No poems available yet. Check back soon!'; return; }
+      const poems = snap.docs.map(d => ({ id: d.id, data: d.data() }));
+      const index = Math.floor(Date.now() / 86400000) % poems.length;
+      const poem = poems[index].data;
+      const slug = poem.slug || poem.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const author = poem.author || 'Anonymous';
+      const authorLink = poem.authorId
+        ? `<a class="daily-poem-author" href="/user-profile.html?uid=${encodeURIComponent(poem.authorId)}">by ${escapeHtml(author)}</a>`
+        : `<span class="daily-poem-author">by ${escapeHtml(author)}</span>`;
+      const excerpt = escapeHtml((poem.content || '').split(/\r?\n/).slice(0, 3).join(' · '));
+      container.innerHTML = `
+        <a class="daily-poem-link" href="poem.html?collection=recentPoems&slug=${encodeURIComponent(slug)}">${escapeHtml(poem.title)}</a>
+        ${authorLink}
+        <div class="daily-poem-excerpt" style="font-style:italic; color:#6f6252;">${excerpt}</div>
+      `;
+    } catch (err) {
+      console.error('Error loading daily poem:', err);
+      container.innerHTML = 'The daily poem is taking a break. Check back soon!';
+    }
+  }
+
+  async function updateStreakBanner() {
+    const banner = document.getElementById('streakBanner');
+    if (!banner) return;
+    if (!currentUserId) {
+      banner.style.display = 'none';
+      banner.textContent = '';
+      return;
+    }
+    try {
+      const userDoc = await getDoc(doc(db, "users", currentUserId));
+      if (!userDoc.exists()) { banner.style.display = 'none'; return; }
+      const ud = userDoc.data();
+      const streak = typeof ud.streak === 'number' ? ud.streak : 0;
+      banner.classList.toggle('off', streak <= 0);
+      banner.style.display = 'inline-flex';
+      banner.textContent = streak > 0 ? `🔥 ${streak}-day streak` : '🔥 Read a poem today to start your streak';
+    } catch (err) {
+      console.warn('Error reading streak:', err);
     }
   }
 
@@ -2461,6 +2752,7 @@
   let initialLoadComplete = false;
   let currentSearchTerm = '';
   let searchTimeout;
+  let currentPoemFilter = 'all';
 
   // Helper functions
   function getInitials(name = "") {
@@ -2569,6 +2861,7 @@
         const card = document.createElement("div");
         card.className = "recent-poem-card";
         card.dataset.id = docId;
+        if (poem.audioUrl) card.dataset.audio = "true";
 
         const truncated = truncatePoem(poem.content, 8);
         const likes = typeof poem.likes === "number" ? poem.likes : 0;
@@ -2648,6 +2941,14 @@
         // Generate slug
         const slug = poem.slug || poem.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
+        // Category line (with Spoken Word tag if audio exists)
+        let categoryLineHTML = '';
+        if (poem.categories?.length || poem.audioUrl) {
+          const cats = (poem.categories || []).map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${escapeHtml(cat)}</a>`);
+          if (poem.audioUrl) cats.push(`<a href="poems.html?spoken=1" class="category-link">Spoken Word</a>`);
+          categoryLineHTML = `<p class="poem-category-line"><em>${cats.join(", ")}</em></p>`;
+        }
+
 card.innerHTML = `
   <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
     <div style="display:flex; align-items:center; gap:10px;">
@@ -2666,7 +2967,7 @@ card.innerHTML = `
   <p class="poem-content">${truncated.preview}</p>
   ${truncated.truncated ? '<button class="read-more-btn">Read More</button>' : ''}
   ${audioHTML}
-  ${poem.categories?.length ? `<p class="poem-category-line"><em>${poem.categories.map(cat => `<a href="category.html?name=${encodeURIComponent(cat)}" class="category-link">${cat}</a>`).join(", ")}</em></p>` : ''}
+  ${categoryLineHTML}
   <div class="poem-actions">
     <div class="comment-section">
       <textarea class="comment-input" placeholder="Write a comment..." rows="1"></textarea>
@@ -2701,6 +3002,11 @@ card.innerHTML = `
 `;
 
         container.appendChild(card);
+
+        // Hide card if active filter is spoken and this poem has no audio
+        if (currentPoemFilter === 'spoken' && !(poem.audioUrl)) {
+          card.style.display = "none";
+        }
 
         // Add comment list as a sibling AFTER the card
         const commentListDiv = document.createElement("div");
@@ -2787,6 +3093,46 @@ card.innerHTML = `
   }
 
   window.addEventListener("scroll", handleScroll);
+
+  // ===== FILTER CHIP HANDLER =====
+  document.querySelectorAll(".filter-chip").forEach(chip => {
+    chip.addEventListener("click", function() {
+      const filter = this.dataset.filter;
+      currentPoemFilter = filter;
+
+      document.querySelectorAll(".filter-chip").forEach(c => {
+        if (c.dataset.filter === 'all') {
+          c.style.background = filter === 'all' ? '#4b2aad' : '#f0ede8';
+          c.style.color = filter === 'all' ? '#fff' : '#4b2aad';
+          c.style.border = filter === 'all' ? 'none' : '1px solid #d8d0c4';
+        } else {
+          c.style.background = filter === 'spoken' ? '#4b2aad' : '#f0ede8';
+          c.style.color = filter === 'spoken' ? '#fff' : '#4b2aad';
+          c.style.border = filter === 'spoken' ? 'none' : '1px solid #d8d0c4';
+        }
+      });
+
+      const container = document.getElementById("poems-container");
+      container.querySelectorAll(".recent-poem-card").forEach(card => {
+        const hasAudio = card.dataset.audio === "true";
+        const show = filter === 'all' || hasAudio;
+        card.style.display = show ? "" : "none";
+        const commentList = card.nextElementSibling;
+        if (commentList && commentList.classList.contains("comment-list")) {
+          commentList.style.display = show ? commentList.style.display : "none";
+        }
+      });
+    });
+  });
+
+  // Handle ?spoken=1 param on load
+  window.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("spoken") === "1") {
+      const chip = document.querySelector('.filter-chip[data-filter="spoken"]');
+      if (chip) chip.click();
+    }
+  });
 
   // Clear search and return to normal view
   async function clearSearch() {

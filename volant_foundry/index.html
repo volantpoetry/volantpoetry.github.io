@@ -2022,7 +2022,7 @@ gap: 80px;
                         <h2>Fresh <span class="highlight">drops</span> from our platforms.</h2>
                     </div>
                 </div>
-                <div class="latest-books">
+                <div class="latest-books" id="latestBooks">
                     <div class="book-item">
                         <img src="../images/Black and Blue Fiction Book Cover (2).png" alt="Scentless Roses" onclick="openLightbox(this.src)">
                         <div class="book-info">
@@ -2253,6 +2253,7 @@ gap: 80px;
                 <a href="https://volantreads.vercel.app">Volant Reads</a>
                 <a href="https://volantcodes.vercel.app">Volant Codes</a>
                 <a href="https://volantlyrics.vercel.app">Volant Lyrics</a>
+                <a href="https://volantpoetry.vercel.app/personal/">Creator's Site</a>
             </div>
             <div class="footer-col">
                 <h4>Contact</h4>
@@ -2283,6 +2284,33 @@ gap: 80px;
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
+
+    function loadLatestBooks() {
+        const latestBooksEl = document.getElementById('latestBooks');
+        if (!latestBooksEl) return;
+        db.collection('books').where('status', '==', 'approved').get()
+            .then(snap => {
+                const books = [];
+                snap.forEach(doc => books.push({ id: doc.id, ...doc.data() }));
+                if (!books.length) return;
+                for (let i = books.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [books[i], books[j]] = [books[j], books[i]];
+                }
+                const picks = books.slice(0, 3);
+                latestBooksEl.innerHTML = picks.map(b => `
+                    <div class="book-item">
+                        <img src="${b.imageUrl || '../images/Black and Blue Fiction Book Cover (2).png'}" alt="${(b.title || 'Book').replace(/"/g, '&quot;')}" onclick="openLightbox(this.src)">
+                        <div class="book-info">
+                            <h4>${b.title || 'Untitled'}</h4>
+                            <p>A collection of poems by ${b.authorName || 'Volant Reads'}</p>
+                            <a href="https://volantreads.vercel.app/details.html?id=${b.id}" target="_blank" class="buy-link">Buy Now</a>
+                        </div>
+                    </div>`).join('');
+            })
+            .catch(() => {});
+    }
+    loadLatestBooks();
 
     function openLightbox(src) {
         document.getElementById('lightbox-img').src = src;

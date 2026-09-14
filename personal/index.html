@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#faf7f0">
+<link rel="icon" type="image/png" href="https://volantpoetry.vercel.app/images/volant-favicon.png">
+<title>Rence Blunt — Poet · Author · AI Assistant · Vibe-Coder</title>
+<meta name="description" content="Rence Blunt is a poet, author and AI assistant builder. Author of Scentless Roses and The Fall Of Twilight. Creator of the Volant ecosystem — poetry, books, lyrics, commerce, codes and AI-assisted craftsmanship.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Rence Blunt — Poet · Author · AI Assistant · Vibe-Coder">
+<meta property="og:description" content="Poetry, books, platforms and AI-assisted craftsmanship. Creator of the Volant ecosystem.">
+<meta property="og:image" content="https://volantpoetry.vercel.app/images/volant-og.jpg">
+<link rel="canonical" href="https://volantpoetry.vercel.app/personal/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,600&family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
+    :root {
+        --ink: #2d2a24;
+        --ink-soft: #5c554a;
+        --cream: #faf7f0;
+        --paper: #fffdf8;
+        --gold: #B8860B;
+        --gold-soft: #DAA520;
+        --gold-line: #e6cf9a;
+        --plum: #4b2aad;
+        --plum-deep: #3a1f8a;
+        --shadow: 0 18px 44px rgba(45, 42, 36, 0.10);
+        --shadow-sm: 0 8px 24px rgba(45, 42, 36, 0.08);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+    body {
+        font-family: 'Inter', sans-serif;
+        color: var(--ink);
+        background: var(--cream);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+        overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; max-width: 100%; }
+
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* ===== NAV ===== */
+    header.site-nav {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 16px 5vw;
+        background: rgba(250, 247, 240, 0.86);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(184, 134, 11, 0.16);
+        transition: box-shadow 0.25s ease, background 0.25s ease;
+    }
+    header.site-nav.scrolled { background: rgba(250, 247, 240, 0.95); box-shadow: 0 10px 30px rgba(45,42,36,0.07); }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .mono {
+        width: 42px; height: 42px; border-radius: 50%;
+        background: var(--ink); color: var(--gold-soft);
+        display: grid; place-items: center;
+        font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.15rem;
+        transition: transform 0.25s ease;
+    }
+    .brand:hover .mono { transform: rotate(-8deg) scale(1.05); }
+    .brand-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; line-height: 1.15; }
+    .brand-name small { display: block; font-family: 'Inter', sans-serif; font-size: 0.58rem; letter-spacing: 2.6px; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; }
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a { color: var(--ink); font-size: 0.85rem; font-weight: 500; position: relative; padding: 4px 0; }
+    .nav-links a::after {
+        content: ''; position: absolute; left: 0; bottom: 0; height: 1.5px; width: 0;
+        background: var(--gold); transition: width 0.25s ease;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links .cta {
+        background: var(--ink); color: var(--cream) !important;
+        padding: 9px 20px !important; border-radius: 999px; font-weight: 600; font-size: 0.8rem;
+    }
+    .nav-links .cta::after { display: none; }
+    .nav-links .cta:hover { background: var(--gold); }
+    .menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: var(--ink); cursor: pointer; padding: 8px; min-width: 44px; }
+
+    /* ===== HERO ===== */
+    .hero {
+        min-height: 100vh;
+        min-height: 100svh;
+        display: flex; align-items: center; justify-content: center; text-align: center;
+        padding: 130px 5vw 90px;
+        background:
+            radial-gradient(1100px 620px at 82% -12%, rgba(184,134,11,0.13), transparent 60%),
+            radial-gradient(950px 560px at 8% 112%, rgba(75,42,173,0.09), transparent 55%),
+            var(--cream);
+    }
+    .eyebrow {
+        display: inline-flex; align-items: center; gap: 10px;
+        letter-spacing: 4px; text-transform: uppercase;
+        font-size: 0.7rem; font-weight: 600; color: var(--gold);
+        margin-bottom: 30px;
+    }
+    .eyebrow::before, .eyebrow::after { content: ''; width: 34px; height: 1px; background: var(--gold-line); }
+    h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2.8rem, 8vw, 5.2rem);
+        font-weight: 900; line-height: 1.02; letter-spacing: -0.5px;
+    }
+    h1 .gold { color: var(--gold); font-style: italic; font-weight: 700; }
+    .tagline {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: clamp(1.25rem, 3.2vw, 1.6rem);
+        font-style: italic; color: var(--ink-soft);
+        margin: 24px auto 0; max-width: 680px;
+    }
+    .roles { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+    .roles span {
+        font-size: 0.8rem; font-weight: 500; color: var(--ink);
+        background: rgba(255,253,248,0.8); border: 1px solid var(--gold-line);
+        padding: 8px 16px; border-radius: 999px;
+        box-shadow: var(--shadow-sm);
+    }
+    .roles i { color: var(--gold); margin-right: 6px; }
+    .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 40px; }
+    .btn {
+        display: inline-flex; align-items: center; gap: 9px;
+        padding: 14px 28px; border-radius: 999px;
+        font-weight: 600; font-size: 0.92rem;
+        transition: all 0.22s ease; cursor: pointer; border: none;
+    }
+    .btn-dark { background: var(--ink); color: var(--cream); }
+    .btn-dark:hover { background: var(--gold); transform: translateY(-3px); }
+    .btn-gold { background: var(--gold); color: #fff; }
+    .btn-gold:hover { background: var(--gold-soft); transform: translateY(-3px); }
+    .btn-ghost { border: 1.5px solid var(--ink); color: var(--ink); background: transparent; }
+    .btn-ghost:hover { background: var(--ink); color: var(--cream); transform: translateY(-3px); }
+    .hero-stats { display: flex; gap: 44px; justify-content: center; margin-top: 64px; flex-wrap: wrap; }
+    .hero-stat { text-align: center; }
+    .hero-stat b { display: block; font-family: 'Playfair Display', serif; font-size: 1.7rem; color: var(--gold); }
+    .hero-stat span { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 2px; color: var(--ink-soft); font-weight: 600; }
+    .scroll-hint { margin-top: 74px; color: var(--ink-soft); font-size: 0.72rem; letter-spacing: 3px; text-transform: uppercase; }
+    .scroll-hint i { display: block; margin-top: 8px; color: var(--gold); animation: bob 1.8s ease-in-out infinite; }
+    @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+    /* ===== SECTIONS ===== */
+    section { padding: 96px 5vw; }
+    .wrap { max-width: 1100px; margin: 0 auto; }
+    .section-head { text-align: center; margin-bottom: 54px; }
+    .section-head .kicker {
+        letter-spacing: 5px; text-transform: uppercase; font-size: 0.68rem; font-weight: 600; color: var(--gold);
+    }
+    .section-head h2 {
+        font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 4.4vw, 2.7rem); font-weight: 700;
+        margin-top: 12px; line-height: 1.15;
+    }
+    .section-head .rule { width: 56px; height: 3px; background: linear-gradient(90deg, var(--gold), transparent); border-radius: 4px; margin: 18px auto 0; }
+    .section-head p { color: var(--ink-soft); max-width: 640px; margin: 14px auto 0; font-size: 0.95rem; }
+
+    /* ===== ABOUT ===== */
+    #about { background: var(--paper); border-top: 1px solid var(--gold-line); }
+    .about-grid { display: grid; grid-template-columns: 380px 1fr; gap: 56px; align-items: center; }
+    .about-portrait {
+        position: relative; border-radius: 22px; overflow: hidden;
+        box-shadow: var(--shadow); background: var(--parchment);
+    }
+    .about-portrait img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+    .about-portrait::after {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(180deg, transparent 55%, rgba(45,42,36,0.35));
+    }
+    .portrait-caption {
+        position: absolute; left: 16px; bottom: 14px; z-index: 2;
+        color: #fff; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.05rem;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .about-frame {
+        position: absolute; inset: 14px; border: 1px solid rgba(184,134,11,0.6); border-radius: 14px; pointer-events: none; z-index: 2;
+    }
+    .about-quote {
+        font-family: 'Cormorant Garamond', serif; font-style: italic;
+        font-size: 1.6rem; line-height: 1.5; color: var(--ink);
+        border-left: 4px solid var(--gold); padding-left: 26px; margin-bottom: 26px;
+    }
+    .about-quote .sig { display: block; margin-top: 14px; font-size: 0.95rem; color: var(--ink-soft); }
+    .about-copy p { color: var(--ink-soft); margin-bottom: 16px; font-size: 0.98rem; }
+    .about-copy .hl { color: var(--gold); font-weight: 600; }
+    .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 28px; }
+    .fact { background: var(--cream); border: 1px solid var(--gold-line); border-radius: 14px; padding: 18px; text-align: center; transition: transform 0.2s ease; }
+    .fact:hover { transform: translateY(-4px); }
+    .fact b { display: block; font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold); }
+    .fact span { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--ink-soft); font-weight: 600; }
+
+    /* ===== BOOKS ===== */
+    .books-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
+    .book-card {
+        display: flex; gap: 26px; align-items: center;
+        background: var(--paper); border: 1px solid var(--gold-line);
+        border-radius: 20px; padding: 22px;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.24s ease, box-shadow 0.24s ease;
+    }
+    .book-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+    .book-cover { width: 140px; height: 204px; object-fit: cover; border-radius: 10px; box-shadow: 0 14px 30px rgba(45,42,36,0.25); flex-shrink: 0; }
+    .book-ph { display: grid; place-items: center; background: var(--cream); color: var(--gold); font-size: 2rem; }
+    .book-info h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; }
+    .book-info .type { font-size: 0.68rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-top: 5px; }
+    .book-info p { color: var(--ink-soft); font-size: 0.88rem; margin-top: 10px; }
+    .book-info .go { margin-top: 16px; font-size: 0.82rem; font-weight: 600; color: var(--gold); display: inline-flex; align-items: center; gap: 6px; }
+    .book-info .go i { transition: transform 0.2s ease; }
+    .book-card:hover .go { color: var(--ink); }
+    .book-card:hover .go i { transform: translateX(4px); }
+
+    /* ===== PLATFORMS (portfolio showcase, codes-style) ===== */
+    #platforms { background: var(--paper); border-top: 1px solid var(--gold-line); border-bottom: 1px solid var(--gold-line); }
+    .platforms-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .plat-card {
+        background: #faf9fe; border-radius: 16px; overflow: hidden;
+        border: 1px solid #eee; cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex; flex-direction: column;
+    }
+    .plat-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(45,42,36,0.12); }
+    .cover-wrapper { position: relative; padding-top: 132%; background: #f0ebe4; overflow: hidden; }
+    .cover-wrapper img {
+        position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+        transition: transform 0.45s ease;
+    }
+    .plat-card:hover .cover-wrapper img { transform: scale(1.045); }
+    .live-badge {
+        position: absolute; top: 0.7rem; right: 0.7rem;
+        background: var(--plum); color: #fff; padding: 0.18rem 0.8rem; border-radius: 30px;
+        font-size: 0.56rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+        box-shadow: 0 4px 12px rgba(75,42,173,0.3);
+    }
+    .plat-card:nth-child(4) .live-badge { background: #b76e4b; }
+    .plat-body { padding: 0.9rem 1.05rem 1.2rem; display: flex; flex-direction: column; flex: 1; }
+    .plat-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.25rem; color: var(--ink); }
+    .plat-sub { display: flex; align-items: center; gap: 6px; font-size: 0.86rem; color: #6f6252; margin-top: 2px; }
+    .plat-sub i { color: #b76e4b; font-size: 0.7rem; }
+    .plat-line { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 0.86rem; color: var(--plum); margin-top: 10px; }
+    .plat-line i { font-size: 0.74rem; }
+    .plat-go { margin-top: auto; padding-top: 12px; font-size: 0.82rem; font-weight: 600; color: var(--gold); display: inline-flex; align-items: center; gap: 6px; }
+    .plat-go i { transition: transform 0.2s ease; }
+    .plat-card:hover .plat-go { color: var(--ink); }
+    .plat-card:hover .plat-go i { transform: translateX(4px); }
+
+    /* ===== SERVICES ===== */
+    #services { background: var(--cream); }
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .service-card {
+        background: var(--paper); border: 1px solid var(--gold-line);
+        border-radius: 20px; padding: 34px 28px;
+        display: flex; flex-direction: column; gap: 12px;
+        transition: transform 0.24s ease, box-shadow 0.24s ease;
+        position: relative; overflow: hidden;
+    }
+    .service-card::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+        background: linear-gradient(90deg, var(--gold), var(--gold-soft), transparent);
+        opacity: 0; transition: opacity 0.25s ease;
+    }
+    .service-card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+    .service-card:hover::before { opacity: 1; }
+    .srv-ico {
+        width: 54px; height: 54px; border-radius: 14px;
+        background: var(--ink); color: var(--gold-soft);
+        display: grid; place-items: center; font-size: 1.4rem;
+    }
+    .service-card h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; }
+    .service-card p { font-size: 0.88rem; color: var(--ink-soft); }
+    .service-card .chip-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
+    .service-card .chip { font-size: 0.7rem; font-weight: 600; background: var(--cream); border: 1px solid var(--gold-line); color: var(--ink); padding: 4px 12px; border-radius: 999px; }
+
+    /* ===== CONTACT ===== */
+    #contact { background: var(--paper); border-top: 1px solid var(--gold-line); text-align: center; }
+    .contact-card {
+        max-width: 760px; margin: 0 auto;
+        background: var(--ink); color: var(--cream);
+        border-radius: 28px; padding: 66px 44px;
+        position: relative; overflow: hidden;
+    }
+    .contact-card::before {
+        content: ''; position: absolute; top: -70px; right: -70px; width: 240px; height: 240px;
+        border-radius: 50%; background: radial-gradient(circle, rgba(218,165,32,0.22), transparent 70%);
+    }
+    .contact-card::after {
+        content: '\201C'; position: absolute; left: 24px; top: -40px;
+        font-family: 'Playfair Display', serif; font-size: 12rem; color: rgba(184,134,11,0.12); line-height: 1;
+    }
+    .contact-card h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 4.4vw, 2.4rem); font-weight: 700; position: relative; z-index: 1; }
+    .contact-card p { color: rgba(255,255,255,0.78); margin: 14px auto 36px; max-width: 540px; font-size: 0.96rem; position: relative; z-index: 1; }
+    .mail-link {
+        display: inline-flex; align-items: center; gap: 12px;
+        font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.5rem;
+        color: var(--cream); border: 1px solid var(--gold-line); border-radius: 999px;
+        padding: 14px 32px; position: relative; z-index: 1;
+        transition: all 0.22s ease;
+    }
+    .mail-link i { font-size: 1.1rem; color: var(--gold-soft); }
+    .mail-link:hover { background: var(--gold); border-color: var(--gold); transform: translateY(-3px); }
+    .mail-link:hover i { color: #fff; }
+
+    footer {
+        text-align: center; padding: 48px 5vw;
+        color: var(--ink-soft); font-size: 0.85rem;
+        background: var(--paper);
+    }
+    footer .foot-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 18px; margin-bottom: 18px; }
+    footer .foot-links a { color: var(--ink-soft); font-size: 0.82rem; }
+    footer .foot-links a:hover { color: var(--gold); }
+    footer .heart { color: var(--gold); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (hover: none) {
+        .btn:hover, .book-card:hover, .plat-card:hover, .service-card:hover, .fact:hover, .mail-link:hover { transform: none; }
+    }
+    @media (max-width: 980px) {
+        .about-grid { grid-template-columns: 1fr; }
+        .about-portrait { max-width: 340px; margin: 0 auto; }
+        .platforms-grid, .services-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 720px) {
+        html { scroll-padding-top: 74px; }
+        header.site-nav { padding: 12px 20px; align-items: center; }
+        .nav-links {
+            display: none; position: absolute; top: calc(100% + 10px); left: 16px; right: 16px;
+            background: var(--paper); flex-direction: column; align-items: stretch; gap: 0;
+            padding: 8px 18px 16px; border: 1px solid var(--gold-line);
+            border-radius: 18px; box-shadow: 0 24px 50px rgba(45,42,36,0.16);
+        }
+        .nav-links.open { display: flex; animation: dropIn 0.18s ease; }
+        @keyframes dropIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+        .nav-links li:not(:last-child) { border-bottom: 1px solid rgba(184,134,11,0.14); }
+        .nav-links a { display: block; padding: 14px 6px; font-size: 0.98rem; }
+        .nav-links a::after { display: none; }
+        .nav-links .cta { text-align: center; margin-top: 10px; }
+        .menu-toggle { display: block; }
+        section { padding: 72px 22px; }
+        .section-head { margin-bottom: 40px; }
+        .section-head h2 { font-size: 1.75rem; }
+        .eyebrow { letter-spacing: 3px; }
+        .eyebrow::before, .eyebrow::after { width: 20px; }
+        .hero { padding: 108px 22px 64px; }
+        .hero-cta { gap: 10px; }
+        .hero-cta .btn { flex: 1 1 auto; min-width: 0; padding: 12px 10px; font-size: 0.8rem; white-space: nowrap; justify-content: center; }
+        h1 { font-size: clamp(2.5rem, 12.5vw, 3.5rem); }
+        .tagline { font-size: 1.3rem; }
+        .hero-stats { gap: 18px; margin-top: 48px; }
+        .hero-stat b { font-size: 1.45rem; }
+        .scroll-hint { margin-top: 56px; }
+        .about-portrait { max-width: 300px; }
+        .about-quote { font-size: 1.4rem; padding-left: 18px; }
+        .books-grid, .platforms-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+        .services-grid { grid-template-columns: 1fr; }
+        .stats-note { display: none; }
+        .contact-card { padding: 52px 26px; }
+        .mail-link { font-size: 1.15rem; padding: 13px 24px; }
+        footer { padding: 36px 22px; }
+        .facts { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .fact { padding: 14px 8px; }
+        .fact b { font-size: 1.3rem; }
+        .fact span { font-size: 0.62rem; letter-spacing: 1px; }
+    }
+    @media (max-width: 520px) {
+        .books-grid { grid-template-columns: 1fr; gap: 14px; }
+        .book-card { gap: 14px; padding: 13px 12px; }
+        .book-cover { width: 116px; height: 170px; }
+        .book-card .type { font-size: 0.68rem; margin-bottom: 4px; }
+        .book-card h3 { font-size: 1.05rem; line-height: 1.25; }
+        .book-card p { font-size: 0.78rem; line-height: 1.45; margin: 6px 0 4px; }
+        .book-card .go { font-size: 0.75rem; }
+        .plat-card { padding: 10px; }
+        .plat-title { font-size: 0.86rem; }
+        .plat-sub { font-size: 0.6rem; }
+        .plat-line { display: none; }
+        .plat-go { font-size: 0.6rem; }
+        .roles span { padding: 7px 13px; font-size: 0.78rem; }
+    }
+    @media (max-width: 400px) {
+        .brand-name small { display: none; }
+        .books-grid { gap: 12px; }
+        .book-cover { width: 100px; height: 148px; }
+        h1 { font-size: 2.35rem; }
+        .hero-cta { gap: 8px; }
+        .hero-cta .btn { padding: 10px 6px; font-size: 0.72rem; justify-content: center; }
+        .hero-cta .btn i { display: none; }
+        .mail-link { width: 100%; justify-content: center; }
+        .facts { grid-template-columns: 1fr; }
+    }
+    @media (max-height: 640px) and (orientation: landscape) {
+        .hero { padding-top: 96px; min-height: auto; }
+        .hero-stats, .scroll-hint { display: none; }
+    }
+</style>
+</head>
+<body>
+
+<header class="site-nav" id="siteNav">
+    <a class="brand" href="#top">
+        <div class="mono">RB</div>
+        <div class="brand-name">Rence Blunt<small>Poet · Author · Builder</small></div>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#books">Books</a></li>
+        <li><a href="#platforms">Platforms</a></li>
+        <li><a href="#services">What I Do</a></li>
+        <li><a class="cta" href="mailto:reach.volant@gmail.com">Email Me</a></li>
+    </ul>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="top">
+    <div>
+        <span class="eyebrow">Poetry · Prose · Code</span>
+        <h1>Rence <span class="gold">Blunt</span></h1>
+        <p class="tagline">“Words are the root of everything — I grow poems, books, and software from the same soil.”</p>
+        <div class="roles">
+            <span><i class="fas fa-feather-alt"></i>Poet</span>
+            <span><i class="fas fa-book-open"></i>Author</span>
+            <span><i class="fas fa-robot"></i>AI Assistant</span>
+            <span><i class="fas fa-code"></i>Vibe-Coder</span>
+        </div>
+        <div class="hero-cta">
+            <a class="btn btn-dark" href="#books"><i class="fas fa-book-open"></i> The Books</a>
+            <a class="btn btn-gold" href="#platforms"><i class="fas fa-th-large"></i> My Platforms</a>
+            <a class="btn btn-ghost" href="mailto:reach.volant@gmail.com"><i class="fas fa-envelope"></i> Contact</a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section id="about">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <div class="kicker">About</div>
+            <h2>Poet, Author &amp; AI Assistant</h2>
+            <div class="rule"></div>
+        </div>
+        <div class="about-grid">
+            <div class="about-portrait reveal">
+                <span class="about-frame"></span>
+                <img src="https://volantpoetry.vercel.app/images/renceblunt.jpg" alt="Portrait of Rence Blunt" loading="lazy" decoding="async">
+                <div class="portrait-caption">Rence Blunt</div>
+            </div>
+            <div class="about-copy reveal">
+                <blockquote class="about-quote">
+                    I write stories with heart and build software with soul. Every line — of poetry or of code — is an attempt to make someone feel something real.
+                    <span class="sig">— Rence Blunt</span>
+                </blockquote>
+                <p><span class="hl">Rence Blunt</span> is a poet and author based in Ghana, whose work lives at the crossroads of the literary and the digital. He is the author of <span class="hl">Scentless Roses</span> and <span class="hl">The Fall Of Twilight</span>.</p>
+                <p>As a builder, Rence created the <span class="hl">Volant</span> ecosystem: a connected family of platforms where poetry is published, stories are read, lyrics are bought and sold, and creators sell their work — all in one handcrafted corner of the web.</p>
+                <p>He also works as an <span class="hl">AI assistant and vibe-coder</span> — designing intelligent systems and shipping real products through a mix of creative direction and AI-assisted engineering.</p>
+                <div class="facts">
+                    <div class="fact"><b>2</b><span>Books Published</span></div>
+                    <div class="fact"><b>6+</b><span>Platforms Built</span></div>
+                    <div class="fact"><b>∞</b><span>Poetry &amp; Code</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== BOOKS ===== -->
+<section id="books">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <div class="kicker">Books</div>
+            <h2>Published Works</h2>
+            <p>Available now in the Volant Reads bookstore.</p>
+            <div class="rule"></div>
+        </div>
+        <div class="books-grid">
+            <a class="book-card reveal" href="https://volantreads.vercel.app" target="_blank" rel="noopener">
+                <img class="book-cover" src="https://volantpoetry.vercel.app/images/Black%20and%20Blue%20Fiction%20Book%20Cover%20(2).png" alt="Scentless Roses cover" loading="lazy" decoding="async">
+                <div class="book-info">
+                    <div class="type">Fiction</div>
+                    <h3>Scentless Roses</h3>
+                    <p>A story about the beauty that survives without fragrance, and the love that refuses to fade.</p>
+                    <span class="go">Read or buy <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+            <a class="book-card reveal" href="https://volantreads.vercel.app" target="_blank" rel="noopener">
+                <img class="book-cover" src="https://volantpoetry.vercel.app/images/Black%20and%20Blue%20Fiction%20Book%20Cover%20(8).jpg" alt="The Fall Of Twilight cover" loading="lazy" decoding="async">
+                <div class="book-info">
+                    <div class="type">Fiction</div>
+                    <h3>The Fall Of Twilight</h3>
+                    <p>When the day gives way to darkness, the choices made in that half-light decide everything.</p>
+                    <span class="go">Read or buy <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PLATFORMS (codes-style showcase) ===== -->
+<section id="platforms">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <div class="kicker">The Volant World</div>
+            <h2>Platforms I Built</h2>
+            <p>One handcrafted corner of the web — poetry, books, lyrics, commerce, codes and brands, connected by a single account.</p>
+            <div class="rule"></div>
+        </div>
+        <div class="platforms-grid">
+            <div class="plat-card reveal" onclick="window.open('https://volantpoetry.vercel.app/', '_blank')">
+                <div class="cover-wrapper">
+                    <img src="https://volantpoetry.vercel.app/images/volant-site.png" alt="Volant Poetry - Content Platform" loading="lazy" decoding="async">
+                    <span class="live-badge">Live</span>
+                </div>
+                <div class="plat-body">
+                    <div class="plat-title">Volant Poetry</div>
+                    <div class="plat-sub"><i class="fas fa-feather-alt"></i> Content Platform · Poetry Community</div>
+                    <div class="plat-line"><i class="fas fa-users"></i> Read &amp; publish poetry</div>
+                    <span class="plat-go">Visit platform <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+            <div class="plat-card reveal" onclick="window.open('https://volantreads.vercel.app/', '_blank')">
+                <div class="cover-wrapper">
+                    <img src="https://volantpoetry.vercel.app/images/volantread-site.png" alt="Volant Reads - Bookstore" loading="lazy" decoding="async">
+                    <span class="live-badge">Live</span>
+                </div>
+                <div class="plat-body">
+                    <div class="plat-title">Volant Reads</div>
+                    <div class="plat-sub"><i class="fas fa-feather-alt"></i> E-Commerce Bookstore</div>
+                    <div class="plat-line"><i class="fas fa-shopping-cart"></i> Digital books &amp; more</div>
+                    <span class="plat-go">Visit platform <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+            <div class="plat-card reveal" onclick="window.open('https://volantlyrics.vercel.app/', '_blank')">
+                <div class="cover-wrapper">
+                    <img src="https://volantpoetry.vercel.app/images/lyrics-site.png" alt="Volant Lyrics - Lyrics Marketplace" loading="lazy" decoding="async">
+                    <span class="live-badge">Live</span>
+                </div>
+                <div class="plat-body">
+                    <div class="plat-title">Volant Lyrics</div>
+                    <div class="plat-sub"><i class="fas fa-feather-alt"></i> Lyrics Marketplace</div>
+                    <div class="plat-line"><i class="fas fa-music"></i> Buy &amp; sell original lyrics</div>
+                    <span class="plat-go">Visit platform <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+            <div class="plat-card reveal" onclick="window.open('https://volantmall.vercel.app/', '_blank')">
+                <div class="cover-wrapper">
+                    <img src="https://volantpoetry.vercel.app/images/kindady.png" alt="Volant Mall - E-Commerce Marketplace" loading="lazy" decoding="async">
+                    <span class="live-badge">Live</span>
+                </div>
+                <div class="plat-body">
+                    <div class="plat-title">Volant Mall</div>
+                    <div class="plat-sub"><i class="fas fa-feather-alt"></i> E-Commerce Marketplace · Shop Ghana</div>
+                    <div class="plat-line"><i class="fas fa-store"></i> Shop from real sellers</div>
+                    <span class="plat-go">Visit platform <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+            <div class="plat-card reveal" onclick="window.open('https://volantcodes.vercel.app/', '_blank')">
+                <div class="cover-wrapper">
+                    <img src="https://volantpoetry.vercel.app/images/codes-site.png" alt="Volant Codes - Web & Brand Services" loading="lazy" decoding="async">
+                    <span class="live-badge">Live</span>
+                </div>
+                <div class="plat-body">
+                    <div class="plat-title">Volant Codes</div>
+                    <div class="plat-sub"><i class="fas fa-feather-alt"></i> Web &amp; Brand Services</div>
+                    <div class="plat-line"><i class="fas fa-code"></i> Websites, platforms &amp; code</div>
+                    <span class="plat-go">Visit platform <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+            <div class="plat-card reveal" onclick="window.open('https://volantfoundry.vercel.app/', '_blank')">
+                <div class="cover-wrapper">
+                    <img src="https://volantpoetry.vercel.app/images/foundry-site.png" alt="Volant Foundry - Platform Ecosystem" loading="lazy" decoding="async">
+                    <span class="live-badge">Live</span>
+                </div>
+                <div class="plat-body">
+                    <div class="plat-title">Volant Foundry</div>
+                    <div class="plat-sub"><i class="fas fa-feather-alt"></i> Platform Ecosystem</div>
+                    <div class="plat-line"><i class="fas fa-globe"></i> The Volant multi-platform brand</div>
+                    <span class="plat-go">Visit platform <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SERVICES ===== -->
+<section id="services">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <div class="kicker">What I Do</div>
+            <h2>Three Ways I Build</h2>
+            <div class="rule"></div>
+        </div>
+        <div class="services-grid">
+            <div class="service-card reveal">
+                <div class="srv-ico"><i class="fas fa-feather-alt"></i></div>
+                <h3>Write</h3>
+                <p>Poems and stories told with care — published across the Volant world. When you read my poetry you're reading what I genuinely feel.</p>
+                <div class="chip-row">
+                    <span class="chip">Poetry</span>
+                    <span class="chip">Fiction</span>
+                    <span class="chip">Short Stories</span>
+                </div>
+            </div>
+            <div class="service-card reveal">
+                <div class="srv-ico"><i class="fas fa-laptop-code"></i></div>
+                <h3>Build</h3>
+                <p>Real, deployed products — full platforms from idea to launch, built with clean, practical engineering and an eye for craft.</p>
+                <div class="chip-row">
+                    <span class="chip">Web Platforms</span>
+                    <span class="chip">E-Commerce</span>
+                    <span class="chip">Integrations</span>
+                </div>
+            </div>
+            <div class="service-card reveal">
+                <div class="srv-ico"><i class="fas fa-robot"></i></div>
+                <h3>Assist</h3>
+                <p>AI assistants and vibe-coded solutions — shipping what you can imagine, fast, by blending creative direction with AI-assisted engineering.</p>
+                <div class="chip-row">
+                    <span class="chip">AI Tools</span>
+                    <span class="chip">Automation</span>
+                    <span class="chip">Prototyping</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact">
+    <div class="wrap">
+        <div class="contact-card reveal">
+            <div class="kicker" style="color: var(--gold-soft); margin-bottom: 14px;">Contact</div>
+            <h2>Let’s create something</h2>
+            <p>Whether you’re reading a poem, buying a book, commissioning lyrics, or hiring a vibe-coder — the door is open.</p>
+            <a class="mail-link" href="mailto:reach.volant@gmail.com"><i class="fas fa-paper-plane"></i> reach.volant@gmail.com</a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="foot-links">
+        <a href="#top">Top</a>
+        <a href="#about">About</a>
+        <a href="#books">Books</a>
+        <a href="#platforms">Platforms</a>
+        <a href="#services">What I Do</a>
+    </div>
+    © 2026 Rence Blunt · Part of the Volant ecosystem · <a href="https://volantpoetry.vercel.app" target="_blank" rel="noopener" style="color: var(--gold);">Volant Poetry</a>
+</footer>
+
+<script>
+    // ===== BOOKS (Volant Reads) — fetched live, same as the mall index =====
+    const firebaseConfig = {
+        apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+        authDomain: "silent-depth.firebaseapp.com",
+        projectId: "silent-depth",
+        storageBucket: "silent-depth.appspot.com"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const BOOKS_STORE = 'https://volantreads.vercel.app/';
+    const BOOKS_GRID = document.querySelector('.books-grid');
+
+    function ts(t) {
+        if (!t) return 0;
+        if (t.toMillis) return t.toMillis();
+        if (t.seconds) return t.seconds * 1000;
+        return 0;
+    }
+
+    function escapeHtml(str) {
+        return String(str == null ? '' : str)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function isRenceBlunt(d) {
+        const name = ((d.authorName || d.author || d.name || '') + '')
+            .trim().toLowerCase();
+        return name.includes('rence') && name.includes('blunt');
+    }
+
+    async function loadBooks() {
+        try {
+            if (!BOOKS_GRID) return;
+            const snap = await db.collection('books').where('status', '==', 'approved').get();
+            const books = [];
+            snap.forEach(dc => {
+                const d = dc.data();
+                if (!isRenceBlunt(d)) return;
+                books.push({
+                    id: dc.id,
+                    title: d.title || 'Untitled',
+                    author: d.authorName || '',
+                    genre: d.genre || '',
+                    description: d.description || '',
+                    imageUrl: d.imageUrl || '',
+                    price: Number((d.pricing && d.pricing.amount) || d.price || 0),
+                    currency: (d.pricing && d.pricing.currency) || d.currency || 'GHS',
+                    approvedAt: ts(d.approvedAt || d.updatedAt || d.submittedAt || d.createdAt)
+                });
+            });
+            books.sort((a, b) => b.approvedAt - a.approvedAt);
+            if (!books.length) return;
+            renderBooks(books);
+            updateBooksCount(books.length);
+        } catch (e) {
+            console.error('Books load error:', e);
+        }
+    }
+
+    function renderBooks(books) {
+        BOOKS_GRID.innerHTML = books.map(b => {
+            const price = b.price > 0 ? `${escapeHtml(b.currency)} ${b.price.toFixed(2)}` : 'Free';
+            const desc = b.description || (b.author ? `By ${escapeHtml(b.author)}` : '');
+            const go = b.price > 0 ? 'Read or buy' : 'Read free';
+            const cover = b.imageUrl
+                ? `<img class="book-cover" src="${escapeHtml(b.imageUrl)}" alt="${escapeHtml(b.title)}" loading="lazy" decoding="async">`
+                : `<div class="book-cover book-ph"><i class="fas fa-book-open"></i></div>`;
+            return `
+            <a class="book-card reveal" href="${BOOKS_STORE}details.html?id=${encodeURIComponent(b.id)}" target="_blank" rel="noopener">
+                ${cover}
+                <div class="book-info">
+                    <div class="type">${escapeHtml(b.genre || 'Book')}</div>
+                    <h3>${escapeHtml(b.title)}</h3>
+                    <p>${escapeHtml(desc)}</p>
+                    <span class="go">${go} · ${price} <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>`;
+        }).join('');
+        if (typeof observeReveals === 'function') observeReveals();
+    }
+
+    function updateBooksCount(count) {
+        document.querySelectorAll('.fact b').forEach(el => {
+            if (el.parentElement && el.parentElement.textContent.includes('Books Published')) el.textContent = count;
+        });
+    }
+
+    if (BOOKS_GRID) loadBooks();
+</script>
+
+<script>
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    const siteNav = document.getElementById('siteNav');
+    if (menuToggle && navLinks) {
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+            menuToggle.querySelector('i').classList.toggle('fa-bars');
+            menuToggle.querySelector('i').classList.toggle('fa-xmark');
+        });
+        document.addEventListener('click', e => {
+            if (navLinks.classList.contains('open') && !e.target.closest('.site-nav')) {
+                navLinks.classList.remove('open');
+                menuToggle.querySelector('i').classList.toggle('fa-bars');
+                menuToggle.querySelector('i').classList.toggle('fa-xmark');
+            }
+        });
+    }
+    if (siteNav) {
+        const onScroll = () => siteNav.classList.toggle('scrolled', window.scrollY > 20);
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+    }
+    function observeReveals() {
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    }
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+    }, { threshold: 0.12 });
+    observeReveals();
+</script>
+
+</body>
+</html>

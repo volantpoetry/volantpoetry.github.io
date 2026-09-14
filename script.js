@@ -409,8 +409,29 @@ async function sendNotification(forUserId, fromUserId, type, data) {
       notification.poemId = data.poemId;
     }
     await addDoc(collection(db, "notifications"), notification);
+    if (type === 'comment' || type === 'reply') {
+      notifyActivityEmail(type, forUserId, fromUserId, {
+        fromUserName: fromUserName,
+        poemTitle: data.poemTitle || '',
+        poemId: data.poemId || '',
+        text: data.commentText || data.replyText || ''
+      });
+    }
   } catch (err) {
     console.warn("Error sending notification:", err);
+  }
+}
+
+async function notifyActivityEmail(type, toUid, fromUid, data) {
+  if (!toUid || !fromUid || toUid === fromUid) return;
+  try {
+    await fetch('/api/notify-activity', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ toUid, type, fromUid, data: data || {} })
+    });
+  } catch (err) {
+    console.warn('Activity email skipped:', err);
   }
 }
 
@@ -1860,7 +1881,9 @@ async function loadRankingPoemsRich() {
   listEl.innerHTML = "";
 
   try {
-    const snapshot = await getDocs(collection(db, "recentPoems"));
+    // Bound the pool so ranking stays fast: only the 400 newest poems can
+    // realistically climb a 7-day "top 20" chart.
+    const snapshot = await getDocs(query(collection(db, "recentPoems"), orderBy("timestamp", "desc"), limit(400)));
     if (snapshot.empty) {
       listEl.innerHTML = "<p style='color:#666;'>Check your internet connection and refresh the page.</p>";
       return;
@@ -1869,35 +1892,47 @@ async function loadRankingPoemsRich() {
     const poems = await Promise.all(snapshot.docs.map(async docSnap => {
       const data = docSnap.data() || {};
       const totalViews = typeof data.views === "number" ? data.views : 0;
+      const createdAt = (data.timestamp?.toDate && data.timestamp.toDate()) || new Date();
+      const ageDays = Math.max(0, (now.getTime() - createdAt.getTime()) / 86400000);
       let recentLikes = 0;
       const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
       const likedByTimestamps = Array.isArray(data.likedByTimestamps) ? data.likedByTimestamps : [];
-      for (let i = 0; i < likedBy.length; i++) {
-        const likeTime = likedByTimestamps[i]?.toDate();
-        if (likeTime && likeTime >= sevenDaysAgo) {
-          recentLikes++;
-        } else if (!likedByTimestamps.length) {
-          recentLikes = likedBy.length;
-          break;
+      if (likedByTimestamps.length === likedBy.length && likedByTimestamps.length > 0) {
+        for (let i = 0; i < likedBy.length; i++) {
+          const likeTime = likedByTimestamps[i]?.toDate();
+          if (likeTime && likeTime >= sevenDaysAgo) recentLikes++;
         }
+      } else {
+        // Older poems don't store like timestamps, so only assume recency when
+        // the poem itself is new enough to have received all of its likes recently.
+        recentLikes = ageDays <= 7 ? likedBy.length : 0;
       }
       let recentComments = 0;
       let totalComments = 0;
+      const knownCommentCount = typeof data.commentCount === "number" ? data.commentCount : null;
       try {
-        const commentSnap = await getDocs(collection(db, "recentPoems", docSnap.id, "comments"));
-        totalComments = commentSnap.size;
-        for (const commentDoc of commentSnap.docs) {
-          const comment = commentDoc.data();
-          const commentTime = comment.timestamp?.toDate();
-          if (commentTime && commentTime >= sevenDaysAgo) {
-            recentComments++;
+        if (knownCommentCount != null) {
+          totalComments = knownCommentCount;
+          recentComments = ageDays <= 7 ? totalComments : 0;
+        } else {
+          const commentSnap = await getDocs(collection(db, "recentPoems", docSnap.id, "comments"));
+          totalComments = commentSnap.size;
+          for (const commentDoc of commentSnap.docs) {
+            const comment = commentDoc.data();
+            const commentTime = comment.timestamp?.toDate();
+            if (commentTime && commentTime >= sevenDaysAgo) recentComments++;
           }
         }
       } catch (err) {
         console.warn("Unable to fetch comment count:", err);
       }
-      const recentViews = totalViews;
-      const score = (recentViews * 1) + (recentLikes * 3) + (recentComments * 4);
+      // Views have no timestamps, so damp total views by age so old evergreen
+      // poems can't permanently bury fresh, engaging work. Likes/comments are
+      // the real "engagement" signal and weigh more heavily, plus a short
+      // freshness boost so brand-new poems get a fair shot at the chart.
+      const viewsWeighted = totalViews * Math.exp(-ageDays / 21);
+      const freshness = Math.max(0, 8 - ageDays);
+      const score = viewsWeighted + (recentLikes * 5) + (recentComments * 8) + freshness + (data.audioUrl ? 3 : 0);
       const poetUid = data.authorId || data.userId || "";
       let displayName = data.author || "Anonymous";
       let profileLink = "#";
@@ -2261,6 +2296,16 @@ async function loadRankingPoemsRich() {
               username: username,
               timestamp: serverTimestamp()
             });
+            
+            const poemOwnerId = poem.authorId || "";
+            if (poemOwnerId && poemOwnerId !== user.uid) {
+              notifyActivityEmail('comment', poemOwnerId, user.uid, {
+                fromUserName: username,
+                poemTitle: poem.title || '',
+                poemId: poem.id || '',
+                text: commentText
+              });
+            }
             
             if (textarea) textarea.value = "";
             poem.totalComments++;
@@ -2867,8 +2912,42 @@ function exposeUserData(user) {
   }
 }
 
+async function updateNotificationBadge(user) {
+  try {
+    const badge = document.getElementById('notificationsBadge');
+    if (!badge) return;
+    if (!user) {
+      badge.textContent = '';
+      badge.style.display = 'none';
+      return;
+    }
+    // The shared 'notifications' collection carries BOTH legacy docs
+    // (forUser field, written by older Volant Poetry pages) and unified
+    // docs (userId field, written across the whole platform). Count both.
+    const uniq = {};
+    const collect = (snap) => { snap.forEach(d => { uniq[d.id] = true; }); };
+    try {
+      collect(await getDocs(query(collection(db, 'notifications'), where('userId', '==', user.uid), where('read', '==', false))));
+    } catch (e) { console.warn('Badge userId query:', e); }
+    try {
+      collect(await getDocs(query(collection(db, 'notifications'), where('forUser', '==', user.uid), where('read', '==', false))));
+    } catch (e) { console.warn('Badge forUser query:', e); }
+    const count = Object.keys(uniq).length;
+    if (count > 0) {
+      badge.textContent = count > 9 ? '9+' : String(count);
+      badge.style.display = 'inline-block';
+    } else {
+      badge.textContent = '';
+      badge.style.display = 'none';
+    }
+  } catch (err) {
+    console.warn("Error fetching unread notification count:", err);
+  }
+}
+
 onAuthStateChanged(auth, async (user) => {
   exposeUserData(user);
+  updateNotificationBadge(user);
 });
 
 window.logoutUser = async function() {

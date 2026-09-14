@@ -1,0 +1,18 @@
+{
+  "name": "Volant Poetry",
+  "short_name": "Volant",
+  "description": "A community for poets to share, read, and grow together. Read poems, spoken word, Poem of the Week and more.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fffdf8",
+  "theme_color": "#4b2aad",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}
