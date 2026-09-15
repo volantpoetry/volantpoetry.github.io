@@ -2041,32 +2041,7 @@ gap: 80px;
     <section class="more-books">
         <div class="container">
             <span class="label">More from Volant Reads</span>
-            <div class="more-books-grid">
-                <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                    <img src="images/Black and Blue Fiction Book Cover (3).jpg" alt="Echoes of Silence">
-                    <div class="more-info"><h4>Echoes of Silence</h4><p>A collection of poems by Maya Darko</p><span class="meta">Volant Reads . June 2026</span></div>
-                </div>
-                <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                    <img src="images/Black and Blue Fiction Book Cover (4).jpg" alt="The Last Verse">
-                    <div class="more-info"><h4>The Last Verse</h4><p>A collection of poems by Kofi Mensah</p><span class="meta">Volant Reads . May 2026</span></div>
-                </div>
-                <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                    <img src="images/Black and Blue Fiction Book Cover (5).jpg" alt="Whispers in the Dark">
-                    <div class="more-info"><h4>Whispers in the Dark</h4><p>A collection of poems by Akua Serwaa</p><span class="meta">Volant Reads . April 2026</span></div>
-                </div>
-                <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                    <img src="images/Black and Blue Fiction Book Cover (6).jpg" alt="Beneath the Surface">
-                    <div class="more-info"><h4>Beneath the Surface</h4><p>A collection of poems by Yaw Asante</p><span class="meta">Volant Reads . March 2026</span></div>
-                </div>
-                <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                    <img src="images/Black and Blue Fiction Book Cover (7).jpg" alt="Fading Light">
-                    <div class="more-info"><h4>Fading Light</h4><p>A collection of poems by Abena Osei</p><span class="meta">Volant Reads . February 2026</span></div>
-                </div>
-                <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
-                    <img src="../images/Black and Blue Fiction Book Cover (2).png" alt="Silent Whispers">
-                    <div class="more-info"><h4>Silent Whispers</h4><p>A collection of poems by Kwame Adjei</p><span class="meta">Volant Reads . January 2026</span></div>
-                </div>
-            </div>
+            <div class="more-books-grid" id="moreBooksGrid"></div>
         </div>
     </section>
 
@@ -2271,6 +2246,7 @@ gap: 80px;
 
     function loadLatestBooks() {
         const latestBooksEl = document.getElementById('latestBooks');
+        const moreBooksEl = document.getElementById('moreBooksGrid');
         if (!latestBooksEl) return;
         db.collection('books').where('status', '==', 'approved').get()
             .then(snap => {
@@ -2281,8 +2257,21 @@ gap: 80px;
                     const j = Math.floor(Math.random() * (i + 1));
                     [books[i], books[j]] = [books[j], books[i]];
                 }
-                const picks = books.slice(0, 3);
-                latestBooksEl.innerHTML = picks.map(b => {
+                const picks = [];
+                const genres = new Set();
+                for (const b of books) {
+                    const g = (b.genre || 'Other').toString().toLowerCase();
+                    if (!genres.has(g)) {
+                        picks.push(b);
+                        genres.add(g);
+                        if (picks.length === 3) break;
+                    }
+                }
+                for (const b of books) {
+                    if (picks.length === 3) break;
+                    if (!picks.includes(b)) picks.push(b);
+                }
+                const card = b => {
                     const sub = b.genre
                         ? (b.authorName ? `${b.genre} · ${b.authorName}` : b.genre)
                         : (b.authorName ? `by ${b.authorName}` : 'Volant Reads');
@@ -2295,7 +2284,21 @@ gap: 80px;
                             <a href="https://volantreads.vercel.app/details.html?id=${b.id}" target="_blank" class="buy-link">Buy Now</a>
                         </div>
                     </div>`;
-                }).join('');
+                };
+                latestBooksEl.innerHTML = picks.map(card).join('');
+                if (moreBooksEl) {
+                    const rest = books.filter(b => !picks.includes(b)).slice(0, 6);
+                    moreBooksEl.innerHTML = rest.map(b => {
+                        const sub = b.genre
+                            ? (b.authorName ? `${b.genre} · ${b.authorName}` : b.genre)
+                            : (b.authorName ? `by ${b.authorName}` : 'Volant Reads');
+                        return `
+                        <div class="more-book-item" onclick="openLightbox(this.querySelector('img').src)">
+                            <img src="${b.imageUrl || '../images/Black and Blue Fiction Book Cover (2).png'}" alt="${(b.title || 'Book').replace(/"/g, '&quot;')}">
+                            <div class="more-info"><h4>${b.title || 'Untitled'}</h4><p>${sub}</p><span class="meta">Volant Reads</span></div>
+                        </div>`;
+                    }).join('');
+                }
             })
             .catch(() => {});
     }
