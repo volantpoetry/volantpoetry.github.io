@@ -1,6 +1,6 @@
 /**
- * 🔥 Auto Sitemap Generator for Volant Ecosystem
- * Includes: Volant Poetry, Volant Reads, Volant Foundry, Volant Codes (external)
+ * 🔥 Auto Sitemap Generator for Volant Poetry
+ * ONLY includes URLs from the volantpoetry.vercel.app domain
  * Uses Firebase Admin SDK with Service Account from GitHub Secrets
  * Runs on GitHub Actions
  */
@@ -14,7 +14,7 @@ const publicFolder = './';
 const MAX_POEMS = 5000;
 const MAX_BOOKS = 5000;
 
-// ✅ STATIC PAGES TO INDEX
+// ✅ STATIC PAGES TO INDEX (all under volantpoetry.vercel.app)
 const allowedPages = [
   // Volant Poetry (Main)
   'index.html',
@@ -32,106 +32,20 @@ const allowedPages = [
   'shared/terms.html',
   'shared/privacy.html',
   
-  // Volant Reads (Store)
+  // Volant Reads (Store) — hosted on this same domain
   'store/index.html',
   'store/submit.html',
   'store/faq.html',
   'store/refund.html',
   
-  // Volant Foundry
+  // Volant Foundry — hosted on this same domain
   'volant_foundry/index.html'
 ];
 
-// ============================================================
-// 🚀 EXTERNAL PLATFORMS (Different Repos/Domains)
-// ============================================================
-const externalUrls = [
-  // 🌐 Volant Reads (Redirect Domain)
-  {
-    loc: 'https://volantreads.vercel.app/',
-    lastmod: new Date().toISOString(),
-    changefreq: 'weekly',
-    priority: '0.9'
-  },
-  {
-    loc: 'https://volantreads.vercel.app/store/',
-    lastmod: new Date().toISOString(),
-    changefreq: 'weekly',
-    priority: '0.8'
-  },
-  
-  // 🌐 Volant Foundry (Redirect Domain)
-  {
-    loc: 'https://volantfoundry.vercel.app/',
-    lastmod: new Date().toISOString(),
-    changefreq: 'weekly',
-    priority: '0.9'
-  },
-  {
-    loc: 'https://volantfoundry.vercel.app/volant_foundry/',
-    lastmod: new Date().toISOString(),
-    changefreq: 'weekly',
-    priority: '0.8'
-  },
-  
-  // 🌐 Volant Codes (Separate Repo)
-  {
-    loc: 'https://volantcodes.vercel.app/',
-    lastmod: new Date().toISOString(),
-    changefreq: 'weekly',
-    priority: '0.9'
-  },
-  {
-    loc: 'https://volantcodes.vercel.app/index.html',
-    lastmod: new Date().toISOString(),
-    changefreq: 'weekly',
-    priority: '0.8'
-  },
-  {
-    loc: 'https://volantcodes.vercel.app/#services',
-    lastmod: new Date().toISOString(),
-    changefreq: 'weekly',
-    priority: '0.7'
-  },
-  {
-    loc: 'https://volantcodes.vercel.app/#portfolio',
-    lastmod: new Date().toISOString(),
-    changefreq: 'weekly',
-    priority: '0.7'
-  },
-  {
-    loc: 'https://volantcodes.vercel.app/#pricing',
-    lastmod: new Date().toISOString(),
-    changefreq: 'monthly',
-    priority: '0.6'
-  },
-  {
-    loc: 'https://volantcodes.vercel.app/#testimonials',
-    lastmod: new Date().toISOString(),
-    changefreq: 'monthly',
-    priority: '0.5'
-  },
-  {
-    loc: 'https://volantcodes.vercel.app/#faq',
-    lastmod: new Date().toISOString(),
-    changefreq: 'monthly',
-    priority: '0.5'
-  },
-  
-  // 🌐 Volant Lyrics (Future - coming soon)
-  {
-    loc: 'https://volantlyrics.vercel.app/',
-    lastmod: new Date().toISOString(),
-    changefreq: 'weekly',
-    priority: '0.8'
-  },
-  {
-    loc: 'https://volantlyrics.vercel.app/index.html',
-    lastmod: new Date().toISOString(),
-    changefreq: 'weekly',
-    priority: '0.7'
-  },
-];
+// ❌ EXTERNAL PLATFORMS REMOVED
+// A sitemap can only contain URLs from the same domain as the sitemap itself.
+// External domains are handled by their own sitemaps on their own domains.
+const externalUrls = [];
 
 // ---- XML ESCAPE FUNCTION ----
 function escapeXml(str) {
@@ -283,7 +197,7 @@ async function fetchPoemsFromFirestore() {
 }
 
 // ============================================================
-// 📚 FETCH BOOKS FROM FIRESTORE (Volant Reads)
+// 📚 FETCH BOOKS FROM FIRESTORE (Volant Reads) — same domain
 // ============================================================
 async function fetchBooksFromFirestore() {
   console.log('\n📚 Starting fetchBooksFromFirestore...');
@@ -292,7 +206,6 @@ async function fetchBooksFromFirestore() {
     console.log('📦 Using existing Firebase Admin SDK instance...');
     const admin = require('firebase-admin');
     
-    // Check if already initialized
     if (!admin.apps || admin.apps.length === 0) {
       console.log('❌ Firebase Admin not initialized. Cannot fetch books.');
       return [];
@@ -304,7 +217,6 @@ async function fetchBooksFromFirestore() {
     console.log('🔥 Connecting to Firestore for books...');
     
     try {
-      // ✅ Fetch approved books from the "books" collection
       console.log('   📂 Fetching from: books (status: approved)');
       
       const snapshot = await db.collection('books')
@@ -326,12 +238,10 @@ async function fetchBooksFromFirestore() {
         const bookId = data.bookId || docId;
         const authorName = data.authorName || data.author || 'Anonymous';
         
-        // Generate a slug from title
         const slug = data.slug || 
                     title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 
                     docId;
         
-        // Get timestamp
         let timestamp = new Date().toISOString();
         if (data.createdAt) {
           if (typeof data.createdAt === 'object' && data.createdAt.toDate) {
@@ -417,7 +327,7 @@ function generatePoemUrls(poems) {
 }
 
 // ============================================================
-// 📚 Generate book URLs (Volant Reads)
+// 📚 Generate book URLs (Volant Reads) — same domain
 // ============================================================
 function generateBookUrls(books) {
   const results = [];
@@ -426,7 +336,6 @@ function generateBookUrls(books) {
   for (const book of books) {
     if (count >= MAX_BOOKS) break;
     
-    // ✅ Use the book ID for details page
     const url = `${domain}/store/details.html?id=${encodeURIComponent(book.id)}`;
     
     let lastmod = new Date().toISOString();
@@ -443,7 +352,7 @@ function generateBookUrls(books) {
       loc: url,
       lastmod: lastmod,
       changefreq: 'weekly',
-      priority: '0.8'  // Books same priority as poems
+      priority: '0.8'
     });
     
     count++;
@@ -480,7 +389,7 @@ ${urls.map(u => `
 
 // ---- Generate robots.txt ----
 function generateRobotsTxt() {
-  const robots = `# Robots.txt for Volant Foundry Ecosystem
+  const robots = `# Robots.txt for Volant Poetry
 User-agent: *
 Allow: /
 
@@ -501,19 +410,15 @@ Allow: /shared/contact.html
 Allow: /shared/terms.html
 Allow: /shared/privacy.html
 
-# Store / Volant Reads
+# Store / Volant Reads (same domain)
 Allow: /store/index.html
 Allow: /store/submit.html
 Allow: /store/faq.html
 Allow: /store/refund.html
 Allow: /store/details.html
 
-# Volant Foundry
+# Volant Foundry (same domain)
 Allow: /volant_foundry/index.html
-
-# External Platforms (Volant Codes, Volant Lyrics)
-# These are separate domains with their own robots.txt
-# Sitemap includes them for better SEO
 
 # Block admin and private
 Disallow: /admin
@@ -525,7 +430,6 @@ Disallow: /verify
 Disallow: /reset
 Disallow: /store/approvals.html
 Disallow: /store/dashboard.html
-Disallow: /store/details.html
 Disallow: /shared/verify-email.html
 Disallow: /shared/universal-login.html
 Disallow: /shared/universal-signup.html
@@ -550,11 +454,7 @@ Disallow: /images/
 # Block 404
 Disallow: /404.html
 
-Sitemap: ${domain}/sitemap.xml
-
-# External sitemaps (for reference)
-# https://volantcodes.vercel.app/sitemap.xml
-# https://volantlyrics.vercel.app/sitemap.xml`;
+Sitemap: ${domain}/sitemap.xml`;
 
   fs.writeFileSync(path.join(publicFolder, 'robots.txt'), robots, 'utf8');
   console.log('✅ robots.txt generated');
@@ -563,10 +463,10 @@ Sitemap: ${domain}/sitemap.xml
 // ---- MAIN ----
 async function generateSitemap() {
   try {
-    console.log("🧠 Generating SEO sitemap for Volant Ecosystem...");
+    console.log("🧠 Generating SEO sitemap for Volant Poetry...");
     console.log(`📁 Domain: ${domain}`);
     console.log(`📄 Targeting ${allowedPages.length} static pages...`);
-    console.log(`🚀 Including ${externalUrls.length} external platform URLs...`);
+    console.log(`🚀 External platform URLs: ${externalUrls.length} (removed — sitemap only allows same-domain URLs)`);
     
     // 1. Static Pages
     const staticResults = [];
@@ -581,16 +481,13 @@ async function generateSitemap() {
       const urlPath = getUrlWithHtml(page);
       const url = urlPath === '' ? domain : `${domain}/${urlPath}`;
       
-      // ============================================================
-      // 🎯 OPTIMIZED PRIORITIES FOR GOOGLE SITELINKS
-      // ============================================================
       let priority = '0.8';
       
-      // PRIORITY 1.0 - Most Important (Homepage & Bookstore)
+      // PRIORITY 1.0 - Homepage & Bookstore
       if (page === 'index.html' || urlPath === '' || urlPath === 'store/') {
         priority = '1.0';
       } 
-      // PRIORITY 0.9 - Core Pages (Should appear as sitelinks)
+      // PRIORITY 0.9 - Core Pages
       else if (page === 'poems.html' || 
                page === 'submitpoems.html' || 
                page === 'shared/about.html' || 
@@ -610,7 +507,6 @@ async function generateSitemap() {
       else if (page.startsWith('shared/')) {
         priority = '0.6';
       } 
-      // Default
       else {
         priority = '0.7';
       }
@@ -632,26 +528,25 @@ async function generateSitemap() {
       console.log(`   ... and ${staticResults.length - 10} more`);
     }
     
-    // 2. Dynamic Poems from Firestore
+    // 2. Dynamic Poems
     console.log("\n🔥 Fetching poems from Firestore using Admin SDK...");
     const poems = await fetchPoemsFromFirestore();
     const poemResults = generatePoemUrls(poems);
     console.log(`✅ ${poemResults.length} poem URLs generated (priority 0.8)`);
     
-    // 3. Dynamic Books from Firestore (Volant Reads)
+    // 3. Dynamic Books
     console.log("\n📚 Fetching books from Firestore using Admin SDK...");
     const books = await fetchBooksFromFirestore();
     const bookResults = generateBookUrls(books);
     console.log(`✅ ${bookResults.length} book URLs generated (priority 0.8)`);
     
-    // 4. Combine all URLs
-    const allUrls = [...staticResults, ...poemResults, ...bookResults, ...externalUrls];
+    // 4. Combine all URLs (NO external URLs)
+    const allUrls = [...staticResults, ...poemResults, ...bookResults];
     
     console.log(`\n📊 Total: ${allUrls.length} URLs`);
     console.log(`   Static: ${staticResults.length}`);
     console.log(`   Dynamic Poems: ${poemResults.length}`);
     console.log(`   Dynamic Books: ${bookResults.length}`);
-    console.log(`   External Platforms: ${externalUrls.length}`);
     
     if (poemResults.length === 0) {
       console.log("\n⚠️ WARNING: No poem URLs generated!");
@@ -663,7 +558,7 @@ async function generateSitemap() {
       console.log("📋 Check the logs above for errors.");
     }
     
-    // 5. Build sitemap with proper XML escaping
+    // 5. Build sitemap
     const xml = buildXML(allUrls);
     fs.writeFileSync(path.join(publicFolder, 'sitemap.xml'), xml, 'utf8');
     console.log('✅ sitemap.xml generated');
@@ -687,7 +582,6 @@ async function generateSitemap() {
     console.log(`   Static: ${staticResults.length}`);
     console.log(`   Dynamic Poems: ${poemResults.length}`);
     console.log(`   Dynamic Books: ${bookResults.length}`);
-    console.log(`   External Platforms: ${externalUrls.length}`);
 
   } catch (err) {
     console.error('❌ Sitemap error:', err);
