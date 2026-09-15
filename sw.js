@@ -1,4 +1,4 @@
-const CACHE = 'volant-poetry-v1';
+const CACHE = 'volant-poetry-v2';
 const PRECACHE = [
   '/',
   '/index.html',
@@ -6,7 +6,17 @@ const PRECACHE = [
   '/script.js',
   '/poems.html',
   '/notifications.html',
+  '/manifest.json',
+  '/icon/icon-192.png',
+  '/icon/icon-512.png'
+];
+
+const NETWORK_FIRST_PATHS = [
   '/manifest.json'
+];
+const BYPASS_CACHE_PATHS = [
+  '/icon/icon-192.png',
+  '/icon/icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -41,6 +51,23 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => caches.match('/index.html'))
     );
+    return;
+  }
+
+  const pathname = url.pathname;
+  if (NETWORK_FIRST_PATHS.some((p) => pathname === p || pathname.startsWith(p))) {
+    event.respondWith(
+      fetch(request).then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
+        return response;
+      }).catch(() => caches.match(request).then((cached) => cached || fetch(request)))
+    );
+    return;
+  }
+
+  if (BYPASS_CACHE_PATHS.some((p) => pathname === p || pathname.startsWith(p))) {
+    event.respondWith(fetch(request));
     return;
   }
 
