@@ -1,4 +1,4 @@
-# Robots.txt for Volant Foundry Ecosystem
+# Robots.txt for Volant Poetry
 User-agent: *
 Allow: /
 
@@ -19,19 +19,15 @@ Allow: /shared/contact.html
 Allow: /shared/terms.html
 Allow: /shared/privacy.html
 
-# Store / Volant Reads
+# Store / Volant Reads (same domain)
 Allow: /store/index.html
 Allow: /store/submit.html
 Allow: /store/faq.html
 Allow: /store/refund.html
 Allow: /store/details.html
 
-# Volant Foundry
+# Volant Foundry (same domain)
 Allow: /volant_foundry/index.html
-
-# External Platforms (Volant Codes, Volant Lyrics)
-# These are separate domains with their own robots.txt
-# Sitemap includes them for better SEO
 
 # Block admin and private
 Disallow: /admin
@@ -43,7 +39,6 @@ Disallow: /verify
 Disallow: /reset
 Disallow: /store/approvals.html
 Disallow: /store/dashboard.html
-Disallow: /store/details.html
 Disallow: /shared/verify-email.html
 Disallow: /shared/universal-login.html
 Disallow: /shared/universal-signup.html
@@ -69,7 +64,3 @@ Disallow: /images/
 Disallow: /404.html
 
 Sitemap: https://volantpoetry.vercel.app/sitemap.xml
-
-# External sitemaps (for reference)
-# https://volantcodes.vercel.app/sitemap.xml
-# https://volantlyrics.vercel.app/sitemap.xml
