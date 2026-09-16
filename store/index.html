@@ -5780,6 +5780,8 @@ const convSeen = new Map();
 let notifUnreadCount = 0;
 let msgUnreadCount = 0;
 let convUnreadCount = 0;
+let notifBodyCache = '';
+let notifLoadGen = 0;
 
 function closeNotifPanel() {
     const panel = document.getElementById('notifPanel');
@@ -6054,9 +6056,15 @@ function notifPlatformValue(d) {
   }
 
   async function loadNotifList(uid) {
+    const gen = ++notifLoadGen;
     const list = document.getElementById('notifList');
     if (!list) return;
-    list.innerHTML = '<div class="notif-empty">Loading…</div>';
+    if (notifBodyCache) {
+        list.innerHTML = notifBodyCache;
+        bindNotifMsgItems();
+    } else {
+        list.innerHTML = '<div class="notif-empty">Loading…</div>';
+    }
     const tsMillis = (t) => t ? (t.toMillis ? t.toMillis() : (t.seconds ? t.seconds * 1000 : new Date(t).getTime())) : 0;
     const entries = [];
     try {
@@ -6106,11 +6114,15 @@ function notifPlatformValue(d) {
     });
     entries.sort((a, b) => b.ts - a.ts);
     const combined = entries.slice(0, 20).map(e => e.html).join('');
-    if (!combined) {
-        list.innerHTML = '<div class="notif-empty">No notifications yet 🎉</div>';
-        return;
-    }
-    list.innerHTML = combined;
+    if (gen !== notifLoadGen) return;
+    notifBodyCache = combined || '<div class="notif-empty">No notifications yet 🎉</div>';
+    list.innerHTML = notifBodyCache;
+    bindNotifMsgItems();
+}
+
+function bindNotifMsgItems() {
+    const list = document.getElementById('notifList');
+    if (!list) return;
     list.querySelectorAll('.msg-item').forEach(el => {
         el.addEventListener('click', () => {
             const convId = el.getAttribute('data-conv-dm');
@@ -6130,9 +6142,12 @@ async function markAllRead(docs) {
     const list = docs || [];
     if (list.length === 0 && uid) {
         try {
-            const q = query(collection(db, "notifications"), where("userId", "==", uid), where("read", "==", false));
-            const snap = await getDocs(q);
-            list.push(...snap.docs);
+            const q1 = query(collection(db, "notifications"), where("userId", "==", uid));
+            const q2 = query(collection(db, "notifications"), where("forUser", "==", uid));
+            const [s1, s2] = await Promise.all([getDocs(q1), getDocs(q2)]);
+            const seen = new Set();
+            s1.forEach(ds => { if (!seen.has(ds.id)) { seen.add(ds.id); list.push(ds); } });
+            s2.forEach(ds => { if (!seen.has(ds.id)) { seen.add(ds.id); list.push(ds); } });
         } catch (e) { return; }
     }
     const batch = writeBatch(db);
@@ -6184,7 +6199,7 @@ document.addEventListener('click', (e) => {
 onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     await renderHeader(user);
-    if (user) startNotifWatcher(user.uid); else stopNotifWatcher();
+    if (user) { startNotifWatcher(user.uid); loadNotifList(user.uid); } else stopNotifWatcher();
     if (cartOverlay.classList.contains('open')) {
         await renderCart();
     }
@@ -6737,6 +6752,7 @@ window.addEventListener('storage', (e) => {
     var deferredPrompt = null;
     var shown = false;
     var closed = false;
+    var DISMISS_EXPIRY_MS = 6 * 60 * 60 * 1000;
 
     function isInstalled() {
         return (window.matchMedia && (window.matchMedia('(display-mode: standalone)').matches ||
@@ -6744,13 +6760,20 @@ window.addEventListener('storage', (e) => {
             (window.navigator && window.navigator.standalone === true);
     }
 
-    if (isInstalled() || localStorage.getItem('volant_reads_pwa_dismissed')) return;
+    if (isInstalled()) return;
     if (!('serviceWorker' in navigator)) return;
+
+    var dismissedAt = parseInt(localStorage.getItem('volant_reads_pwa_dismissed_at') || '0', 10);
+    if (dismissedAt && (Date.now() - dismissedAt) < DISMISS_EXPIRY_MS) return;
 
     function showPop() {
         if (closed || shown) return;
         shown = true;
         setTimeout(function () { popEl.classList.add('show'); }, 1200);
+    }
+
+    function rememberDismiss() {
+        localStorage.setItem('volant_reads_pwa_dismissed_at', String(Date.now()));
     }
 
     window.addEventListener('beforeinstallprompt', function (e) {
@@ -6764,7 +6787,7 @@ window.addEventListener('storage', (e) => {
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then(function (choice) {
             if (choice && choice.outcome === 'dismissed') {
-                localStorage.setItem('volant_reads_pwa_dismissed', '1');
+                rememberDismiss();
                 popEl.classList.remove('show');
             }
             deferredPrompt = null;
@@ -6773,7 +6796,7 @@ window.addEventListener('storage', (e) => {
 
     closeEl.addEventListener('click', function () {
         closed = true;
-        localStorage.setItem('volant_reads_pwa_dismissed', '1');
+        rememberDismiss();
         popEl.classList.remove('show');
     });
 

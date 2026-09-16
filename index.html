@@ -3181,6 +3181,8 @@ const NotifUnreadCache = new Map();
 let NotifMsgUnread = 0;
 let NotifConvUnread = 0;
 const NotifPoemCache = {};
+let NotifBodyCache = '';
+let NotifLoadGen = 0;
 
 function notifEl(id) { return document.getElementById(id); }
 
@@ -3353,9 +3355,15 @@ async function notifTextHTML(d) {
 }
 
 async function loadNotifList(uid) {
+  const gen = ++NotifLoadGen;
   const list = notifEl('notifList');
   if (!list) return;
-  list.innerHTML = '<div class="notif-empty">Loading…</div>';
+  if (NotifBodyCache) {
+    list.innerHTML = NotifBodyCache;
+    notifBindMsgItems();
+  } else {
+    list.innerHTML = '<div class="notif-empty">Loading…</div>';
+  }
   const tsMillis = (t) => t ? (t.toMillis ? t.toMillis() : (t.seconds ? t.seconds * 1000 : new Date(t).getTime())) : 0;
   const entries = [];
   try {
@@ -3415,11 +3423,15 @@ async function loadNotifList(uid) {
   });
   entries.sort((a, b) => b.ts - a.ts);
   const combined = entries.slice(0, 20).map(e => e.html).join('');
-  if (!combined) {
-    list.innerHTML = '<div class="notif-empty">No notifications yet 🎉</div>';
-    return;
-  }
-  list.innerHTML = combined;
+  if (gen !== NotifLoadGen) return;
+  NotifBodyCache = combined || '<div class="notif-empty">No notifications yet 🎉</div>';
+  list.innerHTML = NotifBodyCache;
+  notifBindMsgItems();
+}
+
+function notifBindMsgItems() {
+  const list = notifEl('notifList');
+  if (!list) return;
   list.querySelectorAll('.msg-item').forEach(el => {
     el.addEventListener('click', () => {
       const convId = el.getAttribute('data-conv-dm');
@@ -3443,9 +3455,12 @@ async function markNotifAllRead(docs) {
   const list = docs || [];
   if (list.length === 0 && uid) {
     try {
-      const q = query(collection(db, "notifications"), where("userId", "==", uid), where("read", "==", false));
-      const snap = await getDocs(q);
-      list.push(...snap.docs);
+      const q1 = query(collection(db, "notifications"), where("userId", "==", uid));
+      const q2 = query(collection(db, "notifications"), where("forUser", "==", uid));
+      const [s1, s2] = await Promise.all([getDocs(q1), getDocs(q2)]);
+      const seen = new Set();
+      s1.forEach(ds => { if (!seen.has(ds.id)) { seen.add(ds.id); list.push(ds); } });
+      s2.forEach(ds => { if (!seen.has(ds.id)) { seen.add(ds.id); list.push(ds); } });
     } catch (e) { return; }
   }
   const batch = writeBatch(db);
@@ -3597,9 +3612,17 @@ document.addEventListener('click', (e) => {
 });
 window.addEventListener('authStateChanged', (ev) => {
   const u = (ev && ev.detail && ev.detail.user) || window.currentUser;
-  if (u && u.uid) startNotifWatchers(u.uid); else stopNotifWatchers();
+  if (u && u.uid) {
+    startNotifWatchers(u.uid);
+    loadNotifList(u.uid);
+  } else {
+    stopNotifWatchers();
+  }
 });
-if (window.currentUser && window.currentUser.uid) startNotifWatchers(window.currentUser.uid);
+if (window.currentUser && window.currentUser.uid) {
+  startNotifWatchers(window.currentUser.uid);
+  loadNotifList(window.currentUser.uid);
+}
 
 </script>
 
@@ -3892,10 +3915,10 @@ document.addEventListener("DOMContentLoaded", () => {
       e.stopPropagation();
       if (window.logoutUser) {
         window.logoutUser().then(() => {
-          window.location.href = getReturnUrl();
+          applyLogoutUI();
         });
       } else {
-        window.location.href = getReturnUrl();
+        applyLogoutUI();
       }
     });
   }
@@ -3905,14 +3928,30 @@ document.addEventListener("DOMContentLoaded", () => {
     mobileMenuLogoutBtn.addEventListener('click', function() {
       if (window.logoutUser) {
         window.logoutUser().then(() => {
-          const navLinksMenu = document.getElementById('nav-links');
-          if (navLinksMenu) navLinksMenu.classList.remove('show');
-          window.location.href = getReturnUrl();
+          applyLogoutUI();
         });
       } else {
-        window.location.href = getReturnUrl();
+        applyLogoutUI();
       }
     });
+  }
+
+  function applyLogoutUI() {
+    const navLinksMenu = document.getElementById('nav-links');
+    if (navLinksMenu) navLinksMenu.classList.remove('show');
+    updateAuthUI();
+    if (desktopMenuOpen) closeDesktopLogout();
+    if (typeof stopNotifWatchers === 'function') stopNotifWatchers();
+    const notifPanel = document.getElementById('notifPanel');
+    if (notifPanel) notifPanel.classList.remove('open');
+    const notifBadge = document.getElementById('notificationsBadge');
+    if (notifBadge) {
+      notifBadge.textContent = '';
+      notifBadge.style.display = 'none';
+    }
+    window.dispatchEvent(new CustomEvent('authStateChanged', {
+      detail: { user: null }
+    }));
   }
   
   // Listen for auth state changes from script.js
