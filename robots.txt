@@ -19,15 +19,11 @@ Allow: /shared/contact.html
 Allow: /shared/terms.html
 Allow: /shared/privacy.html
 
-# Store / Volant Reads (same domain)
-Allow: /store/index.html
-Allow: /store/submit.html
-Allow: /store/faq.html
-Allow: /store/refund.html
-Allow: /store/details.html
-
 # Volant Foundry (same domain)
 Allow: /volant_foundry/index.html
+
+# Personal (same domain)
+Allow: /personal/index.html
 
 # Block admin and private
 Disallow: /admin
@@ -37,8 +33,6 @@ Disallow: /login
 Disallow: /signup
 Disallow: /verify
 Disallow: /reset
-Disallow: /store/approvals.html
-Disallow: /store/dashboard.html
 Disallow: /shared/verify-email.html
 Disallow: /shared/universal-login.html
 Disallow: /shared/universal-signup.html
