@@ -12,7 +12,6 @@ const path = require('path');
 const domain = 'https://volantpoetry.vercel.app';
 const publicFolder = './';
 const MAX_POEMS = 5000;
-const MAX_BOOKS = 5000;
 
 // ✅ STATIC PAGES TO INDEX (all under volantpoetry.vercel.app)
 const allowedPages = [
@@ -32,14 +31,11 @@ const allowedPages = [
   'shared/terms.html',
   'shared/privacy.html',
   
-  // Volant Reads (Store) — hosted on this same domain
-  'store/index.html',
-  'store/submit.html',
-  'store/faq.html',
-  'store/refund.html',
-  
   // Volant Foundry — hosted on this same domain
-  'volant_foundry/index.html'
+  'volant_foundry/index.html',
+
+  // Personal section
+  'personal/index.html'
 ];
 
 // ❌ EXTERNAL PLATFORMS REMOVED
@@ -196,103 +192,6 @@ async function fetchPoemsFromFirestore() {
   }
 }
 
-// ============================================================
-// 📚 FETCH BOOKS FROM FIRESTORE (Volant Reads) — same domain
-// ============================================================
-async function fetchBooksFromFirestore() {
-  console.log('\n📚 Starting fetchBooksFromFirestore...');
-  
-  try {
-    console.log('📦 Using existing Firebase Admin SDK instance...');
-    const admin = require('firebase-admin');
-    
-    if (!admin.apps || admin.apps.length === 0) {
-      console.log('❌ Firebase Admin not initialized. Cannot fetch books.');
-      return [];
-    }
-    
-    const db = admin.firestore();
-    const allBooks = [];
-    
-    console.log('🔥 Connecting to Firestore for books...');
-    
-    try {
-      console.log('   📂 Fetching from: books (status: approved)');
-      
-      const snapshot = await db.collection('books')
-        .where('status', '==', 'approved')
-        .get();
-      
-      if (snapshot.empty) {
-        console.log('   ⚠️ No approved books found in Firestore');
-        return [];
-      }
-      
-      console.log(`   📄 Found ${snapshot.size} approved books`);
-      
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        const docId = doc.id;
-        
-        const title = data.title || 'Untitled';
-        const bookId = data.bookId || docId;
-        const authorName = data.authorName || data.author || 'Anonymous';
-        
-        const slug = data.slug || 
-                    title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 
-                    docId;
-        
-        let timestamp = new Date().toISOString();
-        if (data.createdAt) {
-          if (typeof data.createdAt === 'object' && data.createdAt.toDate) {
-            timestamp = data.createdAt.toDate().toISOString();
-          } else if (typeof data.createdAt === 'string') {
-            timestamp = data.createdAt;
-          } else if (typeof data.createdAt === 'number') {
-            timestamp = new Date(data.createdAt).toISOString();
-          }
-        } else if (data.approvedAt) {
-          if (typeof data.approvedAt === 'object' && data.approvedAt.toDate) {
-            timestamp = data.approvedAt.toDate().toISOString();
-          } else if (typeof data.approvedAt === 'string') {
-            timestamp = data.approvedAt;
-          }
-        } else if (data.updatedAt) {
-          if (typeof data.updatedAt === 'object' && data.updatedAt.toDate) {
-            timestamp = data.updatedAt.toDate().toISOString();
-          } else if (typeof data.updatedAt === 'string') {
-            timestamp = data.updatedAt;
-          }
-        }
-        
-        allBooks.push({
-          id: docId,
-          bookId: bookId,
-          title: title,
-          slug: slug,
-          authorName: authorName,
-          status: data.status || 'approved',
-          price: data.pricing?.amount || data.price || 0,
-          currency: data.pricing?.currency || data.currency || 'GHS',
-          timestamp: timestamp,
-          imageUrl: data.imageUrl || null
-        });
-      });
-      
-    } catch (err) {
-      console.log(`   ❌ Error fetching books:`, err.message);
-      return [];
-    }
-    
-    console.log(`\n✅ Total books fetched: ${allBooks.length}`);
-    return allBooks;
-    
-  } catch (err) {
-    console.error('❌ Failed to fetch books:', err.message);
-    return [];
-  }
-}
-
 // ---- Generate poem URLs ----
 function generatePoemUrls(poems) {
   const results = [];
@@ -307,41 +206,6 @@ function generatePoemUrls(poems) {
     if (poem.timestamp) {
       try {
         const date = new Date(poem.timestamp);
-        if (!isNaN(date.getTime())) {
-          lastmod = date.toISOString();
-        }
-      } catch (e) {}
-    }
-    
-    results.push({
-      loc: url,
-      lastmod: lastmod,
-      changefreq: 'weekly',
-      priority: '0.8'
-    });
-    
-    count++;
-  }
-  
-  return results;
-}
-
-// ============================================================
-// 📚 Generate book URLs (Volant Reads) — same domain
-// ============================================================
-function generateBookUrls(books) {
-  const results = [];
-  let count = 0;
-  
-  for (const book of books) {
-    if (count >= MAX_BOOKS) break;
-    
-    const url = `${domain}/store/details.html?id=${encodeURIComponent(book.id)}`;
-    
-    let lastmod = new Date().toISOString();
-    if (book.timestamp) {
-      try {
-        const date = new Date(book.timestamp);
         if (!isNaN(date.getTime())) {
           lastmod = date.toISOString();
         }
@@ -410,15 +274,11 @@ Allow: /shared/contact.html
 Allow: /shared/terms.html
 Allow: /shared/privacy.html
 
-# Store / Volant Reads (same domain)
-Allow: /store/index.html
-Allow: /store/submit.html
-Allow: /store/faq.html
-Allow: /store/refund.html
-Allow: /store/details.html
-
 # Volant Foundry (same domain)
 Allow: /volant_foundry/index.html
+
+# Personal (same domain)
+Allow: /personal/index.html
 
 # Block admin and private
 Disallow: /admin
@@ -428,8 +288,6 @@ Disallow: /login
 Disallow: /signup
 Disallow: /verify
 Disallow: /reset
-Disallow: /store/approvals.html
-Disallow: /store/dashboard.html
 Disallow: /shared/verify-email.html
 Disallow: /shared/universal-login.html
 Disallow: /shared/universal-signup.html
@@ -483,8 +341,8 @@ async function generateSitemap() {
       
       let priority = '0.8';
       
-      // PRIORITY 1.0 - Homepage & Bookstore
-      if (page === 'index.html' || urlPath === '' || urlPath === 'store/') {
+      // PRIORITY 1.0 - Homepage & Personal
+      if (page === 'index.html' || urlPath === '' || urlPath === 'personal/') {
         priority = '1.0';
       } 
       // PRIORITY 0.9 - Core Pages
@@ -499,8 +357,7 @@ async function generateSitemap() {
       // PRIORITY 0.8 - Secondary Pages
       else if (page === 'submission-guidelines.html' || 
                page === 'all-categories.html' ||
-               page === 'poem.html' ||
-               page.startsWith('store/')) {
+               page === 'poem.html') {
         priority = '0.8';
       } 
       // PRIORITY 0.6 - Legal/Contact Pages
@@ -534,36 +391,24 @@ async function generateSitemap() {
     const poemResults = generatePoemUrls(poems);
     console.log(`✅ ${poemResults.length} poem URLs generated (priority 0.8)`);
     
-    // 3. Dynamic Books
-    console.log("\n📚 Fetching books from Firestore using Admin SDK...");
-    const books = await fetchBooksFromFirestore();
-    const bookResults = generateBookUrls(books);
-    console.log(`✅ ${bookResults.length} book URLs generated (priority 0.8)`);
-    
-    // 4. Combine all URLs (NO external URLs)
-    const allUrls = [...staticResults, ...poemResults, ...bookResults];
+    // 3. Combine all URLs (NO external URLs, NO books)
+    const allUrls = [...staticResults, ...poemResults];
     
     console.log(`\n📊 Total: ${allUrls.length} URLs`);
     console.log(`   Static: ${staticResults.length}`);
     console.log(`   Dynamic Poems: ${poemResults.length}`);
-    console.log(`   Dynamic Books: ${bookResults.length}`);
     
     if (poemResults.length === 0) {
       console.log("\n⚠️ WARNING: No poem URLs generated!");
       console.log("📋 Check the logs above for errors.");
     }
     
-    if (bookResults.length === 0) {
-      console.log("\n⚠️ WARNING: No book URLs generated!");
-      console.log("📋 Check the logs above for errors.");
-    }
-    
-    // 5. Build sitemap
+    // 4. Build sitemap
     const xml = buildXML(allUrls);
     fs.writeFileSync(path.join(publicFolder, 'sitemap.xml'), xml, 'utf8');
     console.log('✅ sitemap.xml generated');
     
-    // 6. Sample URLs
+    // 5. Sample URLs
     console.log('\n📋 Sample URLs:');
     const sampleCount = Math.min(15, allUrls.length);
     for (let i = 0; i < sampleCount; i++) {
@@ -573,15 +418,14 @@ async function generateSitemap() {
       console.log(`   ... and ${allUrls.length - sampleCount} more`);
     }
     
-    // 7. Generate robots.txt
+    // 6. Generate robots.txt
     generateRobotsTxt();
     
-    // 8. Summary
+    // 7. Summary
     console.log('\n📊 Sitemap Statistics:');
     console.log(`   Total URLs: ${allUrls.length}`);
     console.log(`   Static: ${staticResults.length}`);
     console.log(`   Dynamic Poems: ${poemResults.length}`);
-    console.log(`   Dynamic Books: ${bookResults.length}`);
 
   } catch (err) {
     console.error('❌ Sitemap error:', err);
