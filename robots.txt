@@ -19,9 +19,6 @@ Allow: /shared/contact.html
 Allow: /shared/terms.html
 Allow: /shared/privacy.html
 
-# Volant Foundry (same domain)
-Allow: /volant_foundry/index.html
-
 # Personal (same domain)
 Allow: /personal/index.html
 
