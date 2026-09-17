@@ -30,9 +30,6 @@ const allowedPages = [
   'shared/contact.html',
   'shared/terms.html',
   'shared/privacy.html',
-  
-  // Volant Foundry — hosted on this same domain
-  'volant_foundry/index.html',
 
   // Personal section
   'personal/index.html'
@@ -274,9 +271,6 @@ Allow: /shared/contact.html
 Allow: /shared/terms.html
 Allow: /shared/privacy.html
 
-# Volant Foundry (same domain)
-Allow: /volant_foundry/index.html
-
 # Personal (same domain)
 Allow: /personal/index.html
 
@@ -349,7 +343,6 @@ async function generateSitemap() {
       else if (page === 'poems.html' || 
                page === 'submitpoems.html' || 
                page === 'shared/about.html' || 
-               page === 'volant_foundry/index.html' ||
                page === 'poem-of-the-week.html' || 
                page === 'quote-of-the-week.html') {
         priority = '0.9';
@@ -391,7 +384,7 @@ async function generateSitemap() {
     const poemResults = generatePoemUrls(poems);
     console.log(`✅ ${poemResults.length} poem URLs generated (priority 0.8)`);
     
-    // 3. Combine all URLs (NO external URLs, NO books)
+    // 3. Combine all URLs (NO external URLs, NO books, NO foundry)
     const allUrls = [...staticResults, ...poemResults];
     
     console.log(`\n📊 Total: ${allUrls.length} URLs`);
