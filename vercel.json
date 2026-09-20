@@ -3,10 +3,7 @@
     "api/*.js": {
       "memory": 1024,
       "maxDuration": 10,
-      "includeFiles": [
-        "poem.html",
-        "store/details.html"
-      ]
+      "includeFiles": "{poem.html,store/details.html}"
     }
   },
   "rewrites": [
