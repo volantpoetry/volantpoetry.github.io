@@ -1,12 +1,21 @@
-const CACHE = 'volant-poetry-v2';
+const CACHE = 'volant-poetry-v3';
 const PRECACHE = [
   '/',
   '/index.html',
   '/style.css',
   '/script.js',
-  '/poems.html',
-  '/notifications.html',
   '/manifest.json',
+  '/poems.html',
+  '/poem.html',
+  '/poem-of-the-week.html',
+  '/quote-of-the-week.html',
+  '/category.html',
+  '/individual.html',
+  '/all-categories.html',
+  '/submitpoems.html',
+  '/submission-guidelines.html',
+  '/notifications.html',
+  '/messages.html',
   '/icon/icon-192.png',
   '/icon/icon-512.png'
 ];
@@ -19,10 +28,15 @@ const BYPASS_CACHE_PATHS = [
   '/icon/icon-512.png'
 ];
 
+function isCacheable(response) {
+  return response && (response.ok || response.type === 'opaque');
+}
+
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE)
       .then((cache) => cache.addAll(PRECACHE))
+      .catch((err) => console.warn('Precache was partial:', err))
       .then(() => self.skipWaiting())
   );
 });
@@ -41,15 +55,25 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== location.origin) return;
 
+  // --- Page navigations: cache each URL under ITS OWN key so a user
+  // who opens a page while online can return to THAT page offline. ---
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put('/index.html', copy)).catch(() => {});
+          if (isCacheable(response) && response.type === 'basic') {
+            const copy = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
+          }
           return response;
         })
-        .catch(() => caches.match('/index.html'))
+        .catch(async () => {
+          const hit = await caches.match(request);
+          if (hit) return hit;
+          const fallback = await caches.match('/index.html');
+          if (fallback) return fallback;
+          return caches.match('/');
+        })
     );
     return;
   }
@@ -58,10 +82,12 @@ self.addEventListener('fetch', (event) => {
   if (NETWORK_FIRST_PATHS.some((p) => pathname === p || pathname.startsWith(p))) {
     event.respondWith(
       fetch(request).then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
+        if (isCacheable(response)) {
+          const copy = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
+        }
         return response;
-      }).catch(() => caches.match(request).then((cached) => cached || fetch(request)))
+      }).catch((err) => caches.match(request).then((cached) => cached || Promise.reject(err)))
     );
     return;
   }
@@ -75,7 +101,7 @@ self.addEventListener('fetch', (event) => {
     caches.match(request).then((cached) => {
       if (cached) return cached;
       return fetch(request).then((response) => {
-        if (response && response.status === 200 && response.type === 'basic') {
+        if (isCacheable(response)) {
           const copy = response.clone();
           caches.open(CACHE).then((cache) => cache.put(request, copy)).catch(() => {});
         }
