@@ -1401,7 +1401,7 @@ header nav {
         <ul>
           <li><i class="fas fa-globe"></i> Open to everyone — no membership</li>
           <li><i class="fas fa-file-alt"></i> Submit title, synopsis, author bio</li>
-          <li><i class="fas fa-file-pdf"></i> Upload PDF manuscript</li>
+          <li><i class="fas fa-file-pdf"></i> Upload your manuscript (PDF or EPUB)</li>
           <li><i class="fas fa-image"></i> Add cover image</li>
           <li><i class="fas fa-tag"></i> Set your own price <span class="badge">paid</span></li>
           <li><i class="fas fa-percent"></i> Earn <strong>90%</strong> of net sales <span class="badge gold">90%</span></li>
@@ -1658,7 +1658,7 @@ header nav {
 
 <!-- Footer -->
 <footer>
-  &copy; 2026 Volant Foundry. All Rights Reserved.
+  &copy; <span id="year"></span> Volant Foundry. All Rights Reserved.
 </footer>
 
 <script type="module" src="test.js"></script>
@@ -1671,5 +1671,9 @@ header nav {
   closeBtn.addEventListener("click", () => navLinks.classList.remove("show"));
 </script>
 
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>

@@ -361,7 +361,7 @@
           <h3>1.3 Content & Activity</h3>
           <ul>
             <li><span class="highlight">Poems submitted</span> — published to the platform under your name.</li>
-            <li><span class="highlight">Book submissions</span> — including title, synopsis, author bio, cover image, PDF manuscript, pricing, and number of pages.</li>
+            <li><span class="highlight">Book submissions</span> — including title, synopsis, author bio, cover image, manuscript file (PDF or EPUB), pricing, and number of pages.</li>
             <li><span class="highlight">Comments and likes</span> — interactions with other poets and readers.</li>
             <li><span class="highlight">Book purchases and downloads</span> — records of books you have acquired.</li>
             <li><span class="highlight">Web development project requests</span> — including project details, scope, and requirements submitted through Volant Codes.</li>
@@ -406,7 +406,7 @@
           <p>However, we work with trusted third-party providers to operate our platform. These include:</p>
           <ul>
             <li><span class="accent-text">Firebase / Google Cloud</span> — for authentication, database, and hosting.</li>
-            <li><span class="accent-text">Cloudinary</span> — for storing and delivering images, PDFs, and other media.</li>
+            <li><span class="accent-text">Cloudinary</span> — for storing and delivering images, book files (PDF or EPUB), and other media.</li>
             <li><span class="accent-text">Payment Processors</span> — <span class="highlight">Payments are processed through third-party providers</span> such as PayPal, Stripe, or mobile money services. We do not store full payment card details on our servers.</li>
           </ul>
           <p style="margin-top: 0.75rem;">
@@ -499,8 +499,12 @@
   </div>
 
   <footer class="page-footer">
-    <p>© 2026 Volant Foundry. All rights reserved. | <a href="terms.html">Terms & Conditions</a> | <a href="contact.html">Contact Us</a></p>
+    <p>© <span id="year"></span> Volant Foundry. All rights reserved. | <a href="terms.html">Terms & Conditions</a> | <a href="contact.html">Contact Us</a></p>
   </footer>
 
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 // store/sw.js
 // v7: offline bookstore shell + offline book reading (PDF & EPUB).
-const CACHE_NAME = 'volant-reads-v7';
+const CACHE_NAME = 'volant-reads-v8';
 const BOOK_CACHE = 'volant-reads-pdfs';
 
 // Pages that change with the signed-in user and must always hit the network.
@@ -41,8 +41,9 @@ function isCacheable(response) {
 async function putInCache(cacheName, request, response) {
     try {
         if (!isCacheable(response)) return;
+        const copy = response.clone();
         const cache = await caches.open(cacheName);
-        await cache.put(request, response.clone());
+        await cache.put(request, copy);
     } catch (err) {
         console.warn('SW cache put failed:', err);
     }

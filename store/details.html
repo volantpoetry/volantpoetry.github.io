@@ -40,7 +40,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <script>
     if ('serviceWorker' in navigator && location.protocol === 'https:') {
-      navigator.serviceWorker.register('/sw.js?v=5', { scope: '/' }).catch(function() {});
+      navigator.serviceWorker.register('/sw.js?v=8', { scope: '/' }).catch(function() {});
     }
   </script>
 
@@ -4460,7 +4460,10 @@ function goToLogin() {
       arrayRemove,
       serverTimestamp,
       orderBy,
-      limit
+      limit,
+      initializeFirestore,
+      persistentLocalCache,
+      persistentMultipleTabManager
     } from "firebase/firestore";
     import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
     import { logEvent, logPageView, captureCampaignEmail, clearAbandonedCart } from "./store-ops.js";
@@ -4475,7 +4478,16 @@ function goToLogin() {
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    let db;
+    try {
+      db = initializeFirestore(app, {
+        localCache: persistentLocalCache({
+          tabManager: persistentMultipleTabManager()
+        })
+      });
+    } catch (e) {
+      db = getFirestore(app);
+    }
     const auth = getAuth(app);
     logPageView('details');
 
@@ -5338,7 +5350,7 @@ function goToLogin() {
                 </div>
               </div>
               <hr>
-              <a class="acct-item" href="dashboard.html#library" style="text-decoration:none;"><i class="fas fa-book-open"></i> My Library</a>
+              <a class="acct-item" href="library.html" style="text-decoration:none;"><i class="fas fa-book-open"></i> My Library</a>
               <a class="acct-item" href="dashboard.html" id="navAcctDashboard" style="display:none;text-decoration:none;" onclick="sessionStorage.setItem('volant_reads_current_page','dashboard');"><i class="fas fa-gauge-high"></i> My Dashboard</a>
               <button class="acct-item" id="navAcctSignOut" type="button"><i class="fas fa-sign-out-alt"></i> Sign out</button>
               <small class="acct-foot">Signed in on Volant Reads</small>

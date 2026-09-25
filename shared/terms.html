@@ -602,8 +602,12 @@
 </div>
 
 <footer class="page-footer">
-  <p>© 2026 Volant Foundry. All rights reserved. | <a href="privacy.html">Privacy Policy</a> | <a href="contact.html">Contact Us</a></p>
+  <p>© <span id="year"></span> Volant Foundry. All rights reserved. | <a href="privacy.html">Privacy Policy</a> | <a href="contact.html">Contact Us</a></p>
 </footer>
 
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
