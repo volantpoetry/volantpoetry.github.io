@@ -15,10 +15,18 @@
     
     if (!hasAuth) {
         if (!sessionStorage.getItem('auth_redirect_attempted')) {
-            sessionStorage.setItem('auth_redirect_attempted', 'true');
-            const currentPage = window.location.pathname + window.location.search;
-            window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'reads' }) + 
-                                  encodeURIComponent(currentPage);
+sessionStorage.setItem('auth_redirect_attempted', 'true');
+            // The auth overlay script is loaded at the bottom of this page, so wait
+            // for it before opening; fall back to the standalone login page if needed.
+            (function tryOpenLogin(attempts) {
+                if (window.VolantAuth && typeof window.VolantAuth.open === 'function') {
+                    window.VolantAuth.open('login', { platform: 'reads', redirect: encodeURIComponent(window.location.pathname + window.location.search) });
+                } else if (attempts < 40) {
+                    setTimeout(function () { tryOpenLogin(attempts + 1); }, 100);
+                } else {
+                    window.location.href = 'universal-login.html?platform=reads&redirect=' + encodeURIComponent(window.location.pathname + window.location.search);
+                }
+            })(0);
         }
     } else {
         sessionStorage.removeItem('auth_redirect_attempted');
@@ -8914,9 +8922,7 @@ window.addEventListener('storage', function(e) {
     } else {
       if (!window.location.pathname.includes('universal-login') && 
           !window.location.pathname.includes('verify-email')) {
-        const currentPage = window.location.pathname + window.location.search;
-        window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'reads' }) + 
-                              encodeURIComponent(currentPage);
+window.goToLogin();
       }
     }
   });
@@ -8951,5 +8957,16 @@ window.addEventListener('storage', function(e) {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script src="../shared/auth-overlay.js?v=5"></script>
+<script>
+// Robust sign-in helper: use the Volant Auth overlay when available,
+// otherwise fall back to the standalone universal-login page.
+window.goToLogin = function () {
+    var target = encodeURIComponent(window.location.pathname + window.location.search);
+    if (window.VolantAuth && typeof window.VolantAuth.open === 'function') {
+        try { window.VolantAuth.open('login', { platform: 'reads', redirect: target }); return; } catch (e) { }
+    }
+    window.location.href = 'universal-login.html?platform=reads&redirect=' + target;
+};
+</script>
 </body>
 </html>

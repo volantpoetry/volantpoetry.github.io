@@ -5703,7 +5703,7 @@ couponInput.addEventListener('keydown', function(e) {
 checkoutBtn.addEventListener('click', async function() {
     if (!currentUser) {
         showToast('🔐 Please sign in to checkout.', 'error');
-        window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'reads' });
+        goToLogin()
         return;
     }
 
@@ -6192,7 +6192,7 @@ async function renderHeader(user) {
         `;
         document.getElementById('cartOpenBtn')?.addEventListener('click', openCart);
         document.getElementById('wishlistHeaderBtn')?.addEventListener('click', () => {
-            window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'reads' });
+            goToLogin()
         });
     }
     updateCartBadge();
@@ -7312,5 +7312,16 @@ document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
 <script src="../shared/auth-overlay.js?v=5"></script>
+<script>
+// Robust sign-in helper: use the Volant Auth overlay when available,
+// otherwise fall back to the standalone universal-login page.
+window.goToLogin = function () {
+    var target = encodeURIComponent(window.location.pathname + window.location.search);
+    if (window.VolantAuth && typeof window.VolantAuth.open === 'function') {
+        try { window.VolantAuth.open('login', { platform: 'reads', redirect: target }); return; } catch (e) { }
+    }
+    window.location.href = 'universal-login.html?platform=reads&redirect=' + target;
+};
+</script>
 </body>
 </html>

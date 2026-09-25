@@ -4029,7 +4029,11 @@ header .logo-header {
 // Helper function for login redirect
 function goToLogin() {
     const currentUrl = window.location.pathname + window.location.search;
-    window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'reads' }) + encodeURIComponent(currentUrl);
+    const target = encodeURIComponent(currentUrl);
+    if (window.VolantAuth && typeof window.VolantAuth.open === 'function') {
+        try { window.VolantAuth.open('login', { platform: 'reads', redirect: target }); return; } catch (err) { }
+    }
+    window.location.href = 'universal-login.html?platform=reads&redirect=' + target;
 }
 </script>
 
@@ -4983,7 +4987,7 @@ function goToLogin() {
     function openContactModal(book) {
       if (!currentUser) {
         showToast('🔐 Please sign in to contact the author.', 'error');
-        window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'reads' }) + encodeURIComponent(window.location.pathname + window.location.search);
+        goToLogin();
         return;
       }
       contactBookTitle.textContent = `About: ${book.title || 'Untitled'}`;
@@ -6909,7 +6913,7 @@ function goToLogin() {
 
     // ===== PAY BUTTON =====
     payBtn.addEventListener('click', function() {
-      if (!currentUser) { showToast('🔐 Please sign in to purchase.', 'error'); window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'reads' }) + encodeURIComponent(window.location.pathname + window.location.search); return; }
+      if (!currentUser) { showToast('🔐 Please sign in to purchase.', 'error'); goToLogin(); return; }
       if (!currentBook) { showToast('❌ Book not loaded.', 'error'); return; }
       if (hasPaidForBook) { showToast('✅ You already own this book!', 'success'); return; }
       const amount = effectiveBookPrice(currentBook);
@@ -6927,7 +6931,7 @@ function goToLogin() {
 
     // ===== RE-PURCHASE BUTTON =====
     repurchaseBtn.addEventListener('click', function() {
-      if (!currentUser) { showToast('🔐 Please sign in to purchase.', 'error'); window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'reads' }) + encodeURIComponent(window.location.pathname + window.location.search); return; }
+      if (!currentUser) { showToast('🔐 Please sign in to purchase.', 'error'); goToLogin(); return; }
       if (!currentBook) { showToast('❌ Book not loaded.', 'error'); return; }
       const amount = effectiveBookPrice(currentBook);
       if (amount <= 0) {
@@ -6944,7 +6948,7 @@ function goToLogin() {
     checkoutBtn.addEventListener('click', async function() {
       if (!currentUser) {
         showToast('🔐 Please sign in to checkout.', 'error');
-        window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'reads' }) + encodeURIComponent(window.location.pathname + window.location.search);
+        goToLogin();
         return;
       }
 
@@ -8104,7 +8108,7 @@ function goToLogin() {
 
     // ===== WISHLIST BUTTON =====
     wishlistBtn.addEventListener('click', async function() {
-      if (!currentUser) { showToast('🔐 Please sign in to use wishlist.', 'error'); window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'reads' }) + encodeURIComponent(window.location.pathname + window.location.search); return; }
+      if (!currentUser) { showToast('🔐 Please sign in to use wishlist.', 'error'); goToLogin(); return; }
       if (!currentBook) { showToast('❌ Book not loaded.', 'error'); return; }
       wishlistBtn.disabled = true;
       const inWishlist = await isBookInWishlist(currentUser.uid, currentBook.id);

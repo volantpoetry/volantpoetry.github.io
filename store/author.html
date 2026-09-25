@@ -563,9 +563,13 @@
       toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2600);
     }
 
-    function goToLogin() {
+function goToLogin() {
       const redir = window.location.pathname + window.location.search;
-      window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'reads' }) + encodeURIComponent(redir);
+      const target = encodeURIComponent(redir);
+      if (window.VolantAuth && typeof window.VolantAuth.open === 'function') {
+        try { window.VolantAuth.open('login', { platform: 'reads', redirect: target }); return; } catch (err) { }
+      }
+      window.location.href = 'universal-login.html?platform=reads&redirect=' + target;
     }
 
     /* ===== HEADER ===== */
