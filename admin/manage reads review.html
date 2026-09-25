@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Manage Reads Reviews</title>
+    <link rel="icon" type="image/png" href="images/logo.png" />
+    <link rel="apple-touch-icon" href="images/logo.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f2ed;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+            border: 1px solid #ede7df;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #2d2a24;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        h1 i { color: #b76e4b; }
+        .subtitle { color: #6f6252; margin-bottom: 1.5rem; font-size: 0.95rem; }
+
+        .auth-section {
+            background: #f8f5f0;
+            padding: 1.2rem 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #ede7df;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .auth-section .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        .auth-section .status .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .auth-section .status .dot.online { background: #2d7d46; }
+        .auth-section .status .dot.offline { background: #b33; }
+
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .btn-primary { background: #4b2aad; color: white; }
+        .btn-primary:hover { background: #3a1f8a; transform: translateY(-2px); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-danger:hover { background: #b02a37; transform: translateY(-2px); }
+        .btn-danger:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-outline { background: transparent; color: #6f6252; border: 1px solid #ede7df; }
+        .btn-outline:hover { background: #f0ebe4; }
+        .btn-sm { padding: 0.3rem 1rem; font-size: 0.75rem; }
+
+        .stats-bar {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+            padding: 0.8rem 1.2rem;
+            background: #f8f5f0;
+            border-radius: 12px;
+            border: 1px solid #ede7df;
+        }
+        .stats-bar .stat { font-size: 0.85rem; color: #6f6252; }
+        .stats-bar .stat strong { color: #2d2a24; }
+        .stats-bar .stat i { margin-right: 4px; color: #4b2aad; }
+
+        .filters {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .filters input {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            border: 1px solid #ede7df;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: 0.3s;
+            min-width: 150px;
+        }
+        .filters input:focus {
+            border-color: #4b2aad;
+            box-shadow: 0 0 0 3px rgba(75, 42, 173, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #2d2a24;
+            margin: 1.6rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title i { color: #b76e4b; }
+
+        .books-list { display: flex; flex-direction: column; gap: 1.2rem; }
+        .book-card {
+            background: #faf8f5;
+            border-radius: 16px;
+            border: 1px solid #ede7df;
+            padding: 1rem 1.2rem;
+            transition: 0.3s;
+        }
+        .book-card:hover { border-color: #d9d0f0; }
+        .book-head {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+            border-bottom: 1px dashed #e3dbcf;
+            padding-bottom: 0.8rem;
+        }
+        .book-cover {
+            width: 56px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #4b2aad, #7b5cff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.6rem;
+            box-shadow: 0 2px 8px rgba(75, 42, 173, 0.2);
+        }
+        .book-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .book-detail { flex: 1; min-width: 180px; }
+        .book-detail h3 { font-size: 1.05rem; color: #2d2a24; }
+        .book-detail .author { font-size: 0.85rem; color: #6f6252; margin-top: 2px; }
+        .book-detail .book-id {
+            font-size: 0.6rem;
+            color: #b0a496;
+            background: #f0ebe4;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            display: inline-block;
+            margin-top: 6px;
+        }
+        .book-detail .review-count {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #4b2aad;
+            background: #ece7fb;
+            padding: 2px 10px;
+            border-radius: 999px;
+            margin-left: 8px;
+            display: inline-block;
+        }
+
+        .reviews-wrap { display: flex; flex-direction: column; gap: 0.7rem; }
+        .review-item {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ede7df;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .review-content { flex: 1; min-width: 220px; }
+        .review-content .reviewer {
+            font-weight: 600;
+            color: #2d2a24;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+        }
+        .reviewer .avatar {
+            width: 22px; height: 22px; border-radius: 50%;
+            object-fit: cover;
+        }
+        .reviewer .stars { color: #f5b342; font-size: 0.8rem; letter-spacing: 1px; }
+        .review-text { color: #4a4538; font-size: 0.88rem; margin-top: 4px; line-height: 1.5; }
+        .review-meta { font-size: 0.7rem; color: #8a7b6a; margin-top: 4px; display: flex; gap: 14px; flex-wrap: wrap; }
+        .review-meta i { margin-right: 3px; }
+        .review-actions { display: flex; gap: 0.5rem; flex-shrink: 0; align-items: center; }
+
+        .empty-state { text-align: center; padding: 3rem 1rem; color: #8a7b6a; }
+        .empty-state i { font-size: 3rem; color: #ede7df; margin-bottom: 1rem; display: block; }
+
+        .loading { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; padding: 3rem 1rem; color: #8a7b6a; }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #ede7df;
+            border-top: 4px solid #4b2aad;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 1000;
+            font-size: 0.9rem;
+            max-width: 320px;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { background: #2d7d46; }
+        .toast.error { background: #b76e4b; }
+        .toast.info { background: #4b2aad; }
+
+        .panel-hidden { display: none !important; }
+        .center { text-align: center; }
+
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            .container { padding: 1.2rem; }
+            .review-item { flex-direction: column; align-items: stretch; }
+            .review-actions { justify-content: flex-end; }
+            .filters { flex-direction: column; }
+            .filters input { width: 100%; }
+            .auth-section { flex-direction: column; align-items: stretch; text-align: center; }
+            .stats-bar { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1><i class="fas fa-book-open"></i> Manage Reads Reviews</h1>
+    <p class="subtitle">Every book on Volant Reads with its reviews. You can delete any review.</p>
+
+    <!-- Auth Status -->
+    <div class="auth-section" id="authSection">
+        <div class="status" id="authStatus">
+            <span class="dot offline" id="authDot"></span>
+            <span id="authText">Checking access...</span>
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-left:auto;">
+            <button class="btn btn-primary btn-sm" id="refreshBtn" style="display:none;">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+            <button class="btn btn-outline btn-sm" id="signOutBtn" style="display:none;">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar" id="statsBar" style="display:none;">
+        <span class="stat"><i class="fas fa-book"></i> Books: <strong id="totalBooks">0</strong></span>
+        <span class="stat"><i class="fas fa-comments"></i> Reviews: <strong id="totalReviews">0</strong></span>
+        <span class="stat"><i class="fas fa-check-circle"></i> Books With Reviews: <strong id="booksWithReviews">0</strong></span>
+        <span class="stat"><i class="fas fa-unlink"></i> Unmatched: <strong id="orphanCount">0</strong></span>
+    </div>
+
+    <!-- Admin Panel (hidden until admin) -->
+    <div id="adminPanel" class="panel-hidden">
+        <!-- Filters -->
+        <div class="filters">
+            <input type="text" id="bookSearch" placeholder="🔍 Filter books by title or author..." />
+            <input type="text" id="reviewSearch" placeholder="💬 Filter reviews by reviewer or text..." />
+            <button class="btn btn-primary btn-sm" id="forceLoadBtn">
+                <i class="fas fa-cloud-download-alt"></i> Load All
+            </button>
+            <button class="btn btn-outline btn-sm" id="resetCountersBtn" title="Zero reviewCount/averageRating on books with no actual reviews">
+                <i class="fas fa-sync-alt"></i> Reset Stale Counters
+            </button>
+        </div>
+
+        <!-- Books + Reviews -->
+        <div id="booksContainer"></div>
+
+        <!-- Orphan reviews -->
+        <div id="orphanSection" class="panel-hidden">
+            <div class="section-title"><i class="fas fa-unlink"></i> Reviews Without a Book</div>
+            <div id="orphanList"></div>
+        </div>
+    </div>
+
+    <!-- Unauthorized / sign-in prompt -->
+    <div id="lockedPanel" class="panel-hidden">
+        <div class="empty-state">
+            <i class="fas fa-lock"></i>
+            <p id="lockedText">You need to be signed in as an administrator.</p>
+            <p style="margin-top: 1rem;">
+                <a href="admin-login.html" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Go to Admin Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script type="importmap">
+{
+    "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
+    }
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs, getDoc, doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
+    authDomain: "silent-depth.firebaseapp.com",
+    projectId: "silent-depth",
+    storageBucket: "silent-depth.appspot.com",
+    messagingSenderId: "78008755450",
+    appId: "1:78008755450:web:3fd0f0f298a08820935543"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const toast = document.getElementById('toast');
+const adminPanel = document.getElementById('adminPanel');
+const lockedPanel = document.getElementById('lockedPanel');
+const statsBar = document.getElementById('statsBar');
+const booksContainer = document.getElementById('booksContainer');
+
+let currentUser = null;
+let isAdmin = false;
+let books = [];
+let reviews = [];
+
+function showToast(message, type = 'info') {
+    toast.textContent = message;
+    toast.className = `toast ${type}`;
+    void toast.offsetWidth;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+function esc(str) {
+    return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+async function checkAdmin(user) {
+    if (!user) return false;
+    try {
+        const d = await getDoc(doc(db, 'admins', user.uid));
+        return d.exists();
+    } catch (e) {
+        console.error('Admin check error:', e);
+        return false;
+    }
+}
+
+function updateAuthUI() {
+    if (isAdmin && currentUser) {
+        document.getElementById('authText').textContent = `Signed in as admin: ${currentUser.displayName || currentUser.email || currentUser.uid}`;
+        document.getElementById('authDot').className = 'dot online';
+        document.getElementById('signOutBtn').style.display = 'inline-flex';
+        document.getElementById('refreshBtn').style.display = 'inline-flex';
+    } else if (currentUser) {
+        document.getElementById('authText').textContent = `Signed in as: ${currentUser.displayName || currentUser.email || currentUser.uid} (not admin)`;
+        document.getElementById('authDot').className = 'dot offline';
+        document.getElementById('signOutBtn').style.display = 'inline-flex';
+        document.getElementById('refreshBtn').style.display = 'none';
+        document.getElementById('lockedText').textContent = 'This account is not authorized to manage reads reviews.';
+        adminPanel.classList.add('panel-hidden');
+        lockedPanel.classList.remove('panel-hidden');
+    } else {
+        document.getElementById('authText').textContent = 'Not signed in';
+        document.getElementById('authDot').className = 'dot offline';
+        document.getElementById('signOutBtn').style.display = 'none';
+        document.getElementById('refreshBtn').style.display = 'none';
+        document.getElementById('lockedText').textContent = 'You need to be signed in as an administrator.';
+        adminPanel.classList.add('panel-hidden');
+        lockedPanel.classList.remove('panel-hidden');
+    }
+}
+
+function showUnauthorized() {
+    isAdmin = false;
+    adminPanel.classList.add('panel-hidden');
+    statsBar.style.display = 'none';
+    lockedPanel.classList.remove('panel-hidden');
+    updateAuthUI();
+}
+
+function showLoading() {
+    booksContainer.innerHTML = `
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>Loading all books and reviews...</p>
+        </div>`;
+}
+
+const FALLBACK_COVER_GRADIENT = 'linear-gradient(135deg,#4b2aad,#7b5cff)';
+
+function starsHtml(rating) {
+    const r = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
+    return '★'.repeat(r) + '☆'.repeat(5 - r);
+}
+
+function reviewItemHtml(review) {
+    const reviewerName = review.userSnapshot?.username || review.userName || 'Anonymous';
+    const photoURL = review.userSnapshot?.photoURL || '';
+    let dateTxt = '—';
+    try {
+        const t = review.createdAt?.toDate ? review.createdAt.toDate() : new Date(review.createdAt || Date.now());
+        if (!isNaN(t)) dateTxt = t.toLocaleDateString();
+    } catch (e) {}
+    const text = review.review || 'No review text.';
+    return `
+        <div class="review-item" data-review-id="${esc(review.id)}">
+            <div class="review-content">
+                <div class="reviewer">
+                    ${photoURL ? `<img src="${esc(photoURL)}" class="avatar" alt="" />` : ''}
+                    <span>${esc(reviewerName)}</span>
+                    <span class="stars">${starsHtml(review.rating)}</span>
+                    <span style="font-size:0.7rem;color:#8a7b6a;">${esc(String(review.rating ?? '—'))}.0</span>
+                </div>
+                <div class="review-text">${esc(text)}</div>
+                <div class="review-meta">
+                    <span><i class="fas fa-calendar-alt"></i> ${esc(dateTxt)}</span>
+                    <span><i class="fas fa-thumbs-up"></i> ${Number(review.helpfulCount) || 0} helpful</span>
+                    <span class="book-id" style="font-size:0.6rem;color:#b0a496;font-family:monospace;">${esc(review.bookId || '—')}</span>
+                </div>
+            </div>
+            <div class="review-actions">
+                <button class="btn btn-danger btn-sm delete-btn" data-review-id="${esc(review.id)}" data-reviewer="${esc(reviewerName)}" data-book="${esc(review.bookId || '')}">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>`;
+}
+
+function render() {
+    const bookTerm = document.getElementById('bookSearch').value.trim().toLowerCase();
+    const reviewTerm = document.getElementById('reviewSearch').value.trim().toLowerCase();
+
+    const bookMap = new Map(books.map(b => [b.id, b]));
+    const grouped = {};
+    reviews.forEach(r => {
+        const bid = r.bookId || 'none';
+        if (!grouped[bid]) grouped[bid] = [];
+        grouped[bid].push(r);
+    });
+
+    const booksWithReviews = Object.keys(grouped).filter(k => bookMap.has(k) && k !== 'none').length;
+
+    document.getElementById('totalBooks').textContent = books.length;
+    document.getElementById('totalReviews').textContent = reviews.length;
+    document.getElementById('booksWithReviews').textContent = booksWithReviews;
+
+    const sortedBooks = [...books].sort((a, b) => {
+        const ra = grouped[a.id]?.length || 0;
+        const rb = grouped[b.id]?.length || 0;
+        if (ra !== rb) return rb - ra;
+        return (a.title || '').localeCompare(b.title || '');
+    });
+
+    let html = '';
+    let shownBooks = 0;
+
+    sortedBooks.forEach(b => {
+        const title = b.title || 'Untitled';
+        const author = b.authorName || 'Unknown Author';
+        const titleMatch = title.toLowerCase().includes(bookTerm);
+        const authorMatch = author.toLowerCase().includes(bookTerm);
+        if (bookTerm && !titleMatch && !authorMatch) return;
+
+        const bookReviews = grouped[b.id] || [];
+        let shownReviews = bookReviews;
+        if (reviewTerm) {
+            shownReviews = bookReviews.filter(r =>
+                (r.userSnapshot?.username || r.userName || '').toLowerCase().includes(reviewTerm) ||
+                (r.review || '').toLowerCase().includes(reviewTerm)
+            );
+        }
+        if (reviewTerm && shownReviews.length === 0) return;
+
+        shownBooks++;
+
+        const coverUrl = b.imageUrl;
+        html += `
+            <div class="book-card" data-book-id="${esc(b.id)}">
+                <div class="book-head">
+                    <div class="book-cover">
+                        ${coverUrl ? `<img src="${esc(coverUrl)}" alt="" onerror="this.style.display='none';" />` : '<i class="fas fa-book"></i>'}
+                    </div>
+                    <div class="book-detail">
+                        <h3>${esc(title)}</h3>
+                        <div class="author"><i class="fas fa-user-edit"></i> ${esc(author)}</div>
+                        <div>
+                            <span class="book-id">${esc(b.id)}</span>
+                            <span class="review-count">${bookReviews.length} review${bookReviews.length === 1 ? '' : 's'}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="reviews-wrap">
+                    ${shownReviews.length ? shownReviews.map(reviewItemHtml).join('') : '<div class="empty-state" style="padding:1.2rem;"><p style="font-size:0.85rem;">No matching reviews.</p></div>'}
+                </div>
+            </div>`;
+    });
+
+    if (shownBooks === 0) {
+        booksContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <p>No books match your filters.</p>
+            </div>`;
+    } else {
+        booksContainer.innerHTML = html;
+    }
+
+    // Orphans
+    const orphanKeys = Object.keys(grouped).filter(k => (!bookMap.has(k)) && k !== 'none');
+    const orphanReviews = orphanKeys.flatMap(k => grouped[k]);
+    const orphanSection = document.getElementById('orphanSection');
+    const orphanList = document.getElementById('orphanList');
+    document.getElementById('orphanCount').textContent = orphanReviews.length;
+
+    if (orphanReviews.length) {
+        const visibleOrphan = reviewTerm
+            ? orphanReviews.filter(r =>
+                (r.userSnapshot?.username || r.userName || '').toLowerCase().includes(reviewTerm) ||
+                (r.review || '').toLowerCase().includes(reviewTerm))
+            : orphanReviews;
+        orphanList.innerHTML = visibleOrphan.length
+            ? visibleOrphan.map(reviewItemHtml).join('')
+            : '<div class="empty-state" style="padding:1.2rem;"><p style="font-size:0.85rem;">No matching reviews.</p></div>';
+        orphanSection.classList.remove('panel-hidden');
+    } else {
+        orphanSection.classList.add('panel-hidden');
+    }
+}
+
+async function loadAll() {
+    showLoading();
+    try {
+        const [booksSnap, reviewsSnap] = await Promise.all([
+            getDocs(collection(db, 'books')),
+            getDocs(collection(db, 'reviews'))
+        ]);
+        books = [];
+        booksSnap.forEach(d => books.push({ id: d.id, ...d.data() }));
+        reviews = [];
+        reviewsSnap.forEach(d => reviews.push({ id: d.id, ...d.data() }));
+        render();
+        showToast(`✅ Loaded ${books.length} books and ${reviews.length} reviews`, 'success');
+    } catch (err) {
+        console.error('Error loading:', err);
+        booksContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-circle" style="color:#b33;"></i>
+                <p>Error loading data: ${esc(err.message)}</p>
+            </div>`;
+        showToast('❌ Error loading data', 'error');
+    }
+}
+
+async function deleteReview(reviewId) {
+    try {
+        await deleteDoc(doc(db, 'reviews', reviewId));
+        reviews = reviews.filter(r => r.id !== reviewId);
+        showToast('✅ Review deleted successfully!', 'success');
+        render();
+    } catch (err) {
+        console.error('Error deleting review:', err);
+        showToast(`❌ Error: ${err.message}`, 'error');
+    }
+}
+
+booksContainer.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.delete-btn');
+    if (!btn) return;
+    const reviewId = btn.dataset.reviewId;
+    if (confirm(`⚠️ Delete review by "${btn.dataset.reviewer}"${btn.dataset.book ? ` for book ${btn.dataset.book}` : ''}? This cannot be undone.`)) {
+        await deleteReview(reviewId);
+    }
+});
+
+document.getElementById('orphanList').addEventListener('click', async (e) => {
+    const btn = e.target.closest('.delete-btn');
+    if (!btn) return;
+    const reviewId = btn.dataset.reviewId;
+    if (confirm(`⚠️ Delete review by "${btn.dataset.reviewer}"? This cannot be undone.`)) {
+        await deleteReview(reviewId);
+    }
+});
+
+document.getElementById('forceLoadBtn').addEventListener('click', loadAll);
+document.getElementById('refreshBtn').addEventListener('click', loadAll);
+
+document.getElementById('resetCountersBtn').addEventListener('click', async () => {
+    const stale = books.filter(b => {
+        const count = Number(b.reviewCount) || 0;
+        const hasReviews = reviews.some(r => r.bookId === b.id);
+        return !hasReviews && count > 0;
+    });
+    if (stale.length === 0) {
+        showToast('✅ No stale counters found — all counters match real reviews', 'info');
+        return;
+    }
+    if (!confirm(`Reset review counters to 0 for ${stale.length} book(s) that have no actual reviews? This clears phantom ratings on the store home.`)) return;
+    let ok = 0;
+    for (const b of stale) {
+        try {
+            await updateDoc(doc(db, 'books', b.id), { reviewCount: 0, averageRating: 0 });
+            b.reviewCount = 0;
+            b.averageRating = 0;
+            ok++;
+        } catch (err) {
+            console.error('Reset failed for', b.id, err);
+        }
+    }
+    showToast(`✅ Reset ${ok} of ${stale.length} book counter(s)`, ok === stale.length ? 'success' : 'error');
+    render();
+});
+document.getElementById('bookSearch').addEventListener('input', render);
+document.getElementById('reviewSearch').addEventListener('input', render);
+
+document.getElementById('signOutBtn').addEventListener('click', async () => {
+    try {
+        await signOut(auth);
+        showToast('👋 Signed out', 'info');
+    } catch (err) {
+        showToast('❌ Error signing out', 'error');
+    }
+});
+
+onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    isAdmin = false;
+    if (user) {
+        isAdmin = await checkAdmin(user);
+        if (isAdmin) {
+            lockedPanel.classList.add('panel-hidden');
+            adminPanel.classList.remove('panel-hidden');
+            statsBar.style.display = 'flex';
+            updateAuthUI();
+            loadAll();
+        } else {
+            showUnauthorized();
+        }
+    } else {
+        showUnauthorized();
+    }
+});
+</script>
+</body>
+</html>
