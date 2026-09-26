@@ -4200,6 +4200,118 @@ body {
   }
 }
 
+/* ============================================================
+   PROFILE THEMES
+   A theme = a set of CSS variables + one remap block that maps
+   the profile surfaces to those variables. Applied via classes
+   `pt-themed theme-<id>` on <body>.
+   ============================================================ */
+
+body.theme-midnight { --pt-bg:#0d1224; --pt-surface:#151b33; --pt-surface2:#1b2342; --pt-surface3:#202a4e; --pt-heading:#eef1ff; --pt-text:#c7cde6; --pt-muted:#8a93b8; --pt-accent:#8b7bff; --pt-accent-soft:#232c54; --pt-line:#2a3359; --pt-shadow:rgba(139,123,255,0.28); --pt-btn-text:#fff; }
+body.theme-royal { --pt-bg:#150a28; --pt-surface:#221140; --pt-surface2:#2b1850; --pt-surface3:#36205f; --pt-heading:#f7eccd; --pt-text:#e3d9f0; --pt-muted:#a98fcc; --pt-accent:#f0c674; --pt-accent-soft:#2f1c54; --pt-line:#3a2660; --pt-shadow:rgba(240,198,116,0.25); --pt-btn-text:#150a28; }
+body.theme-sunset { --pt-bg:#fdf3ee; --pt-surface:#fff8f4; --pt-surface2:#fff0e8; --pt-surface3:#ffdfcd; --pt-heading:#4a2c1c; --pt-text:#3d2b22; --pt-muted:#a07b63; --pt-accent:#e05a33; --pt-accent-soft:#ffe6da; --pt-line:#f0d9cc; --pt-shadow:rgba(224,90,51,0.22); --pt-btn-text:#fff; }
+body.theme-ocean { --pt-bg:#eef6fb; --pt-surface:#ffffff; --pt-surface2:#e8f4fb; --pt-surface3:#d6eafa; --pt-heading:#123c4f; --pt-text:#17394a; --pt-muted:#6f8f9e; --pt-accent:#0e7490; --pt-accent-soft:#e4f2f9; --pt-line:#d3e6f1; --pt-shadow:rgba(14,116,144,0.22); --pt-btn-text:#fff; }
+body.theme-forest { --pt-bg:#eef5ee; --pt-surface:#ffffff; --pt-surface2:#e8f3e9; --pt-surface3:#daeadd; --pt-heading:#1f3d24; --pt-text:#21351f; --pt-muted:#6f8a70; --pt-accent:#2f6f3f; --pt-accent-soft:#e6f1e7; --pt-line:#cfded1; --pt-shadow:rgba(47,111,63,0.22); --pt-btn-text:#fff; }
+body.theme-blossom { --pt-bg:#fdf0f5; --pt-surface:#ffffff; --pt-surface2:#ffeef6; --pt-surface3:#ffdcec; --pt-heading:#4a1f33; --pt-text:#3b2431; --pt-muted:#a07087; --pt-accent:#bf2b6f; --pt-accent-soft:#ffe4f0; --pt-line:#f2d3e0; --pt-shadow:rgba(191,43,111,0.22); --pt-btn-text:#fff; }
+body.theme-mono { --pt-bg:#ffffff; --pt-surface:#ffffff; --pt-surface2:#f4f4f4; --pt-surface3:#e9e9e9; --pt-heading:#000; --pt-text:#1a1a1a; --pt-muted:#888; --pt-accent:#000; --pt-accent-soft:#f0f0f0; --pt-line:#e2e2e2; --pt-shadow:rgba(0,0,0,0.14); --pt-btn-text:#fff; }
+
+/* Surface remap (theme-aware) */
+body.pt-themed { background: var(--pt-bg) !important; color: var(--pt-text) !important; --primary: var(--pt-accent); --bg: var(--pt-bg); --text: var(--pt-text); --muted: var(--pt-muted); }
+body.pt-themed .profile-container { background: var(--pt-surface) !important; }
+body.pt-themed .profile-container h2, body.pt-themed .profile-title { color: var(--pt-heading) !important; }
+body.pt-themed .card-box { background: var(--pt-surface) !important; color: var(--pt-text) !important; }
+body.pt-themed .card-box h4, body.pt-themed .stats-row strong { color: var(--pt-heading) !important; }
+body.pt-themed strong { color: var(--pt-heading) !important; }
+body.pt-themed .username-main { color: var(--pt-heading) !important; }
+body.pt-themed .real-name, body.pt-themed .stats-row span { color: var(--pt-muted) !important; }
+body.pt-themed .divider { background: var(--pt-line) !important; }
+body.pt-themed .interaction-panel { background: var(--pt-surface) !important; }
+body.pt-themed .interaction-panel li { border-bottom-color: var(--pt-line) !important; }
+body.pt-themed .interaction-panel li a { color: var(--pt-text) !important; }
+body.pt-themed .interaction-panel li a:hover { color: var(--pt-accent) !important; background: var(--pt-accent-soft) !important; }
+body.pt-themed .profile-stats-section { background: var(--pt-bg) !important; }
+body.pt-themed .panel-item { background: var(--pt-surface) !important; box-shadow: 0 2px 10px var(--pt-shadow) !important; color: var(--pt-text) !important; }
+body.pt-themed .panel-item h3 { color: var(--pt-heading) !important; }
+body.pt-themed .level-bar { background: var(--pt-line) !important; }
+body.pt-themed #levelProgress { background: var(--pt-accent) !important; }
+body.pt-themed .recent-poem-card { background: linear-gradient(160deg, var(--pt-surface2), var(--pt-surface3)) !important; color: var(--pt-text) !important; border: 1px solid var(--pt-line) !important; }
+body.pt-themed .recent-poem-card .poem-title, body.pt-themed .recent-poem-card h3, body.pt-themed .recent-poem-card .recent-poem-title { color: var(--pt-heading) !important; }
+body.pt-themed .recent-poem-card .poem-content { color: var(--pt-text) !important; }
+body.pt-themed .recent-poem-card .poem-date, body.pt-themed .recent-poem-card .view-count-inline, body.pt-themed .recent-poem-card .like-count, body.pt-themed .recent-poem-card .message-count { color: var(--pt-muted) !important; }
+body.pt-themed .collaborator-line { color: var(--pt-muted) !important; }
+body.pt-themed .collaborator-line a { color: var(--pt-accent) !important; }
+body.pt-themed .recent-poem-card .read-more-btn { color: var(--pt-accent) !important; }
+body.pt-themed .recent-poem-card .category-link { color: var(--pt-accent) !important; }
+body.pt-themed .recent-poem-card .comment-input { background-color: var(--pt-surface) !important; color: var(--pt-text) !important; border-color: var(--pt-line) !important; }
+body.pt-themed .recent-poem-card .comment-input::placeholder { color: var(--pt-muted) !important; }
+body.pt-themed .recent-poem-card .comment-input:focus { border-color: var(--pt-accent) !important; }
+body.pt-themed .recent-poem-card .comment-btn, body.pt-themed .recent-poem-card .like-btn, body.pt-themed .recent-poem-card .show-comments-btn { background-color: var(--pt-accent-soft) !important; border-color: var(--pt-line) !important; color: var(--pt-text) !important; }
+body.pt-themed .recent-poem-card .comment-btn:hover, body.pt-themed .recent-poem-card .like-btn:hover, body.pt-themed .recent-poem-card .show-comments-btn:hover { background-color: var(--pt-accent) !important; color: var(--pt-btn-text) !important; }
+body.pt-themed .recent-poem-card .like-btn.liked { background-color: var(--pt-accent) !important; border-color: var(--pt-accent) !important; }
+body.pt-themed .comment-list { background-color: var(--pt-accent-soft) !important; border-left-color: var(--pt-line) !important; }
+body.pt-themed .comment-list .comment { border-bottom-color: var(--pt-line) !important; background: var(--pt-surface) !important; border-color: var(--pt-line) !important; color: var(--pt-text) !important; }
+body.pt-themed .comment-list .comment a, body.pt-themed .comment-list .comment .reply-toggle { color: var(--pt-accent) !important; }
+body.pt-themed .comment-list .reply-section > div { background: var(--pt-accent-soft) !important; color: var(--pt-text) !important; }
+body.pt-themed .comment-list p { color: var(--pt-muted) !important; }
+
+/* Card & panel design */
+body.pt-themed .profile-container { border-top: 4px solid var(--pt-accent) !important; }
+body.pt-themed .card-box {
+  background: linear-gradient(160deg, var(--pt-surface), var(--pt-surface2)) !important;
+  border: 1px solid var(--pt-line) !important;
+  border-left: 4px solid var(--pt-accent) !important;
+  box-shadow: 0 6px 18px var(--pt-shadow) !important;
+}
+body.pt-themed .card-box h4 { padding-bottom: 8px !important; border-bottom: 1px solid var(--pt-line) !important; margin-bottom: 12px !important; }
+body.pt-themed .interaction-panel {
+  background: linear-gradient(180deg, var(--pt-surface), var(--pt-surface2)) !important;
+  border: 1px solid var(--pt-line) !important;
+  border-top: 4px solid var(--pt-accent) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 20px var(--pt-shadow) !important;
+  padding: 20px !important;
+}
+body.pt-themed .interaction-panel h3 { color: var(--pt-heading) !important; font-family: 'Playfair Display', serif !important; font-weight: 700 !important; }
+body.pt-themed .profile-stats-section { border: 1px solid var(--pt-line) !important; border-radius: 16px !important; box-shadow: 0 8px 20px var(--pt-shadow) !important; }
+body.pt-themed .panel-item {
+  background: linear-gradient(160deg, var(--pt-surface), var(--pt-surface2)) !important;
+  border: 1px solid var(--pt-line) !important;
+  border-top: 3px solid var(--pt-accent) !important;
+}
+body.pt-themed .panel-item ul { color: var(--pt-text) !important; padding-left: 20px !important; }
+body.pt-themed .panel-item ul li { color: var(--pt-text) !important; margin-bottom: 6px !important; }
+body.pt-themed .panel-item ul li span { color: var(--pt-accent) !important; font-weight: 700 !important; }
+body.pt-themed .panel-item .level-info { color: var(--pt-text) !important; }
+body.pt-themed .panel-item .level-info strong { color: var(--pt-heading) !important; }
+body.pt-themed .panel-item .top-poem p { color: var(--pt-text) !important; }
+/* Poem elements polish */
+body.pt-themed .recent-poem-card .recent-poem-title { font-family: 'Playfair Display', serif !important; color: var(--pt-heading) !important; }
+body.pt-themed .category-link {
+  background-color: var(--pt-accent-soft) !important;
+  color: var(--pt-accent) !important;
+  padding: 2px 10px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  text-decoration: none !important;
+}
+body.pt-themed h2 { color: var(--pt-heading) !important; }
+body.pt-themed .avatar { border-color: var(--pt-accent) !important; box-shadow: 0 0 18px var(--pt-shadow) !important; }
+body.pt-themed .edit-btn { background: var(--pt-accent-soft) !important; color: var(--pt-accent) !important; box-shadow: 0 6px 18px var(--pt-shadow) !important; }
+body.pt-themed .edit-btn:active { background: var(--pt-accent) !important; color: var(--pt-btn-text) !important; }
+body.pt-themed .author-link { color: var(--pt-accent) !important; }
+body.pt-themed .top-poem { color: var(--pt-text) !important; }
+
+/* Theme picker UI */
+.theme-picker-card p { font-size: 12px; color: var(--pt-muted, #666); margin-bottom: 10px; }
+.theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.theme-option { display: flex; align-items: center; gap: 8px; border: 2px solid var(--pt-line, #e6e0f5); background: var(--pt-surface2, #fff); border-radius: 10px; padding: 8px 10px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--pt-text, #333); transition: 0.15s; text-align: left; }
+.theme-option:hover { border-color: var(--pt-accent, #4b2aad); }
+.theme-option.active { border-color: var(--pt-accent, #4b2aad); background: var(--pt-accent-soft, #f3f0ff); }
+.theme-option .swatch { display: flex; }
+.theme-option .swatch span { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.18); display: inline-block; vertical-align: middle; }
+.theme-option .swatch span + span { margin-left: -4px; }
+
 </style>
 </head>
 <body>
@@ -4308,6 +4420,22 @@ body {
       <div class="privacy-buttons">
         <button id="privacyPublicBtn" class="privacy-btn public">🌍 Public</button>
         <button id="privacyPrivateBtn" class="privacy-btn private">🔒 Private (Hide)</button>
+      </div>
+    </div>
+
+    <!-- Profile Theme -->
+    <div id="themePickerCard" class="card-box theme-picker-card" style="display: none;">
+      <h4>🎨 Profile Theme</h4>
+      <p>Pick a look for your profile. Visitors will see your page in this theme.</p>
+      <div class="theme-grid" id="themeGrid">
+        <button type="button" class="theme-option" data-theme="classic"><span class="swatch"><span style="background:#4b2aad"></span><span style="background:#fdf6f0"></span></span>Classic</button>
+        <button type="button" class="theme-option" data-theme="midnight"><span class="swatch"><span style="background:#8b7bff"></span><span style="background:#1b2342"></span></span>Midnight</button>
+        <button type="button" class="theme-option" data-theme="royal"><span class="swatch"><span style="background:#f0c674"></span><span style="background:#2b1850"></span></span>Royal Gold</button>
+        <button type="button" class="theme-option" data-theme="sunset"><span class="swatch"><span style="background:#e05a33"></span><span style="background:#fff0e8"></span></span>Sunset</button>
+        <button type="button" class="theme-option" data-theme="ocean"><span class="swatch"><span style="background:#0e7490"></span><span style="background:#d6eafa"></span></span>Ocean</button>
+        <button type="button" class="theme-option" data-theme="forest"><span class="swatch"><span style="background:#2f6f3f"></span><span style="background:#daeadd"></span></span>Forest</button>
+        <button type="button" class="theme-option" data-theme="blossom"><span class="swatch"><span style="background:#bf2b6f"></span><span style="background:#ffdcec"></span></span>Blossom</button>
+        <button type="button" class="theme-option" data-theme="mono"><span class="swatch"><span style="background:#000000"></span><span style="background:#f4f4f4"></span></span>Mono</button>
       </div>
     </div>
 
@@ -6014,7 +6142,58 @@ const profileUid = urlParams.get("uid");
 let actorUsername = "", profileUsername = "", viewingOwnProfile = false;
 let profileEmailPrivacy = "public";
 let currentUserUid = null;
+const FREE_AUDIO_LIMIT = 3;
+let audioUploadsCount = 0;
+let audioUploadBonus = 0;
 let targetProfileUid = null;
+
+(() => {
+  const pc = document.getElementById("themePickerCard");
+  if (pc) pc.style.display = "none";
+})();
+
+const PROFILE_THEMES = {
+  classic:  { name: "Classic",    swatch: ["#4b2aad", "#fdf6f0"] },
+  midnight: { name: "Midnight",   swatch: ["#8b7bff", "#1b2342"] },
+  royal:    { name: "Royal Gold", swatch: ["#f0c674", "#2b1850"] },
+  sunset:   { name: "Sunset",     swatch: ["#e05a33", "#fff0e8"] },
+  ocean:    { name: "Ocean",      swatch: ["#0e7490", "#d6eafa"] },
+  forest:   { name: "Forest",     swatch: ["#2f6f3f", "#daeadd"] },
+  blossom:  { name: "Blossom",    swatch: ["#bf2b6f", "#ffdcec"] },
+  mono:     { name: "Mono",       swatch: ["#000000", "#f4f4f4"] }
+};
+
+function applyProfileTheme(themeId) {
+  const id = PROFILE_THEMES[themeId] ? themeId : "classic";
+  Object.keys(PROFILE_THEMES).forEach(t => document.body.classList.remove("theme-" + t));
+  document.body.classList.remove("pt-themed");
+  if (id !== "classic") {
+    document.body.classList.add("pt-themed", "theme-" + id);
+  }
+}
+
+function buildThemePicker(activeId, uid) {
+  const grid = document.getElementById("themeGrid");
+  if (!grid) return;
+  const id = PROFILE_THEMES[activeId] ? activeId : "classic";
+  grid.querySelectorAll(".theme-option").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.theme === id);
+    btn.onclick = async () => {
+      const next = btn.dataset.theme;
+      if (!uid) return;
+      try {
+        await updateDoc(doc(db, "users", uid), { profileTheme: next });
+      } catch (err) {
+        console.error("Theme save failed:", err);
+        showToastMessage("⚠️ Couldn't save theme. Please try again.", 4000);
+        return;
+      }
+      applyProfileTheme(next);
+      grid.querySelectorAll(".theme-option").forEach(b => b.classList.toggle("active", b === btn));
+      showToastMessage("🎨 Profile theme set to " + PROFILE_THEMES[next].name + ".", 4000);
+    };
+  });
+}
 const poemsContainer = document.getElementById("poemsContainer");
 const editBtn = document.getElementById("editProfileBtn");
 const changePicBtn = document.getElementById("changePicBtn");
@@ -6257,6 +6436,7 @@ async function uploadAvatarToCloudinary(initials, bgColor, publicId = null) {
 }
 
 async function uploadAudioToCloudinary(file, poemId, statusDiv, poemTitle, username) {
+  if (audioUploadsCount >= FREE_AUDIO_LIMIT + audioUploadBonus) { statusDiv.innerHTML = '🔒 You\'ve used your audio uploads on Volant Poetry. Ask a moderator to grant you more.'; return; }
   if (file.size > 9 * 1024 * 1024) { statusDiv.innerHTML = '❌ File too large. Maximum size is 9MB.'; return; }
   if (!file.type.startsWith('audio/') && !file.name.toLowerCase().match(/\.(mp3|m4a|wav)$/)) { statusDiv.innerHTML = '❌ Please upload an audio file (MP3, M4A, or WAV).'; return; }
   const cleanUsername = (username || 'anonymous').toLowerCase().replace(/[^a-z0-9]/g, '_');
@@ -6273,6 +6453,10 @@ async function uploadAudioToCloudinary(file, poemId, statusDiv, poemTitle, usern
     const data = await res.json();
     if (data.secure_url) {
       await updateDoc(doc(db, "recentPoems", poemId), { audioUrl: data.secure_url, audioFilename: customFilename + '.mp3', audioFormat: "mp3", hasAudio: true });
+      if (auth.currentUser) {
+        await updateDoc(doc(db, "users", auth.currentUser.uid), { audioUploads: increment(1) });
+        audioUploadsCount += 1;
+      }
       statusDiv.innerHTML = '✅ Audio uploaded! Refreshing...';
       setTimeout(() => fetchUserPoems(profileUsername), 1500);
     } else { throw new Error(data.error?.message || 'Upload failed'); }
@@ -6295,6 +6479,7 @@ function setupAudioEventListeners() {
       const poemTitle = document.querySelector(`.recent-poem-card[data-id="${poemId}"] .poem-title`)?.textContent || "untitled";
       const username = profileUsername || 'anonymous';
       statusDiv.innerHTML = '';
+      if (audioUploadsCount >= FREE_AUDIO_LIMIT + audioUploadBonus) { statusDiv.innerHTML = '🔒 You\'ve used your audio uploads on Volant Poetry. Ask a moderator to grant you more.'; return; }
       const timerDisplay = document.createElement('div'); timerDisplay.className = 'recording-timer'; timerDisplay.textContent = '00:00'; statusDiv.appendChild(timerDisplay);
       const recordingMsg = document.createElement('div'); recordingMsg.textContent = '🔴 Recording... Click Stop when finished.'; recordingMsg.style.marginTop = '8px'; statusDiv.appendChild(recordingMsg);
       try {
@@ -6320,7 +6505,7 @@ function setupAudioEventListeners() {
     const existingAudio = document.querySelector(`audio[data-audio-id="${poemId}"]`);
     if (existingAudio && existingAudio.src) btn.style.display = 'none';
     btn.removeEventListener('click', btn._uploadListener);
-    btn._uploadListener = (e) => { e.preventDefault(); const poemId = btn.dataset.poemId; const poemTitle = document.querySelector(`.recent-poem-card[data-id="${poemId}"] .poem-title`)?.textContent || "untitled"; const username = profileUsername || 'anonymous'; const fileInput = document.querySelector(`.audio-file-input[data-poem-id="${poemId}"]`); fileInput.dataset.poemTitle = poemTitle; fileInput.dataset.username = username; fileInput.click(); };
+    btn._uploadListener = (e) => { e.preventDefault(); const poemId = btn.dataset.poemId; const poemTitle = document.querySelector(`.recent-poem-card[data-id="${poemId}"] .poem-title`)?.textContent || "untitled"; const username = profileUsername || 'anonymous'; if (audioUploadsCount >= FREE_AUDIO_LIMIT + audioUploadBonus) { const statusDiv = document.querySelector(`.recording-status[data-poem-id="${poemId}"]`); if (statusDiv) statusDiv.innerHTML = '🔒 You\'ve used your audio uploads on Volant Poetry. Ask a moderator to grant you more.'; return; } const fileInput = document.querySelector(`.audio-file-input[data-poem-id="${poemId}"]`); fileInput.dataset.poemTitle = poemTitle; fileInput.dataset.username = username; fileInput.click(); };
     btn.addEventListener('click', btn._uploadListener);
   });
   document.querySelectorAll('.audio-file-input').forEach(input => {
@@ -6858,6 +7043,9 @@ onAuthStateChanged(auth, async (user) => {
       actorDoc = await getDoc(actorRef); 
     } 
     actorUsername = actorDoc.data()?.username || user.email.split("@")[0];
+    const actorData = actorDoc.data() || {};
+    audioUploadsCount = Number(actorData.audioUploads) || 0;
+    audioUploadBonus = Number(actorData.audioUploadBonus) || 0;
   }
   
   viewingOwnProfile = (user && (!profileUid || profileUid === user.uid));
@@ -6872,6 +7060,8 @@ onAuthStateChanged(auth, async (user) => {
   const data = userDoc.data();
   profileUsername = data.username || data.email.split("@")[0];
   profileEmailPrivacy = data.emailPrivacy || "public";
+  const savedProfileTheme = data.profileTheme && PROFILE_THEMES[data.profileTheme] ? data.profileTheme : "classic";
+  applyProfileTheme(savedProfileTheme);
   
   userCache[targetProfileUid] = data;
   
@@ -6923,8 +7113,15 @@ onAuthStateChanged(auth, async (user) => {
     }
     privacyPublicBtn.onclick = () => saveEmailPrivacy(user.uid, "public");
     privacyPrivateBtn.onclick = () => saveEmailPrivacy(user.uid, "private");
+    const themePickerCard = document.getElementById("themePickerCard");
+    if (themePickerCard) {
+      themePickerCard.style.display = "block";
+      buildThemePicker(savedProfileTheme, user.uid);
+    }
   } else {
     emailPrivacyToggle.style.display = "none";
+    const themePickerCard = document.getElementById("themePickerCard");
+    if (themePickerCard) themePickerCard.style.display = "none";
   }
   
   // Avatar handling

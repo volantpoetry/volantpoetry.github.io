@@ -2514,6 +2514,9 @@
                 <i class="fas fa-users"></i> Users
                 <span class="badge" id="usersBadge">0</span>
             </button>
+            <button class="tab-btn" data-tab="audio-uploads">
+                <i class="fas fa-microphone-alt"></i> Audio Uploads
+            </button>
             <button class="tab-btn" data-tab="admins">
                 <i class="fas fa-user-shield"></i> Admins
                 <span class="badge" id="adminsBadge">0</span>
@@ -2782,6 +2785,23 @@
             </div>
         </div>
 
+        <!-- Audio Uploads Tab -->
+        <div class="tab-content" id="tab-audio-uploads">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                <h3 style="font-weight:600; color:#2d2a24;"><i class="fas fa-microphone-alt" style="color:#8b5cf6;"></i> Audio Upload Quota</h3>
+                <input type="text" class="search-box" id="audioUploadsSearch" placeholder="Search by username or email..." />
+            </div>
+            <p style="font-size:0.82rem; color:#8a7b6a; margin-top:0;">Each user gets <strong>3 free audio uploads</strong> on Volant Poetry, plus any bonus granted by a moderator. Add extra uploads to a user's account by entering a number next to them.</p>
+            <div class="users-table-wrap">
+                <div id="audioUploadsContainer">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading users...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Admins Tab -->
         <div class="tab-content" id="tab-admins">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
@@ -2965,7 +2985,7 @@
     import { 
         getFirestore, collection, query, where, getDocs, 
         doc, updateDoc, deleteDoc, orderBy, getDoc, 
-        writeBatch, addDoc, setDoc, onSnapshot, Timestamp
+        writeBatch, addDoc, setDoc, onSnapshot, Timestamp, increment
     } from "firebase/firestore";
     import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 {
@@ -3037,6 +3057,7 @@
     const usersSearch = document.getElementById('usersSearch');
     const mailingSearch = document.getElementById('mailingSearch');
     const messagesSearch = document.getElementById('messagesSearch');
+    const audioUploadsSearch = document.getElementById('audioUploadsSearch');
 
     // Mailto modal
     const mailtoModal = document.getElementById('mailtoModal');
@@ -4803,6 +4824,118 @@ reach.volant@gmail.com`;
         });
     }
 
+    // ========== AUDIO UPLOAD QUOTA ==========
+    let unsubscribeAudioQuota = null;
+    function loadAudioUploadQuota() {
+        if (unsubscribeAudioQuota) unsubscribeAudioQuota();
+        const q = query(collection(db, "users"), orderBy("createdAt", "desc"));
+        unsubscribeAudioQuota = onSnapshot(q, async (snapshot) => {
+            const users = [];
+            for (const docSnap of snapshot.docs) {
+                const user = { id: docSnap.id, ...docSnap.data() };
+                const profileImage = await getUserProfileImage(docSnap.id);
+                users.push({ ...user, profileImage });
+            }
+
+            const searchTerm = audioUploadsSearch?.value?.toLowerCase() || '';
+            let filtered = users;
+            if (searchTerm) {
+                filtered = filtered.filter(u =>
+                    (u.username || '').toLowerCase().includes(searchTerm) ||
+                    (u.email || '').toLowerCase().includes(searchTerm) ||
+                    (u.displayName || '').toLowerCase().includes(searchTerm)
+                );
+            }
+
+            const container = document.getElementById('audioUploadsContainer');
+            if (!container) return;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="fas fa-microphone-alt"></i><h3>No Users Found</h3><p>${searchTerm ? 'No users match your search.' : 'No users have signed up yet.'}</p></div>`;
+                return;
+            }
+
+            let html = `
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Username</th>
+                            <th>Audio Used</th>
+                            <th>Limit (3 + Bonus)</th>
+                            <th>Remaining</th>
+                            <th>Add Uploads</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            filtered.forEach(user => {
+                const displayName = user.displayName || user.username || 'Anonymous';
+                const email = user.email || 'No email';
+                const profileImage = user.profileImage || '/images/default-avatar.png';
+                const used = Number(user.audioUploads) || 0;
+                const bonus = Number(user.audioUploadBonus) || 0;
+                const limit = 3 + bonus;
+                const remaining = Math.max(limit - used, 0);
+
+                html += `
+                    <tr data-audio-user="${user.id}">
+                        <td>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <img src="${profileImage}" alt="${escapeHtml(displayName)}" class="user-avatar-img" onerror="this.src='/images/default-avatar.png'" />
+                                <a href="/user-profile.html?uid=${encodeURIComponent(user.id)}" class="user-link" target="_blank">${escapeHtml(displayName)}</a>
+                            </div>
+                        </td>
+                        <td>${escapeHtml(user.username || '-')}</td>
+                        <td>${used}</td>
+                        <td>${limit}</td>
+                        <td>${remaining}</td>
+                        <td>
+                            <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
+                                <input type="number" min="1" max="500" value="3" class="audio-add-input" data-uid="${user.id}" style="width:70px; padding:0.35rem 0.5rem; border:1px solid #ddd; border-radius:8px;" />
+                                <button type="button" style="background:#8b5cf6; color:white; border:none; padding:0.35rem 0.8rem; border-radius:8px; cursor:pointer; font-weight:600; font-size:0.8rem;" onclick="window.addAudioUploads(this.dataset.uid)" data-uid="${user.id}"><i class="fas fa-plus"></i> Add</button>
+                            </div>
+                            <div style="font-size:0.7rem; color:#8a7b6a; margin-top:0.2rem;">${escapeHtml(email)}</div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        });
+    }
+
+    window.addAudioUploads = async function(uid) {
+        if (!uid) return;
+        const input = document.querySelector(`.audio-add-input[data-uid="${uid}"]`);
+        const n = input ? Math.max(1, Math.min(500, parseInt(input.value, 10) || 1)) : 1;
+        try {
+            const snap = await getDoc(doc(db, "users", uid));
+            const currentBonus = Number(snap.exists() ? snap.data()?.audioUploadBonus : 0) || 0;
+            await updateDoc(doc(db, "users", uid), { audioUploadBonus: increment(n) });
+            const uname = document.querySelector(`tr[data-audio-user="${uid}"] .user-link`)?.textContent || 'that user';
+            const adminName = document.getElementById('adminEmail')?.textContent?.trim() || 'A moderator';
+            try {
+                await addDoc(collection(db, "notifications"), {
+                    forUser: uid,
+                    type: 'announcement',
+                    fromUser: auth.currentUser ? auth.currentUser.uid : 'admin',
+                    fromUserName: adminName,
+                    platform: 'poetry',
+                    message: `🎙️ A moderator added ${n} extra audio upload${n > 1 ? 's' : ''} to your account on Volant Poetry (limit is now ${3 + currentBonus + n} uploads).`,
+                    timestamp: new Date(),
+                    read: false
+                });
+            } catch (e) { console.warn('Could not notify user of audio grant:', e); }
+            showToast(`✅ Added ${n} audio upload${n > 1 ? 's' : ''} to ${uname}`, 'success');
+        } catch (err) {
+            console.error('Error adding audio uploads:', err);
+            showToast('❌ Could not add uploads: ' + (err.message || 'unknown error'), 'error');
+        }
+    };
+
     // ========== LOAD ADMINS ==========
     function loadAdmins() {
         if (unsubscribeAdmins) unsubscribeAdmins();
@@ -5799,6 +5932,7 @@ reach.volant@gmail.com`;
     if (achievementSearch) achievementSearch.addEventListener('input', displayAchievements);
     if (levelSearch) levelSearch.addEventListener('input', displayLevels);
     if (usersSearch) usersSearch.addEventListener('input', loadUsers);
+    if (audioUploadsSearch) audioUploadsSearch.addEventListener('input', loadAudioUploadQuota);
     if (mailingSearch) mailingSearch.addEventListener('input', loadMailingList);
     if (messagesSearch) messagesSearch.addEventListener('input', loadMessages);
 
@@ -5821,6 +5955,7 @@ reach.volant@gmail.com`;
         if (tabName === 'achievements') loadAchievements();
         if (tabName === 'levels') loadLevels();
         if (tabName === 'users') loadUsers();
+        if (tabName === 'audio-uploads') loadAudioUploadQuota();
         if (tabName === 'admins') loadAdmins();
         if (tabName === 'mailing') {
             loadMailingList();
@@ -5848,6 +5983,7 @@ reach.volant@gmail.com`;
         loadAchievements();
         loadLevels();
         loadUsers();
+        loadAudioUploadQuota();
         loadAdmins();
         loadMailingList();
         loadDeletionRequests();
