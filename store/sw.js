@@ -1,6 +1,6 @@
 // store/sw.js
 // v7: offline bookstore shell + offline book reading (PDF & EPUB).
-const CACHE_NAME = 'volant-reads-v8';
+const CACHE_NAME = 'volant-reads-v19';
 const BOOK_CACHE = 'volant-reads-pdfs';
 
 // Pages that change with the signed-in user and must always hit the network.
@@ -29,13 +29,17 @@ const APP_SHELL = [
 const CROSS_ORIGIN_CACHE = {
     'cdnjs.cloudflare.com': CACHE_NAME,   // font-awesome
     'volantpoetry.vercel.app': CACHE_NAME, // /shared/ + style.css
-    'res.cloudinary.com': BOOK_CACHE       // book files + covers
+    'www.gstatic.com': CACHE_NAME,        // firebase SDK modules (offline boot)
+    'fonts.googleapis.com': CACHE_NAME,   // Google Fonts CSS
+    'fonts.gstatic.com': CACHE_NAME       // font files (woff2)
 };
 
 function isCacheable(response) {
-    // Only whole (200) responses are ever stored so a partial Range 206 can
-    // never be mistaken for the full book offline.
-    return response && response.status === 200 && (response.type === 'basic' || response.type === 'cors');
+    // Whole (200) responses are preferred so a partial Range 206 can never be
+    // mistaken for the full book offline; opaque (no-cors) responses are also
+    // stored so images loaded via CSS/img tags work offline too.
+    return (response && response.status === 200 && (response.type === 'basic' || response.type === 'cors')) ||
+           (response && response.type === 'opaque');
 }
 
 async function putInCache(cacheName, request, response) {
@@ -68,6 +72,24 @@ function networkFirst(request, cacheName) {
     }).catch(() => caches.match(request).then((cached) => cached || new Response('Content not available offline.', { status: 503 })));
 }
 
+// Stale-while-revalidate: serve the cached copy instantly (online or offline)
+// and refresh the cache with the network response in the background.
+async function staleWhileRevalidate(request, cacheName) {
+    try {
+        const cache = await caches.open(cacheName);
+        const cached = await cache.match(request);
+        const networkPromise = fetch(request).then((response) => {
+            putInCache(cacheName, request, response);
+            return response;
+        }).catch(() => null);
+        if (cached) return cached;
+        return (await networkPromise) || new Response('Image not available offline.', { status: 503 });
+    } catch (err) {
+        const hit = await caches.match(request);
+        return hit || new Response('Image not available offline.', { status: 503 });
+    }
+}
+
 // Navigation: cache that exact URL, fall back to the offline home page.
 function navigateFirst(request) {
     return fetch(request).then((response) => {
@@ -79,16 +101,28 @@ function navigateFirst(request) {
     }).catch(async () => {
         const hit = await caches.match(request);
         if (hit) return hit;
+        const url = new URL(request.url);
+        const pathRequest = new Request(url.origin + url.pathname);
+        const pathHit = await caches.match(pathRequest);
+        if (pathHit) return pathHit;
         const fallback = await caches.match('./index.html');
         if (fallback) return fallback;
         return new Response('Offline', { status: 503 });
     });
 }
 
-function isBookUrl(url) {
-    return url.hostname === 'res.cloudinary.com' ||
-           url.pathname.toLowerCase().endsWith('.pdf') ||
+// Book files (PDF/EPUB) - network-first with offline cache fallback.
+function isBookFile(url) {
+    return url.pathname.toLowerCase().endsWith('.pdf') ||
            url.pathname.toLowerCase().endsWith('.epub');
+}
+
+// Covers + avatars from Cloudinary or Google - stale-while-revalidate so they
+// display instantly from cache offline and refresh in the background when online.
+function isCoverOrAvatar(url) {
+    return (url.hostname === 'res.cloudinary.com' ||
+            url.hostname.endsWith('.googleusercontent.com')) &&
+           !isBookFile(url);
 }
 
 self.addEventListener('install', event => {
@@ -128,10 +162,17 @@ self.addEventListener('fetch', event => {
     const pathname = url.pathname;
     const request = event.request;
 
-    // --- Book files (PDF/EPUB/covers, same- or cross-origin): network-first,
-    // --- cache-first from the dedicated book cache when offline. ---
-    if (isBookUrl(url)) {
+    // --- Book files (PDF/EPUB): network-first, cache-first from the dedicated
+    // --- book cache when offline. ---
+    if (isBookFile(url)) {
         event.respondWith(networkFirst(request, BOOK_CACHE));
+        return;
+    }
+
+    // --- Covers + avatars (Cloudinary/Google): serve cached instantly and
+    // --- refresh in the background when online (auto-updates). ---
+    if (isCoverOrAvatar(url)) {
+        event.respondWith(staleWhileRevalidate(request, CACHE_NAME));
         return;
     }
 

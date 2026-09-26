@@ -3262,7 +3262,7 @@ onAuthStateChanged(auth, async (user) => {
     if (cachedData && cachedData.length > 0) {
       await renderNotifications(cachedData);
     }
-    window.location.href = "universal-login.html?platform=poetry&redirect=notifications.html";
+    window.window.VolantAuth && window.VolantAuth.open('login', { platform: 'poetry' });
     return;
   }
   currentUser = user;
@@ -3272,5 +3272,7 @@ onAuthStateChanged(auth, async (user) => {
 });
 </script>
 
+
+<script src="shared/auth-overlay.js?v=11"></script>
 </body>
 </html>

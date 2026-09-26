@@ -1,4 +1,4 @@
-const CACHE = 'volant-poetry-v3';
+const CACHE = 'volant-poetry-v7';
 const PRECACHE = [
   '/',
   '/index.html',
@@ -21,7 +21,8 @@ const PRECACHE = [
 ];
 
 const NETWORK_FIRST_PATHS = [
-  '/manifest.json'
+  '/manifest.json',
+  '/shared/'
 ];
 const BYPASS_CACHE_PATHS = [
   '/icon/icon-192.png',

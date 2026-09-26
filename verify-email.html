@@ -511,7 +511,10 @@
 
     // Check auth state
     onAuthStateChanged(auth, (user) => {
-      if (user && !user.emailVerified) {
+      if (user && user.emailVerified) {
+        return;
+      }
+      if (user) {
         currentEmail = user.email;
         displayEmail.textContent = user.email;
         localStorage.setItem('pendingVerificationEmail', user.email);

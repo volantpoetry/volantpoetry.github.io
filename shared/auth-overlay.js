@@ -32,6 +32,7 @@
   var recaptchaRequested = false;
   var recaptchaVerified = false;
   var recaptchaId = null;
+  var recaptchaObserver = null;
 
   function authBase() {
     return /\/store1?\//.test(window.location.pathname) ? "../shared/" : "shared/";
@@ -68,8 +69,8 @@
       '</button>' +
       '<div class="va-or"><span>or continue with email</span></div>' +
       '<form class="va-form" novalidate>' +
-      '<label for="va-email">Email or username</label>' +
-      '<input type="text" id="va-email" class="va-input" placeholder="you@example.com or username" autocomplete="email">' +
+      '<label for="va-email">Email</label>' +
+      '<input type="email" id="va-email" class="va-input" placeholder="you@example.com" autocomplete="email">' +
       '<label for="va-password" class="va-pass-label">Password</label>' +
       '<div class="va-passwrap">' +
       '<input type="password" id="va-password" class="va-input" placeholder="Enter password" autocomplete="current-password">' +
@@ -92,7 +93,7 @@
 
     var style = document.createElement("style");
     style.textContent =
-      '.va-overlay{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;padding:1rem;font-family:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;}' +
+      '.va-overlay{position:fixed;inset:0;z-index:100000;display:none;align-items:center;justify-content:center;padding:1rem;font-family:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;}' +
       '.va-overlay *{box-sizing:border-box;}' +
       '.va-overlay.va-open{display:flex;}' +
       '.va-backdrop{position:absolute;inset:0;background:rgba(15,12,20,0.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);}' +
@@ -118,8 +119,9 @@
       '.va-passwrap{position:relative;}' +
       '.va-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:#9a94af;padding:4px 6px;}' +
       '.va-eye:hover{color:#4b2aad;}' +
-      '.va-recaptcha{display:flex;justify-content:center;margin:1.1rem 0 0.4rem;}' +
-      '.va-recaptcha > div{transform:scale(0.92);transform-origin:center;}' +
+      '.va-recaptcha{display:flex;justify-content:center;margin:1.1rem 0 0.4rem;position:relative;z-index:3;}' +
+      '.va-recaptcha .g-recaptcha{position:relative;z-index:3;}' +
+      '.va-recaptcha iframe[src*="recaptcha"]{transform:none!important;}' +
       '.va-submit{width:100%;padding:0.9rem;margin-top:0.9rem;border:none;border-radius:40px;background:#4b2aad;color:#fff;font-weight:600;font-size:0.98rem;cursor:pointer;box-shadow:0 8px 18px rgba(75,42,173,0.2);display:flex;align-items:center;justify-content:center;gap:10px;font-family:inherit;}' +
       '.va-submit:hover:not(:disabled){background:#3a1f85;}' +
       '.va-submit:disabled{opacity:0.7;cursor:not-allowed;box-shadow:none;}' +
@@ -145,12 +147,10 @@
       '.va-input{font-size:16px;padding:0.78rem 0.95rem;}' +
       '.va-google{padding:0.8rem;font-size:0.92rem;}' +
       '.va-recaptcha{margin:1rem 0 0.3rem;}' +
-      '.va-recaptcha > div{transform:scale(0.78);}' +
       '.va-close{top:8px;right:10px;}' +
       '.va-alt{margin-top:1.2rem;padding:0.8rem;}' +
       '}' +
       '@media (max-width:360px){' +
-      '.va-recaptcha > div{transform:scale(0.68);}' +
       '.va-form label{font-size:0.8rem;}' +
       '}';
 
@@ -234,6 +234,78 @@
     }
   }
 
+  function liftChallengeFrame(f) {
+    if (f.__va_lifted) return;
+    var st = f.style;
+    f.__va_save = { pos: st.position, top: st.top, left: st.left, z: st.zIndex, tf: st.transform };
+    st.setProperty("position", "fixed", "important");
+    st.setProperty("top", "50%", "important");
+    st.setProperty("left", "50%", "important");
+    st.setProperty("transform", "translate(-50%,-50%)", "important");
+    st.setProperty("z-index", "2147483647", "important");
+    f.__va_lifted = true;
+    if (elapsed && elapsed.contains(f)) {
+      document.body.appendChild(f);
+    }
+  }
+
+  function restoreLiftedFrames() {
+    Array.prototype.forEach.call(document.querySelectorAll("iframe"), function (f) {
+      if (f.__va_lifted && f.__va_save) {
+        var st = f.style;
+        var sv = f.__va_save;
+        st.position = sv.pos;
+        st.top = sv.top;
+        st.left = sv.left;
+        st.zIndex = sv.z;
+        st.transform = sv.tf;
+        delete f.__va_lifted;
+        delete f.__va_save;
+      }
+    });
+  }
+
+  function handleRecaptchaNode(n) {
+    if (!n || n.nodeType !== 1 || !n.matches || !n.matches('iframe[src*="recaptcha"]')) return;
+    if (elapsed && !elapsed.contains(n)) {
+      n.style.setProperty("z-index", "2147483647", "important");
+    }
+    window.requestAnimationFrame(function () {
+      var h = n.offsetHeight || parseInt(n.style.height || "0", 10) || 0;
+      if (h >= 200) liftChallengeFrame(n);
+    });
+  }
+
+  function raiseRecaptchaFrames() {
+    if (!elapsed) return;
+    Array.prototype.slice.call(document.querySelectorAll('iframe[src*="recaptcha"]')).forEach(function (f) {
+      if (!elapsed.contains(f)) {
+        f.style.setProperty("z-index", "2147483647", "important");
+      }
+      var h = f.offsetHeight || parseInt(f.style.height || "0", 10) || 0;
+      if (h >= 200) liftChallengeFrame(f);
+    });
+    var badge = document.querySelector(".grecaptcha-badge");
+    if (badge) badge.style.visibility = "hidden";
+  }
+
+  function watchRecaptcha(start) {
+    if (start) {
+      if (recaptchaObserver) return;
+      recaptchaObserver = new MutationObserver(function (mutations) {
+        mutations.forEach(function (m) {
+          m.addedNodes.forEach(function (n) {
+            handleRecaptchaNode(n);
+          });
+        });
+      });
+      recaptchaObserver.observe(document.documentElement, { childList: true, subtree: true });
+    } else if (recaptchaObserver) {
+      recaptchaObserver.disconnect();
+      recaptchaObserver = null;
+    }
+  }
+
   window.onVaRecaptchaLoad = function () {
     recaptchaRequested = false;
     renderRecaptcha();
@@ -292,12 +364,24 @@
     q("[data-va-eye]").innerHTML = show ? '<i class="fas fa-eye-slash"></i>' : '<i class="far fa-eye"></i>';
   }
 
+  function normalizeRedirect(raw) {
+    if (!raw) return null;
+    var decoded = String(raw);
+    try { decoded = decodeURIComponent(decoded); } catch (e) {}
+    try {
+      var u = new URL(decoded, window.location.origin);
+      return u.pathname + u.search;
+    } catch (e) {
+      return decoded.charAt(0) === "/" ? decoded : "/" + decoded;
+    }
+  }
+
   function openOverlay(mode, opts) {
     if (!elapsed) buildOverlay();
     opts = opts || {};
     current.mode = mode === "signup" ? "signup" : "login";
     current.platform = opts.platform || defaultPlatform();
-    current.redirect = opts.redirect || null;
+    current.redirect = normalizeRedirect(opts.redirect);
     var badge = q(".va-badge");
     badge.textContent = PLATFORM_NAMES[current.platform] || "Volant Accounts";
     badge.className = "va-badge" + (PLATFORM_BADGE[current.platform] ? " va-" + PLATFORM_BADGE[current.platform] : "");
@@ -311,6 +395,8 @@
     setBusy(false);
     elapsed.classList.add("va-open");
     document.body.style.overflow = "hidden";
+    raiseRecaptchaFrames();
+    watchRecaptcha(true);
     ensureRecaptcha();
     setTimeout(function () { q("#va-email").focus(); }, 80);
   }
@@ -319,6 +405,10 @@
     if (!elapsed) return;
     elapsed.classList.remove("va-open");
     document.body.style.overflow = "";
+    watchRecaptcha(false);
+    restoreLiftedFrames();
+    var badge = document.querySelector(".grecaptcha-badge");
+    if (badge) badge.style.visibility = "";
     q("#va-password").value = "";
   }
 
@@ -416,18 +506,20 @@
         finish("login");
       } else {
         if (passInput.length < 6) { setStatus("Password must be at least 6 characters.", "err"); setBusy(false); return; }
-        var eq = fdb.query(fdb.collection(db, "users"), fdb.where("email", "==", emailInput));
+        var identifier = emailInput;
+        var eq = fdb.query(fdb.collection(db, "users"), fdb.where("email", "==", identifier));
         var es = await fdb.getDocs(eq);
         if (!es.empty) { setStatus("Email already registered.", "err"); setBusy(false); return; }
-        var base = emailInput.split("@")[0];
+        var base = identifier.split("@")[0];
         if (!base || base.length < 3) base = "user";
         var username = await generateUniqueUsername(fb, base);
-        var c = await fauth.createUserWithEmailAndPassword(auth, emailInput, passInput);
+        var accountEmail = identifier;
+        var c = await fauth.createUserWithEmailAndPassword(auth, accountEmail, passInput);
         var nu = c.user;
         await fauth.sendEmailVerification(nu);
         await fdb.setDoc(fdb.doc(db, "users", nu.uid), {
           username: username,
-          email: emailInput,
+          email: accountEmail,
           displayName: username,
           photoURL: "",
           createdAt: fdb.serverTimestamp(),
@@ -439,7 +531,7 @@
         await fauth.signOut(auth);
         setStatus("Account created! Verification email sent. Redirecting…", "ok");
         var vp = new URLSearchParams();
-        vp.append("email", emailInput);
+        vp.append("email", accountEmail);
         vp.append("platform", current.platform);
         if (current.redirect) vp.append("redirect", current.redirect);
         setTimeout(function () { window.location.href = authBase() + "verify-email.html?" + vp.toString(); }, 1600);

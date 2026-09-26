@@ -14,17 +14,17 @@ const AuthRouter = {
   PLATFORM_CONFIG: {
     poetry: {
       name: 'Volant Poetry',
-      homeUrl: 'index.html',
+      homeUrl: '../index.html',
       platformName: 'Volant Poetry'
     },
     reads: {
       name: 'Volant Reads',
-      homeUrl: 'store/index.html',
+      homeUrl: '../store/index.html',
       platformName: 'Volant Reads'
     },
     foundry: {
       name: 'Volant Foundry',
-      homeUrl: 'parent-house.html',
+      homeUrl: '../parent-house.html',
       platformName: 'Volant Foundry'
     }
   },

@@ -2673,7 +2673,7 @@ Just voices, words, and connection.</p>
   </div>
 
   <div class="footer-copy" style="font-size:0.85rem; color:#555; margin-top:6px;">
-    &copy; 2026 Volant Poetry. All Rights Reserved.
+    &copy; <span id="year"></span> Volant Poetry. All Rights Reserved.
   </div>
 </footer>
 
@@ -3159,7 +3159,7 @@ async function hydrateWeeklyHighlights() {
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(err => {
+    navigator.serviceWorker.register("/sw.js?v=7", { scope: "/" }).catch(err => {
       console.warn("Service worker registration failed:", err);
     });
   });
@@ -4202,5 +4202,11 @@ document.addEventListener("DOMContentLoaded", () => {
 })();
 </script>
 
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+<script src="shared/auth-overlay.js?v=11"></script>
 </body>
 </html>
