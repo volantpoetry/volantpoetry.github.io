@@ -1629,6 +1629,11 @@
   nav {
     padding: 0.6rem 0.8rem !important;
     gap: 0.4rem !important;
+    flex-wrap: nowrap !important;
+  }
+  nav > .logo {
+    min-width: 0;
+    flex-shrink: 0;
   }
   .search-container {
     display: none !important;
@@ -1645,6 +1650,21 @@
   .nav-logo-img {
     width: 26px !important;
     height: 26px !important;
+  }
+  .nav-right {
+    gap: 2px !important;
+    flex-wrap: nowrap !important;
+  }
+  .nav-right .night-toggle {
+    padding: 3px !important;
+    font-size: 1.05rem !important;
+  }
+  .nav-right .search-toggle,
+  .nav-right .menu-toggle {
+    padding: 0.4rem !important;
+  }
+  .nav-right #login-link {
+    padding: 3px 5px !important;
   }
   .hero {
     padding: 1.2rem 0.6rem !important;
@@ -2409,7 +2429,8 @@
 
 </style>
 
-</head>
+<script src="theme.js"></script>
+  </head>
 <body>
 
 <header>
@@ -2473,6 +2494,12 @@
     </svg>
     <span class="notif-badge" id="notificationsBadge" style="display:none;"></span>
   </a>
+
+  <!-- Night reading toggle -->
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
 
   <!-- Notification centre (modal dropdown, like Volant Reads) -->
   <div id="notifPanel">
@@ -3937,8 +3964,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function applyLogoutUI() {
-    const navLinksMenu = document.getElementById('nav-links');
-    if (navLinksMenu) navLinksMenu.classList.remove('show');
     updateAuthUI();
     if (desktopMenuOpen) closeDesktopLogout();
     if (typeof stopNotifWatchers === 'function') stopNotifWatchers();
