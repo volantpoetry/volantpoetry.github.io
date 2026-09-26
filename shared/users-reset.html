@@ -9,8 +9,9 @@
 <link rel="icon" type="image/png" href="../images/volant-favicon.png">
 <link rel="apple-touch-icon" href="../images/volant-favicon.png">
   <!-- base styling (your original CSS structure) -->
-  <link rel="stylesheet" href="../shared/usersaccount.css">
-  <style>
+<link rel="stylesheet" href="../shared/usersaccount.css">
+<script src="../theme.js"></script>
+<style>
     * {
       margin: 0;
       padding: 0;
@@ -190,19 +191,88 @@
       margin: 1.3rem 0 0.8rem;
     }
 
-    .try-now-link {
-      background: none;
-      border: none;
-      color: #4b2aad;
-      font-weight: 600;
-      text-decoration: underline;
-      cursor: pointer;
-      padding: 0;
-      font-size: 0.9rem;
-    }
+  .try-now-link {
+  background: none;
+  border: none;
+  color: #4b2aad;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9rem;
+  }
+
+  /* ===== NIGHT READING TOGGLE (floating) ===== */
+  .night-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    color: #4b2aad !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+    font-family: 'Inter', sans-serif !important;
+    position: fixed !important;
+    top: 16px !important;
+    right: 16px !important;
+    z-index: 1100 !important;
+  }
+  .night-toggle:hover {
+    transform: scale(1.12) !important;
+    background: rgba(75, 42, 173, 0.08) !important;
+  }
+  .theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+  @media (max-width: 768px) { .theme-label { display: none !important; } }
+
+  /* ===== ESPRESSO NIGHT ===== */
+  html[data-theme="dark"] body {
+    background: #161210 !important;
+    color: #ece2d0 !important;
+  }
+  html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .container {
+    background: #211b16 !important;
+    border: 1px solid #332b22;
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6) !important;
+  }
+  html[data-theme="dark"] h2 { color: #a78bfa !important; }
+  html[data-theme="dark"] .poetry-brand { color: #c9b6ff !important; border-bottom-color: #332b22 !important; }
+  html[data-theme="dark"] .info-text { background: #1d1813 !important; color: #d8cebe !important; }
+  html[data-theme="dark"] form label { color: #ece2d0 !important; }
+  html[data-theme="dark"] input[type="email"] {
+    background: #1d1813 !important;
+    color: #ece2d0 !important;
+    border-color: #332b22 !important;
+    caret-color: #fbbf24;
+  }
+  html[data-theme="dark"] input[type="email"]::placeholder { color: #7d7263 !important; }
+  html[data-theme="dark"] .btn-primary { background-color: #4b2aad !important; color: #fff !important; }
+  html[data-theme="dark"] .btn-primary:hover:not(:disabled) { background-color: #6f4ae4 !important; }
+  html[data-theme="dark"] .status { background-color: #2b1416 !important; color: #f5b7b7 !important; }
+  html[data-theme="dark"] .status.success {
+    background-color: #12211a !important;
+    color: #b7e6c5 !important;
+    border-left-color: #b7e6c5 !important;
+  }
+  html[data-theme="dark"] .reset-confirm-message { background: #1f1a2e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .tip-box { background-color: #2b2413 !important; color: #f0d9a0 !important; }
+  html[data-theme="dark"] .links a,
+  html[data-theme="dark"] .try-now-link { color: #a78bfa !important; }
+  html[data-theme="dark"] .links a:hover { color: #c9b6ff !important; }
   </style>
 </head>
-<body>
+  <body>
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
   <div class="container">
     <h2>Reset Your Password</h2>
     <div class="poetry-brand" id="platformBrandName">Volant Poetry</div>

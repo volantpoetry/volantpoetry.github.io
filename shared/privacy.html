@@ -7,8 +7,9 @@
   <title>Privacy Policy | Volant Foundry</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png" />
-  <link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png" />
-  <style>
+<link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png" />
+<script src="../theme.js"></script>
+<style>
     :root {
       --primary: #4b2aad;
       --primary-dark: #3a1f8a;
@@ -301,20 +302,98 @@
         background: none;
         border: none;
       }
-      .privacy-card {
-        box-shadow: none;
-        border: 1px solid #ccc;
-      }
-      body {
-        background: white;
-      }
-    }
+  .privacy-card {
+  box-shadow: none;
+  border: 1px solid #ccc;
+  }
+  body {
+  background: white;
+  }
+  }
+
+  /* ===== NIGHT READING TOGGLE (floating) ===== */
+  .night-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    color: #4b2aad !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+    font-family: 'Inter', sans-serif !important;
+    position: fixed !important;
+    top: 14px !important;
+    right: 14px !important;
+    z-index: 1100 !important;
+  }
+  .night-toggle:hover {
+    transform: scale(1.12) !important;
+    background: rgba(75, 42, 173, 0.08) !important;
+  }
+  .theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+  @media (max-width: 768px) { .theme-label { display: none !important; } }
+
+  /* ===== ESPRESSO NIGHT (screen only, so print stays light) ===== */
+  @media screen {
+  html[data-theme="dark"] {
+    --bg-main: #161210;
+    --bg-card: #211b16;
+    --text-primary: #ece2d0;
+    --text-secondary: #d8cebe;
+    --text-muted: #a2947e;
+    --border-light: #332b22;
+    --border-gold: #4a3f22;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+  html[data-theme="dark"] body { background: #161210 !important; color: #ece2d0 !important; }
+  html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .page-header {
+    background: #1d1813 !important;
+    border-bottom-color: #4a3f22 !important;
+  }
+  html[data-theme="dark"] .page-header h1 { color: #a78bfa !important; }
+  html[data-theme="dark"] .page-header .breadcrumb { color: #a2947e !important; }
+  html[data-theme="dark"] .page-header .breadcrumb a { color: #a78bfa !important; }
+  html[data-theme="dark"] .privacy-card,
+  html[data-theme="dark"] .page-footer {
+    background: #211b16 !important;
+    border-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .privacy-intro,
+  html[data-theme="dark"] .privacy-section { border-bottom-color: #332b22 !important; }
+  html[data-theme="dark"] .privacy-section h2 { color: #a78bfa !important; }
+  html[data-theme="dark"] .privacy-section h3 { color: #c9b6ff !important; }
+  html[data-theme="dark"] .privacy-section p,
+  html[data-theme="dark"] .privacy-section li { color: #d8cebe !important; }
+  html[data-theme="dark"] .privacy-section li::before { color: #fbbf24 !important; }
+  html[data-theme="dark"] .privacy-intro strong,
+  html[data-theme="dark"] .highlight { color: #a78bfa !important; }
+  html[data-theme="dark"] .warning { color: #f5b7b7 !important; }
+  html[data-theme="dark"] .accent-text { color: #fbbf24 !important; }
+  html[data-theme="dark"] .closing-note {
+    background: #1d1813 !important;
+    border-left-color: #fbbf24 !important;
+  }
+  html[data-theme="dark"] .page-footer p { color: #a2947e !important; }
+  html[data-theme="dark"] .page-footer a { color: #a78bfa !important; }
+  }
   </style>
 </head>
 <body>
 
   <div class="page-header">
-    <div style="text-align: center;">
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
+  <div style="text-align: center;">
       <span class="parent-brand-tag">Volant Foundry</span>
     </div>
     <h1>Privacy Policy</h1>

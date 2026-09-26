@@ -31,8 +31,9 @@
   <!-- Favicons -->
   <link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png">
   <link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png">
-  <link rel="author" href="https://volantpoetry.github.io/about.html">
-  <style>
+<link rel="author" href="https://volantpoetry.github.io/about.html">
+<script src="../theme.js"></script>
+<style>
     /* Username styles */
     .username-display, .username-sm {
       font-family: 'Cormorant Garamond', serif;
@@ -411,10 +412,109 @@
         border-radius: 0 !important;
         object-fit: contain !important;
       }
-      .logo .logo-text {
-        font-size: 1.1rem !important;
-      }
-    }
+  .logo .logo-text {
+  font-size: 1.1rem !important;
+  }
+  }
+
+  /* ===== NIGHT READING TOGGLE ===== */
+  .night-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    color: #4b2aad !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+  .night-toggle:hover {
+    transform: scale(1.12) !important;
+    background: rgba(75, 42, 173, 0.08) !important;
+  }
+  .theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+  @media (max-width: 768px) { .theme-label { display: none !important; } }
+
+  /* ===== ESPRESSO NIGHT ===== */
+  html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .nav-links a { color: #ece2d0 !important; }
+  html[data-theme="dark"] .nav-links a:hover { color: #c9b6ff !important; }
+  html[data-theme="dark"] .menu-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .close-btn { color: #a78bfa !important; }
+  html[data-theme="dark"] .logout-btn { background: #8f2630 !important; color: #fff !important; }
+
+  html[data-theme="dark"] .contact-box {
+    background: #211b16 !important;
+    border-color: #332b22 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+  }
+  html[data-theme="dark"] .contact-box h2 { color: #a78bfa !important; }
+  html[data-theme="dark"] .contact-box p { color: #d8cebe !important; }
+  html[data-theme="dark"] .contact-box .direct-email a { color: #a78bfa !important; }
+  html[data-theme="dark"] .contact-box .direct-email a:hover { color: #c9b6ff !important; }
+
+  html[data-theme="dark"] .contact-form label { color: #ece2d0 !important; }
+  html[data-theme="dark"] .contact-form label .label-hint { color: #a2947e !important; }
+  html[data-theme="dark"] .contact-form input,
+  html[data-theme="dark"] .contact-form textarea {
+    background: #1d1813 !important;
+    color: #ece2d0 !important;
+    border-color: #332b22 !important;
+    caret-color: #fbbf24;
+  }
+  html[data-theme="dark"] .contact-form input::placeholder,
+  html[data-theme="dark"] .contact-form textarea::placeholder { color: #a2947e !important; }
+  html[data-theme="dark"] .contact-form input:focus,
+  html[data-theme="dark"] .contact-form textarea:focus {
+    background: #1d1813 !important;
+    border-color: #a78bfa !important;
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.12) !important;
+  }
+  html[data-theme="dark"] .contact-form button {
+    background: linear-gradient(90deg, #4b2aad, #7c5ce3) !important;
+    color: #fff !important;
+  }
+  html[data-theme="dark"] .contact-form button:hover {
+    background: linear-gradient(90deg, #6a45d1, #9d7bf2) !important;
+  }
+
+  html[data-theme="dark"] .sub-platform-badge {
+    background: #2a241e !important;
+    color: #ece2d0 !important;
+  }
+  html[data-theme="dark"] .sub-platform-badge i { color: #fbbf24 !important; }
+  html[data-theme="dark"] .sub-platform-badge.code { background: #2a241e !important; color: #a78bfa !important; }
+  html[data-theme="dark"] .sub-platform-badge.code i { color: #a78bfa !important; }
+  html[data-theme="dark"] .sub-platforms-note {
+    background: #1d1813 !important;
+    border-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .sub-platforms-note p { color: #d8cebe !important; }
+  html[data-theme="dark"] .sub-platforms-note strong { color: #a78bfa !important; }
+
+  /* Readability: page base, footer and inline-styled bits */
+  html[data-theme="dark"] body { background: #161210 !important; color: #ece2d0 !important; }
+  html[data-theme="dark"] .intro-section,
+  html[data-theme="dark"] .contact-box,
+  html[data-theme="dark"] footer,
+  html[data-theme="dark"] .footer-container { color: #ece2d0 !important; }
+  html[data-theme="dark"] footer {
+    background: #1d1813 !important;
+    border-top-color: #332b22 !important;
+  }
+  html[data-theme="dark"] [style*="border-top: 1px solid #eee"] { border-top-color: #332b22 !important; }
+  html[data-theme="dark"] [style*="color: green"] { color: #b7e6c5 !important; }
+  html[data-theme="dark"] [style*="color: #888"],
+  html[data-theme="dark"] [style*="color:#888"],
+  html[data-theme="dark"] [style*="color: #666"],
+  html[data-theme="dark"] [style*="color:#666"] { color: #a2947e !important; }
   </style>
 </head>
 <body>
@@ -436,9 +536,13 @@
       <a href="contact.html">Contact Us</a>
       <a href="../user-profile.html">My Profile</a>
     </div>
-    <div class="nav-right">
-      <div class="menu-toggle" id="menu-toggle">☰</div>
-    </div>
+  <div class="nav-right">
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
+  <div class="menu-toggle" id="menu-toggle">&#9776;</div>
+  </div>
   </nav>
 </header>
 

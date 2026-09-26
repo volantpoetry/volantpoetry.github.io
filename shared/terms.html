@@ -8,9 +8,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png">
 <link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png">
+<script src="../theme.js"></script>
 <style>
-  :root {
-    --primary: #4b2aad;
+:root {
+--primary: #4b2aad;
     --primary-dark: #3a1f8a;
     --primary-light: #6c3ddd;
     --accent-gold: #b89b5e;
@@ -246,13 +247,23 @@
   }
 
   .closing-note {
-    background: #faf9fe;
-    border-left: 3px solid var(--accent-gold);
-    padding: 1.25rem 1.5rem;
-    margin-top: 1.5rem;
-    font-size: 0.95rem;
-    color: var(--text-secondary);
+  background: #faf9fe;
+  border-left: 3px solid var(--accent-gold);
+  padding: 1.25rem 1.5rem;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
   }
+
+  .status-note {
+  background: #f7f5ef;
+  border-left: 4px solid #8a6410;
+  padding: 14px 18px;
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  }
+
 
   .closing-note p {
     margin: 0;
@@ -392,19 +403,121 @@
       background: none;
       border: none;
     }
-    .terms-card {
-      box-shadow: none;
-      border: 1px solid #ccc;
-    }
-    body {
-      background: white;
-    }
+  .terms-card {
+  box-shadow: none;
+  border: 1px solid #ccc;
   }
-</style>
+  body {
+  background: white;
+  }
+  }
+
+  /* ===== NIGHT READING TOGGLE (floating) ===== */
+  .night-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    color: #4b2aad !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+    font-family: 'Inter', sans-serif !important;
+    position: fixed !important;
+    top: 14px !important;
+    right: 14px !important;
+    z-index: 1100 !important;
+  }
+  .night-toggle:hover {
+    transform: scale(1.12) !important;
+    background: rgba(75, 42, 173, 0.08) !important;
+  }
+  .theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+  @media (max-width: 768px) { .theme-label { display: none !important; } }
+
+  /* ===== ESPRESSO NIGHT (screen only, so print stays light) ===== */
+  @media screen {
+  html[data-theme="dark"] {
+    --bg-main: #161210;
+    --bg-card: #211b16;
+    --text-primary: #ece2d0;
+    --text-secondary: #d8cebe;
+    --text-muted: #a2947e;
+    --border-light: #332b22;
+    --border-gold: #4a3f22;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+  html[data-theme="dark"] body { background: #161210 !important; color: #ece2d0 !important; }
+  html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .page-header {
+    background: #1d1813 !important;
+    border-bottom-color: #4a3f22 !important;
+  }
+  html[data-theme="dark"] .page-header h1 { color: #a78bfa !important; }
+  html[data-theme="dark"] .page-header .breadcrumb { color: #a2947e !important; }
+  html[data-theme="dark"] .page-header .breadcrumb a { color: #a78bfa !important; }
+  html[data-theme="dark"] .terms-card,
+  html[data-theme="dark"] .page-footer {
+    background: #211b16 !important;
+    border-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .terms-intro,
+  html[data-theme="dark"] .terms-section { border-bottom-color: #332b22 !important; }
+  html[data-theme="dark"] .terms-section h2 { color: #a78bfa !important; }
+  html[data-theme="dark"] .terms-section h2 i { color: #fbbf24 !important; }
+  html[data-theme="dark"] .terms-section p,
+  html[data-theme="dark"] .terms-section li { color: #d8cebe !important; }
+  html[data-theme="dark"] .terms-section li::before { color: #fbbf24 !important; }
+  html[data-theme="dark"] .terms-intro strong,
+  html[data-theme="dark"] .highlight { color: #a78bfa !important; }
+  html[data-theme="dark"] .warning { color: #f5b7b7 !important; }
+  html[data-theme="dark"] .accent-text { color: #fbbf24 !important; }
+  html[data-theme="dark"] .sub-platform-badge { background: #2a241e !important; color: #ece2d0 !important; }
+  html[data-theme="dark"] .sub-platform-badge i { color: #fbbf24 !important; }
+  html[data-theme="dark"] .sub-platform-badge.code { background: #2a241e !important; color: #a78bfa !important; }
+  html[data-theme="dark"] .sub-platform-badge.code i { color: #a78bfa !important; }
+  html[data-theme="dark"] .closing-note {
+  background: #1d1813 !important;
+  border-left-color: #fbbf24 !important;
+  }
+  html[data-theme="dark"] .status-note {
+  background: #1d1813 !important;
+  border-left-color: #fbbf24 !important;
+  color: #d8cebe !important;
+  }
+  html[data-theme="dark"] .status-note strong { color: #ece2d0 !important; }
+
+  html[data-theme="dark"] .platform-grid .platform-item {
+    background: #1d1813 !important;
+    border-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .platform-grid .platform-item .name { color: #a78bfa !important; }
+  html[data-theme="dark"] .page-footer p { color: #a2947e !important; }
+  html[data-theme="dark"] .page-footer a { color: #a78bfa !important; }
+  /* Inline callout boxes (e.g. Personal Use License) keep a light background */
+  html[data-theme="dark"] .terms-section p[style*="background"],
+  html[data-theme="dark"] .terms-intro p[style*="background"] {
+    background: #1d1813 !important;
+    border-left-color: #4b3a6b !important;
+    color: #d8cebe !important;
+  }
+  html[data-theme="dark"] .terms-section p[style*="background"] strong { color: #ece2d0 !important; }
+  }
+  </style>
 </head>
 <body>
 
-<div class="page-header">
+  <div class="page-header">
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
   <div style="text-align: center;">
     <span class="parent-brand-tag">Volant Foundry</span>
   </div>
@@ -529,13 +642,19 @@
       <!-- ===== SECTION 7: VOLANT LYRICS ===== -->
       <div class="terms-section">
         <h2>7. Lyrics Marketplace Guidelines <span class="platform-tag lyrics">Volant Lyrics</span></h2>
-        <p><strong>Volant Lyrics</strong> is a marketplace for original song lyrics. Songwriters set their own prices and sell their work to artists, producers, and music lovers while retaining full ownership of their creative output. The following terms apply to all songwriters and buyers using the Volant Lyrics platform:</p>
+        <p><strong>Volant Lyrics</strong> is a marketplace for original song lyrics. Songwriters set their own prices and sell their work to artists, producers, and music lovers while retaining full ownership of their creative output. The following terms apply to all songwriters and buyers using the Volant Lyrics platform from the date the marketplace opens for transactions:</p>
+        <p class="status-note">
+          <strong>Pre-launch status.</strong> Volant Lyrics is currently viewable but not open for transactions.
+          <strong>No purchases can be made and no payouts are processed</strong> until payment processing is enabled.
+          Nothing on the platform is for sale at this time, and the pricing, sale and payout arrangements set out
+          below take effect only once payments are live.
+        </p>
         <ul>
-          <li><span class="highlight">Songwriters set the price for their lyrics</span> and are paid for each sale at the price they set.</li>
+          <li><span class="highlight">Songwriters set the price for their lyrics</span> and are paid for each sale at the price they set, once payments are enabled.</li>
           <li><span class="accent-text">Songwriters retain full ownership and copyright</span> of their lyrics. Volant Lyrics is granted permission to display and sell the work on the platform.</li>
           <li><span class="warning">Purchased lyrics are for personal use only.</span> Buyers may not republish, resell, or redistribute lyrics acquired on Volant Lyrics.</li>
           <li>All lyrics must be original work. Plagiarized or infringing content will be removed from the marketplace.</li>
-          <li>Payouts for lyric sales are processed through the songwriter's configured payout account on the platform.</li>
+          <li>Payouts for lyric sales are processed through the songwriter's configured payout account on the platform. No payouts are processed before payment processing is enabled.</li>
           <li>By using Volant Lyrics, users agree to these terms and acknowledge that continued use constitutes acceptance of any updates.</li>
         </ul>
         <p style="margin-top: 0.75rem; padding: 14px 18px; background: #f7f5ef; border-left: 4px solid #4a7f5b; border-radius: 8px;">
@@ -547,7 +666,7 @@
         </p>
         <p style="margin-top: 0.75rem; font-size: 0.95rem; color: var(--text-muted);">
           <i style="color: var(--accent-gold-dark);">📌</i> 
-          <em>Visit the <a href="https://volantlyrics.vercel.app" style="color: var(--primary); text-decoration: underline;" target="_blank">Volant Lyrics</a> marketplace to sell or purchase lyrics.</em>
+          <em>Visit the <a href="https://volantlyrics.vercel.app" style="color: var(--primary); text-decoration: underline;" target="_blank">Volant Lyrics</a> platform to preview the marketplace. Sales and payouts open when payments are enabled.</em>
         </p>
       </div>
 

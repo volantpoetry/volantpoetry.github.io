@@ -8,7 +8,8 @@
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="../images/volant-favicon.png">
 <link rel="apple-touch-icon" href="../images/volant-favicon.png">
-  <style>
+<script src="../theme.js"></script>
+<style>
     * {
       margin: 0;
       padding: 0;
@@ -249,13 +250,77 @@
       margin-top: 0.5rem;
     }
 
-    @media (max-width: 480px) {
-      .container { padding: 1.5rem; }
-      .btn-group { flex-direction: column; }
-    }
+  @media (max-width: 480px) {
+  .container { padding: 1.5rem; }
+  .btn-group { flex-direction: column; }
+  }
+
+  /* ===== NIGHT READING TOGGLE (floating) ===== */
+  .night-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    color: #4b2aad !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+    font-family: 'Inter', sans-serif !important;
+    position: fixed !important;
+    top: 16px !important;
+    right: 16px !important;
+    z-index: 1100 !important;
+  }
+  .night-toggle:hover {
+    transform: scale(1.12) !important;
+    background: rgba(75, 42, 173, 0.08) !important;
+  }
+  .theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+  @media (max-width: 768px) { .theme-label { display: none !important; } }
+
+  /* ===== ESPRESSO NIGHT ===== */
+  html[data-theme="dark"] body {
+    background: #161210 !important;
+    color: #ece2d0 !important;
+  }
+  html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .container {
+    background: #211b16 !important;
+    border: 1px solid #332b22;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6) !important;
+  }
+  html[data-theme="dark"] .brand { color: #a78bfa !important; }
+  html[data-theme="dark"] .email-display { background: #1d1813 !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .message-box { background: #1d1813 !important; border-left-color: #a78bfa !important; }
+  html[data-theme="dark"] .btn-secondary { background: #1d1813 !important; color: #a78bfa !important; border-color: #a78bfa !important; }
+  html[data-theme="dark"] .btn-secondary:hover { background: #2a241e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .btn-outline {
+    background: #1d1813 !important;
+    color: #a2947e !important;
+    border: 1px solid #332b22 !important;
+  }
+  html[data-theme="dark"] .btn-outline:hover { background: #2a241e !important; color: #ece2d0 !important; }
+  html[data-theme="dark"] .status.success { background-color: #12211a !important; color: #b7e6c5 !important; border-left-color: #b7e6c5 !important; }
+  html[data-theme="dark"] .status.error { background-color: #2b1416 !important; color: #f5b7b7 !important; border-left-color: #f5b7b7 !important; }
+  html[data-theme="dark"] .status.info { background-color: #2b2413 !important; color: #f0d9a0 !important; border-left-color: #f0d9a0 !important; }
+  html[data-theme="dark"] .spam-tip { background-color: #1f1a2e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .hint-box { background: #1d1813 !important; color: #d8cebe !important; }
+  html[data-theme="dark"] .links a { color: #a78bfa !important; }
+  html[data-theme="dark"] hr { border-top-color: #332b22 !important; }
+  html[data-theme="dark"] .countdown { color: #a2947e !important; }
   </style>
 </head>
-<body>
+  <body>
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
   <div class="container">
     <div class="email-icon">✉️</div>
     <h2>Verify your email</h2>

@@ -32,8 +32,9 @@
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <link rel="icon" type="image/png" href="../images/volant-foundry-favicon.png">
 <link rel="apple-touch-icon" href="../images/volant-foundry-favicon.png">
-
- <style>
+<script src="../theme.js"></script>
+  
+  <style>
     * {
       margin: 0;
       padding: 0;
@@ -429,13 +430,101 @@
   }
   
   .google-btn i {
-    font-size: 1.1rem;
+  font-size: 1.1rem;
   }
-}
+  }
+
+  /* ===== NIGHT READING TOGGLE (floating) ===== */
+  .night-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    color: #4b2aad !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+    font-family: 'Inter', sans-serif !important;
+    position: fixed !important;
+    top: 16px !important;
+    right: 16px !important;
+    z-index: 1100 !important;
+  }
+  .night-toggle:hover {
+    transform: scale(1.12) !important;
+    background: rgba(75, 42, 173, 0.08) !important;
+  }
+  .theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+  @media (max-width: 768px) { .theme-label { display: none !important; } }
+
+  /* ===== ESPRESSO NIGHT ===== */
+  html[data-theme="dark"] body {
+    background: #161210 !important;
+    color: #ece2d0 !important;
+  }
+  html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .container {
+    background: rgba(33, 27, 22, 0.9) !important;
+    border: 1px solid #332b22;
+  }
+  html[data-theme="dark"] .platform-badge { color: #fff !important; }
+  html[data-theme="dark"] .subtitle { color: #a2947e !important; border-left-color: #a78bfa !important; }
+  html[data-theme="dark"] .google-btn {
+    background: #1d1813 !important;
+    border-color: #332b22 !important;
+    color: #ece2d0 !important;
+  }
+  html[data-theme="dark"] .google-btn:hover:not(:disabled) {
+    background: #2a241e !important;
+    border-color: #a78bfa !important;
+  }
+  html[data-theme="dark"] .google-btn .google-text { color: #ece2d0 !important; }
+  html[data-theme="dark"] .divider-text { color: #6f6558 !important; }
+  html[data-theme="dark"] .divider-text::before,
+  html[data-theme="dark"] .divider-text::after { background: #332b22 !important; }
+  html[data-theme="dark"] form label { color: #ece2d0 !important; }
+  html[data-theme="dark"] input[type="text"],
+  html[data-theme="dark"] input[type="email"],
+  html[data-theme="dark"] input[type="password"] {
+    background: #1d1813 !important;
+    border-color: #332b22 !important;
+    color: #ece2d0 !important;
+    caret-color: #fbbf24;
+  }
+  html[data-theme="dark"] input:focus {
+    background: #1d1813 !important;
+    border-color: #a78bfa !important;
+    box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.12) !important;
+  }
+  html[data-theme="dark"] input::placeholder { color: #7d7263 !important; }
+  html[data-theme="dark"] .password-eye { color: #a2947e !important; }
+  html[data-theme="dark"] .password-eye:hover { background: #2a241e !important; color: #a78bfa !important; }
+  html[data-theme="dark"] .password-eye.showing { color: #a78bfa !important; background: #2a241e !important; }
+  html[data-theme="dark"] .btn-primary { background: #4b2aad !important; color: #fff !important; }
+  html[data-theme="dark"] .btn-primary:hover:not(:disabled) { background: #6f4ae4 !important; }
+  html[data-theme="dark"] .spinner { border-top-color: #fff !important; }
+  html[data-theme="dark"] .status.success { background: #12211a !important; color: #b7e6c5 !important; border-color: #1f5c33 !important; }
+  html[data-theme="dark"] .status.error { background: #2b1416 !important; color: #f5b7b7 !important; border-color: #8f2630 !important; }
+  html[data-theme="dark"] .status.info { background: #1f1a2e !important; color: #c9b6ff !important; border-color: #4b3a6b !important; }
+  html[data-theme="dark"] .account-check { background: #1d1813 !important; border: 1px solid #332b22; }
+  html[data-theme="dark"] .account-check a { color: #a78bfa !important; }
+  html[data-theme="dark"] .account-check a:hover { border-bottom-color: #a78bfa !important; }
+  html[data-theme="dark"] .links a { color: #a2947e !important; }
+  html[data-theme="dark"] .links a:hover { color: #a78bfa !important; border-bottom-color: #a78bfa !important; }
   </style>
 </head>
-<body>
-<div class="container">
+  <body>
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
+  <div class="container">
 
   <a href="#" id="backLink" class="back-link"><i class="fas fa-arrow-left"></i> Back</a>
 

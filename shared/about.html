@@ -110,9 +110,10 @@
     }
   }
   </script>
+  <script src="../theme.js"></script>
 
   <style>
-    /* Mobile nav toggle */
+  /* Mobile nav toggle */
     #nav-links { display: none; }
     #nav-links.show { display: flex; flex-direction: column; }
     
@@ -460,6 +461,49 @@
 
     .volant-reads-cta .btn i {
       margin-right: 8px;
+    }
+
+    /* Pre-launch status panel (Volant Lyrics — payments not yet live) */
+    .lyrics-soon {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 26px 28px;
+      background: #fffdf8;
+      border: 1px solid #e6cf9a;
+      border-left: 4px solid #b8860b;
+      border-radius: 14px;
+      text-align: left;
+    }
+    .lyrics-soon-badge {
+      display: inline-block;
+      background: #b8860b;
+      color: #fffdf8;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .lyrics-soon-badge i { margin-right: 6px; }
+    .lyrics-soon h3 { font-size: 1.15rem; margin-bottom: 8px; color: #2d2a24; }
+    .lyrics-soon p { font-size: 0.95rem; line-height: 1.7; color: #555; margin-bottom: 10px; }
+    .lyrics-soon p:last-child { margin-bottom: 0; }
+    .lyrics-soon a { color: #4b2aad; font-weight: 600; }
+    .soon-dot {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 7px;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #8a6410;
+      background: #fdf3d8;
+      border: 1px solid #e6cf9a;
+      border-radius: 10px;
+      vertical-align: middle;
     }
 
     .volant-reads-footer-note {
@@ -1244,9 +1288,315 @@ header nav {
     margin-right: 4px !important;
   }
   header .logo {
-    font-size: 1.1rem !important;
+  font-size: 1.1rem !important;
   }
-}
+  }
+
+  /* ===== NIGHT READING TOGGLE ===== */
+  .night-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    color: #4b2aad !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+  .night-toggle:hover {
+    transform: scale(1.12) !important;
+    background: rgba(75, 42, 173, 0.08) !important;
+  }
+  .theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+  @media (max-width: 768px) { .theme-label { display: none !important; } }
+
+  /* ===== ESPRESSO NIGHT ===== */
+  html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .logo .logo-text { color: #a78bfa !important; }
+  html[data-theme="dark"] .logo-highlight,
+  html[data-theme="dark"] .logo .logo-text .logo-highlight {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+  }
+  html[data-theme="dark"] .nav-links a,
+  html[data-theme="dark"] header nav a { color: #ece2d0 !important; }
+  html[data-theme="dark"] .nav-links a:hover { color: #c9b6ff !important; }
+  html[data-theme="dark"] .menu-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .close-btn { color: #a78bfa !important; }
+
+  html[data-theme="dark"] .quick-nav-links .nav-container {
+    background: #1d1813 !important;
+    border: 1px solid #332b22 !important;
+  }
+  html[data-theme="dark"] .quick-nav-links a { color: #a78bfa !important; }
+  html[data-theme="dark"] .quick-nav-links .divider { color: #4a4038 !important; }
+
+  html[data-theme="dark"] .ranking-card,
+  html[data-theme="dark"] .volant-reads-box,
+  html[data-theme="dark"] .about-container,
+  html[data-theme="dark"] .mission-block,
+  html[data-theme="dark"] .platform-container {
+    background: #211b16 !important;
+    border-color: #4b3a6b !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;
+  }
+  html[data-theme="dark"] .ranking-card h3,
+  html[data-theme="dark"] .about-text h2,
+  html[data-theme="dark"] .mission-block h3,
+  html[data-theme="dark"] .platform-container h2,
+  html[data-theme="dark"] .volant-codes-box .codes-header h2,
+  html[data-theme="dark"] .volant-codes-box .codes-col h4,
+  html[data-theme="dark"] .author-section .author-info h3 {
+    color: #a78bfa !important;
+  }
+  html[data-theme="dark"] .ranking-card h3 { border-bottom-color: #4a3f22 !important; }
+  html[data-theme="dark"] .formula-box { background: rgba(167, 139, 250, 0.12) !important; color: #ece2d0 !important; }
+  html[data-theme="dark"] .rule-list li { border-bottom-color: #332b22 !important; }
+  html[data-theme="dark"] .rule-text { color: #ece2d0 !important; }
+  html[data-theme="dark"] .example-box { background: #221d14 !important; border: 1px solid #4a3f22 !important; color: #d9c48a !important; }
+  html[data-theme="dark"] .badge-preview { background: #b45309 !important; color: #fff !important; }
+
+  html[data-theme="dark"] .volant-reads-box .description { border-bottom-color: #332b22 !important; }
+  html[data-theme="dark"] .volant-reads-col {
+    background: #1d1813 !important;
+    border-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .volant-reads-col h3 { color: #a78bfa !important; }
+  html[data-theme="dark"] .volant-reads-col ul li { color: #d8cebe !important; }
+  html[data-theme="dark"] .volant-reads-col .badge { background: #4b2aad !important; color: #fff !important; }
+  html[data-theme="dark"] .volant-reads-col .badge.orange { background: #8a4a2e !important; }
+  html[data-theme="dark"] .volant-reads-col .badge.green { background: #1f5c33 !important; }
+  html[data-theme="dark"] .volant-reads-col .badge.gold { background: #8a6410 !important; }
+  html[data-theme="dark"] .volant-reads-col .badge.red { background: #8f2630 !important; }
+  html[data-theme="dark"] .volant-reads-cta { border-top-color: #332b22 !important; }
+  html[data-theme="dark"] .volant-reads-footer-note { background: #1d1813 !important; }
+  html[data-theme="dark"] .volant-reads-footer-note p { color: #a2947e !important; }
+  html[data-theme="dark"] .volant-reads-footer-note i,
+  html[data-theme="dark"] .author-cta { color: #a78bfa !important; }
+
+  html[data-theme="dark"] .volant-codes-box {
+    background: #211b16 !important;
+    border-color: #4b3a6b !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+  }
+  html[data-theme="dark"] .volant-codes-box .description,
+  html[data-theme="dark"] .about-text p,
+  html[data-theme="dark"] .mission-block p,
+  html[data-theme="dark"] .platform-container > p,
+  html[data-theme="dark"] .platform-container .guidelines-box ol {
+    color: #d8cebe !important;
+  }
+  html[data-theme="dark"] .volant-codes-box .codes-header h2 span { color: #fbbf24 !important; }
+  html[data-theme="dark"] .volant-codes-box .codes-col {
+    background: #1d1813 !important;
+    border-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .volant-codes-box .codes-col ul li { color: #d8cebe !important; }
+  html[data-theme="dark"] .volant-codes-box .codes-cta { border-top-color: #332b22 !important; }
+
+  html[data-theme="dark"] .volant-reads-cta .btn,
+  html[data-theme="dark"] .volant-codes-box .codes-cta .btn {
+    background: #4b2aad !important;
+    color: #fff !important;
+  }
+  html[data-theme="dark"] .volant-reads-cta .btn.orange { background: #8a4a2e !important; }
+  html[data-theme="dark"] .volant-codes-box .codes-cta .btn.gold { background: #8a6410 !important; }
+  html[data-theme="dark"] .volant-reads-cta .btn:hover,
+  html[data-theme="dark"] .volant-codes-box .codes-cta .btn:hover { filter: brightness(1.15); }
+
+  html[data-theme="dark"] .platform-container .guidelines-box {
+    background: #241615 !important;
+    border-left-color: #c0392b !important;
+  }
+  html[data-theme="dark"] .platform-container .guidelines-box strong { color: #f5b7b7 !important; }
+  html[data-theme="dark"] .platform-container .guidelines-box a { color: #a78bfa !important; }
+  html[data-theme="dark"] .author-section .author-info p { color: #a2947e !important; }
+  html[data-theme="dark"] .brand-platforms span { background: rgba(255, 255, 255, 0.12) !important; }
+
+  /* Section wrappers painted near-white by shared/about.css */
+  html[data-theme="dark"] .about-section,
+  html[data-theme="dark"] .mission-section,
+  html[data-theme="dark"] .platform-section,
+  html[data-theme="dark"] .ranking-info-section,
+  html[data-theme="dark"] .volant-reads-section,
+  html[data-theme="dark"] .volant-codes-section,
+  html[data-theme="dark"] .dedication-section,
+  html[data-theme="dark"] .author-section {
+    background: #161210 !important;
+    border-top-color: #4b3a6b !important;
+  }
+  html[data-theme="dark"] .about-image,
+  html[data-theme="dark"] .about-image img {
+    background: transparent !important;
+    border-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .about-image .author-info { color: #ece2d0 !important; }
+  html[data-theme="dark"] .about-image .author-info h3 { color: #a78bfa !important; }
+  html[data-theme="dark"] .about-image .author-info p { color: #a2947e !important; }
+  html[data-theme="dark"] .mission-block h3,
+  html[data-theme="dark"] .platform-container h2,
+  html[data-theme="dark"] .dedication-section h2 { color: #a78bfa !important; }
+  html[data-theme="dark"] .mission-block p,
+  html[data-theme="dark"] .platform-container p,
+  html[data-theme="dark"] .dedication-section p { color: #ece2d0 !important; }
+  html[data-theme="dark"] .dedication-sign { color: #a2947e !important; }
+
+  /* Ranking section: Hall of Fame link + inline grey notes */
+  html[data-theme="dark"] .ranking-info-section a { color: #a78bfa !important; }
+  html[data-theme="dark"] .ranking-info-section a:hover { color: #c9b6ff !important; }
+  html[data-theme="dark"] .ranking-card p[style*="color"] { color: #a2947e !important; }
+
+  /* Pre-launch status panel */
+  html[data-theme="dark"] .volant-reads-box .lyrics-soon {
+    background: #1d1813 !important;
+    border-color: #332b22 !important;
+    border-left-color: #fbbf24 !important;
+  }
+  html[data-theme="dark"] .volant-reads-box .lyrics-soon-badge {
+    background: #8a6410 !important;
+    color: #f6ecd2 !important;
+  }
+  html[data-theme="dark"] .volant-reads-box .lyrics-soon h3 { color: #ece2d0 !important; }
+  html[data-theme="dark"] .volant-reads-box .lyrics-soon p { color: #d8cebe !important; }
+  html[data-theme="dark"] .volant-reads-box .lyrics-soon a { color: #a78bfa !important; }
+  html[data-theme="dark"] .soon-dot {
+    color: #fbbf24 !important;
+    background: #2a241e !important;
+    border-color: #4a3f22 !important;
+  }
+
+  /* Purple edge on every card, matching .volant-codes-box */
+  html[data-theme="dark"] .volant-reads-box,
+  html[data-theme="dark"] .volant-codes-box,
+  html[data-theme="dark"] .volant-reads-col,
+  html[data-theme="dark"] .volant-codes-box .codes-col,
+  html[data-theme="dark"] .ranking-card,
+  html[data-theme="dark"] .about-container,
+  html[data-theme="dark"] .mission-block,
+  html[data-theme="dark"] .platform-container,
+  html[data-theme="dark"] .dedication-container,
+  html[data-theme="dark"] .parent-brand-banner,
+  html[data-theme="dark"] .platform-container .guidelines-box,
+  html[data-theme="dark"] .author-info,
+  html[data-theme="dark"] .ranking-info-section {
+    border-color: #4b3a6b !important;
+  }
+
+  /* No light surfaces left: header bar + every remaining pale chip/pill */
+  html[data-theme="dark"] header {
+    background: #161210 !important;
+    border-bottom-color: #4b3a6b !important;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.5) !important;
+  }
+  html[data-theme="dark"] .quick-nav-links a {
+    background: #2a241e !important;
+    color: #a78bfa !important;
+  }
+  html[data-theme="dark"] .quick-nav-links a:hover { background: #332b22 !important; }
+  html[data-theme="dark"] .rule-weight { background: #2a241e !important; color: #a78bfa !important; }
+  html[data-theme="dark"] .rule-list li { background: transparent !important; }
+  html[data-theme="dark"] .rule-icon { background: #2a241e !important; }
+
+  /* Readability: page base + containers that had no text colour */
+  html[data-theme="dark"] body { background: #161210 !important; color: #ece2d0 !important; }
+  html[data-theme="dark"] .volant-reads-section,
+  html[data-theme="dark"] .volant-codes-section,
+  html[data-theme="dark"] .volant-reads-box,
+  html[data-theme="dark"] .volant-reads-box .description,
+  html[data-theme="dark"] .volant-codes-box,
+  html[data-theme="dark"] .ranking-card,
+  html[data-theme="dark"] .about-container,
+  html[data-theme="dark"] .mission-block,
+  html[data-theme="dark"] .platform-container,
+  html[data-theme="dark"] .dedication-section,
+  html[data-theme="dark"] .dedication-container,
+  html[data-theme="dark"] .author-section { color: #ece2d0 !important; }
+  html[data-theme="dark"] .volant-reads-section h2,
+  html[data-theme="dark"] .volant-codes-section h2,
+  html[data-theme="dark"] .dedication-section h2,
+  html[data-theme="dark"] .author-section h2 { color: #a78bfa !important; }
+  html[data-theme="dark"] .ranking-card h3,
+  html[data-theme="dark"] .mission-block h3,
+  html[data-theme="dark"] .platform-container h2,
+  html[data-theme="dark"] .author-section .author-info h3 { color: #a78bfa !important; }
+
+  /* Inline-styled light blocks and muted inline text */
+  html[data-theme="dark"] [style*="background: #f5f3ee"],
+  html[data-theme="dark"] [style*="background:#f5f3ee"] {
+    background: #1d1813 !important;
+    border: 1px solid #332b22 !important;
+    border-radius: 12px !important;
+  }
+  html[data-theme="dark"] [style*="color: #6b6b6b"],
+  html[data-theme="dark"] [style*="color:#6b6b6b"],
+  html[data-theme="dark"] [style*="color: #666"],
+  html[data-theme="dark"] [style*="color:#666"],
+  /* Direct light-mode text rules that sit on the dark cards */
+  html[data-theme="dark"] .dedication-container {
+    background: linear-gradient(160deg, #211b16, #2a241e) !important;
+    border: 1px solid #332b22 !important;
+    border-top: 3px solid #a78bfa !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+    color: #ece2d0 !important;
+  }
+  html[data-theme="dark"] .dedication-container h2 { color: #a78bfa !important; }
+  html[data-theme="dark"] .dedication-container p { color: #d8cebe !important; opacity: 1 !important; }
+  html[data-theme="dark"] .parent-brand-banner {
+    background: linear-gradient(160deg, #1d1813, #2a241e) !important;
+    border: 1px solid #332b22 !important;
+    border-top: 3px solid #a78bfa !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+    color: #ece2d0 !important;
+  }
+  html[data-theme="dark"] .parent-brand-banner h1 { color: #ece2d0 !important; }
+  html[data-theme="dark"] .parent-brand-banner h1 span { color: #fbbf24 !important; }
+  html[data-theme="dark"] .parent-brand-banner p { color: #d8cebe !important; opacity: 1 !important; }
+  html[data-theme="dark"] .brand-platforms span { background: #2a241e !important; color: #ece2d0 !important; border: 1px solid #332b22; }
+  html[data-theme="dark"] .brand-platforms span i { color: #a78bfa !important; }
+  html[data-theme="dark"] .volant-reads-box .description p,
+  html[data-theme="dark"] .volant-reads-box .description,
+  html[data-theme="dark"] .volant-codes-box .description,
+  html[data-theme="dark"] .volant-codes-box .description p,
+  html[data-theme="dark"] .volant-codes-box .codes-col ul li,
+  html[data-theme="dark"] .about-text p,
+  html[data-theme="dark"] .about-text p strong,
+  html[data-theme="dark"] .mission-block p,
+  html[data-theme="dark"] .platform-container > p,
+  html[data-theme="dark"] .platform-container .guidelines-box ol,
+  html[data-theme="dark"] .volant-reads-footer-note p { color: #ece2d0 !important; }
+  html[data-theme="dark"] .volant-reads-box .description strong,
+  html[data-theme="dark"] .volant-codes-box .description strong,
+  html[data-theme="dark"] .volant-codes-box .codes-col ul li i,
+  html[data-theme="dark"] .ranking-info-section h2,
+  html[data-theme="dark"] .rule-weight { color: #a78bfa !important; }
+  html[data-theme="dark"] .volant-reads-box .description .highlight,
+  html[data-theme="dark"] .volant-codes-box .description .highlight { color: #e8a87c !important; }
+  /* The small grey sub-line under each platform description */
+  html[data-theme="dark"] .volant-reads-box .description p[style*="color: #6b6b6b"],
+  html[data-theme="dark"] .volant-reads-box .description p[style*="color: #888"],
+  html[data-theme="dark"] .volant-codes-box .description p[style*="color: #6b6b6b"],
+  html[data-theme="dark"] .volant-codes-box .description p[style*="color: #888"] { color: #d8cebe !important; }
+  html[data-theme="dark"] [style*="border-bottom: 2px solid #ede7df"],
+  html[data-theme="dark"] [style*="border-bottom:2px solid #ede7df"] { border-bottom-color: #332b22 !important; }
+  html[data-theme="dark"] [style*="color: #888"],
+  html[data-theme="dark"] [style*="color:#888"] { color: #a2947e !important; }
+  html[data-theme="dark"] [style*="color: #4b2aad"],
+  html[data-theme="dark"] [style*="color:#4b2aad"] { color: #a78bfa !important; }
+  html[data-theme="dark"] [style*="color: #b76e4b"],
+  html[data-theme="dark"] [style*="color:#b76e4b"] { color: #e8a87c !important; }
+  html[data-theme="dark"] [style*="color: #c0392b"],
+  html[data-theme="dark"] [style*="color:#c0392b"],
+  html[data-theme="dark"] [style*="color: #d32f2f"],
+  html[data-theme="dark"] [style*="color:#d32f2f"] { color: #f5b7b7 !important; }
+  html[data-theme="dark"] [style*="color: #2d7d46"],
+  html[data-theme="dark"] [style*="color:#2d7d46"] { color: #b7e6c5 !important; }
   </style>
 </head>
 <body>
@@ -1264,14 +1614,18 @@ header nav {
                         <a href="https://volantcodes.vercel.app"><i class="fas fa-code" style="margin-right: 6px;"></i>Volant Codes</a>
         <a href="../index.html">📖 Volant Poetry</a>
         <a href="../store/index.html">📚 Bookstore</a>
-        <a href="https://volantlyrics.vercel.app">🎵 Volant Lyrics</a>
+        <a href="#volant-lyrics">🎵 Volant Lyrics <span class="soon-dot">soon</span></a>
         <a href="https://volantfoundry.vercel.app/">🏛️ Volant Foundry</a>
          <a href="contact.html">Contact Us</a>
     </div>
 
-    <div class="nav-right">
-      <div class="menu-toggle" id="menu-toggle">☰</div>
-    </div>
+  <div class="nav-right">
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
+  <div class="menu-toggle" id="menu-toggle">&#9776;</div>
+  </div>
   </nav>
 </header>
 
@@ -1458,7 +1812,7 @@ header nav {
       </p>
       <p style="font-size: 0.95rem; color: #6b6b6b; margin-top: 5px;">
         <i class="fas fa-arrow-right" style="color: #b76e4b;"></i> 
-        Songwriters keep full copyright. Get paid at the price you set.
+        Songwriters keep full copyright. At launch you set the price, and you keep every cedi.
       </p>
     </div>
 
@@ -1522,8 +1876,26 @@ header nav {
     </div>
 
     <div class="volant-reads-cta">
-      <a href="https://volantlyrics.vercel.app" class="btn" target="_blank"><i class="fas fa-store"></i> Visit Marketplace</a>
-      <a href="https://volantlyrics.vercel.app/submit.html" class="btn orange" target="_blank"><i class="fas fa-upload"></i> Sell Your Lyrics</a>
+      <div class="lyrics-soon">
+        <span class="lyrics-soon-badge"><i class="fas fa-hourglass-half"></i> Launching Soon</span>
+        <h3>The marketplace is built. Payments are the last step.</h3>
+        <p>
+          Volant Lyrics is in final preparation. The catalogue and the full licence model set out above
+          are in place, but payment processing has not been switched on yet.
+        </p>
+        <p>
+          We are deliberately <strong>not</strong> accepting submissions or sales until payouts are live.
+          Taking a songwriter's work and promising payment we cannot yet deliver would not be fair to you,
+          so nothing here is for sale at this moment.
+        </p>
+        <p>
+          You are welcome to
+          <a href="https://volantlyrics.vercel.app" target="_blank" rel="noopener">preview the catalogue</a>
+          while we finish, or email
+          <a href="mailto:reach.volant@gmail.com?subject=Volant%20Lyrics%20%E2%80%94%20Early%20Access">request early access</a>
+          to be told the day it opens and to submit your lyrics at launch.
+        </p>
+      </div>
     </div>
   </div>
 </section>
@@ -1611,7 +1983,7 @@ header nav {
       
       <p style="margin-top: 12px; font-size: 0.85rem; color: #666;">
         <strong>📅 Weekly Reset:</strong> Rankings reset every Monday. 
-        The previous week's champion is saved in our Hall of Fame!
+        The previous week's champion is saved in our <a href="../gallery-achievements.html" target="_blank" rel="noopener">Hall of Fame</a>!
       </p>
     </div>
   </div>
@@ -1619,10 +1991,13 @@ header nav {
   <div style="margin-top: 30px; text-align: center; padding: 20px; background: #f5f3ee; border-radius: 12px;">
     <h4 style="color: #4b2aad; margin-bottom: 10px;">💡 Why This System?</h4>
     <p style="max-width: 800px; margin: 0 auto;">
-      Our ranking system is designed to reward <strong>genuine community engagement</strong>, not just popularity.
-      Commenting thoughtfully on others' work is valued more than receiving likes.
-      This creates a supportive environment where every poet can thrive!
+        Our ranking system is designed to reward <strong>genuine community engagement</strong>, not just popularity.
+        Commenting thoughtfully on others' work is valued more than receiving likes.
+        This creates a supportive environment where every poet can thrive!
     </p>
+    <div class="volant-reads-cta">
+      <a href="../gallery-achievements.html" target="_blank" rel="noopener" class="btn"><i class="fas fa-trophy"></i> View Achievement Gallery</a>
+    </div>
     <div style="margin-top: 15px;">
       <span class="badge-preview">🔥 Trending this week</span> Shows poems getting recent activity
       <span style="margin-left: 15px;">🤝 Community Helper is Earned by giving 5+ comments or 20+ likes</span>

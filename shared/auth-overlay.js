@@ -43,9 +43,24 @@
     var fapp = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
     var fauth = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
     var fdb = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
-    var app;
-    try { app = fapp.getApp(); } catch (e) { app = fapp.initializeApp(CONFIG); }
-    firebase = { app: app, auth: fauth.getAuth(app), db: fdb.getFirestore(app), fapp: fapp, fauth: fauth, fdb: fdb };
+      var app;
+      try { app = fapp.getApp(); } catch (e) { app = fapp.initializeApp(CONFIG); }
+      // Attach the offline cache here too. This normally runs long after the
+      // page's own module created the instance, but on a Google-redirect
+      // return it can run first - and a plain getFirestore() there would lock
+      // the page into a memory-only cache. If an instance already exists this
+      // throws and we simply reuse it.
+      var db;
+      try {
+        db = fdb.initializeFirestore(app, {
+          localCache: fdb.persistentLocalCache({
+            tabManager: fdb.persistentMultipleTabManager()
+          })
+        });
+      } catch (e2) {
+        db = fdb.getFirestore(app);
+      }
+      firebase = { app: app, auth: fauth.getAuth(app), db: db, fapp: fapp, fauth: fauth, fdb: fdb };
     return firebase;
   }
 
