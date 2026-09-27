@@ -54,6 +54,7 @@
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="images/volant-favicon.png">
 <link rel="apple-touch-icon" href="images/volant-favicon.png">
+<script src="theme.js"></script>
 <style>
 :root {
   --primary: #4b2aad;
@@ -504,7 +505,279 @@ body {
     border-radius: 10px;
   }
 }
+
+/* ===== AUDIO UPLOAD ===== */
+.audio-hint {
+  display: block;
+  color: #8a8aa0;
+  font-size: 0.74rem;
+  margin: 4px 0 6px;
+}
+.audio-url-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.audio-url-row span {
+  font-size: 0.78rem;
+  color: #8a8aa0;
+  white-space: nowrap;
+}
+.audio-url-row input {
+  flex: 1;
+}
+.audio-preview {
+  display: none;
+  margin-top: 10px;
+  padding: 10px;
+  background: #f6f5fb;
+  border: 1px solid #e3e0f2;
+  border-radius: 12px;
+}
+.audio-preview.open { display: block; }
+.audio-name {
+  font-size: 0.76rem;
+  color: #6b6b8b;
+  margin-top: 6px;
+  word-break: break-all;
+}
+.audio-msg {
+  display: none;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+.audio-msg.show { display: block; }
+.audio-msg.success { background: #e8f7ee; color: #1e7b41; }
+.audio-msg.warn { background: #fff4e5; color: #a8671d; }
+.audio-msg.info { background: #eef2ff; color: #4451b8; }
+
+/* ===== AUDIO PAYWALL MODAL ===== */
+.audio-paywall-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 15, 45, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1200;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.audio-paywall-overlay.open { display: flex; }
+.audio-paywall-card {
+  position: relative;
+  background: #fff;
+  border-radius: 20px;
+  max-width: 420px;
+  width: 100%;
+  padding: 32px 26px 24px;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+}
+.audio-paywall-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #999;
+  cursor: pointer;
+  line-height: 1;
+}
+.audio-paywall-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4b2aad, #6f4ae4);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+.audio-paywall-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.45rem;
+  margin-bottom: 10px;
+  color: #1d1833;
+}
+.audio-paywall-card p {
+  font-size: 0.88rem;
+  color: #5d5d78;
+  line-height: 1.6;
+}
+.audio-paywall-card ul {
+  list-style: none;
+  text-align: left;
+  margin: 16px 0;
+  padding: 0;
+}
+.audio-paywall-card ul li {
+  font-size: 0.84rem;
+  color: #3d3d5c;
+  padding: 4px 0;
+}
+.audio-paywall-card ul li i {
+  color: #2e9e5b;
+  margin-right: 8px;
+}
+.audio-paywall-btn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4b2aad, #6f4ae4);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.audio-paywall-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(75, 42, 173, 0.35); }
+.audio-paywall-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.audio-paywall-later {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border: none;
+  background: none;
+  color: #8a8aa0;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+/* ===== NIGHT READING TOGGLE ===== */
+.header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.night-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  background: none !important;
+  border: none !important;
+  font-size: 1.3rem !important;
+  cursor: pointer !important;
+  padding: 6px 8px !important;
+  border-radius: 10px !important;
+  color: #4b2aad !important;
+  line-height: 1 !important;
+  transition: transform 0.2s ease, background 0.2s ease !important;
+  font-family: 'Inter', sans-serif !important;
+}
+.night-toggle:hover {
+  transform: scale(1.12) !important;
+  background: rgba(75, 42, 173, 0.08) !important;
+}
+.theme-label {
+  font-size: 0.85rem !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+}
+@media (max-width: 768px) {
+  .theme-label { display: none !important; }
+}
+
+/* ===== ESPRESSO NIGHT ===== */
+html[data-theme="dark"] body {
+  background: #161210 !important;
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] .header-bar {
+  background: rgba(22, 18, 16, 0.94) !important;
+  border-bottom-color: #332b22 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .logo-text { color: #a78bfa !important; }
+html[data-theme="dark"] .logo .highlight {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+}
+html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+html[data-theme="dark"] .home-btn { background: #4b2aad !important; color: #f5f0ff !important; }
+html[data-theme="dark"] .home-btn:hover { background: #2a241e !important; color: #a78bfa !important; }
+
+html[data-theme="dark"] .guidelines-banner,
+html[data-theme="dark"] .container {
+  background: #211b16 !important;
+  border: 1px solid #332b22 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+html[data-theme="dark"] .guidelines-banner a { color: #a78bfa !important; }
+html[data-theme="dark"] .container h1,
+html[data-theme="dark"] .container h2,
+html[data-theme="dark"] .container h3 { color: #a78bfa !important; }
+
+html[data-theme="dark"] .field-container label { color: #ece2d0 !important; }
+html[data-theme="dark"] .field-container input,
+html[data-theme="dark"] .field-container textarea,
+html[data-theme="dark"] .field-container select {
+  background: #1d1813 !important;
+  color: #ece2d0 !important;
+  border-color: #332b22 !important;
+  caret-color: #fbbf24;
+}
+html[data-theme="dark"] .field-container input::placeholder,
+html[data-theme="dark"] .field-container textarea::placeholder { color: #a2947e !important; }
+html[data-theme="dark"] .field-container input:focus,
+html[data-theme="dark"] .field-container textarea:focus,
+html[data-theme="dark"] .field-container select:focus {
+  border-color: #a78bfa !important;
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.12) !important;
+}
+html[data-theme="dark"] .field-container input[readonly] {
+  background: #2a241e !important;
+  color: #a78bfa !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .field-container small,
+html[data-theme="dark"] .audio-hint { color: #a2947e !important; }
+
+html[data-theme="dark"] .submit-btn { background: linear-gradient(135deg, #4b2aad, #6f4ae4) !important; color: #fff !important; }
+html[data-theme="dark"] .draft-btn { background: #3a3027 !important; color: #ece2d0 !important; }
+html[data-theme="dark"] .submit-another-btn { background: #4b2aad !important; color: #fff !important; }
+html[data-theme="dark"] .back-btn-form {
+  background: #211b16 !important;
+  color: #a78bfa !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .back-btn-form:hover { background: #2a241e !important; color: #c9b6ff !important; }
+
+html[data-theme="dark"] .success-message.success { background: #12211a !important; color: #b7e6c5 !important; }
+html[data-theme="dark"] .success-message.error { background: #2b1416 !important; color: #f5b7b7 !important; }
+html[data-theme="dark"] .success-message.draft { background: #241e18 !important; color: #fbbf24 !important; }
+
+html[data-theme="dark"] .audio-url-row input { background: #1d1813 !important; color: #ece2d0 !important; border-color: #332b22 !important; }
+html[data-theme="dark"] .audio-preview { background: #211b16 !important; border-color: #332b22 !important; }
+html[data-theme="dark"] .audio-name { color: #a2947e !important; }
+html[data-theme="dark"] .audio-msg.success { background: #12211a !important; color: #b7e6c5 !important; }
+html[data-theme="dark"] .audio-msg.warn { background: #241e18 !important; color: #fbbf24 !important; }
+html[data-theme="dark"] .audio-msg.info { background: #1d1813 !important; color: #a78bfa !important; }
+
+html[data-theme="dark"] .audio-paywall-overlay { background: rgba(0, 0, 0, 0.7) !important; }
+html[data-theme="dark"] .audio-paywall-card {
+  background: #1d1813 !important;
+  border: 1px solid #332b22 !important;
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] .audio-paywall-card h3 { color: #a78bfa !important; }
+html[data-theme="dark"] .audio-paywall-card p { color: #a2947e !important; }
+html[data-theme="dark"] .audio-paywall-close { color: #a2947e !important; }
+html[data-theme="dark"] .audio-paywall-later { color: #a2947e !important; }
+html[data-theme="dark"] .audio-paywall-later:hover { color: #c9b6ff !important; }
+html[data-theme="dark"] .floating { opacity: 0.35 !important; }
 </style>
+
+
 </head>
 <body>
 
@@ -516,7 +789,13 @@ body {
       <span class="highlight">Volant</span> Poetry
     </span>
   </div>
+  <div class="header-actions">
   <a href="index.html" id="homeLink" class="home-btn">Home</a>
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
+  </div>
 </header>
 
 <!-- Floating emojis -->
@@ -531,6 +810,17 @@ body {
   Please read our 
   <a href="submission-guidelines.html">Submission Guidelines</a> 
   before submitting your poem.
+</div>
+
+<!-- ===== AUDIO UPLOAD LOCK NOTICE ===== -->
+<div class="audio-paywall-overlay" id="audioPaywallOverlay">
+  <div class="audio-paywall-card">
+    <button type="button" class="audio-paywall-close" id="audioPaywallClose" aria-label="Close">&times;</button>
+    <div class="audio-paywall-icon"><i class="fas fa-lock"></i></div>
+    <h3>Audio Uploads Locked</h3>
+    <p>You've used your <strong>3 free audio uploads</strong>. To add more spoken-word recordings, ask a moderator to grant you additional uploads.</p>
+    <button type="button" class="audio-paywall-later" id="audioPaywallLater">Got it</button>
+  </div>
 </div>
 
 <!-- ===== MAIN FORM CARD ===== -->
@@ -571,6 +861,22 @@ body {
       <datalist id="collaboratorSuggestions"></datalist>
     </div>
 
+    <div class="field-container">
+      <label for="audioFile">Spoken-Word Audio (optional) 🎙️</label>
+      <small class="audio-hint">Record yourself reading your poem. First 4 uploads are free — then one-time GHS 50 unlock.</small>
+      <input type="file" id="audioFile" accept="audio/*" onchange="audioFileSelected(this)">
+      <div class="audio-url-row">
+        <span>or paste a hosted link</span>
+        <input type="text" id="audioUrl" placeholder="https://example.com/recording.mp3">
+      </div>
+      <small class="audio-hint">Spoken-word recordings should stay under 15 MB (roughly 10–15 minutes).</small>
+      <div class="audio-preview" id="audioPreviewCard">
+        <audio controls id="audioPreview" style="width:100%;"></audio>
+        <div class="audio-name" id="audioName"></div>
+      </div>
+      <div class="audio-msg" id="audioMsg"></div>
+    </div>
+
     <div class="form-footer" id="formFooter">
       <button type="submit" class="submit-btn" id="submitBtn">Submit Poem</button>
       <button type="button" class="draft-btn" id="draftBtn">Save as Draft</button>
@@ -595,7 +901,9 @@ import {
   serverTimestamp,
   doc,
   getDoc,
-  getDocs
+  getDocs,
+  updateDoc,
+  increment
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* ---------------- FIREBASE CONFIG ---------------- */
@@ -626,6 +934,7 @@ const authorInput = document.getElementById("author");
 const titleInput = document.getElementById("title");
 const contentInput = document.getElementById("content");
 const categoriesInput = document.getElementById("categories");
+const audioUrlInput = document.getElementById("audioUrl");
 
 let currentUsername = "Anonymous";
 let currentUser = null;
@@ -633,6 +942,99 @@ let knownUsers = [];
 let isSubmitted = false;
 let wasDraftSaved = false;
 let wasPoemSubmitted = false;
+
+/* ===== AUDIO UPLOAD STATE ===== */
+const AUDIO_MAX_BYTES = 15 * 1024 * 1024;
+const FREE_AUDIO_LIMIT = 3;
+let audioUploadBonus = 0;
+let audioUploadsCount = 0;
+let audioStateFile = null;
+let poemAudioUrl = '';
+
+function setAudioMsg(type, text) {
+  const el = document.getElementById('audioMsg');
+  if (!el) return;
+  if (text) {
+    el.className = 'audio-msg ' + type + ' show';
+    el.innerHTML = text;
+  } else {
+    el.className = 'audio-msg';
+    el.textContent = '';
+  }
+}
+
+function attachPoemAudio(file) {
+  const urlBox = document.getElementById('audioUrl');
+  const preview = document.getElementById('audioPreview');
+  const nameBox = document.getElementById('audioName');
+  if (urlBox) { urlBox.value = ''; }
+  preview.src = URL.createObjectURL(file);
+  const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+  nameBox.textContent = file.name + ' (' + sizeMB + ' MB)';
+  document.getElementById('audioPreviewCard').classList.add('open');
+  setAudioMsg('success', '<i class="fas fa-check-circle"></i> Audio attached — it will be uploaded when you submit.');
+}
+
+function audioFileSelected(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  const isAudioType = file.type.startsWith('audio/');
+  const isAudioName = /\.(mp3|m4a|aac|wav|ogg|oga|flac|wma|aiff|opus|webm|mpeg)$/i.test(file.name);
+  if (!isAudioType && !isAudioName) {
+    setAudioMsg('warn', 'Please choose an audio file (MP3, M4A, WAV, OGG...).');
+    input.value = '';
+    audioStateFile = null;
+    return;
+  }
+  if (file.size > AUDIO_MAX_BYTES) {
+    setAudioMsg('warn', 'This recording is over 15 MB. Trim it to about 10–15 minutes, then re-select it — or paste a hosted link instead.');
+    input.value = '';
+    audioStateFile = null;
+    return;
+  }
+  if (audioUploadsCount >= FREE_AUDIO_LIMIT + audioUploadBonus) {
+    input.value = '';
+    audioStateFile = null;
+    openAudioLock();
+    return;
+  }
+  audioStateFile = file;
+  attachPoemAudio(file);
+}
+
+async function uploadPoemAudio(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'audio_samples');
+  const response = await fetch('https://api.cloudinary.com/v1_1/dzoq4pgjn/video/upload', {
+    method: 'POST',
+    body: formData
+  });
+  if (!response.ok) throw new Error('Audio upload failed');
+  const data = await response.json();
+  return data.secure_url;
+}
+
+/* ===== AUDIO LOCK ===== */
+function openAudioLock() {
+  const overlay = document.getElementById('audioPaywallOverlay');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAudioPaywall() {
+  const overlay = document.getElementById('audioPaywallOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('audioPaywallClose')?.addEventListener('click', closeAudioPaywall);
+document.getElementById('audioPaywallLater')?.addEventListener('click', closeAudioPaywall);
+document.getElementById('audioPaywallOverlay')?.addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeAudioPaywall();
+});
 
 /* ---------------- AUTH ---------------- */
 onAuthStateChanged(auth, async (user) => {
@@ -644,10 +1046,13 @@ onAuthStateChanged(auth, async (user) => {
 
   currentUser = user;
   const userDoc = await getDoc(doc(db, "users", user.uid));
+  const userData = userDoc.exists() ? userDoc.data() : {};
   currentUsername =
-    userDoc.exists() && userDoc.data().username
-      ? userDoc.data().username
+    userData.username
+      ? userData.username
       : user.email.split("@")[0];
+  audioUploadsCount = Number(userData.audioUploads) || 0;
+  audioUploadBonus = Number(userData.audioUploadBonus) || 0;
 
   authorInput.value = currentUsername;
   loadUsernames();
@@ -720,6 +1125,14 @@ function resetFormForNewSubmission() {
   
   form.reset();
   authorInput.value = currentUsername;
+
+  audioStateFile = null;
+  poemAudioUrl = '';
+  const preview = document.getElementById('audioPreview');
+  if (preview) preview.removeAttribute('src');
+  const previewCard = document.getElementById('audioPreviewCard');
+  if (previewCard) previewCard.classList.remove('open');
+  setAudioMsg('', '');
 }
 
 /* ===== SUBMIT ANOTHER BUTTON ===== */
@@ -752,6 +1165,16 @@ function validateForSubmission() {
 }
 
 /* ===== GET FORM DATA ===== */
+async function resolvePoemAudio() {
+  if (audioStateFile) {
+    if (audioStateFile.size > AUDIO_MAX_BYTES) {
+      throw new Error('Audio too large (max 15 MB).');
+    }
+    return await uploadPoemAudio(audioStateFile);
+  }
+  return audioUrlInput ? audioUrlInput.value.trim() || null : null;
+}
+
 function getFormData() {
   return {
     title: titleInput.value.trim() || 'Untitled',
@@ -759,6 +1182,7 @@ function getFormData() {
     author: authorInput.value.trim() || currentUsername,
     authorId: currentUser.uid,
     categories: (categoriesInput.value || '').split(',').map(c => c.trim()).filter(Boolean),
+    audioUrl: poemAudioUrl || (audioUrlInput ? audioUrlInput.value.trim() || null : null),
     timestamp: serverTimestamp(),
     submittedBy: currentUsername
   };
@@ -793,6 +1217,10 @@ draftBtn.addEventListener('click', async function(e) {
   draftBtn.textContent = "Saving...";
 
   try {
+    if (audioStateFile) {
+      draftBtn.textContent = "Uploading audio...";
+      poemAudioUrl = await resolvePoemAudio();
+    }
     const data = getFormData();
     
     await addDoc(collection(db, "draftPoems"), {
@@ -899,6 +1327,10 @@ form.addEventListener("submit", async (e) => {
   }
 
   try {
+    if (audioStateFile) {
+      submitBtn.textContent = "Uploading audio...";
+      poemAudioUrl = await resolvePoemAudio();
+    }
     const poemRef = await addDoc(collection(db, "recentPoems"), {
       title,
       content,
@@ -906,9 +1338,22 @@ form.addEventListener("submit", async (e) => {
       authorId: auth.currentUser.uid,
       categories,
       collaborators,
+      audioUrl: poemAudioUrl || audioUrlInput.value.trim() || null,
+      hasAudio: !!(poemAudioUrl || audioUrlInput.value.trim()),
       timestamp: serverTimestamp(),
       submittedBy: currentUsername
     });
+
+    if (audioStateFile) {
+      try {
+        await updateDoc(doc(db, "users", auth.currentUser.uid), {
+          audioUploads: increment(1)
+        });
+        audioUploadsCount += 1;
+      } catch (incrementErr) {
+        console.warn("Could not increment audio upload count:", incrementErr);
+      }
+    }
 
     // ===== SEND COLLABORATION NOTIFICATIONS - FIXED =====
     for (const collaborator of collaborators) {

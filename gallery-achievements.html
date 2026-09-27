@@ -28,7 +28,8 @@
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="images/volant-favicon.png">
 <link rel="apple-touch-icon" href="images/volant-favicon.png">
-  <style>
+<script src="theme.js"></script>
+<style>
     * {
       margin: 0;
       padding: 0;
@@ -491,11 +492,115 @@ box-orient: vertical;
         font-size: 24px;
       }
       .filter-tab {
-        padding: 5px 10px;
-        font-size: 11px;
-      }
-    }
-  </style>
+padding: 5px 10px;
+font-size: 11px;
+}
+}
+
+/* ===== NIGHT READING TOGGLE (floating) ===== */
+.night-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  background: none !important;
+  border: none !important;
+  font-size: 1.3rem !important;
+  cursor: pointer !important;
+  padding: 6px 8px !important;
+  border-radius: 10px !important;
+  color: #4b2aad !important;
+  line-height: 1 !important;
+  transition: transform 0.2s ease, background 0.2s ease !important;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+  position: fixed !important;
+  top: 12px !important;
+  right: 12px !important;
+  z-index: 1100 !important;
+}
+.night-toggle:hover {
+  transform: scale(1.12) !important;
+  background: rgba(75, 42, 173, 0.08) !important;
+}
+.theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+@media (max-width: 768px) { .theme-label { display: none !important; } }
+
+/* ===== ESPRESSO NIGHT ===== */
+html[data-theme="dark"] body {
+  background: #161210 !important;
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+
+html[data-theme="dark"] .header h1 { color: #ece2d0 !important; }
+html[data-theme="dark"] .header p { color: #a2947e !important; }
+
+html[data-theme="dark"] .stat-pill {
+  background: #211b16 !important;
+  color: #ece2d0 !important;
+  border-color: #332b22 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+}
+html[data-theme="dark"] .stat-pill .count { background: #a78bfa !important; color: #161210 !important; }
+
+html[data-theme="dark"] .filter-bar {
+  background: #211b16 !important;
+  border: 1px solid #332b22 !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
+}
+html[data-theme="dark"] .filter-tab { color: #a2947e !important; }
+html[data-theme="dark"] .filter-tab:hover { background: #2a241e !important; color: #ece2d0 !important; }
+html[data-theme="dark"] .filter-tab.active {
+  background: linear-gradient(145deg, #4b2aad, #6f4ae4) !important;
+  color: #fff !important;
+}
+html[data-theme="dark"] .search-box {
+  background: #1d1813 !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .search-box span { color: #a2947e !important; }
+html[data-theme="dark"] .search-box input { color: #ece2d0 !important; caret-color: #fbbf24; }
+html[data-theme="dark"] .search-box input::placeholder { color: #7d7263 !important; }
+
+html[data-theme="dark"] .category {
+  background: #211b16 !important;
+  border-color: #332b22 !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
+}
+html[data-theme="dark"] .category h2 { color: #a78bfa !important; }
+html[data-theme="dark"] .category-header p { color: #a2947e !important; }
+html[data-theme="dark"] .badge-count { color: #a2947e !important; }
+
+html[data-theme="dark"] .achievement-card {
+  background: #1d1813 !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .achievement-title { color: #ece2d0 !important; }
+html[data-theme="dark"] .achievement-desc { color: #a2947e !important; }
+html[data-theme="dark"] .badge-image { border-color: #1d1813 !important; box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5) !important; }
+html[data-theme="dark"] .badge-level { background: #211b16 !important; color: #fbbf24 !important; }
+html[data-theme="dark"] .requirement-badge {
+  background: #2a241e !important;
+  color: #ece2d0 !important;
+  border: 1px solid #332b22;
+}
+html[data-theme="dark"] .requirement-value { color: #a78bfa !important; }
+html[data-theme="dark"] .status-indicator { background: #2a241e !important; color: #a2947e !important; }
+html[data-theme="dark"] .status-indicator.active { background: #16301f !important; color: #b7e6c5 !important; }
+
+html[data-theme="dark"] .preview-modal { background: rgba(10, 8, 7, 0.88) !important; }
+html[data-theme="dark"] .preview-image { border-color: #332b22 !important; background: #1d1813 !important; }
+html[data-theme="dark"] .preview-close { background: #211b16 !important; color: #ece2d0 !important; }
+html[data-theme="dark"] .preview-info { color: #ece2d0 !important; }
+
+html[data-theme="dark"] .loading,
+html[data-theme="dark"] .empty-state {
+  background: #211b16 !important;
+  color: #a2947e !important;
+  border: 1px solid #332b22 !important;
+}
+</style>
 </head>
 <body>
   <div class="container">
@@ -504,8 +609,12 @@ box-orient: vertical;
         🏆 Platform Achievements
         <span>gallery</span>
       </h1>
-      <p> Earnable badges</p>
-    </div>
+  <p> Earnable badges</p>
+  </div>
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
 
     <div class="stats-summary" id="statsSummary"></div>
 
@@ -539,7 +648,7 @@ box-orient: vertical;
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -551,7 +660,19 @@ box-orient: vertical;
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    // Attach the offline cache at construction time so achievements stay
+    // viewable without a connection.
+    let db;
+    try {
+      db = initializeFirestore(app, {
+        localCache: persistentLocalCache({
+          tabManager: persistentMultipleTabManager()
+        })
+      });
+    } catch (err) {
+      db = getFirestore(app);
+      console.warn("Offline cache unavailable:", err);
+    }
 
     let allAchievements = [];
     let currentFilter = 'all';

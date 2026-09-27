@@ -701,6 +701,7 @@
     }
   }
   </style>
+<script src="theme.js"></script>
 </head>
 <body>
 
@@ -712,7 +713,13 @@
       <span class="highlight">Volant</span> Poetry
     </span>
   </div>
-  <a href="index.html" id="homeLink" class="home-btn">Home</a>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <a href="index.html" id="homeLink" class="home-btn">Home</a>
+    <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+      <span class="theme-icon" aria-hidden="true">🌙</span>
+      <span class="theme-label">Night reading</span>
+    </button>
+  </div>
 </header>
 
 <!-- ===== QUOTE OF THE WEEK ===== -->
@@ -758,6 +765,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { 
+    initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
     getFirestore, doc, getDoc, collection, query, where, getDocs 
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -772,8 +780,20 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth(app);
+    // Attach the offline cache at construction time so this page can be read
+    // without a connection.
+    let db;
+    try {
+      db = initializeFirestore(app, {
+        localCache: persistentLocalCache({
+          tabManager: persistentMultipleTabManager()
+        })
+      });
+    } catch (err) {
+      db = getFirestore(app);
+      console.warn("Offline cache unavailable:", err);
+    }
+    const auth = getAuth(app);
 
   let currentUser = null;
   let currentQuote = '';

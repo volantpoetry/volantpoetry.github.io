@@ -55,6 +55,7 @@
   <link rel="apple-touch-icon" href="images/volant-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="theme.js"></script>
   
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -118,6 +119,19 @@
     .logo .highlight {
       color: #ffffff;
       text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad;
+    }
+
+    /* Desktop: logo image left of the text (as on the profile page) */
+    @media (min-width: 769px) {
+      .logo {
+        gap: 8px;
+      }
+      .logo .nav-logo-img {
+        height: 36px;
+        width: auto;
+        display: inline-block;
+        object-fit: contain;
+      }
     }
 
     .home-btn {
@@ -412,6 +426,105 @@
         border-radius: 12px;
       }
     }
+
+    /* Temporarily hidden - Email Notifications feature in progress */
+    #notifGroup {
+      display: none !important;
+    }
+
+    /* ===== NIGHT READING TOGGLE ===== */
+    .header-actions {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+    }
+    .night-toggle {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      background: none !important;
+      border: none !important;
+      font-size: 1.3rem !important;
+      cursor: pointer !important;
+      padding: 6px 8px !important;
+      border-radius: 10px !important;
+      color: #4b2aad !important;
+      line-height: 1 !important;
+      transition: transform 0.2s ease, background 0.2s ease !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+    .night-toggle:hover {
+      transform: scale(1.12) !important;
+      background: rgba(75, 42, 173, 0.08) !important;
+    }
+    .theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+    @media (max-width: 768px) { .theme-label { display: none !important; } }
+
+    /* ===== ESPRESSO NIGHT ===== */
+    html[data-theme="dark"] body {
+      background: #161210 !important;
+      color: #ece2d0 !important;
+    }
+    html[data-theme="dark"] .header-bar {
+      background: rgba(22, 18, 16, 0.94) !important;
+      border-bottom-color: #332b22 !important;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+    }
+    html[data-theme="dark"] .logo,
+    html[data-theme="dark"] .logo-text { color: #a78bfa !important; }
+    html[data-theme="dark"] .logo .highlight {
+      color: #ffffff !important;
+      text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+    }
+    html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+    html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+    html[data-theme="dark"] .home-btn { background: #2a241e !important; color: #a78bfa !important; }
+    html[data-theme="dark"] .home-btn:hover { background: #332b22 !important; color: #c9b6ff !important; }
+
+    html[data-theme="dark"] .profile-form-container {
+      background: #211b16 !important;
+      border: 1px solid #332b22 !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+    }
+    html[data-theme="dark"] .profile-form-container h2 { color: #a78bfa !important; }
+    html[data-theme="dark"] .profile-form-container .subtitle,
+    html[data-theme="dark"] .hint { color: #a2947e !important; }
+    html[data-theme="dark"] .profile-form label { color: #ece2d0 !important; }
+    html[data-theme="dark"] .profile-form input,
+    html[data-theme="dark"] .profile-form textarea {
+      background: #1d1813 !important;
+      color: #ece2d0 !important;
+      border-color: #332b22 !important;
+      caret-color: #fbbf24;
+    }
+    html[data-theme="dark"] .profile-form input::placeholder,
+    html[data-theme="dark"] .profile-form textarea::placeholder { color: #a2947e !important; }
+    html[data-theme="dark"] .profile-form input:focus,
+    html[data-theme="dark"] .profile-form textarea:focus {
+      border-color: #a78bfa !important;
+      box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.12) !important;
+    }
+    html[data-theme="dark"] .validation-icon.valid { color: #7ee2a8 !important; }
+    html[data-theme="dark"] .validation-icon.invalid { color: #f5b7b7 !important; }
+    html[data-theme="dark"] .validation-message.success { background: #12211a !important; color: #b7e6c5 !important; }
+    html[data-theme="dark"] .validation-message.error { background: #2b1416 !important; color: #f5b7b7 !important; }
+    html[data-theme="dark"] .validation-message.info { background: #1f1a2e !important; color: #c9b6ff !important; }
+    html[data-theme="dark"] .validation-message.warning { background: #2b2413 !important; color: #f0d9a0 !important; }
+    html[data-theme="dark"] #syntheticEmailHint {
+      background: #221d14 !important;
+      border-color: #4a3f22 !important;
+    }
+    html[data-theme="dark"] #syntheticEmailHint > div { color: #d9c48a !important; }
+    html[data-theme="dark"] .btn-save { background: linear-gradient(135deg, #4b2aad, #6f4ae4) !important; color: #fff !important; }
+    html[data-theme="dark"] .btn-back {
+      background: transparent !important;
+      color: #a78bfa !important;
+      border-color: #332b22 !important;
+    }
+    html[data-theme="dark"] .btn-back:hover { background: #2a241e !important; color: #c9b6ff !important; }
+    html[data-theme="dark"] .success-msg { background: #12211a !important; color: #b7e6c5 !important; }
+    html[data-theme="dark"] .error-msg { background: #2b1416 !important; color: #f5b7b7 !important; }
   </style>
 </head>
 <body>
@@ -424,7 +537,13 @@
       <span class="highlight">Volant</span> Poetry
     </span>
   </div>
+  <div class="header-actions">
   <a href="user-profile.html" class="home-btn">Back</a>
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
+  </div>
 </header>
 
 <!-- ===== MAIN CONTENT ===== -->
@@ -457,9 +576,37 @@
       <div class="validation-message" id="emailValidation"></div>
     </div>
 
+    <div class="form-group" id="syntheticEmailHint" style="display:none;background:#fff8e1;border:1px solid #f0c36d;border-radius:10px;padding:12px 14px;">
+      <div style="font-weight:600;color:#7a5c00;display:flex;align-items:center;gap:8px;font-size:0.9rem;">
+        <i class="fas fa-envelope-circle-check" style="color:#d97706;"></i> Add &amp; verify your email
+      </div>
+      <div style="font-size:0.83rem;color:#7a5c00;margin-top:4px;line-height:1.45;">
+        You signed up with a username, so no real email is attached yet. Type your Gmail above and save to receive a verification link.
+      </div>
+    </div>
+
     <div class="form-group">
       <label for="editBio">Bio</label>
       <textarea id="editBio" rows="4" placeholder="Tell us about yourself..."></textarea>
+    </div>
+
+    <div class="form-group" id="notifGroup">
+      <label>Email Notifications</label>
+      <div style="margin:8px 0;">
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.95rem;cursor:pointer;">
+          <input type="checkbox" id="prefAll" checked style="width:auto;height:auto;"> Send me activity emails
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.95rem;cursor:pointer;">
+          <input type="checkbox" id="prefComments" checked style="width:auto;height:auto;"> New comments on my poems
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.95rem;cursor:pointer;">
+          <input type="checkbox" id="prefReplies" checked style="width:auto;height:auto;"> Replies to my comments
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.95rem;cursor:pointer;">
+          <input type="checkbox" id="prefMessages" checked style="width:auto;height:auto;"> Messages &amp; direct messages
+        </label>
+      </div>
+      <p class="hint">You can also unsubscribe with one click from any email you receive.</p>
     </div>
 
     <button type="button" id="saveProfileBtn" class="btn-save" disabled>Save Changes</button>
@@ -476,7 +623,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { getFirestore, doc, getDoc, updateDoc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, updateEmail, sendEmailVerification, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -503,16 +650,50 @@
   const usernameValidation = document.getElementById("usernameValidation");
   const emailIcon = document.getElementById("emailIcon");
   const emailValidation = document.getElementById("emailValidation");
+  const prefAllCheck = document.getElementById("prefAll");
+  const prefCommentsCheck = document.getElementById("prefComments");
+  const prefRepliesCheck = document.getElementById("prefReplies");
+  const prefMessagesCheck = document.getElementById("prefMessages");
 
   let currentUserUid = null;
   let originalUsername = '';
   let originalEmail = '';
+  let isUsernamedAccount = false;
   let originalRealName = '';
   let originalBio = '';
+  let originalPrefs = { all: true, comments: true, replies: true, messages: true };
   let usernameValid = false;
   let emailValid = false;
   let usernameTimeout = null;
   let emailTimeout = null;
+
+  function prefsChanged() {
+    return prefAllCheck.checked !== originalPrefs.all ||
+      prefCommentsCheck.checked !== originalPrefs.comments ||
+      prefRepliesCheck.checked !== originalPrefs.replies ||
+      prefMessagesCheck.checked !== originalPrefs.messages;
+  }
+
+  function syncPrefToggles() {
+    const enabled = prefAllCheck.checked;
+    prefCommentsCheck.disabled = !enabled;
+    prefRepliesCheck.disabled = !enabled;
+    prefMessagesCheck.disabled = !enabled;
+    if (!enabled) {
+      prefCommentsCheck.checked = false;
+      prefRepliesCheck.checked = false;
+      prefMessagesCheck.checked = false;
+    }
+  }
+
+  function emailPrefsValue() {
+    return {
+      all: prefAllCheck.checked,
+      comments: prefAllCheck.checked && prefCommentsCheck.checked,
+      replies: prefAllCheck.checked && prefRepliesCheck.checked,
+      messages: prefAllCheck.checked && prefMessagesCheck.checked
+    };
+  }
 
   // ===== VALIDATION FUNCTIONS =====
 
@@ -626,7 +807,7 @@
     const realNameChanged = realNameInput.value !== originalRealName;
     const bioChanged = bioInput.value !== originalBio;
     
-    const hasChanges = usernameChanged || emailChanged || realNameChanged || bioChanged;
+    const hasChanges = usernameChanged || emailChanged || realNameChanged || bioChanged || prefsChanged();
     const canSave = usernameValid && emailValid && hasChanges;
     
     saveBtn.disabled = !canSave;
@@ -710,6 +891,11 @@
     // Also trigger save button update when Real Name or Bio changes
     realNameInput.addEventListener('input', updateSaveButton);
     bioInput.addEventListener('input', updateSaveButton);
+
+    prefAllCheck.addEventListener('change', () => { syncPrefToggles(); updateSaveButton(); });
+    prefCommentsCheck.addEventListener('change', updateSaveButton);
+    prefRepliesCheck.addEventListener('change', updateSaveButton);
+    prefMessagesCheck.addEventListener('change', updateSaveButton);
   }
 
   // ===== AUTH & LOAD USER DATA =====
@@ -736,6 +922,13 @@
       originalEmail = data.email || "";
       bioInput.value = data.bio || "";
       originalBio = data.bio || "";
+      const prefs = data.emailPrefs || {};
+      prefAllCheck.checked = prefs.all !== false;
+      prefCommentsCheck.checked = prefs.all !== false && prefs.comments !== false;
+      prefRepliesCheck.checked = prefs.all !== false && prefs.replies !== false;
+      prefMessagesCheck.checked = prefs.all !== false && prefs.messages !== false;
+      originalPrefs = { all: prefAllCheck.checked, comments: prefCommentsCheck.checked, replies: prefRepliesCheck.checked, messages: prefMessagesCheck.checked };
+      syncPrefToggles();
     } else {
       await setDoc(userRef, { 
         realName: "",
@@ -752,6 +945,10 @@
       bioInput.value = "";
       originalBio = "";
     }
+
+    isUsernamedAccount = /@volantreads\.com$/i.test(originalEmail || '');
+    const emailVerifyHint = document.getElementById('syntheticEmailHint');
+    if (emailVerifyHint) emailVerifyHint.style.display = isUsernamedAccount ? 'block' : 'none';
 
     usernameValid = true;
     emailValid = true;
@@ -809,17 +1006,53 @@
 
     try {
       const userRef = doc(db, "users", currentUserUid);
+
+      const oldAuthEmail = (auth.currentUser ? auth.currentUser.email : '') || '';
+      if (isUsernamedAccount && newEmail.toLowerCase() !== oldAuthEmail.toLowerCase()) {
+        const verifUpd = {
+          realName: newRealName,
+          username: newUsername,
+          email: newEmail,
+          bio: newBio,
+          emailPrefs: emailPrefsValue(),
+          emailVerified: false
+        };
+        try {
+          await updateEmail(auth, newEmail);
+          await sendEmailVerification(auth.currentUser);
+        } catch (authErr) {
+          if (authErr && authErr.code === 'auth/requires-recent-login') {
+            errorMsg.textContent = "⚠️ For security, sign out and sign back in, then update your email.";
+            errorMsg.style.display = "block";
+            successMsg.style.display = "none";
+            saveBtn.disabled = false;
+            return;
+          }
+          throw authErr;
+        }
+        await updateDoc(userRef, verifUpd);
+        successMsg.style.display = "block";
+        successMsg.textContent = "📧 Verification link sent to " + newEmail + ". Click the link, then sign back in.";
+        try { await signOut(auth); } catch (e) {}
+        setTimeout(() => {
+          window.location.href = 'universal-login.html?platform=poetry&redirect=' + encodeURIComponent(window.location.href);
+        }, 2000);
+        return;
+      }
+
       await updateDoc(userRef, {
         realName: newRealName,
         username: newUsername,
         email: newEmail,
-        bio: newBio
+        bio: newBio,
+        emailPrefs: emailPrefsValue()
       });
 
       originalRealName = newRealName;
       originalBio = newBio;
       originalUsername = newUsername;
       originalEmail = newEmail;
+      originalPrefs = emailPrefsValue();
       
       successMsg.style.display = "block";
       successMsg.textContent = "✅ Profile updated successfully!";

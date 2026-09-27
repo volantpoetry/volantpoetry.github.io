@@ -31,7 +31,7 @@
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="images/volant-favicon.png">
 <link rel="apple-touch-icon" href="images/volant-favicon.png">
-
+<script src="theme.js"></script>
 <style>
 :root {
   --primary: #4b2aad;
@@ -401,6 +401,113 @@ body {
 }
 .small-muted { font-size: 0.85rem; color: var(--muted); }
 .top-actions-note { font-size: 0.9rem; color: var(--muted); }
+
+/* ===== NIGHT READING TOGGLE ===== */
+.header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.night-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  background: none !important;
+  border: none !important;
+  font-size: 1.3rem !important;
+  cursor: pointer !important;
+  padding: 6px 8px !important;
+  border-radius: 10px !important;
+  color: #4b2aad !important;
+  line-height: 1 !important;
+  transition: transform 0.2s ease, background 0.2s ease !important;
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif !important;
+}
+.night-toggle:hover {
+  transform: scale(1.12) !important;
+  background: rgba(75, 42, 173, 0.08) !important;
+}
+.theme-label {
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+}
+@media (max-width: 768px) {
+  .theme-label { display: none !important; }
+}
+
+/* ===== ESPRESSO NIGHT ===== */
+html[data-theme="dark"] body {
+  background: #161210 !important;
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] .header-bar {
+  background: rgba(22, 18, 16, 0.94) !important;
+  border-bottom-color: #332b22 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .logo-text { color: #a78bfa !important; }
+html[data-theme="dark"] .logo .highlight {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+}
+html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+html[data-theme="dark"] .home-btn,
+html[data-theme="dark"] .back-btn-form { background: #2a241e !important; color: #a78bfa !important; }
+html[data-theme="dark"] .home-btn:hover,
+html[data-theme="dark"] .back-btn-form:hover { background: #332b22 !important; color: #c9b6ff !important; }
+
+html[data-theme="dark"] .container {
+  background: #211b16 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid #332b22 !important;
+}
+html[data-theme="dark"] .top-row h1,
+html[data-theme="dark"] .modal h2 { color: #a78bfa !important; }
+html[data-theme="dark"] .card {
+  background: #1d1813 !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .card .title { color: #ece2d0 !important; }
+html[data-theme="dark"] .card .excerpt { color: #d8cebe !important; }
+html[data-theme="dark"] .card .meta,
+html[data-theme="dark"] .small-muted,
+html[data-theme="dark"] .top-actions-note,
+html[data-theme="dark"] .empty { color: #a2947e !important; }
+html[data-theme="dark"] .empty { background: #1d1813 !important; border: 1px solid #332b22 !important; border-radius: 12px; }
+
+html[data-theme="dark"] .btn { background: #4b2aad !important; color: #fff !important; }
+html[data-theme="dark"] .btn.secondary { background: #2a241e !important; color: #ece2d0 !important; }
+html[data-theme="dark"] .btn.secondary:hover { background: #332b22 !important; }
+html[data-theme="dark"] .btn.danger { background: #8f2630 !important; color: #fff !important; }
+html[data-theme="dark"] .btn.danger:hover { background: #a82f3a !important; }
+html[data-theme="dark"] .btn.ghost {
+  background: transparent !important;
+  border-color: #332b22 !important;
+  color: #a78bfa !important;
+}
+html[data-theme="dark"] .btn.ghost:hover { border-color: #a78bfa !important; color: #c9b6ff !important; }
+
+html[data-theme="dark"] .modal {
+  background: #211b16 !important;
+  border: 1px solid #332b22 !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .modal-backdrop { background: rgba(10, 8, 7, 0.72) !important; }
+html[data-theme="dark"] .form-row label { color: #ece2d0 !important; }
+html[data-theme="dark"] .form-row input,
+html[data-theme="dark"] .form-row textarea {
+  background: #1d1813 !important;
+  color: #ece2d0 !important;
+  border-color: #332b22 !important;
+  caret-color: #fbbf24;
+}
+html[data-theme="dark"] .form-row input:focus,
+html[data-theme="dark"] .form-row textarea:focus {
+  border-color: #a78bfa !important;
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.12) !important;
+}
 </style>
 </head>
 <body>
@@ -413,7 +520,13 @@ body {
       <span class="highlight">Volant</span> Poetry
     </span>
   </div>
+  <div class="header-actions">
   <a href="user-profile.html" class="home-btn">Back</a>
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
+  </div>
 </header>
 
 <div class="container">

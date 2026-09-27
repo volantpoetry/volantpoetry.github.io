@@ -3939,6 +3939,340 @@ html {
   }
 }
 
+/* ============================================================
+   NIGHT READING TOGGLE (poetry site)  — theme.js + this block
+   ============================================================ */
+.night-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.night-toggle:hover { transform: scale(1.2); opacity: 0.85; }
+.night-toggle .theme-icon { font-size: 1.15rem; line-height: 1; }
+.night-toggle .theme-label { display: none; }
+
+/* Floating version (reading pages with no nav) */
+.night-toggle.float-night {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 9001;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.35rem;
+  border: none;
+  background: rgba(33, 27, 22, 0.85);
+  color: #fbbf24;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+.night-toggle.float-night .theme-icon { font-size: 1.35rem; }
+.night-toggle.float-night:hover { background: #2a241e; transform: scale(1.08); }
+
+/* Toggle rows inside mobile menus (overlay is mobile-only) */
+.overlay-menu .night-toggle {
+  display: flex !important;
+  width: 100%;
+  justify-content: flex-start;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  padding: 12px 16px;
+  font-family: inherit;
+  font-weight: 500;
+  text-align: left;
+}
+.overlay-menu .night-toggle:hover { background: rgba(75, 42, 173, 0.08); }
+.overlay-menu .night-toggle .theme-label { display: inline; }
+
+@media (max-width: 768px) {
+  .nav-links .night-toggle {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    padding: 12px 16px;
+    font-family: inherit;
+    font-weight: 500;
+    text-align: left;
+  }
+  .nav-links .night-toggle:hover { background: rgba(75, 42, 173, 0.08); }
+  .nav-links .night-toggle .theme-label { display: inline; }
+}
+
+/* ===== ESPRESSO NIGHT — dark reading palette ===== */
+html[data-theme="dark"] {
+  --pt-bg: #161210;
+  --pt-surface: #211b16;
+  --pt-card: #1d1813;
+  --pt-ink: #ece2d0;
+  --pt-muted: #a2947e;
+  --pt-line: #332b22;
+  --pt-accent: #a78bfa;
+  --pt-gold: #fbbf24;
+  --text: #ece2d0;
+  --muted: #a2947e;
+  --bg: #161210;
+  --line: #332b22;
+  --accent-bg: #2a241e;
+}
+html[data-theme="dark"] body {
+  background: #161210 !important;
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] h5,
+html[data-theme="dark"] h6 {
+  color: #a78bfa !important;
+}
+html[data-theme="dark"] a { color: #a78bfa; }
+html[data-theme="dark"] a:hover { color: #c9b6ff; }
+html[data-theme="dark"] .tabs-nav { border-bottom-color: #332b22 !important; }
+html[data-theme="dark"] .view-count-inline { color: #a2947e !important; }
+html[data-theme="dark"] .featured-poem-card {
+  background: #211b16 !important;
+  color: #ece2d0 !important;
+  border: 1px solid #332b22 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+html[data-theme="dark"] .featured-poem-card .title { color: #a78bfa !important; }
+html[data-theme="dark"] .featured-poem-card .content { color: #ece2d0 !important; }
+html[data-theme="dark"] .featured-poem-card .author { color: #fbbf24 !important; }
+html[data-theme="dark"] .featured-share-section { border-top-color: #332b22 !important; }
+
+/* Poetry in Motion gallery + community section */
+html[data-theme="dark"] .gallery-section { background: #161210 !important; }
+html[data-theme="dark"] .gallery-item {
+  background: #211b16 !important;
+  border: 1px solid #332b22 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+html[data-theme="dark"] .gallery-overlay {
+  background: linear-gradient(135deg, rgba(42, 36, 30, 0.92), rgba(33, 27, 22, 0.92)) !important;
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] .gallery-overlay:hover {
+  background: linear-gradient(135deg, rgba(51, 43, 34, 0.95), rgba(42, 36, 30, 0.95)) !important;
+}
+html[data-theme="dark"] .gallery-overlay h3 { color: #a78bfa !important; }
+html[data-theme="dark"] .gallery-overlay p { color: #ece2d0 !important; }
+html[data-theme="dark"] .gallery-overlay .author,
+html[data-theme="dark"] .gallery-overlay .author-line { color: #fbbf24 !important; }
+html[data-theme="dark"] .view-poem-btn {
+  background: #2a241e !important;
+  color: #a78bfa !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .view-poem-btn:hover { background: #332b22 !important; color: #c9b6ff !important; }
+html[data-theme="dark"] .community-section { background: #161210 !important; }
+html[data-theme="dark"] .community-content h2 { color: #a78bfa !important; }
+html[data-theme="dark"] .community-content p { color: #ece2d0 !important; }
+html[data-theme="dark"] .join-btn { background: #4b2aad !important; color: #f5f0ff !important; }
+html[data-theme="dark"] .join-btn:hover { background: #2a241e !important; color: #a78bfa !important; }
+
+/* Links tab header */
+html[data-theme="dark"] .links-header {
+  background: #211b16 !important;
+  border: 1px solid #332b22 !important;
+}
+html[data-theme="dark"] .links-header h2 { color: #a78bfa !important; }
+html[data-theme="dark"] .links-header p { color: #a2947e !important; }
+
+/* Ranking reset countdown badge + captions */
+html[data-theme="dark"] .ranking-header span[style*="background:#e8e0f0"],
+html[data-theme="dark"] .ranking-header span[style*="background: #e8e0f0"],
+html[data-theme="dark"] .countdown-container span[style*="background:#e8e0f0"] {
+  background: #2a241e !important;
+  color: #fbbf24 !important;
+  border: 1px solid #332b22 !important;
+}
+html[data-theme="dark"] .ranking-header p[style*="color:#666"],
+html[data-theme="dark"] .ranking-header p[style*="color: #666"],
+html[data-theme="dark"] .countdown-container + p {
+  color: #a2947e !important;
+}
+html[data-theme="dark"] .ranking-header small,
+html[data-theme="dark"] #ranking-poets-container .ranking-description {
+  color: #a2947e !important;
+}
+
+/* Nav & header */
+html[data-theme="dark"] header {
+  background: #161210 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] nav,
+html[data-theme="dark"] .header-bar {
+  background: #161210 !important;
+  border-bottom-color: #332b22 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .logo-text { color: #a78bfa !important; }
+html[data-theme="dark"] .logo .highlight,
+html[data-theme="dark"] .logo .logo-highlight {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+}
+html[data-theme="dark"] nav .search-container input,
+html[data-theme="dark"] nav .desktop-search-container input,
+html[data-theme="dark"] #global-search-input,
+html[data-theme="dark"] #desktop-search-input,
+html[data-theme="dark"] #mobile-search-input {
+  background: #211b16 !important;
+  color: #ece2d0 !important;
+  border-color: #332b22 !important;
+  caret-color: #fbbf24;
+}
+html[data-theme="dark"] nav .search-container input::placeholder,
+html[data-theme="dark"] nav .desktop-search-container input::placeholder {
+  color: #a2947e;
+}
+html[data-theme="dark"] .username-display { color: #ece2d0 !important; }
+html[data-theme="dark"] #login-link { color: #a78bfa !important; }
+html[data-theme="dark"] .notif-bell { color: #ece2d0 !important; }
+html[data-theme="dark"] .menu-toggle,
+html[data-theme="dark"] .search-toggle { color: #ece2d0 !important; }
+
+/* Mobile menus */
+html[data-theme="dark"] .nav-links,
+html[data-theme="dark"] .overlay-menu,
+html[data-theme="dark"] .dropdown-content {
+  background: #211b16 !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .nav-links a,
+html[data-theme="dark"] .overlay-menu a,
+html[data-theme="dark"] .dropdown-content a {
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] .nav-links a:hover,
+html[data-theme="dark"] .overlay-menu a:hover,
+html[data-theme="dark"] .dropdown-content a:hover { background: #2a241e !important; }
+html[data-theme="dark"] .close-btn,
+html[data-theme="dark"] .close-btn-overlay { color: #ece2d0 !important; }
+html[data-theme="dark"] .night-toggle {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: #a78bfa !important;
+}
+html[data-theme="dark"] .night-toggle:hover { border-color: transparent !important; background: transparent !important; color: #c9b6ff !important; }
+
+/* Reading surfaces */
+html[data-theme="dark"] .recent-poem-card,
+html[data-theme="dark"] .poem-card,
+html[data-theme="dark"] .weekly-card,
+html[data-theme="dark"] .quote-card,
+html[data-theme="dark"] .category-card,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .widget {
+  background: #211b16 !important;
+  border-color: #332b22 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+html[data-theme="dark"] .poem-content,
+html[data-theme="dark"] .weekly-static-content,
+html[data-theme="dark"] #weekly-quote,
+html[data-theme="dark"] .quote-text {
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] .poem-title,
+html[data-theme="dark"] .weekly-static-title,
+html[data-theme="dark"] .category-header,
+html[data-theme="dark"] .community-title {
+  color: #a78bfa !important;
+}
+html[data-theme="dark"] .read-more-btn,
+html[data-theme="dark"] .category-link {
+  color: #a78bfa !important;
+}
+html[data-theme="dark"] .author-link { color: #fbbf24 !important; }
+html[data-theme="dark"] .muted,
+html[data-theme="dark"] .view-badge,
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .lower-caption,
+html[data-theme="dark"] .author { color: #a2947e !important; }
+html[data-theme="dark"] .home-btn { background: #4b2aad !important; color: #f5f0ff !important; }
+html[data-theme="dark"] .home-btn:hover { background: #2a241e !important; color: #a78bfa !important; }
+
+/* Comments & interaction */
+html[data-theme="dark"] .comment,
+html[data-theme="dark"] .comment-card {
+  background: #1d1813 !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .comment-input,
+html[data-theme="dark"] .comment-list textarea {
+  background: #1d1813 !important;
+  color: #ece2d0 !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .comment-btn { background: #4b2aad !important; color: #fff !important; }
+html[data-theme="dark"] .like-btn,
+html[data-theme="dark"] .show-comments-btn { color: #ece2d0 !important; border-color: #332b22 !important; }
+html[data-theme="dark"] .welcome-banner {
+  background: #12211a !important;
+  border-left-color: #2d7d46 !important;
+  color: #b7e6c5 !important;
+}
+
+/* Footer & misc containers */
+html[data-theme="dark"] footer,
+html[data-theme="dark"] .site-footer,
+html[data-theme="dark"] .footer { background: #0f0c0a !important; border-top-color: #332b22 !important; }
+
+/* Modal & toast */
+html[data-theme="dark"] .share-modal-content {
+  background: #1d1813 !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55) !important;
+}
+html[data-theme="dark"] .share-modal-header { border-bottom-color: #332b22 !important; }
+html[data-theme="dark"] .share-modal-header h3 { color: #ece2d0 !important; }
+html[data-theme="dark"] .share-poem-info,
+html[data-theme="dark"] .share-quote-info {
+  background: #2a241e !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .share-poem-info span,
+html[data-theme="dark"] .share-quote-info span,
+html[data-theme="dark"] .share-modal-body textarea { color: #a2947e !important; }
+html[data-theme="dark"] .share-link-display {
+  background: #211b16 !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .share-link-display input,
+html[data-theme="dark"] .share-link-display { color: #ece2d0 !important; }
+html[data-theme="dark"] .share-modal-close { background: #2a241e !important; color: #ece2d0 !important; }
+html[data-theme="dark"] .toast-notification {
+  background: #211b16 !important;
+  color: #ece2d0 !important;
+  border: 1px solid #332b22 !important;
+}
+
+/* Extreme small screens: keep header toggle icon comfortably tappable */
+@media (max-width: 480px) {
+  .night-toggle { padding: 4px; font-size: 1.1rem; }
+}
+
 
 
 

@@ -422,6 +422,51 @@
       z-index: 1000;
     }
 
+    /* ===== OFFLINE SYNC BADGE ===== */
+    .poem-sync-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: #6b7280;
+      padding: 6px 10px;
+      margin: 0 auto 4px;
+      max-width: 760px;
+      text-align: center;
+      flex-wrap: wrap;
+    }
+    .poem-sync-badge.offline {
+      color: #b45309;
+    }
+    .poem-sync-badge .sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      flex: 0 0 auto;
+    }
+    .poem-sync-badge.offline .sync-dot {
+      background: #f59e0b;
+    }
+    .poem-sync-badge.syncing .sync-dot {
+      background: #3b82f6;
+      animation: poemSyncPulse 1s ease-in-out infinite;
+    }
+    @keyframes poemSyncPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
+    }
+    .poem-sync-badge button {
+      background: none;
+      border: 1px solid currentColor;
+      border-radius: 999px;
+      color: inherit;
+      font-size: 0.75rem;
+      padding: 2px 10px;
+      cursor: pointer;
+    }
+
     /* ===== SCROLL PROGRESS ===== */
     .scroll-progress {
       position: fixed;
@@ -2099,7 +2144,8 @@
   }
 
 </style>
-</head>
+<script src="theme.js"></script>
+  </head>
 <body>
 
 <!-- Scroll progress indicator -->
@@ -2133,6 +2179,10 @@
     </div>
     
     <div class="nav-right">
+      <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+        <span class="theme-icon" aria-hidden="true">🌙</span>
+        <span class="theme-label">Night reading</span>
+      </button>
       <div class="mobile-icons">
         <div class="search-toggle" id="search-toggle">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="20" fill="none"
@@ -2187,6 +2237,12 @@
     </div>
   </section>
   
+  <div id="poemSyncBadge" class="poem-sync-badge" role="status" aria-live="polite">
+    <span class="sync-dot"></span>
+    <span id="poemSyncText">Checking your offline library…</span>
+    <button id="poemSyncRetry" type="button" hidden>Sync now</button>
+  </div>
+
   <div id="poems-container" class="recent-poems-container"></div>
   
   <!-- Loading indicator (shown when loading more) -->
@@ -2236,15 +2292,18 @@
     initializeApp 
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-  import { 
-    getFirestore, collection, query, orderBy, limit, getDocs, doc, getDoc, 
-    enableIndexedDbPersistence, startAfter, updateDoc, increment, addDoc, arrayUnion,
-    serverTimestamp, writeBatch
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, query, orderBy, limit, getDocs, doc, getDoc,
+  startAfter, updateDoc, increment, addDoc, arrayUnion,
+  serverTimestamp, writeBatch, runTransaction
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   import { 
     getAuth, onAuthStateChanged, signOut 
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  import { createLikeApi } from "./shared/like-toggle.js";
 
   // Firebase configuration
   const firebaseConfig = {
@@ -2258,8 +2317,37 @@
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  // The offline cache MUST be attached at construction time. The previous code
+  // called enableIndexedDbPersistence() after the auth listener was registered,
+  // so Firestore had already been used and rejected it with failed-precondition
+  // (misreported as "multiple tabs open"). That silently produced no local
+  // cache at all, which is why every offline read came back empty.
+  let db;
+  let offlineCacheReady = false;
+  try {
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+      })
+    });
+    offlineCacheReady = true;
+  } catch (err) {
+    // Only reached if something else already built an instance in this tab.
+    db = getFirestore(app);
+    console.warn("Offline cache unavailable, poems will not load offline:", err);
+  }
   const auth = getAuth(app);
+
+  // Transactional toggle shared with the other poem pages, so a rapid double
+  // click cannot add this user twice or leave the counter out of step.
+  const likeApi = createLikeApi({
+    db,
+    runTransaction,
+    doc,
+    updateDoc,
+    serverTimestamp
+  });
+
   let currentUserId = null;
   let domReady = false;
   let authReady = false;
@@ -2313,14 +2401,14 @@
     refreshFollowButtons();
   });
 
-  // Enable offline persistence
-  enableIndexedDbPersistence(db).catch(err => {
-    if (err.code === 'failed-precondition') {
-      console.warn("Persistence failed: multiple tabs open");
-    } else if (err.code === 'unimplemented') {
-      console.warn("Persistence not supported in this browser");
-    }
-  });
+  // Poems are public content, so a slow or unreachable auth handshake must never
+  // block them. Offline the auth state can take seconds to settle, so after a
+  // short grace period we load anyway: currentUserId stays null and the follow
+  // buttons stay hidden, which is exactly the correct signed-out rendering.
+  setTimeout(() => {
+    authReady = true;
+    maybeStartInitialLoad();
+  }, 1500);
 
   // Helper function to escape HTML
   function escapeHtml(text) {
@@ -2833,7 +2921,12 @@
 
       if (snapshot.empty) {
         if (initial) {
-          container.innerHTML = '<div class="no-poems-message">Check your internet connection and refresh the page.</div>';
+          // An empty result means two very different things depending on the
+          // connection, so say which one actually happened.
+          const offlineEmpty = !navigator.onLine;
+          container.innerHTML = offlineEmpty
+            ? '<div class="no-poems-message">You are offline and have not saved any poems yet. Reconnect once to download poems for offline reading.</div>'
+            : '<div class="no-poems-message">No poems have been published yet. Check back soon.</div>';
         }
         if (loadingIndicator) loadingIndicator.style.display = "none";
         if (endMessage) endMessage.style.display = "block";
@@ -2960,7 +3053,7 @@ card.innerHTML = `
         </div>
       </div>
     </div>
-    <span class="view-count-inline" style="font-size:0.85rem; color:#333;">${viewCount} Reads</span>
+    <span class="view-count-inline" style="font-size:0.85rem;">${viewCount} Reads</span>
   </div>
   ${collaboratorsHTML}
   <h3 class="recent-poem-title">${poem.title}</h3>
@@ -3315,7 +3408,7 @@ async function performSearch(searchTerm) {
               </div>
             </div>
           </div>
-          <span class="view-count-inline" style="font-size:0.85rem; color:#333;">${viewCount} Reads</span>
+          <span class="view-count-inline" style="font-size:0.85rem;">${viewCount} Reads</span>
         </div>
         ${collaboratorsHTML}
         <h3 class="recent-poem-title" style="margin-top:12px; color:#4b2aad;">${escapeHtml(poem.title || 'Untitled')}</h3>
@@ -3475,36 +3568,23 @@ async function performSearch(searchTerm) {
       const card = e.target.closest(".recent-poem-card");
       const docId = card.dataset.id;
       const countSpan = card.querySelector(".like-count");
-      const poemRef = doc(db, "recentPoems", docId);
+      const likeBtn = e.target;
+      const poemCollection = card.dataset.collection || "recentPoems";
+      if (!likeApi.guard(likeBtn)) return;
 
       try {
-        const docSnap = await getDoc(poemRef);
-        if (!docSnap.exists()) return;
-        
-        const data = docSnap.data();
-        const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
-        let likes = typeof data.likes === "number" ? data.likes : 0;
-
-        if (likedBy.includes(user.uid)) {
-          if (likes > 0) {
-            await updateDoc(poemRef, { 
-              likes: increment(-1), 
-              likedBy: likedBy.filter(uid => uid !== user.uid) 
-            });
-          }
-          countSpan.textContent = Math.max(0, likes - 1);
-          e.target.classList.remove("liked");
-        } else {
-          await updateDoc(poemRef, { 
-            likes: increment(1), 
-            likedBy: arrayUnion(user.uid) 
-          });
-          countSpan.textContent = likes + 1;
-          e.target.classList.add("liked");
-        }
+        const result = await likeApi.toggle({
+          collection: poemCollection,
+          poemId: docId,
+          userId: user.uid
+        });
+        if (!result.ok) return;
+        likeApi.apply(likeBtn, countSpan, result);
       } catch (err) { 
         console.error("Error updating like:", err); 
         alert("Failed to update like. Please try again.");
+      } finally {
+        likeApi.release(likeBtn);
       }
     }
 
@@ -3963,17 +4043,121 @@ document.addEventListener('click', function(e) {
       });
     }
 
-    // Offline notice
-    window.addEventListener("offline", () => {
-      const notice = document.createElement("div");
-      notice.textContent = "⚠ You are offline. Viewing cached content.";
-      notice.className = "offline-notice";
-      document.body.prepend(notice);
-    });
+      // ===== OFFLINE LIBRARY =====
+  // Poems live in Firestore, so the offline copy is Firestore's own local
+  // cache. These helpers surface that state and re-pull data on reconnect.
+  const SYNC_PREFETCH = 60;
+  let lastSyncedAt = null;
 
-    window.addEventListener("online", () => {
-      document.querySelectorAll(".offline-notice").forEach(el => el.remove());
-    });
+  function setSyncBadge(state, message) {
+    const badge = document.getElementById("poemSyncBadge");
+    const text = document.getElementById("poemSyncText");
+    const retry = document.getElementById("poemSyncRetry");
+    if (!badge || !text) return;
+    badge.classList.remove("offline", "syncing");
+    if (state === "offline") badge.classList.add("offline");
+    if (state === "syncing") badge.classList.add("syncing");
+    text.textContent = message;
+    if (retry) retry.hidden = state !== "offline";
+  }
+
+  function showOfflineNotice() {
+    if (document.querySelector(".offline-notice")) return;
+    const notice = document.createElement("div");
+    notice.textContent = "You are offline. Showing your saved poems.";
+    notice.className = "offline-notice";
+    document.body.prepend(notice);
+  }
+
+  function removeOfflineNotice() {
+    document.querySelectorAll(".offline-notice").forEach((el) => el.remove());
+  }
+
+  function relativeTime(date) {
+    const seconds = Math.round((Date.now() - date.getTime()) / 1000);
+    if (seconds < 60) return "just now";
+    const minutes = Math.round(seconds / 60);
+    if (minutes < 60) return minutes + (minutes === 1 ? " min ago" : " mins ago");
+    const hours = Math.round(minutes / 60);
+    if (hours < 24) return hours + (hours === 1 ? " hr ago" : " hrs ago");
+    const days = Math.round(hours / 24);
+    return days + (days === 1 ? " day ago" : " days ago");
+  }
+
+  // Pull extra poems into Firestore's local cache so the offline library is
+  // meaningfully larger than the batch the grid has rendered so far.
+  async function warmPoemCache() {
+    if (!navigator.onLine || !offlineCacheReady) return;
+    try {
+      const colRef = collection(db, "recentPoems");
+      await getDocs(query(colRef, orderBy("title", "asc"), limit(SYNC_PREFETCH)));
+    } catch (err) {
+      console.warn("Offline warm-up skipped:", err);
+    }
+  }
+
+  async function syncPoems({ silent = false } = {}) {
+    if (!navigator.onLine) {
+      showOfflineNotice();
+      setSyncBadge("offline", "Offline · showing your saved poems");
+      return;
+    }
+    if (!silent) setSyncBadge("syncing", "Syncing new poems…");
+    removeOfflineNotice();
+    try {
+      // Firestore serves cached docs first and writes the server response into
+      // the local cache behind it, so one call is both the refresh and the
+      // offline update.
+      resetPagination();
+      isSearchMode = false;
+      await loadPoems(true);
+      await warmPoemCache();
+      lastSyncedAt = new Date();
+      setSyncBadge("ok", "Saved for offline · updated " + relativeTime(lastSyncedAt));
+    } catch (err) {
+      console.warn("Poem sync failed:", err);
+      setSyncBadge("offline", "Sync failed · showing your saved poems");
+    }
+  }
+
+  window.addEventListener("offline", () => {
+    showOfflineNotice();
+    setSyncBadge("offline", "Offline · showing your saved poems");
+  });
+
+  window.addEventListener("online", () => {
+    removeOfflineNotice();
+    // The previous handler only removed the banner, so a reader coming back
+    // online kept seeing whatever was already on screen. Re-pull for real.
+    syncPoems();
+  });
+
+  const syncRetryBtn = document.getElementById("poemSyncRetry");
+  if (syncRetryBtn) syncRetryBtn.addEventListener("click", () => syncPoems());
+
+  if (!offlineCacheReady) {
+    setSyncBadge("offline", "Offline saving unavailable in this browser");
+  } else if (!navigator.onLine) {
+    showOfflineNotice();
+    setSyncBadge("offline", "Offline · showing your saved poems");
+  } else {
+    setSyncBadge("syncing", "Saving poems for offline reading…");
+    // This branch used to stop here, which left the badge on "Saving…" with a
+    // pulsing dot for the rest of the session: syncPoems() is only reached from
+    // the reconnect handler and the retry button, so on a plain page load
+    // nothing ever moved the badge on.
+    //
+    // The grid has already loaded at startup, so this only tops up Firestore's
+    // local cache and then settles the badge. Calling syncPoems() here instead
+    // would re-run resetPagination() and loadPoems(), doubling the reads the
+    // page has just made.
+    warmPoemCache()
+      .then(() => {
+        lastSyncedAt = new Date();
+        setSyncBadge("ok", "Saved for offline · updated " + relativeTime(lastSyncedAt));
+      })
+      .catch(() => setSyncBadge("offline", "Sync failed · showing your saved poems"));
+  }
 
     // ===== SHARE MODAL EVENT LISTENERS =====
     // Close modal

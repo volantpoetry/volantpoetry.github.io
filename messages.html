@@ -31,6 +31,7 @@
   <link rel="icon" type="image/png" href="images/volant-favicon.png">
   <link rel="apple-touch-icon" href="images/volant-favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="theme.js"></script>
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -661,7 +662,133 @@
     font-size: 0.9rem;
   }
 }
-    
+
+  /* ===== NIGHT READING TOGGLE ===== */
+  .header-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+  .night-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    color: #4b2aad !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+  .night-toggle:hover {
+    transform: scale(1.12) !important;
+    background: rgba(75, 42, 173, 0.08) !important;
+  }
+  .theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+  @media (max-width: 768px) { .theme-label { display: none !important; } }
+
+  /* ===== ESPRESSO NIGHT ===== */
+  html[data-theme="dark"] body {
+    background: #161210 !important;
+    color: #ece2d0 !important;
+  }
+  html[data-theme="dark"] .header-bar {
+    background: rgba(22, 18, 16, 0.94) !important;
+    border-bottom-color: #332b22 !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+  }
+  html[data-theme="dark"] .logo,
+  html[data-theme="dark"] .logo-text { color: #a78bfa !important; }
+  html[data-theme="dark"] .logo .highlight {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+  }
+  html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .home-btn { background: #2a241e !important; color: #a78bfa !important; }
+  html[data-theme="dark"] .home-btn:hover { background: #332b22 !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .username-link { color: #a78bfa !important; }
+
+  html[data-theme="dark"] .messenger-container {
+    background: #211b16 !important;
+    border-color: #332b22 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+  }
+  html[data-theme="dark"] .conversations-sidebar {
+    background: #1d1813 !important;
+    border-right-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .sidebar-header {
+    background: #1d1813 !important;
+    border-bottom-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .sidebar-header h3 { color: #a78bfa !important; }
+  html[data-theme="dark"] .sidebar-toggle {
+    background: #2a241e !important;
+    border-color: #332b22 !important;
+    color: #a78bfa !important;
+  }
+  html[data-theme="dark"] .new-message-btn { background: #4b2aad !important; color: #fff !important; }
+  html[data-theme="dark"] .new-message-btn:hover { background: #6f4ae4 !important; }
+  html[data-theme="dark"] .conversation-item:hover { background: #2a241e !important; }
+  html[data-theme="dark"] .conversation-item.active { background: #332b22 !important; border-left-color: #a78bfa !important; }
+  html[data-theme="dark"] .conversation-name { color: #ece2d0 !important; }
+  html[data-theme="dark"] .conversation-last-msg { color: #a2947e !important; }
+  html[data-theme="dark"] .unread-badge { background: #fbbf24 !important; color: #161210 !important; }
+
+  html[data-theme="dark"] .chat-area { background: #211b16 !important; }
+  html[data-theme="dark"] .chat-header {
+    background: #1d1813 !important;
+    border-bottom-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .chat-header h3,
+  html[data-theme="dark"] .chat-header-info h4 { color: #ece2d0 !important; }
+  html[data-theme="dark"] .messages-container { background: #161210 !important; }
+  html[data-theme="dark"] .message.sent .message-bubble { background: #4b2aad !important; color: #fff !important; }
+  html[data-theme="dark"] .message.received .message-bubble {
+    background: #2a241e !important;
+    color: #ece2d0 !important;
+    border-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .message.sent .message-time { color: #d8cebe !important; }
+  html[data-theme="dark"] .message.received .message-time { color: #a2947e !important; }
+  html[data-theme="dark"] .message-divider { color: #a2947e !important; }
+  html[data-theme="dark"] .message-divider span { background: #2a241e !important; color: #a2947e !important; }
+  html[data-theme="dark"] .message-input-area {
+    background: #1d1813 !important;
+    border-top-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .message-input-area textarea {
+    background: #161210 !important;
+    color: #ece2d0 !important;
+    border-color: #332b22 !important;
+    caret-color: #fbbf24;
+  }
+  html[data-theme="dark"] .message-input-area textarea:focus { border-color: #a78bfa !important; }
+  html[data-theme="dark"] .send-btn { background: #4b2aad !important; color: #fff !important; }
+  html[data-theme="dark"] .send-btn:hover { background: #6f4ae4 !important; }
+  html[data-theme="dark"] .empty-chat { color: #a2947e !important; }
+
+  html[data-theme="dark"] .modal { background: rgba(10, 8, 7, 0.72) !important; }
+  html[data-theme="dark"] .modal-content {
+    background: #211b16 !important;
+    border: 1px solid #332b22 !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+  }
+  html[data-theme="dark"] .modal-content h3 { color: #a78bfa !important; }
+  html[data-theme="dark"] .search-users {
+    background: #1d1813 !important;
+    color: #ece2d0 !important;
+    border-color: #332b22 !important;
+  }
+  html[data-theme="dark"] .user-item:hover { background: #2a241e !important; }
+  html[data-theme="dark"] .close-modal { background: #2a241e !important; color: #ece2d0 !important; }
+  html[data-theme="dark"] .close-modal:hover { background: #332b22 !important; }
   </style>
 </head>
 <body>
@@ -674,7 +801,13 @@
       <span class="highlight">Volant</span> Poetry
     </span>
   </div>
+  <div class="header-actions">
   <a href="user-profile.html" class="home-btn">Back</a>
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
+  </div>
 </header>
 
 <div class="container">

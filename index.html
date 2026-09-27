@@ -725,6 +725,111 @@
   transition: all 0.25s ease;
 }
 
+/* --- Search quick picks -------------------------------------------------
+   Short suggestion list shown while typing. Deliberately capped at a handful
+   of rows: the full result set renders in the Search Results tab, not here. */
+.search-container { position: relative; }
+
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  min-width: 260px;
+  max-height: 60vh;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #e6e0f2;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(75, 42, 173, 0.16);
+  padding: 6px;
+  z-index: 1000;
+  text-align: left;
+}
+
+.search-suggestions[hidden] { display: none; }
+
+.search-suggestions--mobile {
+  position: static;
+  min-width: 0;
+  margin-top: 8px;
+  max-height: 45vh;
+}
+
+.search-suggestions__group {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9a94ab;
+  padding: 6px 10px 4px;
+  font-family: 'Playfair Display', serif;
+}
+
+.search-suggestions__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: #2c2540;
+  cursor: pointer;
+}
+
+.search-suggestions__item:hover,
+.search-suggestions__item.is-active {
+  background: #f1ecfb;
+}
+
+.search-suggestions__item .ss-icon { flex: none; opacity: 0.6; }
+
+.search-suggestions__item .ss-label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.search-suggestions__item .ss-meta { flex: none; font-size: 0.72rem; color: #9a94ab; }
+
+.search-suggestions__clear {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  color: #6b6390;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.search-suggestions__clear:hover { text-decoration: underline; }
+
+.search-suggestions__all {
+  width: 100%;
+  text-align: left;
+  background: #f7f4fd;
+  border: 0;
+  border-top: 1px solid #ece7f7;
+  border-radius: 0 0 8px 8px;
+  margin-top: 4px;
+  padding: 9px 10px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #4b2aad;
+  cursor: pointer;
+}
+
+.search-suggestions__all:hover { background: #efe9fb; }
+
+.search-suggestions__empty {
+  padding: 10px;
+  font-size: 0.85rem;
+  color: #9a94ab;
+}
+
 
 #mobile-search-input:focus {
   outline: none;
@@ -1454,6 +1559,17 @@
   font-size: clamp(1.8rem, 7vw, 4.5rem);
 }
 
+/* Weight only, not size. style.css:189-215 never sets font-weight on the hero
+   heading, so it was inheriting the browser default of 700 in Playfair Display.
+   At 700 that serif is very heavy and thick-set, which is what stops the
+   lettering sitting inside the artwork rather than on top of it. 500 keeps the
+   display presence while letting the strokes thin down. Scoped to this page;
+   the shared rule is untouched for the other pages using .hero. */
+.hero-right h1,
+.hero-right h1 span {
+  font-weight: 500;
+}
+
 /* Hero Description Text */
 .hero-line-content p {
   font-size: clamp(0.8rem, 1.5vw, 1.1rem);
@@ -1464,6 +1580,113 @@
 .hero-line-content .cta-btn {
   font-size: clamp(0.7rem, 1.2vw, 1rem);
   padding: clamp(0.4rem, 1vw, 0.7rem) clamp(0.8rem, 2vw, 1.5rem);
+}
+
+/* The description beside it is quiet and unhurried, so the button matches that
+   rather than shouting over it. Overrides the solid #6a4bc4 fill from
+   style.css:484: no fill, no lift on hover, weight 400 instead of 600, and a
+   pill outline that still reads as clickable. Placed after the sizing rule
+   above so the clamp padding there still wins. */
+.hero-line-content .cta-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  color: #fff;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  border-radius: 999px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.hero-line-content .cta-btn:hover,
+.hero-line-content .cta-btn:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.85);
+  color: #fff;
+  transform: none;
+}
+
+/* === HERO ARTWORK: one wide source, cropped per viewport ===
+   style.css:145-159 still points .hero at rose-Copy.jpg and sets
+   min-height: 45vh. That shared rule is deliberately left untouched, because
+   many other pages use it; the index hero overrides it at both breakpoints.
+
+   Desktop (>=1025px): rose.png is 1983x793 (2.501:1) and is used as-is, with no
+   blur, extension or compositing. "cover" keeps the entire width and trims the
+   top and bottom.
+
+   Height is deliberately left to style.css. 71vh is the height at which a 16:9
+   box matches the image aspect exactly (zero crop), but it makes the hero
+   767px tall at 1080p, which reads as far too dominant. Staying on the shared
+   45vh keeps the hero compact and holds the full image width, at the cost of
+   showing roughly 63% of its height.
+
+   Phones and tablets (<=1024px): rose-mobile.jpg is 1467x793 (1.85:1), a
+   centred full-height crop of that same rose.png. A 26vh phone hero box works
+   out at roughly 1.7-2.3:1, so this crop shows 69-74% of the artwork where a
+   direct reference to the 2.5:1 original would leave only 41%. Shift
+   background-position if the focal point is not centred.
+
+   The <=1024px rule further down keeps min-height: auto, so phone height stays
+   content-driven on top of the 26vh floor set further down still. */
+@media (min-width: 1025px) {
+  .hero {
+    background-image: url('images/rose.png');
+    background-position: center;
+    background-size: cover;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero {
+    background-image: url('images/rose-mobile.jpg');
+    background-position: center;
+    background-size: cover;
+  }
+}
+
+/* === HERO LEGIBILITY: scrim + separation for the new artwork ===
+   rose.png is far more contrasty and busier than the rose-Copy.jpg it replaced:
+   luminance behind the logo runs 0-255 and behind the h1 runs 13-191 after the
+   existing overlay. Averaged out, white text still passes WCAG AA, but bright
+   patches sit directly under the lettering and wash it out locally.
+
+   logo.png is a transparent 1024x1024 PNG (corners are A=0), so it has no plate
+   of its own and sits straight on that busy artwork.
+
+   style.css:161-167 supplies a flat rgba(0,0,0,0.25) ::before overlay. That
+   rule is shared, so it is left alone and the overlay is re-aimed here instead. */
+
+/* One scrim for every viewport, so the fade reads identically on phones,
+   tablets and desktops. The floor matters: mobile text is centred and spans
+   roughly 4-96% of the width, so a gradient that faded out to 0.22 on the right
+   dropped the end of the tagline to 2.97:1 against a bright speck in the crop.
+   Holding the darkest stop at 0.50 keeps the whole text block above AA while
+   still letting the artwork read through on the right, where the desktop hero
+   has no text at all. */
+.hero::before {
+  background: linear-gradient(
+    95deg,
+    rgba(0, 0, 0, 0.62) 0%,
+    rgba(0, 0, 0, 0.58) 40%,
+    rgba(0, 0, 0, 0.54) 70%,
+    rgba(0, 0, 0, 0.50) 100%
+  );
+}
+
+/* Light shadows only. Stacked on top of the scrim above, the earlier values
+   (0.75 / 0.7 / 0.65 at 20px blur) left a dark halo that read as smudge rather
+   than separation. These are just enough to lift the lettering off the artwork
+   without dulling the strokes themselves. */
+.hero-right h1 {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+.hero-line-content p {
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.28);
+}
+
+.hero-left img.hero-logo {
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.4));
 }
 
 /* === BREAKPOINT: Hide hero-left and hero-right on smaller screens === */
@@ -1498,7 +1721,7 @@
 /* === Additional fine-tuning for very small screens === */
 @media (max-width: 480px) {
   .hero {
-    padding: 1.5rem 0.8rem !important;
+    padding: 1.2rem 0.8rem !important;
   }
   
   .hero-line-content p {
@@ -1508,6 +1731,26 @@
   .hero-line-content .cta-btn {
     font-size: 0.75rem !important;
     padding: 0.4rem 1rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    min-height: 26vh !important;
+  }
+  .hero-line-content {
+    gap: 0.7rem !important;
+  }
+  .hero-line-content p {
+    font-size: clamp(0.75rem, calc(3.6vw + 1px), 1.2rem) !important;
+    line-height: 1.35 !important;
+    max-width: 92vw !important;
+    white-space: normal !important;
+    margin-bottom: 0.9rem !important;
+  }
+  .hero-line-content .cta-btn {
+    font-size: 1rem !important;
+    padding: 0.6rem 1.3rem !important;
   }
 }
 
@@ -1669,12 +1912,16 @@
   .hero {
     padding: 1.2rem 0.6rem !important;
   }
-  .hero-line-content p {
-    font-size: 0.75rem !important;
-  }
   .hero-line-content .cta-btn {
-    font-size: 0.7rem !important;
-    padding: 0.35rem 0.8rem !important;
+    font-size: 0.9rem !important;
+    padding: 0.55rem 1.1rem !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .hero-line-content .cta-btn {
+    font-size: 0.8rem !important;
+    padding: 0.45rem 0.9rem !important;
   }
 }
 
@@ -2443,15 +2690,17 @@
     </div>
 
 
- <div class="search-container">
-  <input id="global-search-input" type="text" placeholder="Search poems, authors..." />
-</div>
+  <div class="search-container">
+    <input id="global-search-input" type="text" placeholder="Search poems, authors..."
+      autocomplete="off" role="combobox" aria-expanded="false" aria-controls="search-suggestions"
+      aria-autocomplete="list" aria-label="Search poems, authors, and categories" />
+    <div class="search-suggestions" id="search-suggestions" role="listbox" aria-label="Search suggestions" hidden></div>
+  </div>
 
     <div class="nav-links" id="nav-links">
       <span class="close-btn" id="close-btn">✕</span>
       <a href="index.html">Home</a>
-      <a href="poems.html">Poems</a>
-      <a href="shared/about.html">About</a>
+      <a href="shared/about.html">About Us</a>
        <div class="dropdown">
     <a href="javascript:void(0)">Community ▼</a>
     <div class="dropdown-content">
@@ -2533,7 +2782,13 @@
     id="mobile-search-input"
     placeholder="Search poems, authors, or categories..."
     autocomplete="off"
+    role="combobox"
+    aria-expanded="false"
+    aria-controls="mobile-search-suggestions"
+    aria-autocomplete="list"
+    aria-label="Search poems, authors, and categories"
   />
+  <div class="search-suggestions search-suggestions--mobile" id="mobile-search-suggestions" role="listbox" aria-label="Search suggestions" hidden></div>
 </div>
 
 </header>
@@ -2541,7 +2796,7 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-left">
-    <img src="images/logo.png" alt="Volant Poetry Logo" class="hero-logo">
+    <img src="images/logo-hero.png" alt="Volant Poetry Logo" class="hero-logo">
   </div>
   <div class="hero-right">
     <h1>Volant<br><span>Poetry</span></h1>
@@ -2551,7 +2806,7 @@
  <p>A space where words take breath-<br>
 where poets share, read, and grow together.<br>
 Just voices, words, and connection.</p>
-<a href="poems.html" class="cta-btn">Explore Poems</a>
+<a href="poems.html" class="cta-btn">Find your voice</a>
 
   </div>
 </section>
@@ -2566,6 +2821,9 @@ Just voices, words, and connection.</p>
     <button class="tab-btn" data-tab="rank-poems">Ranking Poems</button>
     <button class="tab-btn" data-tab="rank-poets">Ranking Poets</button>
     <button class="tab-btn" data-tab="submit">Submit</button>
+    <!-- Search tab. Hidden until a query is active (see showSearchTab in script.js)
+         so the tab bar is not polluted during normal browsing. -->
+    <button class="tab-btn" data-tab="search" id="search-tab-btn" hidden>Search Results</button>
   </div>
 
   <div class="tab-content-container">
@@ -2637,13 +2895,21 @@ Just voices, words, and connection.</p>
 </div>
 
 
-    <!-- SUBMIT -->
-    <div class="tab-content" id="submit">
-      <h3>Submit Your Work</h3>
-      <p>Share your poetry with the world. Join Volant Poetry today.</p>
-      <a href="submitpoems.html" class="cta-btn">Submit a Poem</a>
+      <!-- SUBMIT -->
+      <div class="tab-content" id="submit">
+        <h3>Submit Your Work</h3>
+        <p>Share your poetry with the world. Join Volant Poetry today.</p>
+        <a href="submitpoems.html" class="cta-btn">Submit a Poem</a>
+      </div>
+
+      <!-- SEARCH RESULTS -->
+      <!-- Full search output renders here instead of into the Recent Poems panel.
+           Previously performUniversalSearch() wrote into #recent-poems-container, so
+           results were invisible whenever the Recent tab was not the active one. -->
+      <div class="tab-content" id="search">
+        <div id="search-results-container" class="recent-poems-container"></div>
+      </div>
     </div>
-  </div>
 </section>
 
 
@@ -2807,7 +3073,12 @@ const firebaseConfig = {
   appId: "1:78008755450:web:3fd0f0f298a08820935543"
 };
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  // script.js is a deferred module earlier in this document, so it has already
+  // created the Firestore instance with the offline cache attached.
+  // getFirestore() hands back that same instance. Calling initializeFirestore()
+  // here instead throws "already been called with different options" and
+  // silently drops the home page back to a memory-only cache.
+  const db = getFirestore(app);
 // --- Load ALL Poems Links (from multiple collections) ---
 async function loadAllPoemsLinks() {
   try {
@@ -3099,26 +3370,22 @@ async function loadFeaturedPoems() {
         mobileShare.addEventListener("mouseenter", () => mobileShare.style.background = "#e8e0ff");
         mobileShare.addEventListener("mouseleave", () => mobileShare.style.background = "#f0edff");
         
-        // Share click handler
-        const shareClickHandler = function(e) {
-          e.preventDefault();
-          const poemId = this.dataset.poemId;
-          const poemTitle = this.dataset.poemTitle || 'Poem';
-          const poemAuthor = this.dataset.poemAuthor || 'Anonymous';
-          const collection = this.dataset.collection || 'classicPoems';
-          const slug = this.dataset.slug || poemTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-          
-          // Use the global showShareModal function if available
-          if (typeof showShareModal === 'function') {
-            showShareModal(poemId, poemTitle, poemAuthor, collection, slug);
-          } else {
-            // Fallback: open poem page
-            window.open(`poem.html?collection=${collection}&slug=${slug}`, '_blank');
-          }
-        };
-        
-        desktopShare.addEventListener('click', shareClickHandler);
-        mobileShare.addEventListener('click', shareClickHandler);
+        // Share clicks need no handler here. script.js registers a delegated
+        // document-level listener that matches .desktop-share-btn and
+        // .mobile-share-btn and calls its own showShareModal(), reading the same
+        // data-poemId / data-poemTitle / data-poemAuthor / data-collection /
+        // data-slug attributes set above. The modal markup and all of its
+        // wiring (close, backdrop, copy, social buttons) already exist further
+        // down this file.
+        //
+        // The per-button handler that used to sit here tested
+        // `typeof showShareModal === 'function'`, which was always false:
+        // index.html loads script.js with <script type="module"> (line 2935),
+        // and ES module scope is not global, so the function was never reachable
+        // from this inline classic script. The test therefore always fell
+        // through to window.open('poem.html?collection=...&slug=...'), so
+        // sharing a featured poem opened the poem page in a new tab, while
+        // script.js's listener was opening the share modal at the same time.
         
         mobileWrapper.appendChild(mobileShare);
         shareSection.appendChild(desktopShare);
@@ -3185,10 +3452,49 @@ async function hydrateWeeklyHighlights() {
 // ============================================================
 
 if ("serviceWorker" in navigator) {
+  // Whether this page started under a previous worker. Used below so the very
+  // first install (where there is no old controller) does not trigger a reload.
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloadingForUpdate = false;
+
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!hadController || reloadingForUpdate) return;
+    // A new worker has taken over, so this document is still running the
+    // previous deployment's JavaScript. Reload once to pick up the new one.
+    reloadingForUpdate = true;
+    window.location.reload();
+  });
+
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js?v=7", { scope: "/" }).catch(err => {
-      console.warn("Service worker registration failed:", err);
-    });
+      // ?v=9 must be bumped on every deploy. If the URL is unchanged the browser
+      // is entitled to reuse its cached copy of sw.js and never notice the new
+      // CACHE name inside, which is what leaves users stuck on old files.
+      navigator.serviceWorker.register("/sw.js?v=9", {
+      scope: "/",
+      // Belt-and-braces with the query string: never consult the HTTP cache
+      // when checking the worker script or its imports.
+      updateViaCache: "none"
+    })
+        .then((registration) => {
+          // Check for a newer sw.js on every visit rather than only on the
+          // browser's own schedule.
+          if (registration.update) registration.update().catch(() => {});
+
+          // Ask for a one-shot background sync so the worker refreshes the
+          // offline fonts and Firebase SDK from the page cache the next time
+          // connectivity returns. Unlike Periodic Background Sync this needs no
+          // installed PWA, so it is the path that actually runs for most readers.
+          // The browser decides when it fires and may never fire it, which is
+          // harmless: the same assets refresh on the next ordinary request.
+          if (registration.sync) {
+            registration.sync
+              .register("poem-refresh")
+              .catch(() => {});
+          }
+        })
+      .catch((err) => {
+        console.warn("Service worker registration failed:", err);
+      });
   });
 }
 
@@ -3671,54 +3977,106 @@ if (window.currentUser && window.currentUser.uid) {
     }
   });
 
-  const tabBtns = document.querySelectorAll(".tab-btn");
-  const tabContents = document.querySelectorAll(".tab-content");
-
-  tabBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      tabBtns.forEach(b => b.classList.remove("active"));
-      tabContents.forEach(c => c.classList.remove("active"));
-
-      btn.classList.add("active");
-      document.getElementById(btn.dataset.tab).classList.add("active");
-    });
+  // Outside-click is the dismissal model already in use for this dropdown.
+  // Escape is added because a keyboard user tabbing into the search field has
+  // no other way to close it.
+  searchDropdown.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      searchDropdown.classList.remove("show");
+      const input = document.getElementById("mobile-search-input");
+      if (input) {
+        input.value = "";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      searchToggle.focus();
+    }
   });
+
+  // Tab handling is consolidated here. Previously two separate blocks each
+  // attached a click handler to every .tab-btn, and activateTab() was trapped
+  // inside a DOMContentLoaded closure so script.js could not reach it - which is
+  // why search had to render into the Recent Poems panel to be visible at all.
 </script>
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const tabBtns = document.querySelectorAll(".tab-btn");
-  const tabContents = document.querySelectorAll(".tab-content");
-
+(function () {
   const ACTIVE_TAB_KEY = "volant_active_tab";
 
-  function activateTab(tabId) {
-    tabBtns.forEach(b => b.classList.remove("active"));
-    tabContents.forEach(c => c.classList.remove("active"));
+  function getTabNodes() {
+    return {
+      btns: Array.from(document.querySelectorAll(".tab-btn")),
+      contents: Array.from(document.querySelectorAll(".tab-content")),
+    };
+  }
 
-    const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+  // The search tab is transient. It must never be restored on reload, or the
+  // user lands on an empty results panel with no query in the box.
+  function isPersistable(tabId) {
+    return tabId !== "search";
+  }
+
+  function activateTab(tabId, options) {
+    const persist = !options || options.persist !== false;
+    const { btns, contents } = getTabNodes();
+
+    const btn = btns.find((b) => b.dataset.tab === tabId);
     const content = document.getElementById(tabId);
+    if (!btn || !content) return false;
 
-    if (btn && content) {
-      btn.classList.add("active");
-      content.classList.add("active");
-    }
-  }
+    btns.forEach((b) => b.classList.remove("active"));
+    contents.forEach((c) => c.classList.remove("active"));
+    btn.classList.add("active");
+    content.classList.add("active");
 
-  const savedTab = localStorage.getItem(ACTIVE_TAB_KEY);
-  if (savedTab) {
-    activateTab(savedTab);
-  } else {
-    activateTab(tabBtns[0].dataset.tab);
-  }
-
-  tabBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const tabId = btn.dataset.tab;
-
-      activateTab(tabId);
+    if (persist && isPersistable(tabId)) {
       localStorage.setItem(ACTIVE_TAB_KEY, tabId);
+    }
+    return true;
+  }
+
+  function currentTabId() {
+    const active = document.querySelector(".tab-btn.active");
+    return active ? active.dataset.tab : null;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const { btns } = getTabNodes();
+
+    // Restore the last real tab. Ignore a stale "search" value from an older
+    // build so it can never win over the default.
+    const savedTab = localStorage.getItem(ACTIVE_TAB_KEY);
+    if (savedTab && savedTab !== "search" && document.getElementById(savedTab)) {
+      activateTab(savedTab, { persist: false });
+    } else {
+      const firstVisible = btns.find((b) => !b.hidden);
+      activateTab(firstVisible ? firstVisible.dataset.tab : btns[0].dataset.tab, { persist: false });
+    }
+
+    btns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (btn.hidden) return;
+        activateTab(btn.dataset.tab);
+      });
     });
   });
+
+  // Exposed so the module in script.js can drive the tab strip. Kept as a
+  // function rather than inline class-toggling so there is one implementation.
+  window.volantTabs = {
+    activate: activateTab,
+    current: currentTabId,
+    isPersistable: isPersistable,
+    showSearchTab: function (show) {
+      const btn = document.getElementById("search-tab-btn");
+      if (btn) btn.hidden = !show;
+    },
+  };
+})();
+</script>
+<script>
+(function () {
+
+  // The per-tab click handlers that used to live here are now part of the
+  // single consolidated block above (window.volantTabs).
 });
 </script>
 <script>

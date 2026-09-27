@@ -363,6 +363,7 @@
   }
 }
 </style>
+<script src="theme.js"></script>
 </head>
 
 <body>
@@ -385,6 +386,10 @@
          </div>
 
     <div class="nav-right">
+      <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+        <span class="theme-icon" aria-hidden="true">🌙</span>
+        <span class="theme-label">Night reading</span>
+      </button>
       <div class="menu-toggle" id="menu-toggle">☰</div>
     </div>
   </nav>
@@ -400,7 +405,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -412,7 +417,19 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  // Attach the offline cache at construction time so the category list is
+  // browsable without a connection.
+  let db;
+  try {
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+      })
+    });
+  } catch (err) {
+    db = getFirestore(app);
+    console.warn("Offline cache unavailable:", err);
+  }
 
   const container = document.getElementById("categories-container");
 

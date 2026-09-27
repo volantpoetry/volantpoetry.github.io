@@ -4214,6 +4214,7 @@ body.theme-ocean { --pt-bg:#eef6fb; --pt-surface:#ffffff; --pt-surface2:#e8f4fb;
 body.theme-forest { --pt-bg:#eef5ee; --pt-surface:#ffffff; --pt-surface2:#e8f3e9; --pt-surface3:#daeadd; --pt-heading:#1f3d24; --pt-text:#21351f; --pt-muted:#6f8a70; --pt-accent:#2f6f3f; --pt-accent-soft:#e6f1e7; --pt-line:#cfded1; --pt-shadow:rgba(47,111,63,0.22); --pt-btn-text:#fff; }
 body.theme-blossom { --pt-bg:#fdf0f5; --pt-surface:#ffffff; --pt-surface2:#ffeef6; --pt-surface3:#ffdcec; --pt-heading:#4a1f33; --pt-text:#3b2431; --pt-muted:#a07087; --pt-accent:#bf2b6f; --pt-accent-soft:#ffe4f0; --pt-line:#f2d3e0; --pt-shadow:rgba(191,43,111,0.22); --pt-btn-text:#fff; }
 body.theme-mono { --pt-bg:#ffffff; --pt-surface:#ffffff; --pt-surface2:#f4f4f4; --pt-surface3:#e9e9e9; --pt-heading:#000; --pt-text:#1a1a1a; --pt-muted:#888; --pt-accent:#000; --pt-accent-soft:#f0f0f0; --pt-line:#e2e2e2; --pt-shadow:rgba(0,0,0,0.14); --pt-btn-text:#fff; }
+body.theme-espresso { --pt-bg:#161210; --pt-surface:#211b16; --pt-surface2:#2a241e; --pt-surface3:#332b22; --pt-heading:#a78bfa; --pt-text:#ece2d0; --pt-muted:#a2947e; --pt-accent:#a78bfa; --pt-accent-soft:#2a241e; --pt-line:#332b22; --pt-shadow:rgba(167,139,250,0.24); --pt-btn-text:#161210; }
 
 /* Surface remap (theme-aware) */
 body.pt-themed { background: var(--pt-bg) !important; color: var(--pt-text) !important; --primary: var(--pt-accent); --bg: var(--pt-bg); --text: var(--pt-text); --muted: var(--pt-muted); }
@@ -4302,6 +4303,25 @@ body.pt-themed .edit-btn:active { background: var(--pt-accent) !important; color
 body.pt-themed .author-link { color: var(--pt-accent) !important; }
 body.pt-themed .top-poem { color: var(--pt-text) !important; }
 
+/* Phone slide-out menu panel (shown when the hamburger is expanded) */
+@media (max-width: 768px) {
+body.pt-themed .nav-links {
+background: var(--pt-surface) !important;
+background-color: var(--pt-surface) !important;
+border-left: 1px solid var(--pt-line) !important;
+box-shadow: -4px 0 18px var(--pt-shadow) !important;
+}
+body.pt-themed .nav-links a {
+color: var(--pt-accent) !important;
+background: transparent !important;
+}
+body.pt-themed .nav-links a:hover {
+background: var(--pt-accent-soft) !important;
+color: var(--pt-accent) !important;
+}
+body.pt-themed .nav-links .close-btn { color: var(--pt-accent) !important; }
+}
+
 /* Theme picker UI */
 .theme-picker-card p { font-size: 12px; color: var(--pt-muted, #666); margin-bottom: 10px; }
 .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
@@ -4311,6 +4331,10 @@ body.pt-themed .top-poem { color: var(--pt-text) !important; }
 .theme-option .swatch { display: flex; }
 .theme-option .swatch span { width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.18); display: inline-block; vertical-align: middle; }
 .theme-option .swatch span + span { margin-left: -4px; }
+
+/* Manage Account modal: saved avatar replaces the initials disc */
+#manageAccountAvatarWrap.has-avatar #manageAccountInitials { display: none; }
+#manageAccountAvatar { background: #4b2aad; }
 
 </style>
 </head>
@@ -4436,6 +4460,7 @@ body.pt-themed .top-poem { color: var(--pt-text) !important; }
         <button type="button" class="theme-option" data-theme="forest"><span class="swatch"><span style="background:#2f6f3f"></span><span style="background:#daeadd"></span></span>Forest</button>
         <button type="button" class="theme-option" data-theme="blossom"><span class="swatch"><span style="background:#bf2b6f"></span><span style="background:#ffdcec"></span></span>Blossom</button>
         <button type="button" class="theme-option" data-theme="mono"><span class="swatch"><span style="background:#000000"></span><span style="background:#f4f4f4"></span></span>Mono</button>
+        <button type="button" class="theme-option" data-theme="espresso"><span class="swatch"><span style="background:#a78bfa"></span><span style="background:#161210"></span></span>Espresso Night</button>
       </div>
     </div>
 
@@ -4576,9 +4601,10 @@ body.pt-themed .top-poem { color: var(--pt-text) !important; }
       <!-- Account Info -->
       <div style="background: #f8f6ff; border-radius: 12px; padding: 15px; border: 1px solid #ede8ff;">
         <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="width: 48px; height: 48px; border-radius: 50%; background: #4b2aad; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0;">
-            <span id="manageAccountInitials">JD</span>
-          </div>
+                <div id="manageAccountAvatarWrap" style="width: 48px; height: 48px; border-radius: 50%; background: #4b2aad; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0; overflow: hidden; position: relative;">
+                  <img id="manageAccountAvatar" alt="" style="display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />
+                  <span id="manageAccountInitials">?</span>
+                </div>
           <div>
             <div style="font-weight: 600; font-size: 1.05rem;" id="manageAccountUsername">username</div>
             <div style="font-size: 0.85rem; color: #888;" id="manageAccountEmail">email@example.com</div>
@@ -4826,14 +4852,17 @@ import {
   arrayUnion, 
   writeBatch, 
   serverTimestamp, 
-  orderBy,
-  onSnapshot 
+  orderBy, 
+  onSnapshot,
+  runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { 
   getAuth, 
   onAuthStateChanged, 
   signOut 
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { createLikeApi } from "./shared/like-toggle.js";
+
 
 // ============================================================
 // ====== FIREBASE CONFIG ======
@@ -4851,6 +4880,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+// Transactional toggle shared with the other poem pages.
+const likeApi = createLikeApi({
+  db,
+  runTransaction,
+  doc,
+  updateDoc,
+  serverTimestamp
+});
 
 // ============================================================
 // ====== CONSTANTS ======
@@ -6160,7 +6198,8 @@ const PROFILE_THEMES = {
   ocean:    { name: "Ocean",      swatch: ["#0e7490", "#d6eafa"] },
   forest:   { name: "Forest",     swatch: ["#2f6f3f", "#daeadd"] },
   blossom:  { name: "Blossom",    swatch: ["#bf2b6f", "#ffdcec"] },
-  mono:     { name: "Mono",       swatch: ["#000000", "#f4f4f4"] }
+  mono:     { name: "Mono",       swatch: ["#000000", "#f4f4f4"] },
+  espresso: { name: "Espresso Night", swatch: ["#a78bfa", "#161210"] }
 };
 
 function applyProfileTheme(themeId) {
@@ -6580,6 +6619,10 @@ async function fetchUserPoems(usernameToFetch) {
       const card = document.createElement("div");
       card.className = "recent-poem-card";
       card.dataset.id = docId;
+      // The like toggle no longer fetches the poem, so the author and title it
+      // needs for the notification have to be on the card already.
+      card.dataset.ownerId = (poem.authorId || poem.userId || targetProfileUid || "");
+      card.dataset.title = poem.title || "Untitled";
       
       let displayName = usernameToFetch;
       let profileLink = "#";
@@ -6784,40 +6827,33 @@ document.addEventListener('click', async (e) => {
     if (!card) return;
     const docId = card.dataset.id;
     const countSpan = card.querySelector('.like-count');
+    const likeBtn = e.target;
+    if (!likeApi.guard(likeBtn)) return;
 
     try {
-      const poemRef = doc(db, 'recentPoems', docId);
-      const poemSnap = await getDoc(poemRef);
-      if (!poemSnap.exists()) return;
-      const poemData = poemSnap.data();
-      const likedBy = Array.isArray(poemData.likedBy) ? poemData.likedBy : [];
-      let likes = typeof poemData.likes === 'number' ? poemData.likes : 0;
-      const poemOwnerId = poemData.userId || poemData.authorId || null;
+      const result = await likeApi.toggle({
+        collection: 'recentPoems',
+        poemId: docId,
+        userId: user.uid
+      });
+      if (!result.ok) return;
+      likeApi.apply(likeBtn, countSpan, result);
 
-      if (likedBy.includes(user.uid)) {
-        await updateDoc(poemRef, {
-          likes: increment(-1),
-          likedBy: likedBy.filter(uid => uid !== user.uid)
-        });
-        if (countSpan) countSpan.textContent = `${Math.max(likes - 1, 0)}`;
-        e.target.classList.remove('liked');
-      } else {
-        await updateDoc(poemRef, {
-          likes: increment(1),
-          likedBy: arrayUnion(user.uid)
-        });
-        if (countSpan) countSpan.textContent = `${likes + 1}`;
-        e.target.classList.add('liked');
+      // Only a new like notifies, and only once per real like.
+      if (result.liked) {
+        const poemOwnerId = card.dataset.ownerId || null;
         if (poemOwnerId && poemOwnerId !== user.uid) {
           await sendNotification(poemOwnerId, user.uid, 'like', {
             poemId: docId,
-            poemTitle: poemData.title || 'Untitled'
+            poemTitle: card.dataset.title || 'Untitled'
           });
         }
       }
       updateCountsAfterDeletion();
     } catch (err) {
       console.error('Error updating like:', err);
+    } finally {
+      likeApi.release(likeBtn);
     }
   }
 
@@ -7453,11 +7489,72 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+function buildInitials(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return '?';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+let resolvedAccountUsername = '';
+
+async function getStoredAccountProfile() {
+  const user = auth.currentUser;
+  if (!user) return { username: 'User', email: 'email@example.com', initials: '?', photoURL: '', cachedAvatarURL: '' };
+
+  let data = userCache[user.uid];
+
+  if (!data) {
+    try {
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (snap.exists()) {
+        data = snap.data();
+        userCache[user.uid] = data;
+      }
+    } catch (err) {
+      console.warn('Could not read stored profile:', err);
+    }
+  }
+
+  const username = (data && data.username ? String(data.username) : '').trim()
+    || String((data && data.email) || user.email || '').split('@')[0]
+    || 'User';
+  const email = String((data && data.email) || user.email || '').trim() || 'email@example.com';
+
+  // Same precedence the profile header uses: photoURL, then the Cloudinary fallback.
+  const photoURL = String((data && data.photoURL) || '').trim();
+  const cachedAvatarURL = String((data && data.cachedAvatarURL) || '').trim();
+  return { username, email, initials: buildInitials(username), photoURL, cachedAvatarURL };
+}
+
+// Shows the saved avatar in the Manage Account card, falling back to the initials disc.
+// Deliberately read-only: the profile loader already backfills photoURL for your own
+// profile, so this modal must not trigger a Cloudinary write of its own.
+function renderManageAccountAvatar(account) {
+  const wrap = document.getElementById('manageAccountAvatarWrap');
+  const img = document.getElementById('manageAccountAvatar');
+  const initials = document.getElementById('manageAccountInitials');
+  if (!wrap || !img || !initials) return;
+  const showInitials = () => {
+    img.style.display = 'none';
+    img.removeAttribute('src');
+    wrap.classList.remove('has-avatar');
+    initials.style.display = '';
+  };
+  const src = (account && (account.photoURL || account.cachedAvatarURL)) || '';
+  if (!src) { showInitials(); return; }
+  // A dead Cloudinary URL must degrade to initials, not a broken-image icon.
+  img.onerror = showInitials;
+  img.onload = () => { wrap.classList.add('has-avatar'); initials.style.display = 'none'; };
+  img.src = src;
+  img.style.display = 'block';
+}
+
 // ============================================================
 // ====== MANAGE ACCOUNT MODAL EVENT LISTENERS ======
 // ============================================================
 
-document.getElementById('manageAccountLink')?.addEventListener('click', function(e) {
+document.getElementById('manageAccountLink')?.addEventListener('click', async function(e) {
   e.preventDefault();
   
   if (!viewingOwnProfile) {
@@ -7467,13 +7564,13 @@ document.getElementById('manageAccountLink')?.addEventListener('click', function
   
   const modal = document.getElementById('manageAccountModal');
   if (modal) {
-    const username = document.getElementById('username')?.textContent || 'User';
-    const email = document.getElementById('email')?.textContent || 'email@example.com';
-    const initials = username.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+    const account = await getStoredAccountProfile();
+    resolvedAccountUsername = account.username;
     
-    document.getElementById('manageAccountUsername').textContent = username;
-    document.getElementById('manageAccountEmail').textContent = email;
-    document.getElementById('manageAccountInitials').textContent = initials;
+    document.getElementById('manageAccountUsername').textContent = account.username;
+    document.getElementById('manageAccountEmail').textContent = account.email;
+    document.getElementById('manageAccountInitials').textContent = account.initials;
+    renderManageAccountAvatar(account);
     
     modal.classList.add('show');
     modal.style.display = 'flex';
@@ -7504,19 +7601,18 @@ document.getElementById('manageExportBtn')?.addEventListener('click', function()
   }
 });
 
-document.getElementById('manageDeleteBtn')?.addEventListener('click', function() {
+document.getElementById('manageDeleteBtn')?.addEventListener('click', async function() {
   document.getElementById('manageAccountModal').classList.remove('show');
   document.getElementById('manageAccountModal').style.display = 'none';
   
-  const username = document.getElementById('username')?.textContent || 'User';
-  const email = document.getElementById('email')?.textContent || 'email@example.com';
-  const initials = username.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  const account = await getStoredAccountProfile();
+  resolvedAccountUsername = account.username;
   
-  document.getElementById('deleteModalUsername').textContent = username;
-  document.getElementById('deleteModalUsernameBold').textContent = username;
-  document.getElementById('deleteConfirmUsernameLabel').textContent = username;
-  document.getElementById('deleteModalEmail').textContent = email;
-  document.getElementById('deleteModalInitials').textContent = initials;
+  document.getElementById('deleteModalUsername').textContent = account.username;
+  document.getElementById('deleteModalUsernameBold').textContent = account.username;
+  document.getElementById('deleteConfirmUsernameLabel').textContent = account.username;
+  document.getElementById('deleteModalEmail').textContent = account.email;
+  document.getElementById('deleteModalInitials').textContent = account.initials;
   
   const confirmCheckbox = document.getElementById('deleteConfirmCheckbox');
   const typeCheckbox = document.getElementById('deleteTypeCheckbox');
@@ -7602,7 +7698,7 @@ document.getElementById('gdprRightCheckbox')?.addEventListener('change', checkDe
 document.getElementById('deleteConfirmUsername')?.addEventListener('input', checkDeleteForm);
 
 function checkDeleteForm() {
-  const username = document.getElementById('username')?.textContent || '';
+  const username = resolvedAccountUsername;
   const typedUsername = document.getElementById('deleteConfirmUsername')?.value || '';
   const confirmCheck = document.getElementById('deleteConfirmCheckbox')?.checked || false;
   const typeCheck = document.getElementById('deleteTypeCheckbox')?.checked || false;
@@ -7610,7 +7706,11 @@ function checkDeleteForm() {
   
   const submitBtn = document.getElementById('submitDeleteAccount');
   if (submitBtn) {
-    submitBtn.disabled = !(confirmCheck && typeCheck && gdprCheck && typedUsername === username);
+    submitBtn.disabled = !(
+      username &&
+      confirmCheck && typeCheck && gdprCheck &&
+      typedUsername.trim() === username
+    );
   }
 }
 
@@ -7621,9 +7721,13 @@ document.getElementById('submitDeleteAccount')?.addEventListener('click', async 
     return;
   }
   
-  const username = document.getElementById('username')?.textContent || '';
+  const username = resolvedAccountUsername;
   const typedUsername = document.getElementById('deleteConfirmUsername')?.value || '';
-  if (typedUsername !== username) {
+  if (!username) {
+    alert('Could not verify your username. Please close and try again.');
+    return;
+  }
+  if (typedUsername.trim() !== username) {
     alert('Username does not match. Please try again.');
     return;
   }

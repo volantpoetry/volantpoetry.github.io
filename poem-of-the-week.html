@@ -1172,6 +1172,69 @@
       }
     }
   </style>
+<script src="theme.js"></script>
+<style>
+/* ===== NIGHT READING TOGGLE (no style.css on this page) ===== */
+.night-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 6px; border: none; background: transparent; color: inherit;
+  font-size: 1.15rem; line-height: 1; cursor: pointer; font-family: inherit;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  white-space: nowrap; -webkit-tap-highlight-color: transparent;
+}
+.night-toggle:hover { transform: scale(1.2); opacity: 0.85; }
+.night-toggle .theme-icon { font-size: 1.15rem; line-height: 1; }
+.night-toggle .theme-label { display: none; }
+
+/* ===== ESPRESSO NIGHT — dark reading palette ===== */
+html[data-theme="dark"] body { background: #161210 !important; color: #ece2d0 !important; }
+html[data-theme="dark"] .header-bar {
+  background: rgba(22, 18, 16, 0.92) !important;
+  border-bottom-color: #332b22 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .logo-text { color: #a78bfa !important; }
+html[data-theme="dark"] .logo .highlight {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad !important;
+}
+html[data-theme="dark"] .night-toggle {
+  background: transparent !important; border-color: transparent !important; color: #a78bfa !important;
+}
+html[data-theme="dark"] .night-toggle:hover { border-color: transparent !important; background: transparent !important; color: #c9b6ff !important; }
+html[data-theme="dark"] .weekly-container { background: #161210 !important; }
+html[data-theme="dark"] .weekly-title,
+html[data-theme="dark"] .weekly-static-title,
+html[data-theme="dark"] .recent-poem-title { color: #a78bfa !important; }
+html[data-theme="dark"] .weekly-card {
+  background: #211b16 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid #332b22 !important;
+}
+html[data-theme="dark"] .weekly-static-content,
+html[data-theme="dark"] .poem-content { color: #ece2d0 !important; }
+html[data-theme="dark"] .view-badge { color: #a2947e !important; }
+html[data-theme="dark"] .author-link { color: #fbbf24 !important; }
+html[data-theme="dark"] .category-link { color: #a78bfa !important; }
+html[data-theme="dark"] .read-more-btn { color: #a78bfa !important; }
+html[data-theme="dark"] .home-btn { background: #4b2aad !important; color: #f5f0ff !important; }
+html[data-theme="dark"] .home-btn:hover { background: #2a241e !important; color: #a78bfa !important; }
+html[data-theme="dark"] .comment-input {
+  background: #1d1813 !important; color: #ece2d0 !important; border-color: #332b22 !important;
+}
+html[data-theme="dark"] .comment { background: #1d1813 !important; border-color: #332b22 !important; }
+html[data-theme="dark"] .comment-list-outside,
+html[data-theme="dark"] .comment-list { background: transparent !important; }
+html[data-theme="dark"] .share-modal-content { background: #1d1813 !important; }
+html[data-theme="dark"] .share-modal-header h3 { color: #ece2d0 !important; }
+html[data-theme="dark"] .share-modal-header { border-bottom-color: #332b22 !important; }
+html[data-theme="dark"] .share-poem-info { background: #2a241e !important; border-color: #332b22 !important; }
+html[data-theme="dark"] .share-poem-info span { color: #a2947e !important; }
+html[data-theme="dark"] .share-link-display { background: #211b16 !important; border-color: #332b22 !important; }
+html[data-theme="dark"] .share-link-display input { color: #ece2d0 !important; }
+html[data-theme="dark"] .share-modal-close { background: #2a241e !important; color: #ece2d0 !important; }
+html[data-theme="dark"] .toast-notification { background: #211b16; color: #ece2d0; border: 1px solid #332b22; }
+</style>
 </head>
 <body>
 
@@ -1183,7 +1246,13 @@
       <span class="highlight">Volant</span> Poetry
     </span>
   </div>
-  <a href="index.html" id="homeLink" class="home-btn">Home</a>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <a href="index.html" id="homeLink" class="home-btn">Home</a>
+    <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+      <span class="theme-icon" aria-hidden="true">🌙</span>
+      <span class="theme-label">Night reading</span>
+    </button>
+  </div>
 </header>
 
 <section class="weekly-container">
@@ -1227,10 +1296,12 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { 
+    initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
     getFirestore, doc, getDoc, updateDoc, arrayUnion, arrayRemove, collection, addDoc, 
-    increment, serverTimestamp, query, orderBy, getDocs, writeBatch, setDoc
+    increment, serverTimestamp, query, orderBy, getDocs, writeBatch, setDoc, runTransaction
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { createLikeApi } from "./shared/like-toggle.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -1241,8 +1312,29 @@
     appId: "1:78008755450:web:3fd0f0f298a08820935543"
   };
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  // Attach the offline cache at construction time so this page can be read
+  // without a connection.
+  let db;
+  try {
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+      })
+    });
+  } catch (err) {
+    db = getFirestore(app);
+    console.warn("Offline cache unavailable:", err);
+  }
   const auth = getAuth(app);
+
+  // Transactional toggle shared with the other poem pages.
+  const likeApi = createLikeApi({
+    db,
+    runTransaction,
+    doc,
+    updateDoc,
+    serverTimestamp
+  });
 
   let currentUser = null;
   let currentUsername = '';
@@ -1846,13 +1938,16 @@
       const likeSpan = cardContainer.querySelector(".like-count-val");
       
       // Use recentPoems for likes
-      let likeDocRef;
+      let likeCollection;
+      let likePoemId;
       let useRecentPoems = (actualPoemId !== 'weeklyPoem');
       
       if (useRecentPoems) {
-        likeDocRef = doc(db, "recentPoems", actualPoemId);
+        likeCollection = "recentPoems";
+        likePoemId = actualPoemId;
       } else {
-        likeDocRef = doc(db, "weeklyHighlights", "weeklyPoem");
+        likeCollection = "weeklyHighlights";
+        likePoemId = "weeklyPoem";
       }
       
       likeBtn.addEventListener("click", async () => {
@@ -1860,26 +1955,16 @@
           showLoginAlertAndRedirect("Please sign in to like!");
           return; 
         }
+        if (!likeApi.guard(likeBtn)) return;
         try {
-          const currSnap = await getDoc(likeDocRef);
-          let currData = currSnap.data();
-          let currLikedBy = currData?.likedBy || [];
-          let newLikes = currData?.likes || 0;
-          
-          if (currLikedBy.includes(currentUser.uid)) {
-            await updateDoc(likeDocRef, { 
-              likes: Math.max(newLikes - 1, 0), 
-              likedBy: arrayRemove(currentUser.uid) 
-            });
-            likeSpan.textContent = Math.max(newLikes - 1, 0);
-            likeBtn.classList.remove("liked");
-          } else {
-            await updateDoc(likeDocRef, { 
-              likes: newLikes + 1, 
-              likedBy: arrayUnion(currentUser.uid) 
-            });
-            likeSpan.textContent = newLikes + 1;
-            likeBtn.classList.add("liked");
+          const result = await likeApi.toggle({
+            collection: likeCollection,
+            poemId: likePoemId,
+            userId: currentUser.uid
+          });
+          if (!result.ok) return;
+          likeApi.apply(likeBtn, likeSpan, result);
+          if (result.liked) {
             showToast('❤️ Liked!', 1000);
             if (authorId && authorId !== currentUser.uid) {
               await sendNotification(authorId, currentUser.uid, 'like', { poemId: actualPoemId, poemTitle: title });
@@ -1888,6 +1973,8 @@
         } catch (err) {
           console.error("Error updating like:", err);
           showToast('Error updating like. Please try again.', 'error');
+        } finally {
+          likeApi.release(likeBtn);
         }
       });
 

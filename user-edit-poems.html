@@ -32,7 +32,7 @@
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="images/volant-favicon.png">
 <link rel="apple-touch-icon" href="images/volant-favicon.png">
-
+<script src="theme.js"></script>
 <style>
 :root {
   --primary: #4b2aad;
@@ -734,6 +734,122 @@ body {
     font-size: 1.2rem;
   }
 }
+
+/* ===== NIGHT READING TOGGLE ===== */
+.header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.night-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  background: none !important;
+  border: none !important;
+  font-size: 1.3rem !important;
+  cursor: pointer !important;
+  padding: 6px 8px !important;
+  border-radius: 10px !important;
+  color: #4b2aad !important;
+  line-height: 1 !important;
+  transition: transform 0.2s ease, background 0.2s ease !important;
+  font-family: 'Inter', sans-serif !important;
+}
+.night-toggle:hover {
+  transform: scale(1.12) !important;
+  background: rgba(75, 42, 173, 0.08) !important;
+}
+.theme-label {
+  font-size: 0.85rem !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+}
+@media (max-width: 768px) {
+  .theme-label { display: none !important; }
+}
+
+/* ===== ESPRESSO NIGHT ===== */
+html[data-theme="dark"] body {
+  background: #161210 !important;
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] .header-bar {
+  background: rgba(22, 18, 16, 0.94) !important;
+  border-bottom-color: #332b22 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .logo-text { color: #a78bfa !important; }
+html[data-theme="dark"] .logo .highlight {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+}
+html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+html[data-theme="dark"] .home-btn { background: #2a241e !important; color: #a78bfa !important; }
+html[data-theme="dark"] .home-btn:hover { background: #332b22 !important; color: #c9b6ff !important; }
+
+html[data-theme="dark"] .page-header h1 { color: #a78bfa !important; }
+html[data-theme="dark"] .search-filter-bar,
+html[data-theme="dark"] .poem-edit-card,
+html[data-theme="dark"] .no-poems,
+html[data-theme="dark"] .loading-spinner {
+  background: #211b16 !important;
+  border-color: #332b22 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] .poem-edit-header { background: linear-gradient(135deg, #4b2aad, #6c3ddd) !important; color: #fff !important; }
+html[data-theme="dark"] .poem-date-badge { background: rgba(255, 255, 255, 0.18) !important; color: #fff !important; }
+
+html[data-theme="dark"] .search-box input,
+html[data-theme="dark"] .filter-options select,
+html[data-theme="dark"] .form-group input,
+html[data-theme="dark"] .form-group textarea,
+html[data-theme="dark"] .form-group select,
+html[data-theme="dark"] .add-category input {
+  background-color: #1d1813 !important;
+  color: #ece2d0 !important;
+  border-color: #332b22 !important;
+  caret-color: #fbbf24;
+}
+html[data-theme="dark"] .search-box input:focus,
+html[data-theme="dark"] .filter-options select:focus,
+html[data-theme="dark"] .form-group input:focus,
+html[data-theme="dark"] .form-group textarea:focus,
+html[data-theme="dark"] .form-group select:focus,
+html[data-theme="dark"] .add-category input:focus {
+  border-color: #a78bfa !important;
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.12) !important;
+}
+html[data-theme="dark"] .search-box input::placeholder,
+html[data-theme="dark"] .form-group input::placeholder,
+html[data-theme="dark"] .form-group textarea::placeholder { color: #a2947e !important; }
+
+html[data-theme="dark"] .form-group label { color: #a78bfa !important; }
+html[data-theme="dark"] .category-tag {
+  background: #2a241e !important;
+  color: #ece2d0 !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .stats-preview { background: #1d1813 !important; border: 1px solid #332b22 !important; }
+html[data-theme="dark"] .stat-value { color: #a78bfa !important; }
+html[data-theme="dark"] .stat-label,
+html[data-theme="dark"] .save-status,
+html[data-theme="dark"] .no-poems { color: #a2947e !important; }
+html[data-theme="dark"] .save-status.saved { color: #7ee2a8 !important; }
+html[data-theme="dark"] .save-status.error { color: #f5b7b7 !important; }
+
+html[data-theme="dark"] .btn { background: #2a241e !important; color: #ece2d0 !important; }
+html[data-theme="dark"] .btn-success { background: #1f6b3d !important; color: #fff !important; }
+html[data-theme="dark"] .btn-danger { background: #8f2630 !important; color: #fff !important; }
+html[data-theme="dark"] .toast {
+  background: #1d1813 !important;
+  color: #ece2d0 !important;
+  border-left-color: #a78bfa !important;
+}
+html[data-theme="dark"] .floating { opacity: 0.35 !important; }
 </style>
 </head>
 <body>
@@ -753,7 +869,13 @@ body {
       <span class="highlight">Volant</span> Poetry
     </span>
   </div>
+  <div class="header-actions">
   <a href="user-profile.html" class="home-btn">Home</a>
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
+  </div>
 </header>
 
 <!-- ===== MAIN CONTENT ===== -->

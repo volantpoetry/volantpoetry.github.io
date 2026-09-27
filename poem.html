@@ -106,8 +106,16 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
 .author-line { display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; justify-content:space-between; }
 .author-left { display:flex; align-items:center; gap:10px; }
 .author-line img { width:50px; height:50px; border-radius:50%; object-fit:cover; }
-.author-line .author-link { font-weight:700; color:#B8860B; text-decoration:none; font-family:'Inter',sans-serif; font-size:1.1rem; }
-.author-line .author-link:hover { text-decoration:underline; }
+  .author-line .author-link { font-weight:700; color:#B8860B; text-decoration:none; font-family:'Inter',sans-serif; font-size:1.1rem; }
+  .author-line .author-link:hover { text-decoration:underline; }
+  /* A name kept after its href was dropped has no profile to open, so it reads
+     as plain text rather than as a link that goes nowhere. */
+  .author-line .author-link:not([href]) { color:#4b3f2f; cursor:default; }
+  .author-line .author-link:not([href]):hover { text-decoration:none; }
+  /* .author-line is justify-content:space-between, so hiding the author block
+     would slide the read badge to the left. Push it back to the right so the
+     badge sits in the same place whether or not an author is shown. */
+  .author-line.no-author .view-badge { margin-left:auto; }
 
 /* ===== COLLABORATORS ===== */
 .collaborator-line {
@@ -572,8 +580,96 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
   gap: 2px !important;
 }
 </style>
+<script src="theme.js"></script>
+<style>
+/* ===== NIGHT READING TOGGLE (no style.css on this page) ===== */
+.night-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 6px; border: none; background: transparent; color: inherit;
+  font-size: 1.15rem; line-height: 1; cursor: pointer; font-family: inherit;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  white-space: nowrap; -webkit-tap-highlight-color: transparent;
+}
+.night-toggle:hover { transform: scale(1.2); opacity: 0.85; }
+.night-toggle .theme-icon { font-size: 1.15rem; line-height: 1; }
+.night-toggle .theme-label { display: none; }
+.night-toggle.float-night {
+  position: fixed; right: 18px; bottom: 18px; z-index: 9001;
+  width: 48px; height: 48px; padding: 0; border-radius: 50%; font-size: 1.35rem;
+  border: none; background: rgba(33, 27, 22, 0.85); color: #fbbf24;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+.night-toggle.float-night .theme-icon { font-size: 1.35rem; }
+.night-toggle.float-night:hover { background: #2a241e; transform: scale(1.08); }
+
+/* ===== ESPRESSO NIGHT — dark reading palette ===== */
+html[data-theme="dark"] body {
+  background: #161210 !important;
+  background-image: none !important;
+  animation: none !important;
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] .poem-card {
+  background: #211b16 !important;
+  background-image: none !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45) !important;
+  border: 1px solid #332b22 !important;
+}
+html[data-theme="dark"] #poem-title { color: #a78bfa !important; }
+html[data-theme="dark"] .poem-content { color: #ece2d0 !important; }
+html[data-theme="dark"] .collaborator-line,
+html[data-theme="dark"] .collaborator-line em { color: #a2947e !important; }
+html[data-theme="dark"] .collaborator-link,
+html[data-theme="dark"] .collaborator-link:hover { color: #fbbf24 !important; }
+html[data-theme="dark"] #view-count { color: #a2947e !important; }
+html[data-theme="dark"] .poem-category-line,
+html[data-theme="dark"] .poem-category-line em { color: #B8860B !important; }
+html[data-theme="dark"] .category-link,
+html[data-theme="dark"] .category-link:hover { color: #a78bfa !important; }
+html[data-theme="dark"] #audio-player-container { background: #241e18 !important; }
+html[data-theme="dark"] .night-toggle { background: transparent !important; border-color: transparent !important; color: #a78bfa !important; }
+html[data-theme="dark"] .night-toggle:hover { border-color: transparent !important; background: transparent !important; color: #c9b6ff !important; }
+html[data-theme="dark"] .comment-input {
+  background: #1d1813 !important; color: #ece2d0 !important; border-color: #332b22 !important;
+}
+html[data-theme="dark"] .comment-section .comment-input.signed-in {
+  background: #241e18 !important; border-color: #4b2aad !important;
+}
+html[data-theme="dark"] .comment-btn { background: #4b2aad !important; color: #fff !important; }
+html[data-theme="dark"] .comment-btn:hover { background: #5b3ec8 !important; }
+html[data-theme="dark"] .like-btn { background: #3a3027 !important; color: #ece2d0 !important; }
+html[data-theme="dark"] .desktop-share-btn { color: #a78bfa !important; }
+html[data-theme="dark"] .desktop-share-btn:hover { background: #241e18 !important; }
+html[data-theme="dark"] .pdf-export-btn { color: #fbbf24 !important; }
+html[data-theme="dark"] .mobile-share-btn {
+  background: #241e18 !important; border-color: #332b22 !important; color: #a78bfa !important;
+}
+html[data-theme="dark"] .mobile-share-btn:hover { background: #2a241e !important; }
+html[data-theme="dark"] .mobile-pdf-export-btn {
+  background: #241e18 !important; border-color: #332b22 !important; color: #fbbf24 !important;
+}
+html[data-theme="dark"] .comment { background: #1d1813 !important; border-color: #332b22 !important; }
+html[data-theme="dark"] .welcome-banner {
+  background: #12211a !important;
+  border-left-color: #2d7d46 !important;
+  color: #b7e6c5 !important;
+}
+html[data-theme="dark"] .home-link { color: #f28b82 !important; }
+html[data-theme="dark"] .share-modal-content { background: #1d1813 !important; }
+html[data-theme="dark"] .share-modal-header h3 { color: #ece2d0 !important; }
+html[data-theme="dark"] .share-modal-header { border-bottom-color: #332b22 !important; }
+html[data-theme="dark"] .share-poem-info { background: #2a241e !important; border-color: #332b22 !important; }
+html[data-theme="dark"] .share-poem-info span { color: #a2947e !important; }
+html[data-theme="dark"] .share-link-display { background: #211b16 !important; border-color: #332b22 !important; }
+html[data-theme="dark"] .share-link-display input { color: #ece2d0 !important; }
+html[data-theme="dark"] .share-modal-close { background: #2a241e !important; color: #ece2d0 !important; }
+</style>
 </head>
 <body>
+<button class="night-toggle float-night" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+  <span class="theme-icon" aria-hidden="true">🌙</span>
+  <span class="theme-label">Night reading</span>
+</button>
 <script>
   // ============================================
   // FIX: Handle &amp; in URL from sitemap
@@ -596,7 +692,7 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
   <div class="poem-card">
     <!-- Author Image + Name -->
     <div class="author-line">
-      <div class="author-left">
+      <div class="author-left" id="author-left">
         <img id="author-img" src="/images/default-avatar.png" alt="Author">
         <a id="author-link" class="author-link" href="#"></a>
       </div>
@@ -682,13 +778,40 @@ body { margin:0; font-family:'Inter',sans-serif; background: linear-gradient(135
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, addDoc, getDoc, updateDoc, increment, arrayUnion, arrayRemove, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, getDocs, doc, addDoc, getDoc, updateDoc, increment, arrayUnion, arrayRemove, query, orderBy, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { createLikeApi } from "./shared/like-toggle.js";
 
 const firebaseConfig = { apiKey:"AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU", authDomain:"silent-depth.firebaseapp.com", projectId:"silent-depth", storageBucket:"silent-depth.appspot.com", messagingSenderId:"78008755450", appId:"1:78008755450:web:3fd0f0f298a08820935543" };
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+  // This page had no offline persistence at all, so its getDoc() calls for a
+  // single poem could never fall back to cache. The cache must be attached when
+  // the instance is constructed, not enabled afterwards.
+  let db;
+  let offlineCacheReady = false;
+  try {
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+      })
+    });
+    offlineCacheReady = true;
+  } catch (err) {
+    db = getFirestore(app);
+    console.warn("Offline cache unavailable, this poem may not open offline:", err);
+  }
+  const auth = getAuth(app);
+
+  // One transactional toggle per user per poem, shared with the other poem
+  // pages. The old handler incremented a counter outside a transaction, so a
+  // double click could leave the count and likedBy out of step.
+  const likeApi = createLikeApi({
+    db,
+    runTransaction,
+    doc,
+    updateDoc,
+    serverTimestamp
+  });
 
 const params = new URLSearchParams(window.location.search);
 const slug = params.get("slug");
@@ -741,8 +864,10 @@ async function notifyActivityEmail(type, toUid, fromUid, data) {
 
 const titleEl = document.getElementById("poem-title");
 const contentEl = document.getElementById("poem-content");
-const authorImgEl = document.getElementById("author-img");
-const authorLinkEl = document.getElementById("author-link");
+  const authorImgEl = document.getElementById("author-img");
+  const authorLinkEl = document.getElementById("author-link");
+  const authorLeftEl = document.getElementById("author-left");
+  const authorLineEl = document.querySelector(".author-line");
 const viewCountEl = document.getElementById("view-count");
 const poemCard = document.querySelector(".poem-card");
 const interactiveSection = poemCard.querySelector(".interactive-section");
@@ -1248,6 +1373,50 @@ document.getElementById('pdfExportBtn')?.addEventListener('click', downloadPoemP
 document.getElementById('pdfExportBtnMobile')?.addEventListener('click', downloadPoemPdf);
 
 // ============================================================
+// ====== AUTHOR BLOCK VISIBILITY ======
+// ============================================================
+
+// Featured poems, and any poem without a resolvable author, used to render a
+// default avatar next to the word "Anonymous" wrapped in href="#", so the author
+// line looked broken and nothing was actually openable. This hides whatever has
+// no real content behind it: the whole block when there is no author at all, or
+// just the avatar when there is a name but no photo. The read badge is left
+// alone, since the view count is still valid.
+const PLACEHOLDER_AVATAR = "/images/default-avatar.png";
+
+function renderAuthorBlock(name, href, photo) {
+  const realName = typeof name === "string" ? name.trim() : "";
+  const hasName = realName !== "" && realName !== "Anonymous";
+  const hasHref = typeof href === "string" && href !== "" && href !== "#";
+  const hasPhoto = typeof photo === "string" && photo !== "" && photo !== PLACEHOLDER_AVATAR;
+
+  // Nothing to show and nothing to open.
+  if (!hasName && !hasPhoto) {
+    authorLeftEl.style.display = "none";
+    authorLineEl.classList.add("no-author");
+    return;
+  }
+
+  authorLeftEl.style.display = "";
+  authorLineEl.classList.remove("no-author");
+
+  // A real name is worth showing even with no profile behind it, but the avatar
+  // is not: the default image implies a person that does not exist here.
+  authorImgEl.style.display = hasPhoto ? "" : "none";
+  authorImgEl.src = hasPhoto ? photo : "";
+
+  authorLinkEl.style.display = hasName ? "" : "none";
+  authorLinkEl.textContent = realName;
+  if (hasHref) {
+    authorLinkEl.href = href;
+  } else {
+    // Drop the href so it is not a focusable dead link, and so the CSS below
+    // can style it as plain text rather than a link.
+    authorLinkEl.removeAttribute("href");
+  }
+}
+
+// ============================================================
 // ====== LOAD POEM ======
 // ============================================================
 
@@ -1322,9 +1491,7 @@ async function loadPoem(slug, justSignedIn = false){
           }
         }catch(err){ console.warn(err); }
       }
-      authorImgEl.src = profileImage;
-      authorLinkEl.href = profileLink;
-      authorLinkEl.textContent = displayName;
+      renderAuthorBlock(displayName, profileLink, profileImage);
 
       if(collectionName==="recentPoems" && !data.isFeatured){
         interactiveSection.style.display="flex";
@@ -1409,7 +1576,16 @@ async function loadPoem(slug, justSignedIn = false){
       return;
     }
   }
-  titleEl.textContent="Poem not found"; contentEl.textContent=""; authorImgEl.src="/images/default-avatar.png"; authorLinkEl.href="#"; authorLinkEl.textContent="";
+    // Distinguish "not saved on this device and we're offline" from a genuine
+    // missing poem, otherwise a cached-later poem looks permanently deleted.
+    if (!navigator.onLine) {
+      titleEl.textContent = "This poem is not saved on your device";
+      contentEl.textContent = "You are offline. Poems become readable offline after you have opened them once while connected, or after visiting the poems page to save your library.";
+    } else {
+      titleEl.textContent = "Poem not found";
+      contentEl.textContent = "";
+    }
+    renderAuthorBlock("", "", "");
   interactiveSection.style.display = "none";
   commentsOuterWrapper.style.display = "none";
 }
@@ -1457,39 +1633,21 @@ document.addEventListener("click", async e=>{
     const docId = card.dataset.id;
     const countSpan = card.querySelector(".like-count");
     const likeBtn = e.target;
-    const poemRef = doc(db,"recentPoems",docId);
+    // This page reads collectionName from the URL, so a classic poem opened via
+    // ?collection=classicPoems used to have its like written into recentPoems.
+    const poemCollection = card.dataset.collection || collectionName || "recentPoems";
+    if(!likeApi.guard(likeBtn)) return;
 
     try{
-        const docSnap = await getDoc(poemRef);
-        if(!docSnap.exists()) return;
-        const data = docSnap.data();
-        const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
-        let likes = data.likes || 0;
-
-        if(likedBy.includes(user.uid)){
-            const newLikes = Math.max(likes - 1, 0);
-            const idx = likedBy.indexOf(user.uid);
-            const timestamps = Array.isArray(data.likedByTimestamps) ? data.likedByTimestamps.slice() : [];
-            timestamps.splice(idx, 1);
-            await updateDoc(poemRef,{
-                likes: newLikes,
-                likedBy: likedBy.filter(uid => uid !== user.uid),
-                likedByTimestamps: timestamps
-            });
-            likeBtn.classList.remove("liked");
-            countSpan.textContent = newLikes;
-        } else {
-            const newLikes = likes + 1;
-            await updateDoc(poemRef,{
-                likes: newLikes,
-                likedBy: arrayUnion(user.uid),
-                likedByTimestamps: arrayUnion(serverTimestamp())
-            });
-            likeBtn.classList.add("liked");
-            countSpan.textContent = newLikes;
-        }
-
+      const result = await likeApi.toggle({
+        collection: poemCollection,
+        poemId: docId,
+        userId: user.uid
+      });
+      if(!result.ok) return;
+      likeApi.apply(likeBtn, countSpan, result);
     }catch(err){ console.error(err); }
+    finally{ likeApi.release(likeBtn); }
   }
 
   if(e.target.classList.contains("message-count") || e.target.id === "messageCountTrigger" || e.target.closest(".message-count")){
@@ -1618,4 +1776,4 @@ if (messageCountTrigger) {
 </script>
 <script src="return-url-handler.js"></script>
 </body>
-</html>
+</html>

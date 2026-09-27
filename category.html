@@ -1297,8 +1297,240 @@
   }
 }
 
-  
+  /* ===== NIGHT READING TOGGLE ===== */
+  .night-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    color: #4b2aad !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+    order: 99 !important;
+  }
+
+  .night-toggle:hover {
+    transform: scale(1.12) !important;
+    background: rgba(75, 42, 173, 0.08) !important;
+  }
+
+  .theme-label {
+    font-size: 0.85rem !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+  }
+
+  @media (max-width: 768px) {
+    .night-toggle {
+      order: 0 !important;
+      margin-left: auto !important;
+    }
+    .theme-label {
+      display: none !important;
+    }
+  }
+
+  /* ===== ESPRESSO NIGHT ===== */
+  html[data-theme="dark"] body {
+    background: #161210 !important;
+  }
+
+  html[data-theme="dark"] header {
+    background: rgba(22, 18, 16, 0.92) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  html[data-theme="dark"] .logo,
+  html[data-theme="dark"] .logo-text,
+  html[data-theme="dark"] .night-toggle {
+    color: #a78bfa !important;
+  }
+
+  html[data-theme="dark"] .logo-text .logo-highlight {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+  }
+
+  html[data-theme="dark"] .menu-toggle,
+  html[data-theme="dark"] .close-btn {
+    color: #ece2d0 !important;
+  }
+
+  html[data-theme="dark"] .night-toggle:hover {
+    background: transparent !important;
+    color: #c9b6ff !important;
+  }
+
+  html[data-theme="dark"] .nav-links {
+    background: #211b16 !important;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  html[data-theme="dark"] .nav-links a {
+    color: #ece2d0 !important;
+  }
+
+  html[data-theme="dark"] .nav-links a:hover {
+    color: #c9b6ff !important;
+    background: #2a241e !important;
+  }
+
+  html[data-theme="dark"] .nav-links a {
+    border-bottom-color: #332b22 !important;
+  }
+
+  html[data-theme="dark"] .category-header {
+    color: #a78bfa !important;
+  }
+
+  html[data-theme="dark"] .recent-poem-card {
+    background: #211b16 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+    color: #ece2d0 !important;
+  }
+
+  html[data-theme="dark"] .recent-poem-title {
+    color: #a78bfa !important;
+  }
+
+  html[data-theme="dark"] .poem-content {
+    color: #ece2d0 !important;
+  }
+
+  html[data-theme="dark"] .view-badge {
+    color: #a2947e !important;
+  }
+
+  html[data-theme="dark"] .view-badge.view-update {
+    color: #4CAF50 !important;
+  }
+
+  html[data-theme="dark"] .read-more-btn {
+    color: #a78bfa !important;
+  }
+
+  html[data-theme="dark"] .read-more-btn:hover {
+    color: #c9b6ff !important;
+  }
+
+  html[data-theme="dark"] .category-link,
+  html[data-theme="dark"] .category-link:hover {
+    color: #a78bfa !important;
+  }
+
+  html[data-theme="dark"] .author-link {
+    color: #fbbf24 !important;
+  }
+
+  html[data-theme="dark"] .poem-audio-section {
+    background: #241e18 !important;
+  }
+
+  html[data-theme="dark"] .collaborator-line,
+  html[data-theme="dark"] .collaborator-line em {
+    color: #a2947e !important;
+  }
+
+  html[data-theme="dark"] .message-count {
+    color: #ece2d0 !important;
+  }
+
+  html[data-theme="dark"] .desktop-share-btn {
+    color: #a78bfa !important;
+  }
+
+  html[data-theme="dark"] .desktop-share-btn:hover {
+    background: #2a241e !important;
+  }
+
+  html[data-theme="dark"] .comment-input,
+  html[data-theme="dark"] .reply-input textarea {
+    background: #1d1813 !important;
+    border-color: #332b22 !important;
+    color: #ece2d0 !important;
+  }
+
+  html[data-theme="dark"] .comment-list-simple {
+    background: #1d1813 !important;
+    border-color: #332b22 !important;
+    box-shadow: none !important;
+  }
+
+  html[data-theme="dark"] .comment {
+    background: #211b16 !important;
+    border-color: #332b22 !important;
+    color: #ece2d0 !important;
+  }
+
+  html[data-theme="dark"] .no-comments {
+    color: #a2947e !important;
+  }
+
+  html[data-theme="dark"] .reply-toggle {
+    color: #a78bfa !important;
+  }
+
+  html[data-theme="dark"] .mobile-share-btn {
+    background: #241e18 !important;
+    border-color: #483c2a !important;
+    color: #a78bfa !important;
+  }
+
+  html[data-theme="dark"] .mobile-share-btn:hover {
+    background: #2a241e !important;
+  }
+
+  html[data-theme="dark"] .mobile-share-wrapper {
+    border-top-color: #332b22 !important;
+  }
+
+  html[data-theme="dark"] .share-modal-content {
+    background: #1d1813 !important;
+  }
+
+  html[data-theme="dark"] .share-modal-header {
+    border-bottom-color: #332b22 !important;
+  }
+
+  html[data-theme="dark"] .share-modal-header h3 {
+    color: #ece2d0 !important;
+  }
+
+  html[data-theme="dark"] .share-modal-close {
+    background: #2a241e !important;
+    color: #ece2d0 !important;
+  }
+
+  html[data-theme="dark"] .share-poem-info {
+    background: #2a241e !important;
+    border-color: #332b22 !important;
+  }
+
+  html[data-theme="dark"] .share-poem-info strong {
+    color: #a78bfa !important;
+  }
+
+  html[data-theme="dark"] .share-poem-info span {
+    color: #a2947e !important;
+  }
+
+  html[data-theme="dark"] .share-link-display {
+    background: #211b16 !important;
+    border-color: #332b22 !important;
+  }
+
+  html[data-theme="dark"] .share-link-display input {
+    color: #ece2d0 !important;
+  }
+
 </style>
+<script src="theme.js"></script>
 </head>
 <body>
 
@@ -1317,6 +1549,10 @@
       <a href="shared/about.html">About Us</a>
       <a href="shared/contact.html">Contact Us</a>
     </div>
+    <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+      <span class="theme-icon" aria-hidden="true">🌙</span>
+      <span class="theme-label">Night reading</span>
+    </button>
     <div class="menu-toggle" id="menu-toggle">☰</div>
   </nav>
 </header>
@@ -1355,10 +1591,12 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import { 
+    initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
     getFirestore, collection, query, where, getDocs, doc, getDoc, updateDoc, increment, 
-    arrayUnion, arrayRemove, orderBy, addDoc, serverTimestamp, writeBatch 
+    arrayUnion, arrayRemove, orderBy, addDoc, serverTimestamp, writeBatch, runTransaction
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { createLikeApi } from "./shared/like-toggle.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPsewtEWxzU",
@@ -1370,8 +1608,29 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth();
+  // Attach the offline cache at construction time so categories can be browsed
+  // without a connection.
+  let db;
+  try {
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+      })
+    });
+  } catch (err) {
+    db = getFirestore(app);
+    console.warn("Offline cache unavailable:", err);
+  }
+  const auth = getAuth(app);
+
+  // Transactional toggle shared with the other poem pages.
+  const likeApi = createLikeApi({
+    db,
+    runTransaction,
+    doc,
+    updateDoc,
+    serverTimestamp
+  });
 
   let currentUser = null;
   onAuthStateChanged(auth, (user) => { 
@@ -1989,25 +2248,23 @@
     const likeSpan = card.querySelector(".like-count-val");
     likeBtn.addEventListener("click", async () => {
       if (!currentUser) { alert("Sign in to like."); return; }
-      const poemRef = doc(db, "recentPoems", docId);
-      const snap = await getDoc(poemRef);
-      if (!snap.exists()) return;
-      const data = snap.data();
-      const likedBy = data.likedBy || [];
-      if (likedBy.includes(currentUser.uid)) {
-        const idx = likedBy.indexOf(currentUser.uid);
-        const timestamps = Array.isArray(data.likedByTimestamps) ? data.likedByTimestamps.slice() : [];
-        timestamps.splice(idx, 1);
-        await updateDoc(poemRef, { likes: increment(-1), likedBy: arrayRemove(currentUser.uid), likedByTimestamps: timestamps });
-        likeSpan.textContent = parseInt(likeSpan.textContent) - 1;
-        likeBtn.classList.remove("liked");
-      } else {
-        await updateDoc(poemRef, { likes: increment(1), likedBy: arrayUnion(currentUser.uid), likedByTimestamps: arrayUnion(serverTimestamp()) });
-        likeSpan.textContent = parseInt(likeSpan.textContent) + 1;
-        likeBtn.classList.add("liked");
-        if (authorId && authorId !== currentUser.uid) {
+      if (!likeApi.guard(likeBtn)) return;
+      try {
+        const result = await likeApi.toggle({
+          collection: "recentPoems",
+          poemId: docId,
+          userId: currentUser.uid
+        });
+        if (!result.ok) return;
+        // like-count-val is a bare number, so apply()'s textContent is safe here.
+        likeApi.apply(likeBtn, likeSpan, result);
+        if (result.liked && authorId && authorId !== currentUser.uid) {
           await sendNotification(authorId, currentUser.uid, 'like', { poemId: docId, poemTitle: poem.title });
         }
+      } catch (err) {
+        console.error("Error updating like:", err);
+      } finally {
+        likeApi.release(likeBtn);
       }
     });
     if (currentUser && poem.likedBy && poem.likedBy.includes(currentUser.uid)) {

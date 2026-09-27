@@ -30,6 +30,7 @@
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="images/volant-favicon.png">
 <link rel="apple-touch-icon" href="images/volant-favicon.png">
+<script src="theme.js"></script>
 <style>
   body {
     margin: 0;
@@ -67,14 +68,62 @@
   #poem-content { font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; white-space: pre-wrap; }
   .author { font-style: italic; font-size: 0.9rem; color: #6b5a4c; }
   @media (max-width: 768px) {
-    .poem-card { padding: 20px 15px; width: 84%; margin-left: -8%; }
-    #poem-title { font-size: 1.5rem; }
+  .poem-card { padding: 20px 15px; width: 84%; margin-left: -8%; }
+  #poem-title { font-size: 1.5rem; }
   }
-</style>
-</head>
-<body>
 
-<section class="poem-section">
+  /* ===== NIGHT READING TOGGLE (floating) ===== */
+  .night-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    color: #4b2aad !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+    font-family: 'Inter', sans-serif !important;
+    position: fixed !important;
+    top: 16px !important;
+    right: 16px !important;
+    z-index: 1100 !important;
+  }
+  .night-toggle:hover { transform: scale(1.12) !important; background: rgba(75, 42, 173, 0.08) !important; }
+  .theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+  @media (max-width: 768px) { .theme-label { display: none !important; } }
+
+  /* ===== ESPRESSO NIGHT ===== */
+  html[data-theme="dark"] body {
+    background: linear-gradient(135deg, #161210 0%, #1d1813 30%, #201a14 60%, #161210 100%) !important;
+    background-size: 400% 400% !important;
+    color: #ece2d0 !important;
+  }
+  html[data-theme="dark"] .poem-card {
+    background: linear-gradient(160deg, #211b16, #1d1813) !important;
+    color: #ece2d0 !important;
+    border: 1px solid #332b22;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55) !important;
+  }
+  html[data-theme="dark"] #poem-title { color: #a78bfa !important; }
+  html[data-theme="dark"] #poem-content { color: #ece2d0 !important; }
+  html[data-theme="dark"] .author { color: #a2947e !important; }
+  html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+  </style>
+</head>
+  <body>
+  
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
+  
+  <section class="poem-section">
   <div id="poem-container" class="poem-card">
     <h2 id="poem-title"></h2>
     <p id="poem-content"></p>

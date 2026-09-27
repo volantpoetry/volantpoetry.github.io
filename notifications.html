@@ -29,6 +29,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/volant-favicon.png">
   <link rel="apple-touch-icon" href="images/volant-favicon.png">
+  <script src="theme.js"></script>
   
   <style>
   * {
@@ -2101,12 +2102,127 @@ a:active {
    MAINTAIN TAB FONT SIZE - 480px AND BELOW
    ============================================ */
 
-@media (max-width: 480px) {
+  @media (max-width: 480px) {
   .tab-btn {
     font-size: 13px !important;
     padding: 10px 20px !important;
   }
-}
+  }
+
+  /* ===== NIGHT READING TOGGLE ===== */
+  .header-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+  .night-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.3rem !important;
+    cursor: pointer !important;
+    padding: 6px 8px !important;
+    border-radius: 10px !important;
+    color: #4b2aad !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+    font-family: 'Inter', sans-serif !important;
+  }
+  .night-toggle:hover {
+    transform: scale(1.12) !important;
+    background: rgba(75, 42, 173, 0.08) !important;
+  }
+  .theme-label { font-size: 0.85rem !important; font-weight: 600 !important; }
+  @media (max-width: 768px) { .theme-label { display: none !important; } }
+
+  /* ===== ESPRESSO NIGHT ===== */
+  html[data-theme="dark"] body {
+    background: #161210 !important;
+    color: #ece2d0 !important;
+  }
+  html[data-theme="dark"] .header-bar {
+    background: rgba(22, 18, 16, 0.94) !important;
+    border-bottom-color: #332b22 !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+  }
+  html[data-theme="dark"] .logo,
+  html[data-theme="dark"] .logo-text { color: #a78bfa !important; }
+  html[data-theme="dark"] .logo .highlight {
+    color: #ffffff !important;
+    text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+  }
+  html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+  html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+  html[data-theme="dark"] .home-btn { background: #2a241e !important; color: #a78bfa !important; }
+  html[data-theme="dark"] .home-btn:hover { background: #332b22 !important; color: #c9b6ff !important; }
+
+  html[data-theme="dark"] .notifications-header h1 { color: #a78bfa !important; }
+  html[data-theme="dark"] .mark-read-btn { background: #4b2aad !important; color: #fff !important; }
+  html[data-theme="dark"] .mark-read-btn:hover { background: #6f4ae4 !important; }
+  html[data-theme="dark"] .tabs { border-bottom-color: #332b22 !important; }
+  html[data-theme="dark"] .tab-btn { color: #a2947e !important; }
+  html[data-theme="dark"] .tab-btn.active { background: #4b2aad !important; color: #fff !important; }
+  html[data-theme="dark"] .tab-btn:hover:not(.active) { background: #2a241e !important; color: #ece2d0 !important; }
+
+  html[data-theme="dark"] .notification-item {
+    background: #211b16 !important;
+    border-left-color: #a78bfa !important;
+  }
+  html[data-theme="dark"] .notification-item:hover { background: #2a241e !important; }
+  html[data-theme="dark"] .notification-item.unread {
+    background: #251f18 !important;
+    border-left-color: #fbbf24 !important;
+  }
+  html[data-theme="dark"] .notification-item.unread:hover { background: #2f2718 !important; }
+  html[data-theme="dark"] .notification-item.read { opacity: 0.72 !important; }
+  html[data-theme="dark"] .notification-item.announcement {
+    background: linear-gradient(135deg, #241a15, #1f1812) !important;
+    border-left-color: #ff6b35 !important;
+  }
+  html[data-theme="dark"] .notification-item.announcement.unread {
+    background: linear-gradient(135deg, #2b1d14, #241a12) !important;
+  }
+  html[data-theme="dark"] .notification-item.welcome {
+    background: linear-gradient(135deg, #16201a, #141d18) !important;
+    border-left-color: #2ecc71 !important;
+  }
+  html[data-theme="dark"] .notification-item.welcome.unread {
+    background: linear-gradient(135deg, #1a2a1f, #16231b) !important;
+  }
+  html[data-theme="dark"] .notification-item.deletion {
+    background: linear-gradient(135deg, #241615, #1f1413) !important;
+    border-left-color: #e74c3c !important;
+  }
+  html[data-theme="dark"] .notification-item.deletion.unread {
+    background: linear-gradient(135deg, #2c1a19, #261615) !important;
+  }
+  html[data-theme="dark"] .notification-message { color: #ece2d0 !important; }
+  html[data-theme="dark"] .notification-time { color: #a2947e !important; }
+  html[data-theme="dark"] .clickable-user { color: #fbbf24 !important; }
+  html[data-theme="dark"] .clickable-link,
+  html[data-theme="dark"] .poem-title-link,
+  html[data-theme="dark"] .email-link { color: #a78bfa !important; }
+  html[data-theme="dark"] .poem-title-link { border-bottom-color: #4b3a6b !important; }
+  html[data-theme="dark"] .quote-text-link { color: #c9b6ff !important; }
+  html[data-theme="dark"] .collab-badge { background: #2a241e !important; color: #a78bfa !important; }
+  html[data-theme="dark"] .quote-display {
+    background: #1d1813 !important;
+    border-left-color: #8b5cf6 !important;
+    color: #d8cebe !important;
+  }
+  html[data-theme="dark"] .follow-back-btn { background: #2f7a45 !important; color: #fff !important; }
+  html[data-theme="dark"] .follow-back-btn.following { background: #a02c28 !important; color: #fff !important; }
+  html[data-theme="dark"] .read-link { background: #2a241e !important; color: #a78bfa !important; }
+  html[data-theme="dark"] .read-link:hover { background: #332b22 !important; }
+  html[data-theme="dark"] .empty-state {
+    background: #211b16 !important;
+    border: 1px solid #332b22 !important;
+  }
+  html[data-theme="dark"] .empty-state h3 { color: #a2947e !important; }
+  html[data-theme="dark"] .empty-state p { color: #7d7263 !important; }
   </style>
 </head>
 <body>
@@ -2119,7 +2235,13 @@ a:active {
       <span class="highlight">Volant</span> Poetry
     </span>
   </div>
+  <div class="header-actions">
   <a href="user-profile.html" class="home-btn">Back</a>
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
+  </div>
 </header>
 
 <!-- ===== MAIN CONTENT ===== -->

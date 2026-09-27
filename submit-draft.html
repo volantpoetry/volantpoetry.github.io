@@ -37,7 +37,7 @@
 <!-- Favicons -->
 <link rel="icon" type="image/png" href="images/volant-favicon.png">
 <link rel="apple-touch-icon" href="images/volant-favicon.png">
-
+<script src="theme.js"></script>
 <style>
 :root {
   --primary: #4b2aad;
@@ -390,6 +390,89 @@ body {
     border-radius: 12px;
   }
 }
+
+/* ===== NIGHT READING TOGGLE ===== */
+.night-toggle {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  background: none !important;
+  border: none !important;
+  font-size: 1.3rem !important;
+  cursor: pointer !important;
+  padding: 6px 8px !important;
+  border-radius: 10px !important;
+  color: #4b2aad !important;
+  line-height: 1 !important;
+  transition: transform 0.2s ease, background 0.2s ease !important;
+  font-family: 'Inter', sans-serif !important;
+}
+.night-toggle:hover {
+  transform: scale(1.12) !important;
+  background: rgba(75, 42, 173, 0.08) !important;
+}
+.theme-label {
+  font-size: 0.85rem !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 600 !important;
+}
+@media (max-width: 768px) {
+  .theme-label { display: none !important; }
+}
+
+/* ===== ESPRESSO NIGHT ===== */
+html[data-theme="dark"] body {
+  background: #161210 !important;
+  color: #ece2d0 !important;
+}
+html[data-theme="dark"] .header-bar {
+  background: rgba(22, 18, 16, 0.94) !important;
+  border-bottom-color: #332b22 !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5) !important;
+}
+html[data-theme="dark"] .logo-text { color: #a78bfa !important; }
+html[data-theme="dark"] .logo .highlight {
+  color: #ffffff !important;
+  text-shadow: 0 0 2px #4b2aad, 0 0 4px #4b2aad, 0 0 6px #4b2aad !important;
+}
+html[data-theme="dark"] .night-toggle { color: #a78bfa !important; }
+html[data-theme="dark"] .night-toggle:hover { background: #2a241e !important; color: #c9b6ff !important; }
+
+html[data-theme="dark"] .container {
+  background: #211b16 !important;
+  border: 1px solid #332b22 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+}
+html[data-theme="dark"] .container h1 { color: #a78bfa !important; }
+html[data-theme="dark"] .field-container label { color: #ece2d0 !important; }
+html[data-theme="dark"] .field-container input,
+html[data-theme="dark"] .field-container textarea,
+html[data-theme="dark"] .field-container select {
+  background: #1d1813 !important;
+  color: #ece2d0 !important;
+  border-color: #332b22 !important;
+  caret-color: #fbbf24;
+}
+html[data-theme="dark"] .field-container input::placeholder,
+html[data-theme="dark"] .field-container textarea::placeholder { color: #a2947e !important; }
+html[data-theme="dark"] .field-container input:focus,
+html[data-theme="dark"] .field-container textarea:focus {
+  border-color: #a78bfa !important;
+  box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.12) !important;
+}
+html[data-theme="dark"] .field-container small { color: #a2947e !important; }
+html[data-theme="dark"] .submit-btn { background: linear-gradient(135deg, #4b2aad, #6f4ae4) !important; color: #fff !important; }
+html[data-theme="dark"] .submit-another-btn { background: #4b2aad !important; color: #fff !important; }
+html[data-theme="dark"] .back-btn-form {
+  background: #2a241e !important;
+  color: #ece2d0 !important;
+  border-color: #332b22 !important;
+}
+html[data-theme="dark"] .back-btn-form:hover { background: #332b22 !important; color: #a78bfa !important; }
+html[data-theme="dark"] .success-message.success { background: #12211a !important; color: #b7e6c5 !important; }
+html[data-theme="dark"] .success-message.error { background: #2b1416 !important; color: #f5b7b7 !important; }
+html[data-theme="dark"] .floating { opacity: 0.35 !important; }
 </style>
 </head>
 <body>
@@ -404,6 +487,10 @@ body {
   </div>
   <!-- Home button removed -->
   <div class="header-spacer"></div>
+  <button class="night-toggle" data-theme-btn onclick="toggleTheme()" type="button" aria-pressed="false" title="Switch to night reading">
+    <span class="theme-icon" aria-hidden="true">🌙</span>
+    <span class="theme-label">Night reading</span>
+  </button>
 </header>
 
 <!-- Floating emojis -->

@@ -3,10 +3,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import { 
-  getFirestore, collection, query, orderBy, limit, getDocs, doc, getDoc, where,
-  enableIndexedDbPersistence, startAfter, updateDoc, setDoc, increment, addDoc, arrayUnion,
-  writeBatch, serverTimestamp
+  getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, query, orderBy, limit, getDocs, doc, getDoc, where,
+  startAfter, updateDoc, setDoc, increment, addDoc, arrayUnion,
+  writeBatch, serverTimestamp, runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { createLikeApi } from "./shared/like-toggle.js";
 
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
@@ -21,9 +24,35 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
+// This is the FIRST Firestore instance created on the home page (this module is
+// a deferred script that runs before the inline module), so the offline cache
+// has to be attached right here. Attaching it later throws
+// "initializeFirestore() has already been called with different options".
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth();
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+      tabManager: persistentMultipleTabManager()
+    })
+  });
+} catch (err) {
+  db = getFirestore(app);
+  console.warn("Offline cache unavailable on the home page:", err);
+}
+const auth = getAuth(app);
+
+// Single source of truth for liking, shared with poem.html, poems.html,
+// category.html, poem-of-the-week.html and user-profile.html. Every toggle runs
+// in a transaction, so one user can never hold more than one like per poem no
+// matter how fast they click, and unliking removes every stored copy of their uid.
+const likeApi = createLikeApi({
+  db,
+  runTransaction,
+  doc,
+  updateDoc,
+  serverTimestamp
+});
 
 // ============================================
 // PREVENT DUPLICATE COMMENTS
@@ -507,6 +536,10 @@ async function loadPoemsBatch() {
       const card = document.createElement("div");
       card.className = "recent-poem-card";
       card.dataset.id = docId;
+      // The like toggle no longer fetches the poem, so the author and title it
+      // needs for the notification have to be on the card already.
+      card.dataset.ownerId = poem.authorId || "";
+      card.dataset.title = poem.title || "Untitled";
       const truncated = truncatePoem(poem.content, 8);
       const likes = typeof poem.likes === "number" ? poem.likes : 0;
       const viewCount = typeof poem.views === "number" ? poem.views : 0;
@@ -834,35 +867,45 @@ onAuthStateChanged(auth, async (user) => {
 document.addEventListener("click", async (e) => {
   const user = auth.currentUser;
 
-  if (e.target.classList.contains("like-btn")) {
-    if (!user) { redirectToLogin(); return; }
-    const card = e.target.closest(".recent-poem-card");
-    if (!card) return;
-    const docId = card.dataset.id;
-    const countSpan = card.querySelector(".like-count");
-    const poemRef = doc(db, "recentPoems", docId);
-    try {
-      const docSnap = await getDoc(poemRef);
-      if (!docSnap.exists()) return;
-      const data = docSnap.data();
-      const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
-      let likes = typeof data.likes === "number" ? data.likes : 0;
-      const poemOwnerId = data.userId || data.authorId || null;
-      if (likedBy.includes(user.uid)) {
-        if (likes > 0) await updateDoc(poemRef, { likes: increment(-1), likedBy: likedBy.filter(uid => uid !== user.uid) });
-        countSpan.textContent = likes - 1;
-        e.target.classList.remove("liked");
-      } else {
-        await updateDoc(poemRef, { likes: increment(1), likedBy: arrayUnion(user.uid) });
-        countSpan.textContent = likes + 1;
-        e.target.classList.add("liked");
-        await sendNotification(poemOwnerId, user.uid, 'like', {
+    if (e.target.classList.contains("like-btn")) {
+      if (!user) { redirectToLogin(); return; }
+      const card = e.target.closest(".recent-poem-card");
+      if (!card) return;
+      const docId = card.dataset.id;
+      const countSpan = card.querySelector(".like-count");
+      const likeBtn = e.target;
+      // Previously this read the doc, decided, then wrote with updateDoc().
+      // Two clicks in the same round trip both read "not liked" and both
+      // incremented, so one user could hold several likes on one poem.
+      if (!likeApi.guard(likeBtn)) return;
+      try {
+        // data-collection lets search results on this same feed target the
+        // collection their poem actually came from.
+        const poemCollection = card.dataset.collection || "recentPoems";
+        const result = await likeApi.toggle({
+          collection: poemCollection,
           poemId: docId,
-          poemTitle: data.title || "Untitled"
+          userId: user.uid
         });
+        if (!result.ok) return;
+        likeApi.apply(likeBtn, countSpan, result);
+
+        // Only a new like notifies the author, and only once per real like.
+        if (result.liked) {
+          const poemOwnerId = card.dataset.ownerId || null;
+          if (poemOwnerId && poemOwnerId !== user.uid) {
+            await sendNotification(poemOwnerId, user.uid, 'like', {
+              poemId: docId,
+              poemTitle: card.dataset.title || "Untitled"
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Error updating like:", err);
+      } finally {
+        likeApi.release(likeBtn);
       }
-    } catch (err) { console.error("Error updating like:", err); }
-  }
+    }
 
   // ===== POST COMMENT WITH DUPLICATE PREVENTION =====
   if (e.target.classList.contains("comment-btn") || e.target.id === "commentBtn") {
@@ -1237,18 +1280,41 @@ async function searchAllUsers(searchTerm) {
   }
 }
 
+// Searchable poem collections. Deliberately recentPoems only: classicPoems and
+// featuredPoems are curated archive entries reached through the Poetry in Motion
+// gallery and the Featured Poems tab, not through universal search.
+const SEARCHABLE_POEM_COLLECTIONS = ["recentPoems"];
+
+// Documents are inconsistent about which field holds the author's name:
+// loadFeaturedPoems() reads authorName, while most submissions write author.
+// All of them are checked so searching a poet's name finds their poems.
+function poemAuthorHaystack(poem) {
+  return [poem.author, poem.authorName, poem.username, poem.poetName]
+    .filter((v) => typeof v === "string" && v !== "")
+    .join(" ")
+    .toLowerCase();
+}
+
 async function searchAllPoems(searchTerm) {
   const poems = [];
   try {
-    const poemsRef = collection(db, "recentPoems");
-    const snapshot = await getDocs(poemsRef);
-    for (const docSnap of snapshot.docs) {
-      const poem = docSnap.data();
-      const title = (poem.title || "").toLowerCase();
-      const content = (poem.content || "").toLowerCase();
-      const author = (poem.author || "").toLowerCase();
-      if (title.includes(searchTerm) || content.includes(searchTerm) || author.includes(searchTerm)) {
-        let authorName = poem.author || "Anonymous";
+    // Previously only "recentPoems" was read, so classic poems were displayed
+    // in the Poetry in Motion gallery but were impossible to find by search.
+    const snapshots = await Promise.all(
+      SEARCHABLE_POEM_COLLECTIONS.map((name) => getDocs(collection(db, name)))
+    );
+
+    for (let c = 0; c < snapshots.length; c++) {
+      const sourceCollection = SEARCHABLE_POEM_COLLECTIONS[c];
+      for (const docSnap of snapshots[c].docs) {
+        const poem = docSnap.data();
+        const title = (poem.title || "").toLowerCase();
+        const content = (poem.content || "").toLowerCase();
+        const author = poemAuthorHaystack(poem);
+        if (!(title.includes(searchTerm) || content.includes(searchTerm) || author.includes(searchTerm))) {
+          continue;
+        }
+        let authorName = poem.author || poem.authorName || "Anonymous";
         let authorId = poem.authorId || poem.userId || null;
         let authorPhoto = "/images/default-avatar.png";
         if (authorId) {
@@ -1263,6 +1329,9 @@ async function searchAllPoems(searchTerm) {
         }
         poems.push({
           id: docSnap.id,
+          // The share buttons read this back so a featured or classic hit never
+          // produces a link into recentPoems.
+          collection: sourceCollection,
           title: poem.title || "Untitled",
           content: poem.content || "",
           author: authorName,
@@ -1280,11 +1349,15 @@ async function searchAllPoems(searchTerm) {
         });
       }
     }
+    // Title matches first, then author-name matches, then popularity.
     poems.sort((a, b) => {
-      const aTitleMatch = (a.title || "").toLowerCase().includes(searchTerm);
-      const bTitleMatch = (b.title || "").toLowerCase().includes(searchTerm);
-      if (aTitleMatch && !bTitleMatch) return -1;
-      if (!aTitleMatch && bTitleMatch) return 1;
+      const rank = (p) => {
+        const t = (p.title || "").toLowerCase().includes(searchTerm) ? 0 : 1;
+        const a2 = poemAuthorHaystack(p).includes(searchTerm) ? 0 : 1;
+        return t * 2 + a2;
+      };
+      const diff = rank(a) - rank(b);
+      if (diff !== 0) return diff;
       return (b.views || 0) - (a.views || 0);
     });
     return poems.slice(0, 30);
@@ -1297,14 +1370,19 @@ async function searchAllPoems(searchTerm) {
 async function searchAllCategories(searchTerm) {
   const categoriesMap = new Map();
   try {
-    const poemsRef = collection(db, "recentPoems");
-    const snapshot = await getDocs(poemsRef);
-    for (const docSnap of snapshot.docs) {
-      const poem = docSnap.data();
-      const poemCategories = poem.categories || [];
-      for (const cat of poemCategories) {
-        if (cat && cat.toLowerCase().includes(searchTerm)) {
-          categoriesMap.set(cat, (categoriesMap.get(cat) || 0) + 1);
+    // Reads the same collection list as searchAllPoems so a category used only
+    // by classic poems is still discoverable.
+    const snapshots = await Promise.all(
+      SEARCHABLE_POEM_COLLECTIONS.map((name) => getDocs(collection(db, name)))
+    );
+    for (const snapshot of snapshots) {
+      for (const docSnap of snapshot.docs) {
+        const poem = docSnap.data();
+        const poemCategories = poem.categories || [];
+        for (const cat of poemCategories) {
+          if (cat && cat.toLowerCase().includes(searchTerm)) {
+            categoriesMap.set(cat, (categoriesMap.get(cat) || 0) + 1);
+          }
         }
       }
     }
@@ -1316,7 +1394,10 @@ async function searchAllCategories(searchTerm) {
 }
 
 async function displaySearchResults(poems, users, categories, searchTerm) {
-  const container = document.getElementById("recent-poems-container");
+  // Renders into its own tab panel. This used to be "recent-poems-container",
+  // which put universal results (poems + users + categories) inside the Recent
+  // Poems tab, so nothing was visible unless that tab happened to be active.
+  const container = document.getElementById("search-results-container");
   if (!container) return;
   container.innerHTML = '';
   const searchHeader = document.createElement('div');
@@ -1377,7 +1458,16 @@ async function displaySearchResults(poems, users, categories, searchTerm) {
   
   if (poems.length > 0) {
     const poemsSection = document.createElement('div');
-    poemsSection.innerHTML = `<h4 style="color: #4b2aad; margin: 0 0 15px 0;">📖 Poems (${poems.length})</h4>`;
+    const classicCount = poems.filter((p) => p.collection === "classicPoems").length;
+    const recentCount = poems.length - classicCount;
+    // Surfacing the split keeps it honest that results now span both
+    // collections rather than silently implying "recent poems only".
+    const breakdown = [];
+    if (recentCount > 0) breakdown.push(`${recentCount} recent`);
+    if (classicCount > 0) breakdown.push(`${classicCount} classic`);
+    poemsSection.innerHTML =
+      `<h4 style="color: #4b2aad; margin: 0 0 15px 0;">📖 Poems (${poems.length})` +
+      `<span style="font-size: 0.78rem; font-weight: 400; color: #8a8299; margin-left: 8px;">${breakdown.join(" · ")}</span></h4>`;
     for (const poem of poems) {
       const cardHTML = await createPoemCardFromSearch(poem);
       poemsSection.insertAdjacentHTML('beforeend', cardHTML);
@@ -1397,13 +1487,14 @@ async function displaySearchResults(poems, users, categories, searchTerm) {
   }
   
   document.getElementById('clear-search-results')?.addEventListener('click', () => {
-    allPoemsCache = [];
-    currentIndex = 0;
-    reachedEnd = false;
-    container.innerHTML = '';
-    loadPoemsBatch();
+    // Hand the Recent tab its content back and return the user to wherever
+    // they were browsing from. loadPoemsBatch() writes to
+    // #recent-poems-container, which search no longer touches, so the reset
+    // has to be explicit on both sides.
+    clearSearchUI({ restoreTab: true });
   });
 }
+
 
 async function createPoemCardFromSearch(poem) {
   const truncated = truncatePoem(poem.content, 8);
@@ -1431,22 +1522,25 @@ async function createPoemCardFromSearch(poem) {
   }
   let audioHTML = '';
   if (poem.audioUrl) {
-    audioHTML = `<div class="poem-audio-section" style="margin: 15px 0 15px 0 !important; padding: 8px 12px !important; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;"><span style="font-size: 0.75rem; color: #4b2aad; font-weight: 600;">🎙️ Spoken Version</span></div><audio controls style="width: 100%; border-radius: 8px; height: 35px;" preload="metadata"><source src="${poem.audioUrl}" type="audio/mpeg">Your browser does not support the audio element.</audio></div>`;
+    audioHTML = `<div class="poem-audio-section" style="margin: 15px 0 15px 0 !important; padding: 8px 12px !important; background: #f0ede8; border-radius: 12px; width: fit-content; max-width: 45%; min-width: 240px; clear: both;"><div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;"><span style="font-size: 0.75rem; color: #4b2aad; font-weight: 600;">🎙️ Spoken Version</span></div><audio controls style="width: 100%; border-radius: 8px; height: 35px;" preload="metadata"><source src="${poem.audioUrl}" type="audio/mpeg">Your browser does not support the audio element.</audio></div>`;
   }
   const followButtonHTML = (currentUserId && poem.authorId && currentUserId !== poem.authorId) 
     ? `<button class="follow-btn-on-card ${isFollowing ? 'following' : ''}" data-poet-id="${poem.authorId}" style="background: ${isFollowing ? '#f44336' : '#4CAF50'}; color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-size: 12px; margin-left: auto; transition: all 0.2s;">${isFollowing ? 'Following' : 'Follow'}</button>`
     : '';
   const poemSlug = poem.slug || generateSlugFromTitle(poem.title) || poem.id;
+  // Kept even though search is scoped to recentPoems, so the handlers below and
+  // the share links can never be hardcoded to one collection.
+  const sourceCollection = poem.collection || "recentPoems";
   let commentCount = 0;
   try {
-    const commentsSnapshot = await getDocs(collection(db, "recentPoems", poem.id, "comments"));
+    const commentsSnapshot = await getDocs(collection(db, sourceCollection, poem.id, "comments"));
     commentCount = commentsSnapshot.size;
   } catch(e) {}
   return `
-    <div class="recent-poem-card" data-id="${poem.id}" style="margin-bottom: 20px;">
+    <div class="recent-poem-card" data-id="${poem.id}" data-collection="${sourceCollection}" data-owner-id="${escapeHtml(poem.authorId || "")}" data-title="${escapeHtml(poem.title || "Untitled")}" style="margin-bottom: 20px;">
       <div class="author-line" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;">
         <div style="display:flex; align-items:center; gap:10px;">
-          <img src="${poem.authorPhoto}" alt="${poem.author}" class="author-img" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
+          <img src="${poem.authorPhoto}" alt="${escapeHtml(poem.author)}" class="author-img" style="width:50px; height:50px; border-radius:50%; object-fit:cover;">
           <div class="author-info">
             <a href="/user-profile.html?uid=${encodeURIComponent(poem.authorId || '')}" class="author-link" style="font-size:1.2rem; font-weight:700;">${escapeHtml(poem.author)}</a>
             <div class="follow-button-container" style="margin-top: 4px;">
@@ -1472,7 +1566,7 @@ async function createPoemCardFromSearch(poem) {
         <span class="message-count">💬 ${commentCount}</span>
         <button class="desktop-share-btn" 
                 data-poem-id="${poem.id}" 
-                data-collection="recentPoems"
+                data-collection="${sourceCollection}"
                 data-slug="${poemSlug}"
                 data-poem-title="${escapeHtml(poem.title || 'Untitled')}"
                 data-poem-author="${escapeHtml(poem.author)}"
@@ -1482,8 +1576,8 @@ async function createPoemCardFromSearch(poem) {
       </div>
       <div class="mobile-share-wrapper">
         <button class="mobile-share-btn" 
-                data-poem-id="${poem.id}" 
-                data-collection="recentPoems"
+                data-poem-id="${poem.id}"
+                data-collection="${sourceCollection}"
                 data-slug="${poemSlug}"
                 data-poem-title="${escapeHtml(poem.title || 'Untitled')}"
                 data-poem-author="${escapeHtml(poem.author)}"
@@ -1495,15 +1589,12 @@ async function createPoemCardFromSearch(poem) {
     <div class="comment-list" style="display: none; margin-bottom: 20px;"></div>
   `;
 }
-
-// ============================================
-// SEARCH RESULTS EVENT LISTENERS WITH DUPLICATE PREVENTION
-// ============================================
 function attachSearchResultEventListeners() {
-  // Track active comments per button using a Map
-  const activeComments = new Map();
+  // Search results now live in their own tab panel, not inside the Recent Poems
+  // feed. Scoping to the old id left these buttons dead.
+  const scope = '#search-results-container';
   
-  document.querySelectorAll('#recent-poems-container .read-more-btn').forEach(btn => {
+  document.querySelectorAll(`${scope} .read-more-btn`).forEach(btn => {
     btn.removeEventListener('click', btn._readMoreHandler);
     btn._readMoreHandler = () => {
       const card = btn.closest('.recent-poem-card');
@@ -1521,120 +1612,114 @@ function attachSearchResultEventListeners() {
     btn.addEventListener('click', btn._readMoreHandler);
   });
 
-  document.querySelectorAll('#recent-poems-container .like-btn').forEach(btn => {
+  document.querySelectorAll(`${scope} .like-btn`).forEach(btn => {
     btn.removeEventListener('click', btn._likeHandler);
     btn._likeHandler = async (e) => {
       if (!auth.currentUser) { redirectToLogin(); return; }
       const card = btn.closest('.recent-poem-card');
       const poemId = card.dataset.id;
+      // Without this the write always targeted recentPoems, so liking a result
+      // could mutate the wrong document or create a phantom one.
+      const poemCollection = card.dataset.collection || "recentPoems";
       const countSpan = card.querySelector('.like-count');
-      const poemRef = doc(db, "recentPoems", poemId);
+      if (!likeApi.guard(btn)) return;
       try {
-        const docSnap = await getDoc(poemRef);
-        if (!docSnap.exists()) return;
-        const data = docSnap.data();
-        const likedBy = Array.isArray(data.likedBy) ? data.likedBy : [];
-        let likes = typeof data.likes === "number" ? data.likes : 0;
-        if (likedBy.includes(currentUserId)) {
-          await updateDoc(poemRef, { likes: increment(-1), likedBy: likedBy.filter(uid => uid !== currentUserId) });
-          countSpan.textContent = likes - 1;
-          btn.classList.remove("liked");
-        } else {
-          await updateDoc(poemRef, { likes: increment(1), likedBy: arrayUnion(currentUserId) });
-          countSpan.textContent = likes + 1;
-          btn.classList.add("liked");
-        }
+        const result = await likeApi.toggle({
+          collection: poemCollection,
+          poemId: poemId,
+          userId: auth.currentUser.uid
+        });
+        if (!result.ok) return;
+        likeApi.apply(btn, countSpan, result);
       } catch(err) {
         console.error("Error updating like:", err);
+      } finally {
+        likeApi.release(btn);
       }
     };
     btn.addEventListener('click', btn._likeHandler);
   });
 
   // ===== SEARCH RESULTS COMMENT HANDLER WITH ROBUST DUPLICATE PREVENTION =====
-  document.querySelectorAll('#recent-poems-container .comment-btn').forEach(btn => {
-    // Remove any existing listener
+  document.querySelectorAll(`${scope} .comment-btn`).forEach(btn => {
     btn.removeEventListener('click', btn._commentHandler);
-    
+
     btn._commentHandler = async function(e) {
-      // Prevent duplicate submissions using a flag on the button
       if (this.dataset.commenting === 'true') {
         console.log("⏳ Comment already in progress, ignoring duplicate click");
         return;
       }
-      
-      // Also check the global flag
+
       if (isCommenting) {
         console.log("⏳ Global comment flag active, ignoring");
         return;
       }
-      
-      if (!auth.currentUser) { 
-        redirectToLogin(); 
-        return; 
+
+      if (!auth.currentUser) {
+        redirectToLogin();
+        return;
       }
-      
+
       const card = this.closest('.recent-poem-card');
       if (!card) {
         console.error("Could not find card");
         return;
       }
-      
+
       const docId = card.dataset.id;
       if (!docId) {
         console.error("No docId found on card");
         return;
       }
-      
+      // Same reason as the like handler: comments must land on the collection
+      // the poem came from, not unconditionally on recentPoems.
+      const poemCollection = card.dataset.collection || "recentPoems";
+
       const input = card.querySelector('.comment-input');
       if (!input) {
         console.error("No comment input found");
         return;
       }
-      
+
       const text = input.value.trim();
       if (!text) {
         console.log("Empty comment, ignoring");
         return;
       }
-      
-      // Set flags to prevent duplicates
+
       this.dataset.commenting = 'true';
       isCommenting = true;
-      
+
       const originalText = this.textContent;
       this.textContent = "Posting...";
       this.disabled = true;
       this.style.opacity = "0.6";
-      
+
       try {
         const userDoc = await getDoc(doc(db, "users", currentUserId));
         const username = userDoc.exists() ? userDoc.data().username : "Anonymous";
-        
-        const commentRef = collection(db, "recentPoems", docId, "comments");
+
+        const commentRef = collection(db, poemCollection, docId, "comments");
         await addDoc(commentRef, {
           userId: currentUserId,
           username: username,
           text: text,
           timestamp: serverTimestamp()
         });
-        
+
         input.value = "";
         input.style.height = "auto";
-        
-        // Update comment count
-        const commentsSnapshot = await getDocs(collection(db, "recentPoems", docId, "comments"));
+
+        const commentsSnapshot = await getDocs(collection(db, poemCollection, docId, "comments"));
         const msgSpan = card.querySelector(".message-count");
         if (msgSpan) msgSpan.textContent = `💬 ${commentsSnapshot.size}`;
-        
-        // Show feedback toast
+
         showToast("✅ Comment posted!");
-        
+
       } catch (err) {
         console.error("Error posting comment:", err);
         showToast("❌ Failed to post comment. Please try again.", true);
       } finally {
-        // Reset flags
         this.dataset.commenting = 'false';
         isCommenting = false;
         this.textContent = originalText;
@@ -1645,7 +1730,7 @@ function attachSearchResultEventListeners() {
     btn.addEventListener('click', btn._commentHandler);
   });
 
-  document.querySelectorAll('#recent-poems-container .follow-btn-on-card').forEach(btn => {
+  document.querySelectorAll(`${scope} .follow-btn-on-card`).forEach(btn => {
     btn.removeEventListener('click', btn._followHandler);
     btn._followHandler = async (e) => {
       e.stopPropagation();
@@ -1674,22 +1759,266 @@ function showToast(message, isError = false) {
   }, 2500);
 }
 
-async function performUniversalSearch(query) {
-  if (!query || query.trim().length < 2) {
-    if (query === '') {
-      allPoemsCache = [];
-      currentIndex = 0;
-      reachedEnd = false;
-      const container = document.getElementById("recent-poems-container");
-      if (container) {
-        container.innerHTML = '';
-        loadPoemsBatch();
-      }
+// ---------------------------------------------------------------------------
+// Search state
+//
+// Results render into a dedicated Search tab, not into the Recent Poems feed.
+// That is the whole point of this block: previously performUniversalSearch()
+// wrote into #recent-poems-container, so results existed in the DOM but were
+// inside a hidden .tab-content and nothing was visible unless the user
+// happened to click Recent first. Because localStorage remembers the last tab
+// ("volant_active_tab"), that was not intermittent - it was every visit for
+// anyone whose last tab was not Recent.
+// ---------------------------------------------------------------------------
+
+const SEARCH_TAB_ID = "search";
+const RECENT_SEARCHES_KEY = "volant_recent_searches";
+const MAX_RECENT_SEARCHES = 5;
+const MIN_SEARCH_LENGTH = 2;
+
+// Remembered so clearing a search can put the user back where they were.
+let searchReturnTabId = null;
+
+function getSearchInputs() {
+  return [
+    document.getElementById("global-search-input"),
+    document.getElementById("mobile-search-input"),
+  ].filter(Boolean);
+}
+
+function readRecentSearches() {
+  try {
+    const raw = localStorage.getItem(RECENT_SEARCHES_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((t) => typeof t === "string") : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function writeRecentSearches(list) {
+  try {
+    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(list.slice(0, MAX_RECENT_SEARCHES)));
+  } catch (e) {
+    // Private mode or a full quota must not break search.
+  }
+}
+
+function rememberSearchTerm(term) {
+  const clean = (term || "").trim();
+  if (clean.length < MIN_SEARCH_LENGTH) return;
+  const existing = readRecentSearches().filter((t) => t.toLowerCase() !== clean.toLowerCase());
+  writeRecentSearches([clean, ...existing]);
+}
+
+function clearRecentSearches() {
+  writeRecentSearches([]);
+}
+
+function showSearchTab(show) {
+  const btn = document.getElementById("search-tab-btn");
+  if (btn) btn.hidden = !show;
+  if (window.volantTabs && window.volantTabs.showSearchTab) {
+    window.volantTabs.showSearchTab(show);
+  }
+}
+
+// Direct fallback for the class-toggling in index.html. The module is deferred
+// so window.volantTabs is normally already set, but search must not silently
+// become a no-op if that ever changes.
+function forceActivateTab(tabId) {
+  const btns = Array.from(document.querySelectorAll(".tab-btn"));
+  const contents = Array.from(document.querySelectorAll(".tab-content"));
+  const btn = btns.find((b) => b.dataset.tab === tabId);
+  const content = document.getElementById(tabId);
+  if (!btn || !content) return false;
+  btns.forEach((b) => b.classList.remove("active"));
+  contents.forEach((c) => c.classList.remove("active"));
+  btn.classList.add("active");
+  content.classList.add("active");
+  return true;
+}
+
+function activateSearchTab() {
+  const current = window.volantTabs ? window.volantTabs.current() : currentTabFallback();
+  if (current === SEARCH_TAB_ID) return;
+  // Only the first switch needs to remember where to go back to.
+  if (searchReturnTabId === null && current && current !== SEARCH_TAB_ID) {
+    searchReturnTabId = current;
+  }
+  showSearchTab(true);
+  // persist:false is essential. The search tab is transient; persisting it would
+  // make a reload restore an empty results panel with no query in the box.
+  const ok = window.volantTabs
+    ? window.volantTabs.activate(SEARCH_TAB_ID, { persist: false })
+    : forceActivateTab(SEARCH_TAB_ID);
+  if (!ok) forceActivateTab(SEARCH_TAB_ID);
+}
+
+function currentTabFallback() {
+  const active = document.querySelector(".tab-btn.active");
+  return active ? active.dataset.tab : null;
+}
+
+function restoreTabAfterSearch() {
+  const target = searchReturnTabId || "recent";
+  const ok = window.volantTabs
+    ? window.volantTabs.activate(target)
+    : forceActivateTab(target);
+  if (!ok) forceActivateTab("recent");
+  searchReturnTabId = null;
+}
+
+function hideSearchSuggestions() {
+  for (const id of ["search-suggestions", "mobile-search-suggestions"]) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.hidden = true;
+      el.innerHTML = "";
     }
+  }
+  for (const input of getSearchInputs()) input.setAttribute("aria-expanded", "false");
+}
+
+function buildSuggestionRow({ icon, label, meta, onActivate }) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "search-suggestions__item";
+  btn.setAttribute("role", "option");
+  btn.innerHTML =
+    `<span class="ss-icon" aria-hidden="true">${icon}</span>` +
+    `<span class="ss-label"></span>` +
+    (meta ? `<span class="ss-meta"></span>` : "");
+  // textContent, not innerHTML, for anything user-supplied.
+  btn.querySelector(".ss-label").textContent = label;
+  if (meta) btn.querySelector(".ss-meta").textContent = meta;
+
+  // mousedown fires before blur. Letting blur win would tear the row out of
+  // the DOM before click could register, which is the classic dead-dropdown
+  // bug. preventDefault on mousedown keeps focus in the input.
+  btn.addEventListener("mousedown", (e) => e.preventDefault());
+  btn.addEventListener("click", () => {
+    onActivate();
+  });
+  return btn;
+}
+
+function renderSearchSuggestions(query) {
+  const panels = [
+    { el: document.getElementById("search-suggestions"), input: document.getElementById("global-search-input") },
+    { el: document.getElementById("mobile-search-suggestions"), input: document.getElementById("mobile-search-input") },
+  ].filter((p) => p.el);
+
+  if (!panels.length) return;
+  const term = (query || "").trim();
+  const hasTerm = term.length >= MIN_SEARCH_LENGTH;
+  const recents = readRecentSearches().filter((t) => t.toLowerCase() !== term.toLowerCase());
+
+  for (const { el, input } of panels) {
+    el.innerHTML = "";
+    if (!hasTerm && recents.length === 0) {
+      el.hidden = true;
+      if (input) input.setAttribute("aria-expanded", "false");
+      continue;
+    }
+
+    if (recents.length) {
+      const group = document.createElement("div");
+      group.className = "search-suggestions__group";
+      group.textContent = "Recent";
+      el.appendChild(group);
+
+      for (const r of recents) {
+        el.appendChild(
+          buildSuggestionRow({
+            icon: "↺",
+            label: r,
+            onActivate: () => {
+              if (input) input.value = r;
+              hideSearchSuggestions();
+              performUniversalSearch(r);
+            },
+          })
+        );
+      }
+
+      const clearBtn = document.createElement("button");
+      clearBtn.type = "button";
+      clearBtn.className = "search-suggestions__clear";
+      clearBtn.textContent = "Clear recent searches";
+      clearBtn.addEventListener("mousedown", (e) => e.preventDefault());
+      clearBtn.addEventListener("click", () => {
+        clearRecentSearches();
+        hideSearchSuggestions();
+      });
+      el.appendChild(clearBtn);
+    }
+
+    if (hasTerm) {
+      const all = document.createElement("button");
+      all.type = "button";
+      all.className = "search-suggestions__all";
+      all.textContent = `See all results for "${term}"`;
+      all.addEventListener("mousedown", (e) => e.preventDefault());
+      all.addEventListener("click", () => {
+        hideSearchSuggestions();
+        activateSearchTab();
+        performUniversalSearch(term);
+      });
+      el.appendChild(all);
+    }
+
+    el.hidden = false;
+    if (input) input.setAttribute("aria-expanded", "true");
+  }
+}
+
+// Resets both the panel and the Recent feed, and optionally returns the user to
+// the tab they started from.
+function clearSearchUI(options) {
+  const restoreTab = options && options.restoreTab;
+  allPoemsCache = [];
+  currentIndex = 0;
+  reachedEnd = false;
+  loading = false;
+
+  for (const input of getSearchInputs()) {
+    if (input.value !== "") input.value = "";
+  }
+  hideSearchSuggestions();
+
+  const results = document.getElementById("search-results-container");
+  if (results) {
+    results.innerHTML = "";
+    // Reset the in-flight guard, otherwise the first search after a clear is
+    // discarded as "stale" and the panel stays blank.
+    results.removeAttribute("data-term");
+  }
+  showSearchTab(false);
+
+  // The Recent feed owns #recent-poems-container again now that search does not.
+  const recentContainer = document.getElementById("recent-poems-container");
+  if (recentContainer) {
+    recentContainer.innerHTML = "";
+    loadPoemsBatch();
+  }
+
+  if (restoreTab) restoreTabAfterSearch();
+}
+
+async function performUniversalSearch(query) {
+  const raw = (query || "").trim();
+  if (raw.length < MIN_SEARCH_LENGTH) {
+    // Only tear down on a genuinely empty box. A single stray character must
+    // not wipe the results the user is still reading.
+    if (raw === "") clearSearchUI({ restoreTab: true });
     return;
   }
-  const searchTerm = query.trim().toLowerCase();
-  const container = document.getElementById("recent-poems-container");
+  const searchTerm = raw.toLowerCase();
+  activateSearchTab();
+  // Recorded with the user's original casing, not the lowercased match term.
+  rememberSearchTerm(raw);
+  const container = document.getElementById("search-results-container");
   if (!container) return;
   container.innerHTML = '<div style="text-align: center; padding: 60px 20px;"><div class="loading-spinner"></div><br>Searching...</div>';
   try {
@@ -1698,6 +2027,12 @@ async function performUniversalSearch(query) {
       searchAllUsers(searchTerm),
       searchAllCategories(searchTerm)
     ]);
+    // Guard against out-of-order responses. Several keystrokes are in flight
+    // behind a 300ms debounce, and an earlier slow query must not land last
+    // and overwrite results for a term the user has already moved past.
+    const currentTerm = container.getAttribute("data-term");
+    if (currentTerm !== null && currentTerm !== searchTerm) return;
+    container.setAttribute("data-term", searchTerm);
     await displaySearchResults(poems, users, categories, searchTerm);
   } catch(err) {
     console.error("Search error:", err);
@@ -1717,16 +2052,58 @@ const mobileSearchInput = document.getElementById('mobile-search-input');
 
 if (globalSearchInput) {
   globalSearchInput.addEventListener("input", async (e) => {
+    renderSearchSuggestions(e.target.value);
     await enhancedPerformSearch(e.target.value);
+  });
+  globalSearchInput.addEventListener("focus", (e) => renderSearchSuggestions(e.target.value));
+  globalSearchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hideSearchSuggestions();
+      clearSearchUI({ restoreTab: true });
+    }
+    if (e.key === "ArrowDown") {
+      const first = document.querySelector("#search-suggestions .search-suggestions__item");
+      if (first) { e.preventDefault(); first.focus(); }
+    }
   });
 }
 
 if (mobileSearchInput) {
   mobileSearchInput.addEventListener("input", async (e) => {
+    renderSearchSuggestions(e.target.value);
     await enhancedPerformSearch(e.target.value);
+    // Kept in sync both ways now; clearSearchUI() clears each input directly,
+    // which the old one-way assignment could not do.
     if (globalSearchInput) globalSearchInput.value = e.target.value;
   });
+  mobileSearchInput.addEventListener("focus", (e) => renderSearchSuggestions(e.target.value));
+  mobileSearchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      hideSearchSuggestions();
+      clearSearchUI({ restoreTab: true });
+    }
+  });
 }
+
+// Outside-click dismissal, matching the pattern already used for the mobile
+// search dropdown. Both the desktop and mobile suggestion panels live inside
+// elements that may be hidden, so each is checked for visibility first.
+document.addEventListener("click", (e) => {
+  const container = e.target.closest("#search-suggestions, .search-container, #mobile-search-suggestions, #search-dropdown");
+  if (!container) hideSearchSuggestions();
+});
+
+// If the user picks a different tab while results are showing, clearing the
+// search should return them to the tab they chose, not the one they started on.
+document.addEventListener("click", (e) => {
+  const tabBtn = e.target.closest(".tab-btn");
+  if (!tabBtn) return;
+  const tabId = tabBtn.dataset.tab;
+  if (tabId && tabId !== SEARCH_TAB_ID && !tabBtn.hidden) {
+    searchReturnTabId = tabId;
+  }
+});
+
 
 if (!document.querySelector('#search-spinner-styles')) {
   const spinnerStyles = document.createElement('style');
@@ -2203,44 +2580,31 @@ async function loadRankingPoemsRich() {
       
       if (likeBtn) {
         likeBtn.addEventListener("click", async function() {
-          if (this.dataset.liking === 'true') {
-            console.log("⏳ Like already in progress");
-            return;
-          }
-          
           if (!user) {
             window.location.href = "universal-login.html";
             return;
           }
-          
-          this.dataset.liking = 'true';
-          
+
+          // This ranking section only ever renders recentPoems, matching the
+          // hardcoded data-collection on the share buttons above.
+          if (!likeApi.guard(this)) return;
+
           try {
-            const poemRef = doc(db, "recentPoems", poem.id);
-            const likedBy = poem.likedBy || [];
-            const isLiked = likedBy.includes(user.uid);
-            
-            if (isLiked) {
-              await updateDoc(poemRef, {
-                likes: (poem.totalLikes || 0) - 1,
-                likedBy: likedBy.filter(id => id !== user.uid)
-              });
-              poem.totalLikes--;
-              poem.recentLikes = Math.max(0, poem.recentLikes - 1);
-              this.style.color = "";
-              this.classList.remove("liked");
-            } else {
-              await updateDoc(poemRef, {
-                likes: (poem.totalLikes || 0) + 1,
-                likedBy: [...likedBy, user.uid],
-                likedByTimestamps: [...(poem.likedByTimestamps || []), new Date()]
-              });
-              poem.totalLikes++;
-              poem.recentLikes++;
-              this.style.color = "#e74c3c";
-              this.classList.add("liked");
-            }
-            likeCountSpan.textContent = poem.totalLikes;
+            const result = await likeApi.toggle({
+              collection: "recentPoems",
+              poemId: poem.id,
+              userId: user.uid
+            });
+            if (!result.ok) return;
+            likeApi.apply(this, likeCountSpan, result);
+            // The inline colour overrode the .liked class, so it is kept in sync
+            // rather than dropped.
+            this.style.color = result.liked ? "#e74c3c" : "";
+
+            // Mirror the result into the local object so the derived weekly
+            // numbers on this card stay consistent with what was just written.
+            poem.totalLikes = result.likes;
+            poem.recentLikes = Math.max(0, (poem.recentLikes || 0) + (result.liked ? 1 : -1));
             poem.score = (poem.totalViews * 1) + (poem.recentLikes * 3) + (poem.recentComments * 4);
             const scoreBadge = card.querySelector("h3 small");
             if (scoreBadge) scoreBadge.textContent = `(weekly score: ${poem.score})`;
@@ -2251,7 +2615,7 @@ async function loadRankingPoemsRich() {
           } catch (err) {
             console.error("Error updating like:", err);
           } finally {
-            this.dataset.liking = 'false';
+            likeApi.release(this);
           }
         });
       }
@@ -2755,7 +3119,7 @@ async function loadRankingPoets() {
         <div style="text-align: center; padding: 40px; background: #f9f7f4; border-radius: 12px;">
           <p style="font-size: 1.2rem; margin-bottom: 10px;">📊 No activity recorded for ${weekLabel}</p>
           <p style="color: #666;">Be the first to write, like, or comment this week!</p>
-          <button onclick="window.location.href='write-poem.html'" style="margin-top: 15px; padding: 10px 20px; background: #5a3cb3; color: white; border: none; border-radius: 8px; cursor: pointer;">Write a Poem →</button>
+          <button onclick="window.location.href='submitpoems.html'" style="margin-top: 15px; padding: 10px 20px; background: #5a3cb3; color: white; border: none; border-radius: 8px; cursor: pointer;">Write a Poem →</button>
         </div>
       `;
       return;
