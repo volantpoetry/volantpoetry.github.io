@@ -1,6 +1,6 @@
 {
   "name": "Volant Admin",
-  "short_name": "Volant",
+  "short_name": "Moderators",
   "description": "Volant Admin — manage Volant Poetry and Volant Reads from one app.",
   "start_url": "app.html",
   "scope": "./",

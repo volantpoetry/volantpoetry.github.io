@@ -3454,6 +3454,122 @@
 
     // ========== NOTIFICATION FUNCTIONS ==========
 
+    // ===== WEEKLY-ANNOUNCEMENT AUDIENCE =====
+    // Poem/Quote of the Week announcements must only reach people who actually
+    // live in the Volant Poetry community. Two independent gates, both required:
+    //
+    //   1. the account belongs to the Poetry app (the `platform` field written by
+    //      universal-signup.html), and
+    //   2. the account leaves a real trace of Poetry activity.
+    //
+    // Gate 1 keeps book sellers, shoppers and the other platforms out. Gate 2
+    // keeps brand-new and dormant accounts out even when they are Poetry users.
+    // Neither gate trusts the other, and a failure in one never falls open.
+
+    const POETRY_ACTIVITY_TYPES = ['like', 'comment', 'reply', 'follow'];
+    const POETRY_POEM_COLLECTIONS = ['recentPoems', 'classicPoems', 'featuredPoems'];
+
+    function isPoetryAccount(userData) {
+        if (!userData || typeof userData !== 'object') return false;
+        const platform = String(userData.platform == null ? '' : userData.platform).trim().toLowerCase();
+        // Accounts created before the `platform` field existed signed up through
+        // the root Poetry pages, so an empty value is treated as Poetry.
+        if (platform && platform !== 'poetry') return false;
+        return true;
+    }
+
+    // Builds the set of accounts that have actually taken part in Poetry.
+    async function getActivePoetryUserIds() {
+        const active = new Set();
+        const add = (id) => { if (typeof id === 'string' && id) active.add(id); };
+        const addAll = (ids) => { if (Array.isArray(ids)) ids.forEach(add); };
+
+        // 1) Follows: following a poet is engagement.
+        try {
+            const snap = await getDocs(collection(db, 'follows'));
+            snap.forEach((d) => add(d.data().followerId));
+        } catch (e) {
+            console.warn('Audience: follows scan failed', e);
+        }
+
+        // 2) Notifications: every like / comment / reply / follow a reader
+        //    performs is recorded with the actor in `fromUser`.
+        try {
+            const snap = await getDocs(query(collection(db, 'notifications'), where('type', 'in', POETRY_ACTIVITY_TYPES)));
+            snap.forEach((d) => add(d.data().fromUser));
+        } catch (e) {
+            console.warn('Audience: notifications scan failed', e);
+        }
+
+        // 3) Poems: the authors, plus everyone named in `likedBy`.
+        for (const name of POETRY_POEM_COLLECTIONS) {
+            try {
+                const snap = await getDocs(collection(db, name));
+                snap.forEach((d) => {
+                    const data = d.data();
+                    add(data.authorId || data.userId);
+                    addAll(data.likedBy);
+                });
+            } catch (e) {
+                console.warn(`Audience: ${name} scan failed`, e);
+            }
+        }
+
+        console.log(`Audience: ${active.size} accounts show Poetry activity`);
+        return active;
+    }
+
+    // The final recipient list: Poetry accounts that also have Poetry activity.
+    async function getPoetryAnnouncementRecipients(skipUserId = null) {
+        const [usersSnapshot, activeIds] = await Promise.all([
+            getDocs(collection(db, 'users')),
+            getActivePoetryUserIds()
+        ]);
+
+        const recipients = [];
+        let otherPlatform = 0;
+        let noActivity = 0;
+
+        for (const userDoc of usersSnapshot.docs) {
+            const userId = userDoc.id;
+            if (skipUserId && userId === skipUserId) continue;
+
+            const userData = userDoc.data();
+            if (!isPoetryAccount(userData)) { otherPlatform++; continue; }
+            if (!activeIds.has(userId)) { noActivity++; continue; }
+
+            recipients.push({ id: userId, username: userData.username || 'User' });
+        }
+
+        console.log(
+            `Audience: ${recipients.length} of ${usersSnapshot.size} accounts qualify ` +
+            `(skipped ${otherPlatform} other-platform, ${noActivity} without Poetry activity)`
+        );
+        return recipients;
+    }
+
+    // Firestore caps a batch at 500 writes, so announcements go out in slices
+    // instead of failing the whole send on one oversized commit.
+    async function sendAnnouncementBatch(recipients, buildPayload) {
+        const CHUNK = 400;
+        let count = 0;
+
+        for (let i = 0; i < recipients.length; i += CHUNK) {
+            const slice = recipients.slice(i, i + CHUNK);
+            const batch = writeBatch(db);
+            const notificationsRef = collection(db, "notifications");
+
+            for (const recipient of slice) {
+                batch.set(doc(notificationsRef), buildPayload(recipient));
+            }
+
+            await batch.commit();
+            count += slice.length;
+        }
+
+        return count;
+    }
+
     // ===== POEM OF THE WEEK - PERSONALIZED TO AUTHOR =====
     async function notifyPoemAuthorAboutPoemOfTheWeek(poemData) {
         try {
@@ -3485,7 +3601,10 @@
             
             const user = await findUserByUsername(author);
             
-            if (user) {
+            if (user && !isPoetryAccount(user.data)) {
+                console.log(`❌ Author "${author}" is not a Poetry account. Skipping the personalized notice.`);
+                showToast(`⚠️ Author "${author}" is not a Poetry account. Personalized notice skipped.`, 'info');
+            } else if (user) {
                 const userId = user.id;
                 const userData = user.data;
                 const username = userData.username || author;
@@ -3540,14 +3659,6 @@ reach.volant@gmail.com`;
     // ===== POEM OF THE WEEK - GENERAL ANNOUNCEMENT =====
     async function notifyAllUsersAboutPoemOfTheWeek(poemData, slug = null, skipUserId = null) {
         try {
-            const usersSnapshot = await getDocs(collection(db, "users"));
-            if (usersSnapshot.empty) {
-                console.log("No users to notify");
-                return;
-            }
-            
-            const batch = writeBatch(db);
-            const notificationsRef = collection(db, "notifications");
             const title = poemData.title || "Untitled";
             
             let poemAuthor = poemData.author || poemData.authorName || null;
@@ -3586,36 +3697,31 @@ Warm regards,
 The Volant Team
 reach.volant@gmail.com`;
             
-            let count = 0;
-            for (const userDoc of usersSnapshot.docs) {
-                const userId = userDoc.id;
-                if (skipUserId && userId === skipUserId) continue;
-                
-                const userData = userDoc.data();
-                const username = userData.username || 'User';
-                
-                const newNotifRef = doc(notificationsRef);
-                batch.set(newNotifRef, {
-                    forUser: userId,
-                    type: 'announcement',
-                    fromUser: userId,
-                    fromUserName: username,
-                    message: generalMessage,
-                    poemTitle: title,
-                    poemId: poemId,
-                    poemSlug: slug,
-                    poemCollection: poemCollection,
-                    isPoemOfWeek: true,
-                    isAuthorNotification: false,
-                    timestamp: new Date(),
-                    read: false
-                });
-                count++;
+            const recipients = await getPoetryAnnouncementRecipients(skipUserId);
+            if (!recipients.length) {
+                console.log("No active Poetry accounts to notify");
+                showToast("No active Poetry accounts to notify.", 'info');
+                return;
             }
             
-            await batch.commit();
-            console.log(`✅ Notified ${count} users about Poem of the Week by ${poemAuthor}`);
-            showToast(`✅ Notified ${count} users about Poem of the Week!`, 'success');
+            const count = await sendAnnouncementBatch(recipients, (r) => ({
+                forUser: r.id,
+                type: 'announcement',
+                fromUser: r.id,
+                fromUserName: r.username,
+                message: generalMessage,
+                poemTitle: title,
+                poemId: poemId,
+                poemSlug: slug,
+                poemCollection: poemCollection,
+                isPoemOfWeek: true,
+                isAuthorNotification: false,
+                timestamp: new Date(),
+                read: false
+            }));
+            
+            console.log(`✅ Notified ${count} active Poetry accounts about Poem of the Week by ${poemAuthor}`);
+            showToast(`✅ Notified ${count} active Poetry accounts about Poem of the Week!`, 'success');
             
         } catch (err) {
             console.error("❌ Error sending general Poem of the Week notifications:", err);
@@ -3647,7 +3753,10 @@ reach.volant@gmail.com`;
             const user = await findUserByUsername(authorName);
             const quote = quoteData.quote || "";
             
-            if (user) {
+            if (user && !isPoetryAccount(user.data)) {
+                console.log(`❌ Author "${authorName}" is not a Poetry account. Skipping the personalized notice.`);
+                showToast(`⚠️ Author "${authorName}" is not a Poetry account. Personalized notice skipped.`, 'info');
+            } else if (user) {
                 const userId = user.id;
                 const userData = user.data;
                 const username = userData.username || authorName;
@@ -3703,14 +3812,6 @@ reach.volant@gmail.com`;
     // ===== QUOTE OF THE WEEK - GENERAL ANNOUNCEMENT =====
     async function notifyAllUsersAboutQuoteOfTheWeek(quoteData, skipUserId = null) {
         try {
-            const usersSnapshot = await getDocs(collection(db, "users"));
-            if (usersSnapshot.empty) {
-                console.log("No users to notify");
-                return;
-            }
-            
-            const batch = writeBatch(db);
-            const notificationsRef = collection(db, "notifications");
             const quote = quoteData.quote || "";
             
             let quoteAuthor = quoteData.author || quoteData.quoteAuthor || null;
@@ -3740,34 +3841,29 @@ Warm regards,
 The Volant Team
 reach.volant@gmail.com`;
             
-            let count = 0;
-            for (const userDoc of usersSnapshot.docs) {
-                const userId = userDoc.id;
-                if (skipUserId && userId === skipUserId) continue;
-                
-                const userData = userDoc.data();
-                const username = userData.username || 'User';
-                
-                const newNotifRef = doc(notificationsRef);
-                batch.set(newNotifRef, {
-                    forUser: userId,
-                    type: 'announcement',
-                    fromUser: userId,
-                    fromUserName: username,
-                    message: generalMessage,
-                    quote: quote,
-                    quoteAuthor: quoteAuthor,
-                    isQuoteOfWeek: true,
-                    isAuthorNotification: false,
-                    timestamp: new Date(),
-                    read: false
-                });
-                count++;
+            const recipients = await getPoetryAnnouncementRecipients(skipUserId);
+            if (!recipients.length) {
+                console.log("No active Poetry accounts to notify");
+                showToast("No active Poetry accounts to notify.", 'info');
+                return;
             }
             
-            await batch.commit();
-            console.log(`✅ Notified ${count} users about Quote of the Week by ${quoteAuthor}`);
-            showToast(`✅ Notified ${count} users about Quote of the Week!`, 'success');
+            const count = await sendAnnouncementBatch(recipients, (r) => ({
+                forUser: r.id,
+                type: 'announcement',
+                fromUser: r.id,
+                fromUserName: r.username,
+                message: generalMessage,
+                quote: quote,
+                quoteAuthor: quoteAuthor,
+                isQuoteOfWeek: true,
+                isAuthorNotification: false,
+                timestamp: new Date(),
+                read: false
+            }));
+            
+            console.log(`✅ Notified ${count} active Poetry accounts about Quote of the Week by ${quoteAuthor}`);
+            showToast(`✅ Notified ${count} active Poetry accounts about Quote of the Week!`, 'success');
             
         } catch (err) {
             console.error("❌ Error sending general Quote of the Week notifications:", err);
@@ -15068,7 +15164,7 @@ var MALL_CATEGORIES = [
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('sw.js').catch(function() {});
+      navigator.serviceWorker.register('sw.js?v=5').catch(function() {});
     });
   }
 })();
