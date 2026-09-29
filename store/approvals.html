@@ -1907,7 +1907,7 @@
         }
     };
 
-    function openPDFModal(pdfUrl, title, format) {
+    function openPDFModal(pdfUrl, title, format, author) {
         currentPdfUrl = pdfUrl;
         currentPdfTitle = title || 'PDF Viewer';
         const isEpub = format === 'epub' || /\.epub(\?|#|$)/i.test(pdfUrl || '');
@@ -1916,8 +1916,8 @@
         pdfTitle.textContent = `${isEpub ? '📖' : '📄'} ${currentPdfTitle}`;
 
         // Inbuilt preview (EPUB → dedicated EPUB viewer, PDF → multi-page viewer)
-        const viewerBase = isEpub ? 'epubjs/reader.html' : 'pdfjs/multi-page-viewer.html';
-        const viewerUrl = `${viewerBase}?viewerVersion=3&file=${encodeURIComponent(pdfUrl)}&startPage=1&endPage=${isEpub ? 10 : 8}&totalPages=${isEpub ? 100 : 20}&isFree=false&isPurchased=true&isSignedIn=true&currency=GHS&amount=0`;
+        const viewerBase = isEpub ? 'epub-preview.html' : 'pdfjs/multi-page-viewer.html';
+        const viewerUrl = `${viewerBase}?viewerVersion=4&file=${encodeURIComponent(pdfUrl)}&title=${encodeURIComponent(currentPdfTitle || '')}&author=${encodeURIComponent(author || '')}&startPage=1&endPage=${isEpub ? 10 : 8}&totalPages=${isEpub ? 100 : 20}&isFree=false&isPurchased=true&isSignedIn=true&currency=GHS&amount=0`;
 
         pdfContainer.innerHTML = `
             <div class="pdf-embed-wrap">
@@ -1957,7 +1957,7 @@
         }
     };
 
-    window.viewPDF = function(pdfUrl, title, format) {
+    window.viewPDF = function(pdfUrl, title, format, author) {
         if (!pdfUrl) {
             showToast('❌ No book file available.', 'error');
             return;
@@ -1965,7 +1965,7 @@
         currentPdfUrl = pdfUrl;
         currentPdfTitle = title || 'PDF Viewer';
         currentPdfFormat = format || '';
-        openPDFModal(pdfUrl, title, format);
+        openPDFModal(pdfUrl, title, format, author);
     };
 
     window.downloadPDF = function(pdfUrl, title, format) {
@@ -2282,6 +2282,14 @@ Volant Reads Team
             if (m === '"') return '&quot;';
             return m;
         });
+
+        const safeAuthor = (book.authorName || '').replace(/[&<>"]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            if (m === '"') return '&quot;';
+            return m;
+        });
         
         const submittedDate = book.submittedAt?.toDate 
             ? book.submittedAt.toDate().toLocaleDateString('en-US', { 
@@ -2413,7 +2421,7 @@ Volant Reads Team
                         </a>
                     ` : ''}
                     ${pdfUrl ? `
-                        <button onclick="window.viewPDF('${pdfUrl}', '${safeTitle}', '${bookFormat}')" class="view-pdf">
+                        <button onclick="window.viewPDF('${pdfUrl}', '${safeTitle}', '${bookFormat}', '${safeAuthor}')" class="view-pdf">
                             <i class="fas fa-eye"></i> View ${bookFormat === 'epub' ? 'EPUB' : 'PDF'}
                         </button>
                         <button onclick="window.downloadPDF('${pdfUrl}', '${safeTitle}', '${bookFormat}')" class="download-pdf">
