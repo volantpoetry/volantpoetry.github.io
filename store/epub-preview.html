@@ -684,6 +684,20 @@
         (function() {
             // ===== GET PARAMETERS =====
             const urlParams = new URLSearchParams(window.location.search);
+            // The sample is fetched from /api/sample-book?id=... , which has no
+            // file extension. epub.js picks how to open a book from that
+            // extension (determineType), and with none it falls through to its
+            // "directory" branch, which resolves META-INF/container.xml
+            // RELATIVE to the URL - producing /api/META-INF/container.xml, a
+            // guaranteed 404 that left the EPUB preview blank.
+            // A "#book.epub" fragment does NOT help: the URL parser that feeds
+            // determineType takes new URL(t).pathname, which drops the fragment
+            // before the extension is ever read. The fragment is a dead end.
+            // Instead the sample URL is passed through untouched and openAs is
+            // set to "epub" in loadEpub(), which forces the archive branch:
+            // epub.js downloads the bytes, unarchives them in memory, points
+            // its base path at "/", and serves every internal file from the
+            // unzipped archive instead of over HTTP.
             const file = urlParams.get('file');
             const startPage = parseInt(urlParams.get('startPage')) || 1;
             const totalPages = parseInt(urlParams.get('totalPages')) || 100;
@@ -706,6 +720,25 @@
             const previewEndMsg = document.getElementById('previewEndMsg');
             const previewEndInner = document.getElementById('previewEndInner');
             const signinOverlay = document.getElementById('signinOverlay');
+
+            // Opt-in boot tracing: add &epubDebug=1 to the preview URL to see which
+            // stage actually runs (boot, ePub, book.ready, display, first render).
+            // Silent by default so production stays free of console noise.
+            const DEBUG_BOOT = /[?&]epubDebug=1/.test(window.location.search);
+            const trace = function (msg, data) {
+                if (DEBUG_BOOT) console.info('[epub-preview] ' + msg, data === undefined ? '' : data);
+            };
+            trace('boot: script start', file ? 'file=' + file : 'file=(none)');
+
+            // The placeholder block is static markup, so it used to stay on screen
+            // even after a good render - it was only ever rewritten on error, never
+            // removed. Removing it on the first rendered section is what finally
+            // clears "Loading EPUB preview..." and exposes the real page.
+            const hideLoadingState = function () {
+                if (!loadingState) return;
+                if (loadingState.parentNode) loadingState.parentNode.removeChild(loadingState);
+                else loadingState.style.display = 'none';
+            };
 
             // Hard page slice: EPUB preview ends at previewPages/totalPages (the rule above,
             // same as the PDF viewer), i.e. the last allowed page is page `endPage` of `totalPages`.
@@ -1193,10 +1226,17 @@
             });
 
             // ===== LOAD & RENDER EPUB =====
+            //
+            // The preview sample is served from /api/sample-book, whose URL has no
+            // file extension. epub.js's determineType() sniffs the extension from
+            // new URL(url).pathname, so openAs:'epub' is required to take the
+            // archive branch instead of treating the URL as a directory (which
+            // made epub.js request /api/META-INF/container.xml and render nothing).
             function loadEpub(url) {
                 try {
-                    book = window.ePub(url);
+                    book = window.ePub(url, { openAs: 'epub' });
                 } catch (err) {
+                    console.error('[epub-preview] ePub() rejected the sample:', err);
                     viewer.innerHTML = '<div class="loading"><p>❌ Could not open EPUB</p></div>';
                     return;
                 }
@@ -1212,8 +1252,19 @@
                 viewer.innerHTML = '';
                 viewer.appendChild(container);
                 tapHold.forEach(function(el) { viewer.appendChild(el); });
-                const vh = viewer.clientHeight || window.innerHeight || 600;
-                container.style.height = vh + 'px';
+
+                // #viewer is a flex child, so its height is only final once the
+                // flex layout has settled. Reading clientHeight too early can hand
+                // epub.js a 0px height, and the iframe it creates would inherit
+                // that and render nothing visible. Re-measure on every rendered
+                // page so a late relayout cannot leave the page at a stale size.
+                const sizeContainer = function () {
+                    if (!container.isConnected) return;
+                    const vh = viewer.clientHeight || window.innerHeight || 600;
+                    if (vh <= 0) return;
+                    container.style.height = vh + 'px';
+                };
+                sizeContainer();
 
                 rendition = book.renderTo('epubContainer', {
                     width: '100%',
@@ -1245,7 +1296,21 @@
                     });
                 } catch (err) { /* ignore */ }
                 // Re-paint each freshly rendered content document with the theme.
-                try { rendition.on('rendered', epubApplyThemeRules); } catch (err) { /* ignore */ }
+                let firstRendered = true;
+                try {
+                    rendition.on('rendered', function (section) {
+                        // Clear the placeholder BEFORE re-measuring, so the height
+                        // taken from #viewer is the real reading area and not one
+                        // that still contains the spinner block.
+                        hideLoadingState();
+                        sizeContainer();
+                        epubApplyThemeRules();
+                        if (firstRendered) {
+                            firstRendered = false;
+                            trace('rendered first section');
+                        }
+                    });
+                } catch (err) { /* ignore */ }
                 epubApplyThemeRules();
 
                 // ===== READER BAR (book + author, like the reader) =====
@@ -1264,9 +1329,80 @@
                 // whole UI (and page counter) behind locations.generate.
                 renderControls();
 
-                rendition.display().catch(function(err) {
-                    viewer.innerHTML = '<div class="loading"><p>❌ Error loading EPUB preview</p></div>';
-                });
+                // Wait for the book to finish opening before displaying. In the
+                // archive branch epub.js still has to download the sample and
+                // unarchive it (META-INF/container.xml, content.opf, the spine),
+                // and that is asynchronous. Calling display() immediately left
+                // the rendition attached to a book that had not opened yet, so
+                // the container stayed empty and only the page background showed.
+                //
+                // Do NOT gate this on book.ready / book.opened. epub.js resolves
+                // them through Promise.all over internal deferreds, and one of
+                // them (displayOptions) only settles if the package carries
+                // META-INF/com.apple.ibooks.display-options.xml. The
+                // server-truncated sample does not ship that part, so the missing
+                // load neither resolves nor rejects - the promise just stays
+                // pending forever, display() is never called, and the viewer
+                // shows nothing at all with no console error.
+                //
+                // manifest/spine/metadata are all resolved in the same tick once
+                // the container and the OPF are parsed, which is exactly the
+                // point at which the rendition can render.
+                let readyWatchdog = null;
+                let renderSettled = false;
+                const clearWatchdog = function () {
+                    if (readyWatchdog) { clearTimeout(readyWatchdog); readyWatchdog = null; }
+                };
+                const failRender = function (err) {
+                    renderSettled = true;
+                    clearWatchdog();
+                    console.error('[epub-preview] display failed:', err);
+                    viewer.innerHTML = '<div class="loading"><p>❌ Error loading EPUB preview</p>'
+                        + '<p style="font-size:0.8rem;color:#999;margin-top:8px;">'
+                        + String((err && (err.message || err)) || 'unknown error') + '</p></div>';
+                };
+
+                // Still bound the wait, so any other open failure surfaces as a
+                // visible error instead of an empty background.
+                const READY_TIMEOUT_MS = 20000;
+                readyWatchdog = setTimeout(function () {
+                    if (renderSettled) return;
+                    renderSettled = true;
+                    readyWatchdog = null;
+                    console.error('[epub-preview] the book did not finish opening within ' + READY_TIMEOUT_MS + 'ms');
+                    viewer.innerHTML = '<div class="loading"><p>❌ Timed out loading the EPUB preview</p>'
+                        + '<p style="font-size:0.8rem;color:#999;margin-top:8px;">'
+                        + 'The sample did not finish opening after ' + Math.round(READY_TIMEOUT_MS / 1000)
+                        + 's. Check the Network tab for /api/sample-book.</p></div>';
+                }, READY_TIMEOUT_MS);
+
+                const openGate = (function () {
+                    const parts = [];
+                    ['manifest', 'spine', 'metadata'].forEach(function (key) {
+                        const p = book.loaded && book.loaded[key];
+                        if (p && typeof p.then === 'function') parts.push(p);
+                    });
+                    return parts.length ? Promise.all(parts) : Promise.resolve(book);
+                })();
+
+                try {
+                    trace('ePub created, waiting for manifest/spine/metadata');
+                    openGate
+                        .then(function () {
+                            trace('book opened, calling display()');
+                            return rendition.display();
+                        })
+                        .then(function () {
+                            renderSettled = true;
+                            clearWatchdog();
+                            hideLoadingState();
+                            sizeContainer();
+                            trace('display() resolved');
+                        })
+                        .catch(failRender);
+                } catch (err) {
+                    failRender(err);
+                }
 
                 if (book.loaded && book.loaded.spine) {
                     book.loaded.spine.then(function() {
