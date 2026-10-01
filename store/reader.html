@@ -199,7 +199,7 @@
 
         }
 
-        body.reader-pdf.pdf-immersive .reader-content .pdf-viewer-wrapper {
+        body.reader-pdf .reader-content .pdf-viewer-wrapper {
 
             height: 100vh !important;
 
@@ -3732,6 +3732,26 @@ body.reader-epub .epub-controls.show {
         }
         
         // ================================================================
+        // ===== FULL FILE RESOLUTION (entitled reader only) =====
+        // ================================================================
+        // The full Cloudinary URL is no longer on the public book doc; it lives
+        // in books/{id}/files/full, which Firestore rules gate to the buyer,
+        // the author and admins. The reader is only opened by an entitled user
+        // (entitlement is checked before displayBook), so it resolves the full
+        // URL here and everything downstream keeps reading .pdfUrl. Previews
+        // never come through this path: they get a server-truncated sample.
+        async function resolveFullFileUrl(bookId) {
+            if (!bookId) return '';
+            try {
+                const snap = await getDoc(doc(db, "books", bookId, "files", "full"));
+                if (snap.exists() && snap.data().url) return snap.data().url;
+            } catch (err) {
+                console.warn('Could not resolve the full book file:', err);
+            }
+            return '';
+        }
+
+        // ================================================================
         // ===== OFFLINE STORAGE FUNCTIONS =====
         // ================================================================
         
@@ -3880,22 +3900,23 @@ body.reader-epub .epub-controls.show {
                 }
                 
                 const freshData = { id: bookSnap.id, ...bookSnap.data() };
-                
+                const fullUrl = await resolveFullFileUrl(freshData.id) || freshData.pdfUrl || '';
+
                 saveBookToLocalStorage({
                     id: freshData.id,
                     title: freshData.title,
                     authorName: freshData.authorName,
-                    pdfUrl: freshData.pdfUrl,
+                    pdfUrl: fullUrl,
                     bookFormat: freshData.bookFormat || '',
                     content: freshData.content || '',
                     downloadLimit: freshData.downloadLimit || 5
                 });
-                
+
                 currentBook = {
                     id: freshData.id,
                     title: freshData.title,
                     authorName: freshData.authorName,
-                    pdfUrl: freshData.pdfUrl,
+                    pdfUrl: fullUrl,
                     bookFormat: freshData.bookFormat || '',
                     content: freshData.content || '',
                     downloadLimit: freshData.downloadLimit || 5
@@ -4253,7 +4274,7 @@ body.reader-epub .epub-controls.show {
 
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js?v=29', { scope: './' })
+                navigator.serviceWorker.register('./sw.js?v=30', { scope: './' })
                     .then(registration => {
                         console.log('✅ Service Worker registered successfully');
                     })
@@ -4537,7 +4558,7 @@ function isDesktop() {            return window.matchMedia && window.matchMedia(
                             title: freshData.title || 'Untitled',
                             authorName: freshData.authorName || 'Anonymous',
                             subtitle: freshData.subtitle || '',
-                            pdfUrl: freshData.pdfUrl || '',
+                            pdfUrl: await resolveFullFileUrl(freshData.id) || freshData.pdfUrl || '',
                             bookFormat: freshData.bookFormat || '',
                             content: freshData.content || '',
                             downloadLimit: freshData.downloadLimit || 5,
@@ -4580,7 +4601,7 @@ function isDesktop() {            return window.matchMedia && window.matchMedia(
                             title: freshData.title || 'Untitled',
                             authorName: freshData.authorName || 'Anonymous',
                             subtitle: freshData.subtitle || '',
-                            pdfUrl: freshData.pdfUrl || '',
+                            pdfUrl: await resolveFullFileUrl(freshData.id) || freshData.pdfUrl || '',
                             bookFormat: freshData.bookFormat || '',
                             content: freshData.content || '',
                             downloadLimit: freshData.downloadLimit || 5,
