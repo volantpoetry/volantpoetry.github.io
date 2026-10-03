@@ -239,7 +239,8 @@
         font-size: 0.56rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
         box-shadow: 0 4px 12px rgba(75,42,173,0.3);
     }
-    .plat-card:nth-child(4) .live-badge { background: #b76e4b; }
+      .plat-card:nth-child(4) .live-badge { background: #b76e4b; }
+      .plat-card .live-badge.soon { background: var(--gold); box-shadow: 0 4px 12px rgba(184,134,11,0.28); }
     .plat-body { padding: 0.9rem 1.05rem 1.2rem; display: flex; flex-direction: column; flex: 1; }
     .plat-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.25rem; color: var(--ink); }
     .plat-sub { display: flex; align-items: center; gap: 6px; font-size: 0.86rem; color: #6f6252; margin-top: 2px; }
@@ -422,7 +423,7 @@
     <div>
         <span class="eyebrow">Poetry · Prose · Code</span>
         <h1>Rence <span class="gold">Blunt</span></h1>
-        <p class="tagline">“Words are the root of everything — I grow poems, books, and software from the same soil.”</p>
+        <p class="tagline">Words you feel, not just read.<br>Code that flows, not just runs.</p>
         <div class="roles">
             <span><i class="fas fa-feather-alt"></i>Poet</span>
             <span><i class="fas fa-book-open"></i>Author</span>
@@ -453,7 +454,7 @@
             </div>
             <div class="about-copy reveal">
                 <blockquote class="about-quote">
-                    I write stories with heart and build software with soul. Every line — of poetry or of code — is an attempt to make someone feel something real.
+                    Words are the root of everything. I grow poems, books, and software from the same soil.
                     <span class="sig">— Rence Blunt</span>
                 </blockquote>
                 <p><span class="hl">Rence Blunt</span> is a poet and author based in Ghana, whose work lives at the crossroads of the literary and the digital. He is the author of <span class="hl">Scentless Roses</span> and <span class="hl">The Fall Of Twilight</span>.</p>
@@ -538,25 +539,25 @@
             <div class="plat-card reveal" onclick="window.open('https://volantlyrics.vercel.app/', '_blank')">
                 <div class="cover-wrapper">
                     <img src="https://volantpoetry.vercel.app/images/lyrics-site.png" alt="Volant Lyrics - Lyrics Marketplace" loading="lazy" decoding="async">
-                    <span class="live-badge">Live</span>
-                </div>
-                <div class="plat-body">
-                    <div class="plat-title">Volant Lyrics</div>
-                    <div class="plat-sub"><i class="fas fa-feather-alt"></i> Lyrics Marketplace</div>
-                    <div class="plat-line"><i class="fas fa-music"></i> Buy &amp; sell original lyrics</div>
-                    <span class="plat-go">Visit platform <i class="fas fa-arrow-right"></i></span>
+                <span class="live-badge soon">Coming soon</span>
+            </div>
+            <div class="plat-body">
+                <div class="plat-title">Volant Lyrics</div>
+                <div class="plat-sub"><i class="fas fa-feather-alt"></i> Lyrics Marketplace</div>
+                <div class="plat-line"><i class="fas fa-music"></i> Original lyrics from independent songwriters</div>
+                <span class="plat-go">Preview platform <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
             <div class="plat-card reveal" onclick="window.open('https://volantmall.vercel.app/', '_blank')">
                 <div class="cover-wrapper">
                     <img src="https://volantpoetry.vercel.app/images/kindady.png" alt="Volant Mall - E-Commerce Marketplace" loading="lazy" decoding="async">
-                    <span class="live-badge">Live</span>
-                </div>
-                <div class="plat-body">
-                    <div class="plat-title">Volant Mall</div>
-                    <div class="plat-sub"><i class="fas fa-feather-alt"></i> E-Commerce Marketplace · Shop Ghana</div>
-                    <div class="plat-line"><i class="fas fa-store"></i> Shop from real sellers</div>
-                    <span class="plat-go">Visit platform <i class="fas fa-arrow-right"></i></span>
+                <span class="live-badge soon">Coming soon</span>
+            </div>
+            <div class="plat-body">
+                <div class="plat-title">Volant Mall</div>
+                <div class="plat-sub"><i class="fas fa-feather-alt"></i> E-Commerce Marketplace · Shop Ghana</div>
+                <div class="plat-line"><i class="fas fa-store"></i> A marketplace for independent Ghanaian sellers</div>
+                <span class="plat-go">Preview platform <i class="fas fa-arrow-right"></i></span>
                 </div>
             </div>
             <div class="plat-card reveal" onclick="window.open('https://volantcodes.vercel.app/', '_blank')">
@@ -650,7 +651,7 @@
         <a href="#platforms">Platforms</a>
         <a href="#services">What I Do</a>
     </div>
-    © 2026 Rence Blunt · Part of the Volant ecosystem · <a href="https://volantpoetry.vercel.app" target="_blank" rel="noopener" style="color: var(--gold);">Volant Poetry</a>
+    © <span id="year"></span> Rence Blunt · Part of the Volant ecosystem · <a href="https://volantpoetry.vercel.app" target="_blank" rel="noopener" style="color: var(--gold);">Volant Poetry</a>
 </footer>
 
 <script>
@@ -780,5 +781,9 @@
     observeReveals();
 </script>
 
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
