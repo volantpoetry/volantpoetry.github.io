@@ -1,4 +1,4 @@
-﻿// store/sw.js
+// store/sw.js
 // v29: every previous version of this app's caches is dropped when this worker
 // takes over, and the new shell is always fetched past the HTTP disk cache.
 // v21 -> v22: ships the standalone EPUB preview page in the app shell.
@@ -42,7 +42,7 @@
 // limited to the prefixes this app owns.
 const APP_TAG = 'store';
 const CACHE_PREFIX = `volant-${APP_TAG}-`;
-const CACHE_NAME = `${CACHE_PREFIX}v31`;
+const CACHE_NAME = `${CACHE_PREFIX}v32`;
 
 // Downloaded books are user data, not a version, so this cache survives upgrades.
 const BOOK_CACHE = 'volant-reads-pdfs';

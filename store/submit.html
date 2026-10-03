@@ -2377,7 +2377,7 @@
 <script type="module">
         import { initializeApp } from "firebase/app";
         import {
-            getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, updateDoc
+            getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, updateDoc, setDoc
         } from "firebase/firestore";
         import {
             getAuth, onAuthStateChanged
@@ -3953,7 +3953,7 @@ document.addEventListener('DOMContentLoaded', setupBackLink);
                     ...preorderData,
                     otherDetails: otherDetails || null,
                     imageUrl,
-                    pdfUrl,
+                    hasFile: true,
                     bookFormat,
                     pricing: { currency, amount: parseFloat(price) },
                     submittedBy: currentUser.uid,
@@ -3964,7 +3964,15 @@ document.addEventListener('DOMContentLoaded', setupBackLink);
                     submittedAt: serverTimestamp(),
                     updatedAt: serverTimestamp()
                 };
-                await addDoc(collection(db, "books"), bookData);
+                const bookRef = await addDoc(collection(db, "books"), bookData);
+                // The full file URL is never stored on the public book doc. It
+                // lives in books/{id}/files/full, which only the buyer, the
+                // author and admins may read; previews get a truncated sample.
+                await setDoc(doc(bookRef, "files", "full"), {
+                    url: pdfUrl,
+                    submittedBy: currentUser.uid,
+                    updatedAt: serverTimestamp()
+                });
                 
                 discardDraft();
                 showProgress(false);

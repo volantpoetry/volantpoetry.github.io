@@ -1989,6 +1989,39 @@
         showToast('✅ Download started!', 'success');
     };
 
+    // ========== FULL FILE RESOLUTION ==========
+    // The full URL is no longer on the public book doc; it lives in
+    // books/{id}/files/full, which rules gate to the author and admins.
+    // Approvals is an author/admin surface, so it can read it on demand.
+    async function resolveFullFileUrl(bookId) {
+        if (!bookId) return '';
+        try {
+            const snap = await getDoc(doc(db, "books", bookId, "files", "full"));
+            if (snap.exists() && snap.data().url) return snap.data().url;
+        } catch (err) {
+            console.warn('Could not resolve the full book file:', err);
+        }
+        return '';
+    }
+
+    window.viewBookFile = async function(bookId, title, format, author) {
+        const url = await resolveFullFileUrl(bookId);
+        if (!url) {
+            showToast('❌ No book file available.', 'error');
+            return;
+        }
+        window.viewPDF(url, title, format, author);
+    };
+
+    window.downloadBookFile = async function(bookId, title, format) {
+        const url = await resolveFullFileUrl(bookId);
+        if (!url) {
+            showToast('❌ No book file available.', 'error');
+            return;
+        }
+        window.downloadPDF(url, title, format);
+    };
+
     // ========== DELETE BOOK ==========
     window.deleteBook = async function(bookId, bookTitle) {
         if (!bookId) return;
@@ -2267,8 +2300,10 @@ Volant Reads Team
     }
     function renderBookCard(book) {
         const imageUrl = book.imageUrl || '';
-        const pdfUrl = book.pdfUrl || '';
-        const bookFormat = book.bookFormat || ((/\.epub(\?|#|$)/i).test(pdfUrl) ? 'epub' : 'pdf');
+        // The full URL lives in books/{id}/files/full and is resolved on click
+        // by window.viewBookFile / window.downloadBookFile.
+        const hasFile = book.hasFile === true || !!book.pdfUrl;
+        const bookFormat = book.bookFormat || ((/\.epub(\?|#|$)/i).test(book.pdfUrl || '') ? 'epub' : 'pdf');
         const priceDisplay = book.preorder === true
             ? (book.pricing?.currency || 'GHS') + ' ' + (Number(book.preorderPrice) > 0 ? Number(book.preorderPrice).toFixed(2) : (book.pricing?.amount || 0).toFixed(2)) + ' (pre-order)'
             : (book.pricing?.currency 
@@ -2420,11 +2455,11 @@ Volant Reads Team
                             <i class="fas fa-image"></i> View Image
                         </a>
                     ` : ''}
-                    ${pdfUrl ? `
-                        <button onclick="window.viewPDF('${pdfUrl}', '${safeTitle}', '${bookFormat}', '${safeAuthor}')" class="view-pdf">
+                    ${hasFile ? `
+                        <button onclick="window.viewBookFile('${book.id}', '${safeTitle}', '${bookFormat}', '${safeAuthor}')" class="view-pdf">
                             <i class="fas fa-eye"></i> View ${bookFormat === 'epub' ? 'EPUB' : 'PDF'}
                         </button>
-                        <button onclick="window.downloadPDF('${pdfUrl}', '${safeTitle}', '${bookFormat}')" class="download-pdf">
+                        <button onclick="window.downloadBookFile('${book.id}', '${safeTitle}', '${bookFormat}')" class="download-pdf">
                             <i class="fas fa-download"></i> Download ${bookFormat === 'epub' ? 'EPUB' : 'PDF'}
                         </button>
                     ` : `

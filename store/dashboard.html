@@ -83,7 +83,7 @@ sessionStorage.setItem('auth_redirect_attempted', 'true');
 
   <script>
         if ('serviceWorker' in navigator && location.protocol === 'https:') {
-            navigator.serviceWorker.register('./sw.js?v=29', { scope: './' }).catch(function() {});
+            navigator.serviceWorker.register('./sw.js?v=32', { scope: './' }).catch(function() {});
         }
     </script>
 
@@ -4370,6 +4370,7 @@ header .logo-header {
     deleteDoc,
     serverTimestamp,
     addDoc,
+    setDoc,
     increment,
     limit,
     orderBy,
@@ -5953,10 +5954,13 @@ header .logo-header {
       
       updateCoverCurrent.textContent = data.imageUrl ? '✅ Current cover uploaded' : 'No cover';
       updateCoverCurrent.className = data.imageUrl ? 'current-file' : 'current-file no-file';
+      // The public book doc carries hasFile, not the full URL (that lives in
+      // the gated books/{id}/files/full doc), so gate the label on hasFile.
+      const hasBookFile = data.hasFile === true || !!data.pdfUrl;
       const updateIsEpub = (data.bookFormat === 'epub') || /\.epub(\?|#|$)/i.test(data.pdfUrl || '');
-      updatePdfLabel.textContent = data.pdfUrl ? (updateIsEpub ? 'Book File — EPUB' : 'Book File — PDF') : 'Book File';
-      updatePdfCurrent.textContent = data.pdfUrl ? (updateIsEpub ? '✅ Current EPUB uploaded' : '✅ Current PDF uploaded') : 'No file';
-      updatePdfCurrent.className = data.pdfUrl ? 'current-file' : 'current-file no-file';
+      updatePdfLabel.textContent = hasBookFile ? (updateIsEpub ? 'Book File — EPUB' : 'Book File — PDF') : 'Book File';
+      updatePdfCurrent.textContent = hasBookFile ? (updateIsEpub ? '✅ Current EPUB uploaded' : '✅ Current PDF uploaded') : 'No file';
+      updatePdfCurrent.className = hasBookFile ? 'current-file' : 'current-file no-file';
       
       updateCoverImage.value = '';
       updatePdfFile.value = '';
@@ -6098,12 +6102,22 @@ async function updateBook() {
 
     if (imageUrl) updateData.imageUrl = imageUrl;
     if (pdfUrl) {
-      updateData.pdfUrl = pdfUrl;
       updateData.bookFormat = newBookFormat || 'pdf';
+      updateData.hasFile = true;
     }
     if (preorderReleaseDate) updateData.preorderReleaseDate = preorderReleaseDate;
 
     await updateDoc(doc(db, "books", bookId), updateData);
+
+    // The full file URL goes only to books/{id}/files/full (buyer/author/admin
+    // read), never onto the public book doc.
+    if (pdfUrl) {
+      await setDoc(doc(db, "books", bookId, "files", "full"), {
+        url: pdfUrl,
+        submittedBy: currentUser.uid,
+        updatedAt: serverTimestamp()
+      });
+    }
 
     // ✅ FIX: Update local array with ALL data including price
     const bookIndex = authorBooks.findIndex(b => b.id === bookId);

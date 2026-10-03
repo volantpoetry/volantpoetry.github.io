@@ -40,7 +40,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <script>
     if ('serviceWorker' in navigator && location.protocol === 'https:') {
-      navigator.serviceWorker.register('./sw.js?v=29', { scope: './' }).catch(function() {});
+      navigator.serviceWorker.register('./sw.js?v=32', { scope: './' }).catch(function() {});
     }
   </script>
 
@@ -3745,8 +3745,9 @@ header .logo-header {
     }
     
     .preview-buy-fullscreen {
-        bottom: 20px;
-        right: 20px;
+        top: 60px;
+        right: 14px;
+        bottom: auto;
         padding: 10px 20px;
         font-size: 0.9rem;
     }
@@ -3785,8 +3786,9 @@ header .logo-header {
     }
     
     .preview-buy-fullscreen {
-        bottom: 16px;
-        right: 16px;
+        top: 52px;
+        right: 12px;
+        bottom: auto;
         padding: 8px 16px;
         font-size: 0.8rem;
         border-radius: 30px;
@@ -6008,6 +6010,31 @@ let storedSenderName = '';
       return 'customer@example.com';
     }
 
+    // Purchases are recorded SERVER-SIDE by /api/verify-paystack-transaction.
+    // The client sends a Firebase ID token (so the server knows WHO is buying)
+    // plus the per-book amounts it charged, and the server does the Firestore
+    // write. Never write a purchase doc for a paid book from the client.
+    async function getIdTokenForPurchase() {
+      if (!currentUser) return null;
+      try {
+        return await currentUser.getIdToken();
+      } catch (e) {
+        console.warn('Could not get ID token:', e);
+        return null;
+      }
+    }
+
+    // Build the server-side purchase payload for a set of cart/book items.
+    // priceInGHS/discountGHS mirror what the client charged; the server checks
+    // that sum(price) - sum(discount) equals the Paystack-verified amount.
+    function buildPurchaseItems(entries) {
+      return (entries || []).map((e) => ({
+        bookId: e.bookId,
+        priceInGHS: round2(e.priceInGHS),
+        discountGHS: round2(e.discountGHS)
+      }));
+    }
+
     function checkPaystackReady() {
       if (typeof PaystackPop === 'undefined') {
         showToast('⏳ Payment system is loading. Please wait a moment.', 'info');
@@ -6149,6 +6176,7 @@ let storedSenderName = '';
         console.log('Verifying payment...');
         console.log('Reference:', response.reference);
 
+        const idToken = await getIdTokenForPurchase();
         const verificationResponse = await fetch('/api/verify-paystack-transaction', {
           method: 'POST',
           headers: {
@@ -6159,7 +6187,9 @@ let storedSenderName = '';
             amount: effectiveBookPrice(currentBook),
             email: currentUser.email,
             bookId: currentBook.id,
-            authorId: currentBook.submittedBy
+            authorId: currentBook.submittedBy,
+            token: idToken,
+            items: buildPurchaseItems([{ bookId: currentBook.id, priceInGHS: effectiveBookPrice(currentBook), discountGHS: 0 }])
           })
         });
 
@@ -6176,23 +6206,9 @@ let storedSenderName = '';
 
         console.log('✅ Payment verified successfully!');
         
-        const transactionRef = response.reference || 'paystack_' + Date.now();
-        const success = await recordPurchase(
-          currentUser.uid, 
-          currentBook.id, 
-          transactionRef,
-          {
-            amount: response.amount || effectiveBookPrice(currentBook),
-            currency: response.currency || currentBook.pricing?.currency || 'GHS',
-            customerEmail: response.customer?.email || currentUser.email,
-            verifiedBy: 'serverless-api',
-            authorId: currentBook.submittedBy,
-            bookTitle: currentBook.title || 'Unknown',
-            preorder: currentBook.preorder === true && currentBook.released !== true,
-            preorderReleaseDate: currentBook.preorderReleaseDate || null,
-            released: currentBook.released === true
-          }
-        );
+        // The server already recorded the purchase (server-authoritative).
+        // The client must NOT write purchases/{uid}_{bookId} for a paid book.
+        const success = true;
         
         if (success) {
           hasPaidForBook = true;
@@ -6513,7 +6529,7 @@ let storedSenderName = '';
             ]
           },
           callback: function(response) {
-            handleCartPaymentCallback(response, { items, chargedTotalGHS, couponData: couponData && couponData.res ? { code: couponData.code, coupon: couponData.res.coupon, itemDiscounts: couponData.res.itemDiscounts, discount: discountGHS } : null });
+            handleCartPaymentCallback(response, { items: convertedItems, chargedTotalGHS, couponData: couponData && couponData.res ? { code: couponData.code, coupon: couponData.res.coupon, itemDiscounts: couponData.res.itemDiscounts, discount: discountGHS } : null });
           },
           onClose: function() {
             isProcessingPayment = false;
@@ -6568,36 +6584,51 @@ let storedSenderName = '';
         return;
       }
 
-      // ===== VERIFY ONCE WITH THE ACTUAL CHARGED TOTAL (supports multi-book carts + coupons) =====
+      // ===== SERVER RECORDS THE PURCHASE =====
+      // One call handles both a real Paystack charge (chargedTotalGHS > 0) and
+      // a 100% coupon (mode:'coupon', no money). The server verifies the
+      // payment/coupon, then writes purchases/{uid}_{bookId} itself.
       let verified = false;
-      if (chargedTotalGHS > 0) {
-        try {
-          const verificationResponse = await fetch('/api/verify-paystack-transaction', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              reference: response.reference,
-              amount: chargedTotalGHS,
-              email: currentUser.email,
-              bookId: items[0] ? items[0].id : '',
-              authorId: ''
-            })
-          });
-          const verificationResult = await verificationResponse.json();
-          verified = verificationResult.success === true;
-          if (!verified) {
-            console.warn('Verification failed:', verificationResult);
-          }
-        } catch (error) {
-          console.error('Verification error:', error);
-          verified = false;
+      let failureMessage = '';
+      try {
+        const idToken = await getIdTokenForPurchase();
+        const itemDiscounts = (couponData && couponData.itemDiscounts) || {};
+        const purchaseItems = buildPurchaseItems(
+          items.map((it) => ({
+            bookId: it.id,
+            priceInGHS: it.priceInGHS,
+            discountGHS: itemDiscounts[it.id] || 0
+          }))
+        );
+        const isCouponOnly = !(chargedTotalGHS > 0);
+        const verificationResponse = await fetch('/api/verify-paystack-transaction', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            reference: isCouponOnly ? undefined : response.reference,
+            amount: chargedTotalGHS,
+            email: currentUser.email,
+            bookId: items[0] ? items[0].id : '',
+            authorId: '',
+            token: idToken,
+            items: purchaseItems,
+            couponCode: couponCode || undefined,
+            mode: isCouponOnly ? 'coupon' : undefined
+          })
+        });
+        const verificationResult = await verificationResponse.json();
+        verified = verificationResult.success === true;
+        if (!verified) {
+          console.warn('Verification failed:', verificationResult);
+          failureMessage = verificationResult.message || '';
         }
-      } else {
-        verified = true;
+      } catch (error) {
+        console.error('Verification error:', error);
+        verified = false;
       }
 
       if (!verified) {
-        showToast('⚠️ Payment verification failed. Please contact support.', 'error');
+        showToast(`⚠️ ${failureMessage || 'Payment verification failed. Please contact support.'}`, 'error');
         isProcessingPayment = false;
         isCartCheckout = false;
         cartPaymentProcessing.classList.remove('active');
@@ -6606,82 +6637,18 @@ let storedSenderName = '';
         return;
       }
 
-      const transactionRef = response.reference || 'paystack_' + Date.now();
-      let allSuccess = true;
+      const allSuccess = true;
       const successfulItems = [];
 
+      // The server already wrote every purchase (and incremented coupon
+      // usage). The client only collects titles for the success message.
       for (const item of items) {
         try {
-          const bookRef = doc(db, "books", item.id);
-          const bookSnap = await getDoc(bookRef);
-          if (!bookSnap.exists()) {
-            allSuccess = false;
-            continue;
-          }
-          const bookData = bookSnap.data();
-          const authorId = bookData.submittedBy || null;
-          const bookTitle = bookData.title || item.title || 'Unknown';
-
-          let poPreorder = item.preorder === true && item.released !== true;
-          let poReleaseDate = item.preorderReleaseDate || null;
-          try {
-            const bkSnap = await getDoc(doc(db, 'books', item.id));
-            if (bkSnap.exists()) {
-              const bd = bkSnap.data();
-              poPreorder = bd.preorder === true && bd.released !== true;
-              poReleaseDate = bd.preorderReleaseDate || null;
-            }
-          } catch (e) { /* use cart values */ }
-
-          let amount = item.price || 0;
-          let currency = item.currency || 'GHS';
-          let discountGHS = 0;
-          if (couponData && couponData.itemDiscounts && couponData.itemDiscounts[item.id]) {
-            discountGHS = round2(Number(couponData.itemDiscounts[item.id]) || 0);
-            amount = round2(amount - discountGHS);
-            currency = 'GHS';
-            if (amount < 0) amount = 0;
-          }
-
-          const success = await recordPurchase(
-            currentUser.uid,
-            item.id,
-            transactionRef,
-            {
-              amount: amount,
-              currency: currency,
-              customerEmail: response.customer?.email || currentUser.email,
-              verifiedBy: 'serverless-api',
-              authorId: authorId,
-              bookTitle: bookTitle,
-              preorder: poPreorder,
-              preorderReleaseDate: poReleaseDate,
-              released: false,
-              couponCode: couponCode || null,
-              discountGHS: discountGHS,
-              chargedTotalGHS: chargedTotalGHS
-            }
-          );
-          if (success) {
-            successfulItems.push(bookTitle);
-          } else {
-            allSuccess = false;
-          }
+          const bookSnap = await getDoc(doc(db, "books", item.id));
+          if (!bookSnap.exists()) continue;
+          successfulItems.push(bookSnap.data().title || item.title || 'Unknown');
         } catch (error) {
-          console.error('Error recording purchase for item:', item.id, error);
-          allSuccess = false;
-        }
-      }
-
-      // ===== INCREMENT COUPON USAGE =====
-      if (couponData && couponData.coupon && couponData.coupon.id) {
-        try {
-          await updateDoc(doc(db, "coupons", couponData.coupon.id), {
-            uses: increment(1),
-            lastUsedAt: serverTimestamp()
-          });
-        } catch (err) {
-          console.warn('Could not increment coupon usage:', err);
+          console.warn('Could not read book title:', error);
         }
       }
 
@@ -6852,10 +6819,22 @@ let storedSenderName = '';
       setInterval(write, 30000);
     }
 
+    // ===== RESOLVE THE FULL FILE FOR AN ENTITLED READER =====
+    async function resolveBookFileUrl() {
+      try {
+        const snap = await getDoc(doc(db, 'books', currentBook.id, 'files', 'full'));
+        if (snap.exists() && snap.data().url) return snap.data().url;
+      } catch (err) {
+        console.warn('Could not resolve the full book file:', err);
+      }
+      if (currentBook && currentBook.pdfUrl) return currentBook.pdfUrl;
+      return null;
+    }
+
     // ===== DOWNLOAD BOOK =====
     async function downloadBook() {
       if (!currentUser) { showToast('❌ Please sign in to download.', 'error'); return; }
-      if (!currentBook || !currentBook.pdfUrl) { showToast('❌ Book file not available.', 'error'); return; }
+      if (!currentBook || (!currentBook.hasFile && !currentBook.pdfUrl)) { showToast('❌ Book file not available.', 'error'); return; }
       if (isPreorderLocked(currentBook)) {
         showToast(`🔒 This book releases on ${preorderReleaseDateLabel(currentBook)}. Download unlocks automatically.`, 'error');
         return;
@@ -6894,7 +6873,9 @@ let storedSenderName = '';
         await recordUserDownload(currentUser.uid, currentBook.id);
         await trackDailyDownload(currentBook.id);
 
-        const response = await fetch(currentBook.pdfUrl);
+        const fullUrl = await resolveBookFileUrl();
+        if (!fullUrl) throw new Error('Full file unavailable for download');
+        const response = await fetch(fullUrl);
         if (!response.ok) throw new Error(`Download failed with status ${response.status}`);
         const blob = await response.blob();
         const titlePart = currentBook.title ? currentBook.title.trim() : 'Untitled';
@@ -7368,7 +7349,7 @@ let storedSenderName = '';
     // ===== PREVIEW FUNCTIONS =====
     // ================================================================
     function updatePreviewButton(book) {
-      if (book && book.pdfUrl) {
+      if (book && (book.hasFile || book.pdfUrl)) {
         previewBtn.style.display = 'inline-flex';
         previewBtn.disabled = false;
       } else {
@@ -7377,7 +7358,7 @@ let storedSenderName = '';
     }
 
     async function openPreview() {
-      if (!currentBook || !currentBook.pdfUrl) {
+      if (!currentBook || (!currentBook.hasFile && !currentBook.pdfUrl)) {
         showToast('❌ Preview not available for this book.', 'error');
         return;
       }
@@ -7385,19 +7366,46 @@ let storedSenderName = '';
       // EPUB books preview in the dedicated EPUB viewer.
       const isEpub = (String(currentBook.bookFormat || '').toLowerCase() === 'epub' || /\.epub(\?|#|$)/i.test(currentBook.pdfUrl || ''));
 
-      // ===== DETECT ACTUAL PDF PAGE COUNT =====
-      let totalPages = currentBook.pageCount || 0;
+      // ===== RESOLVE A SERVER-TRUNCATED SAMPLE (never the full file) =====
+      function sampleRequestUrl(withMeta) {
+        let u = '/api/sample-book?id=' + encodeURIComponent(currentBook.id || '');
+        if (withMeta) u += '&meta=1';
+        return u;
+      }
 
-      if (!isEpub) {
+      async function fetchSampleMeta() {
+        let u = sampleRequestUrl(true);
+        if (currentUser && typeof currentUser.getIdToken === 'function') {
+          try {
+            const token = await currentUser.getIdToken();
+            if (token) u += '&token=' + encodeURIComponent(token);
+          } catch (e) {
+            console.warn('⚠️ Could not attach auth token to the sample request:', e);
+          }
+        }
         try {
-          const pdf = await pdfjsLib.getDocument(currentBook.pdfUrl).promise;
-          const actualPages = pdf.numPages;
-          console.log('📄 Actual PDF pages:', actualPages, '| Metadata pages:', totalPages);
-          totalPages = actualPages;
-        } catch (error) {
-          console.warn('⚠️ Could not detect PDF page count, using metadata:', error);
+          const res = await fetch(u);
+          if (!res.ok) return null;
+          return await res.json();
+        } catch (e) {
+          console.warn('⚠️ Sample endpoint unreachable, using the plain sample route:', e);
+          return null;
         }
       }
+
+      // ===== AUTHORITATIVE PAGE COUNT + SAMPLE URL FROM THE SERVER =====
+      let totalPages = currentBook.pageCount || 0;
+      let sampleUrl = '';
+
+      const sampleMeta = await fetchSampleMeta();
+      if (sampleMeta && sampleMeta.sampleUrl) {
+        totalPages = sampleMeta.totalPages || totalPages;
+        sampleUrl = sampleMeta.sampleUrl;
+      }
+      if (!sampleUrl) sampleUrl = sampleRequestUrl(false);
+
+      // The preview always renders the truncated server sample. The full file
+      // is never loaded, page-counted, or passed to the viewer from this page.
 
       let previewPages = 0;
 
@@ -7450,7 +7458,13 @@ let storedSenderName = '';
       // ===== BUILD PREVIEW URL WITH STATUS =====
       const viewerBase = isEpub ? 'epub-preview.html' : 'pdfjs/multi-page-viewer.html';
       const previewPct = isEpub ? Math.round((previewPages / totalPages) * 100) : 0;
-      const previewUrl = `${viewerBase}?viewerVersion=4&file=${encodeURIComponent(currentBook.pdfUrl)}&title=${encodeURIComponent(currentBook.title || '')}&author=${encodeURIComponent(currentBook.authorName || '')}&startPage=1&endPage=${previewPages}&totalPages=${totalPages || 100}&previewPct=${previewPct}&isFree=${isFree}&isPurchased=${isPurchased}&isSignedIn=${isSignedIn}&currency=${currency}&amount=${amount}`;
+      // A unique token per preview load. The sample PDF is always same-origin and
+      // must never be reused from a cache, so this guarantees a real network
+      // request even if an older service worker already cached a bad response
+      // for the plain /api/sample-book?id=... URL.
+      const previewBust = '_=' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      const bustUrl = sampleUrl + (sampleUrl.includes('?') ? '&' : '?') + previewBust;
+      const previewUrl = `${viewerBase}?viewerVersion=5&file=${encodeURIComponent(bustUrl)}&title=${encodeURIComponent(currentBook.title || '')}&author=${encodeURIComponent(currentBook.authorName || '')}&startPage=1&endPage=${previewPages}&totalPages=${totalPages || 100}&previewPct=${previewPct}&isFree=${isFree}&isPurchased=${isPurchased}&isSignedIn=${isSignedIn}&currency=${currency}&amount=${amount}`;
       
       console.log('📄 Preview URL:', previewUrl);
 
