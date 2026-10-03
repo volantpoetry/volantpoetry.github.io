@@ -95,7 +95,12 @@ async function resolveFullUrl(bookId, book) {
     const snap = await loadAdmin().firestore().collection('books').doc(bookId)
       .collection('files').doc('full').get();
     if (snap.exists && snap.data().url) return snap.data().url;
-  } catch (err) { /* fall through */ }
+  } catch (err) {
+    // Swallowing this hid the real cause behind a generic 422. Admin needs
+    // SERVICE_ACCOUNT_KEY (or SERVICE_ACCOUNT / GOOGLE_CREDENTIALS) to read the
+    // protected files/full doc, so log it instead of failing silently.
+    console.error('[sample-book] files/full lookup failed for', bookId, '-', err.message);
+  }
   if (book && book.pdfUrl) return book.pdfUrl;
   return null;
 }
@@ -124,7 +129,11 @@ module.exports = async (req, res) => {
 
   const book = await fetchBookDoc(id);
   const fullUrl = await resolveFullUrl(id, book);
-  if (!fullUrl) return json(res, 422, { error: 'book file unavailable' });
+      if (!fullUrl) return json(res, 422, {
+        error: 'book file unavailable',
+        reason: 'no url on books/' + id + '/files/full, and no legacy pdfUrl on the book',
+        hint: 'check SERVICE_ACCOUNT_KEY is set on this deployment'
+      });
 
   const isEpub = isEpubBook(book, fullUrl);
 

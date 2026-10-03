@@ -1,7 +1,14 @@
 // Bumping this string is the single switch that makes every returning user pick
 // up a brand new shell: the activate handler below deletes every cache whose
 // name is not exactly this value, so the old copies cannot be served again.
-const CACHE = 'volant-poetry-v17';
+//
+// v19 -> v20: /api/* is never cached, and only a real 200 is stored. This worker
+// is scoped to the origin root, so it was intercepting /api/sample-book and
+// serving it from caches.match() first. isCacheable() accepted response.ok,
+// which is true for an empty 204, so that 204 was stored once and then replayed
+// to PDF.js on every load ("Unexpected server response (204)"). v20 also drops
+// the poisoned v19 cache, so the bad entry goes away on activation.
+const CACHE = 'volant-poetry-v20';
 
 // Every cache name shipped by an earlier deployment. activate already removes
 // anything that is not the current CACHE, so this list is belt-and-braces, but
@@ -12,7 +19,8 @@ const RETIRED_CACHES = [
   'volant-poetry-v7',  'volant-poetry-v8',  'volant-poetry-v9',
   'volant-poetry-v10', 'volant-poetry-v11', 'volant-poetry-v12',
   'volant-poetry-v13', 'volant-poetry-v14', 'volant-poetry-v15',
-  'volant-poetry-v16'
+  'volant-poetry-v16', 'volant-poetry-v17', 'volant-poetry-v18',
+  'volant-poetry-v19'
 ];
 
 const PRECACHE = [
@@ -38,7 +46,23 @@ const PRECACHE = [
   '/personal/',
   '/personal/index.html',
   '/icon/icon-192.png',
-  '/icon/icon-512.png'
+  '/icon/icon-512.png',
+  // The community area used to run its own worker under /community/. That
+  // worker is gone: these five pages now belong to this shell, so they are
+  // precached here (and the community module files they import).
+  '/community/competitions.html',
+  '/community/competition.html',
+  '/community/groups.html',
+  '/community/group.html',
+  '/community/manage.html',
+  '/community/members-core.js',
+  '/community/members-ops.js',
+  '/community/members-ui.js',
+  '/community/members-style.css',
+  // The community pages are self-contained in their folder again: they now load
+  // local style.css / theme.js copies of the site's shared files.
+  '/community/style.css',
+  '/community/theme.js'
 ];
 
 // --- Offline shell dependencies -------------------------------------------
@@ -72,7 +96,13 @@ const BYPASS_CACHE_PATHS = [
 ];
 
 function isCacheable(response) {
-  return response && (response.ok || response.type === 'opaque');
+  // Only a real 200 (or an opaque cross-origin body) is worth storing.
+  // response.ok is also true for 204/205/304, and caching one of those empty
+  // bodies makes PDF.js reject the file with "Unexpected server response (204)".
+  return response &&
+         ((response.status === 200 &&
+           (response.type === 'basic' || response.type === 'cors')) ||
+          response.type === 'opaque');
 }
 
 // Serve from cache immediately, refresh in the background. This is what makes
@@ -249,6 +279,17 @@ self.addEventListener('fetch', (event) => {
   }
 
   const pathname = url.pathname;
+
+  // --- API calls: straight to the network, never cached ---
+  // This worker is scoped to the origin root, so it also sees /api/*. A sample
+  // PDF, entitlement check or auth failure must never be stored: response.ok
+  // is true for 204, so an empty 204 used to be cached here and then replayed
+  // to PDF.js forever ("Unexpected server response (204)").
+  if (pathname.startsWith('/api/')) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
   if (NETWORK_FIRST_PATHS.some((p) => pathname === p || pathname.startsWith(p))) {
     event.respondWith(
       fetch(request).then((response) => {
