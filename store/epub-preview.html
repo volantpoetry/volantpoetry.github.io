@@ -700,11 +700,13 @@
             // unzipped archive instead of over HTTP.
             const file = urlParams.get('file');
             const startPage = parseInt(urlParams.get('startPage')) || 1;
-            const totalPages = parseInt(urlParams.get('totalPages')) || 100;
-            // EPUB preview slice rule, same as the PDF/EPUB previewer in details.html:
-            // at least 10 pages or 10% of the book (clamped to the whole book).
-            const previewPages = Math.min(Math.max(Math.round(totalPages * 0.1), 10), totalPages);
-            const endPage = Math.min(parseInt(urlParams.get('endPage')) || previewPages, previewPages);
+            const totalPages = parseInt(urlParams.get('totalPages')) || 0;
+            // /api/sample-book already returns a file truncated to the preview
+            // length and reports that length as `endPage`, so this viewer must
+            // NOT re-derive the slice rule or clamp endPage against a locally
+            // computed 10% of `totalPages`. Doing so sliced an already-sliced
+            // file and made the visible preview jump around.
+            const endPage = parseInt(urlParams.get('endPage')) || 0;
             const previewPct = parseFloat(urlParams.get('previewPct')) || 0;
 
             const isFree = urlParams.get('isFree') === 'true';
@@ -740,14 +742,10 @@
                 else loadingState.style.display = 'none';
             };
 
-            // Hard page slice: EPUB preview ends at previewPages/totalPages (the rule above,
-            // same as the PDF viewer), i.e. the last allowed page is page `endPage` of `totalPages`.
-            // Falls back to previewPct for old preview URLs.
-            const previewShare = (endPage > 0 && totalPages > 0)
-                ? Math.max(0.02, Math.min(1, endPage / totalPages))
-                : (previewPct > 0
-                    ? Math.max(0.02, Math.min(1, previewPct / 100))
-                    : 0.1);
+            // The delivered file IS the preview, so the boundary is the end of
+            // that file - not a fraction of it. Locking at ~100% lets the reader
+            // finish the sample they were given; anything smaller hid most of it.
+            const previewShare = 0.995;
 
             let book = null;
             let rendition = null;
@@ -1043,7 +1041,7 @@
                 previewEndInner.innerHTML = `
                     <h4>📖 Preview Ends Here</h4>
                     <p>You've reached the end of the preview.</p>
-                    <span class="epub-link">${Math.min(endPage, totalPages)} of ${totalPages} pages shown (${Math.round(previewShare*100)}% of book)</span>
+                          <span class="epub-link">${endPage > 0 && totalPages > 0 ? endPage + ' of ' + totalPages + ' in this sample' : 'Sample preview'}${previewPct > 0 ? ' (' + Math.round(previewPct) + '% of the book)' : ''}</span>
                     ${buttonHTML}`;
 
                 document.getElementById('buyNowFromPreview')?.addEventListener('click', function() {

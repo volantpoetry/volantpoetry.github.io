@@ -7398,23 +7398,40 @@ let storedSenderName = '';
       let sampleUrl = '';
 
       const sampleMeta = await fetchSampleMeta();
+      // The server measures the real file and applies the slice rule to THAT
+      // number. Trusting its previewPages keeps the viewer's endPage equal to
+      // the pages the delivered sample actually contains, which is what stops
+      // the preview from jumping. Recomputing it here is what caused the drift.
+      let serverPreviewPages = 0;
       if (sampleMeta && sampleMeta.sampleUrl) {
         totalPages = sampleMeta.totalPages || totalPages;
         sampleUrl = sampleMeta.sampleUrl;
+        serverPreviewPages = Number(sampleMeta.previewPages) || 0;
       }
       if (!sampleUrl) sampleUrl = sampleRequestUrl(false);
 
       // The preview always renders the truncated server sample. The full file
       // is never loaded, page-counted, or passed to the viewer from this page.
 
-      let previewPages = 0;
+      // Server-measured slice length wins. Only if the endpoint was unreachable
+
+      // do we fall back to applying the rule locally.
+
+      let previewPages = serverPreviewPages > 0
+
+        ? Math.min(serverPreviewPages, totalPages > 0 ? totalPages : serverPreviewPages)
+
+        : 0;
+
+      
 
       // EPUB files (or unknown page counts) default to a 10% preview slice
-      if (isEpub || totalPages <= 0) {
+
+      if (previewPages === 0 && (isEpub || totalPages <= 0)) {
         totalPages = totalPages > 0 ? totalPages : 100;
         previewPages = Math.min(Math.max(Math.round(totalPages * 0.1), 10), totalPages);
-        console.log('📚 EPUB preview slice:', { totalPages, previewPages });
-      } else {
+        console.log('📚 EPUB preview slice (fallback):', { totalPages, previewPages });
+      } else if (previewPages === 0) {
       console.log('📄 Book pages:', totalPages);
       console.log('📄 Current user:', currentUser ? 'Signed in' : 'Not signed in');
 
