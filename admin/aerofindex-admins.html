@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Aerofindex Admins · Volant Admin</title>
+  <meta name="theme-color" content="#4b2aad">
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #faf7f2; color: #2d2a24; min-height: 100dvh;
+      padding: calc(20px + env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    .top { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .top .icon { width: 46px; height: 46px; border-radius: 13px; overflow: hidden; flex: 0 0 auto; border: 1px solid #e9e2d7; }
+    .top .icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .top h1 { font-size: 1.25rem; font-weight: 700; }
+    .top p { font-size: .78rem; color: #8a7b6a; margin-top: 2px; }
+    .back { margin-left: auto; font-size: .78rem; color: #4b2aad; text-decoration: none; white-space: nowrap; }
+    .card { background: #fff; border: 1px solid #e9e2d7; border-radius: 16px; padding: 18px; box-shadow: 0 6px 22px rgba(120,105,90,.08); margin-bottom: 16px; }
+    .card h2 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .card h2 i { color: #4b2aad; }
+    label { display: block; font-size: .76rem; color: #8a7b6a; margin-bottom: 4px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; }
+    input[type=email], input[type=password] {
+      flex: 1; min-width: 200px; padding: 11px 12px; border: 1px solid #dfd5ee; border-radius: 10px;
+      font-family: inherit; font-size: .95rem; background: #fff;
+    }
+    input[type=email]:focus, input[type=password]:focus { outline: none; border-color: #4b2aad; box-shadow: 0 0 0 3px rgba(75,42,173,.12); }
+    button {
+      padding: 11px 16px; border: 0; border-radius: 10px; background: #4b2aad; color: #fff;
+      font-family: inherit; font-size: .9rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+    }
+    button:hover { background: #3f238f; }
+    button:disabled { opacity: .55; cursor: default; }
+    button.ghost { background: #f2edff; color: #4b2aad; }
+    button.ghost:hover { background: #e7ddff; }
+    button.danger { background: #fbeaea; color: #a33; }
+    button.danger:hover { background: #f6d9d9; }
+    .msg { margin-top: 10px; font-size: .84rem; min-height: 1.1em; }
+    .msg.ok { color: #1e7e34; }
+    .msg.err { color: #c62828; }
+    .who { font-size: .82rem; color: #6b5f52; }
+    .who code { background: #f3eee6; padding: 0 0.3rem; border-radius: 4px; }
+    .banner { background: #f2edff; border: 1px solid #e0d5ff; color: #4b2aad; border-radius: 12px; padding: 12px 14px; font-size: .82rem; margin-bottom: 16px; }
+    .list { list-style: none; }
+    .list li { display: flex; align-items: center; gap: 10px; padding: 11px 4px; border-bottom: 1px solid #f1ece3; }
+    .list li:last-child { border-bottom: 0; }
+    .list .who-email { flex: 1; min-width: 0; }
+    .list .who-email strong { display: block; font-size: .92rem; font-weight: 600; overflow-wrap: anywhere; }
+    .list .who-email span { font-size: .72rem; color: #a0927f; }
+    .chip { font-size: .68rem; background: #e6f4ea; color: #1e7e34; padding: 2px 9px; border-radius: 30px; }
+    .spinner { text-align: center; color: #8a7b6a; padding: 20px; }
+    .empty { text-align: center; color: #8a7b6a; padding: 18px; font-size: .88rem; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="icon"><img src="images/logo.png" alt="Volant Admin"></div>
+      <div>
+        <h1><i class="fas fa-book-open" style="color:#4b2aad;"></i> Aerofindex Admins</h1>
+        <p>Who can manage the Aerofindex platform tab</p>
+      </div>
+      <a class="back" href="app.html"><i class="fas fa-chevron-left"></i> Home</a>
+    </div>
+
+    <!-- Not signed in -->
+    <div class="card hidden" id="signedOut">
+      <h2><i class="fas fa-lock"></i> Sign in required</h2>
+      <p class="who" style="margin-bottom:6px;">This page uses your normal Volant Admin login (silent-depth).</p>
+      <p class="who" style="margin-bottom:12px; font-size:.78rem; color:#a0927f;">
+        You're on <code id="originEl">—</code>. Firebase sessions are tied to this address,
+        so sign in <strong>here</strong> (a login on another host, e.g. volantpoetry.vercel.app or a different port, won't be seen).
+      </p>
+      <a href="admin-login.html"><button class="ghost"><i class="fas fa-sign-in-alt"></i> Go to admin login</button></a>
+    </div>
+
+    <!-- Signed in -->
+    <div id="signedIn" class="hidden">
+      <div class="card">
+        <div class="who">Signed in as <strong id="whoEmail">—</strong></div>
+      </div>
+
+      <div class="banner hidden" id="bootstrapNote">
+        <i class="fas fa-circle-info"></i>
+        No Aerofindex admins exist yet, so the first one you add here will be created
+        as the founding admin. After that, only existing admins can add or remove others.
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-user-plus"></i> Add an admin</h2>
+        <div class="row">
+          <div style="flex:1; min-width:200px;">
+            <label for="emailInput">Email address</label>
+            <input type="email" id="emailInput" placeholder="name@example.com" autocomplete="off" />
+          </div>
+          <div style="flex:1; min-width:200px;">
+            <label for="passwordInput">Password</label>
+            <input type="password" id="passwordInput" placeholder="Min 6 characters" autocomplete="new-password" />
+          </div>
+          <button id="addBtn"><i class="fas fa-user-plus"></i> Create admin</button>
+        </div>
+        <p class="who" style="margin-top:8px; font-size:.74rem; color:#a0927f;">
+          Creates a real account inside the <strong>Aerofindex</strong> project (not silent-depth).
+        </p>
+        <div class="msg" id="addMsg"></div>
+      </div>
+
+      <div class="card">
+        <h2><i class="fas fa-user-shield"></i> Current admins <span class="chip" id="countChip" style="margin-left:auto;">0</span></h2>
+        <div id="listArea" class="spinner"><i class="fas fa-circle-notch fa-spin"></i> Loading…</div>
+        <div class="msg" id="listMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    // Where the Aerofindex API lives. Defaults to the deployed Aerofindex;
+    // override for local dev with ?api=http://localhost:3000
+    const AERO_ORIGIN =
+      new URLSearchParams(location.search).get("api") ||
+      "https://aerofindex.vercel.app";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC4DHI8aBVY4JjTvJ-r-TGIDPSEwtEWxzU",
+      authDomain: "silent-depth.firebaseapp.com",
+      projectId: "silent-depth",
+      storageBucket: "silent-depth.firebasestorage.app",
+      messagingSenderId: "78008755450",
+      appId: "1:78008755450:web:3fd0f0f298a08820935543",
+      measurementId: "G-WSWDCB7KD8",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const $ = (id) => document.getElementById(id);
+    const signedOut = $("signedOut");
+    const signedIn = $("signedIn");
+    const listArea = $("listArea");
+
+    function escapeHtml(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+    function fmtDate(v) {
+      if (!v) return "";
+      const d = new Date(v);
+      return isNaN(d.getTime()) ? "" : d.toLocaleDateString();
+    }
+    function setMsg(el, text, kind) {
+      el.textContent = text || "";
+      el.className = "msg" + (kind ? " " + kind : "");
+    }
+
+    async function api(path, options) {
+      const user = auth.currentUser;
+      if (!user) throw Object.assign(new Error("Not signed in."), { code: 401 });
+      const token = await user.getIdToken(false);
+      const res = await fetch(AERO_ORIGIN + path, {
+        method: (options && options.method) || "GET",
+        headers: {
+          "content-type": "application/json",
+          authorization: "Bearer " + token,
+        },
+        body: options && options.body ? JSON.stringify(options.body) : undefined,
+      });
+      let data = {};
+      try { data = await res.json(); } catch (e) { data = {}; }
+      if (!res.ok) {
+        throw Object.assign(new Error(data.error || "Request failed (" + res.status + ")."), { code: res.status });
+      }
+      return data;
+    }
+
+    async function loadAdmins() {
+      listArea.className = "spinner";
+      listArea.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Loading…';
+      setMsg($("listMsg"), "");
+      try {
+        const data = await api("/api/admin/admins");
+        const admins = data.admins || [];
+        $("countChip").textContent = admins.length;
+        $("bootstrapNote").classList.toggle("hidden", admins.length > 0);
+        if (!admins.length) {
+          listArea.className = "empty";
+          listArea.innerHTML = "No admins yet — add the first one above.";
+          return;
+        }
+        listArea.className = "";
+        listArea.innerHTML =
+          '<ul class="list">' +
+          admins.map((a) => `
+            <li>
+              <div class="who-email">
+                <strong>${escapeHtml(a.email)}</strong>
+                <span>${escapeHtml(a.role || "admin")}${a.createdAt ? " · added " + fmtDate(a.createdAt) : ""}</span>
+              </div>
+              <button class="danger" data-email="${escapeHtml(a.email)}"><i class="fas fa-trash"></i> Remove</button>
+            </li>`).join("") +
+          "</ul>";
+        listArea.querySelectorAll("button[data-email]").forEach((btn) => {
+          btn.addEventListener("click", () => removeAdmin(btn.dataset.email, btn));
+        });
+      } catch (e) {
+        if (e.code === 401) { showSignedOut(); return; }
+        listArea.className = "empty";
+        listArea.innerHTML = "Could not load admins.";
+        setMsg($("listMsg"), e.message, "err");
+      }
+    }
+
+    async function addAdmin() {
+      const input = $("emailInput");
+      const email = input.value.trim();
+      const password = $("passwordInput").value;
+      const btn = $("addBtn");
+      if (!email) { setMsg($("addMsg"), "Enter an email address.", "err"); return; }
+      if (password.length < 6) { setMsg($("addMsg"), "Password must be at least 6 characters.", "err"); return; }
+      btn.disabled = true;
+      setMsg($("addMsg"), "Creating Aerofindex account…");
+      try {
+        await api("/api/admin/admins", { method: "POST", body: { email, password } });
+        setMsg($("addMsg"), "✅ Aerofindex account created for " + email + ".", "ok");
+        input.value = "";
+        $("passwordInput").value = "";
+        loadAdmins();
+      } catch (e) {
+        setMsg($("addMsg"), "❌ " + e.message, "err");
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function removeAdmin(email, btn) {
+      if (!confirm("Remove " + email + " as an Aerofindex admin?")) return;
+      btn.disabled = true;
+      setMsg($("listMsg"), "Removing…");
+      try {
+        await api("/api/admin/admins", { method: "DELETE", body: { email } });
+        setMsg($("listMsg"), "✅ Removed " + email + ".", "ok");
+        loadAdmins();
+      } catch (e) {
+        setMsg($("listMsg"), "❌ " + e.message, "err");
+        btn.disabled = false;
+      }
+    }
+
+    function showSignedOut() {
+      var originEl = $("originEl");
+      if (originEl) originEl.textContent = location.origin;
+      signedOut.classList.remove("hidden");
+      signedIn.classList.add("hidden");
+    }
+    function showSignedIn(user) {
+      signedOut.classList.add("hidden");
+      signedIn.classList.remove("hidden");
+      $("whoEmail").textContent = user.email || user.uid;
+      loadAdmins();
+    }
+
+    $("addBtn").addEventListener("click", addAdmin);
+    $("emailInput").addEventListener("keydown", (e) => { if (e.key === "Enter") addAdmin(); });
+    $("passwordInput").addEventListener("keydown", (e) => { if (e.key === "Enter") addAdmin(); });
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) showSignedOut();
+      else showSignedIn(user);
+    });
+
+    window.addEventListener("pageshow", () => {
+      const u = auth.currentUser;
+      if (u) showSignedIn(u);
+    });
+  </script>
+</body>
+</html>

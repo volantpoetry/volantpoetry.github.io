@@ -1,13 +1,13 @@
 // admin/sw.js — Volant Admin service worker (offline app shell + cached static assets).
 //
-// v5. This worker is scoped to /admin/, but CacheStorage is shared with every
+// v8. This worker is scoped to /admin/, but CacheStorage is shared with every
 // other worker on this origin: the Poetry app and the Reads store both run here
 // too. v4 deleted every cache that was not its own, so simply opening the admin
 // panel wiped the Poetry offline shell and every book a reader had downloaded.
 // Cleanup is now limited to the caches this app owns, and the precache always
 // bypasses the browser's HTTP disk cache so a redeploy is actually picked up.
 var CACHE_PREFIX = 'volant-admin-';
-var CACHE = CACHE_PREFIX + 'v5';
+var CACHE = CACHE_PREFIX + 'v8';
 
 // Prefixes belonging to the other apps on this origin. Never touched.
 var PROTECTED_PREFIXES = ['volant-poetry-', 'volant-store-', 'volant-store1-', 'volant-reads-'];
@@ -17,6 +17,7 @@ var PRECACHE = [
   './admin.html',
   './admin-login.html',
   './admin-ops.js',
+  './aerofindex-admin.js',
   './return-url-handler.js',
   './images/logo.png',
   './images/app-icon-192.png',

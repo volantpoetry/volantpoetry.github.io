@@ -2436,6 +2436,7 @@
   .vt-panel[data-tab="reads"] { padding: 0; }
   .vt-panel[data-tab="mall"] { padding: 0; background: #faf7f2; }
   .vt-panel[data-tab="codes"] { padding: 0; background: #faf9fe; }
+  .vt-panel[data-tab="aerofindex"] { padding: 0; background: #faf7f2; }
   @keyframes vf-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   @media (max-width: 768px) { .vt-tab { flex: 1; text-align: center; padding: 8px 14px; } }
 </style>
@@ -2446,6 +2447,7 @@
   <button class="vt-tab" data-tab="reads">Reads</button>
   <button class="vt-tab" data-tab="mall">Mall</button>
   <button class="vt-tab" data-tab="codes">Codes</button>
+  <button class="vt-tab" data-tab="aerofindex">Aerofindex</button>
 </div>
 <div class="vt-panel active" data-tab="poetry">
 
@@ -2806,7 +2808,10 @@
         <div class="tab-content" id="tab-admins">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
                 <h3 style="font-weight:600; color:#2d2a24;"><i class="fas fa-user-shield" style="color:#8b5cf6;"></i> All Admins</h3>
-                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+                    <a href="admin-signup.html" style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.45rem 0.9rem; border-radius:8px; background:#4b2aad; color:#fff; text-decoration:none; font-size:0.8rem; font-weight:600;">
+                        <i class="fas fa-user-plus"></i> Add Admin
+                    </a>
                     <span style="font-size:0.8rem; color:#8a7b6a;">
                         <i class="fas fa-info-circle"></i> Only Super-Admins can manage other admins
                     </span>
@@ -8331,6 +8336,40 @@ ${msg.message || 'No message'}`;
         showToast('✅ Download started!', 'success');
     };
 
+    // ========== FULL FILE RESOLUTION ==========
+    // The full URL is no longer on the public book doc; it lives in
+    // books/{id}/files/full, which rules gate to the author and admins.
+    // Admins can read it, so resolve on demand instead of leaking it into
+    // the public book document.
+    async function resolveFullFileUrl(bookId) {
+        if (!bookId) return '';
+        try {
+            const snap = await getDoc(doc(db, "books", bookId, "files", "full"));
+            if (snap.exists() && snap.data().url) return snap.data().url;
+        } catch (err) {
+            console.warn('Could not resolve the full book file:', err);
+        }
+        return '';
+    }
+
+    window.viewBookFile = async function(bookId, title, format) {
+        const url = await resolveFullFileUrl(bookId);
+        if (!url) {
+            showToast('❌ No book file available.', 'error');
+            return;
+        }
+        window.viewPDF(url, title, format);
+    };
+
+    window.downloadBookFile = async function(bookId, title, format) {
+        const url = await resolveFullFileUrl(bookId);
+        if (!url) {
+            showToast('❌ No book file available.', 'error');
+            return;
+        }
+        window.downloadPDF(url, title, format);
+    };
+
     // ========== DELETE BOOK ==========
     window.deleteBook = async function(bookId, bookTitle) {
         if (!bookId) return;
@@ -8603,6 +8642,9 @@ Volant Reads Team
     function renderBookCard(book) {
         const imageUrl = book.imageUrl || '';
         const pdfUrl = book.pdfUrl || '';
+        // The full URL lives in books/{id}/files/full and is resolved on click
+        // by window.viewBookFile / window.downloadBookFile.
+        const hasFile = book.hasFile === true || !!pdfUrl;
         const bookFormat = book.bookFormat || ((/\.epub(\?|#|$)/i).test(pdfUrl) ? 'epub' : 'pdf');
         const priceDisplay = book.preorder === true
             ? (book.pricing?.currency || 'GHS') + ' ' + (Number(book.preorderPrice) > 0 ? Number(book.preorderPrice).toFixed(2) : (book.pricing?.amount || 0).toFixed(2)) + ' (pre-order)'
@@ -8754,11 +8796,11 @@ Volant Reads Team
                             <i class="fas fa-image"></i> View Image
                         </a>
                     ` : ''}
-                    ${pdfUrl ? `
-                        <button onclick="window.viewPDF('${pdfUrl}', '${safeTitle}', '${bookFormat}')" class="view-pdf">
+                    ${hasFile ? `
+                        <button onclick="window.viewBookFile('${book.id}', '${safeTitle}', '${bookFormat}')" class="view-pdf">
                             <i class="fas fa-eye"></i> View ${bookFormat === 'epub' ? 'EPUB' : 'PDF'}
                         </button>
-                        <button onclick="window.downloadPDF('${pdfUrl}', '${safeTitle}', '${bookFormat}')" class="download-pdf">
+                        <button onclick="window.downloadBookFile('${book.id}', '${safeTitle}', '${bookFormat}')" class="download-pdf">
                             <i class="fas fa-download"></i> Download ${bookFormat === 'epub' ? 'EPUB' : 'PDF'}
                         </button>
                     ` : `
@@ -9973,6 +10015,7 @@ ${msg.message || msg.content || ''}
 
 <script src="return-url-handler.js"></script>
 <script type="module" src="admin-ops.js"></script>
+<script type="module" src="aerofindex-admin.js"></script>
 </body>
 </html>
 
@@ -15091,6 +15134,14 @@ var MALL_CATEGORIES = [
 </script>
 </div>
 
+<div class="vt-panel vp-aerofindex" data-tab="aerofindex">
+<div id="tab-aerofindex" style="padding:1.2rem 1.5rem;">
+  <div style="max-width:1100px; margin:0 auto; padding:1.2rem 0; text-align:center; color:#8a7b6a;">
+    <i class="fas fa-circle-notch fa-spin" style="color:#4b2aad;"></i> Loading Aerofindex…
+  </div>
+</div>
+</div>
+
 <script>
 (function() {
   var vtBtns = document.querySelectorAll('.vt-tab');
@@ -15115,6 +15166,7 @@ var MALL_CATEGORIES = [
     else if (name === 'reads') { if (window.__loadReadsDashboard) window.__loadReadsDashboard(); }
     else if (name === 'mall') { if (window.__loadMallDashboard) window.__loadMallDashboard(); }
     else if (name === 'codes') { if (window.__loadCodesDashboard) window.__loadCodesDashboard(); }
+    else if (name === 'aerofindex') { if (window.__loadAerofindexDashboard) window.__loadAerofindexDashboard(); }
   }
 
   window.__loadMallDashboard = function() {
@@ -15140,7 +15192,7 @@ var MALL_CATEGORIES = [
     var qtab = null;
     try { qtab = new URLSearchParams(window.location.search).get('tab'); } catch (e) {}
     var savedMain = getSaved(mainKey);
-    var main = (qtab === 'poetry' || qtab === 'reads' || qtab === 'mall' || qtab === 'codes') ? qtab : ((savedMain === 'poetry' || savedMain === 'reads' || savedMain === 'mall' || savedMain === 'codes') ? savedMain : 'poetry');
+    var main = (qtab === 'poetry' || qtab === 'reads' || qtab === 'mall' || qtab === 'codes' || qtab === 'aerofindex') ? qtab : ((savedMain === 'poetry' || savedMain === 'reads' || savedMain === 'mall' || savedMain === 'codes' || savedMain === 'aerofindex') ? savedMain : 'poetry');
     setSaved(mainKey, main);
     setPanel(main);
     loadPanel(main);
@@ -15148,7 +15200,7 @@ var MALL_CATEGORIES = [
     if (main === 'poetry') {
       var sub = getSaved(poetrySubKey);
       if (sub && window.__openPoetryTab) window.__openPoetryTab(sub);
-    } else if (main === 'mall' || main === 'codes') {
+    } else if (main === 'mall' || main === 'codes' || main === 'aerofindex') {
       return;
     } else {
       var sub = getSaved(readsSubKey);
@@ -15164,7 +15216,7 @@ var MALL_CATEGORIES = [
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('sw.js?v=5').catch(function() {});
+      navigator.serviceWorker.register('sw.js?v=8').catch(function() {});
     });
   }
 })();

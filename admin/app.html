@@ -61,6 +61,7 @@
     .card.reads .tile { background: #b76e4b; }
     .card.mall .tile { background: #f59e0b; }
     .card.login .tile { background: #2d7d46; }
+    .card.aerofindex .tile { background: #4b2aad; }
     .card .meta { flex: 1; min-width: 0; }
     .card .meta h2 { font-size: 1.05rem; font-weight: 700; }
     .card .meta p { font-size: .78rem; color: #8a7b6a; margin-top: 3px; }
@@ -143,6 +144,14 @@
           </div>
           <i class="fas fa-chevron-right chev"></i>
         </a>
+        <a class="card aerofindex" href="admin.html?tab=aerofindex">
+          <div class="tile"><i class="fas fa-book-open"></i></div>
+          <div class="meta">
+            <h2>Aerofindex Admin</h2>
+            <p>Sign-ups &amp; complimentary access grants</p>
+          </div>
+          <i class="fas fa-chevron-right chev"></i>
+        </a>
         <a class="card login" href="admin-login.html">
           <div class="tile"><i class="fas fa-sign-in-alt"></i></div>
           <div class="meta">
@@ -185,7 +194,7 @@
 
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('sw.js?v=5').catch(function() {});
+          navigator.serviceWorker.register('sw.js?v=7').catch(function() {});
         });
       }
 
