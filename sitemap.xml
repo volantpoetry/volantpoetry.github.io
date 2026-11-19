@@ -5,91 +5,91 @@
 
   <url>
     <loc>https://volantpoetry.vercel.app</loc>
-    <lastmod>2026-11-18T09:39:43.427Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.412Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/poems.html</loc>
-    <lastmod>2026-11-18T09:39:43.431Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.416Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/poem.html</loc>
-    <lastmod>2026-11-18T09:39:43.431Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.416Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/submitpoems.html</loc>
-    <lastmod>2026-11-18T09:39:43.455Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.447Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/submission-guidelines.html</loc>
-    <lastmod>2026-11-18T09:39:43.454Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.446Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/all-categories.html</loc>
-    <lastmod>2026-11-18T09:39:43.322Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.277Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/poem-of-the-week.html</loc>
-    <lastmod>2026-11-18T09:39:43.430Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.415Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/quote-of-the-week.html</loc>
-    <lastmod>2026-11-18T09:39:43.431Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.417Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/shared/about.html</loc>
-    <lastmod>2026-11-18T09:39:43.433Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.419Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/shared/contact.html</loc>
-    <lastmod>2026-11-18T09:39:43.433Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.419Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/shared/terms.html</loc>
-    <lastmod>2026-11-18T09:39:43.433Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.419Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/shared/privacy.html</loc>
-    <lastmod>2026-11-18T09:39:43.433Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.419Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
     <loc>https://volantpoetry.vercel.app/personal/</loc>
-    <lastmod>2026-11-18T09:39:43.430Z</lastmod>
+    <lastmod>2026-11-19T09:46:37.415Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -270,8 +270,29 @@
   </url>
 
   <url>
+    <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=how-do-i-love-thee-sonnet-43</loc>
+    <lastmod>2026-11-19T02:24:51.039Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
     <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=ozymandias</loc>
     <lastmod>2025-10-31T20:34:57.783Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=she-walks-in-beauty</loc>
+    <lastmod>2026-11-19T02:32:08.406Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=trees</loc>
+    <lastmod>2026-11-19T02:34:05.962Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -298,6 +319,20 @@
   </url>
 
   <url>
+    <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=who-has-seen-the-wind</loc>
+    <lastmod>2026-11-19T02:26:54.156Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=a-dream-within-a-dream</loc>
+    <lastmod>2026-11-19T02:32:40.305Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
     <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=the-tyger</loc>
     <lastmod>2026-11-17T21:41:50.117Z</lastmod>
     <changefreq>weekly</changefreq>
@@ -314,6 +349,13 @@
   <url>
     <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=sympathy-caged-bird</loc>
     <lastmod>2026-11-17T23:43:09.146Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=o-captain-my-captain</loc>
+    <lastmod>2026-11-19T02:25:39.136Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -349,6 +391,20 @@
   <url>
     <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=the-road-not-taken</loc>
     <lastmod>2025-10-31T08:38:12.895Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=death-be-not-proud</loc>
+    <lastmod>2026-11-19T02:27:27.793Z</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://volantpoetry.vercel.app/poem.html?collection=classicPoems&amp;slug=remember</loc>
+    <lastmod>2026-11-19T02:33:15.755Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
